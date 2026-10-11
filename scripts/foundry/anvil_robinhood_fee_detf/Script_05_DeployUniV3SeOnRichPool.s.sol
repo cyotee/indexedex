@@ -12,19 +12,19 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
-import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
 import {
-    UniswapV3_Component_FactoryService
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
+    UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
 
 /// @title Script_05_DeployUniV3SeOnRichPool
-/// @notice Uni V3 SE DFPkg + vault on pons RICH/WETH pool.
+/// @notice Uni V3 FullSpread SE DFPkg + vault on pons RICH/WETH pool.
 /// @dev Do not seed SE inventory here — stage 10 market buy moves the mid; pre-buy seed leaves
 ///      managed ticks out-of-range and later exchangeIn/bond hits _depositQuote div-by-zero.
 ///      First bond (stage 11) funds the empty SE at the post-buy mid.
 contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
-    using UniswapV3_Component_FactoryService for ICreate3FactoryProxy;
-    using UniswapV3_Component_FactoryService for IIndexedexManagerProxy;
+    using UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService for ICreate3FactoryProxy;
+    using UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService for IIndexedexManagerProxy;
 
     string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant CORE_FILE = "02_indexedex_core.json";
@@ -39,7 +39,7 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
     IFacet private multiAssetBasicVaultFacet;
     IFacet private multiAssetStandardVaultFacet;
 
-    IUniswapV3StandardExchangeDFPkg private uniV3SePkg;
+    IUniswapV3FullSpreadStandardExchangeVaultDFPkg private uniV3SePkg;
     address private uniV3Se_rich;
     address private rich;
     address private pool;
@@ -89,24 +89,24 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         (address pkg, bool okPkg) = _readAddressSafe(ARTIFACT_FILE, "uniV3SePkg");
         (address se, bool okSe) = _readAddressSafe(ARTIFACT_FILE, "uniV3Se_rich");
         if (!okPkg || !okSe || pkg.code.length == 0 || se.code.length == 0) return false;
-        uniV3SePkg = IUniswapV3StandardExchangeDFPkg(pkg);
+        uniV3SePkg = IUniswapV3FullSpreadStandardExchangeVaultDFPkg(pkg);
         uniV3Se_rich = se;
         return true;
     }
 
     function _deployPkg() internal {
-        IFacet inFacet = create3Factory.deployUniswapV3StandardExchangeInFacet();
-        IFacet inQueryFacet = create3Factory.deployUniswapV3StandardExchangeInQueryFacet();
-        IFacet outFacet = create3Factory.deployUniswapV3StandardExchangeOutFacet();
-        IFacet outQueryFacet = create3Factory.deployUniswapV3StandardExchangeOutQueryFacet();
-        IFacet posImportFacet = create3Factory.deployUniswapV3StandardExchangePositionImportFacet();
-        IFacet liquidReserveFacet = create3Factory.deployUniswapV3StandardExchangeLiquidReserveFacet();
-        IFacet inMultiFacet = create3Factory.deployUniswapV3StandardExchangeInMultiFacet();
-        IFacet inMultiQueryFacet = create3Factory.deployUniswapV3StandardExchangeInMultiQueryFacet();
-        IFacet outMultiFacet = create3Factory.deployUniswapV3StandardExchangeOutMultiFacet();
-        IFacet outMultiQueryFacet = create3Factory.deployUniswapV3StandardExchangeOutMultiQueryFacet();
+        IFacet inFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInFacet();
+        IFacet inQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInQueryFacet();
+        IFacet outFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutFacet();
+        IFacet outQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutQueryFacet();
+        IFacet posImportFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultPositionImportFacet();
+        IFacet liquidReserveFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet();
+        IFacet inMultiFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiFacet();
+        IFacet inMultiQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet();
+        IFacet outMultiFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiFacet();
+        IFacet outMultiQueryFacet = create3Factory.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet();
 
-        IUniswapV3StandardExchangeDFPkg.PkgInit memory pkgInit;
+        IUniswapV3FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = erc20Facet;
         pkgInit.erc5267Facet = erc5267Facet;
         pkgInit.erc2612Facet = erc2612Facet;
@@ -118,7 +118,7 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         pkgInit.uniswapV3StandardExchangeOutQueryFacet = outQueryFacet;
         pkgInit.uniswapV3StandardExchangePositionImportFacet = posImportFacet;
         pkgInit.uniswapV3StandardExchangeLiquidReserveFacet = liquidReserveFacet;
-        pkgInit = UniswapV3_Component_FactoryService.attachUniswapV3StandardExchangeMultiFacets(
+        pkgInit = UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.attachUniswapV3FullSpreadStandardExchangeVaultMultiFacets(
             pkgInit, inMultiFacet, inMultiQueryFacet, outMultiFacet, outMultiQueryFacet
         );
         pkgInit.vaultFeeOracleQuery = indexedexManager;
@@ -126,7 +126,7 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         pkgInit.permit2 = IPermit2(RobinhoodCanonicalLib.permit2());
         pkgInit.uniswapV3Factory = IUniswapV3Factory(RobinhoodCanonicalLib.v3Factory());
 
-        uniV3SePkg = indexedexManager.deployUniswapV3StandardExchangeDFPkg(pkgInit);
+        uniV3SePkg = indexedexManager.deployUniswapV3FullSpreadStandardExchangeVaultDFPkg(pkgInit);
     }
 
     function _assertVaultTokens() internal view {

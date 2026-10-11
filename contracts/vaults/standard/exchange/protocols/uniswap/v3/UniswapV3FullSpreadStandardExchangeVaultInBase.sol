@@ -153,6 +153,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        virtual
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);

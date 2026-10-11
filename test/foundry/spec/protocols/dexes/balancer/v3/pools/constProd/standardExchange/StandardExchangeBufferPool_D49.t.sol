@@ -34,6 +34,44 @@ import {
 contract StandardExchangeBufferPool_D49_Test is TestBase_StandardExchangeBufferPool {
     error DependencyRejected(bytes32 tag);
 
+    function test_recurrence_D49_realUnderlyingPauseRollsBackSelectedOperation() public {
+        IERC20 input = tta;
+        IERC20 output = shares;
+        mintTTA(alice, 10e18);
+        Snap memory beforeState = _snap();
+        uint256 seInput = input.balanceOf(address(seVault));
+        uint256 vaultInput = input.balanceOf(address(bv3Vault));
+        uint256 allowanceBefore = input.allowance(address(seVault), address(aeroRouter));
+        vm.prank(aeroPoolFactory.pauser());
+        aeroPoolFactory.setPauseState(true);
+
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSignature("IsPaused()"));
+        seRouterReal.swapSingleTokenExactIn(
+            bufferPool, input, IStandardExchangeProxy(address(0)), output,
+            IStandardExchangeProxy(address(0)), 10e18, 0, block.timestamp, false, ""
+        );
+        _assertUnchanged(beforeState);
+        assertEq(input.balanceOf(address(seVault)), seInput, "SE input restored");
+        assertEq(input.balanceOf(address(bv3Vault)), vaultInput, "Vault input restored");
+        assertEq(input.allowance(address(seVault), address(aeroRouter)), allowanceBefore,
+            "dependency allowance restored");
+        IBalancerV3StandardExchangeRouterPrepay p = IBalancerV3StandardExchangeRouterPrepay(address(seRouterReal));
+        assertFalse(p.prepaySessionActive(), "failed root clears transient session");
+        assertEq(p.prepayAuthDepth(), 0, "failed root clears auth stack");
+
+        vm.prank(aeroPoolFactory.pauser());
+        aeroPoolFactory.setPauseState(false);
+        vm.prank(alice);
+        uint256 received = seRouterReal.swapSingleTokenExactIn(
+            bufferPool, input, IStandardExchangeProxy(address(0)), output,
+            IStandardExchangeProxy(address(0)), 10e18, 0, block.timestamp, false, ""
+        );
+        assertGt(received, 0, "same funded route succeeds with underlying unpaused");
+        assertFalse(p.prepaySessionActive());
+        assertEq(p.prepayAuthDepth(), 0);
+    }
+
     bytes internal REJECT = abi.encodeWithSelector(DependencyRejected.selector, keccak256("APEX-D49"));
 
     IBalancerV3StandardExchangeRouterProxy internal seRouterReal;

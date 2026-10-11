@@ -6,10 +6,13 @@ import {
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol";
 
 contract UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate is UniswapV3FullSpreadStandardExchangeVaultInBase {
+    address private immutable SELF = address(this);
+    error DelegateCallRequired();
     function executeZapInDeposit(address tokenIn, uint256 amountIn, uint256 minSharesOut, address recipient)
         external
         returns (uint256 sharesOut)
     {
+        if (address(this) == SELF) revert DelegateCallRequired();
         return _executeZapInDeposit(tokenIn, amountIn, minSharesOut, recipient);
     }
 
@@ -17,6 +20,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate is UniswapV
         external
         returns (uint256 amountOut)
     {
+        if (address(this) == SELF) revert DelegateCallRequired();
         return _executeZapOutExactIn(tokenOut, sharesBurned, minAmountOut, recipient);
     }
 }

@@ -73,6 +73,17 @@ class SelectorSizeEvidenceTests(unittest.TestCase):
         self.assertEqual(result.exception.code, 2)
         self.assertEqual(Path('result.json').read_text(), 'historical evidence')
 
+    def test_deleted_baseline_source_is_not_tested(self):
+        self.base.append({'source': 'contracts/se/DeletedFacet.sol',
+                          'artifact': 'out/DeletedFacet.sol/DeletedFacet.json',
+                          'methodIdentifiers': {}})
+        Path('baseline.json').write_text(json.dumps(self.base))
+        self.run_compare()
+        report = json.loads(Path('result.json').read_text())
+        self.assertEqual(report['missingArtifacts'], 0)
+        self.assertEqual(report['skippedStaleCount'], 1)
+        self.assertEqual(report['skippedStale'][0]['source'], 'contracts/se/DeletedFacet.sol')
+
     def test_rebaseline_preserves_original(self):
         initial = Path('baseline.json').read_bytes()
         self.run_compare('--rebaseline', 'ExistingFacet')

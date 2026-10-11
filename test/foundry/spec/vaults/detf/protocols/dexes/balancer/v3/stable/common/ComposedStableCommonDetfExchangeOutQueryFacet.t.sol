@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
@@ -47,19 +48,21 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is TestBase_Composed
         assertGt(composedOut.previewExchangeOut(IERC20(composedDetf), weth, 1e15), 0);
     }
 
-    function test_previewExchangeOut_revertsForUnsupportedTokenIn() public {
-        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
-        composedOut.previewExchangeOut(dai, weth, 1e15);
+    function test_previewExchangeOut_returnsZeroForUnsupportedTokenIn() public {
+        assertEq(composedOut.previewExchangeOut(dai, weth, 1e15), 0);
+        _live();
+        assertEq(composedOut.previewExchangeOut(dai, weth, 1e15), 0);
     }
 
-    function test_previewExchangeOut_revertsForUnsupportedTokenOut() public {
-        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", composedDetf, address(0xBAD)));
-        composedOut.previewExchangeOut(IERC20(composedDetf), IERC20(address(0xBAD)), 1e15);
+    function test_previewExchangeOut_returnsZeroForUnsupportedTokenOut() public {
+        assertEq(composedOut.previewExchangeOut(IERC20(composedDetf), IERC20(address(0xBAD)), 1e15), 0);
+        _live();
+        assertEq(composedOut.previewExchangeOut(IERC20(composedDetf), IERC20(address(0xBAD)), 1e15), 0);
     }
 
-    function test_previewExchangeOut_revertsWhenReservePoolUninitialized() public {
-        vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));
-        composedOut.previewExchangeOut(IERC20(composedDetf), weth, 1e15);
+    function test_previewExchangeOut_returnsZeroWhenReservePoolUninitialized() public {
+        assertFalse(composedInfo.isReserveLive());
+        assertEq(composedOut.previewExchangeOut(IERC20(composedDetf), weth, 1e15), 0);
     }
 
     function test_exchangeOut_executesSelectedRoute() public {
@@ -87,10 +90,24 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is TestBase_Composed
     }
 
     function test_exchangeOut_revertsForUnsupportedTokenOut() public {
-        uint256 raw_ = _buyRaw(alice, 10e18);
-        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", composedDetf, address(0xBAD)));
-        composedOut.exchangeOut(IERC20(composedDetf), raw_, IERC20(address(0xBAD)), 1e15, alice, false, block.timestamp);
-        assertEq(IERC20(composedDetf).balanceOf(alice), raw_);
+        _buyRaw(alice, 10e18);
+        _assertRejectedBeforeFunding(IERC20(composedDetf), IERC20(address(0xBAD)),
+            abi.encodeWithSignature("InvalidRoute(address,address)", composedDetf, address(0xBAD)));
+    }
+
+    function test_exchangeOut_revertsForUnsupportedTokenIn() public {
+        _live();
+        _assertRejectedBeforeFunding(dai, weth,
+            abi.encodeWithSignature("InvalidRoute(address,address)", address(dai), address(weth)));
+    }
+
+    function test_exchangeOut_rejectsUnsupportedDirectConversions() public {
+        _buyRaw(alice, 10e18);
+        IERC20 raw_ = IERC20(composedDetf);
+        IERC20 staking_ = IERC20(address(_staked()));
+        _assertRejectedBeforeFunding(raw_, raw_, abi.encodeWithSignature("InvalidRoute(address,address)", raw_, raw_));
+        _assertRejectedBeforeFunding(staking_, staking_, abi.encodeWithSignature("InvalidRoute(address,address)", staking_, staking_));
+        _assertRejectedBeforeFunding(dai, staking_, abi.encodeWithSignature("InvalidRoute(address,address)", dai, staking_));
     }
 
     function test_exchangeOut_revertsWhenDeadlineExpired() public {
@@ -125,8 +142,9 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is TestBase_Composed
     }
 
     function test_exchangeOut_revertsWhenReservePoolUninitialized() public {
-        vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));
-        composedOut.exchangeOut(IERC20(composedDetf), 1e9, weth, 1e15, alice, false, block.timestamp);
+        assertFalse(composedInfo.isReserveLive());
+        _assertRejectedBeforeFunding(IERC20(composedDetf), weth, abi.encodeWithSignature("ReservePoolNotInitialized()"));
+        _assertRejectedBeforeFunding(IERC20(address(_staked())), weth, abi.encodeWithSignature("ReservePoolNotInitialized()"));
     }
 
     function test_exchangeOut_underlyingExitDeliversExactAmount() public {
@@ -157,5 +175,73 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is TestBase_Composed
         assertEq(paid_, amount_);
         assertEq(IERC20(composedDetf).balanceOf(bob), amount_);
         assertEq(_staked().balanceOf(alice), before_ - amount_);
+    }
+    /// @notice Invalid requests must fail before either a pull or prepayment lookup.
+    function _assertRejectedBeforeFunding(IERC20 in_, IERC20 out_, bytes memory error_) internal {
+        bytes32 before_ = _custodyState(in_);
+        vm.expectCall(address(in_), abi.encodeWithSelector(IERC20.transferFrom.selector), uint64(0));
+        for (uint256 flag_; flag_ < 2; ++flag_) {
+            vm.expectRevert(error_);
+            composedOut.exchangeOut(in_, 1e18, out_, 1e15, bob, flag_ == 1, block.timestamp);
+            assertEq(_custodyState(in_), before_, "rejection preserves custody and supply");
+        }
+    }
+
+    function _custodyState(IERC20 in_) internal view returns (bytes32) {
+        return keccak256(abi.encode(
+            in_.balanceOf(address(this)), in_.balanceOf(alice), in_.balanceOf(composedDetf),
+            IERC20(composedDetf).balanceOf(bob), IERC20(composedDetf).totalSupply(),
+            weth.balanceOf(bob), _staked().totalSupply(), _bondNft().lpToken().balanceOf(address(_bondNft()))
+        ));
+    }
+
+    /// @notice Direct conversions bypass reserve liveness but still require funded input.
+    function test_exchangeOut_directStakingBeforeActivation_reachesFundingCheck() public {
+        assertFalse(composedInfo.isReserveLive());
+        IERC20 raw_ = IERC20(composedDetf);
+        IERC20 staking_ = IERC20(address(_staked()));
+        assertEq(composedOut.previewExchangeOut(raw_, staking_, 1), 1);
+        assertEq(composedOut.previewExchangeOut(staking_, raw_, 1), 1);
+        vm.expectRevert(bytes4(keccak256("TransferFromFailed()")));
+        composedOut.exchangeOut(raw_, 1, staking_, 1, bob, false, block.timestamp);
+        vm.expectRevert(bytes4(keccak256("TransferFromFailed()")));
+        composedOut.exchangeOut(staking_, 1, raw_, 1, bob, false, block.timestamp);
+    }
+
+    function test_exchangeOut_directStakingRoundTrip_pull() public { _directStakingRoundTrip(false); }
+    function test_exchangeOut_directStakingRoundTrip_prepaid() public { _directStakingRoundTrip(true); }
+
+    function _directStakingRoundTrip(bool prepaid_) internal {
+        uint256 rawBefore_ = _buyRaw(alice, 10e18);
+        uint256 amount_ = rawBefore_ / 4;
+        IERC20 raw_ = IERC20(composedDetf);
+        IERC20 staking_ = IERC20(address(_staked()));
+        uint256 supply_ = raw_.totalSupply();
+        uint256 stakedBefore_ = staking_.balanceOf(alice);
+        uint256 bobBefore_ = raw_.balanceOf(bob);
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+        vm.prank(alice);
+        raw_.approve(address(caller_), amount_);
+        _fundAndConvert(caller_, raw_, staking_, amount_, alice, prepaid_);
+        assertEq(raw_.balanceOf(alice), rawBefore_ - amount_);
+        assertEq(staking_.balanceOf(alice), stakedBefore_ + amount_);
+        vm.prank(alice);
+        staking_.approve(address(caller_), amount_);
+        _fundAndConvert(caller_, staking_, raw_, amount_, bob, prepaid_);
+        assertEq(staking_.balanceOf(alice), stakedBefore_);
+        assertEq(raw_.balanceOf(bob), bobBefore_ + amount_);
+        assertEq(raw_.totalSupply(), supply_, "direct conversion does not issue DETF");
+        assertEq(raw_.balanceOf(address(caller_)), 0);
+        assertEq(staking_.balanceOf(address(caller_)), 0);
+    }
+
+    function _fundAndConvert(AtomicPretransferCaller caller_, IERC20 in_, IERC20 out_, uint256 amount_, address to_, bool prepaid_) internal {
+        assertEq(composedOut.previewExchangeOut(in_, out_, amount_), amount_);
+        bytes memory data_ = abi.encodeCall(IStandardExchangeOut.exchangeOut,
+            (in_, amount_, out_, amount_, to_, prepaid_, block.timestamp));
+        bytes memory result_ = prepaid_
+            ? caller_.consumePretransfer(in_, alice, composedDetf, amount_, data_)
+            : caller_.consumePull(in_, alice, composedDetf, amount_, data_);
+        assertEq(abi.decode(result_, (uint256)), amount_, "direct quote matches execution");
     }
 }

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -71,11 +73,12 @@ abstract contract LiquidStakingSYBehavior is Test {
     }
 
     function test_liquidStakingInternalRedemptionKeepsUnburnedShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 shares_ = _depositYield();
         vm.prank(HOLDER); _sy().transfer(_subject(), shares_);
         uint256 amount_ = shares_ / 3;
         uint256 quote_ = _sy().previewRedeem(_yield(), amount_);
-        vm.prank(HOLDER); _sy().redeem(HOLDER, amount_, _yield(), quote_, true);
+        vm.prank(HOLDER); abi.decode(atomic.execute(address(_sy()), abi.encodeCall(IStandardizedYield.redeem, (HOLDER, amount_, _yield(), quote_, true))), (uint256));
         assertEq(_sy().balanceOf(_subject()), shares_ - amount_);
         assertEq(_sy().balanceOf(HOLDER), 0);
     }

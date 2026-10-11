@@ -6,6 +6,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {
@@ -230,6 +231,46 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         assertEq(token0.balanceOf(user) - outBefore, amountOut, "funded exact-out");
         assertLt(IERC20(se0).balanceOf(hook), seBefore, "SE burned used shares");
         assertEq(token0.balanceOf(hook), 0, "no leftover buffered face");
+    }
+
+    function test_recurrence_R6_exactOutputBurnAndAllowanceAreBounded() public {
+        uint256 wanted = 1 ether;
+        uint256 sharesBefore = IERC20(se0).balanceOf(hook);
+        uint256 expectedBurn = IStandardExchangeOut(se0).previewExchangeOut(
+            IERC20(se0), IERC20(address(token0)), wanted
+        );
+        assertGt(expectedBurn, 0);
+        assertLt(expectedBurn, sharesBefore, "supported quote leaves retained SE inventory");
+        uint256 amountIn = orbital.previewSwapExactOut(address(token1), address(token0), wanted);
+        uint256 inputBefore = token1.balanceOf(user);
+        uint256 outputBefore = token0.balanceOf(user);
+        _swapExactOut(address(token1), address(token0), wanted, amountIn + 1 ether);
+        assertEq(sharesBefore - IERC20(se0).balanceOf(hook), expectedBurn);
+        assertEq(token0.balanceOf(user) - outputBefore, wanted);
+        assertEq(inputBefore - token1.balanceOf(user), amountIn);
+        assertEq(IERC20(se0).allowance(hook, se0), 0, "exact-output allowance reset");
+    }
+
+    function test_recurrence_R6_overCapRejectedBeforeSeExecutionWithExactNestedError() public {
+        uint256 wanted = 10_000 ether;
+        uint256 user0 = token0.balanceOf(user);
+        uint256 user1 = token1.balanceOf(user);
+        uint256 seBefore = IERC20(se0).balanceOf(hook);
+        uint256 allowanceBefore = IERC20(se0).allowance(hook, se0);
+        vm.expectCall(se0, abi.encodeWithSelector(IStandardExchangeOut.exchangeOut.selector), uint64(0));
+        PoolKey memory key = _poolKeyFor(address(token1), address(token0));
+        bool zeroForOne = address(token1) == Currency.unwrap(key.currency0);
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSignature(
+            "WrappedError(address,bytes4,bytes,bytes)", hook, IHooks.beforeSwap.selector,
+            abi.encodeWithSignature("Drain()"), abi.encodeWithSignature("HookCallFailed()")
+        ));
+        swapRouter.swapExactOut(key, SwapParams({zeroForOne: zeroForOne,
+            amountSpecified: int256(wanted), sqrtPriceLimitX96: _sqrtLimit(zeroForOne)}), 1_000 ether, "");
+        assertEq(token0.balanceOf(user), user0);
+        assertEq(token1.balanceOf(user), user1);
+        assertEq(IERC20(se0).balanceOf(hook), seBefore);
+        assertEq(IERC20(se0).allowance(hook, se0), allowanceBefore);
     }
 
     function test_R6_cappedUnwrap_insufficient_rollsBack() public {

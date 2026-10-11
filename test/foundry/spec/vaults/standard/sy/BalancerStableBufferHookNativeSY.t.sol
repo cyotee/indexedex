@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {StableMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/StableMath.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -15,6 +16,19 @@ import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCal
 import {TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
 
 contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook {
+    function test_nativeSYHeldRedemptionHelperIsNotPublic() public {
+        address facet_ = IDiamondLoupe(hook).facetAddress(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector);
+        bytes memory data_ = abi.encodeWithSignature(
+            "executeVaultHeldRedemption(address,uint256,address,uint256)", user, 1, address(token0), 0
+        );
+        (bool ok_, bytes memory reason_) = facet_.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("DelegateCallRequired()"));
+        (ok_, reason_) = hook.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", bytes4(data_)));
+    }
+
     IStandardizedYield private sy_;
 
     function setUp() public override {
@@ -120,13 +134,14 @@ contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExcha
     }
 
     function test_balancerStableSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 held_ = sy_.balanceOf(user) / 4;
         uint256 redeem_ = held_ / 3;
         uint256 quote_ = sy_.previewRedeem(se0, redeem_);
         uint256 before_ = IERC20(se0).balanceOf(user);
         vm.startPrank(user);
         sy_.transfer(hook, held_);
-        assertEq(sy_.redeem(user, redeem_, se0, quote_, true), quote_);
+        assertEq(abi.decode(atomic.execute(address(sy_), abi.encodeCall(IStandardizedYield.redeem, (user, redeem_, se0, quote_, true))), (uint256)), quote_);
         vm.stopPrank();
         assertEq(sy_.balanceOf(hook), held_ - redeem_);
         assertEq(IERC20(se0).balanceOf(user), before_ + quote_);

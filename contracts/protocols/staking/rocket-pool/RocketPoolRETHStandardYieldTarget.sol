@@ -4,9 +4,21 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {RocketPoolRETHStandardExchangeCommon} from "./RocketPoolRETHStandardExchangeCommon.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
 /// @notice Native SY adapter preserving this SE's ETH reserve entitlement and liquid sleeve.
-abstract contract RocketPoolRETHStandardYieldTarget is NativeStandardYieldTarget, RocketPoolRETHStandardExchangeCommon {
+abstract contract RocketPoolRETHStandardYieldTarget is NativeStandardYieldTarget, RocketPoolRETHStandardExchangeCommon, ReentrancyLockModifiers {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256 amount_)
+    {
+        amount_ = _quoteExactIn(address(this), shares_, tokenOut_);
+        if (amount_ < minimum_) revert Slippage();
+        ERC20Repo._burn(address(this), shares_);
+        _payAsset(tokenOut_, amount_, receiver_);
+        _syncAllExpectedHoldReserves();
+    }
+
     function getTokensIn() public view override returns (address[] memory tokens_) {
         tokens_ = new address[](2);
         tokens_[0] = weth();

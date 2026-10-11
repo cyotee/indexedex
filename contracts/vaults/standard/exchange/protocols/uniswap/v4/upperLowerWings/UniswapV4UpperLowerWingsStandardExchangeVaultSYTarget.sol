@@ -9,6 +9,14 @@ import {UniswapV4UpperLowerWingsStandardExchangeVaultMoney as Money} from "./Uni
 
 /// @notice Native SY uses the existing vault share and its installed standard money routes.
 contract UniswapV4UpperLowerWingsStandardExchangeVaultSYTarget is NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address, uint256 minimum_)
+        internal override returns (uint256 amount_)
+    {
+        Money.begin(block.timestamp);
+        amount_ = Money.redeem(shares_, minimum_, receiver_, true);
+        Money.end();
+    }
+
     function getTokensIn() public view override returns (address[] memory tokens_) {
         tokens_ = new address[](1); tokens_[0] = address(Money.target());
     }

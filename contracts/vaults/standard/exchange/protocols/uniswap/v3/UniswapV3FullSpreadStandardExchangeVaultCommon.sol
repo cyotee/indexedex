@@ -49,7 +49,6 @@ import {
  * @dev Gate is bound-pool `slot0.unlocked` (true = idle). Do not `mint`/`burn`/`swap`/`collect` while locked.
  *      Organic ticks are Crane V3 min/max usable. Imported books keep NFT ticks as the single center.
  */
-import {NativeStandardYieldContextRepo} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {StandardExchangeConstantProduct} from "../StandardExchangeConstantProduct.sol";
 
 abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
@@ -65,6 +64,9 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
     error UniswapV3Exchange_CallbackNotAuthorized();
     error UniswapV3Exchange_UnsupportedPair();
     error UniswapV3Exchange_InsufficientOutput();
+    /// @notice Exact-output quote or settlement did not pay the requested output.
+    /// @dev Distinct from the input-ceiling error. `delivered` is the output amount, never the input.
+    error UniswapV3Exchange_ExactOutputNotFilled(uint256 requested, uint256 delivered);
     error UniswapV3Exchange_ZeroAmount();
     /// @notice Path requires a bound-pool op while `slot0.unlocked == false`.
     error UniswapV3Exchange_BoundPoolInteractionBlocked();
@@ -276,6 +278,9 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
             })
         );
 
+        if (!quote.fullyFilled || quote.amountOut != amountOut) {
+            revert UniswapV3Exchange_ExactOutputNotFilled(amountOut, quote.amountOut);
+        }
         return quote.amountIn;
     }
 
@@ -522,6 +527,12 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
         amountIn = zeroForOne ? uint256(amount0Delta) : uint256(amount1Delta);
         if (amountIn > maxAmountIn) {
             revert UniswapV3Exchange_InsufficientOutput();
+        }
+        // Pool delta is negative when the pool paid the recipient. Do not cast this into amountIn.
+        int256 outputDelta = zeroForOne ? amount1Delta : amount0Delta;
+        uint256 outputPaid = outputDelta < 0 ? uint256(-outputDelta) : 0;
+        if (outputPaid != amountOut) {
+            revert UniswapV3Exchange_ExactOutputNotFilled(amountOut, outputPaid);
         }
     }
 
@@ -905,11 +916,6 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
     }
 
     function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
-        if (!pretransferred && msg.sender == address(this) && NativeStandardYieldContextRepo._initiator() != address(0)) {
-            uint256 selfBalance = IERC20(address(this)).balanceOf(address(this));
-            _requireDelivered(amountIn, selfBalance);
-            return amountIn;
-        }
         return _secureTokenTransfer(IERC20(address(this)), amountIn, pretransferred);
     }
 

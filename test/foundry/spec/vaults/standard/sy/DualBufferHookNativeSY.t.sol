@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -92,6 +94,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
     }
 
     function test_dualNativeSYInternalRedemptionAndLimits() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         IStandardizedYield sy = IStandardizedYield(hook);
         vm.startPrank(user);
         uint256 supply = sy.totalSupply();
@@ -101,7 +104,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         sy.redeem(user, amount, address(tokenA), type(uint256).max, false);
         assertEq(sy.totalSupply(), supply);
         sy.transfer(hook, amount * 3);
-        uint256 paid = sy.redeem(user, amount, address(tokenA), quoted, true);
+        uint256 paid = abi.decode(atomic.execute(address(sy), abi.encodeCall(IStandardizedYield.redeem, (user, amount, address(tokenA), quoted, true))), (uint256));
         assertGe(paid, quoted, "internal SY redeem preview");
         assertEq(sy.balanceOf(hook), amount * 2, "unrequested internal shares retained");
         vm.stopPrank();

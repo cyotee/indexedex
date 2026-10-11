@@ -1,0 +1,1493 @@
+{
+  "date": "2026-10-10",
+  "status": "15 active listed failures fixed; 17 Balancer-hosted DETF cases remain owner-deferred",
+  "production_changed": false,
+  "before": {
+    "summary": "Ran 9 test suites in 74.70s (6.36s CPU time): 3 tests passed, 15 failed, 0 skipped (18 total tests)",
+    "exit_code": 1,
+    "log": ".scratch/errors-third-pass-2026-10-10/before.log",
+    "log_sha256": "2654fd0bc189858acae37143fa0707def5ea906993e86631ba50ad9363f7b33b",
+    "command": [
+      "python3",
+      "scripts/forge-artifacts.py",
+      "test",
+      "--test-root",
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3FullSpreadStandardExchangeVault_Delivery.t.sol",
+      "--",
+      "--threads",
+      "2",
+      "--fuzz-runs",
+      "128",
+      "--match-test",
+      "test_count_(raw_donation_prices_live_book_and_becomes_booked|shared_book_matches_reference_after_cross_pair_swap)|test_RC06_nonzeroPreview|testFuzz_residualSweep_smallAmounts|test_residualSweep_localRehearsalAmount|test_J[12]_|test_everyTargetSelectorIsInstalledOnRegistryProxy",
+      "-vvv"
+    ],
+    "suites": {
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV3FullSpreadStandardExchangeVault_Adversarial": {
+        "test_J1_TargetSelectorsMatchFacetDeclarations()": {
+          "status": "FAIL",
+          "result": "(gas: 706931)"
+        },
+        "test_J2_allTargetSelectorsInstalledOnProxy()": {
+          "status": "FAIL",
+          "result": "(gas: 707710)"
+        },
+        "test_everyTargetSelectorIsInstalledOnRegistryProxy()": {
+          "status": "FAIL",
+          "result": "(gas: 707519)"
+        }
+      },
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3FullSpreadStandardExchangeVault_Delivery.t.sol:UniswapV3FullSpreadStandardExchangeVault_Delivery": {
+        "test_everyTargetSelectorIsInstalledOnRegistryProxy()": {
+          "status": "FAIL",
+          "result": "(gas: 707445)"
+        }
+      },
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol:UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic": {
+        "test_J1_TargetSelectorsMatchFacetDeclarations()": {
+          "status": "FAIL",
+          "result": "(gas: 706931)"
+        },
+        "test_J2_allTargetSelectorsInstalledOnProxy()": {
+          "status": "FAIL",
+          "result": "(gas: 707710)"
+        },
+        "test_everyTargetSelectorIsInstalledOnRegistryProxy()": {
+          "status": "FAIL",
+          "result": "(gas: 707519)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N2": {
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "FAIL",
+          "result": "(gas: 1112611)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "FAIL",
+          "result": "(gas: 1465159)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N3": {
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "FAIL",
+          "result": "(gas: 1264459)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1421163)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol:UniswapV4Detf_Cp_Univ3Se_ResidualGas": {
+        "testFuzz_residualSweep_smallAmounts(uint256)": {
+          "status": "FAIL",
+          "result": "(runs: 0, \u03bc: 0, ~: 0)"
+        },
+        "test_residualSweep_localRehearsalAmount()": {
+          "status": "FAIL",
+          "result": "(gas: 6520904)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N4": {
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "FAIL",
+          "result": "(gas: 1417565)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1588231)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N5": {
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "FAIL",
+          "result": "(gas: 1569428)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1753428)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol:UniswapV4DetfLeftoverPreview_Test": {
+        "test_RC06_nonzeroPreview_reachesJoinRejectionWithoutBooking()": {
+          "status": "FAIL",
+          "result": "(gas: 5564289)"
+        }
+      }
+    }
+  },
+  "after": {
+    "summary": "Ran 9 test suites in 14.57s (36.48s CPU time): 301 tests passed, 0 failed, 0 skipped (301 total tests)",
+    "exit_code": 0,
+    "log": ".scratch/errors-third-pass-2026-10-10/after.log",
+    "log_sha256": "a684ec20b44524a64df75c35ece06895c9133846b95c679f1632a0c56f0c8b8c",
+    "command": [
+      "python3",
+      "scripts/forge-artifacts.py",
+      "test",
+      "--test-root",
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3FullSpreadStandardExchangeVault_Delivery.t.sol",
+      "--",
+      "--threads",
+      "2",
+      "--fuzz-runs",
+      "128",
+      "-vv"
+    ],
+    "suites": {
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV3FullSpreadStandardExchangeVault_Adversarial": {
+        "testFuzz_deliveryAcrossSleeveRatios(bool,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1365581, ~: 1348733)"
+        },
+        "testFuzz_noPhantomCreditAfterTrade(bool,uint96)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 972973, ~: 969825)"
+        },
+        "test_A0_dustFirstMint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 373960)"
+        },
+        "test_A0_dustFirstMint_reverts_sixDecimals()": {
+          "status": "PASS",
+          "result": "(gas: 18427639)"
+        },
+        "test_A0_dustFirstMint_thenDonate_victimJoin_attackerCannotTakeHalf()": {
+          "status": "PASS",
+          "result": "(gas: 1761559)"
+        },
+        "test_A0_floor_decimalSumBelowSix()": {
+          "status": "PASS",
+          "result": "(gas: 18426374)"
+        },
+        "test_A0_floor_oddDecimalSum()": {
+          "status": "PASS",
+          "result": "(gas: 18428005)"
+        },
+        "test_A0_floor_sixEighteen()": {
+          "status": "PASS",
+          "result": "(gas: 18428643)"
+        },
+        "test_A0_minimumPlusOne_previewAndExecution_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 1471385)"
+        },
+        "test_A0_minimumPlusOne_previewAndExecution_idleAndBlocked()": {
+          "status": "PASS",
+          "result": "(gas: 831756)"
+        },
+        "test_A0_residualDeadShares_firstMinterNotWhole()": {
+          "status": "PASS",
+          "result": "(gas: 431695)"
+        },
+        "test_A0_revertingMetadata_propagatesDependencyRevert_D34()": {
+          "status": "PASS",
+          "result": "(gas: 17808936)"
+        },
+        "test_APEX001M_atomicFundedSucceedsFromPreparedState()": {
+          "status": "PASS",
+          "result": "(gas: 1556047)"
+        },
+        "test_APEX001M_eoaAndContractZeroInputRejected_token0()": {
+          "status": "PASS",
+          "result": "(gas: 1337237)"
+        },
+        "test_APEX001M_eoaAndContractZeroInputRejected_token1()": {
+          "status": "PASS",
+          "result": "(gas: 1328504)"
+        },
+        "test_APEX001M_excessPushedTransferCreditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 1119868)"
+        },
+        "test_APEX005_zapOut_pretransferred_eoaRejected()": {
+          "status": "PASS",
+          "result": "(gas: 1912034)"
+        },
+        "test_C1_nestedMoneyPaths_recordedAndPropagating()": {
+          "status": "PASS",
+          "result": "(gas: 1854442)"
+        },
+        "test_CROPS_disableInboundStillAllowsExitAndSY()": {
+          "status": "PASS",
+          "result": "(gas: 2645640)"
+        },
+        "test_E6_dualExit_refundMatrix_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 3123818)"
+        },
+        "test_E6_dualExit_shortShares_idleAndBlocked()": {
+          "status": "PASS",
+          "result": "(gas: 1879988)"
+        },
+        "test_E6_dualExit_unusedShares_fatMax_transferOnlyUsed_doesNotPayBooked()": {
+          "status": "PASS",
+          "result": "(gas: 2872926)"
+        },
+        "test_E6_exchangeOut_tokenExactOut_fatMax_transferOnlyUsed_doesNotPayBooked()": {
+          "status": "PASS",
+          "result": "(gas: 3117259)"
+        },
+        "test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered()": {
+          "status": "PASS",
+          "result": "(gas: 2632766)"
+        },
+        "test_E6_zapOut_refundMatrix_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 4197501)"
+        },
+        "test_E6_zapOut_refundMatrix_idle()": {
+          "status": "PASS",
+          "result": "(gas: 7298807)"
+        },
+        "test_F5_rebalancePaysCallerNothing()": {
+          "status": "PASS",
+          "result": "(gas: 908423)"
+        },
+        "test_H_lockedExitAfterPermissionlessRebalance()": {
+          "status": "PASS",
+          "result": "(gas: 1044896)"
+        },
+        "test_H_lockedExit_onePercentOfSupply()": {
+          "status": "PASS",
+          "result": "(gas: 1046106)"
+        },
+        "test_H_positiveSleeveInsufficientCapacity_rollsBack()": {
+          "status": "PASS",
+          "result": "(gas: 1088217)"
+        },
+        "test_H_zeroSleeveCanBlockLockedExit()": {
+          "status": "PASS",
+          "result": "(gas: 1070123)"
+        },
+        "test_I1_exchangeOut_pretransferredTrue_noDelivery()": {
+          "status": "PASS",
+          "result": "(gas: 2440978)"
+        },
+        "test_I1_pretransferredTrue_noDelivery_noFreeMint()": {
+          "status": "PASS",
+          "result": "(gas: 929110)"
+        },
+        "test_I2_dualJoinOneExcessLeg_creditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 960173)"
+        },
+        "test_I2_excessExactIn_creditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 1119912)"
+        },
+        "test_I2_exchangeOut_usedGtActualIn_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 2441445)"
+        },
+        "test_I2_shortPush_pretransferred_claimedGtDelta_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 880519)"
+        },
+        "test_I3_exchangeOut_residualAfterSuccessfulPush()": {
+          "status": "PASS",
+          "result": "(gas: 1958508)"
+        },
+        "test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 1637143)"
+        },
+        "test_I_reserveOfTokenWrittenAfterRebalanceAndSwap()": {
+          "status": "PASS",
+          "result": "(gas: 1182826)"
+        },
+        "test_I_routerTransferFromUserToVault()": {
+          "status": "PASS",
+          "result": "(gas: 1327175)"
+        },
+        "test_J1_TargetSelectorsMatchFacetDeclarations()": {
+          "status": "PASS",
+          "result": "(gas: 25670781)"
+        },
+        "test_J2_allTargetSelectorsInstalledOnProxy()": {
+          "status": "PASS",
+          "result": "(gas: 24017294)"
+        },
+        "test_J3_proxyFundedMoneyPathsAndRemovedPrepare()": {
+          "status": "PASS",
+          "result": "(gas: 3792270)"
+        },
+        "test_J3_queryAndNativeSYProductSelectors()": {
+          "status": "PASS",
+          "result": "(gas: 2645955)"
+        },
+        "test_L1_poolTradeThenFalsePretransfer_noCredit()": {
+          "status": "PASS",
+          "result": "(gas: 1337457)"
+        },
+        "test_L2_FoT_forbidden()": {
+          "status": "PASS",
+          "result": "(gas: 1389329)"
+        },
+        "test_L3_spotSkew_noUnfundedMint()": {
+          "status": "PASS",
+          "result": "(gas: 1328416)"
+        },
+        "test_SYFailureRollsBackAndCanRetry()": {
+          "status": "PASS",
+          "result": "(gas: 1334945)"
+        },
+        "test_bookedSharesCannotBeClaimed()": {
+          "status": "PASS",
+          "result": "(gas: 1080769)"
+        },
+        "test_disabledPackageRejectsDepositButPermitsWithdrawals()": {
+          "status": "PASS",
+          "result": "(gas: 3284622)"
+        },
+        "test_disabledVaultRejectsDepositButPermitsWithdrawals()": {
+          "status": "PASS",
+          "result": "(gas: 3282277)"
+        },
+        "test_everyTargetSelectorIsInstalledOnRegistryProxy()": {
+          "status": "PASS",
+          "result": "(gas: 24017094)"
+        },
+        "test_failedRouteRollsBackCreditAndCanRetry()": {
+          "status": "PASS",
+          "result": "(gas: 1180572)"
+        },
+        "test_feeOnTransferInputRejectedAndRolledBack()": {
+          "status": "PASS",
+          "result": "(gas: 908067)"
+        },
+        "test_fundedCallerMaySelectRecipient()": {
+          "status": "PASS",
+          "result": "(gas: 1434603)"
+        },
+        "test_lockedExactOutputRefundsPushedShares()": {
+          "status": "PASS",
+          "result": "(gas: 1246488)"
+        },
+        "test_lockedExitSettlesBothEntitlements()": {
+          "status": "PASS",
+          "result": "(gas: 1047827)"
+        },
+        "test_lockedPushedDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1160875)"
+        },
+        "test_nativeSYCallerRedemptionNeedsNoAllowance()": {
+          "status": "PASS",
+          "result": "(gas: 1179391)"
+        },
+        "test_nativeSYInternalHolderBurnAndInsufficientBalance()": {
+          "status": "PASS",
+          "result": "(gas: 1290144)"
+        },
+        "test_nativeSYInternalMinimumRollbackAndContextRestored()": {
+          "status": "PASS",
+          "result": "(gas: 1469225)"
+        },
+        "test_nativeSYRequestedRecipientAndOrdinaryCallerDenied()": {
+          "status": "PASS",
+          "result": "(gas: 1211838)"
+        },
+        "test_noPositionNoMovementDoesNotEnableUnpushedInput()": {
+          "status": "PASS",
+          "result": "(gas: 176576)"
+        },
+        "test_priceMoveCannotCreditPhantomDeposit_token0()": {
+          "status": "PASS",
+          "result": "(gas: 1337193)"
+        },
+        "test_priceMoveCannotCreditPhantomDeposit_token1()": {
+          "status": "PASS",
+          "result": "(gas: 1328702)"
+        },
+        "test_proxyRemovedPreparationSurface()": {
+          "status": "PASS",
+          "result": "(gas: 109107)"
+        },
+        "test_pullAndPushedDepositsAfterPriceMovement()": {
+          "status": "PASS",
+          "result": "(gas: 1636217)"
+        },
+        "test_pullDualExit_maxAllowanceAndBalance_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 2894159)"
+        },
+        "test_pullDualExit_maxAllowanceAndBalance_idle()": {
+          "status": "PASS",
+          "result": "(gas: 3285654)"
+        },
+        "test_pushedDirectExactInputSwap()": {
+          "status": "PASS",
+          "result": "(gas: 1394115)"
+        },
+        "test_pushedDualWithdrawalRefundsOnlyDeliveredShares()": {
+          "status": "PASS",
+          "result": "(gas: 1611721)"
+        },
+        "test_pushedExactOutputRefundOnlyUnusedInput()": {
+          "status": "PASS",
+          "result": "(gas: 1508739)"
+        },
+        "test_pushedExactOutputShareWithdrawal()": {
+          "status": "PASS",
+          "result": "(gas: 6839186)"
+        },
+        "test_pushedMultiDepositAndMissingSecondToken()": {
+          "status": "PASS",
+          "result": "(gas: 1452596)"
+        },
+        "test_pushedSharesRedeemAndCannotReplay()": {
+          "status": "PASS",
+          "result": "(gas: 1424494)"
+        },
+        "test_rebalanceCannotCreatePushedCredit()": {
+          "status": "PASS",
+          "result": "(gas: 1254209)"
+        },
+        "test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay()": {
+          "status": "PASS",
+          "result": "(gas: 932116)"
+        },
+        "test_shortPushedTransferRejected()": {
+          "status": "PASS",
+          "result": "(gas: 880299)"
+        },
+        "test_transferCallbackCannotExchangeMidDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1200358)"
+        },
+        "test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1200829)"
+        },
+        "test_transferCallbackCannotReenter()": {
+          "status": "PASS",
+          "result": "(gas: 1202208)"
+        },
+        "test_unpushedDirectSwapAndExactOutputRejected()": {
+          "status": "PASS",
+          "result": "(gas: 1205564)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N2": {
+        "testFuzz_count_swap_round_trip_cannot_extract_value(uint96,uint8,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1426032, ~: 1426277)"
+        },
+        "test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value()": {
+          "status": "PASS",
+          "result": "(gas: 2260029)"
+        },
+        "test_count_all_buffered_bootstrap_and_exit()": {
+          "status": "PASS",
+          "result": "(gas: 26465596)"
+        },
+        "test_count_all_directed_swaps_exact_in_and_out()": {
+          "status": "PASS",
+          "result": "(gas: 2673610)"
+        },
+        "test_count_amplification_endpoints()": {
+          "status": "PASS",
+          "result": "(gas: 15837562)"
+        },
+        "test_count_bootstrap_and_proportional_round_trip()": {
+          "status": "PASS",
+          "result": "(gas: 1886734)"
+        },
+        "test_count_discovery_and_every_pair()": {
+          "status": "PASS",
+          "result": "(gas: 151454)"
+        },
+        "test_count_failed_last_transfer_is_atomic()": {
+          "status": "PASS",
+          "result": "(gas: 1262686)"
+        },
+        "test_count_fee_on_transfer_bootstrap_reverts_atomically()": {
+          "status": "PASS",
+          "result": "(gas: 26752432)"
+        },
+        "test_count_flexible_share_bootstrap_prop_exit_and_address_join()": {
+          "status": "PASS",
+          "result": "(gas: 2012899)"
+        },
+        "test_count_funded_pretransfer_and_post_operation_book()": {
+          "status": "PASS",
+          "result": "(gas: 1593348)"
+        },
+        "test_count_invalid_cardinalities()": {
+          "status": "PASS",
+          "result": "(gas: 112977)"
+        },
+        "test_count_invalid_indices()": {
+          "status": "PASS",
+          "result": "(gas: 49956)"
+        },
+        "test_count_last_binding_validation_and_salt()": {
+          "status": "PASS",
+          "result": "(gas: 162056)"
+        },
+        "test_count_last_pair_required_and_finalization_gas()": {
+          "status": "PASS",
+          "result": "(gas: 11538906)"
+        },
+        "test_count_mixed_decimals_and_nonunit_se_rate()": {
+          "status": "PASS",
+          "result": "(gas: 33970122)"
+        },
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "PASS",
+          "result": "(gas: 1478227)"
+        },
+        "test_count_rejects_each_array_mismatch()": {
+          "status": "PASS",
+          "result": "(gas: 105858)"
+        },
+        "test_count_retained_buffered_dust_is_not_new_funding()": {
+          "status": "PASS",
+          "result": "(gas: 2302242)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1604735)"
+        },
+        "test_count_unbalanced_and_single_exact_output_liquidity()": {
+          "status": "PASS",
+          "result": "(gas: 5172661)"
+        },
+        "test_count_yield_does_not_mint_inventory_growth_fees()": {
+          "status": "PASS",
+          "result": "(gas: 1439618)"
+        }
+      },
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3FullSpreadStandardExchangeVault_Delivery.t.sol:UniswapV3FullSpreadStandardExchangeVault_Delivery": {
+        "testFuzz_deliveryAcrossSleeveRatios(bool,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1362161, ~: 1340028)"
+        },
+        "testFuzz_noPhantomCreditAfterTrade(bool,uint96)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 972395, ~: 969060)"
+        },
+        "test_APEX001M_atomicFundedSucceedsFromPreparedState()": {
+          "status": "PASS",
+          "result": "(gas: 1555592)"
+        },
+        "test_APEX001M_eoaAndContractZeroInputRejected_token0()": {
+          "status": "PASS",
+          "result": "(gas: 1336848)"
+        },
+        "test_APEX001M_eoaAndContractZeroInputRejected_token1()": {
+          "status": "PASS",
+          "result": "(gas: 1328203)"
+        },
+        "test_APEX001M_excessPushedTransferCreditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 1119121)"
+        },
+        "test_SYFailureRollsBackAndCanRetry()": {
+          "status": "PASS",
+          "result": "(gas: 1334791)"
+        },
+        "test_bookedSharesCannotBeClaimed()": {
+          "status": "PASS",
+          "result": "(gas: 1080549)"
+        },
+        "test_disabledPackageRejectsDepositButPermitsWithdrawals()": {
+          "status": "PASS",
+          "result": "(gas: 3284534)"
+        },
+        "test_disabledVaultRejectsDepositButPermitsWithdrawals()": {
+          "status": "PASS",
+          "result": "(gas: 3282101)"
+        },
+        "test_everyTargetSelectorIsInstalledOnRegistryProxy()": {
+          "status": "PASS",
+          "result": "(gas: 24017063)"
+        },
+        "test_failedRouteRollsBackCreditAndCanRetry()": {
+          "status": "PASS",
+          "result": "(gas: 1179737)"
+        },
+        "test_feeOnTransferInputRejectedAndRolledBack()": {
+          "status": "PASS",
+          "result": "(gas: 907913)"
+        },
+        "test_fundedCallerMaySelectRecipient()": {
+          "status": "PASS",
+          "result": "(gas: 1434302)"
+        },
+        "test_lockedExactOutputRefundsPushedShares()": {
+          "status": "PASS",
+          "result": "(gas: 1245652)"
+        },
+        "test_lockedExitSettlesBothEntitlements()": {
+          "status": "PASS",
+          "result": "(gas: 1047199)"
+        },
+        "test_lockedPushedDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1160216)"
+        },
+        "test_nativeSYCallerRedemptionNeedsNoAllowance()": {
+          "status": "PASS",
+          "result": "(gas: 1179303)"
+        },
+        "test_nativeSYInternalHolderBurnAndInsufficientBalance()": {
+          "status": "PASS",
+          "result": "(gas: 1290056)"
+        },
+        "test_nativeSYInternalMinimumRollbackAndContextRestored()": {
+          "status": "PASS",
+          "result": "(gas: 1468873)"
+        },
+        "test_nativeSYRequestedRecipientAndOrdinaryCallerDenied()": {
+          "status": "PASS",
+          "result": "(gas: 1211442)"
+        },
+        "test_noPositionNoMovementDoesNotEnableUnpushedInput()": {
+          "status": "PASS",
+          "result": "(gas: 176203)"
+        },
+        "test_priceMoveCannotCreditPhantomDeposit_token0()": {
+          "status": "PASS",
+          "result": "(gas: 1336804)"
+        },
+        "test_priceMoveCannotCreditPhantomDeposit_token1()": {
+          "status": "PASS",
+          "result": "(gas: 1328313)"
+        },
+        "test_proxyRemovedPreparationSurface()": {
+          "status": "PASS",
+          "result": "(gas: 108315)"
+        },
+        "test_pullAndPushedDepositsAfterPriceMovement()": {
+          "status": "PASS",
+          "result": "(gas: 1635954)"
+        },
+        "test_pushedDirectExactInputSwap()": {
+          "status": "PASS",
+          "result": "(gas: 1393565)"
+        },
+        "test_pushedDualWithdrawalRefundsOnlyDeliveredShares()": {
+          "status": "PASS",
+          "result": "(gas: 1611545)"
+        },
+        "test_pushedExactOutputRefundOnlyUnusedInput()": {
+          "status": "PASS",
+          "result": "(gas: 1507771)"
+        },
+        "test_pushedExactOutputShareWithdrawal()": {
+          "status": "PASS",
+          "result": "(gas: 6838658)"
+        },
+        "test_pushedMultiDepositAndMissingSecondToken()": {
+          "status": "PASS",
+          "result": "(gas: 1451826)"
+        },
+        "test_pushedSharesRedeemAndCannotReplay()": {
+          "status": "PASS",
+          "result": "(gas: 1424406)"
+        },
+        "test_rebalanceCannotCreatePushedCredit()": {
+          "status": "PASS",
+          "result": "(gas: 1253814)"
+        },
+        "test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay()": {
+          "status": "PASS",
+          "result": "(gas: 931500)"
+        },
+        "test_shortPushedTransferRejected()": {
+          "status": "PASS",
+          "result": "(gas: 879860)"
+        },
+        "test_transferCallbackCannotExchangeMidDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1200233)"
+        },
+        "test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1200175)"
+        },
+        "test_transferCallbackCannotReenter()": {
+          "status": "PASS",
+          "result": "(gas: 1201577)"
+        },
+        "test_unpushedDirectSwapAndExactOutputRejected()": {
+          "status": "PASS",
+          "result": "(gas: 1205520)"
+        }
+      },
+      "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol:UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic": {
+        "testFuzz_deliveryAcrossSleeveRatios(bool,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1347589, ~: 1340224)"
+        },
+        "testFuzz_noPhantomCreditAfterTrade(bool,uint96)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 973383, ~: 969857)"
+        },
+        "test_A0_dustFirstMint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 373960)"
+        },
+        "test_A0_dustFirstMint_reverts_sixDecimals()": {
+          "status": "PASS",
+          "result": "(gas: 18427639)"
+        },
+        "test_A0_dustFirstMint_thenDonate_victimJoin_attackerCannotTakeHalf()": {
+          "status": "PASS",
+          "result": "(gas: 1761581)"
+        },
+        "test_A0_floor_decimalSumBelowSix()": {
+          "status": "PASS",
+          "result": "(gas: 18426396)"
+        },
+        "test_A0_floor_oddDecimalSum()": {
+          "status": "PASS",
+          "result": "(gas: 18428005)"
+        },
+        "test_A0_floor_sixEighteen()": {
+          "status": "PASS",
+          "result": "(gas: 18428665)"
+        },
+        "test_A0_minimumPlusOne_previewAndExecution_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 1471407)"
+        },
+        "test_A0_minimumPlusOne_previewAndExecution_idleAndBlocked()": {
+          "status": "PASS",
+          "result": "(gas: 831778)"
+        },
+        "test_A0_residualDeadShares_firstMinterNotWhole()": {
+          "status": "PASS",
+          "result": "(gas: 431717)"
+        },
+        "test_A0_revertingMetadata_propagatesDependencyRevert_D34()": {
+          "status": "PASS",
+          "result": "(gas: 17808958)"
+        },
+        "test_APEX001M_atomicFundedSucceedsFromPreparedState()": {
+          "status": "PASS",
+          "result": "(gas: 1556069)"
+        },
+        "test_APEX001M_eoaAndContractZeroInputRejected_token0()": {
+          "status": "PASS",
+          "result": "(gas: 1337237)"
+        },
+        "test_APEX001M_eoaAndContractZeroInputRejected_token1()": {
+          "status": "PASS",
+          "result": "(gas: 1328504)"
+        },
+        "test_APEX001M_excessPushedTransferCreditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 1119890)"
+        },
+        "test_APEX005_zapOut_pretransferred_eoaRejected()": {
+          "status": "PASS",
+          "result": "(gas: 1912056)"
+        },
+        "test_C1_nestedMoneyPaths_recordedAndPropagating()": {
+          "status": "PASS",
+          "result": "(gas: 1854442)"
+        },
+        "test_CROPS_disableInboundStillAllowsExitAndSY()": {
+          "status": "PASS",
+          "result": "(gas: 2645640)"
+        },
+        "test_E6_dualExit_refundMatrix_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 3123818)"
+        },
+        "test_E6_dualExit_shortShares_idleAndBlocked()": {
+          "status": "PASS",
+          "result": "(gas: 1880010)"
+        },
+        "test_E6_dualExit_unusedShares_fatMax_transferOnlyUsed_doesNotPayBooked()": {
+          "status": "PASS",
+          "result": "(gas: 2872926)"
+        },
+        "test_E6_exchangeOut_tokenExactOut_fatMax_transferOnlyUsed_doesNotPayBooked()": {
+          "status": "PASS",
+          "result": "(gas: 3117281)"
+        },
+        "test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered()": {
+          "status": "PASS",
+          "result": "(gas: 2632810)"
+        },
+        "test_E6_zapOut_refundMatrix_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 4197545)"
+        },
+        "test_E6_zapOut_refundMatrix_idle()": {
+          "status": "PASS",
+          "result": "(gas: 7298829)"
+        },
+        "test_F5_rebalancePaysCallerNothing()": {
+          "status": "PASS",
+          "result": "(gas: 908467)"
+        },
+        "test_F6_diagnostic_zapOutPreviewVersusExecution()": {
+          "status": "PASS",
+          "result": "(gas: 18350983)"
+        },
+        "test_F6_exactOut_previewAndExecutionMatchExactly()": {
+          "status": "PASS",
+          "result": "(gas: 18171549)"
+        },
+        "test_H_lockedExitAfterPermissionlessRebalance()": {
+          "status": "PASS",
+          "result": "(gas: 1044896)"
+        },
+        "test_H_lockedExit_onePercentOfSupply()": {
+          "status": "PASS",
+          "result": "(gas: 1046128)"
+        },
+        "test_H_positiveSleeveInsufficientCapacity_rollsBack()": {
+          "status": "PASS",
+          "result": "(gas: 1088217)"
+        },
+        "test_H_zeroSleeveCanBlockLockedExit()": {
+          "status": "PASS",
+          "result": "(gas: 1070167)"
+        },
+        "test_I1_exchangeOut_pretransferredTrue_noDelivery()": {
+          "status": "PASS",
+          "result": "(gas: 2441000)"
+        },
+        "test_I1_pretransferredTrue_noDelivery_noFreeMint()": {
+          "status": "PASS",
+          "result": "(gas: 929110)"
+        },
+        "test_I2_dualJoinOneExcessLeg_creditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 960173)"
+        },
+        "test_I2_excessExactIn_creditsRequestedOnly()": {
+          "status": "PASS",
+          "result": "(gas: 1119934)"
+        },
+        "test_I2_exchangeOut_usedGtActualIn_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 2441467)"
+        },
+        "test_I2_shortPush_pretransferred_claimedGtDelta_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 880541)"
+        },
+        "test_I3_exchangeOut_residualAfterSuccessfulPush()": {
+          "status": "PASS",
+          "result": "(gas: 1958508)"
+        },
+        "test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 1637165)"
+        },
+        "test_I_reserveOfTokenWrittenAfterRebalanceAndSwap()": {
+          "status": "PASS",
+          "result": "(gas: 1182870)"
+        },
+        "test_I_routerTransferFromUserToVault()": {
+          "status": "PASS",
+          "result": "(gas: 1327175)"
+        },
+        "test_J1_TargetSelectorsMatchFacetDeclarations()": {
+          "status": "PASS",
+          "result": "(gas: 25670781)"
+        },
+        "test_J2_allTargetSelectorsInstalledOnProxy()": {
+          "status": "PASS",
+          "result": "(gas: 24017294)"
+        },
+        "test_J3_proxyFundedMoneyPathsAndRemovedPrepare()": {
+          "status": "PASS",
+          "result": "(gas: 3792314)"
+        },
+        "test_J3_queryAndNativeSYProductSelectors()": {
+          "status": "PASS",
+          "result": "(gas: 2645977)"
+        },
+        "test_L1_poolTradeThenFalsePretransfer_noCredit()": {
+          "status": "PASS",
+          "result": "(gas: 1337479)"
+        },
+        "test_L2_FoT_forbidden()": {
+          "status": "PASS",
+          "result": "(gas: 1389351)"
+        },
+        "test_L3_spotSkew_noUnfundedMint()": {
+          "status": "PASS",
+          "result": "(gas: 1328416)"
+        },
+        "test_SYFailureRollsBackAndCanRetry()": {
+          "status": "PASS",
+          "result": "(gas: 1334945)"
+        },
+        "test_bookedSharesCannotBeClaimed()": {
+          "status": "PASS",
+          "result": "(gas: 1080769)"
+        },
+        "test_disabledPackageRejectsDepositButPermitsWithdrawals()": {
+          "status": "PASS",
+          "result": "(gas: 3284622)"
+        },
+        "test_disabledVaultRejectsDepositButPermitsWithdrawals()": {
+          "status": "PASS",
+          "result": "(gas: 3282277)"
+        },
+        "test_everyTargetSelectorIsInstalledOnRegistryProxy()": {
+          "status": "PASS",
+          "result": "(gas: 24017094)"
+        },
+        "test_failedRouteRollsBackCreditAndCanRetry()": {
+          "status": "PASS",
+          "result": "(gas: 1180616)"
+        },
+        "test_feeOnTransferInputRejectedAndRolledBack()": {
+          "status": "PASS",
+          "result": "(gas: 908067)"
+        },
+        "test_fundedCallerMaySelectRecipient()": {
+          "status": "PASS",
+          "result": "(gas: 1434603)"
+        },
+        "test_lockedExactOutputRefundsPushedShares()": {
+          "status": "PASS",
+          "result": "(gas: 1246510)"
+        },
+        "test_lockedExitSettlesBothEntitlements()": {
+          "status": "PASS",
+          "result": "(gas: 1047849)"
+        },
+        "test_lockedPushedDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1160897)"
+        },
+        "test_nativeSYCallerRedemptionNeedsNoAllowance()": {
+          "status": "PASS",
+          "result": "(gas: 1179391)"
+        },
+        "test_nativeSYInternalHolderBurnAndInsufficientBalance()": {
+          "status": "PASS",
+          "result": "(gas: 1290144)"
+        },
+        "test_nativeSYInternalMinimumRollbackAndContextRestored()": {
+          "status": "PASS",
+          "result": "(gas: 1469225)"
+        },
+        "test_nativeSYRequestedRecipientAndOrdinaryCallerDenied()": {
+          "status": "PASS",
+          "result": "(gas: 1211838)"
+        },
+        "test_noPositionNoMovementDoesNotEnableUnpushedInput()": {
+          "status": "PASS",
+          "result": "(gas: 176576)"
+        },
+        "test_priceMoveCannotCreditPhantomDeposit_token0()": {
+          "status": "PASS",
+          "result": "(gas: 1337193)"
+        },
+        "test_priceMoveCannotCreditPhantomDeposit_token1()": {
+          "status": "PASS",
+          "result": "(gas: 1328702)"
+        },
+        "test_proxyRemovedPreparationSurface()": {
+          "status": "PASS",
+          "result": "(gas: 109129)"
+        },
+        "test_pullAndPushedDepositsAfterPriceMovement()": {
+          "status": "PASS",
+          "result": "(gas: 1636217)"
+        },
+        "test_pullDualExit_maxAllowanceAndBalance_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 2894159)"
+        },
+        "test_pullDualExit_maxAllowanceAndBalance_idle()": {
+          "status": "PASS",
+          "result": "(gas: 3285654)"
+        },
+        "test_pushedDirectExactInputSwap()": {
+          "status": "PASS",
+          "result": "(gas: 1394137)"
+        },
+        "test_pushedDualWithdrawalRefundsOnlyDeliveredShares()": {
+          "status": "PASS",
+          "result": "(gas: 1611721)"
+        },
+        "test_pushedExactOutputRefundOnlyUnusedInput()": {
+          "status": "PASS",
+          "result": "(gas: 1508783)"
+        },
+        "test_pushedExactOutputShareWithdrawal()": {
+          "status": "PASS",
+          "result": "(gas: 6839208)"
+        },
+        "test_pushedMultiDepositAndMissingSecondToken()": {
+          "status": "PASS",
+          "result": "(gas: 1452618)"
+        },
+        "test_pushedSharesRedeemAndCannotReplay()": {
+          "status": "PASS",
+          "result": "(gas: 1424494)"
+        },
+        "test_rebalanceCannotCreatePushedCredit()": {
+          "status": "PASS",
+          "result": "(gas: 1254209)"
+        },
+        "test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay()": {
+          "status": "PASS",
+          "result": "(gas: 932138)"
+        },
+        "test_shortPushedTransferRejected()": {
+          "status": "PASS",
+          "result": "(gas: 880321)"
+        },
+        "test_transferCallbackCannotExchangeMidDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1200358)"
+        },
+        "test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 1200851)"
+        },
+        "test_transferCallbackCannotReenter()": {
+          "status": "PASS",
+          "result": "(gas: 1202230)"
+        },
+        "test_unpushedDirectSwapAndExactOutputRejected()": {
+          "status": "PASS",
+          "result": "(gas: 1205564)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N3": {
+        "testFuzz_count_swap_round_trip_cannot_extract_value(uint96,uint8,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1522756, ~: 1601027)"
+        },
+        "test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value()": {
+          "status": "PASS",
+          "result": "(gas: 2550353)"
+        },
+        "test_count_all_buffered_bootstrap_and_exit()": {
+          "status": "PASS",
+          "result": "(gas: 43063624)"
+        },
+        "test_count_all_directed_swaps_exact_in_and_out()": {
+          "status": "PASS",
+          "result": "(gas: 6013768)"
+        },
+        "test_count_amplification_endpoints()": {
+          "status": "PASS",
+          "result": "(gas: 19638665)"
+        },
+        "test_count_bootstrap_and_proportional_round_trip()": {
+          "status": "PASS",
+          "result": "(gas: 2179040)"
+        },
+        "test_count_discovery_and_every_pair()": {
+          "status": "PASS",
+          "result": "(gas: 184227)"
+        },
+        "test_count_failed_last_transfer_is_atomic()": {
+          "status": "PASS",
+          "result": "(gas: 1477712)"
+        },
+        "test_count_fee_on_transfer_bootstrap_reverts_atomically()": {
+          "status": "PASS",
+          "result": "(gas: 16203880)"
+        },
+        "test_count_flexible_share_bootstrap_prop_exit_and_address_join()": {
+          "status": "PASS",
+          "result": "(gas: 2320925)"
+        },
+        "test_count_funded_pretransfer_and_post_operation_book()": {
+          "status": "PASS",
+          "result": "(gas: 1760369)"
+        },
+        "test_count_invalid_cardinalities()": {
+          "status": "PASS",
+          "result": "(gas: 127355)"
+        },
+        "test_count_invalid_indices()": {
+          "status": "PASS",
+          "result": "(gas: 49956)"
+        },
+        "test_count_last_binding_validation_and_salt()": {
+          "status": "PASS",
+          "result": "(gas: 195576)"
+        },
+        "test_count_last_pair_required_and_finalization_gas()": {
+          "status": "PASS",
+          "result": "(gas: 13666828)"
+        },
+        "test_count_mixed_decimals_and_nonunit_se_rate()": {
+          "status": "PASS",
+          "result": "(gas: 50339763)"
+        },
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "PASS",
+          "result": "(gas: 1651418)"
+        },
+        "test_count_rejects_each_array_mismatch()": {
+          "status": "PASS",
+          "result": "(gas: 121301)"
+        },
+        "test_count_retained_buffered_dust_is_not_new_funding()": {
+          "status": "PASS",
+          "result": "(gas: 2504162)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1605827)"
+        },
+        "test_count_unbalanced_and_single_exact_output_liquidity()": {
+          "status": "PASS",
+          "result": "(gas: 6890420)"
+        },
+        "test_count_yield_does_not_mint_inventory_growth_fees()": {
+          "status": "PASS",
+          "result": "(gas: 1651751)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N4": {
+        "testFuzz_count_swap_round_trip_cannot_extract_value(uint96,uint8,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1646174, ~: 1569386)"
+        },
+        "test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value()": {
+          "status": "PASS",
+          "result": "(gas: 2842516)"
+        },
+        "test_count_all_buffered_bootstrap_and_exit()": {
+          "status": "PASS",
+          "result": "(gas: 55963021)"
+        },
+        "test_count_all_directed_swaps_exact_in_and_out()": {
+          "status": "PASS",
+          "result": "(gas: 11055811)"
+        },
+        "test_count_amplification_endpoints()": {
+          "status": "PASS",
+          "result": "(gas: 22734084)"
+        },
+        "test_count_bootstrap_and_proportional_round_trip()": {
+          "status": "PASS",
+          "result": "(gas: 2471403)"
+        },
+        "test_count_discovery_and_every_pair()": {
+          "status": "PASS",
+          "result": "(gas: 221318)"
+        },
+        "test_count_failed_last_transfer_is_atomic()": {
+          "status": "PASS",
+          "result": "(gas: 1692746)"
+        },
+        "test_count_fee_on_transfer_bootstrap_reverts_atomically()": {
+          "status": "PASS",
+          "result": "(gas: 14275447)"
+        },
+        "test_count_flexible_share_bootstrap_prop_exit_and_address_join()": {
+          "status": "PASS",
+          "result": "(gas: 2632811)"
+        },
+        "test_count_funded_pretransfer_and_post_operation_book()": {
+          "status": "PASS",
+          "result": "(gas: 1929277)"
+        },
+        "test_count_invalid_cardinalities()": {
+          "status": "PASS",
+          "result": "(gas: 141740)"
+        },
+        "test_count_invalid_indices()": {
+          "status": "PASS",
+          "result": "(gas: 49956)"
+        },
+        "test_count_last_binding_validation_and_salt()": {
+          "status": "PASS",
+          "result": "(gas: 230074)"
+        },
+        "test_count_last_pair_required_and_finalization_gas()": {
+          "status": "PASS",
+          "result": "(gas: 15894795)"
+        },
+        "test_count_mixed_decimals_and_nonunit_se_rate()": {
+          "status": "PASS",
+          "result": "(gas: 58366640)"
+        },
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "PASS",
+          "result": "(gas: 1827111)"
+        },
+        "test_count_rejects_each_array_mismatch()": {
+          "status": "PASS",
+          "result": "(gas: 136748)"
+        },
+        "test_count_retained_buffered_dust_is_not_new_funding()": {
+          "status": "PASS",
+          "result": "(gas: 2710444)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1785247)"
+        },
+        "test_count_unbalanced_and_single_exact_output_liquidity()": {
+          "status": "PASS",
+          "result": "(gas: 8874537)"
+        },
+        "test_count_yield_does_not_mint_inventory_growth_fees()": {
+          "status": "PASS",
+          "result": "(gas: 1863873)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol:UniswapV4Detf_Cp_Univ3Se_ResidualGas": {
+        "testFuzz_residualSweep_smallAmounts(uint256)": {
+          "status": "PASS",
+          "result": "(runs: 129, \u03bc: 8089634, ~: 8279621)"
+        },
+        "test_residualSweep_localRehearsalAmount()": {
+          "status": "PASS",
+          "result": "(gas: 8278850)"
+        },
+        "test_residualSweep_nativeUnit()": {
+          "status": "PASS",
+          "result": "(gas: 2158074)"
+        }
+      },
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N5": {
+        "testFuzz_count_swap_round_trip_cannot_extract_value(uint96,uint8,uint8)": {
+          "status": "PASS",
+          "result": "(runs: 128, \u03bc: 1804565, ~: 1741763)"
+        },
+        "test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value()": {
+          "status": "PASS",
+          "result": "(gas: 3132853)"
+        },
+        "test_count_all_buffered_bootstrap_and_exit()": {
+          "status": "PASS",
+          "result": "(gas: 71061464)"
+        },
+        "test_count_all_directed_swaps_exact_in_and_out()": {
+          "status": "PASS",
+          "result": "(gas: 18023157)"
+        },
+        "test_count_amplification_endpoints()": {
+          "status": "PASS",
+          "result": "(gas: 22373766)"
+        },
+        "test_count_bootstrap_and_proportional_round_trip()": {
+          "status": "PASS",
+          "result": "(gas: 2763829)"
+        },
+        "test_count_discovery_and_every_pair()": {
+          "status": "PASS",
+          "result": "(gas: 262766)"
+        },
+        "test_count_failed_last_transfer_is_atomic()": {
+          "status": "PASS",
+          "result": "(gas: 1907800)"
+        },
+        "test_count_fee_on_transfer_bootstrap_reverts_atomically()": {
+          "status": "PASS",
+          "result": "(gas: 19466679)"
+        },
+        "test_count_flexible_share_bootstrap_prop_exit_and_address_join()": {
+          "status": "PASS",
+          "result": "(gas: 2948552)"
+        },
+        "test_count_funded_pretransfer_and_post_operation_book()": {
+          "status": "PASS",
+          "result": "(gas: 2096316)"
+        },
+        "test_count_invalid_cardinalities()": {
+          "status": "PASS",
+          "result": "(gas: 156131)"
+        },
+        "test_count_invalid_indices()": {
+          "status": "PASS",
+          "result": "(gas: 49956)"
+        },
+        "test_count_last_binding_validation_and_salt()": {
+          "status": "PASS",
+          "result": "(gas: 265558)"
+        },
+        "test_count_last_pair_required_and_finalization_gas()": {
+          "status": "PASS",
+          "result": "(gas: 29475237)"
+        },
+        "test_count_mixed_decimals_and_nonunit_se_rate()": {
+          "status": "PASS",
+          "result": "(gas: 76002913)"
+        },
+        "test_count_raw_donation_prices_live_book_and_becomes_booked()": {
+          "status": "PASS",
+          "result": "(gas: 2000305)"
+        },
+        "test_count_rejects_each_array_mismatch()": {
+          "status": "PASS",
+          "result": "(gas: 152210)"
+        },
+        "test_count_retained_buffered_dust_is_not_new_funding()": {
+          "status": "PASS",
+          "result": "(gas: 2912344)"
+        },
+        "test_count_shared_book_matches_reference_after_cross_pair_swap()": {
+          "status": "PASS",
+          "result": "(gas: 1962169)"
+        },
+        "test_count_unbalanced_and_single_exact_output_liquidity()": {
+          "status": "PASS",
+          "result": "(gas: 11112536)"
+        },
+        "test_count_yield_does_not_mint_inventory_growth_fees()": {
+          "status": "PASS",
+          "result": "(gas: 2076025)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol:UniswapV4DetfLeftoverPreview_Test": {
+        "test_RC06_nonzeroPreview_usesSingleAssetFallback()": {
+          "status": "PASS",
+          "result": "(gas: 7528747)"
+        },
+        "test_RC06_revertingPreview_doesNotBookOrDeposit()": {
+          "status": "PASS",
+          "result": "(gas: 230293)"
+        },
+        "test_RC06_zeroPreview_retainsTokensAndBooksFullLocalBalance()": {
+          "status": "PASS",
+          "result": "(gas: 582135)"
+        }
+      }
+    }
+  },
+  "resolved": [
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV3FullSpreadStandardExchangeVault_Adversarial",
+      "original_test": "test_J1_TargetSelectorsMatchFacetDeclarations()",
+      "passing_test": "test_J1_TargetSelectorsMatchFacetDeclarations()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV3FullSpreadStandardExchangeVault_Adversarial",
+      "original_test": "test_J2_allTargetSelectorsInstalledOnProxy()",
+      "passing_test": "test_J2_allTargetSelectorsInstalledOnProxy()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV3FullSpreadStandardExchangeVault_Adversarial",
+      "original_test": "test_everyTargetSelectorIsInstalledOnRegistryProxy()",
+      "passing_test": "test_everyTargetSelectorIsInstalledOnRegistryProxy()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3FullSpreadStandardExchangeVault_Delivery.t.sol:UniswapV3FullSpreadStandardExchangeVault_Delivery",
+      "original_test": "test_everyTargetSelectorIsInstalledOnRegistryProxy()",
+      "passing_test": "test_everyTargetSelectorIsInstalledOnRegistryProxy()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol:UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic",
+      "original_test": "test_J1_TargetSelectorsMatchFacetDeclarations()",
+      "passing_test": "test_J1_TargetSelectorsMatchFacetDeclarations()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol:UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic",
+      "original_test": "test_J2_allTargetSelectorsInstalledOnProxy()",
+      "passing_test": "test_J2_allTargetSelectorsInstalledOnProxy()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic.t.sol:UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic",
+      "original_test": "test_everyTargetSelectorIsInstalledOnRegistryProxy()",
+      "passing_test": "test_everyTargetSelectorIsInstalledOnRegistryProxy()"
+    },
+    {
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N2",
+      "original_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()",
+      "passing_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()"
+    },
+    {
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N2",
+      "original_test": "test_count_shared_book_matches_reference_after_cross_pair_swap()",
+      "passing_test": "test_count_shared_book_matches_reference_after_cross_pair_swap()"
+    },
+    {
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N3",
+      "original_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()",
+      "passing_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol:UniswapV4Detf_Cp_Univ3Se_ResidualGas",
+      "original_test": "testFuzz_residualSweep_smallAmounts(uint256)",
+      "passing_test": "testFuzz_residualSweep_smallAmounts(uint256)"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol:UniswapV4Detf_Cp_Univ3Se_ResidualGas",
+      "original_test": "test_residualSweep_localRehearsalAmount()",
+      "passing_test": "test_residualSweep_localRehearsalAmount()"
+    },
+    {
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N4",
+      "original_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()",
+      "passing_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()"
+    },
+    {
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_N5",
+      "original_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()",
+      "passing_test": "test_count_raw_donation_prices_live_book_and_becomes_booked()"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol:UniswapV4DetfLeftoverPreview_Test",
+      "original_test": "test_RC06_nonzeroPreview_reachesJoinRejectionWithoutBooking()",
+      "passing_test": "test_RC06_nonzeroPreview_usesSingleAssetFallback()"
+    }
+  ],
+  "changed_test_sources": [
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol",
+      "sha256_before": "4c2c7866b47d880a45363a7ae12740568a932ae8259ab2dcfccc319a688c73dc",
+      "sha256_after": "b6cf557db263fd08c59e52941162da0bb3c4af35bd5d1ed249f4892e4fe0d1fa",
+      "changed": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/UniswapV4DetfLeftoverPreview.t.sol",
+      "sha256_before": "b606ff275825f3015ce4aba779937c66a999ed5662924e64d91cb2422dfb9898",
+      "sha256_after": "da433dfa3a2c2316bd21d40cf2d75d4b8acd255a2c266684f29e3956d52807e9",
+      "changed": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol",
+      "sha256_before": "c98c61b6cf277490518e97d5c28bee43504138919c44658573c48074cb9afa5b",
+      "sha256_after": "78dab0d53d64ab5796a3993ff9060551b4e1956e7d9e635eb919124328961b40",
+      "changed": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/StandardExchangeReleaseBehavior.sol",
+      "sha256_before": "e2bfb638b26b0bc434e14040ea6a51edc1bff9d853ae1e35ef81aad088af3b3b",
+      "sha256_after": "ccaf436e29b7adbb09d226ca40ed223b8d3fa770dea860c5da5f528b95394d2a",
+      "changed": true
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/StandardExchangeFullSpreadAdversarialBehavior.sol",
+      "sha256_before": "a720660c2b7e7e50c93f551e8b379b7896eda754914425b912d3eff41e72016d",
+      "sha256_after": "c44f08d5978783e3cf7b3fe2d6916a22d6e87ba3222389cba4691a6ed0745763",
+      "changed": true
+    }
+  ],
+  "fuzz_runs_configured": 128,
+  "residual_fuzz_runs_reported": 129,
+  "scope": "Six complete leaf files, nine suites; not a whole-repository run"
+}

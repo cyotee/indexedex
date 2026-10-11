@@ -70,4 +70,8 @@ contract ReceiptBackedERC4626_CrossInterface_Stata is
         receiptsOut = _acquireStata(address(this), _u(human));
         IERC20(realStata).approve(realVault, type(uint256).max);
     }
+
+    function _mintUnderlying(address to, uint256 amount) internal override {
+        _fundUnderlying(amount, to);
+    }
 }

@@ -496,38 +496,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         uint256 deadline
     ) internal returns (uint256 amountOut) {
         _requireDeadline(deadline);
-        if (to == address(0)) revert ZeroAddress();
-        if (sharesIn == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        uint8 idx = _tokenIndex(tokenOut);
-        if (receiveSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
-            revert SeShareNotBuffered();
-        }
-        uint256 protocolShares = _maybeMintProtocolFee();
-        amountOut = _quoteExitSingleExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
-        if (amountOut < amountOutMin) revert Slippage();
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
-        Repo.Layout storage l = Repo._layout();
-        if (l.standardExchanges[idx] != address(0)) {
-            if (receiveSeShare) {
-                IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);
-            } else {
-                _unwrapSeShares(idx, invOut, to);
-            }
-        } else {
-            _debitRawIntentional(idx, invOut);
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
-        _syncVaultReserves();
-        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingleFlexible(
-            msg.sender, to, tokenOut, amountOut, receiveSeShare, sharesIn, protocolShares
-        );
+        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, receiveSeShare, to, amountOutMin);
     }
 
     function _quoteExitSingleExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)

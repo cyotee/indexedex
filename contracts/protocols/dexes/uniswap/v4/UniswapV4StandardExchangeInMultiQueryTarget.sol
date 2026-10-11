@@ -20,9 +20,6 @@ contract UniswapV4StandardExchangeInMultiQueryTarget is UniswapV4StandardExchang
             (address(tokenIn) == token0 && address(tokenOut) == token1)
                 || (address(tokenIn) == token1 && address(tokenOut) == token0)
         ) {
-            if (!canOpenPoolManagerUnlock()) {
-                revert UniswapV4Exchange_PoolManagerInteractionBlocked();
-            }
             return _quoteSwapIn(amountIn, address(tokenIn) == token0);
         }
 

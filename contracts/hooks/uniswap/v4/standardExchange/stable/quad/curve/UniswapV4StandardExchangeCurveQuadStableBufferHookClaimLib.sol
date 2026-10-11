@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
@@ -23,6 +25,33 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math} from "./
  */
 library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     using SafeERC20 for IERC20;
+
+    /// @notice Normalize the redeemable reserve claim into DETF creation units.
+    function syntheticValue(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address out_)
+        external view returns (uint256)
+    {
+        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
+        if (pairOut == 0) return 0;
+        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
+        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
+
+    /// @notice Native SY input/output tokens, with shared SE tokens listed only once.
+    function nativeSyTokens() external view returns (address[] memory tokens_) {
+        Repo.Layout storage l_ = Repo._layout();
+        tokens_ = new address[](uint256(Repo.N_TOKENS) * 2);
+        uint256 count_;
+        for (uint256 i_; i_ < Repo.N_TOKENS; ++i_) tokens_[count_++] = l_.tokens[i_];
+        for (uint256 i_; i_ < Repo.N_TOKENS; ++i_) {
+            address se_ = l_.standardExchanges[i_];
+            if (se_ == address(0)) continue;
+            bool found_;
+            for (uint256 j_; j_ < count_; ++j_) if (tokens_[j_] == se_) { found_ = true; break; }
+            if (!found_) tokens_[count_++] = se_;
+        }
+        assembly ("memory-safe") { mstore(tokens_, count_) }
+    }
 
     /// @dev Reuse a single-leg join's immediately preceding SE quote. No other
     /// leg executes between quotation and buffering, so its minimum is unchanged.

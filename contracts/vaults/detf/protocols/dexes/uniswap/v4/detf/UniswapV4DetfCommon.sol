@@ -7,7 +7,6 @@ import {
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
-import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeExactOutputQuantityQuote} from "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol";
 
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -524,45 +523,30 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _tryJoinResidual(address token_) internal {
         uint256 bal_ = IERC20(token_).balanceOf(address(this));
-        if (bal_ <= 10) return;
+        if (bal_ == 0) return;
 
-        Repo.Storage storage s = Repo._layoutStruct();
-        bool isSe_ = s.hookStandardExchanges._contains(token_);
         if (_retainSubSharePairResidual(token_, bal_)) return;
         // Book residual capital directly before a ratio zap can create new refunds.
         // DETF and SE shares use the same partial-add path.
         if (_joinResidualUnbalanced(token_, bal_)) {
-            if (s.hookPairTokens._contains(token_) && _parkUnmintablePairDust(token_, IERC20(token_).balanceOf(address(this)))) return;
             MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
             return;
         }
         uint256 leftover_ = IERC20(token_).balanceOf(address(this));
-        // The existing native-unit dust floor also applies before attempting a
-        // ratio zap: splitting dust can create an unquotable sub-unit SE leg.
-        if (leftover_ <= 10) return;
-        if (leftover_ > 0 && !isSe_ && token_ != address(this)) {
+        if (leftover_ > 0) {
             if (_joinResidualCapped(token_, leftover_)) {
                 MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
                 return;
             }
         }
 
-        if (token_ == address(this)) {
-            return;
-        }
-        leftover_ = IERC20(token_).balanceOf(address(this));
-        if (leftover_ <= 10) return;
-        // Last-resort only: tiny unjoinable remainder. Do not park large SE
-        // (donates book without LP and can fail later burns).
-        if (s.hookPairTokens._contains(token_)) {
-            _wrapAndParkPair(token_);
-        } else if (isSe_) {
-            _parkResidualOnHook(token_);
-        }
+        // Residuals belong to the reserve. Keep an unmintable remainder booked
+        // locally for the next sweep; never donate it to the hook without LP.
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
     }
 
-    /// @dev Orbital leftover can MathDomain on a 3-leg zap of the full residual.
-    ///      Halve and retry so R19 still clears.
+    /// @dev Try the supported single-asset mode after the proportional mode
+    /// cannot progress. A zero complete-route quote retains the booked remainder.
     function _joinResidualCapped(address token_, uint256 amount_) internal returns (bool deferred_) {
         if (amount_ == 0) return false;
         address hook_ = Repo._layoutStruct().hook;
@@ -574,14 +558,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             if (_retainSubSharePairResidual(token_, amt_)) return true;
             if (_pairQuoteIsZero(token_, amt_)) return true;
             IERC20(token_).forceApprove(hook_, amt_);
-            uint256 lpOut_;
-            try IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, true) returns (uint256 joined_) {
-                lpOut_ = joined_;
-            } catch (bytes memory reason_) {
-                IERC20(token_).forceApprove(hook_, 0);
-                if (reason_.length == 4 && bytes4(reason_) == IUniswapV4DetfSelfCall.ResidualJoinUnavailable.selector) break;
-                assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
-            }
+            uint256 lpOut_ = IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, true);
             IERC20(token_).forceApprove(hook_, 0);
 
             uint256 after_ = IERC20(token_).balanceOf(address(this));
@@ -606,14 +583,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             if (_retainSubSharePairResidual(token_, amt_)) return true;
             if (_pairQuoteIsZero(token_, amt_)) return true;
             IERC20(token_).forceApprove(hook_, amt_);
-            uint256 lpOut_;
-            try IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, false) returns (uint256 joined_) {
-                lpOut_ = joined_;
-            } catch (bytes memory reason_) {
-                IERC20(token_).forceApprove(hook_, 0);
-                if (reason_.length == 4 && bytes4(reason_) == IUniswapV4DetfSelfCall.ResidualJoinUnavailable.selector) break;
-                assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
-            }
+            uint256 lpOut_ = IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, false);
             IERC20(token_).forceApprove(hook_, 0);
 
             uint256 after_ = IERC20(token_).balanceOf(address(this));
@@ -629,69 +599,40 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _entryJoinResidualAtomic(address token_, uint256 amount_, bool singleAsset_) internal returns (uint256 lpOut_) {
         if (msg.sender != address(this)) revert Repo.NotAuthorized(msg.sender);
+        uint256 quoted_;
         if (singleAsset_) {
-            try _hook().joinSingleAssetExactIn(token_, amount_, _bondLpHolder(), 0, block.timestamp + 1) returns (uint256 joined_) {
-                lpOut_ = joined_;
-            } catch (bytes memory reason_) {
-                if (reason_.length == 4 && bytes4(reason_) == bytes4(keccak256("ZeroAmount()"))
-                    && _hook().previewJoinSingleAssetExactIn(token_, amount_) == 0) {
-                    revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
-                }
-                assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
-            }
+            quoted_ = _hook().previewJoinSingleAssetExactIn(token_, amount_);
+            if (quoted_ == 0) return 0;
+            lpOut_ = _hook().joinSingleAssetExactIn(token_, amount_, _bondLpHolder(), quoted_, block.timestamp + 1);
         } else {
             address[] memory tokens_ = new address[](1);
             uint256[] memory amounts_ = new uint256[](1);
             tokens_[0] = token_;
             amounts_[0] = amount_;
-            try _hook().joinUnbalanced(tokens_, amounts_, _bondLpHolder(), 0, block.timestamp + 1) returns (uint256 joined_) {
-                lpOut_ = joined_;
-            } catch (bytes memory reason_) {
-                if (reason_.length == 4 && bytes4(reason_) == bytes4(keccak256("ZeroAmount()"))
-                    && _hook().previewJoinUnbalanced(tokens_, amounts_) == 0) {
-                    revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
-                }
-                assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
-            }
+            // Test this complete mode: a one-sided proportional join can be
+            // unsupported even when the input can mint underlying SE shares.
+            quoted_ = _hook().previewJoinUnbalanced(tokens_, amounts_);
+            if (quoted_ == 0) return 0;
+            lpOut_ = _hook().joinUnbalanced(tokens_, amounts_, _bondLpHolder(), quoted_, block.timestamp + 1);
         }
-        if (lpOut_ == 0) revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
+        if (lpOut_ != quoted_) revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
     }
 
-    /// @dev Retain only a proven sub-share input under the SE's current actual
-    /// context. The opaque snapshot and whole-book inverse belong to the SE.
-    /// An explicitly unsupported inverse may use a successful zero-share deposit
-    /// preview instead. Failed probes provide no proof and leave the route intact.
+    /// @dev Retain a leftover only when a successful preview of that leftover
+    /// returns zero shares. The reserve is the full locally held balance.
+    /// A failed interface probe is not proof and does not book. A reverting
+    /// preview is not caught here.
     function _retainSubSharePairResidual(address pair_, uint256 amount_) private returns (bool) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (amount_ == 0 || !s.hookPairTokens._contains(pair_)) return false;
         address se_ = IUniswapV4SeBufferHook(s.hook).standardExchangeOf(pair_);
         if (se_ == address(0) || se_ == pair_) return false;
         try IERC165(se_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId)
-            returns (bool supported_) {
-            if (!supported_) {
-                if (IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) != 0) return false;
-                MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
-                return true;
-            }
+            returns (bool) {
         } catch {
             return false;
         }
-        (bytes memory state_,) = IStandardExchangeTransitionQuote(se_).quoteState(pair_, address(0));
-        uint256 minimum_ = IStandardExchangeExactOutputQuantityQuote(se_).quoteInputForExactShares(state_, 1);
-        if (minimum_ == 0 || amount_ >= minimum_) return false;
-        MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
-        return true;
-    }
-
-    /// @dev Keep a zero-share deposit worth less than ten native SE share units
-    /// in the bound SE's backing. The reverse quote limits the value parked;
-    /// this also handles deposits whose geometric share math rounds before
-    /// division, so the deposit quantum exceeds the value of one redeemed share.
-    function _parkUnmintablePairDust(address pair_, uint256 amount_) private returns (bool) {
-        if (_retainSubSharePairResidual(pair_, amount_)) return true;
-        address se_ = IUniswapV4SeBufferHook(Repo._layoutStruct().hook).standardExchangeOf(pair_);
-        if (se_ == address(0) || se_ == pair_) return false;
-        if (!_pairQuoteIsZero(pair_, amount_)) return false;
+        if (IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) != 0) return false;
         MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
         return true;
     }
@@ -702,34 +643,6 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         address se_ = IUniswapV4SeBufferHook(Repo._layoutStruct().hook).standardExchangeOf(pair_);
         if (se_ == address(0) || se_ == pair_) return false;
         return IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) == 0;
-    }
-
-    function _parkResidualOnHook(address token_) internal {
-        uint256 left_ = IERC20(token_).balanceOf(address(this));
-        if (left_ <= 10) return;
-        IERC20(token_).safeTransfer(Repo._layoutStruct().hook, left_ - 10);
-    }
-
-    function _wrapAndParkPair(address pair_) internal {
-        Repo.Storage storage s = Repo._layoutStruct();
-        address se_ = IUniswapV4SeBufferHook(s.hook).standardExchangeOf(pair_);
-        if (se_ == address(0) || se_ == pair_) return;
-        uint256 amt_ = IERC20(pair_).balanceOf(address(this));
-        if (amt_ > 10) amt_ -= 10;
-        for (uint256 i; i < 16 && amt_ > 0; ++i) {
-            uint256 before_ = IERC20(pair_).balanceOf(address(this));
-            if (amt_ + 10 > before_) amt_ = before_ > 10 ? before_ - 10 : 0;
-            if (amt_ == 0) break;
-            if (_retainSubSharePairResidual(pair_, amt_)) break;
-            if (IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amt_, IERC20(se_)) == 0) break;
-            IUniswapV4DetfSelfCall(address(this)).sweepPairToShare(se_, pair_, amt_);
-            uint256 seBal_ = IERC20(se_).balanceOf(address(this));
-            if (seBal_ > 10) IERC20(se_).safeTransfer(s.hook, seBal_ - 10);
-            uint256 after_ = IERC20(pair_).balanceOf(address(this));
-            if (after_ + 10 >= before_) amt_ = amt_ / 2;
-            else amt_ = after_ > 10 ? after_ - 10 : 0;
-        }
-        _parkResidualOnHook(se_);
     }
 
     function _entrySweepPairToShare(address se_, address pair_, uint256 amount_) internal returns (uint256 shares_) {

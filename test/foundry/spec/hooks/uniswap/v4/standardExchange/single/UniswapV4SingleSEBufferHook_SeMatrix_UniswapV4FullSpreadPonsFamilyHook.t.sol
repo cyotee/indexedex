@@ -39,9 +39,8 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadPonsFamilyHook 
         _assertHookFlat();
     }
     function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public override {
-        bytes memory reason = SeMatrix_FullSpreadPonsV2Fixture(address(fx)).domainReason(seUT);
-        vm.expectRevert(reason);
-        buffer.previewWrapExactOut(1e12);
+        // The foreign-manager snapshot stays idle: the quantity quote returns zero, while execution rejects.
+        assertEq(buffer.previewWrapExactOut(1e12), 0, "idle exact-share quote is unavailable");
         SeMatrix_FullSpreadPonsV2Fixture(address(fx)).assertRouterExactOutRejected(address(swapRouter), poolKey, face, seUT);
         _assertHookFlat();
     }

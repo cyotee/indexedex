@@ -8,8 +8,6 @@ import {UniswapV4FullSpreadPonsFamilyHookTransitionPlanner as Planner} from "./U
 import {UniswapV4FullSpreadPonsFamilyHookQuoteService as Quotes} from "./UniswapV4FullSpreadPonsFamilyHookQuoteService.sol";
 
 
-import {StandardExchangeConstantProduct} from "../../../StandardExchangeConstantProduct.sol";
-
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
@@ -111,20 +109,14 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
         uint256 totalShares = IERC20(address(this)).totalSupply();
         if (totalShares == 0) return 0;
 
-        // D24: blocked preview models sleeve cover only; free models PM path.
-        if (!canOpenPoolManagerUnlock()) {
-            uint256 output = _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
-            uint256 available = _localBalance(tokenOut);
-            if (output > available || output == 0) return 0;
-            return output;
-        }
-
+        // A quote does not open an unlock. Price the pool book whether or not it is locked.
         return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
     }
 
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        virtual
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
@@ -136,18 +128,6 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
             return amount0 + (amount1 > 0 ? _quoteSwapAfterWithdrawal(amount1, false, sharesBurned, totalShares) : 0);
         }
         return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
-    }
-
-    /// @dev Proportional burn plus fee-free conversion against the remaining complete book.
-    function _quoteSleeveZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
-        return tokenOut == _token0()
-            ? StandardExchangeConstantProduct._singleExit(reserve0, reserve1, sharesBurned, totalShares)
-            : StandardExchangeConstantProduct._singleExit(reserve1, reserve0, sharesBurned, totalShares);
     }
 
     function _executeZapOutExactIn(address tokenOut, uint256 sharesBurned, uint256 minAmountOut, address recipient)
@@ -162,8 +142,9 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
         if (totalShares == 0) revert IStandardExchangeErrors.InvalidRoute(address(this), tokenOut);
 
         if (!canOpenPoolManagerUnlock()) {
-            // D18: blocked — pay from free inventory of tokenOut or revert InsufficientLocalReserve.
-            amountOut = _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
+            // Use the same pool price as an idle redemption, but settle only from local inventory.
+            // Quoting the withdrawal/swap does not mutate the pool or open a nested unlock.
+            amountOut = _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
             uint256 freeOut = _localBalance(tokenOut);
             if (amountOut == 0 || freeOut < amountOut) {
                 revert UniswapV4Exchange_InsufficientLocalReserve(

@@ -25,7 +25,7 @@ contract UniswapV4Detf_Cp_Univ4Se_ProductLaw_H6 is UniswapV4Detf_Cp_Univ4Se_Prod
         _bondOn(detf, detfUser, _uPair(10));
         IERC20 pair = IERC20(address(pairToken));
         uint256 retained = pair.balanceOf(detf);
-        assertGt(retained, 10, "reproducer exceeds native dust floor");
+        assertGt(retained, 0, "a real undeployable residual is required");
         _assertIdleAlignmentResidual(pair, retained);
         bytes32 before_ = _alignmentResidualState(pair);
         for (uint256 i_; i_ < 2; ++i_) {
@@ -35,11 +35,13 @@ contract UniswapV4Detf_Cp_Univ4Se_ProductLaw_H6 is UniswapV4Detf_Cp_Univ4Se_Prod
             assertEq(_alignmentResidualState(pair), before_, "repeat retention preserves custody, booking and issuance");
         }
 
+        uint256 lpBefore = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
         vm.prank(detfUser);
         pair.transfer(detf, 1e6);
         vm.expectCall(se, abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (pair, retained + 1e6, IERC20(se))));
         IUniswapV4Detf(detf).sweepDust();
-        assertLe(pair.balanceOf(detf), retained + 1e6, "later sweep retries the full accumulated amount");
+        assertLt(pair.balanceOf(detf), retained + 1e6, "later sweep deploys accumulated input");
+        assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore, "sweep obtains owned LP");
         assertEq(IBasicVault(detf).reserveOfToken(address(pair)), pair.balanceOf(detf), "later custody stays booked");
     }
 

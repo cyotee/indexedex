@@ -87,14 +87,14 @@ abstract contract TestBase_UniswapV4FullSpreadExactOutputQuantity is Test {
         }
     }
 
-    function test_quantityIdleMintAndTwoLegExitRemainInvalidBothFaces() public {
+    function test_quantityIdleMintReturnsZeroAndTwoLegExitRemainsInvalidBothFaces() public {
         address[] memory tokens = quantityVault.vaultTokens();
         for (uint256 i; i < 2; ++i) {
             (bytes memory state,) = Transition(address(quantityVault)).quoteState(tokens[i], address(0));
             assertEq(Quantity(address(quantityVault)).quoteInputForExactShares(state, 0), 0);
             assertEq(Quantity(address(quantityVault)).quoteSharesForExactAssets(state, 0), 0);
-            vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, tokens[i], address(quantityVault)));
-            Quantity(address(quantityVault)).quoteInputForExactShares(state, 1);
+            assertEq(Quantity(address(quantityVault)).quoteInputForExactShares(state, 1), 0,
+                "idle exact-share quote is unavailable");
             state = Context(address(quantityVault)).quoteStateWithUnavailableUnlock(state, quantityManager);
             vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(quantityVault), tokens[i]));
             Quantity(address(quantityVault)).quoteSharesForExactAssets(state, 1);

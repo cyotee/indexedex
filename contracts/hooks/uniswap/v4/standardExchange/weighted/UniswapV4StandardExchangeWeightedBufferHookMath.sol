@@ -347,9 +347,10 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
             }
         }
         uint256 invariantWithFees = WeightedMath.computeInvariantDown(weights, newBalances);
-        if (invariantWithFees <= currentInvariant) revert MathDomain();
+        // A valid offered vector can be below the integer LP minimum. Quotes
+        // return zero; the execution commit rejects before taking any input.
+        if (invariantWithFees <= currentInvariant) return 0;
         bptOut = (supply * (invariantWithFees - currentInvariant)) / currentInvariant;
-        if (bptOut == 0) revert ZeroAmount();
     }
 
     function unbalancedJoinShares(

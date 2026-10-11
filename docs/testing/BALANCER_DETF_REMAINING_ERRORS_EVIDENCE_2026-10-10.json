@@ -1,0 +1,3901 @@
+{
+  "date": "2026-10-10",
+  "scope": "17 previously deferred cases, now explicitly authorized by owner",
+  "production_changes": [
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol"
+  ],
+  "before": {
+    "summary": "Ran 1 test suite in 143.29s (892.55ms CPU time): 0 tests passed, 2 failed, 0 skipped (2 total tests)",
+    "exit_code": 1,
+    "log": ".scratch/balancer-detf-fixes-2026-10-10/before.log",
+    "log_sha256": "997cb1bcb532ffad3d38923c4f5d51318c95d001a2d113c910e0dbf5edb8fc15",
+    "command": [
+      "python3",
+      "scripts/forge-artifacts.py",
+      "test",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol",
+      "--",
+      "--threads",
+      "2",
+      "--match-test",
+      "test_exchangeOut_revertsForUnsupportedTokenOut|test_exchangeOut_revertsWhenReservePoolUninitialized",
+      "-vvv"
+    ],
+    "suites": {
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test": {
+        "test_exchangeOut_revertsForUnsupportedTokenOut()": {
+          "status": "FAIL",
+          "result": "(gas: 3519130)"
+        },
+        "test_exchangeOut_revertsWhenReservePoolUninitialized()": {
+          "status": "FAIL",
+          "result": "(gas: 454273)"
+        }
+      }
+    }
+  },
+  "after": {
+    "summary": "Ran 87 test suites in 2033.96s (4193.70s CPU time): 875 tests passed, 0 failed, 0 skipped (875 total tests)",
+    "exit_code": 0,
+    "log": ".scratch/balancer-detf-fixes-2026-10-10/after.log",
+    "log_sha256": "d9e9de38e5e278839e04d8748c62c2bedcc2f9b36c08a0124bf14c919923f2eb",
+    "command": [
+      "python3",
+      "scripts/forge-artifacts.py",
+      "test",
+      "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Routes.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Routes_NativeMatrix.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_ALL6.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_ALL9.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P18_R6.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P18_R9.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P6_R18.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P6_R9.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P9_R18.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P9_R6.t.sol",
+      "--test-root",
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common",
+      "--",
+      "--threads",
+      "2",
+      "--fuzz-runs",
+      "128",
+      "-vv"
+    ],
+    "suites": {
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_P6_R18.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_P6_R18": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859747)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_P6_R18.t.sol:Adversarial_ComposedStable_GE_B_P6_R18": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6420855)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12975465)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69527261)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859813)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_P6_R9.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_P6_R9": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859711)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_P9_R18.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_P9_R18": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859711)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_P6_R9.t.sol:Adversarial_ComposedStable_GE_B_P6_R9": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6426170)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12983711)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69527225)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859777)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_P9_R6.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_P9_R6": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859511)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_P9_R18.t.sol:Adversarial_ComposedStable_GE_B_P9_R18": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6425967)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12982493)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69527103)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859777)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_P9_R6.t.sol:Adversarial_ComposedStable_GE_B_P9_R6": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6426140)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12983541)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69527225)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859777)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_P0.t.sol:Adversarial_ComposedStable_P0_Test": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1715081)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2901521)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1888201)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4132199)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4130115)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1739072)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18759)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9309)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19874)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4130222)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4685288)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261944)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57988)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45816)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2895022)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_GE.t.sol:Adversarial_ComposedStable_GE_Test": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6540195)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 13222463)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69638024)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261900)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45794)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2894668)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_ALL6.t.sol:Adversarial_ComposedStable_P0_B_ALL6": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721859)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865932)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880963)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4068070)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056651)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745487)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4066115)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587501)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198357)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859967)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_ALL9.t.sol:Adversarial_ComposedStable_P0_B_ALL9": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721859)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865932)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880963)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4068070)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056651)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745487)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4066115)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587501)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198357)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859967)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_P18_R6.t.sol:Adversarial_ComposedStable_P0_B_P18_R6": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721859)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865732)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880963)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4068070)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056251)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745487)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4066115)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587271)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198357)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859767)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_P18_R9.t.sol:Adversarial_ComposedStable_P0_B_P18_R9": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721823)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865896)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880927)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4067926)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056615)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745451)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4065971)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587435)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198213)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859931)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_P6_R18.t.sol:Adversarial_ComposedStable_P0_B_P6_R18": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721656)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865932)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880963)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4068070)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056651)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745284)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4066115)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587298)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198357)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859967)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_P6_R9.t.sol:Adversarial_ComposedStable_P0_B_P6_R9": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721823)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865896)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880927)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4067926)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056615)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745451)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4065971)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587465)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198213)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859931)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_P9_R18.t.sol:Adversarial_ComposedStable_P0_B_P9_R18": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721620)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865896)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880927)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4067926)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056615)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745248)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4065971)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587262)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198213)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859931)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_B_P9_R6.t.sol:Adversarial_ComposedStable_P0_B_P9_R6": {
+        "test_A1_donateDai_cannotMintFreeDetf()": {
+          "status": "PASS",
+          "result": "(gas: 1721823)"
+        },
+        "test_A2_donateDetfToken_noTheft()": {
+          "status": "PASS",
+          "result": "(gas: 2865696)"
+        },
+        "test_A3_D2_unstakeWithoutBalance_noPrincipalDrain()": {
+          "status": "PASS",
+          "result": "(gas: 1880927)"
+        },
+        "test_D3_doubleUnstake_secondReverts()": {
+          "status": "PASS",
+          "result": "(gas: 4067926)"
+        },
+        "test_E4_holderBalance_notDilutedByOthersMint()": {
+          "status": "PASS",
+          "result": "(gas: 4056215)"
+        },
+        "test_E5_expiredDeadline_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 1745451)"
+        },
+        "test_E5_zeroAmount_principalPreviewZero()": {
+          "status": "PASS",
+          "result": "(gas: 18737)"
+        },
+        "test_F1_diamondCut_blocked()": {
+          "status": "PASS",
+          "result": "(gas: 9287)"
+        },
+        "test_F2_bondNft_createFundedPosition_onlyDetf()": {
+          "status": "PASS",
+          "result": "(gas: 19852)"
+        },
+        "test_H2_failedUnstake_leavesFundedBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4065971)"
+        },
+        "test_H3_minOutTooHigh_leavesNoStrandedMint()": {
+          "status": "PASS",
+          "result": "(gas: 4587235)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198213)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91392)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37160)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859731)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecRemediation.t.sol:Adversarial_ComposedStable_SecRemediation_Test": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 169481)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1596417)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5280043)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5554821)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5257077)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1548052)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33095)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2626765)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20927)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35631)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33425)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261956)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58032)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45750)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2895122)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_ALL6.t.sol:Adversarial_ComposedStable_SecRemediation_B_ALL6": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175905)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1605136)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176544)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5459216)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153578)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550332)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619724)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198445)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2860143)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_ALL9.t.sol:Adversarial_ComposedStable_SecRemediation_B_ALL9": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175905)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1605136)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176544)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5459216)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153578)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550332)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619724)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198445)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2860143)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_ALL6.t.sol:Adversarial_ComposedStable_GE_B_ALL6": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6426314)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12983963)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69527261)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859813)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_P18_R6.t.sol:Adversarial_ComposedStable_SecRemediation_B_P18_R6": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175905)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1605136)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176284)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5458956)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153318)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550332)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619724)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198445)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859943)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_P18_R9.t.sol:Adversarial_ComposedStable_SecRemediation_B_P18_R9": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175905)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1605100)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176448)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5459012)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153482)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550296)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619580)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198301)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2860107)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_P6_R18.t.sol:Adversarial_ComposedStable_SecRemediation_B_P6_R18": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175702)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1604933)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5175721)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5458393)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5152755)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550332)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619724)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198445)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2860143)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_P6_R9.t.sol:Adversarial_ComposedStable_SecRemediation_B_P6_R9": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175905)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1605100)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176508)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5459072)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153542)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550296)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619580)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198301)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2860107)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_P9_R18.t.sol:Adversarial_ComposedStable_SecRemediation_B_P9_R18": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175702)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1604897)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176305)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5458869)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153339)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550296)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619580)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198301)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2860107)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_B_P9_R6.t.sol:Adversarial_ComposedStable_SecRemediation_B_P9_R6": {
+        "test_A0_cs_preLive_donatedPairToken_cannotBeFirstMinted()": {
+          "status": "PASS",
+          "result": "(gas: 175905)"
+        },
+        "test_A0_cs_preLive_donatedPairToken_survivesFirstBond()": {
+          "status": "PASS",
+          "result": "(gas: 1605100)"
+        },
+        "test_C1_hostilePairToken_reenterExchangeIn_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5176248)"
+        },
+        "test_C2_hostilePairToken_reenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5458812)"
+        },
+        "test_C3_mintReenterBond_hitsIsLocked()": {
+          "status": "PASS",
+          "result": "(gas: 5153282)"
+        },
+        "test_F_deployer_cannotMintAfterGoLive()": {
+          "status": "PASS",
+          "result": "(gas: 1550296)"
+        },
+        "test_F_detfToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 33073)"
+        },
+        "test_F_fundedBond_isTheAuthorizedIssuancePath()": {
+          "status": "PASS",
+          "result": "(gas: 2619580)"
+        },
+        "test_F_stakingRewards_requireDetfAuthorization()": {
+          "status": "PASS",
+          "result": "(gas: 20905)"
+        },
+        "test_F_stakingToken_hasNoExternalMintAuthority()": {
+          "status": "PASS",
+          "result": "(gas: 35609)"
+        },
+        "test_F_stranger_mint_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 33403)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198301)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58010)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859907)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecurePull.t.sol:Adversarial_ComposedStable_SecurePull_Test": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3628555)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3645830)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3628486)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5298977)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4533144)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261779)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57988)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45772)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2894890)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_ALL6.t.sol:Adversarial_ComposedStable_SecurePull_B_ALL6": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535395)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552521)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535326)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159755)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430560)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859835)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_ALL9.t.sol:Adversarial_ComposedStable_SecurePull_B_ALL9": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535395)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552521)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535326)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159755)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430560)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859835)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_P18_R6.t.sol:Adversarial_ComposedStable_SecurePull_B_P18_R6": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535375)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552501)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535306)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159495)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430330)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859635)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_P18_R9.t.sol:Adversarial_ComposedStable_SecurePull_B_P18_R9": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535339)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552465)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535270)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159659)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430494)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859799)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_P6_R18.t.sol:Adversarial_ComposedStable_SecurePull_B_P6_R18": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535395)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552521)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535326)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159427)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430560)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859835)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_P6_R9.t.sol:Adversarial_ComposedStable_SecurePull_B_P6_R9": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535359)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552485)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535290)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159719)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430524)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859799)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_P9_R18.t.sol:Adversarial_ComposedStable_SecurePull_B_P9_R18": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535359)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552485)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535290)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159719)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430524)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859799)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_P9_R6.t.sol:Adversarial_ComposedStable_SecurePull_B_P9_R6": {
+        "test_I1_pretransferred_claimedLeInventory_stillReverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535339)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 3552465)"
+        },
+        "test_I2_pretransferred_claimedGtDelta0_reverts()": {
+          "status": "PASS",
+          "result": "(gas: 3535270)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 5159459)"
+        },
+        "test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 4430294)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859599)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_Surface.t.sol:Adversarial_ComposedStable_Surface_Test": {
+        "test_J1_bonding_targetSelectors_subseteq_facetFuncs()": {
+          "status": "PASS",
+          "result": "(gas: 118214)"
+        },
+        "test_J1_exchangeIn_targetSelectors_subseteq_facetFuncs()": {
+          "status": "PASS",
+          "result": "(gas: 47281)"
+        },
+        "test_J1_exchangeOut_targetSelectors_subseteq_facetFuncs()": {
+          "status": "PASS",
+          "result": "(gas: 36104)"
+        },
+        "test_J1_pricing_targetSelectors_subseteq_facetFuncs()": {
+          "status": "PASS",
+          "result": "(gas: 139851)"
+        },
+        "test_J2_facetFuncs_subseteq_loupe_onProxy()": {
+          "status": "PASS",
+          "result": "(gas: 663537)"
+        },
+        "test_J3_proxySmoke_moneyAndViews()": {
+          "status": "PASS",
+          "result": "(gas: 5570791)"
+        },
+        "test_J_facetMetadata_matches_CREATE3_facets()": {
+          "status": "PASS",
+          "result": "(gas: 97961)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261900)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57988)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91348)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45794)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2894934)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg_Deploy.t.sol:ComposedStableCommonDetfBondNFTVaultDFPkg_Deploy_Test": {
+        "test_deployVault_initializesBondVaultReferences()": {
+          "status": "PASS",
+          "result": "(gas: 8150080)"
+        },
+        "test_packageMetadata_matchesExpectedFacets()": {
+          "status": "PASS",
+          "result": "(gas: 27532)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.t.sol:ComposedStableCommonDetfBondingFacet_Test": {
+        "test_acceptedBondTokens_deduplicatesRouteBaseTokens()": {
+          "status": "PASS",
+          "result": "(gas: 40000)"
+        },
+        "test_bond_revertsForUnsupportedToken()": {
+          "status": "PASS",
+          "result": "(gas: 1565115)"
+        },
+        "test_bond_routesToReserveAndFundsBondPosition()": {
+          "status": "PASS",
+          "result": "(gas: 2774757)"
+        },
+        "test_matureBond_paysFundedStaking_withoutMovingProtocolLp()": {
+          "status": "PASS",
+          "result": "(gas: 4006303)"
+        },
+        "test_newBond_hasNoUnvestedPrincipalPayout()": {
+          "status": "PASS",
+          "result": "(gas: 4118426)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBurnExchangeIn.t.sol:ComposedStableCommonDetfBurnExchangeIn_Test": {
+        "test_closedPrimaryBurn_swapsExistingDetfWithoutBurningSupply()": {
+          "status": "PASS",
+          "result": "(gas: 3897719)"
+        },
+        "test_previewExchangeIn_selectsFundedEligibleExit()": {
+          "status": "PASS",
+          "result": "(gas: 4858264)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg_Deploy.t.sol:ComposedStableCommonDetfDFPkg_Deploy_Test": {
+        "test_deployVault_initializesReservePoolReference()": {
+          "status": "PASS",
+          "result": "(gas: 88391)"
+        },
+        "test_deployVault_rejectsMissingOpeningConfiguration()": {
+          "status": "PASS",
+          "result": "(gas: 180616)"
+        },
+        "test_packageMetadata_matchesExpectedFacets()": {
+          "status": "PASS",
+          "result": "(gas: 366894)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.t.sol:ComposedStableCommonDetfExchangeIn_Test": {
+        "test_closedPrimaryMint_usesReserveSwapWithoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 3145049)"
+        },
+        "test_exchangeIn_usesFundedReserveAndPaysRecipient()": {
+          "status": "PASS",
+          "result": "(gas: 2913764)"
+        },
+        "test_previewExchangeIn_returnsZeroWhenReservePoolUninitialized()": {
+          "status": "PASS",
+          "result": "(gas: 112973)"
+        },
+        "test_previewExchangeIn_routesSharedTokenToFundedPool()": {
+          "status": "PASS",
+          "result": "(gas: 4399610)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test": {
+        "test_claimLiquidity_legacySelectorIsNotExposed()": {
+          "status": "PASS",
+          "result": "(gas: 14906)"
+        },
+        "test_exchangeOut_cannotSpendUnfundedInventory()": {
+          "status": "PASS",
+          "result": "(gas: 2643578)"
+        },
+        "test_exchangeOut_closedPrimaryBurn_usesReserveSwap()": {
+          "status": "PASS",
+          "result": "(gas: 6619945)"
+        },
+        "test_exchangeOut_defaultsRecipientToCaller()": {
+          "status": "PASS",
+          "result": "(gas: 6371816)"
+        },
+        "test_exchangeOut_directStakingBeforeActivation_reachesFundingCheck()": {
+          "status": "PASS",
+          "result": "(gas: 194192)"
+        },
+        "test_exchangeOut_directStakingRoundTrip_prepaid()": {
+          "status": "PASS",
+          "result": "(gas: 4464238)"
+        },
+        "test_exchangeOut_directStakingRoundTrip_pull()": {
+          "status": "PASS",
+          "result": "(gas: 4240336)"
+        },
+        "test_exchangeOut_executesSelectedRoute()": {
+          "status": "PASS",
+          "result": "(gas: 6371440)"
+        },
+        "test_exchangeOut_keepsUnusedDetfInputWithPayer()": {
+          "status": "PASS",
+          "result": "(gas: 6373682)"
+        },
+        "test_exchangeOut_rejectsUnsupportedDirectConversions()": {
+          "status": "PASS",
+          "result": "(gas: 3304987)"
+        },
+        "test_exchangeOut_revertsForUnsupportedTokenIn()": {
+          "status": "PASS",
+          "result": "(gas: 1685193)"
+        },
+        "test_exchangeOut_revertsForUnsupportedTokenOut()": {
+          "status": "PASS",
+          "result": "(gas: 3049447)"
+        },
+        "test_exchangeOut_revertsWhenAmountOutIsZero()": {
+          "status": "PASS",
+          "result": "(gas: 22501)"
+        },
+        "test_exchangeOut_revertsWhenDeadlineExpired()": {
+          "status": "PASS",
+          "result": "(gas: 23026)"
+        },
+        "test_exchangeOut_revertsWhenMaxAmountInIsTooLow()": {
+          "status": "PASS",
+          "result": "(gas: 4680633)"
+        },
+        "test_exchangeOut_revertsWhenReservePoolUninitialized()": {
+          "status": "PASS",
+          "result": "(gas: 342591)"
+        },
+        "test_exchangeOut_stakedInput_paysExactRawDetf()": {
+          "status": "PASS",
+          "result": "(gas: 4088159)"
+        },
+        "test_exchangeOut_supportsDirectVaultTokenPayout()": {
+          "status": "PASS",
+          "result": "(gas: 5282663)"
+        },
+        "test_exchangeOut_underlyingExitDeliversExactAmount()": {
+          "status": "PASS",
+          "result": "(gas: 8868569)"
+        },
+        "test_fundedClaimAndUnstake_preserveReserveOwnership()": {
+          "status": "PASS",
+          "result": "(gas: 4006460)"
+        },
+        "test_previewExchangeOut_closedPrimaryBurn_keepsReserveRouteAvailable()": {
+          "status": "PASS",
+          "result": "(gas: 2621327)"
+        },
+        "test_previewExchangeOut_returnsZeroForUnsupportedTokenIn()": {
+          "status": "PASS",
+          "result": "(gas: 1571623)"
+        },
+        "test_previewExchangeOut_returnsZeroForUnsupportedTokenOut()": {
+          "status": "PASS",
+          "result": "(gas: 1577685)"
+        },
+        "test_previewExchangeOut_returnsZeroWhenReservePoolUninitialized()": {
+          "status": "PASS",
+          "result": "(gas: 31215)"
+        },
+        "test_previewExchangeOut_selectsFundedEligibleRoute()": {
+          "status": "PASS",
+          "result": "(gas: 6373726)"
+        },
+        "test_previewExchangeOut_supportsDirectVaultTokenPayout()": {
+          "status": "PASS",
+          "result": "(gas: 2184184)"
+        },
+        "test_reserveInventory_cannotBeWithdrawnByCaller()": {
+          "status": "PASS",
+          "result": "(gas: 1592144)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_ALL9.t.sol:Adversarial_ComposedStable_GE_B_ALL9": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6426314)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12983963)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69527261)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859813)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_P18_R6.t.sol:ComposedStableCommonDetf_Sequences_B_P18_R6": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859591)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077750)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649257)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056053)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_P18_R9.t.sol:ComposedStableCommonDetf_Sequences_B_P18_R9": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859755)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077606)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649205)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056417)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_P6_R18.t.sol:ComposedStableCommonDetf_Sequences_B_P6_R18": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859791)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077750)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649457)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056453)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_P6_R9.t.sol:ComposedStableCommonDetf_Sequences_B_P6_R9": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859755)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077606)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649205)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056417)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_P9_R18.t.sol:ComposedStableCommonDetf_Sequences_B_P9_R18": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859755)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077606)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649205)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056417)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_P9_R6.t.sol:ComposedStableCommonDetf_Sequences_B_P9_R6": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859555)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077606)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649005)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056017)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Routes.t.sol:MixedBufferMultiVaultStableDetf_Routes_Test": {
+        "test_exactOut_InvalidRoute()": {
+          "status": "PASS",
+          "result": "(gas: 77151)"
+        },
+        "test_share_to_share_InvalidRoute()": {
+          "status": "PASS",
+          "result": "(gas: 505946)"
+        },
+        "test_unconfigured_token_InvalidRoute()": {
+          "status": "PASS",
+          "result": "(gas: 310147)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Routes_NativeMatrix.t.sol:MixedBufferMultiVaultStableDetf_Routes_NativeMatrix": {
+        "test_exactOut_InvalidRoute()": {
+          "status": "PASS",
+          "result": "(gas: 1384886550)"
+        },
+        "test_share_to_share_InvalidRoute()": {
+          "status": "PASS",
+          "result": "(gas: 1386492388)"
+        },
+        "test_unconfigured_token_InvalidRoute()": {
+          "status": "PASS",
+          "result": "(gas: 1386176840)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol:MultiVaultWeightedDetf_MintBurn_Test": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2792194)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2307120)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1782163)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1853598)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1877421)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2514502)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_ALL6.t.sol:MultiVaultWeightedDetf_MintBurn_B_ALL6": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2796580)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2312098)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1784999)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1873638)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1881871)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2519040)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_ALL9.t.sol:MultiVaultWeightedDetf_MintBurn_B_ALL9": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2795372)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2310264)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1783727)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1872366)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1880599)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2517604)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P18_R6.t.sol:MultiVaultWeightedDetf_MintBurn_B_P18_R6": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2874943)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2389681)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1823610)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1912249)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1960282)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2597175)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P18_R9.t.sol:MultiVaultWeightedDetf_MintBurn_B_P18_R9": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2875051)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2389879)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1823548)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1912263)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1960220)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2597359)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P6_R18.t.sol:MultiVaultWeightedDetf_MintBurn_B_P6_R18": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2875527)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2390265)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1823902)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1912541)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1960866)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2597759)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P6_R9.t.sol:MultiVaultWeightedDetf_MintBurn_B_P6_R9": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2875664)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2390462)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1823941)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1912656)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1960905)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2597972)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P9_R18.t.sol:MultiVaultWeightedDetf_MintBurn_B_P9_R18": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2875635)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2390463)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1823840)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1912555)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1960804)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2597943)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P9_R6.t.sol:MultiVaultWeightedDetf_MintBurn_B_P9_R6": {
+        "test_burn_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2875080)"
+        },
+        "test_closedPrimaryMint_swapsExistingDetf_withoutIssuance()": {
+          "status": "PASS",
+          "result": "(gas: 2389878)"
+        },
+        "test_invalidRoute_exactOut()": {
+          "status": "PASS",
+          "result": "(gas: 1823649)"
+        },
+        "test_invalidRoute_rateAssetAsMint()": {
+          "status": "PASS",
+          "result": "(gas: 1912364)"
+        },
+        "test_invalidRoute_shareToShare()": {
+          "status": "PASS",
+          "result": "(gas: 1960321)"
+        },
+        "test_mint_previewEqualsExecution()": {
+          "status": "PASS",
+          "result": "(gas: 2597388)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenBehavior.t.sol:RebasingDETFTokenBehavior_Test": {
+        "test_I1_pretransferred_exchangeIn_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 107966)"
+        },
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 121541)"
+        },
+        "test_I2_pretransferred_transferBeforeCall_revertsDelta0()": {
+          "status": "PASS",
+          "result": "(gas: 135824)"
+        },
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer()": {
+          "status": "PASS",
+          "result": "(gas: 244467)"
+        },
+        "test_balanceOf_rebasesWithUpdatedDetfPricing()": {
+          "status": "PASS",
+          "result": "(gas: 115437)"
+        },
+        "test_burnShares_pretransferred_burnsFromTokenBalance()": {
+          "status": "PASS",
+          "result": "(gas: 137058)"
+        },
+        "test_exchangeIn_revertsWhenClaimLiquidityFails_withoutBurningShares()": {
+          "status": "PASS",
+          "result": "(gas: 225282)"
+        },
+        "test_exchangeOut_redeemsExactCommonTokenAmount()": {
+          "status": "PASS",
+          "result": "(gas: 386599)"
+        },
+        "test_exchangeOut_revertsWhenClaimLiquidityFails_withoutBurningShares()": {
+          "status": "PASS",
+          "result": "(gas: 381350)"
+        },
+        "test_mintFromNFTSale_mintsSharesAtDefaultRate()": {
+          "status": "PASS",
+          "result": "(gas: 105694)"
+        },
+        "test_previewExchangeIn_returnsConfiguredCommonTokenQuote()": {
+          "status": "PASS",
+          "result": "(gas: 26488)"
+        },
+        "test_redeem_transfersWethAndBurnsShares()": {
+          "status": "PASS",
+          "result": "(gas: 204546)"
+        },
+        "test_transfer_movesUnderlyingSharesAtCurrentRate()": {
+          "status": "PASS",
+          "result": "(gas: 145727)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg_Deploy.t.sol:RebasingDETFTokenDFPkg_Deploy_Test": {
+        "test_deployToken_returnsExisting_onDuplicateSalt()": {
+          "status": "PASS",
+          "result": "(gas: 3970852)"
+        },
+        "test_deployToken_success()": {
+          "status": "PASS",
+          "result": "(gas: 3966666)"
+        },
+        "test_packageMetadata_includesStandardExchangeInterfaces()": {
+          "status": "PASS",
+          "result": "(gas: 10848)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet_IFacet_Test.t.sol:RebasingDETFTokenFacet_IFacet_Test": {
+        "test_IFacet_FacetFunctions()": {
+          "status": "PASS",
+          "result": "(gas: 1834560)"
+        },
+        "test_IFacet_FacetInterfaces()": {
+          "status": "PASS",
+          "result": "(gas: 402892)"
+        },
+        "test_IFacet_FacetMetadata_Consistency()": {
+          "status": "PASS",
+          "result": "(gas: 2238792)"
+        },
+        "test_IFacet_InterfaceId_Computation()": {
+          "status": "PASS",
+          "result": "(gas: 1753)"
+        },
+        "test_IFacet_facetName()": {
+          "status": "PASS",
+          "result": "(gas: 31310)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingFacet_IFacet_Test.t.sol:RebasingDETFTokenPricingFacet_IFacet_Test": {
+        "test_IFacet_FacetFunctions()": {
+          "status": "PASS",
+          "result": "(gas: 1617481)"
+        },
+        "test_IFacet_FacetInterfaces()": {
+          "status": "PASS",
+          "result": "(gas: 186550)"
+        },
+        "test_IFacet_FacetMetadata_Consistency()": {
+          "status": "PASS",
+          "result": "(gas: 1806139)"
+        },
+        "test_IFacet_InterfaceId_Computation()": {
+          "status": "PASS",
+          "result": "(gas: 1753)"
+        },
+        "test_IFacet_facetName()": {
+          "status": "PASS",
+          "result": "(gas: 31216)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingTarget.t.sol:RebasingDETFTokenPricingTarget_Test": {
+        "test_inertPricing_hasNoBackingOrExpansion()": {
+          "status": "PASS",
+          "result": "(gas: 93964)"
+        },
+        "test_previewInnerPoolValues_matchActualRateAssetQuotes()": {
+          "status": "PASS",
+          "result": "(gas: 498898)"
+        },
+        "test_previewReservePoolDecomposition_returnsProRataLegs()": {
+          "status": "PASS",
+          "result": "(gas: 1634922)"
+        },
+        "test_stakingReceipt_redeemsFundedDetfAtPar()": {
+          "status": "PASS",
+          "result": "(gas: 4013833)"
+        },
+        "test_syntheticDetfEthPrice_usesExternalBackingOnly()": {
+          "status": "PASS",
+          "result": "(gas: 2106758)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_P18_R6.t.sol:Adversarial_ComposedStable_GE_B_P18_R6": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6426084)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12963493)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69526539)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859613)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_ALL6.t.sol:ComposedStableCommonDetf_NestedPush_B_ALL6": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101883)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3364072)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390623)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1619186)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577506)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411987)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11705349)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3387158)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552134)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11704913)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198229)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859945)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_ALL9.t.sol:ComposedStableCommonDetf_NestedPush_B_ALL9": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101883)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3364072)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390623)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1619186)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577506)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411987)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11705349)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3387158)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552134)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11704913)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198229)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859945)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_P18_R6.t.sol:ComposedStableCommonDetf_NestedPush_B_P18_R6": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101883)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3363852)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390403)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1619186)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577506)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411767)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11702909)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3386938)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552134)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11702473)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198229)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859745)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_P18_R9.t.sol:ComposedStableCommonDetf_NestedPush_B_P18_R9": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101847)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3364016)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390567)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1619150)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577470)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411931)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11721815)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3394254)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552098)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11721379)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198085)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859909)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_P6_R18.t.sol:ComposedStableCommonDetf_NestedPush_B_P6_R18": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101883)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3363869)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390420)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1618983)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577506)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411784)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11707061)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3386955)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552134)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11706625)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198229)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859945)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_P6_R9.t.sol:ComposedStableCommonDetf_NestedPush_B_P6_R9": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101847)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3364036)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390587)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1619150)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577470)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411951)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11721885)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3394274)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552098)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11721449)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198085)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859909)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_P9_R18.t.sol:ComposedStableCommonDetf_NestedPush_B_P9_R18": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101847)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3363833)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390384)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1618947)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577470)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411748)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11721789)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3394071)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552098)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11721353)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198085)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859909)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_B_P9_R6.t.sol:ComposedStableCommonDetf_NestedPush_B_P9_R6": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2101847)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3363816)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3390367)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1619150)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1577470)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3411731)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 11721925)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3394054)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1552098)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 11721489)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198085)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58029)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859709)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/sequences/ComposedStableCommonDetf_Sequences.t.sol:ComposedStableCommonDetf_Sequences_Test": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261900)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57966)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45794)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2894846)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5179865)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4732618)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4129917)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_ALL6.t.sol:ComposedStableCommonDetf_Sequences_B_ALL6": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859791)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077750)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649457)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056453)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_B_ALL9.t.sol:ComposedStableCommonDetf_Sequences_B_ALL9": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198313)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859791)"
+        },
+        "test_invariantSequence_bondVesting_fundedClaimPositive()": {
+          "status": "PASS",
+          "result": "(gas: 5077750)"
+        },
+        "test_invariantSequence_mintPartialBurn_noFreeInventory()": {
+          "status": "PASS",
+          "result": "(gas: 4649457)"
+        },
+        "test_invariantSequence_multiActor_noDiluteBalance()": {
+          "status": "PASS",
+          "result": "(gas: 4056453)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_B_P18_R9.t.sol:Adversarial_ComposedStable_GE_B_P18_R9": {
+        "test_E1_mintThenPartialBurn_conservation()": {
+          "status": "PASS",
+          "result": "(gas: 6425940)"
+        },
+        "test_E2_multiLeg_mintBurn_noStrandedVaultShareOrBptOnDiamond()": {
+          "status": "PASS",
+          "result": "(gas: 12983141)"
+        },
+        "test_G1_composedAsOuter_nestedDetfLegs_productN_A()": {
+          "status": "PASS",
+          "result": "(gas: 21999)"
+        },
+        "test_G1_outerActivity_doesNotBrickInner()": {
+          "status": "PASS",
+          "result": "(gas: 69526503)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198169)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57944)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859577)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NestedPush.t.sol:ComposedStableCommonDetf_NestedPush_Test": {
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 2118645)"
+        },
+        "test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU()": {
+          "status": "PASS",
+          "result": "(gas: 3414195)"
+        },
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync()": {
+          "status": "PASS",
+          "result": "(gas: 3440447)"
+        },
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient()": {
+          "status": "PASS",
+          "result": "(gas: 1612088)"
+        },
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts()": {
+          "status": "PASS",
+          "result": "(gas: 1575340)"
+        },
+        "test_T_NEST_4_noNestedApproveOnFundPath()": {
+          "status": "PASS",
+          "result": "(gas: 3461884)"
+        },
+        "test_T_NEST_5_outerExactOut_refundToEntryMsgSender()": {
+          "status": "PASS",
+          "result": "(gas: 12059351)"
+        },
+        "test_T_NEST_6_holdSetSyncAfterRoute()": {
+          "status": "PASS",
+          "result": "(gas: 3436983)"
+        },
+        "test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount()": {
+          "status": "PASS",
+          "result": "(gas: 1549892)"
+        },
+        "test_T_NEST_8_partialMaxIn_succeeds_noHardRevert()": {
+          "status": "PASS",
+          "result": "(gas: 12058893)"
+        },
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261801)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 58051)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91370)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45794)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2895000)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol:ComposedStableCommonDetf_Invariant": {
+        "invariant_accounting()": {
+          "status": "PASS",
+          "result": "(runs: 256, calls: 16384, reverts: 0)"
+        },
+        "test_deterministicLifecycle()": {
+          "status": "PASS",
+          "result": "(gas: 74731970)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol:ComposedStableCommonDetf_IntegratedDeploy_Test": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4261757)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 45750)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2894780)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_ALL6.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_ALL6": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859747)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_ALL9.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_ALL9": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859747)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_P18_R6.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_P18_R6": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198207)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859547)"
+        }
+      },
+      "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_B_P18_R9.t.sol:ComposedStableCommonDetf_IntegratedDeploy_B_P18_R9": {
+        "test_bond_vestsFundedStaking_andUnstakes_onProductionGraph()": {
+          "status": "PASS",
+          "result": "(gas: 4198063)"
+        },
+        "test_deployVault_exposesBondAndExchangeEntryPoints()": {
+          "status": "PASS",
+          "result": "(gas: 57900)"
+        },
+        "test_deployVault_preservesCompanionSpecialPositionState()": {
+          "status": "PASS",
+          "result": "(gas: 91326)"
+        },
+        "test_deployVault_surfacesRealCompanionReferences()": {
+          "status": "PASS",
+          "result": "(gas: 58020)"
+        },
+        "test_deployVault_zeroAmountPricingQueriesShortCircuitSafely()": {
+          "status": "PASS",
+          "result": "(gas: 37138)"
+        },
+        "test_exchangeIn_fundedReserveRoute_previewEqualsPayment()": {
+          "status": "PASS",
+          "result": "(gas: 2859711)"
+        }
+      }
+    }
+  },
+  "requested_cases": [
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Routes.t.sol:MixedBufferMultiVaultStableDetf_Routes_Test",
+      "original_test": "test_exactOut_InvalidRoute()",
+      "passing_test": "test_exactOut_InvalidRoute()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Routes_NativeMatrix.t.sol:MixedBufferMultiVaultStableDetf_Routes_NativeMatrix",
+      "original_test": "test_exactOut_InvalidRoute()",
+      "passing_test": "test_exactOut_InvalidRoute()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol:MultiVaultWeightedDetf_MintBurn_Test",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_ALL6.t.sol:MultiVaultWeightedDetf_MintBurn_B_ALL6",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_ALL9.t.sol:MultiVaultWeightedDetf_MintBurn_B_ALL9",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P18_R6.t.sol:MultiVaultWeightedDetf_MintBurn_B_P18_R6",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P18_R9.t.sol:MultiVaultWeightedDetf_MintBurn_B_P18_R9",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P6_R18.t.sol:MultiVaultWeightedDetf_MintBurn_B_P6_R18",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P6_R9.t.sol:MultiVaultWeightedDetf_MintBurn_B_P6_R9",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P9_R18.t.sol:MultiVaultWeightedDetf_MintBurn_B_P9_R18",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_B_P9_R6.t.sol:MultiVaultWeightedDetf_MintBurn_B_P9_R6",
+      "original_test": "test_invalidRoute_exactOut()",
+      "passing_test": "test_invalidRoute_exactOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.t.sol:ComposedStableCommonDetfExchangeIn_Test",
+      "original_test": "test_previewExchangeIn_revertsWhenReservePoolUninitialized()",
+      "passing_test": "test_previewExchangeIn_returnsZeroWhenReservePoolUninitialized()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test",
+      "original_test": "test_exchangeOut_revertsForUnsupportedTokenOut()",
+      "passing_test": "test_exchangeOut_revertsForUnsupportedTokenOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test",
+      "original_test": "test_exchangeOut_revertsWhenReservePoolUninitialized()",
+      "passing_test": "test_exchangeOut_revertsWhenReservePoolUninitialized()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test",
+      "original_test": "test_previewExchangeOut_revertsForUnsupportedTokenIn()",
+      "passing_test": "test_previewExchangeOut_returnsZeroForUnsupportedTokenIn()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test",
+      "original_test": "test_previewExchangeOut_revertsForUnsupportedTokenOut()",
+      "passing_test": "test_previewExchangeOut_returnsZeroForUnsupportedTokenOut()",
+      "status": "PASS"
+    },
+    {
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol:ComposedStableCommonDetfExchangeOutQueryFacet_Test",
+      "original_test": "test_previewExchangeOut_revertsWhenReservePoolUninitialized()",
+      "passing_test": "test_previewExchangeOut_returnsZeroWhenReservePoolUninitialized()",
+      "status": "PASS"
+    }
+  ],
+  "changed_sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+      "sha256_before": "6a4890974ce93de6dae835f825bb270cb23142e6c3de9ce237f07839091b0cdd",
+      "sha256_after": "3dde8cc1370c89dd51309fc3508679bda9b7c1b881dada1ef00907b291a31466"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Routes.t.sol",
+      "sha256_before": "6a73069abee2da3b62012fe344f4935b0152037a63776a1311795e5d594b8d57",
+      "sha256_after": "fc46807a9cad62fb5214d78b4445b0ac7c3c1d922b574e47138f8d6829dde253"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+      "sha256_before": "f0dad826ead5a29b5080274e0ff59211a6dcbfd973f713accc192496cbc85b6a",
+      "sha256_after": "fa48c1c864de319bebb31f40d3b7b2934de968b439f052114c703229202b2dc1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_Decimals.sol",
+      "sha256_before": "b590654844b5a298f8382f59ecb3f190b6a9e6ee76c681e58f6c81a09fe65dc6",
+      "sha256_after": "13224929ddd20c75c386220fa0e97ea40e597fa651ed16b27c289e49bf3ff608"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.t.sol",
+      "sha256_before": "cab3e37e9d39ae107a13d6ca609ef5ed22f6ec4379c3ecbe22c7074b7a07c1bb",
+      "sha256_after": "c7f3551da1eb03633e4a6769c55bcfcb2597c678bdd6eab8f7740c4d39f75458"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol",
+      "sha256_before": "9cfedc8b8c0ab6f381587ee2a8ceee19be636e66620b36fb56f04fa103024e62",
+      "sha256_after": "18010fcfc5287fe1ed7588fec5558d59d5e25386ecd2abf42bb0c58c23f63868"
+    }
+  ],
+  "runtime": {
+    "artifact": "out/ComposedStableCommonDetfExchangeOutQueryFacet.sol/ComposedStableCommonDetfExchangeOutQueryFacet.json",
+    "runtime_bytes": 21174,
+    "limit_bytes": 24576,
+    "passes": true
+  },
+  "test_count": 875,
+  "suite_count": 87,
+  "validation_limit": "Affected suites only, not a fresh whole-repository test run"
+}

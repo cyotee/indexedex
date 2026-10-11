@@ -295,7 +295,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
         }
         if (!subShare_) {
             uint256 shares_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
-            if (shares_ != 0) _assertResidualHookAlignment(pair_, retained_);
+            assertEq(shares_, 0, "above-dust retention requires a successful Standard Exchange preview of zero");
         }
         assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");
     }

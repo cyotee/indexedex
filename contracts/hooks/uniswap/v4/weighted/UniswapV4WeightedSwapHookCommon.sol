@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -303,9 +305,17 @@ abstract contract UniswapV4WeightedSwapHookCommon {
 
     function _pull(address token_, uint256 amount) internal {
         if (amount == 0) return;
+        uint256 beforeBalance = IERC20(token_).balanceOf(address(this));
         _callOptionalReturn(
             token_, abi.encodeWithSelector(IERC20.transferFrom.selector, msg.sender, address(this), amount)
         );
+        _requireReceived(token_, amount, beforeBalance);
+    }
+
+    function _requireReceived(address token_, uint256 amount_, uint256 beforeBalance_) internal view {
+        uint256 afterBalance_ = IERC20(token_).balanceOf(address(this));
+        uint256 received_ = afterBalance_ > beforeBalance_ ? afterBalance_ - beforeBalance_ : 0;
+        if (received_ != amount_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, received_);
     }
 
     function _push(address token_, address to, uint256 amount) internal {

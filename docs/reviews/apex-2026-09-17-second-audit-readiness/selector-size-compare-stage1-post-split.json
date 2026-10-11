@@ -1,0 +1,992 @@
+{
+ "compared": 540,
+ "missingArtifacts": 32,
+ "oversizeCount": 0,
+ "selectorDiffCount": 52,
+ "oversize": [],
+ "selectorDiffs": [
+  {
+   "source": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol",
+   "artifact": "out/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.json",
+   "added": [
+    "executeZapInMintExactOut(address,uint256,uint256,address,bool)"
+   ],
+   "removed": [],
+   "runtimeBytes": 23098,
+   "classification": "D64 (2026-09-24): exact-out mint execution delegated here (executeZapInMintExactOut) so the OutFacet stays under EIP-170; the closed-form math lives in the delegate and the query facet."
+  },
+  {
+   "source": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol",
+   "artifact": "out/ERC4626StandardExchangeDFPkg.sol/ERC4626StandardExchangeDFPkg.json",
+   "added": [
+    "EXCHANGE_IN_FACET_EXT()"
+   ],
+   "removed": [],
+   "runtimeBytes": 9708,
+   "classification": "Added EXCHANGE_IN_FACET_EXT() so the package can install the preview facet. This does not certify the installed proxy cut."
+  },
+  {
+   "source": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol",
+   "artifact": "out/ERC4626StandardExchangeInFacet.sol/ERC4626StandardExchangeInFacet.json",
+   "added": [],
+   "removed": [
+    "previewExchangeIn(address,uint256,address)"
+   ],
+   "runtimeBytes": 24009,
+   "classification": "Removed previewExchangeIn versus the 2026-09-17 baseline. That selector now lives on ERC4626StandardExchangeInFacetExt, which the package installs beside this facet. This does not certify the installed proxy cut."
+  },
+  {
+   "source": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+   "artifact": "out/ERC4626StandardExchangeInTarget.sol/ERC4626StandardExchangeInTarget.json",
+   "added": [],
+   "removed": [
+    "previewExchangeIn(address,uint256,address)"
+   ],
+   "runtimeBytes": 18330,
+   "classification": "Removed previewExchangeIn versus the 2026-09-17 baseline. The function moved to ERC4626StandardExchangeInTargetExt so the execution facet no longer compiles it."
+  },
+  {
+   "source": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInFacet.sol",
+   "artifact": "out/SlipstreamStandardExchangeInFacet.sol/SlipstreamStandardExchangeInFacet.json",
+   "added": [],
+   "removed": [
+    "previewExchangeIn(address,uint256,address)"
+   ],
+   "runtimeBytes": 23282,
+   "classification": "D19 split: previewExchangeIn served by SlipstreamStandardExchangeInFacetExt; proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInTarget.sol",
+   "artifact": "out/SlipstreamStandardExchangeInTarget.sol/SlipstreamStandardExchangeInTarget.json",
+   "added": [],
+   "removed": [
+    "previewExchangeIn(address,uint256,address)"
+   ],
+   "runtimeBytes": 22578,
+   "classification": "Target of the D19 split above (not a proxy)."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol",
+   "artifact": "out/StandardExchangeBufferPoolStandardVaultPkg.sol/StandardExchangeBufferPoolStandardVaultPkg.json",
+   "added": [
+    "TRANSITION_QUOTE_FACET()"
+   ],
+   "removed": [],
+   "runtimeBytes": 14249,
+   "classification": "D68 (2026-09-24): mandatory IStandardExchangeTransitionQuote facet + interfaceId always wired on the Balancer pool SE; adds TRANSITION_QUOTE_FACET() immutable getter."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolFacet.sol",
+   "artifact": "out/CommonBufferMultiVaultStablePoolFacet.sol/CommonBufferMultiVaultStablePoolFacet.json",
+   "added": [
+    "quotePoolLiquidity(bytes,(uint256[],uint256,uint256,uint256,uint256,bool,bool))",
+    "quotePoolState(uint256[],uint256[])",
+    "quotePoolStateAfterLiquidity(bytes,bool,uint256,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 14041,
+   "classification": "Added versus the 2026-09-17 baseline. Identifiers are in committed source. Stage 1 did not edit this file. This does not certify the installed proxy cut."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookFacet.sol",
+   "artifact": "out/CommonBufferMultiVaultStablePoolHookFacet.sol/CommonBufferMultiVaultStablePoolHookFacet.json",
+   "added": [],
+   "removed": [
+    "__preSeatAttempt(address,uint8,uint256,uint256)",
+    "__reconcileAttempt(address,uint8,uint256,bool,uint256)"
+   ],
+   "runtimeBytes": 18670,
+   "classification": "D56: dead self-call entry points __preSeatAttempt / __reconcileAttempt removed after D37 made pre-seat and reconcile direct internal calls (open item 9, owner ruling 2026-09-21); the family's proxy selector set shrinks by these two selectors."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+   "artifact": "out/CommonBufferMultiVaultStablePoolHookTarget.sol/CommonBufferMultiVaultStablePoolHookTarget.json",
+   "added": [],
+   "removed": [
+    "__preSeatAttempt(address,uint8,uint256,uint256)",
+    "__reconcileAttempt(address,uint8,uint256,bool,uint256)"
+   ],
+   "runtimeBytes": 0,
+   "classification": "D56: dead self-call entry points __preSeatAttempt / __reconcileAttempt removed after D37 made pre-seat and reconcile direct internal calls (open item 9, owner ruling 2026-09-21); the family's proxy selector set shrinks by these two selectors."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+   "artifact": "out/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol/CommonBufferMultiVaultStablePoolStandardVaultPkg.json",
+   "added": [
+    "TRANSITION_QUOTE_FACET()"
+   ],
+   "removed": [],
+   "runtimeBytes": 18894,
+   "classification": "D68 (2026-09-24): mandatory IStandardExchangeTransitionQuote facet + interfaceId always wired on the Balancer pool SE; adds TRANSITION_QUOTE_FACET() immutable getter."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolTarget.sol",
+   "artifact": "out/CommonBufferMultiVaultStablePoolTarget.sol/CommonBufferMultiVaultStablePoolTarget.json",
+   "added": [
+    "quotePoolLiquidity(bytes,(uint256[],uint256,uint256,uint256,uint256,bool,bool))",
+    "quotePoolState(uint256[],uint256[])",
+    "quotePoolStateAfterLiquidity(bytes,bool,uint256,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 10399,
+   "classification": "Added versus the 2026-09-17 baseline. Identifiers are in committed source. Stage 1 did not edit this file."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolFacet.sol",
+   "artifact": "out/MixedBufferMultiVaultStablePoolFacet.sol/MixedBufferMultiVaultStablePoolFacet.json",
+   "added": [
+    "quotePoolLiquidity(bytes,(uint256[],uint256,uint256,uint256,uint256,bool,bool))",
+    "quotePoolState(uint256[],uint256[])",
+    "quotePoolStateAfterLiquidity(bytes,bool,uint256,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 14857,
+   "classification": "Added versus the 2026-09-17 baseline. Identifiers are in committed source. Stage 1 did not edit this file. This does not certify the installed proxy cut."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookFacet.sol",
+   "artifact": "out/MixedBufferMultiVaultStablePoolHookFacet.sol/MixedBufferMultiVaultStablePoolHookFacet.json",
+   "added": [],
+   "removed": [
+    "__preSeatAttempt(address,uint8,uint256,uint256)",
+    "__reconcileAttempt(address,uint8,uint256,bool,uint256)"
+   ],
+   "runtimeBytes": 19673,
+   "classification": "D56: dead self-call entry points __preSeatAttempt / __reconcileAttempt removed after D37 made pre-seat and reconcile direct internal calls (open item 9, owner ruling 2026-09-21); the family's proxy selector set shrinks by these two selectors."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+   "artifact": "out/MixedBufferMultiVaultStablePoolHookTarget.sol/MixedBufferMultiVaultStablePoolHookTarget.json",
+   "added": [],
+   "removed": [
+    "__preSeatAttempt(address,uint8,uint256,uint256)",
+    "__reconcileAttempt(address,uint8,uint256,bool,uint256)"
+   ],
+   "runtimeBytes": 0,
+   "classification": "D56: dead self-call entry points __preSeatAttempt / __reconcileAttempt removed after D37 made pre-seat and reconcile direct internal calls (open item 9, owner ruling 2026-09-21); the family's proxy selector set shrinks by these two selectors."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+   "artifact": "out/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol/MixedBufferMultiVaultStablePoolStandardVaultPkg.json",
+   "added": [
+    "TRANSITION_QUOTE_FACET()"
+   ],
+   "removed": [],
+   "runtimeBytes": 20318,
+   "classification": "D68 (2026-09-24): mandatory IStandardExchangeTransitionQuote facet + interfaceId always wired on the Balancer pool SE; adds TRANSITION_QUOTE_FACET() immutable getter."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolTarget.sol",
+   "artifact": "out/MixedBufferMultiVaultStablePoolTarget.sol/MixedBufferMultiVaultStablePoolTarget.json",
+   "added": [
+    "quotePoolLiquidity(bytes,(uint256[],uint256,uint256,uint256,uint256,bool,bool))",
+    "quotePoolState(uint256[],uint256[])",
+    "quotePoolStateAfterLiquidity(bytes,bool,uint256,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 10790,
+   "classification": "Added versus the 2026-09-17 baseline. Identifiers are in committed source. Stage 1 did not edit this file."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookFacet.sol",
+   "artifact": "out/CommonBufferMultiVaultWeightedPoolHookFacet.sol/CommonBufferMultiVaultWeightedPoolHookFacet.json",
+   "added": [],
+   "removed": [
+    "__preSeatAttempt(address,uint8,uint256,uint256)",
+    "__reconcileAttempt(address,uint8,uint256,bool,uint256)"
+   ],
+   "runtimeBytes": 21109,
+   "classification": "D56: dead self-call entry points __preSeatAttempt / __reconcileAttempt removed after D37 made pre-seat and reconcile direct internal calls (open item 9, owner ruling 2026-09-21); the family's proxy selector set shrinks by these two selectors."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+   "artifact": "out/CommonBufferMultiVaultWeightedPoolHookTarget.sol/CommonBufferMultiVaultWeightedPoolHookTarget.json",
+   "added": [],
+   "removed": [
+    "__preSeatAttempt(address,uint8,uint256,uint256)",
+    "__reconcileAttempt(address,uint8,uint256,bool,uint256)"
+   ],
+   "runtimeBytes": 0,
+   "classification": "D56: dead self-call entry points __preSeatAttempt / __reconcileAttempt removed after D37 made pre-seat and reconcile direct internal calls (open item 9, owner ruling 2026-09-21); the family's proxy selector set shrinks by these two selectors."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+   "artifact": "out/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.json",
+   "added": [
+    "TRANSITION_QUOTE_FACET()"
+   ],
+   "removed": [],
+   "runtimeBytes": 20436,
+   "classification": "D68 (2026-09-24): mandatory IStandardExchangeTransitionQuote facet + interfaceId always wired on the Balancer pool SE; adds TRANSITION_QUOTE_FACET() immutable getter."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol",
+   "artifact": "out/MixedLegWeightedBufferPoolStandardVaultPkg.sol/MixedLegWeightedBufferPoolStandardVaultPkg.json",
+   "added": [
+    "TRANSITION_QUOTE_FACET()"
+   ],
+   "removed": [],
+   "runtimeBytes": 19628,
+   "classification": "D68 (2026-09-24): mandatory IStandardExchangeTransitionQuote facet + interfaceId always wired on the Balancer pool SE; adds TRANSITION_QUOTE_FACET() immutable getter."
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol",
+   "artifact": "out/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol/MultiPairStandardExchangeBufferPoolStandardVaultPkg.json",
+   "added": [
+    "TRANSITION_QUOTE_FACET()"
+   ],
+   "removed": [],
+   "runtimeBytes": 18248,
+   "classification": "D68 (2026-09-24): mandatory IStandardExchangeTransitionQuote facet + interfaceId always wired on the Balancer pool SE; adds TRANSITION_QUOTE_FACET() immutable getter."
+  },
+  {
+   "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol",
+   "artifact": "out/UniswapV4DetfMaintenanceFacet.sol/UniswapV4DetfMaintenanceFacet.json",
+   "added": [
+    "joinResidualAtomic(address,uint256,bool)"
+   ],
+   "removed": [],
+   "runtimeBytes": 14754,
+   "classification": "Added versus the 2026-09-17 baseline. joinResidualAtomic is in the committed maintenance facet. Stage 1 changed its caller from try/catch to a hard call and did not add the identifier. This does not certify the installed proxy cut."
+  },
+  {
+   "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceTarget.sol",
+   "artifact": "out/UniswapV4DetfMaintenanceTarget.sol/UniswapV4DetfMaintenanceTarget.json",
+   "added": [
+    "joinResidualAtomic(address,uint256,bool)"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "Added versus the 2026-09-17 baseline. joinResidualAtomic is in the committed maintenance target. Stage 1 changed its caller from try/catch to a hard call and did not add the identifier."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol",
+   "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.json",
+   "added": [
+    "bufferQuotedResidual(uint256,uint256)",
+    "exactOutputRatedDebit(uint256)",
+    "invertBufferClaimIn(uint256)",
+    "previewBudget(uint256)",
+    "previewBudgetWithContext(uint256,address)",
+    "previewBufferClaimIn(uint256)",
+    "previewBufferClaimInWithContext(uint256,address)",
+    "previewResidualBuffer(uint256)",
+    "projectedClaimIn(address,bytes,uint256,uint256)",
+    "quoteExactOutContext(bool,uint256,address)",
+    "quoteMintableDepositExactIn(address,address,bytes,uint256)",
+    "rate()",
+    "ratedClaimOfState(address,bytes)",
+    "ratedOf(uint256)",
+    "ratedReserve()",
+    "ratedReserveWithContext(address)",
+    "requireInputInverse(uint256)",
+    "sharesForPairUnitsDown(uint256)",
+    "sharesForPairUnitsDownAtState(uint256,bytes)",
+    "sharesForPairUnitsUp(uint256)",
+    "unwrapQuoted(UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.ExactInOutput)",
+    "withdrawalPlan(uint256,uint256,uint256,bool)"
+   ],
+   "removed": [
+    "invertBufferClaimIn(address,address,uint256,IVaultFeeOracleQuery,address)",
+    "previewBufferClaimIn(address,address,uint256,IVaultFeeOracleQuery,address)"
+   ],
+   "runtimeBytes": 17407,
+   "classification": "External library, not a facet or proxy: quoteMintableDepositExactIn added by the remediation (D22/D31 mintable-deposit quote). No diamond selector change. Absent from the 2026-09-18 compare because that artifact was stale then."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol",
+   "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.json",
+   "added": [
+    "deployVault((address,address,address,address,address,uint8,uint8,bool,address,address),uint256)",
+    "deployVaultAutoMine((address,address,address,address,address,uint8,uint8,bool,address,address))"
+   ],
+   "removed": [
+    "deployVault((address,address,address,address,address,uint8,uint8,bool,address),uint256)",
+    "deployVaultAutoMine((address,address,address,address,address,uint8,uint8,bool,address))"
+   ],
+   "runtimeBytes": 21332,
+   "classification": "D60: PkgArgs gained rateProvider (single-CP) / rateProvider0,1 (dual); deployVault and deployVaultAutoMine take the new struct (RateProviderRequired validated)"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget.sol",
+   "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rateProviders() and rateProvider(address) added on the CP-hook getter host; proxy selector set gains the two getters"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol",
+   "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.json",
+   "added": [
+    "ratedPairUnits(uint256,uint256,uint256,uint256)",
+    "ratedPairUnitsUp(uint256,uint256,uint256,uint256)",
+    "sharesForPairUnitsDown(uint256,uint256,uint256,uint256)",
+    "sharesForPairUnitsUp(uint256,uint256,uint256,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 4081,
+   "classification": "D60 work package 2: +'ratedPairUnits(uint256,uint256,uint256,uint256)', 'sharesForPairUnitsUp(uint256,uint256,uint256,uint256)'"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+   "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.json",
+   "added": [],
+   "removed": [
+    "exchangeOut(address,uint256,address,uint256,address,bool,uint256)"
+   ],
+   "runtimeBytes": 0,
+   "classification": "Removed versus the 2026-09-17 baseline. Stage 1 did not edit this file. This does not certify the installed proxy cut."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol",
+   "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 13639,
+   "classification": "D60: rateProviders() and rateProvider(address) added on the CP-hook getter host; proxy selector set gains the two getters"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol",
+   "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.json",
+   "added": [
+    "invertBufferClaimIn(address,address,uint256)",
+    "previewBufferClaimIn(address,address,uint256)",
+    "previewInputWithContext(address,uint256,address)",
+    "previewOutputExactIn(address,uint256)",
+    "previewOutputExactOut(address,uint256)",
+    "previewOutputWithContext(address,uint256,address)",
+    "projectOutputExactIn(address,bytes,uint256)",
+    "projectedBufferClaimIn(address,bytes,uint256)",
+    "quoteExactOutContext(bool,uint256,address)",
+    "rateProviderOf(address)",
+    "ratedOf(address,uint256)",
+    "ratedReserve(address)",
+    "ratedReserveOfState(address,bytes)",
+    "ratedReserveWithContext(address,address)",
+    "requireInputInverse(address,uint256)"
+   ],
+   "removed": [
+    "invertBufferClaimIn(address,address,uint256,IVaultFeeOracleQuery,address)",
+    "previewBufferClaimIn(address,address,uint256,IVaultFeeOracleQuery,address)"
+   ],
+   "runtimeBytes": 11169,
+   "classification": "D60 work package 2: +'invertBufferClaimIn(address,address,uint256)', 'previewBufferClaimIn(address,address,uint256)', 'rateProviderOf(address)', 'ratedOf(address,uint256)', 'ratedReserve(address)' -'invertBufferClaimIn(address,address,uint256,IVaultFeeOracleQuery,address)', 'previewBufferClaimIn(address,address,uint256,IVaultFeeOracleQuery,address)'"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol",
+   "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.json",
+   "added": [
+    "deployVault((address,address,address,address,address,address,address,address),uint256)",
+    "deployVaultAutoMine((address,address,address,address,address,address,address,address))"
+   ],
+   "removed": [
+    "deployVault((address,address,address,address,address,address),uint256)",
+    "deployVaultAutoMine((address,address,address,address,address,address))"
+   ],
+   "runtimeBytes": 20402,
+   "classification": "D60: PkgArgs gained rateProvider (single-CP) / rateProvider0,1 (dual); deployVault and deployVaultAutoMine take the new struct (RateProviderRequired validated)"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget.sol",
+   "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget.sol/UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rateProviders() and rateProvider(address) added on the CP-hook getter host; proxy selector set gains the two getters"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookTarget.sol",
+   "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookTarget.sol/UniswapV4DualStandardExchangeBufferConstantProductHookTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rateProviders() and rateProvider(address) added on the CP-hook getter host; proxy selector set gains the two getters"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol",
+   "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 16750,
+   "classification": "D60: rateProviders() and rateProvider(address) added on the CP-hook getter host; proxy selector set gains the two getters"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol",
+   "artifact": "out/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.json",
+   "added": [
+    "effectiveNative(address,address,address,uint256,uint256)",
+    "effectiveNativeWithContext(address,address,address,uint256,uint256,address)",
+    "getRateFailClosed(address)",
+    "invertBufferForEffective(address,address,address,uint256)",
+    "invertUnwrapExactTokenOut(address,address,uint256)",
+    "previewBufferClaimIn(address,address,address,uint256,address)",
+    "previewBufferSharesIn(address,address,uint256)",
+    "previewInputWithContext(address,address,address,uint256,address)",
+    "previewOutputWithContext(address,address,address,uint256,address)",
+    "previewSwapExactInContext(address,address,uint256,uint256,address)",
+    "previewSwapExactOutContext(address,address,uint256,uint256,address)",
+    "previewUnwrapForEffectiveOut(address,address,address,uint256)",
+    "previewUnwrapShares(address,address,uint256)",
+    "ratedNative(uint256,uint256,address,address)",
+    "sharesForNativeUp(uint256,uint256,address,address)"
+   ],
+   "removed": [],
+   "runtimeBytes": 12663,
+   "classification": "Added versus the 2026-09-17 baseline. Identifiers are in committed library source. Stage 1 did not edit this file."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol",
+   "artifact": "out/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookTarget.sol",
+   "artifact": "out/UniswapV4StandardExchangeOrbitalBufferHookTarget.sol/UniswapV4StandardExchangeOrbitalBufferHookTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 24210,
+   "classification": "D60: rateProviders() and rateProvider(address) hosted on this facet (owner ruling 2026-09-21, open item 10 PRD; re-hosted off the shared Target bases on 2026-09-22 to keep every facet under EIP-170); its facetFuncs() lists them, so the family's proxy selector set grows by these two selectors."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol",
+   "artifact": "out/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.json",
+   "added": [
+    "nativeForRatedWad(uint8,uint256,bool)",
+    "pairInWithContext(uint8,uint256,address)",
+    "pairInputForRated(uint8,uint256)",
+    "quoteSwapExactIn(uint8,uint8,uint256[],uint256,uint256)",
+    "quoteSwapExactInContext(uint8,uint8,uint256[],uint256,uint256,address)",
+    "quoteSwapExactOut(uint8,uint8,uint256[],uint256,uint256,uint256)",
+    "quoteSwapExactOutContext(uint8,uint8,uint256[],uint256,uint256,uint256,address)",
+    "ratedWadAllWithContext(address)",
+    "ratedWadForNativeUp(uint8,uint256)",
+    "shareScale(address)"
+   ],
+   "removed": [],
+   "runtimeBytes": 16818,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget.sol",
+   "artifact": "out/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget.sol/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget.sol",
+   "artifact": "out/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget.sol/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet.sol/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 19427,
+   "classification": "D60: rateProviders() and rateProvider(address) hosted on this facet (owner ruling 2026-09-21, open item 10 PRD; re-hosted off the shared Target bases on 2026-09-22 to keep every facet under EIP-170); its facetFuncs() lists them, so the family's proxy selector set grows by these two selectors."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeFacet.sol/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 21928,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol",
+   "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.json",
+   "added": [
+    "bufferQuotedJoin(uint8,uint256,uint256)",
+    "mapPairInToRatedWad(uint8,uint256)",
+    "nativeForRatedWad(uint8,uint256,bool)",
+    "pairInWithContext(uint8,uint256,address)",
+    "pairInputForRated(uint8,uint256)",
+    "previewSwapExactInContext(address,address,uint256,address)",
+    "quoteSwapExactIn(uint8,uint8,uint256[4],uint256,uint256)",
+    "quoteSwapExactInContext(uint8,uint8,uint256[4],uint256,uint256,address)",
+    "quoteSwapExactOut(uint8,uint8,uint256[4],uint256,uint256,uint256)",
+    "quoteSwapExactOutContext(uint8,uint8,uint256[4],uint256,uint256,uint256,address)",
+    "rated(uint8,uint256)",
+    "ratedWadAllWithContext(address)",
+    "ratedWadForNativeUp(uint8,uint256)",
+    "ratedWith(uint8,uint256,uint256)",
+    "unrated(uint8,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 16729,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget.sol",
+   "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 23807,
+   "classification": "D60: rateProviders() and rateProvider(address) hosted on this facet (owner ruling 2026-09-21, open item 10 PRD; re-hosted off the shared Target bases on 2026-09-22 to keep every facet under EIP-170); its facetFuncs() lists them, so the family's proxy selector set grows by these two selectors."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.json",
+   "added": [],
+   "removed": [
+    "exitProportional(uint256,address,uint256[],uint256)",
+    "exitProportionalFlexible(uint256,address,bool[],uint256[],uint256)",
+    "exitSingleAssetExactBptIn(address,uint256,address,uint256,uint256)",
+    "exitSingleAssetExactBptInFlexible(address,uint256,bool,address,uint256,uint256)",
+    "exitSingleAssetExactTokenOut(address,uint256,address,uint256,uint256)",
+    "previewBurnToToken(uint256,address)",
+    "previewDepositSingle(address,uint256)",
+    "previewDepositSingleFlexible(address,uint256,bool)",
+    "previewExitProportional(uint256)",
+    "previewExitProportionalFlexible(uint256,bool[])",
+    "previewExitSingleAssetExactBptIn(address,uint256)",
+    "previewExitSingleAssetExactBptInFlexible(address,uint256,bool)",
+    "previewExitSingleAssetExactTokenOut(address,uint256)",
+    "previewJoinProportional(uint256[])",
+    "previewJoinProportionalFlexible(uint256[],bool[])",
+    "previewJoinSingleAssetExactIn(address,uint256)",
+    "previewJoinSingleAssetExactInFlexible(address,uint256,bool)",
+    "previewJoinSingleAssetExactOut(address,uint256)",
+    "previewJoinUnbalanced(address[],uint256[])",
+    "previewJoinUnbalanced(uint256[])",
+    "previewWithdrawSingle(address,uint256)",
+    "previewWithdrawSingleExactOut(address,uint256)",
+    "previewWithdrawSingleFlexible(address,uint256,bool)",
+    "withdrawSingle(address,uint256,address,uint256,uint256)",
+    "withdrawSingleExactOut(address,uint256,address,uint256,uint256)",
+    "withdrawSingleFlexible(address,uint256,bool,address,uint256,uint256)"
+   ],
+   "runtimeBytes": 24357,
+   "classification": "D60: the rateProviders() / rateProvider(address) getters (and shareScale(address) on the Balancer-quad claim library) are inherited from the family Target base and appear in this artifact's ABI only; its facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+   "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol/UniswapV4StandardExchangeWeightedBufferHookClaimLib.json",
+   "added": [
+    "mapPairInToRatedWad(uint8,uint256)",
+    "nativeForRatedWad(uint8,uint256,bool)",
+    "pairInWithContext(uint8,uint256,address)",
+    "previewSwapExactInContext(address,address,uint256,address)",
+    "quoteSwapExactIn(uint8,uint8,uint256[],uint256)",
+    "quoteSwapExactInContext(uint8,uint8,uint256[],uint256,address)",
+    "quoteSwapExactOut(uint8,uint8,uint256[],uint256,uint256)",
+    "quoteSwapExactOutContext(uint8,uint8,uint256[],uint256,uint256,address)",
+    "ratedWadAllWithContext(address)",
+    "ratedWadForNativeUp(uint8,uint256)"
+   ],
+   "removed": [],
+   "runtimeBytes": 17048,
+   "classification": "Added versus the 2026-09-17 baseline. Identifiers are in committed library source. Stage 1 did not edit this file."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget.sol",
+   "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget.sol/UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 0,
+   "classification": "D60: rate-provider getters or external claim-library helpers (rated, ratedWith, unrated, shareScale) appear in this artifact's ABI through inheritance or as library externals; facetFuncs() does not list them, so the proxy selector set unchanged."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.json",
+   "added": [
+    "rateProvider(address)",
+    "rateProviders()"
+   ],
+   "removed": [],
+   "runtimeBytes": 20739,
+   "classification": "D60: rateProviders() and rateProvider(address) hosted on this facet (owner ruling 2026-09-21, open item 10 PRD; re-hosted off the shared Target bases on 2026-09-22 to keep every facet under EIP-170); its facetFuncs() lists them, so the family's proxy selector set grows by these two selectors."
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol",
+   "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.json",
+   "added": [],
+   "removed": [
+    "depositSingleFlexible(address,uint256,bool,address,uint256,uint256)",
+    "exitProportional(uint256,address,uint256[],uint256)",
+    "exitProportionalFlexible(uint256,address,bool[],uint256[],uint256)",
+    "exitSingleAssetExactBptIn(address,uint256,address,uint256,uint256)",
+    "exitSingleAssetExactBptInFlexible(address,uint256,bool,address,uint256,uint256)",
+    "exitSingleAssetExactTokenOut(address,uint256,address,uint256,uint256)",
+    "joinProportionalFlexible(uint256[],bool[],address,uint256,uint256)",
+    "joinSingleAssetExactInFlexible(address,uint256,bool,address,uint256,uint256)",
+    "joinUnbalanced(address[],uint256[],address,uint256,uint256)",
+    "previewBurnToToken(uint256,address)",
+    "previewDepositSingle(address,uint256)",
+    "previewDepositSingleFlexible(address,uint256,bool)",
+    "previewExitProportional(uint256)",
+    "previewExitProportionalFlexible(uint256,bool[])",
+    "previewExitSingleAssetExactBptIn(address,uint256)",
+    "previewExitSingleAssetExactBptInFlexible(address,uint256,bool)",
+    "previewExitSingleAssetExactTokenOut(address,uint256)",
+    "previewJoinProportional(uint256[])",
+    "previewJoinProportionalFlexible(uint256[],bool[])",
+    "previewJoinSingleAssetExactIn(address,uint256)",
+    "previewJoinSingleAssetExactInFlexible(address,uint256,bool)",
+    "previewJoinSingleAssetExactOut(address,uint256)",
+    "previewJoinUnbalanced(address[],uint256[])",
+    "previewJoinUnbalanced(uint256[])",
+    "previewWithdrawSingle(address,uint256)",
+    "previewWithdrawSingleExactOut(address,uint256)",
+    "previewWithdrawSingleFlexible(address,uint256,bool)",
+    "withdrawSingle(address,uint256,address,uint256,uint256)",
+    "withdrawSingleExactOut(address,uint256,address,uint256,uint256)",
+    "withdrawSingleFlexible(address,uint256,bool,address,uint256,uint256)"
+   ],
+   "runtimeBytes": 23939,
+   "classification": "D60: the rateProviders() / rateProvider(address) getters (and shareScale(address) on the Balancer-quad claim library) are inherited from the family Target base and appear in this artifact's ABI only; its facetFuncs() does not list them, so the proxy selector set unchanged."
+  }
+ ],
+ "missing": [
+  "out/UniswapV4FullSpreadStandardExchangeVaultCommon.sol/UniswapV4FullSpreadStandardExchangeVaultCommon.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol/UniswapV4FullSpreadStandardExchangeVaultDFPkg.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInBase.sol/UniswapV4FullSpreadStandardExchangeVaultInBase.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInExecutionDelegate.sol/UniswapV4FullSpreadStandardExchangeVaultInExecutionDelegate.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInFacet.sol/UniswapV4FullSpreadStandardExchangeVaultInFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInMultiFacet.sol/UniswapV4FullSpreadStandardExchangeVaultInMultiFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet.sol/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryTarget.sol/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInMultiTarget.sol/UniswapV4FullSpreadStandardExchangeVaultInMultiTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInQueryFacet.sol/UniswapV4FullSpreadStandardExchangeVaultInQueryFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInQueryTarget.sol/UniswapV4FullSpreadStandardExchangeVaultInQueryTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultInTarget.sol/UniswapV4FullSpreadStandardExchangeVaultInTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveFacet.sol/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveTarget.sol/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutBase.sol/UniswapV4FullSpreadStandardExchangeVaultOutBase.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget.sol/UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate.sol/UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutFacet.sol/UniswapV4FullSpreadStandardExchangeVaultOutFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet.sol/UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryTarget.sol/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget.sol/UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutQueryFacet.sol/UniswapV4FullSpreadStandardExchangeVaultOutQueryFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutQueryTarget.sol/UniswapV4FullSpreadStandardExchangeVaultOutQueryTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultOutTarget.sol/UniswapV4FullSpreadStandardExchangeVaultOutTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultPoolKeyAwareRepo.sol/UniswapV4FullSpreadStandardExchangeVaultPoolKeyAwareRepo.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultPoolManagerAwareRepo.sol/UniswapV4FullSpreadStandardExchangeVaultPoolManagerAwareRepo.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet.sol/UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultPositionImportTarget.sol/UniswapV4FullSpreadStandardExchangeVaultPositionImportTarget.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultPositionRepo.sol/UniswapV4FullSpreadStandardExchangeVaultPositionRepo.json",
+  "out/UniswapV4FullSpreadStandardExchangeVaultQuoteService.sol/UniswapV4FullSpreadStandardExchangeVaultQuoteService.json",
+  "out/UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.sol/UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.json"
+ ],
+ "note": "Post-split stage-1 comparison. Not audit submission. Historical evidence files were not overwritten. previewExchangeIn moved from ERC4626StandardExchangeInFacet to ERC4626StandardExchangeInFacetExt. Labels do not certify installed proxy cuts. The 32 missing artifacts are the pre-split FullSpread sources.",
+ "proxySelectorDiffCount": 13,
+ "newArtifacts": [
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt.sol",
+   "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt.json",
+   "runtimeBytes": 24147,
+   "sha256": "d91959b2f779d1a476d0384d31c394a4f341ff340da512132048bbb512c5c4ac",
+   "methodIdentifiers": {
+    "accruedRewards(address)": "128fced1",
+    "assetInfo()": "a40bee50",
+    "baseAmp()": "350b6630",
+    "claimRewards(address)": "ef5cfb8c",
+    "deposit(address,address,uint256,uint256)": "20e8c565",
+    "dexSwapFee()": "c1090523",
+    "ensurePairPools()": "09693f8d",
+    "exchangeRate()": "3ba0b9a9",
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "feeOracle()": "500b19e7",
+    "feeTo()": "017e7e58",
+    "firstJoinMustBeFullBook()": "eba7e025",
+    "getCurrentAmp()": "9a9dc92c",
+    "getRewardTokens()": "c4f59f9b",
+    "getTokensIn()": "213cae63",
+    "getTokensOut()": "071bc3c9",
+    "invScale(uint256)": "9d8cb9b7",
+    "isBuffered(uint256)": "cf147303",
+    "isFullBook()": "9bb2b3a0",
+    "isLive()": "b8f7a665",
+    "isValidTokenIn(address)": "fa5a4f06",
+    "isValidTokenOut(address)": "784367d6",
+    "kLast()": "7464fc3d",
+    "nativeReserve(uint256)": "091f93c4",
+    "nativeReserves()": "afdcc795",
+    "numTokens()": "8e499bcf",
+    "ownerOnlyLiquidity()": "fe884e28",
+    "pairDoorCount()": "50e1d9cc",
+    "permit2()": "12261ee7",
+    "poolManager()": "dc4c90d3",
+    "previewDeposit(address,uint256)": "b8f82b26",
+    "previewDepositSingle(address,uint256)": "b4ebddb3",
+    "previewDepositSingleFlexible(address,uint256,bool)": "a842f57c",
+    "previewJoinAfterDeposit(address,address,uint256)": "0aa5af87",
+    "previewJoinProportional(uint256[])": "052a3ce9",
+    "previewJoinProportionalFlexible(uint256[],bool[])": "669b0df3",
+    "previewJoinSingleAssetExactIn(address,uint256)": "c9ce79e1",
+    "previewJoinSingleAssetExactInFlexible(address,uint256,bool)": "434cba90",
+    "previewJoinSingleAssetExactOut(address,uint256)": "3ab7ac69",
+    "previewJoinUnbalanced(address[],uint256[])": "1da946ac",
+    "previewJoinUnbalanced(uint256[])": "41d7507d",
+    "previewRedeem(address,uint256)": "cbe52ae3",
+    "previewSynthetic((uint256,uint256,uint256,uint256),address)": "9e13dc65",
+    "rateProvider(uint256)": "a92d1ee9",
+    "ratedBalance(uint256)": "76d195dc",
+    "ratedBalances()": "c7350977",
+    "ratedScale(uint256)": "2e43148f",
+    "redeem(address,uint256,address,uint256,bool)": "769f8e5d",
+    "requiredFirstBondTokens()": "a21c62eb",
+    "rewardIndexesCurrent()": "f8b2f991",
+    "rewardIndexesStored()": "da88ecb4",
+    "seBalance(uint256)": "5fe8f805",
+    "seClaim(uint256)": "0ba95f7d",
+    "standardExchange(uint256)": "f9f05e50",
+    "standardExchangeOf(address)": "29212177",
+    "syntheticNumeraires()": "471d2393",
+    "token(uint256)": "044215c6",
+    "tokens()": "9d63848a",
+    "tradingFeeWad()": "3bd12041",
+    "usageFee()": "34aef4c8",
+    "yieldToken()": "76d5de85"
+   },
+   "artifactSha256": "cf9b30f3d442281c2b7b5d53b367c984f0207038ff6ac3681b1fe7c42a1d50a3",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  },
+  {
+   "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol",
+   "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.json",
+   "runtimeBytes": 21532,
+   "sha256": "1337de6356880876312d80dbe3c5e7d6bb65a878a51de9c2b241d618062f2b1c",
+   "methodIdentifiers": {
+    "dexSwapFee()": "c1090523",
+    "ensurePairPools()": "09693f8d",
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "feeOracle()": "500b19e7",
+    "feeTo()": "017e7e58",
+    "firstJoinMustBeFullBook()": "eba7e025",
+    "getNormalizedWeights()": "f89f27ed",
+    "invScale(uint256)": "9d8cb9b7",
+    "isBuffered(uint256)": "cf147303",
+    "isFullBook()": "9bb2b3a0",
+    "isLive()": "b8f7a665",
+    "kLast()": "7464fc3d",
+    "kLastMode()": "13dd1fcc",
+    "nativeReserve(uint256)": "091f93c4",
+    "nativeReserves()": "afdcc795",
+    "numTokens()": "8e499bcf",
+    "ownerOnlyLiquidity()": "fe884e28",
+    "pairDoorCount()": "50e1d9cc",
+    "permit2()": "12261ee7",
+    "poolManager()": "dc4c90d3",
+    "previewDepositSingle(address,uint256)": "b4ebddb3",
+    "previewDepositSingleFlexible(address,uint256,bool)": "a842f57c",
+    "previewJoinAfterDeposit(address,address,uint256)": "0aa5af87",
+    "previewJoinProportional(uint256[])": "052a3ce9",
+    "previewJoinProportionalFlexible(uint256[],bool[])": "669b0df3",
+    "previewJoinSingleAssetExactIn(address,uint256)": "c9ce79e1",
+    "previewJoinSingleAssetExactInFlexible(address,uint256,bool)": "434cba90",
+    "previewJoinSingleAssetExactOut(address,uint256)": "3ab7ac69",
+    "previewJoinUnbalanced(address[],uint256[])": "1da946ac",
+    "previewJoinUnbalanced(uint256[])": "41d7507d",
+    "rateProvider(uint256)": "a92d1ee9",
+    "ratedBalance(uint256)": "76d195dc",
+    "ratedBalances()": "c7350977",
+    "ratedScale(uint256)": "2e43148f",
+    "requiredFirstBondTokens()": "a21c62eb",
+    "seBalance(uint256)": "5fe8f805",
+    "seClaim(uint256)": "0ba95f7d",
+    "standardExchange(uint256)": "f9f05e50",
+    "standardExchangeOf(address)": "29212177",
+    "syntheticNumeraires()": "471d2393",
+    "token(uint256)": "044215c6",
+    "tokens()": "9d63848a",
+    "tradingFeeWad()": "3bd12041",
+    "usageFee()": "34aef4c8",
+    "weight(uint256)": "f8e27f93"
+   },
+   "artifactSha256": "c106f7b2e616439b5eef8ff3736ca4a5e5c9bec14e2a367d9370403a86d20cbf",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  },
+  {
+   "source": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInFacetExt.sol",
+   "artifact": "out/SlipstreamStandardExchangeInFacetExt.sol/SlipstreamStandardExchangeInFacetExt.json",
+   "runtimeBytes": 17903,
+   "sha256": "d4925d04b92a631df048c4efb4603a4ef73ddd6d3cba2e22e4b6c9807c1d6d8f",
+   "methodIdentifiers": {
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "previewExchangeIn(address,uint256,address)": "89d61912",
+    "uniswapV3MintCallback(uint256,uint256,bytes)": "d3487997",
+    "uniswapV3SwapCallback(int256,int256,bytes)": "fa461e33"
+   },
+   "artifactSha256": "81ca1869f973e7ceb78b5171eb022a921eb725ebf801318cd6e7d62b3aee5312",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  },
+  {
+   "source": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol",
+   "artifact": "out/BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol/BalancerV3PoolStandardExchangeTransitionQuoteFacet.json",
+   "runtimeBytes": 13721,
+   "sha256": "df8c8b2e1f00eb7a95dadc5a52321800bd29b41367c46ef2085d2cb609db3ceb",
+   "methodIdentifiers": {
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "quoteAssets(bytes,uint256)": "dedbf308",
+    "quoteShareBalance(bytes)": "2e5f15dc",
+    "quoteState(address,address)": "844c633c",
+    "quoteTotalSupply(bytes)": "43225235",
+    "quoteTransition(bytes,uint8,uint256)": "2fb41732"
+   },
+   "artifactSha256": "88e4c5e49edc9a945703651a277908d3773effaa40c6ece7e5618a24e3c3da8e",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  },
+  {
+   "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopStandardExchangeTransitionQuoteFacet.sol",
+   "artifact": "out/AaveCrossVersionLoopStandardExchangeTransitionQuoteFacet.sol/AaveCrossVersionLoopStandardExchangeTransitionQuoteFacet.json",
+   "runtimeBytes": 8692,
+   "sha256": "e113092824298bd380060b2e3cc4543cab01e8fd96d624cc063a879ec4efcc3a",
+   "methodIdentifiers": {
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "initCrossVersionLoop((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,string,string))": "4aff9fa0",
+    "quoteAssets(bytes,uint256)": "dedbf308",
+    "quoteShareBalance(bytes)": "2e5f15dc",
+    "quoteState(address,address)": "844c633c",
+    "quoteTotalSupply(bytes)": "43225235",
+    "quoteTransition(bytes,uint8,uint256)": "2fb41732"
+   },
+   "artifactSha256": "ef4649ef84084effec2e8f2ebead3bb19a0c317c333876d50442fac504f32d18",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  },
+  {
+   "source": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol",
+   "artifact": "out/ERC4626StandardExchangeInFacetExt.sol/ERC4626StandardExchangeInFacetExt.json",
+   "runtimeBytes": 14815,
+   "sha256": "d0f2ce2d0ba3041a4911358dfec708999e5e9cdabfd79d40b3f133172c2ba6a9",
+   "methodIdentifiers": {
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "previewExchangeIn(address,uint256,address)": "89d61912",
+    "protocolVault()": "5a9249e6",
+    "quoteAssets(bytes,uint256)": "dedbf308",
+    "quoteExternalDeposit(bytes,address,uint256)": "cad1be6b",
+    "quoteExternalExchange(bytes,address,uint256)": "0558d1f9",
+    "quoteShareBalance(bytes)": "2e5f15dc",
+    "quoteState(address,address)": "844c633c",
+    "quoteTotalSupply(bytes)": "43225235",
+    "quoteTransition(bytes,uint8,uint256)": "2fb41732"
+   },
+   "artifactSha256": "6170046845ca44e2d28ba412edb8bd422db18bf81c7afc06afda1c7e2f8f84d3",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  },
+  {
+   "source": "contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol",
+   "artifact": "out/ReceiptBackedERC4626Facet.sol/ReceiptBackedERC4626Facet.json",
+   "runtimeBytes": 6980,
+   "sha256": "d685ecbf4adc8126b2c16a35796ab392a8b9cb56c4408157504fd3a9ab4aee1a",
+   "methodIdentifiers": {
+    "asset()": "38d52e0f",
+    "convertToAssets(uint256)": "07a2d13a",
+    "convertToShares(uint256)": "c6e6f592",
+    "deposit(uint256,address)": "6e553f65",
+    "facetFuncs()": "574a4cff",
+    "facetInterfaces()": "2ea80826",
+    "facetMetadata()": "f10d7a75",
+    "facetName()": "5b6f4d01",
+    "maxDeposit(address)": "402d267d",
+    "maxMint(address)": "c63d75b6",
+    "maxRedeem(address)": "d905777e",
+    "maxWithdraw(address)": "ce96cb77",
+    "mint(uint256,address)": "94bf804d",
+    "previewDeposit(uint256)": "ef8b30f7",
+    "previewMint(uint256)": "b3d7f6b9",
+    "previewRedeem(uint256)": "4cdad506",
+    "previewWithdraw(uint256)": "0a28a477",
+    "redeem(uint256,address,address)": "ba087652",
+    "totalAssets()": "01e1d114",
+    "withdraw(uint256,address,address)": "b460af94"
+   },
+   "artifactSha256": "c22dd56b16df0762e37911d57b59fcb90ff97df352454aeacc768eb37598ce86",
+   "status": "NEW_ARTIFACT_NO_HISTORICAL_BASELINE"
+  }
+ ],
+ "newArtifactCount": 7,
+ "selectorCoverage": "Artifact ABI comparison only. New units have no historical ABI baseline; proxy selector sets require deployed cuts/loupe verification."
+}

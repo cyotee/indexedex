@@ -268,12 +268,38 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
     function _roundingToZeroControl() internal {
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 hookFace = IERC20(face).balanceOf(hook);
+        uint256 bookedBefore = fx.seBooked();
+        (bool previewOk, bytes memory previewRet) = address(single).staticcall(
+            abi.encodeWithSignature("previewDepositSingle(address,uint256)", face, uint256(1))
+        );
         vm.prank(user);
-        try single.depositSingle(face, 1, user, 0, block.timestamp + 1 hours) returns (uint256) {
-            assertEq(userFace - IERC20(face).balanceOf(user), 1, "dust taken, not refunded");
-        } catch {
-            assertEq(IERC20(face).balanceOf(user), userFace, "rejected dust leaves the caller untouched");
-            assertEq(IERC20(face).balanceOf(hook), hookFace, "rejected dust leaves the hook untouched");
+        (bool ok, bytes memory ret) = address(single).call(
+            abi.encodeWithSignature(
+                "depositSingle(address,uint256,address,uint256,uint256)",
+                face, uint256(1), user, uint256(0), block.timestamp + 1 hours
+            )
+        );
+        if (!ok) {
+            assertTrue(ret.length >= 4, "dust rejection has a selector");
+            bytes4 sel = bytes4(ret);
+            bool named = sel == bytes4(keccak256("InsufficientTokenOut()")) || sel == bytes4(keccak256("ZeroAmount()"));
+            bool previewMatch = !previewOk && previewRet.length >= 4 && sel == bytes4(previewRet);
+            assertTrue(named || previewMatch, "dust rejection is ZeroAmount or InsufficientTokenOut");
+            assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
+            assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
+            assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
+            return;
+        }
+        uint256 shares = abi.decode(ret, (uint256));
+        if (previewOk && previewRet.length >= 32) {
+            assertEq(shares, abi.decode(previewRet, (uint256)), "dust execution matches its preview");
+        }
+        assertEq(userFace - IERC20(face).balanceOf(user), 1, "dust taken, not refunded");
+        if (shares == 0) {
+            assertTrue(
+                IERC20(face).balanceOf(hook) == hookFace + 1 || fx.seBooked() == bookedBefore + 1,
+                "zero output retains the dust in the book"
+            );
         }
     }
 

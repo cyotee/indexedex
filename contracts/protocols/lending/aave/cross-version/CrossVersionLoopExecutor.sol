@@ -14,6 +14,8 @@ import {ReserveConfiguration} from
     "@crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/configuration/ReserveConfiguration.sol";
 import {TokenMath} from
     "@crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/helpers/TokenMath.sol";
+import {PercentageMath} from
+    "@crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/math/PercentageMath.sol";
 import {ISpoke} from "@crane/contracts/protocols/lending/aave/v4/spoke/interfaces/ISpoke.sol";
 import {IHub} from "@crane/contracts/protocols/lending/aave/v4/hub/interfaces/IHub.sol";
 
@@ -92,10 +94,21 @@ library CrossVersionLoopExecutor {
         if (supplyCap == 0) return type(uint256).max;
         DataTypes.ReserveDataLegacy memory rd = m.v36Pool.getReserveData(address(m.tokenA));
         uint256 index = m.v36Pool.getReserveNormalizedIncome(address(m.tokenA));
-        uint256 used = (IAToken(rd.aTokenAddress).scaledTotalSupply() + uint256(rd.accruedToTreasury))
-            .getATokenBalance(index);
+        uint256 treasury = uint256(rd.accruedToTreasury);
+        if (rd.lastUpdateTimestamp != block.timestamp && cfg.getReserveFactor() != 0) {
+            uint256 scaledDebt = IScaledBalanceToken(rd.variableDebtTokenAddress).scaledTotalSupply();
+            uint256 nextDebtIndex = m.v36Pool.getReserveNormalizedVariableDebt(address(m.tokenA));
+            uint256 accruedDebt = Math.mulDiv(scaledDebt, nextDebtIndex - rd.variableBorrowIndex, 1e27);
+            uint256 treasuryAssets = PercentageMath.percentMul(accruedDebt, cfg.getReserveFactor());
+            treasury += treasuryAssets.getATokenMintScaledAmount(index);
+        }
+        uint256 usedScaled = IAToken(rd.aTokenAddress).scaledTotalSupply() + treasury;
         uint256 capTokens = supplyCap * (10 ** cfg.getDecimals());
-        return capTokens > used ? capTokens - used : 0;
+        // Supply validates floor(totalScaled * index / RAY) against the cap,
+        // after adding floor(amount * RAY / index) newly minted aTokens.
+        uint256 maxScaled = Math.mulDiv(capTokens + 1, 1e27, index, Math.Rounding.Ceil) - 1;
+        if (maxScaled <= usedScaled) return 0;
+        return Math.mulDiv(maxScaled - usedScaled + 1, index, 1e27, Math.Rounding.Ceil) - 1;
     }
 
     /// @notice Deposit `amountA` of tokenA and build the leveraged cross-version loop (A-first):

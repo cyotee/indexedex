@@ -312,6 +312,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinCore is
     function _commitJoin(uint256[] memory pairUsed, address to, uint256 shares, bool firstMint)
         internal
     {
+        if (shares == 0) revert IStandardExchangeErrors.MinAmountNotMet(1, 0);
         _pullAmounts(pairUsed);
         _bufferLast(pairUsed);
         if (firstMint) {
@@ -741,6 +742,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinCore is
         uint256 shares,
         bool firstMint
     ) internal {
+        if (shares == 0) revert IStandardExchangeErrors.MinAmountNotMet(1, 0);
         Repo.Layout storage l = Repo._layout();
         // Pull edge units (pair or SE share), then buffer-last pair legs only.
         for (uint8 i; i < l.numTokens; ++i) {

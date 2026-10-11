@@ -153,27 +153,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
     function _exitSingleAsset(address tokenOut, uint256 shares, address to, uint256 deadline)
         private returns (uint256 amountOut)
     {
-        address pair = _resolveBurnTokenOut(tokenOut);
-        if (pair == address(0)) revert InvalidRoute(tokenOut, address(0));
-        if (to == address(0)) revert ZeroAddress();
-        uint256 freeBefore = _freeTokenBalance(pair);
-        uint256[3] memory amounts;
-        (amounts[0], amounts[1], amounts[2]) = _removeLiquidityAndSettle(
-            shares, address(this), 0, 0, 0, deadline, false
-        );
-        for (uint8 i; i < 3; ++i) {
-            address input = Repo._tokenAt(Repo._layout(), i);
-            if (input == pair || amounts[i] == 0) continue;
-            _swapExitResidual(input, pair, amounts[i]);
-        }
-        amountOut = _freeTokenBalance(pair) - freeBefore;
-        if (tokenOut != pair && amountOut > 0) amountOut = _bufferToken(pair, amountOut);
-        IERC20(tokenOut).safeTransfer(to, amountOut);
-        _syncVaultReserves();
-    }
-
-    function _swapExitResidual(address tokenIn, address tokenOut, uint256 amountIn) private {
-        _internalSwapExactIn(tokenIn, tokenOut, amountIn, _feeOracle().dexSwapFeeOfVault(address(this)));
+        return _exitSingleAssetFrom(msg.sender, tokenOut, shares, to, deadline);
     }
 
     function exitSingleAssetExactTokenOut(
@@ -224,20 +204,5 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         return _fromWadFloor(tokenOut, _toWad(tokenIn, amountIn));
     }
 
-    function _resolveBurnTokenOut(address tokenOut) private view returns (address) {
-        Repo.Layout storage l = Repo._layout();
-        UniswapV4SeBufferHookLegLib.LegKind kind_ =
-            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
-        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            return l.legs.pairOfStandardExchange[tokenOut];
-        }
-        if (
-            kind_ == UniswapV4SeBufferHookLegLib.LegKind.Pair
-                || kind_ == UniswapV4SeBufferHookLegLib.LegKind.Detf
-        ) {
-            return tokenOut;
-        }
-        return address(0);
-    }
 
 }

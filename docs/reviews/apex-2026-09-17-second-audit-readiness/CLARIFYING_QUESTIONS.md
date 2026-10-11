@@ -3,7 +3,7 @@
 - **Date:** 2026-10-03
 - **Status:** targeted follow-up, not a new review round and not consensus
 - **PRD:** `docs/reviews/apex-2026-09-17-second-audit-readiness/REMEDIATION_PRD.md`
-- **This file records the coordinator's question list.** It does not authorize code changes and does not amend the remediation PRD.
+- **This file records the coordinator's question list.** Owner answers are recorded in the remediation PRD. This file does not authorize code changes.
 
 All four existing sessions answered. Astra was not censored. Session IDs are unchanged:
 
@@ -27,51 +27,33 @@ Source question files:
 
 ### 1. REQ-01 and REQ-02: remove the residual catches, or keep some under a written exception?
 
-Astra, MiniMax, and Kimi say the PRD allows either outcome, so an implementer cannot choose. Grok does not treat this as open: no owner amendment was found, so the implementer should restore hard propagation.
+**Decided 2026-10-06 as OD-01.** A preview result of `0` is the only signal that a residual deposit cannot be processed. The leftover stays booked and the parent operation continues. Any revert rolls the transaction back. No new catch exception is required. The `supportsInterface` probe is not decided by OD-01.
 
-If an exception is wanted, name the function, the permitted error, and the exact retained or rolled-back result. The sites are not the same:
-
-- Operative residual joins in `UniswapV4DetfCommon.sol` around lines 572, 604, 628, and 642.
-- Interface probes and sub-share qualification around lines 664–685.
-- Residual parking around lines 699–721.
-- `previewResidualBuffer` at `UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol:246-257`.
-
-The product choice is whether a residual that cannot be joined should revert the operation, or stay locally owned without being credited or paid out.
+The wings vault PRD was included as related design context only. It does not authorize a DETF catch.
 
 ### 2. REQ-07: what happens to the gas-gated `quoteState` probe?
 
-All four ask this. The PRD says remove it or amend it, and then says a failed call follows "the locked hard or exact-length rule." Those are different fixes.
-
-- Delete the snapshot call. Empty-state rates use the live probe only.
-- Keep the snapshot call and revert if it fails, returns short data, or cannot be paid for.
-- Keep a non-reverting exact-length fall-through, and say which rate that path must return.
-- Keep the current gas-gated fall-through only if an amendment names the gas bound and the required rate match.
-
-Kimi also asks whether open-item 10 already authorized this probe, and whether any production SE needs it for a correct rate. That was not established in the review.
+**Decided 2026-10-06 as OD-02.** A plain rate call uses the live preview. It does not call `quoteState` and does not check remaining gas. A hook that already holds a snapshot may still pass that snapshot into the rate quote. A failed snapshot is not silently replaced with the live rate. Vault snapshot functions stay. The Full Spread gas workaround is not a reason to keep the self-snapshot.
 
 ### 3. REQ-06: which rounding direction closes the double floor?
 
-Only MiniMax treats this as open. Astra, Grok, and Kimi say the acceptance text is already enough: return the full owner balance when that balance's rounded receipt payout is within held receipts, and otherwise use one consistent cap that still rejects a redeem above receipt inventory.
-
-If a specific direction is wanted, say floor, ceiling, or parity with `previewRedeem`. Otherwise an implementer can follow the acceptance text as written.
+**Decided 2026-10-06 as OD-03.** The current formula is not correct. `maxRedeem` becomes the share cap, in the OpenZeppelin ERC-4626 v5.7.0 direction, and `maxWithdraw` becomes `previewRedeem` of that cap. The uncapped OpenZeppelin `balanceOf` return applies only when `previewRedeem` of the full balance is payable from held receipts and is not zero. This is not a port of OpenZeppelin virtual shares.
 
 ### 4. REQ-05: what must the replacement FullSpread prove?
 
-Only Kimi treats this as open. The others say the cited supplement must stop being labeled as the stale-total boundary, and a real stale-book control must be cited.
-
-Kimi asks whether the equality and greater-than cases exist only on the preserved implementation, with the replacement checked after an external pool trade that does not sync the vault, or whether the replacement needs its own named boundary set.
+**Decided 2026-10-06 as OD-04.** The old incorrect vault is not kept merely to prove the new vaults. FullSpread and the wings vault each get their own outside-trade credit test. The old equality and greater-than cases are not reconstructed. The current supplement is not the stale-reserve proof. This review does not write the tests.
 
 ### 5. REQ-08: was the current FullSpread V4 split authorized?
 
-Only Kimi asks this. If the hookless and Pons-family split is ratified, REQ-08 is an evidence map and a fresh source-bound run. If it was not authorized, the later task may have to restructure or revert that package shape before regenerating evidence.
+**Decided 2026-10-06 as OD-05.** The owner specifically requested the split. Distinct packages stay for specific Uniswap V4 hooks. Do not merge them back. Evidence names the current files. Whether a later package may reuse the wings vault on a Pons-configured pool is a separate open question, not decided by OD-05.
 
 ### 6. How wide is the later implementation task?
 
-Only Astra asks this. The PRD can be read as eight repairs, with the other criteria left unverified, or as a renewed certification of all 108 criteria plus the full hermetic, release-count, and fork gates.
+**Decided 2026-10-06 as OD-06.** Do both, in stages. Stage 1 is the repairs in this PRD and their tests, used as a fast-fail check. Stage 2 reopens the full APEX program, including the broader changes and new vaults, before audit submission. Stage 1 passing is not submission.
 
-### 7. May implementing tests still contain defensive red/green regressions?
+### 7. May implementing tests still contain defensive regressions?
 
-Only Astra asks this. The PRD forbids exploit procedures, proof-of-concept code, payloads, and attack parameters in implementing tests. It does not say whether a hermetic production-route test may still show the old assertion failing on preserved source and passing on the replacement, as long as the report does not describe how to attack a live system.
+**Decided 2026-10-06 as OD-07.** Option 1 is the project rule. Tests must exercise the real production path and assert the exact corrected security result, including that the forbidden credit or payout does not occur. Reports and test names must not describe how to attack a live system. A red run on preserved old source is not required.
 
 ## Already specific enough for the reviewers who did not ask
 
@@ -79,4 +61,4 @@ REQ-03 and REQ-04 were not questioned. The required tests are exact errors, unch
 
 ## Next step
 
-Work through each question above. The remediation PRD is unchanged until those answers are recorded.
+Questions 1 through 7 are decided in the remediation PRD. No clarifying question from this list remains open.

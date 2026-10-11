@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 
@@ -222,6 +223,8 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
 
     /// @notice Seed leftover self-shares as R; fat max + this-call unused only `used` does not pay R.
     function test_E6_exchangeOut_zap_doesNotSweepOtherUsersShares() public {
+        // Reach prepaid-credit accounting through an eligible integrating-contract caller.
+        attacker = address(new AtomicPretransferCaller());
         uint256 leftover_ = _mintSeShares(victim, TEST_AMT);
         uint256 attackerShares_ = _mintSeShares(attacker, TEST_AMT);
         uint256 used_ = attackerShares_ / 2;
@@ -258,6 +261,7 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
 
     /// @notice Exact used delivery after leftover is booked refunds 0 leftover shares.
     function test_E6_exchangeOut_zap_exactUsed_doesNotRefundBookedLeftover() public {
+        attacker = address(new AtomicPretransferCaller());
         uint256 leftover_ = _mintSeShares(victim, TEST_AMT);
         uint256 attackerShares_ = _mintSeShares(attacker, TEST_AMT);
 
@@ -284,6 +288,7 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
 
     /// @notice In zap-out fat claim against booked leftover reverts (no self-balance U).
     function test_E6_exchangeIn_zapOut_fatClaim_doesNotSkimBookedShares() public {
+        attacker = address(new AtomicPretransferCaller());
         uint256 leftover_ = _mintSeShares(victim, TEST_AMT);
         uint256 attackerShares_ = _mintSeShares(attacker, TEST_AMT / 2);
         if (attackerShares_ == 0) attackerShares_ = _mintSeShares(attacker, TEST_AMT);

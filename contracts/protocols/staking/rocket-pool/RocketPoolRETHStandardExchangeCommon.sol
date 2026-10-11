@@ -493,8 +493,10 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
     }
 
     /**
-     * @dev After WETH→SE mint: best-effort stake overage toward liquid target (capacity-capped).
-     *      PRD D22/D23: never revert SE mint because stakeable == 0.
+     * @dev After WETH→SE mint: one stake of the sleeve excess.
+     *      Excess below the deposit minimum stays in the sleeve and accumulates.
+     *      A later credit may make that accumulated excess depositable.
+     *      PRD D22/D23: never revert SE mint because nothing was staked.
      *      Deposit fee may socialize eth-value drag (accepted).
      */
     function _bestEffortStakeOverageTowardTarget() internal {
@@ -502,15 +504,8 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
         if (liquid == 0) return;
         uint256 target = (totalReserveEth() * targetLiquidReservePercentage()) / ONE_WAD;
         if (liquid <= target) return;
-        uint256 eligible = liquid - target;
-        uint256 booked = _bookedReserve(IERC20(weth()));
-        uint256 fromBooked = eligible < booked ? eligible : booked;
-        if (fromBooked > 0) {
-            _stakeWethToRethSoft(fromBooked);
-        }
-        liquid = liquidReserveEth();
-        target = (totalReserveEth() * targetLiquidReservePercentage()) / ONE_WAD;
-        if (liquid <= target) return;
-        _stakeWethToRethSoft(liquid - target);
+        uint256 excess = liquid - target;
+        if (excess < _minimumDeposit()) return;
+        _stakeWethToRethSoft(excess);
     }
 }

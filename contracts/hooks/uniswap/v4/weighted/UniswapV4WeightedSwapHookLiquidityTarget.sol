@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+
 import {
     toBeforeSwapDelta,
     BeforeSwapDelta
@@ -14,8 +16,8 @@ import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
-import {ISignatureTransfer} from
-    "@crane/contracts/interfaces/protocols/utils/permit2/ISignatureTransfer.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookPullLib as PullLib} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol";
 import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -702,48 +704,21 @@ abstract contract UniswapV4WeightedSwapHookLiquidityTarget is UniswapV4WeightedS
         }
 
         if (mode == 0) {
-            (, ISignatureTransfer.PermitBatchTransferFrom memory permit, bytes memory signature) =
-                abi.decode(permit2Data, (uint8, ISignatureTransfer.PermitBatchTransferFrom, bytes));
-            _pullSignatureBatch(used, permit, signature);
+            PullLib.pullSignatureBatch(l.tokens, msg.sender, used, permit2Data);
         } else if (mode == 1) {
             for (uint256 i; i < l.numTokens; ++i) {
                 if (used[i] > 0) {
+                    if (used[i] > type(uint160).max) revert InvalidPermit2Data();
+                    uint256 beforeBalance = IERC20(l.tokens[i]).balanceOf(address(this));
                     IAllowanceTransfer(PERMIT2).transferFrom(
                         msg.sender, address(this), uint160(used[i]), l.tokens[i]
                     );
+                    _requireReceived(l.tokens[i], used[i], beforeBalance);
                 }
             }
         } else {
             revert InvalidPermit2Data();
         }
-    }
-
-
-    function _pullSignatureBatch(
-        uint256[] memory used,
-        ISignatureTransfer.PermitBatchTransferFrom memory permit,
-        bytes memory signature
-    ) internal {
-        Repo.Layout storage l = Repo._layout();
-        uint256 n;
-        for (uint256 i; i < l.numTokens; ++i) {
-            if (used[i] > 0) ++n;
-        }
-        if (permit.permitted.length != n) revert InvalidPermit2Data();
-
-        ISignatureTransfer.SignatureTransferDetails[] memory details =
-            new ISignatureTransfer.SignatureTransferDetails[](n);
-        uint256 k;
-        for (uint256 i; i < l.numTokens; ++i) {
-            if (used[i] == 0) continue;
-            if (permit.permitted[k].token != l.tokens[i]) revert InvalidPermit2Data();
-            details[k] = ISignatureTransfer.SignatureTransferDetails({
-                to: address(this),
-                requestedAmount: used[i]
-            });
-            ++k;
-        }
-        ISignatureTransfer(PERMIT2).permitTransferFrom(permit, details, msg.sender, signature);
     }
 
 

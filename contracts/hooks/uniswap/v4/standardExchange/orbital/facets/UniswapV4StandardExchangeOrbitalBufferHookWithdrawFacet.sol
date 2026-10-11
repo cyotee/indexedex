@@ -19,6 +19,18 @@ contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet is
     UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget,
     IFacet
 {
+    address private immutable NATIVE_SY_SELF = address(this);
+    error DelegateCallRequired();
+
+    /// @dev Not installed on the proxy. The native SY facet retains authorization and its lock.
+    function executeVaultHeldRedemption(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        external returns (uint256 amount_)
+    {
+        if (address(this) == NATIVE_SY_SELF) revert DelegateCallRequired();
+        amount_ = _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, block.timestamp);
+        if (amount_ < minimum_) revert InsufficientTokenOut();
+    }
+
     function facetName() public pure returns (string memory) {
         return type(UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet).name;
     }

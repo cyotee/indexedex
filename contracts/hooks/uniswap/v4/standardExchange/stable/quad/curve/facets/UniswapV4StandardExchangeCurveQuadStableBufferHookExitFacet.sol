@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
@@ -15,6 +17,20 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet is
     UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget,
     IFacet
 {
+    address private immutable NATIVE_SY_SELF = address(this);
+    error DelegateCallRequired();
+
+    /// @dev Not installed on the proxy. The native SY facet retains authorization and its lock.
+    function executeVaultHeldRedemption(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        external returns (uint256 amount_)
+    {
+        if (address(this) == NATIVE_SY_SELF) revert DelegateCallRequired();
+        Repo.Layout storage l_ = Repo._layout();
+        bool asShare_ = LegLib.classify(l_.legs, tokenOut_) == LegLib.LegKind.StandardExchange;
+        address pair_ = asShare_ ? l_.legs.pairOfStandardExchange[tokenOut_] : tokenOut_;
+        return _exitSingleAssetFrom(address(this), pair_, shares_, asShare_, receiver_, minimum_);
+    }
+
     function facetName() public pure returns (string memory) {
         return type(UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet).name;
     }

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -196,6 +197,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
         returns (uint256 seOut)
     {
         seOut = _previewWrap(pairIn);
+        if (seOut == 0) revert IStandardExchangeErrors.MinAmountNotMet(1, 0);
         _take(pairC, address(this), pairIn);
         // SE pulls via transferFrom; do not pretransfer+true free-mint path.
         IERC20(_pair()).forceApprove(_se(), pairIn);

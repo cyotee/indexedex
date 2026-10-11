@@ -1,0 +1,59 @@
+ M contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol
+ M contracts/test/bases/DETFFundedStakingArtifacts.sol
+ M contracts/test/bases/TestBase_ERC4626StandardExchange.sol
+ M contracts/test/stubs/ApexD48QuoteReplyFixture.sol
+ M contracts/test/stubs/ReentrantERC20Harness.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol
+ M contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol
+ M contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol
+ M contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol
+ M contracts/vaults/standard/erc4626/ERC4626StandardExchange_Component_FactoryService.sol
+ M contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol
+ M contracts/vaults/standard/erc4626/ReceiptBackedERC4626Target.sol
+ M docs/audits/apex-2026-09-17-evidence/bare-expectrevert.txt
+ M docs/reviews/apex-2026-09-17-second-audit-readiness/CLARIFYING_QUESTIONS.md
+ M docs/reviews/apex-2026-09-17-second-audit-readiness/REMEDIATION_PRD.md
+ M scripts/apex_bare_expectrevert_scan.sh
+ M scripts/r12_selector_size_compare.py
+ M scripts/test_r12_selector_size_compare.py
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrixBehavior.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrixBehavior.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleSEBufferHook_SeMatrixBehavior.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBehavior.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior.sol
+ M test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Adversarial.t.sol
+ M test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Fuzz.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol
+ M test/foundry/spec/vaults/standard/erc4626/ReceiptBackedERC4626_SharedFacet.t.sol
+ M test/foundry/spec/vaults/standard/erc4626/behaviors/Behavior_ReceiptBackedERC4626_CrossInterface.sol
+ M test/foundry/spec/vaults/standard/erc4626/behaviors/ReceiptBackedERC4626_CrossInterface.t.sol
+ M test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchange_RateProvider.t.sol
+ M test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_FeeCompound.t.sol
+ M test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/AttributionAndBooking.t.sol
+ M test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/AttributionAndBooking.t.sol
+ M test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultMoney.t.sol
+?? contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol
+?? contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTargetExt.sol
+?? docs/plans/APEX_STAGE2_REVIEW_PRD.md
+?? docs/plans/APEX_STAGE2_REVIEW_PRD.plan.md
+?? docs/research/apex-stage2-plan-authoring-2026-10-07/
+?? docs/research/apex-stage2-prd-authoring-2026-10-07/
+?? docs/research/apex-stage2-prd-readiness-2026-10-07/
+?? docs/research/apex-stage2-review/
+?? docs/research/apex-stage2-understanding-2026-10-07/
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/REMEDIATION_PRD.plan.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/STAGE1_EVIDENCE.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/astra-maxredeem.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/astra-prd-consistency.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/grok-maxredeem.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/grok-prd-consistency.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/kimi-maxredeem.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/kimi-prd-consistency.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/minimax-maxredeem.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/minimax-prd-consistency.md
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/selector-size-compare-stage1-current.json
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/selector-size-compare-stage1-post-split.json
+?? docs/reviews/apex-2026-09-17-second-audit-readiness/selector-size-compare-stage1.json

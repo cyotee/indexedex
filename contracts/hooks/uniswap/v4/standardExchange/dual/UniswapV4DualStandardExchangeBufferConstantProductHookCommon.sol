@@ -734,6 +734,13 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 deadline,
         bool refundDust
     ) internal returns (uint256 amount0, uint256 amount1) {
+        return _withdrawFrom(msg.sender, lpAmount, to, minAmount0, minAmount1, deadline, refundDust);
+    }
+
+    function _withdrawFrom(
+        address holder, uint256 lpAmount, address to, uint256 minAmount0,
+        uint256 minAmount1, uint256 deadline, bool refundDust
+    ) internal returns (uint256 amount0, uint256 amount1) {
         _requireDeadline(deadline);
         _requireNonZero(lpAmount);
 
@@ -741,7 +748,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         _mintProtocolFeeIfNeeded(false);
 
         uint256 supply = ERC20Repo._totalSupply();
-        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
+        if (lpAmount > ERC20Repo._balanceOf(holder)) revert InsufficientLpOut();
 
         Repo.Layout storage l = Repo._layout();
         uint256 seBal0 = IERC20(_seFor(l.currency0)).balanceOf(address(this));
@@ -749,7 +756,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 seOut0 = (seBal0 * lpAmount) / supply;
         uint256 seOut1 = (seBal1 * lpAmount) / supply;
 
-        _burnLp(msg.sender, lpAmount);
+        _burnLp(holder, lpAmount);
 
         if (seOut0 > 0) {
             amount0 = _unwrap(_seFor(l.currency0), l.currency0, seOut0);
@@ -768,6 +775,42 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         emit IHook.Withdraw(msg.sender, to, lpAmount, amount0, amount1);
     }
 
+
+    struct ExitState {
+        address pair;
+        bool asShare;
+        bool outIs0;
+        uint256 beforeOut;
+    }
+
+    function _exitSingleAssetFrom(address holder, address tokenOut, uint256 sharesIn, address to, uint256 deadline)
+        internal returns (uint256 amountOut)
+    {
+        if (to == address(0)) revert ZeroAddress();
+        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
+        Repo.Layout storage l = Repo._layout();
+        ExitState memory state;
+        state.asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        state.pair = state.asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
+        state.outIs0 = state.pair == l.currency0;
+        if (!state.outIs0 && state.pair != l.currency1) revert InvalidRoute();
+        state.beforeOut = IERC20(state.pair).balanceOf(address(this));
+        (uint256 a0, uint256 a1) = _withdrawFrom(holder, sharesIn, address(this), 0, 0, deadline, false);
+        uint256 residual = state.outIs0 ? a1 : a0;
+        if (residual > 0) {
+            BookSwapPlan memory plan = _planExactIn(!state.outIs0, residual);
+            if (plan.output.amount > 0) {
+                _executePlannedSwap(plan, true, address(this));
+            } else {
+                IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);
+            }
+        }
+        amountOut = IERC20(state.pair).balanceOf(address(this)) - state.beforeOut;
+        if (state.asShare && amountOut > 0) amountOut = _buffer(tokenOut, state.pair, amountOut);
+        IERC20(tokenOut).safeTransfer(to, amountOut);
+        _syncReserves();
+    }
 
     function _depositFlexibleSe(
         uint256 amount0,

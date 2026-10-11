@@ -116,12 +116,12 @@ import "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSE
 import "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeBufferAbi.t.sol";
 
 import {V3FullRangeNativeSYTest} from "test/foundry/spec/vaults/standard/sy/V3FullRangeNativeSY.t.sol";
-import {UniswapV3StandardExchange_Import_Test} from "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Import.t.sol";
+import {UniswapV3FullSpreadStandardExchangeVault_Import_Test} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Import.t.sol";
 
 import "./claimToken/V4ReserveLiquidity.t.sol";
 
-import "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet_IFacet_Test.t.sol";
-import "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiQueryFacet_IFacet_Test.t.sol";
+import "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol";
+import "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet_IFacet_Test.t.sol";
 import "test/foundry/spec/fee/collector/FeeCollectorManagerFacet_IFacet.t.sol";
 import "test/foundry/spec/fee/collector/FeeCollectorProxy_Selectors.t.sol";
 
@@ -305,7 +305,7 @@ import {LidoNativeSYTest} from "test/foundry/spec/vaults/standard/sy/LiquidStaki
 
 import {UniswapV4Detf_Deploy} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol";
 
-import {UniswapV3StandardExchange_FullRangeBook_Test} from "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol";
+import {UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_FullRangeBook.t.sol";
 
 import {StandardExchangeStages} from "test/foundry/spec/scripts/anvil_robinhood_main/StandardExchangeStages.t.sol";
 

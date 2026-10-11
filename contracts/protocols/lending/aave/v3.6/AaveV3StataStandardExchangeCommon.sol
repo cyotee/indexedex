@@ -38,6 +38,21 @@ import {
  * - ERC4626 share math helpers for Stata delta <-> SE Vault shares
  */
 contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
+    /// @dev Receipt outputs need actual receipts; underlying spends booked local cash first.
+    function _deliverStata(IStataTokenV2 stata_, uint256 shares_, IERC20 out_, address to_) internal returns (uint256) {
+        uint256 held_ = IERC20(address(stata_)).balanceOf(address(this));
+        if (address(out_) == address(stata_)) {
+            if (shares_ > held_) revert InsufficientReceiptInventory(shares_, held_);
+            out_.safeTransfer(to_, shares_);
+            return shares_;
+        }
+        if (address(out_) == stata_.aToken()) {
+            if (shares_ > held_) revert InsufficientReceiptInventory(shares_, held_);
+            return stata_.redeemATokens(shares_, to_, address(this));
+        }
+        return _payUnderlying(stata_, stata_.previewRedeem(shares_), to_);
+    }
+
     using ERC20Repo for ERC20Repo.Storage;
     using SafeERC20 for IERC20;
 

@@ -182,6 +182,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         }
         uint256 allow = _f(10);
         fx.limitCapacity(allow);
+        (bool measured, uint256 deployedBefore) = fx.partialDeploymentBalance();
         uint256 bookedBefore = fx.seBooked();
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 seBefore = _hookSeShares();
@@ -189,9 +190,13 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         assertGt(usedFace, allow, "join used more face than the dependency could take");
         assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "no refund of the unconsumed part");
         uint256 booked = fx.seBooked() - bookedBefore;
-        assertGe(booked, usedFace - allow, "SE booked the remainder above capacity");
-        assertLe(booked, usedFace, "booked remainder never exceeds what was used");
-        assertGt(_hookSeShares(), seBefore, "hook still receives SE shares for the booked input");
+        uint256 credited = _hookSeShares() - seBefore;
+        (, uint256 deployedAfter) = fx.partialDeploymentBalance();
+        uint256 consumed = measured ? deployedAfter - deployedBefore : allow;
+        assertLe(consumed, allow, "dependency consumption respects the requested upper bound");
+        assertEq(booked, usedFace - consumed, "book change is the input the dependency did not take");
+        assertGt(credited, 0, "hook receives shares for the booked input");
+        assertEq(usedFace, consumed + booked, "protocol custody, book change and caller debit reconcile");
         fx.openCapacity();
         uint256 bookedAfter = fx.seBooked();
         _joinBoth(_f(1), 1 ether);
@@ -202,17 +207,36 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         }
     }
 
-    /// @dev Families with no leftover case: a dust join that rounds to zero SE output is either
-    ///      rejected with no state change or retained by the hook; it is never refunded.
+    /// @dev Reject a zero-share deposit atomically; every accepted deposit
+    /// must issue the positive claim quoted for its actual input.
     function _roundingToZeroControl() internal {
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 hookFace = IERC20(face).balanceOf(hook);
+        uint256 bookedBefore = fx.seBooked();
+        (bool previewOk, bytes memory previewRet) = address(weighted).staticcall(
+            abi.encodeWithSignature("previewDepositSingle(address,uint256)", face, uint256(1))
+        );
         vm.prank(user);
-        try weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours) returns (uint256) {
-            assertEq(userFace - IERC20(face).balanceOf(user), 1, "dust taken, not refunded");
-        } catch {
-            assertEq(IERC20(face).balanceOf(user), userFace, "rejected dust leaves the caller untouched");
-            assertEq(IERC20(face).balanceOf(hook), hookFace, "rejected dust leaves the hook untouched");
+        if (!previewOk) {
+            vm.expectRevert(previewRet);
+            weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
+            assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
+            assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
+            assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
+        } else {
+            uint256 preview = abi.decode(previewRet, (uint256));
+            if (preview == 0) {
+                vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
+                weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
+                assertEq(IERC20(face).balanceOf(user), userFace, "below-minimum input is not taken");
+                assertEq(IERC20(face).balanceOf(hook), hookFace, "hook custody unchanged");
+                assertEq(fx.seBooked(), bookedBefore, "book unchanged");
+            } else {
+                uint256 shares = weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
+                assertEq(shares, preview, "dust execution matches its preview");
+                assertEq(userFace - IERC20(face).balanceOf(user), 1, "representable deposit taken");
+                assertGt(shares, 0, "every taken deposit receives a representable claim");
+            }
         }
     }
 
@@ -371,8 +395,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
             emit log("not an AMM family: D33 fund-separation control not applicable");
             return;
         }
-        _seed();
+        _seedAmmReserve();
         uint256 reservedFace = IBasicVault(seUT).reserveOfToken(face);
+        assertGt(reservedFace, 0, "unpaired book exists before the other-token call");
         address ot = fx.otherToken();
         uint256 amt = 10 * (10 ** uint256(IERC20Metadata_decimals(ot)));
         fx.fundOther(rowBob, amt);
@@ -381,6 +406,10 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         IStandardExchangeIn(seUT).exchangeIn(IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGe(IBasicVault(seUT).reserveOfToken(face), reservedFace, "reserved face leftover not consumed by an other-token caller (its own dust may add)");
+    }
+
+    function _seedAmmReserve() internal virtual {
+        _seed();
     }
 
     function IERC20Metadata_decimals(address token) internal view returns (uint8 d) {

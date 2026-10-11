@@ -15,6 +15,8 @@ import {RebasingAwareOracle} from
 import {
     IStandardExchangeTransitionQuote
 } from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
@@ -59,8 +61,13 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
         );
         vm.assume(need > 1 && need < 1_000e18);
         uint256 snap = vm.snapshotState();
+        uint256 sharesBefore = IERC20(address(vault)).balanceOf(alice);
+        uint256 supplyBefore = IERC20(address(vault)).totalSupply();
+        uint256 aliceAssets = asset.balanceOf(alice);
+        uint256 vaultAssets = asset.balanceOf(address(vault));
+        uint256 reserveBefore = IBasicVault(address(vault)).reserveOfToken(address(asset));
         vm.prank(alice);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MaxAmountExceeded.selector, need - 1, need));
         IStandardExchangeOut(address(vault)).exchangeOut(
             IERC20(address(asset)),
             need - 1,
@@ -70,6 +77,11 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
             false,
             block.timestamp
         );
+        assertEq(IERC20(address(vault)).balanceOf(alice), sharesBefore, "short funding mints nothing");
+        assertEq(IERC20(address(vault)).totalSupply(), supplyBefore, "short funding changes no supply");
+        assertEq(asset.balanceOf(alice), aliceAssets, "short funding takes nothing");
+        assertEq(asset.balanceOf(address(vault)), vaultAssets, "short funding credits nothing");
+        assertEq(IBasicVault(address(vault)).reserveOfToken(address(asset)), reserveBefore, "short funding books nothing");
         vm.revertToState(snap);
         vm.prank(alice);
         uint256 paid = IStandardExchangeOut(address(vault)).exchangeOut(
@@ -82,6 +94,10 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
             block.timestamp
         );
         assertEq(paid, need);
+        assertEq(IERC20(address(vault)).balanceOf(alice), shares, "exact funding mints the quoted shares");
+        assertEq(asset.balanceOf(alice), aliceAssets - need, "exact funding debits the quoted assets");
+        assertEq(asset.balanceOf(address(vault)), vaultAssets + need, "exact funding credits the quoted assets");
+        assertEq(IBasicVault(address(vault)).reserveOfToken(address(asset)), vaultAssets + need, "exact funding books the quoted assets");
     }
 
     function testFuzz_FUZZ03_closedCycleNoProfit(uint96 assets) public {

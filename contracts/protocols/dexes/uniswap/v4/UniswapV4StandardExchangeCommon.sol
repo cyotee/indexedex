@@ -43,6 +43,7 @@ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVa
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {UniswapV4PoolManagerAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolManagerAwareRepo.sol";
 import {UniswapV4PoolKeyAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolKeyAwareRepo.sol";
@@ -135,13 +136,9 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
 
     function _inventoryRedeem(InventoryQuote memory q, uint256 shares) internal view returns (uint256 assets) {
         if (shares > q.supply) revert ITransition.InvalidQuoteState();
-        if (!q.idle) {
-            (uint256 total0, uint256 total1) = _inventoryTotals(q);
-            assets = Math.mulDiv(q.token0 ? total0 : total1, shares, q.supply);
-            // quoteAssets values inventory even when the liquid sleeve cannot pay it yet.
-            if (q.token0) q.free0 = assets <= q.free0 ? q.free0 - assets : 0;
-            else q.free1 = assets <= q.free1 ? q.free1 - assets : 0;
-        } else {
+        // Price the same withdrawal and conversion in either unlock context.
+        // quoteAssets runs this on a copy; blocked transitions apply only the real local payout.
+        {
             _inventoryCollect(q);
             uint256 out0 = Math.mulDiv(q.free0, shares, q.supply);
             uint256 out1 = Math.mulDiv(q.free1, shares, q.supply);
@@ -162,17 +159,11 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
     }
 
     function _inventorySharesIn(InventoryQuote memory q, uint256 amount) internal view returns (uint256) {
-        if (q.supply == 0) return 0;
-        if (!q.idle) {
-            (uint256 total0, uint256 total1) = _inventoryTotals(q);
-            uint256 reserve = q.token0 ? total0 : total1;
-            if (reserve == 0) return 0;
-            return Math.min(q.supply, Math.mulDiv(amount, q.supply, reserve, Math.Rounding.Ceil));
-        }
+        if (amount == 0 || q.supply == 0) return 0;
         if (q.positionLiquidity == 0 && (q.token0 ? q.free1 + q.fees1 : q.free0 + q.fees0) == 0) {
             uint256 reserve = q.token0 ? q.free0 + q.fees0 : q.free1 + q.fees1;
-            if (amount >= reserve) return q.supply;
-            return _bufferedInventoryShares(Math.mulDiv(amount, q.supply, reserve, Math.Rounding.Ceil), q.supply);
+            if (reserve == 0 || amount > reserve) return 0;
+            return Math.mulDiv(amount, q.supply, reserve, Math.Rounding.Ceil);
         }
         uint256 low = 1;
         uint256 high = q.supply;
@@ -197,13 +188,8 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
                 belowAssets = assets;
             }
         }
-        return _bufferedInventoryShares(high, q.supply);
-    }
-
-    function _bufferedInventoryShares(uint256 shares, uint256 supply) internal pure returns (uint256) {
-        if (shares >= supply) return supply;
-        uint256 buffer = Math.max(shares / 100, 1);
-        return buffer > supply - shares ? supply : shares + buffer;
+        // The search must not turn an unachievable output into a whole-supply quote.
+        return _inventoryAssets(q, high) >= amount ? high : 0;
     }
 
     function _inventorySwap(InventoryQuote memory q, uint256 amount) internal view returns (uint256) {
@@ -1321,6 +1307,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
             vaultShare.safeTransferFrom(msg.sender, address(this), amountIn);
             return vaultShare.balanceOf(address(this)) - b0;
         }
+        LocalCreditLib.requirePretransferCaller(msg.sender);
         uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(this));
         uint256 U = b0 > R ? b0 - R : 0;
         if (amountIn > U) {

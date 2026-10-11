@@ -37,8 +37,14 @@ contract ComposedStableCommonDetfExchangeIn_Test is TestBase_ComposedFundedRoute
         assertEq(IERC20(composedDetf).totalSupply(), supply_);
     }
 
-    function test_previewExchangeIn_revertsWhenReservePoolUninitialized() public {
+    function test_previewExchangeIn_returnsZeroWhenReservePoolUninitialized() public {
+        assertFalse(composedInfo.isReserveLive());
+        assertEq(composedIn.previewExchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf)), 0);
+        uint256 held_ = IERC20(address(composedStable)).balanceOf(composedDetf);
+        uint256 supply_ = IERC20(composedDetf).totalSupply();
         vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));
-        composedIn.previewExchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf));
+        composedIn.exchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf), 0, alice, false, block.timestamp);
+        assertEq(IERC20(address(composedStable)).balanceOf(composedDetf), held_);
+        assertEq(IERC20(composedDetf).totalSupply(), supply_);
     }
 }

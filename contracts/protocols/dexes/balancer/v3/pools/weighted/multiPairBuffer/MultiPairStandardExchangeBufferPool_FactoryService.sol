@@ -54,7 +54,7 @@ library MultiPairStandardExchangeBufferPool_FactoryService {
      */
     function deployTransitionQuoteFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode("BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol:BalancerV3PoolStandardExchangeTransitionQuoteFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol:BalancerV3PoolStandardExchangeTransitionQuoteFacet"),
             abi.encode("BalancerV3PoolStandardExchangeTransitionQuoteFacet")._hash()
         );
         vm.label(address(instance), "BalancerV3PoolStandardExchangeTransitionQuoteFacet");

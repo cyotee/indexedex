@@ -14,9 +14,9 @@ import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v3/peri
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {TestBase_UniswapV3StandardExchange} from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol";
+import {TestBase_UniswapV3FullSpreadStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
 
-contract V3FullRangeNativeSYTest is TestBase_UniswapV3StandardExchange, IUniswapV3FlashCallback, TransitionQuoteAssertions {
+contract V3FullRangeNativeSYTest is TestBase_UniswapV3FullSpreadStandardExchangeVault, IUniswapV3FlashCallback, TransitionQuoteAssertions {
     IUniswapV3Pool private pool;
     IStandardExchangeProxy private se;
     IStandardizedYield private sy;
@@ -39,7 +39,7 @@ contract V3FullRangeNativeSYTest is TestBase_UniswapV3StandardExchange, IUniswap
     function _activate() private returns (uint256) {
         address[] memory tokens = new address[](2); tokens[0] = address(token0); tokens[1] = address(token1);
         uint256[] memory amounts = new uint256[](2); amounts[0] = 1_000e18; amounts[1] = 1_000e18;
-        return IStandardExchangeInMulti(address(se)).exchangeInManyToOne(tokens, amounts, IERC20(address(se)), 1_000e18, address(this), false, block.timestamp);
+        return IStandardExchangeInMulti(address(se)).exchangeInManyToOne(tokens, amounts, IERC20(address(se)), 1_000e18 - 1e15, address(this), false, block.timestamp);
     }
 
     function test_receivedSharesDoNotRebalanceOrChangePoolInventory() public {
@@ -59,7 +59,7 @@ contract V3FullRangeNativeSYTest is TestBase_UniswapV3StandardExchange, IUniswap
         uint256 before0 = token0.balanceOf(address(this));
         vm.expectRevert(); sy.deposit(address(this), address(token0), 1e18, 0);
         assertEq(token0.balanceOf(address(this)), before0); assertEq(se.totalSupply(), 0);
-        assertEq(_activate(), 1_000e18);
+        assertEq(_activate(), 1_000e18 - 1e15);
         (uint128 liquidity,,,,) = pool.positions(keccak256(abi.encodePacked(address(se), TickMath.minUsableTick(pool.tickSpacing()), TickMath.maxUsableTick(pool.tickSpacing()))));
         assertGt(liquidity, 0);
     }

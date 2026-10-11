@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -21,7 +22,7 @@ import {
 
 /**
  * @title MorphoBlueStandardExchange_RateProvider
- * @notice RP0–RP3: existing StandardExchangeRateProvider DFPkg via diamondPackageFactory. Do not edit provider source.
+ * @notice RP0–RP3: whole-supply StandardExchangeRateProvider DFPkg via diamondPackageFactory.
  */
 contract MorphoBlueStandardExchange_RateProvider is TestBase_MorphoBlueStandardExchange {
     using StandardExchangeRateProvider_FactoryService for ICreate3FactoryProxy;
@@ -39,6 +40,86 @@ contract MorphoBlueStandardExchange_RateProvider is TestBase_MorphoBlueStandardE
         );
     }
 
+function _expectFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 amount) internal {
+        vm.expectCall(address(fx), abi.encodeWithSignature(
+            "previewExchangeIn(address,uint256,address)", address(fx), amount, address(loanToken)
+        ), uint64(1));
+    }
+
+    function test_recurrence_D48_fullSupplyFailureDoesNotSample() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setFailAbove(25e16);
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 5e17);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        _expectFixtureQuote(fx, fx.totalSupply());
+        assertEq(provider.getRate(), 0, "a smaller payable quote cannot replace the whole book");
+    }
+
+    function test_recurrence_D48_failureAttemptsFullSupplyOnce() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.RevertCustom, 0);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        _expectFixtureQuote(fx, fx.totalSupply());
+        vm.expectCall(address(fx), abi.encodeWithSignature("previewExchangeIn(address,uint256,address)"), uint64(1));
+        assertEq(provider.getRate(), 0);
+    }
+
+    function test_recurrence_D48_zeroQuoteScalesUpAndRecovers() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setSupply(100e18, 18);
+        fx.setZeroBelow(100e18);
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 200e18);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        _expectFixtureQuote(fx, 100e18);
+        assertEq(provider.getRate(), 2e18);
+    }
+
+    function test_recurrence_D48_fullSupplyFailureDoesNotRetryZeroSample() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setSupply(100e18, 18);
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 0);
+        fx.setFailAbove(1e18);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        _expectFixtureQuote(fx, 100e18);
+        vm.expectCall(address(fx), abi.encodeWithSignature("previewExchangeIn(address,uint256,address)"), uint64(1));
+        assertEq(provider.getRate(), 0);
+    }
+
+    function test_recurrence_D48_projectedPayloadMatrix() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        IRateProvider provider = _deployFixtureProvider(fx);
+        for (uint256 mode = 1; mode <= uint256(ApexD48QuoteReplyFixture.Reply.MalformedRevert); ++mode) {
+            fx.setReply(ApexD48QuoteReplyFixture.Reply(mode), 1e18);
+            assertEq(IStandardExchangeRateQuote(address(provider)).quoteRate(
+                address(fx), address(loanToken), hex"01"
+            ), 0, "all invalid projected quote payloads fail soft");
+        }
+    }
+
+    function test_recurrence_D48_supplyAndDecimalsFailuresRemainHard() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        IRateProvider provider = _deployFixtureProvider(fx);
+        fx.setMetadataFailures(true, false);
+        vm.expectRevert(ApexD48QuoteReplyFixture.QuoteBoom.selector);
+        provider.getRate();
+        fx.setMetadataFailures(false, true);
+        vm.expectRevert(ApexD48QuoteReplyFixture.QuoteBoom.selector);
+        provider.getRate();
+    }
+
+    function test_recurrence_D48_unrelatedProjectionUsesLiveContext() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 2e18);
+        fx.setSnapshotSupplyReverts(true);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        assertEq(IStandardExchangeRateQuote(address(provider)).quoteRate(
+            address(0xBEEF), address(loanToken), hex"01"
+        ), 2e18);
+        assertEq(IStandardExchangeRateQuote(address(provider)).quoteRate(
+            address(fx), address(0xBEEF), hex"01"
+        ), 2e18);
+    }
+
     function test_RP0_emptySe_getRateInitialMint() public view {
         // D60 (2026-09-22): an empty SE publishes its initial mint rate (one whole share per whole target token
         // at first mint, scaled to 18 decimals of the target) instead of 0, so hooks can price a first buffer.
@@ -49,8 +130,10 @@ contract MorphoBlueStandardExchange_RateProvider is TestBase_MorphoBlueStandardE
         _wrapExactIn(user, 100 ether);
         uint256 rate = rp.getRate();
         assertGt(rate, 0, "RP1 rate > 0");
-        uint256 quote = seIn.previewExchangeIn(IERC20(se), 1 ether, IERC20(address(loanToken)));
-        assertApproxEqAbs(rate, quote, 1, "RP1 getRate vs previewExchangeIn 1e18 shares");
+        uint256 supply = IERC20(se).totalSupply();
+        uint256 quote = seIn.previewExchangeIn(IERC20(se), supply, IERC20(address(loanToken)));
+        uint256 scale = 10 ** (18 + uint256(IERC20Metadata(se).decimals()) - loanToken.decimals());
+        assertEq(rate, Math.mulDiv(quote, scale, supply, Math.Rounding.Ceil), "RP1 whole-book rate");
     }
 
     function test_RP2_afterInterestWarp_getRateRisesWithConvertToAssets() public {
@@ -68,9 +151,31 @@ contract MorphoBlueStandardExchange_RateProvider is TestBase_MorphoBlueStandardE
     function test_RP3_providerSourceUnmodified_quotesThisVaultNav() public {
         _wrapExactIn(user, 50 ether);
         uint256 rate = rp.getRate();
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), 1 ether, IERC20(address(loanToken)));
+        uint256 supply = IERC20(se).totalSupply();
+        uint256 preview = seIn.previewExchangeIn(IERC20(se), supply, IERC20(address(loanToken)));
+        uint256 scale = 10 ** (18 + uint256(IERC20Metadata(se).decimals()) - loanToken.decimals());
         assertGt(rate, 0);
-        assertApproxEqAbs(rate, preview, 1, "RP3 vault preview/NAV");
+        assertEq(rate, Math.mulDiv(preview, scale, supply, Math.Rounding.Ceil), "RP3 whole-book NAV");
+    }
+
+    /// @notice A one-unit share supply still has a whole-book rate.
+    function test_fullSupplyRateIncludesSingleNativeShare() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setSupply(1, 18);
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 3);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        _expectFixtureQuote(fx, 1);
+        assertEq(provider.getRate(), 3e18);
+    }
+
+    /// @notice The final per-share division rounds once after valuing the full book.
+    function test_fullSupplyRateRoundsOnlyAfterValuation() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setSupply(3e18, 18);
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 10);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        _expectFixtureQuote(fx, 3e18);
+        assertEq(provider.getRate(), 4);
     }
 
     function _deployFixtureProvider(ApexD48QuoteReplyFixture fx)
@@ -85,13 +190,11 @@ contract MorphoBlueStandardExchange_RateProvider is TestBase_MorphoBlueStandardE
         );
     }
 
-    function test_APEX_D48_halveSearch_recoversWhenLargeQuoteReverts() public {
+    function test_APEX_D48_fullSupplyRevertReturnsZero() public {
         ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
         fx.setFailAbove(5e17);
         fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 5e17);
-        IRateProvider rpFx = _deployFixtureProvider(fx);
-        uint256 rate = rpFx.getRate();
-        assertGt(rate, 0, "halved quote recovers");
+        assertEq(_deployFixtureProvider(fx).getRate(), 0, "unavailable whole-book rate");
     }
 
     function test_APEX_D48_customRevert_returnsZero() public {
@@ -150,5 +253,29 @@ contract MorphoBlueStandardExchange_RateProvider is TestBase_MorphoBlueStandardE
             address(fx), address(loanToken), hex"01"
         );
         assertEq(quoted, 2e18);
+    }
+
+    function test_emptyGetRate_ignoresQuoteStateFailure() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setQuoteStateReverts(true);
+        fx.setSupply(0, 18);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        uint256 live = provider.getRate();
+        (bool ok, bytes memory data) = address(provider).staticcall{gas: 120_000}(
+            abi.encodeCall(IRateProvider.getRate, ())
+        );
+        assertTrue(ok, "empty rate does not spend its budget on quoteState");
+        assertEq(abi.decode(data, (uint256)), live, "low budget returns the same live rate");
+    }
+
+    function test_failedCallerSnapshot_isNotReportedAsLiveRate() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 2e18);
+        fx.setSnapshotSupplyReverts(true);
+        IRateProvider provider = _deployFixtureProvider(fx);
+        uint256 live = provider.getRate();
+        vm.expectRevert(ApexD48QuoteReplyFixture.QuoteBoom.selector);
+        IStandardExchangeRateQuote(address(provider)).quoteRate(address(fx), address(loanToken), hex"01");
+        assertEq(provider.getRate(), live, "failed snapshot is not replaced with the live rate");
     }
 }

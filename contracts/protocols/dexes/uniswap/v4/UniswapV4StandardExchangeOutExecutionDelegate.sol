@@ -29,7 +29,7 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
         }
 
         if (!canOpenPoolManagerUnlock()) {
-            sharesBurned = _quotedWithdrawalShares(tokenOut, minAmountOut, 0);
+            sharesBurned = _quotedWithdrawalShares(tokenOut, minAmountOut, maxSharesToBurn);
             if (sharesBurned == 0 || sharesBurned > maxSharesToBurn) {
                 revert UniswapV4ExchangeOut_InsufficientInput();
             }
@@ -47,8 +47,8 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
             } else {
                 ERC20Repo._burn(msg.sender, sharesBurned);
             }
-            _syncVaultReserves();
             _transferCurrency(tokenOut, recipient, state.actualOut);
+            _syncVaultReserves();
             return sharesBurned;
         }
 
@@ -69,8 +69,9 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
         } else {
             ERC20Repo._burn(msg.sender, sharesBurned);
         }
+        // Keep any forward-quote rounding surplus in the vault.
+        _transferCurrency(tokenOut, recipient, minAmountOut);
         _syncVaultReserves();
-        _transferCurrency(tokenOut, recipient, state.actualOut);
     }
 
     function _quotedWithdrawalShares(address tokenOut, uint256 amountOut, uint256 shareBudget)
@@ -78,12 +79,9 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
     {
         uint256 supply = IERC20(address(this)).totalSupply();
         if (amountOut != 0 && shareBudget > 1 && shareBudget < supply) {
-            // Invert s + max(floor(s / 100), 1). A capped budget has no unique inverse.
-            uint256 candidate = shareBudget < 101 ? shareBudget - 1 : shareBudget - shareBudget / 101;
-            // Treat the budget only as a hint. Verify the buffer and both adjacent forward quotes.
-            if (_bufferedInventoryShares(candidate, supply) == shareBudget
-                && _withdrawalAssets(tokenOut, candidate) >= amountOut
-                && (candidate == 1 || _withdrawalAssets(tokenOut, candidate - 1) < amountOut)) {
+            // A caller's quote is only a hint: prove it is the minimal sufficient input.
+            if (_withdrawalAssets(tokenOut, shareBudget) >= amountOut
+                && _withdrawalAssets(tokenOut, shareBudget - 1) < amountOut) {
                 return shareBudget;
             }
         }
@@ -141,6 +139,7 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
 
     function _burnPositionLiquidity(uint256 sharesBurned, uint256 totalShares)
         internal
+        override
     {
         uint128 currentLiquidity = _currentLiquidity();
         if (currentLiquidity == 0) {

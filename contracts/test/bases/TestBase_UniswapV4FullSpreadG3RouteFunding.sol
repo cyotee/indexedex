@@ -419,13 +419,17 @@ abstract contract TestBase_UniswapV4FullSpreadG3RouteFunding is TestBase_Uniswap
         }
     }
 
-    /// @notice R1 blocked exact-input preview and execution reject both directions and funding flags.
+    /// @notice Blocked direct execution rejects both flags; its price preview remains context-independent.
     function test_blockedDirectExactInputRejectsBothDirections() public {
         _gBootstrap();
         for (uint256 i; i < 2; ++i) {
             bytes memory errorData = abi.encodeWithSignature("UniswapV4Exchange_PoolManagerInteractionBlocked()");
-            _gReject(abi.encodeCall(IStandardExchangeIn.previewExchangeIn,
-                (gToken[i], 1e18, gToken[1-i])), errorData, true);
+            bytes32 beforeQuote = _gDigest();
+            uint256 quoted = gVault.previewExchangeIn(gToken[i], 1e18, gToken[1-i]);
+            assertGt(quoted, 0, "direct trade has a funded idle price");
+            assertEq(abi.decode(_gCall(abi.encodeCall(IStandardExchangeIn.previewExchangeIn,
+                (gToken[i], 1e18, gToken[1-i])), true), (uint256)), quoted, "blocked context preserves direct price");
+            assertEq(_gDigest(), beforeQuote, "price queries preserve ledger");
             for (uint256 push; push < 2; ++push) {
                 bytes32 beforeState = _gDigest();
                 bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
@@ -580,7 +584,7 @@ abstract contract TestBase_UniswapV4FullSpreadG3RouteFunding is TestBase_Uniswap
             if (mode == 5) amounts[0] = 0;
             if (mode == 6) amounts[1] = 0;
             bytes memory errorData = abi.encodeWithSelector(IStandardExchangeIn.ExchangeInNotAvailable.selector);
-            _gReject(abi.encodeCall(MultiIn.previewExchangeInManyToOne, (tokens, amounts, output)), errorData, false);
+            assertEq(MultiIn(address(gVault)).previewExchangeInManyToOne(tokens, amounts, output), 0, "invalid vector quotes zero");
             for (uint256 blocked; blocked < 2; ++blocked) {
                 _gReject(abi.encodeCall(MultiIn.exchangeInManyToOne,
                     (tokens, amounts, output, 0, G3_RECIPIENT, false, block.timestamp)), errorData, blocked != 0);

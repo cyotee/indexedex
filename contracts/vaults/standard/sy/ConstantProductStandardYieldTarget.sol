@@ -12,6 +12,15 @@ import {NativeStandardYieldTarget} from "./NativeStandardYieldTarget.sol";
 /// @dev Accounting remains in actual LP units. Existing compound operations realize any
 ///      separately accrued pool fees into that reserve; this adapter creates no second reward.
 abstract contract ConstantProductStandardYieldTarget is NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override returns (uint256)
+    {
+        return _redeemConstantProduct(address(this), receiver_, shares_, tokenOut_, minimum_);
+    }
+
+    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal virtual returns (uint256);
+
     function getTokensIn() public view override returns (address[] memory tokens_) {
         tokens_ = new address[](3);
         tokens_[0] = address(ERC4626Repo._reserveAsset());

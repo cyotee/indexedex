@@ -20,6 +20,7 @@ import {BasePoolMath} from "@crane/contracts/external/balancer/v3/vault/contract
 import {PoolDataLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolDataLib.sol";
 import {PoolConfigLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolConfigLib.sol";
 import {ScalingHelpers} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/helpers/ScalingHelpers.sol";
+import {BalancerV3PoolLiquidationLib as Liquidation} from "./BalancerV3PoolLiquidationLib.sol";
 
 contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLockModifiers {
     using BetterSafeERC20 for IERC20;
@@ -28,6 +29,7 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
     /// @custom:signature Permit2AmountOverflow(uint256)
     /// @custom:selector 0x74c07329
     error Permit2AmountOverflow(uint256 amount);
+    error LiquidationAmountMismatch(uint256 expected, uint256 actual);
 
     IRouter public immutable router;
     address public immutable pool;
@@ -100,9 +102,8 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
         if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
             uint256 actualBptIn = _receiveExactIn(tokenIn, amountIn, pretransferred);
             _approvePermit2ToRouter(tokenIn, actualBptIn);
-            uint256 minSingleTokenOut = minAmountOut == 0 ? 1 : minAmountOut;
-            amountOut =
-                router.removeLiquiditySingleTokenExactIn(pool, actualBptIn, tokenOut, minSingleTokenOut, false, "");
+            (, amountOut) = _executeRemove(tokenOut, actualBptIn, false);
+            if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
             _approvePermit2ToRouter(tokenIn, 0);
             tokenOut.safeTransfer(payoutRecipient, amountOut);
             _syncReserve(tokenIn);
@@ -187,7 +188,8 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
         if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
             uint256 spendable = pretransferred ? credit : quotedUsed;
             _approvePermit2ToRouter(tokenIn, spendable);
-            amountIn = router.removeLiquiditySingleTokenExactOut(pool, spendable, tokenOut, amountOut, false, "");
+            (amountIn,) = _executeRemove(tokenOut, amountOut, true);
+            if (amountIn > spendable) revert MaxAmountExceeded(spendable, amountIn);
             if (amountIn > maxAmountIn) {
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
@@ -308,13 +310,35 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
         return ScalingHelpers.toRawUndoRateRoundUp(in_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
     }
     function _queryRemoveLiquiditySingleTokenExactIn(uint256 amount_, IERC20 token_) internal view returns (uint256 out_) {
-        PoolData memory d_ = _quotePoolData(false); uint256 index_ = _tokenIndexPlusOne[address(token_)] - 1;
-        (out_,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactIn(d_.balancesLiveScaled18, index_, amount_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
-        return ScalingHelpers.toRawUndoRateRoundDown(out_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
+        (,, out_,) = Liquidation.liquidate(_liquidationState(token_), amount_, false);
     }
     function _queryRemoveLiquiditySingleTokenExactOut(IERC20 token_, uint256 amount_) internal view returns (uint256 in_) {
-        PoolData memory d_ = _quotePoolData(false); uint256 index_ = _tokenIndexPlusOne[address(token_)] - 1;
-        uint256 live_ = ScalingHelpers.toScaled18ApplyRateRoundUp(amount_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
-        (in_,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactOut(d_.balancesLiveScaled18, index_, live_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
+        (, in_,,) = Liquidation.liquidate(_liquidationState(token_), amount_, true);
+    }
+
+    function _liquidationState(IERC20 token_) private view returns (Liquidation.PoolQuoteState memory) {
+        return Liquidation.snapshot(
+            IVault(address(IRouterCommon(address(router)).getVault())), pool, _tokenIndexPlusOne[address(token_)] - 1
+        );
+    }
+
+    function _executeRemove(IERC20 token_, uint256 amount_, bool exactOut_)
+        private returns (uint256 paid_, uint256 received_)
+    {
+        (,,, Liquidation.Step[] memory steps_) = Liquidation.liquidate(_liquidationState(token_), amount_, exactOut_);
+        for (uint256 i_; i_ < steps_.length; ++i_) {
+            Liquidation.Step memory step_ = steps_[i_];
+            if (step_.exactOut) {
+                uint256 used_ = router.removeLiquiditySingleTokenExactOut(pool, step_.bpt, token_, step_.assets, false, "");
+                if (used_ != step_.bpt) revert LiquidationAmountMismatch(step_.bpt, used_);
+            } else {
+                uint256 got_ = router.removeLiquiditySingleTokenExactIn(
+                    pool, step_.bpt, token_, step_.assets == 0 ? 1 : step_.assets, false, ""
+                );
+                if (got_ != step_.assets) revert LiquidationAmountMismatch(step_.assets, got_);
+            }
+            paid_ += step_.bpt;
+            received_ += step_.assets;
+        }
     }
 }

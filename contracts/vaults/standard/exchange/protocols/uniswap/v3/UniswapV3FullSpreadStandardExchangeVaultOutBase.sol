@@ -10,10 +10,10 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {UniswapV3FullSpreadStandardExchangeVaultRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultRepo.sol";
 import {
-    UniswapV3FullSpreadStandardExchangeVaultCommon
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol";
+    UniswapV3FullSpreadStandardExchangeVaultInBase
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol";
 
-abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3FullSpreadStandardExchangeVaultCommon, ReentrancyLockModifiers {
+abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3FullSpreadStandardExchangeVaultInBase {
     struct ZapOutState {
         uint256 totalShares;
         address token0;
@@ -124,6 +124,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3Fu
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        override
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);

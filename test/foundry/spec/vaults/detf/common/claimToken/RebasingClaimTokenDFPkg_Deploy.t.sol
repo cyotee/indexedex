@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC721Metadata} from "@crane/contracts/interfaces/IERC721Metadata.sol";
@@ -35,6 +37,7 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
     }
 
     function test_nativeSYUsesStandardRoutesAndPreservesUnredeemedInternalShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         IStandardizedYield native_ = IStandardizedYield(se);
         uint256 preview_ = native_.previewDeposit(address(pairToken), 100 ether);
         vm.startPrank(detfUser);
@@ -45,7 +48,7 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
         IERC20(se).transfer(se, internal_);
         uint256 redeem_ = shares_ / 4;
         uint256 expected_ = native_.previewRedeem(address(pairToken), redeem_);
-        uint256 paid_ = native_.redeem(detfUser, redeem_, address(pairToken), expected_, true);
+        uint256 paid_ = abi.decode(atomic.execute(address(native_), abi.encodeCall(IStandardizedYield.redeem, (detfUser, redeem_, address(pairToken), expected_, true))), (uint256));
         vm.stopPrank();
         assertEq(paid_, expected_);
         assertEq(IERC20(se).balanceOf(se), internal_ - redeem_, "only requested internal SY is consumed");

@@ -13,6 +13,7 @@ contract ReentrantERC20Harness {
     address public reenterTarget;
     bytes public reenterPayload;
     bool public callbackOnTransfer;
+    bool public bubbleRevert;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
@@ -36,6 +37,10 @@ contract ReentrantERC20Harness {
 
     function setCallbackOnTransfer(bool enabled) external {
         callbackOnTransfer = enabled;
+    }
+
+    function setBubbleRevert(bool enabled) external {
+        bubbleRevert = enabled;
     }
 
     function approve(address spender, uint256 amount) external returns (bool) {
@@ -62,7 +67,13 @@ contract ReentrantERC20Harness {
 
     function _callback() private {
         if (reenterTarget != address(0) && reenterPayload.length > 0) {
-            (bool ok,) = reenterTarget.call(reenterPayload);
+            (bool ok, bytes memory reason) = reenterTarget.call(reenterPayload);
+            if (ok) return;
+            if (bubbleRevert) {
+                assembly ("memory-safe") {
+                    revert(add(reason, 32), mload(reason))
+                }
+            }
             require(ok, "reenter-failed");
         }
     }

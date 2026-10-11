@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
@@ -96,17 +97,14 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             return 0;
         }
 
-        // D24: blocked preview models sleeve cover only; free models PM path.
-        if (!canOpenPoolManagerUnlock()) {
-            return _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
-        }
-
+        // A quote does not open an unlock. Price the pool book whether or not it is locked.
         return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
     }
 
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        virtual
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
@@ -118,24 +116,6 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             return amount0 + (amount1 > 0 ? _quoteSwapAfterWithdrawal(amount1, false, sharesBurned, totalShares) : 0);
         }
         return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
-    }
-
-    /// @dev Pro-rata claim on free+deployed of `tokenOut` only (blocked sleeve path / free-only inventory).
-    function _quoteSleeveZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
-        if (tokenOut == _token0()) {
-            if (reserve0 == 0) return 0;
-            return (sharesBurned * reserve0) / totalShares;
-        }
-        if (tokenOut == _token1()) {
-            if (reserve1 == 0) return 0;
-            return (sharesBurned * reserve1) / totalShares;
-        }
-        return 0;
     }
 
     function _executeZapOutExactIn(address tokenOut, uint256 sharesBurned, uint256 minAmountOut, address recipient)
@@ -152,8 +132,11 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         }
 
         if (!canOpenPoolManagerUnlock()) {
-            // D18: blocked — pay from free inventory of tokenOut or revert InsufficientLocalReserve.
-            amountOut = _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
+            // Price the reference pool exit, then settle locally without a nested unlock.
+            // Use the installed query facet so execution does not embed another pool quoter.
+            amountOut = IStandardExchangeIn(address(this)).previewExchangeIn(
+                IERC20(address(this)), sharesBurned, IERC20(tokenOut)
+            );
             uint256 freeOut = IERC20(tokenOut).balanceOf(address(this));
             if (amountOut == 0 || freeOut < amountOut) {
                 revert UniswapV4Exchange_InsufficientLocalReserve(
@@ -162,8 +145,8 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             }
             if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
             ERC20Repo._burn(address(this), sharesBurned);
-            _syncVaultReserves();
             _transferCurrency(tokenOut, recipient, amountOut);
+            _syncVaultReserves();
             return amountOut;
         }
 
@@ -210,13 +193,14 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
 
         ERC20Repo._burn(address(this), sharesBurned);
-        _syncVaultReserves();
         _transferCurrency(tokenOut, recipient, amountOut);
+        _syncVaultReserves();
         _rebalanceLiquidReserveBestEffort();
     }
 
     function _burnPositionLiquidity(uint256 sharesBurned, uint256 totalShares)
         internal
+        virtual
     {
         uint128 currentLiquidity = _currentLiquidity();
         if (currentLiquidity == 0) {

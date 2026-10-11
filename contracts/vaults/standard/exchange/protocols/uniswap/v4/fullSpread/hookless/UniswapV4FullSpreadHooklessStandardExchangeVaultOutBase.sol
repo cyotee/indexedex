@@ -23,13 +23,12 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 
 import {UniswapV4FullSpreadHooklessStandardExchangeVaultPositionRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultPositionRepo.sol";
 import {
-    UniswapV4FullSpreadHooklessStandardExchangeVaultCommon
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultCommon.sol";
+    UniswapV4FullSpreadHooklessStandardExchangeVaultInBase
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultInBase.sol";
 
 /// @dev Shared Out types/helpers for Query + Execute Targets (Option 1b — siblings of Common).
 abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutBase is
-    UniswapV4FullSpreadHooklessStandardExchangeVaultCommon,
-    ReentrancyLockModifiers
+    UniswapV4FullSpreadHooklessStandardExchangeVaultInBase
 {
     error ExchangeOutNotAvailable();
 
@@ -80,6 +79,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutBase is
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        override
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);

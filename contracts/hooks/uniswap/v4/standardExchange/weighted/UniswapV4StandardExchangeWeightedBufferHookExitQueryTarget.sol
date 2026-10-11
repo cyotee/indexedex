@@ -14,6 +14,16 @@ import {UniswapV4StandardExchangeWeightedBufferHookExitCore} from "contracts/hoo
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is UniswapV4StandardExchangeWeightedBufferHookExitCore, NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
+    {
+        Repo.Layout storage l_ = Repo._layout();
+        bool asShare_ = UniswapV4SeBufferHookLegLib.classify(l_.legs, tokenOut_)
+            == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        address pair_ = asShare_ ? l_.legs.pairOfStandardExchange[tokenOut_] : tokenOut_;
+        return _exitSingleAssetFrom(address(this), pair_, shares_, asShare_, receiver_, minimum_, block.timestamp);
+    }
+
     function previewBurnToToken(uint256 lpAmount, address tokenOut)
         external
         view

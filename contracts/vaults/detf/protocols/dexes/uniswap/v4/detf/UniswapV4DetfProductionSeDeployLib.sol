@@ -82,13 +82,13 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
 import {
-    UniswapV3_Component_FactoryService
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
+    UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService as V3FullSpreadFactory
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol";
 import {
-    IUniswapV3StandardExchangeLiquidReserve
-} from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
+    IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
 import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService as HooklessFactory} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService.sol";
 import {IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/interfaces/IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve.sol";
@@ -241,7 +241,7 @@ library UniswapV4DetfProductionSeDeployLib {
 
     struct Univ3SePkg {
         IUniswapV3Factory factory;
-        IUniswapV3StandardExchangeDFPkg pkg;
+        IUniswapV3FullSpreadStandardExchangeVaultDFPkg pkg;
     }
 
     struct Univ4SePkg {
@@ -308,28 +308,28 @@ library UniswapV4DetfProductionSeDeployLib {
         internal
         returns (Univ3SeFacets memory f)
     {
-        f.inFacet = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeInFacet(create3Factory);
-        f.inQuery = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeInQueryFacet(create3Factory);
-        f.outFacet = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeOutFacet(create3Factory);
-        f.outQuery = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeOutQueryFacet(create3Factory);
+        f.inFacet = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultInFacet(create3Factory);
+        f.inQuery = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultInQueryFacet(create3Factory);
+        f.outFacet = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultOutFacet(create3Factory);
+        f.outQuery = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultOutQueryFacet(create3Factory);
         f.posImport =
-            UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangePositionImportFacet(create3Factory);
+            V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultPositionImportFacet(create3Factory);
         f.liquidReserve =
-            UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeLiquidReserveFacet(create3Factory);
-        f.inMulti = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeInMultiFacet(create3Factory);
+            V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet(create3Factory);
+        f.inMulti = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiFacet(create3Factory);
         f.inMultiQuery =
-            UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeInMultiQueryFacet(create3Factory);
-        f.outMulti = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeOutMultiFacet(create3Factory);
+            V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet(create3Factory);
+        f.outMulti = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiFacet(create3Factory);
         f.outMultiQuery =
-            UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeOutMultiQueryFacet(create3Factory);
+            V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet(create3Factory);
     }
 
     function deployUniv3SePkg(CraneCtx memory ctx, IUniswapV3Factory factory)
         internal
-        returns (IUniswapV3StandardExchangeDFPkg pkg)
+        returns (IUniswapV3FullSpreadStandardExchangeVaultDFPkg pkg)
     {
         Univ3SeFacets memory f = _deployUniv3SeFacets(ctx.create3Factory);
-        IUniswapV3StandardExchangeDFPkg.PkgInit memory pkgInit;
+        IUniswapV3FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = ctx.erc20Facet;
         pkgInit.erc5267Facet = ctx.erc5267Facet;
         pkgInit.erc2612Facet = ctx.erc2612Facet;
@@ -341,7 +341,7 @@ library UniswapV4DetfProductionSeDeployLib {
         pkgInit.uniswapV3StandardExchangeOutQueryFacet = f.outQuery;
         pkgInit.uniswapV3StandardExchangePositionImportFacet = f.posImport;
         pkgInit.uniswapV3StandardExchangeLiquidReserveFacet = f.liquidReserve;
-        pkgInit = UniswapV3_Component_FactoryService.attachUniswapV3StandardExchangeMultiFacets(
+        pkgInit = V3FullSpreadFactory.attachUniswapV3FullSpreadStandardExchangeVaultMultiFacets(
             pkgInit, f.inMulti, f.inMultiQuery, f.outMulti, f.outMultiQuery
         );
         pkgInit.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(ctx.indexedexManager));
@@ -351,9 +351,9 @@ library UniswapV4DetfProductionSeDeployLib {
 
         vm.startPrank(ctx.owner);
         IVaultFeeOracleManager(address(ctx.indexedexManager)).setDefaultLiquidReservePercentageOfTypeId(
-            type(IUniswapV3StandardExchangeLiquidReserve).interfaceId, V3_LIQUID_RESERVE_PCT
+            type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId, V3_LIQUID_RESERVE_PCT
         );
-        pkg = UniswapV3_Component_FactoryService.deployUniswapV3StandardExchangeDFPkg(ctx.indexedexManager, pkgInit);
+        pkg = V3FullSpreadFactory.deployUniswapV3FullSpreadStandardExchangeVaultDFPkg(ctx.indexedexManager, pkgInit);
         vm.stopPrank();
     }
 
@@ -438,7 +438,7 @@ library UniswapV4DetfProductionSeDeployLib {
         require(IERC20(vault).balanceOf(seedHolder) == minted, "external seed shares");
     }
 
-    function deployUniv3Vault(IUniswapV3StandardExchangeDFPkg pkg, IUniswapV3Pool pool)
+    function deployUniv3Vault(IUniswapV3FullSpreadStandardExchangeVaultDFPkg pkg, IUniswapV3Pool pool)
         internal
         returns (address vault)
     {

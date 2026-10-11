@@ -174,42 +174,10 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         return 0;
     }
 
-    struct ExitState {
-        address pair;
-        bool asShare;
-        bool outIs0;
-        uint256 beforeOut;
-    }
-
     function _exitSingleAsset(address tokenOut, uint256 sharesIn, address to, uint256 deadline)
         internal returns (uint256 amountOut)
     {
-        if (to == address(0)) revert ZeroAddress();
-        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
-        Repo.Layout storage l = Repo._layout();
-        ExitState memory state;
-        state.asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
-        state.pair = state.asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
-        state.outIs0 = state.pair == l.currency0;
-        if (!state.outIs0 && state.pair != l.currency1) revert InvalidRoute();
-
-        state.beforeOut = IERC20(state.pair).balanceOf(address(this));
-        (uint256 a0, uint256 a1) = _withdrawAndSettle(sharesIn, address(this), 0, 0, deadline, false);
-        uint256 residual = state.outIs0 ? a1 : a0;
-        if (residual > 0) {
-            BookSwapPlan memory plan = _planExactIn(!state.outIs0, residual);
-            if (plan.output.amount > 0) {
-                _executePlannedSwap(plan, true, address(this));
-            } else {
-                IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);
-            }
-        }
-        // Credit actual operation proceeds, including rounding surplus, but no prior inventory.
-        amountOut = IERC20(state.pair).balanceOf(address(this)) - state.beforeOut;
-        if (state.asShare && amountOut > 0) amountOut = _buffer(tokenOut, state.pair, amountOut);
-        IERC20(tokenOut).safeTransfer(to, amountOut);
-        _syncReserves();
+        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, to, deadline);
     }
 
     struct ExitQuoteLeg {

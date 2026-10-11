@@ -9,6 +9,7 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+import {ERC4626StandardExchangeInFacetExt} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol";
 import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol";
 import {
     ERC4626StandardExchange_Component_FactoryService
@@ -25,6 +26,7 @@ abstract contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase
     using VaultComponentFactoryService for ICreate3FactoryProxy;
 
     IFacet exchangeInFacet;
+    IFacet exchangeInFacetExt;
     IFacet exchangeOutFacet;
     IFacet markerFacet;
     IERC4626StandardExchangeDFPkg erc4626StandardExchangeDFPkg;
@@ -34,6 +36,7 @@ abstract contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase
         TestBase_VaultComponents.setUp();
 
         exchangeInFacet = create3Factory.deployERC4626StandardExchangeInFacet();
+        exchangeInFacetExt = create3Factory.deployERC4626StandardExchangeInFacetExt();
         exchangeOutFacet = create3Factory.deployERC4626StandardExchangeOutFacet();
         markerFacet = create3Factory.deployERC4626StandardExchangeMarkerFacet();
         erc4626Facet = create3Factory.deployReceiptBackedERC4626Facet();
@@ -57,6 +60,7 @@ abstract contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
             exchangeInFacet: exchangeInFacet,
+            exchangeInFacetExt: exchangeInFacetExt,
             exchangeOutFacet: exchangeOutFacet,
             markerFacet: markerFacet,
             vaultFeeOracleQuery: indexedexManager,

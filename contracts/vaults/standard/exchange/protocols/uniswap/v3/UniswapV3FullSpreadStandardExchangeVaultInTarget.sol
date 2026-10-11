@@ -14,7 +14,7 @@ import {
 contract UniswapV3FullSpreadStandardExchangeVaultInTarget is UniswapV3FullSpreadStandardExchangeVaultInBase {
     using Address for address;
 
-    address immutable UNISWAP_V3_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE;
+    address public immutable UNISWAP_V3_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE;
 
     constructor(address executionDelegate) {
         UNISWAP_V3_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE = executionDelegate;

@@ -62,7 +62,6 @@ import {
     UniswapV4TwapOracleAwareRepo
 } from "contracts/oracles/uniswap/v4/twap/aware/UniswapV4TwapOracleAwareRepo.sol";
 
-import {NativeStandardYieldContextRepo} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {UniswapV4FullSpreadHooklessStandardExchangeVaultRouteTypes as Types} from "../hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultRouteTypes.sol";
@@ -167,15 +166,9 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookCommon is IUnlockCallback, IS
 
     function _inventoryRedeem(InventoryQuote memory q, uint256 shares) internal view returns (uint256 assets) {
         if (shares > q.supply) revert ITransition.InvalidQuoteState();
-        if (!q.idle) {
-            (uint256 total0, uint256 total1) = _inventoryTotals(q);
-            assets = q.token0
-                ? StandardExchangeConstantProduct._singleExit(total0, total1, shares, q.supply)
-                : StandardExchangeConstantProduct._singleExit(total1, total0, shares, q.supply);
-            // quoteAssets values inventory even when the liquid sleeve cannot pay it yet.
-            if (q.token0) q.free0 = assets <= q.free0 ? q.free0 - assets : 0;
-            else q.free1 = assets <= q.free1 ? q.free1 - assets : 0;
-        } else {
+        // Locked or not, redeem against the pool book. The sleeve is a settlement
+        // assumption, not a different price.
+        {
             _inventoryCollect(q);
             uint256 out0 = Math.mulDiv(q.free0, shares, q.supply);
             uint256 out1 = Math.mulDiv(q.free1, shares, q.supply);
@@ -949,11 +942,6 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookCommon is IUnlockCallback, IS
     }
 
     function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
-        if (!pretransferred && msg.sender == address(this) && NativeStandardYieldContextRepo._initiator() != address(0)) {
-            uint256 selfBalance = IERC20(address(this)).balanceOf(address(this));
-            _requireDelivered(amountIn, selfBalance);
-            return amountIn;
-        }
         if (!pretransferred) {
             ERC20Repo._transfer(msg.sender, address(this), amountIn);
             return amountIn;

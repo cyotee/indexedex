@@ -9,9 +9,31 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {ERC4626StandardExchangeCommon} from "./ERC4626StandardExchangeCommon.sol";
+import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 
 /// @notice SY for the existing SE share token backed by an external ERC-4626 vault.
-abstract contract ERC4626StandardYieldTarget is NativeStandardYieldTarget, ERC4626StandardExchangeCommon {
+abstract contract ERC4626StandardYieldTarget is NativeStandardYieldTarget, ERC4626StandardExchangeCommon, ReentrancyLockModifiers {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256 amount_)
+    {
+        IERC4626 vault_ = protocolVault();
+        if (tokenOut_ == vault_.asset()) {
+            amount_ = _previewUnderlyingOutForSeIn(shares_);
+            if (amount_ < minimum_) revert Slippage();
+            _burnSeShares(address(this), shares_, false);
+            _payUnderlyingLocalFirst(vault_, amount_, receiver_);
+        } else {
+            amount_ = _previewRedeemShares(shares_);
+            if (amount_ < minimum_) revert Slippage();
+            uint256 held_ = IERC20(address(vault_)).balanceOf(address(this));
+            if (amount_ > held_) revert InsufficientReceiptInventory(amount_, held_);
+            _burnSeShares(address(this), shares_, false);
+            BetterSafeERC20.safeTransfer(IERC20(address(vault_)), receiver_, amount_);
+        }
+        _syncAllExpectedHoldReserves();
+    }
+
     function getTokensIn() public view override returns (address[] memory tokens_) {
         IERC4626 vault_ = protocolVault();
         tokens_ = new address[](2);

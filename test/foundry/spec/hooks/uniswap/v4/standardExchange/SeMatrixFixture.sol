@@ -95,6 +95,12 @@ abstract contract SeMatrixFixture {
     ///         Later input above that is booked on the SE (D22 / D31), not refunded.
     function limitCapacity(uint256 allowFace) external virtual;
 
+    /// @notice Independent protocol custody measurement for fixtures whose requested allowance
+    /// cannot express exact consumption. Values are denominated in native face-token units.
+    function partialDeploymentBalance() external view virtual returns (bool measured, uint256 balance) {
+        return (false, 0);
+    }
+
     /// @notice Remove the capacity limit so the next investing operation sweeps the booked remainder.
     function openCapacity() external virtual;
 

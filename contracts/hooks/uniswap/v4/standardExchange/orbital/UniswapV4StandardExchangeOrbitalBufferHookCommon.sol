@@ -76,6 +76,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     error FullBookRequiresThreeLegs();
     error ReservesExceedRadius();
     error InvalidPermit2Data();
+    error InvalidTransferAmount();
     error FirstMintRequiresTwoLegs();
     error NotZapEligible();
     error InvalidIndex();
@@ -635,7 +636,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 minOut;
         if (quoteMin_) {
             uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
-            minOut = m > 0 ? m - 1 : 0;
+            minOut = m;
         }
         IERC20(token).forceApprove(se, amount);
         seOut = IStandardExchangeIn(se).exchangeIn(
@@ -1208,9 +1209,22 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 e1n = _effectiveNativeAt(1);
         uint256 e2n = _effectiveNativeAt(2);
         (r.used0, r.used1, r.used2) = _partialUsed(a0Max, a1Max, a2Max, e0n, e1n, e2n);
+        r.used0 = _executablePartialFace(0, r.used0, a0Max);
+        r.used1 = _executablePartialFace(1, r.used1, a1Max);
+        r.used2 = _executablePartialFace(2, r.used2, a2Max);
         r.shares = _partialNavShares(supply, e0n, e1n, e2n, r.used0, r.used1, r.used2);
     }
 
+
+    /// @dev Forward deposit feasibility is discontinuous in native units. A
+    /// ratio-rounded intake can fail even though the offered budget is valid.
+    /// Both candidates are within the radius-capped budget; reprice LP from
+    /// the selected amounts rather than executing a zero-quote reduced intake.
+    function _executablePartialFace(uint8 i, uint256 used, uint256 offered) private view returns (uint256) {
+        if (used == 0 || _previewRawSharesFromFace(i, used) != 0) return used;
+        if (used != offered && _previewRawSharesFromFace(i, offered) != 0) return offered;
+        return 0;
+    }
 
     function _partialUsed(
         uint256 a0Max,
@@ -1385,20 +1399,57 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 a2Min, uint256 deadline, bool refundFree)
         internal returns (uint256 a0, uint256 a1, uint256 a2)
     {
+        return _removeLiquidityFrom(msg.sender, shares, to, a0Min, a1Min, a2Min, deadline, refundFree);
+    }
+
+    function _removeLiquidityFrom(address holder, uint256 shares, address to, uint256 a0Min, uint256 a1Min,
+        uint256 a2Min, uint256 deadline, bool refundFree)
+        internal returns (uint256 a0, uint256 a1, uint256 a2)
+    {
         _requireDeadline(deadline);
         _requireNonZero(shares);
         if (to == address(0)) revert ZeroAddress();
 
         _maybeMintProtocolFee();
-        if (shares > _balanceOf(msg.sender)) revert InsufficientSharesOut();
+        if (shares > _balanceOf(holder)) revert InsufficientSharesOut();
 
         (a0, a1, a2) = _proRataOut(shares);
         if (a0 < a0Min || a1 < a1Min || a2 < a2Min) revert InsufficientTokenOut();
 
-        (a0, a1, a2) = _burnAndPay(shares, to, a0, a1, a2, refundFree);
+        (a0, a1, a2) = _burnAndPay(holder, shares, to, a0, a1, a2, refundFree);
         emit LiquidityRemoved(msg.sender, to, shares, a0, a1, a2);
     }
 
+
+    function _exitSingleAssetFrom(address holder, address tokenOut, uint256 shares, address to, uint256 deadline)
+        internal returns (uint256 amountOut)
+    {
+        address pair = _resolveBurnTokenOut(tokenOut);
+        if (pair == address(0)) revert InvalidRoute(tokenOut, address(0));
+        if (to == address(0)) revert ZeroAddress();
+        uint256 freeBefore = _freeTokenBalance(pair);
+        uint256[3] memory amounts;
+        (amounts[0], amounts[1], amounts[2]) = _removeLiquidityFrom(
+            holder, shares, address(this), 0, 0, 0, deadline, false
+        );
+        for (uint8 i; i < 3; ++i) {
+            address input = Repo._tokenAt(Repo._layout(), i);
+            if (input == pair || amounts[i] == 0) continue;
+            _internalSwapExactIn(input, pair, amounts[i], _feeOracle().dexSwapFeeOfVault(address(this)));
+        }
+        amountOut = _freeTokenBalance(pair) - freeBefore;
+        if (tokenOut != pair && amountOut > 0) amountOut = _bufferToken(pair, amountOut);
+        IERC20(tokenOut).safeTransfer(to, amountOut);
+        _syncVaultReserves();
+    }
+
+    function _resolveBurnTokenOut(address tokenOut) internal view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        LegLib.LegKind kind_ = LegLib.classify(l.legs, tokenOut);
+        if (kind_ == LegLib.LegKind.StandardExchange) return l.legs.pairOfStandardExchange[tokenOut];
+        if (kind_ == LegLib.LegKind.Pair || kind_ == LegLib.LegKind.Detf) return tokenOut;
+        return address(0);
+    }
 
     function _proRataOut(uint256 shares)
         private
@@ -1432,14 +1483,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _burnAndPay(uint256 shares, address to, uint256 a0, uint256 a1, uint256 a2, bool refundFree)
+    function _burnAndPay(address holder, uint256 shares, address to, uint256 a0, uint256 a1, uint256 a2, bool refundFree)
         private
         returns (uint256, uint256, uint256)
     {
         Repo.Layout storage l = Repo._layout();
         FaceSnap memory snap = _faceSnap();
         uint256 supply = _totalSupply();
-        _burnLp(msg.sender, shares);
+        _burnLp(holder, shares);
 
         if (l.se0 == address(0)) {
             l.reserves[l.token0] -= a0;
@@ -1760,15 +1811,15 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         Repo.Layout storage l = Repo._layout();
         if (v.used0 > 0) {
             address t0 = v.amount0IsSeShare ? l.se0 : l.token0;
-            IERC20(t0).safeTransferFrom(msg.sender, address(this), v.used0);
+            _pullDirectExact(t0, v.used0);
         }
         if (v.used1 > 0) {
             address t1 = v.amount1IsSeShare ? l.se1 : l.token1;
-            IERC20(t1).safeTransferFrom(msg.sender, address(this), v.used1);
+            _pullDirectExact(t1, v.used1);
         }
         if (v.used2 > 0) {
             address t2 = v.amount2IsSeShare ? l.se2 : l.token2;
-            IERC20(t2).safeTransferFrom(msg.sender, address(this), v.used2);
+            _pullDirectExact(t2, v.used2);
         }
     }
 
@@ -2005,11 +2056,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
 
     function _pullTokenIn(address tokenIn, uint256 amountIn, bytes calldata permit2Data) private {
+        uint256 beforeBalance = IERC20(tokenIn).balanceOf(address(this));
         if (permit2Data.length == 0) {
             IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         } else {
             _pullSingle(tokenIn, amountIn, permit2Data);
         }
+        _requireReceived(tokenIn, amountIn, beforeBalance);
     }
 
 
@@ -2244,12 +2297,43 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (allowance >= amount) {
             IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
         } else {
-            IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(amount), token);
+            _pullPermit2(token, amount);
         }
     }
 
 
+    function _pullDirectExact(address token, uint256 amount) internal {
+        if (amount == 0) return;
+        uint256 beforeBalance = IERC20(token).balanceOf(address(this));
+        IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
+        _requireReceived(token, amount, beforeBalance);
+    }
+
+    function _requireReceived(address token, uint256 amount, uint256 beforeBalance) private view {
+        uint256 afterBalance = IERC20(token).balanceOf(address(this));
+        uint256 received = afterBalance > beforeBalance ? afterBalance - beforeBalance : 0;
+        if (received != amount) revert ISecurePullErrors.TransferDeltaInsufficient(amount, received);
+    }
+
+    function _pullPermit2(address token, uint256 amount) private {
+        if (amount > type(uint160).max) revert InvalidTransferAmount();
+        IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(amount), token);
+    }
+
     function _pullLegs(uint256 u0, uint256 u1, uint256 u2, bytes memory permit2Data) internal {
+        address[3] memory tokens = [token0(), token1(), token2()];
+        uint256[3] memory amounts = [u0, u1, u2];
+        uint256[3] memory beforeBalances;
+        for (uint256 i; i < 3; ++i) {
+            if (amounts[i] > 0) beforeBalances[i] = IERC20(tokens[i]).balanceOf(address(this));
+        }
+        _transferLegs(u0, u1, u2, permit2Data);
+        for (uint256 i; i < 3; ++i) {
+            if (amounts[i] > 0) _requireReceived(tokens[i], amounts[i], beforeBalances[i]);
+        }
+    }
+
+    function _transferLegs(uint256 u0, uint256 u1, uint256 u2, bytes memory permit2Data) private {
         address t0 = token0();
         address t1 = token1();
         address t2 = token2();
@@ -2287,7 +2371,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             mode = abi.decode(permit2Data[:32], (uint8));
         }
         if (mode == 1) {
-            IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(amount), token);
+            _pullPermit2(token, amount);
         } else {
             revert InvalidPermit2Data();
         }
@@ -2328,13 +2412,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     function _pullAllowance(uint256 u0, uint256 u1, uint256 u2) internal {
         if (u0 > 0) {
-            IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(u0), token0());
+            _pullPermit2(token0(), u0);
         }
         if (u1 > 0) {
-            IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(u1), token1());
+            _pullPermit2(token1(), u1);
         }
         if (u2 > 0) {
-            IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(u2), token2());
+            _pullPermit2(token2(), u2);
         }
     }
 

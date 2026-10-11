@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {Creation} from "@crane/contracts/utils/Creation.sol";
@@ -96,10 +98,11 @@ contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataPro
     }
 
     function test_stataInternalBalanceConsumesOnlyRequestedShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 shares_ = _depositBase();
         vm.prank(HOLDER); sy.transfer(subject, shares_);
         uint256 quote_ = sy.previewRedeem(address(stataTokenV2), shares_ / 3);
-        vm.prank(HOLDER); sy.redeem(HOLDER, shares_ / 3, address(stataTokenV2), quote_, true);
+        vm.prank(HOLDER); abi.decode(atomic.execute(address(sy), abi.encodeCall(IStandardizedYield.redeem, (HOLDER, shares_ / 3, address(stataTokenV2), quote_, true))), (uint256));
         assertEq(sy.balanceOf(subject), shares_ - shares_ / 3);
     }
 

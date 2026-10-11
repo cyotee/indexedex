@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {TestBase_UniswapV4FullSpreadHooklessStandardExchangeVault_Acceptance as Acceptance} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/test/bases/TestBase_UniswapV4FullSpreadHooklessStandardExchangeVault_Acceptance.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 
 // tag::HooklessAttributionAndBookingTest[]
 contract HooklessAttributionAndBookingTest is Acceptance {
@@ -28,6 +29,23 @@ contract HooklessAttributionAndBookingTest is Acceptance {
         _assertBooked();
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0));
         vault.exchangeIn(token0, 1, IERC20(address(vault)), 0, address(this), true, block.timestamp);
+    }
+
+    function test_outsidePoolTradeDoesNotRefreshVaultBook() public {
+        _bootstrap();
+        uint256 book0 = IBasicVault(address(vault)).reserveOfToken(address(token0));
+        uint256 book1 = IBasicVault(address(vault)).reserveOfToken(address(token1));
+        uint256 supply = IERC20(address(vault)).totalSupply();
+        _externalSwap(false, 100e18);
+        assertEq(IBasicVault(address(vault)).reserveOfToken(address(token0)), book0, "outside trade leaves token0 book unchanged");
+        assertEq(IBasicVault(address(vault)).reserveOfToken(address(token1)), book1, "outside trade leaves token1 book unchanged");
+        assertEq(IERC20(address(vault)).totalSupply(), supply, "outside trade mints no shares");
+        uint256 beforeShares = IERC20(address(vault)).balanceOf(address(this));
+        uint256 preview = vault.previewExchangeIn(token1, 1e18, IERC20(address(vault)));
+        uint256 minted = vault.exchangeIn(token1, 1e18, IERC20(address(vault)), preview, address(this), false, block.timestamp);
+        assertEq(minted, preview, "later deposit credits only the funded input");
+        assertEq(IERC20(address(vault)).balanceOf(address(this)) - beforeShares, minted, "caller receives only the funded credit");
+        _assertBooked();
     }
 
     function test_poolRepricingDoesNotCreatePretransferCredit() public {

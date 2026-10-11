@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {HermeticWETH, HermeticStETH, HermeticWstETH, HermeticWithdrawalQueue} from "contracts/protocols/staking/lido/test/hermetic/HermeticLidoPorts.sol";
 import {LidoWstETH_Component_FactoryService as LidoFactory} from "contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol";
@@ -549,9 +551,16 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         IUniswapV4Detf subject_ = _subject();
         IERC20 lp_ = _lp();
         address buyer_ = _buyer();
-        vm.expectRevert(); subject_.previewBond(lp_, 1, 180 days);
-        vm.prank(buyer_); vm.expectRevert();
+        (uint256 quotedLp_, uint256 principal_, uint256 rewards_, uint256 fee_) = subject_.previewBond(lp_, 1, 180 days);
+        assertEq(quotedLp_, 0, "inactive LP route quotes no reserve shares");
+        assertEq(principal_, 0);
+        assertEq(rewards_, 0);
+        assertEq(fee_, 0);
+        uint256 allowance_ = lp_.allowance(buyer_, address(subject_));
+        assertEq(allowance_, 0, "no LP funding exists before activation");
+        vm.prank(buyer_); vm.expectRevert(SafeTransferLib.TransferFromFailed.selector);
         subject_.bond(lp_, 1, 180 days, buyer_, false, block.timestamp);
+        assertEq(lp_.balanceOf(address(subject_)), 0, "failed activation takes no LP");
         assertFalse(_subject().isReserveLive());
     }
 

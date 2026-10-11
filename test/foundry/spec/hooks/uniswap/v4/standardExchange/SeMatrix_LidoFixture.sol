@@ -34,6 +34,10 @@ import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchan
  *      stETH port only; they gate `rebalance` / `exchangeInEth`, not the hook's WETH→SE route.
  */
 contract SeMatrix_LidoFixture is SeMatrixFixture {
+    function partialDeploymentBalance() external view override returns (bool, uint256) {
+        return (true, address(stEth).balance);
+    }
+
     using LidoWstETH_Component_FactoryService for ICreate3FactoryProxy;
     using LidoWstETH_Component_FactoryService for IIndexedexManagerProxy;
 

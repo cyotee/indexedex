@@ -3,7 +3,55 @@
 > **Current release authority:** [DETF alignment PRD D57–D59 and §24](../../../../vaults/detf/DETF_ALIGNMENT_PRD.md) and the [funded staking/SY implementation plan §7.4](../../../../vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting historical instructions below. Initial activation, including an imported position, requires actual funding in both tokens. Ordinary and imported liquidity use the maximum usable tick range. Share accounting uses proportional ownership and constant-product mathematics over exact deployed token amounts, sleeve balances and earned fees counted once. Subsequent single-token deposits and funded sleeve operations during pool locks remain available. Native Pendle SY and current facet declarations are part of the release; unread caches, unused wing state and unused import metadata are removed. V4 dual inputs follow PoolKey order, with WETH representing a native currency; numeric ERC20 address order cannot reject that mapping. Prior first-single-token, sum-of-assets issuance, unchanged imported ticks, cache-retention and pre-SY selector instructions are historical. Unfinished Slipstream work and its validation are deferred under D66.
 
 
-**Status:** Ready for coding (product law frozen)  
+## Pool-pricing alignment validation (2026-10-09)
+
+The [pool-priced redemption clarification](./UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_PRD.md#pool-priced-redemption-clarification-2026-10-09)
+supersedes historical blocked one-token pricing and exact-output padding in this plan.
+The implementation keeps price simulation separate from actual local settlement.
+Blocked execution reuses the installed preview facet; native SY reuses the guarded
+SE entrypoint and its existing vault-held-share handling, avoiding duplicate execution bytecode.
+
+The production-proxy regressions are in
+[`UniswapV4StandardExchange_FullRangeBook.t.sol`](../../../../../test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol):
+
+| Required evidence | Tests |
+|---|---|
+| Exact real idle/blocked payout parity for both underlying faces, including minimal exact-output shares | `test_poolPrice_idleAndBlockedRedemptionsBothFaces` |
+| Crossed external ticks, pending fees, unchanged blocked pool/position/fee state | `test_poolPrice_idleAndBlockedAfterTickCrossingBothFaces` |
+| Entire prequoted sequence matches every executed state in both contexts | `test_poolPrice_projectedSequenceIdleAndBlockedBothFaces` |
+| Exact cover succeeds; one-unit-short exact-output settlement rolls back | `test_poolPrice_exactLocalCoverAndOneUnitShortBothFaces` |
+| Unfunded exact-input quotes retain their price; transition and execution reject without state change | `test_poolPrice_unfundedExactInputKeepsQuoteAndRollsBackBothFaces` |
+| Minimal charge, exact requested receipt, prepaid refunds, and budget independence | `testFuzz_zapOut_exactOutputChargesQuotedShares`, `testFuzz_fundedSleeveWithdrawalRounding` |
+| Native SY routing, internal balances, slippage, blocked settlement, and all facet/delegate runtime sizes | `test_nativeSY*` |
+
+The broad validation also exposed a pre-existing missing contract-caller guard in
+`_secureShareDelivery` for prepaid shares. That branch now uses the canonical
+`LocalCreditLib.requirePretransferCaller`; the existing
+`test_RECURRENCE_legacyV4_prepaidSharesRejectEOA` verifies the funded contract
+control succeeds and the EOA is rejected without consuming the shares.
+The E6 prepaid-share accounting tests use the existing `AtomicPretransferCaller`
+fixture to reach refund/credit checks through an eligible contract, including the
+decimal variants; their booked-balance and exact-refund assertions are preserved.
+
+Also run the full legacy V4 protocol directory, including all eight decimal H2
+variants and the existing secure-pull, import, and adversarial suites. Rebuild runtime
+artifacts before testing:
+
+```sh
+python3 scripts/forge-artifacts.py test \
+  contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol \
+  --test-root test/foundry/spec/protocol/dexes/uniswap/v4 \
+  -- --fuzz-runs 128 -vv
+```
+
+**Validation result (2026-10-09):** 1,107 tests passed across 103 suites, with
+0 failures and 0 skips; fuzz tests ran 128 cases each. This includes all eight
+reported decimal H2 failures, the pool-price regressions above, E6 accounting,
+the EOA prepaid-share rejection, and native SY/runtime-size checks. All 13 legacy
+V4 package/facet/delegate runtimes fit EIP-170; the largest is 22,738 bytes.
+This evidence covers the legacy V4 protocol directory, not a repository-wide audit.
+
+**Historical plan status:** Ready for coding (product law frozen)
 **Date:** 2026-08-05  
 **Product law (normative):** [`UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_PRD.md`](./UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_PRD.md) (**v1.6**, D1–D29)  
 **Bring-up plan (historical):** [`UNISWAP_V4_STANDARD_EXCHANGE_VAULT_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_VAULT_PLAN.md)  

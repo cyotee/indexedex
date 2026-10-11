@@ -1,0 +1,3675 @@
+{
+  "scope_roots": [
+    "contracts/hooks/uniswap/v4/standardExchange",
+    "contracts/protocols/dexes/balancer/v3/pools",
+    "contracts/protocols/dexes/balancer/v3/rateProviders",
+    "contracts/hooks/uniswap/v4/libs"
+  ],
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol",
+      "sha256": "835e9924cf0fdef905b27964410700d15040b839717249bc5496d580204fde65",
+      "line_count": 42,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol",
+      "sha256": "5cea017b110c2d4ea4ac91231ab5cbeec57726d1032831f8cab776ca316bd0c0",
+      "line_count": 489,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 302,
+            "text": "(bool ok, bytes memory data) = rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          },
+          {
+            "line": 358,
+            "text": "(bool ok, bytes memory ret) = se.staticcall("
+          }
+        ],
+        "allowance": [
+          {
+            "line": 165,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, output.sharesOut);"
+          },
+          {
+            "line": 168,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          },
+          {
+            "line": 257,
+            "text": "IERC20(l.pairToken).forceApprove(l.standardExchange, amount);"
+          },
+          {
+            "line": 261,
+            "text": "IERC20(l.pairToken).forceApprove(l.standardExchange, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol",
+      "sha256": "6ad28c27c00ab58cb92983ab20ca45ce87f95eb10020d5f459a67688098d0a33",
+      "line_count": 414,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol",
+      "sha256": "6699c1e3a7f1ce9979aea0f7f4d7735c34c3d5bc74e07be02d5df38a973e6a3e",
+      "line_count": 1026,
+      "sites": {
+        "payout": [
+          {
+            "line": 503,
+            "text": "if (amount0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, amount0 - used0);"
+          },
+          {
+            "line": 504,
+            "text": "if (amount1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, amount1 - used1);"
+          },
+          {
+            "line": 683,
+            "text": "IERC20(l.rawToken).safeTransfer(msg.sender, amountRaw - usedRaw);"
+          },
+          {
+            "line": 686,
+            "text": "IERC20(l.standardExchange).safeTransfer(msg.sender, amountSe - usedSe);"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 298,
+            "text": "IERC20(l.pairToken).forceApprove(l.standardExchange, amount);"
+          },
+          {
+            "line": 325,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 330,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          },
+          {
+            "line": 346,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 351,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol",
+      "sha256": "c20e8283d94bff60d2c4ed85a7907902c6a2f4db6873a65c0561a63d1eb8961c",
+      "line_count": 385,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleTarget.sol",
+      "sha256": "432cf5e571ae8183f47229d53f6fd36af3ae3fbce06646efb118b35bbee75df7",
+      "line_count": 156,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget.sol",
+      "sha256": "e61de96eaf13f86ab3dfee8ac1941cc8663f2de0ed73daa467ed0d9b961fc83e",
+      "line_count": 140,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookInitTarget.sol",
+      "sha256": "1140a2ab4e764c28b8f720dd8d06121f4db4db803300dd134cf79e6d2af718d7",
+      "line_count": 98,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol",
+      "sha256": "0113a662c328d7a67802cb60c2bcd568480e80070b221dc332d6fb66491182e0",
+      "line_count": 169,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPairPoolLib.sol",
+      "sha256": "b11658345464036f8a03809099b1d0e65a245b33907f10526d494e8e11487fdc",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol",
+      "sha256": "8ca16303dc66e39df7e8ff106391f61285042f8f0fa3fbd77bd52ec594acfeef",
+      "line_count": 85,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol",
+      "sha256": "af071fab414794a833fd18f1461dc0ba1d2529300efd5194bd0f59b1adee6605",
+      "line_count": 88,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "sha256": "4c5fd6f30152b8b77078ba6e78395f4948232918de2f4f6af9f1d34d8aa431f2",
+      "line_count": 1028,
+      "sites": {
+        "credit": [
+          {
+            "line": 13,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 796,
+            "text": "_securePull(IERC20(address(tokenIn)), amountIn, pretransferred);"
+          },
+          {
+            "line": 850,
+            "text": "_pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);"
+          },
+          {
+            "line": 882,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          },
+          {
+            "line": 907,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          },
+          {
+            "line": 944,
+            "text": "function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)"
+          },
+          {
+            "line": 957,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 958,
+            "text": "uint256 U = _unbookedBalance(tokenIn);"
+          },
+          {
+            "line": 966,
+            "text": "function _unbookedBalance(IERC20 token) internal view returns (uint256) {"
+          },
+          {
+            "line": 974,
+            "text": "return LocalCreditLib.available(token.balanceOf(address(this)), booked);"
+          },
+          {
+            "line": 979,
+            "text": "function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)"
+          },
+          {
+            "line": 982,
+            "text": "_securePull(token, used, pretransferred);"
+          },
+          {
+            "line": 984,
+            "text": "uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 472,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(pm), amount);"
+          },
+          {
+            "line": 803,
+            "text": "IERC20(l.pairToken).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 807,
+            "text": "IERC20(l.rawToken).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 857,
+            "text": "IERC20(l.pairToken).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 861,
+            "text": "IERC20(l.rawToken).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 885,
+            "text": "IERC20(Repo._layout().pairToken).safeTransfer(msg.sender, amountOut);"
+          },
+          {
+            "line": 930,
+            "text": "IERC20(l.pairToken).safeTransfer(msg.sender, paidOut);"
+          },
+          {
+            "line": 937,
+            "text": "IERC20(l.rawToken).safeTransfer(msg.sender, paidOut);"
+          },
+          {
+            "line": 985,
+            "text": "if (credit > used) token.safeTransfer(msg.sender, credit - used);"
+          }
+        ],
+        "callback": [
+          {
+            "line": 571,
+            "text": "function beforeSwap(address, PoolKey calldata, SwapParams calldata params, bytes calldata)"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 379,
+            "text": "IERC20(l.pairToken).forceApprove(l.standardExchange, amount);"
+          },
+          {
+            "line": 412,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 422,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          },
+          {
+            "line": 436,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 446,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+      "sha256": "e982975b898c7c346c0af72006ac1d3af74e915ffa5275c43f0e123cd655fc81",
+      "line_count": 1486,
+      "sites": {
+        "payout": [
+          {
+            "line": 384,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(pm), amount);"
+          },
+          {
+            "line": 705,
+            "text": "IERC20(l.pairToken).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 709,
+            "text": "IERC20(l.rawToken).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 838,
+            "text": "if (amount0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, amount0 - used0);"
+          },
+          {
+            "line": 839,
+            "text": "if (amount1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, amount1 - used1);"
+          },
+          {
+            "line": 1131,
+            "text": "if (rawOut > 0) IERC20(l.rawToken).safeTransfer(to, rawOut);"
+          },
+          {
+            "line": 1133,
+            "text": "if (pairOut > 0) IERC20(l.pairToken).safeTransfer(to, pairOut);"
+          },
+          {
+            "line": 1203,
+            "text": "if (amountOut > 0) IERC20(l.pairToken).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 1209,
+            "text": "if (amountOut > 0) IERC20(l.rawToken).safeTransfer(to, amountOut);"
+          }
+        ],
+        "callback": [
+          {
+            "line": 483,
+            "text": "function beforeSwap(address, PoolKey calldata, SwapParams calldata params, bytes calldata)"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 290,
+            "text": "IERC20(l.pairToken).forceApprove(l.standardExchange, amount);"
+          },
+          {
+            "line": 324,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 334,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          },
+          {
+            "line": 348,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 358,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+      "sha256": "1321cc1c5ee08ed29851f17b3b0fe275217b247c303095afee472f556de83493",
+      "line_count": 894,
+      "sites": {
+        "payout": [
+          {
+            "line": 575,
+            "text": "if (rawOut > 0) IERC20(l.rawToken).safeTransfer(to, rawOut);"
+          },
+          {
+            "line": 577,
+            "text": "if (pairOut > 0) IERC20(l.pairToken).safeTransfer(to, pairOut);"
+          },
+          {
+            "line": 628,
+            "text": "if (amountRaw > 0) IERC20(l.rawToken).safeTransfer(to, amountRaw);"
+          },
+          {
+            "line": 633,
+            "text": "if (amountSe > 0) IERC20(l.standardExchange).safeTransfer(to, amountSe);"
+          },
+          {
+            "line": 690,
+            "text": "if (amountOut > 0) IERC20(l.pairToken).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 701,
+            "text": "if (amountOut > 0) IERC20(l.rawToken).safeTransfer(to, amountOut);"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 291,
+            "text": "IERC20(l.pairToken).forceApprove(l.standardExchange, amount);"
+          },
+          {
+            "line": 324,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 334,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          },
+          {
+            "line": 348,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);"
+          },
+          {
+            "line": 358,
+            "text": "IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol",
+      "sha256": "c7e4353d04c43f1e66345e7991e04b8c437e40da6beb82f27ea0a2999761833a",
+      "line_count": 100,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol",
+      "sha256": "0138249460db5dbc388fe59b7cffaff274811d6237652eac11280208b571f76e",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol",
+      "sha256": "74520e743845e8479bf2ffc241dafe4c49ba3fbbb01361e90919726f104db2bc",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol",
+      "sha256": "7639afd50516d143f71d7d5e10320460476656cdd362f37d44a8686743e406ae",
+      "line_count": 51,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookInitFacet.sol",
+      "sha256": "1eaa094541996eb4bd004808b42e66ff6afd63f5f29d6ca17ab0b8b662c54340",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol",
+      "sha256": "3d257e959ba0c3c7bb6a84e177502b0be8b80ebf029933bf0b4571784aec2b0e",
+      "line_count": 111,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol",
+      "sha256": "13b85a8c0d5eda0111c284a33fcfee9f72484e59827cf71cd3dde5afdf7fa87d",
+      "line_count": 56,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol",
+      "sha256": "42a18dae588a4309ec115ed846816b63107d4eca1228a5489eaec37a1b8a62ca",
+      "line_count": 212,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookInit.sol",
+      "sha256": "2f2b138cb4e93622925d6ad646727e8d4f96cfa7e1c7411ec39951f69cef124f",
+      "line_count": 14,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol",
+      "sha256": "cfb153763bf9d8d9f58fe1259cef5da12387df63dcb04c83996d463f907a47a6",
+      "line_count": 79,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol",
+      "sha256": "f68b4bfce824d472ef20b2d786c342df6746d32a5dbf60affe26fe6cf6158567",
+      "line_count": 34,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol",
+      "sha256": "7d43ff5c4d564067e1a453daebc6cb38d51f98265bc2c2ad15ead70b511384e7",
+      "line_count": 338,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 203,
+            "text": "(bool ok, bytes memory data) = leg.rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookCommon.sol",
+      "sha256": "56769d4cfbe9fd7d83b1ec7f814719cfd8b92164c7fc2779a69e1e26cacb4fa3",
+      "line_count": 1349,
+      "sites": {
+        "credit": [
+          {
+            "line": 16,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 151,
+            "text": "function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)"
+          },
+          {
+            "line": 164,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 165,
+            "text": "uint256 U = _unbookedBalance(tokenIn);"
+          },
+          {
+            "line": 173,
+            "text": "function _unbookedBalance(IERC20 token) internal view returns (uint256) {"
+          },
+          {
+            "line": 176,
+            "text": "return LocalCreditLib.available(token.balanceOf(address(this)), booked);"
+          },
+          {
+            "line": 181,
+            "text": "function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)"
+          },
+          {
+            "line": 184,
+            "text": "_securePull(token, used, pretransferred);"
+          },
+          {
+            "line": 186,
+            "text": "uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 187,
+            "text": "if (credit > used) token.safeTransfer(msg.sender, credit - used);"
+          },
+          {
+            "line": 412,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(pm), amount);"
+          },
+          {
+            "line": 568,
+            "text": "if (amount0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, amount0 - used0);"
+          },
+          {
+            "line": 569,
+            "text": "if (amount1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, amount1 - used1);"
+          },
+          {
+            "line": 671,
+            "text": "if (add0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, add0 - used0);"
+          },
+          {
+            "line": 672,
+            "text": "if (add1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, add1 - used1);"
+          },
+          {
+            "line": 756,
+            "text": "IERC20(l.currency0).safeTransfer(to, amount0);"
+          },
+          {
+            "line": 760,
+            "text": "IERC20(l.currency1).safeTransfer(to, amount1);"
+          },
+          {
+            "line": 902,
+            "text": "IERC20(t0).safeTransfer(msg.sender, v.amount0 - v.used0);"
+          },
+          {
+            "line": 906,
+            "text": "IERC20(t1).safeTransfer(msg.sender, v.amount1 - v.used1);"
+          },
+          {
+            "line": 971,
+            "text": "IERC20(v.se0).safeTransfer(v.to, v.seOut0);"
+          },
+          {
+            "line": 974,
+            "text": "IERC20(v.currency0).safeTransfer(v.to, v.amount0);"
+          },
+          {
+            "line": 980,
+            "text": "IERC20(v.se1).safeTransfer(v.to, v.seOut1);"
+          },
+          {
+            "line": 983,
+            "text": "IERC20(v.currency1).safeTransfer(v.to, v.amount1);"
+          },
+          {
+            "line": 1054,
+            "text": "if (recipient != address(this)) IERC20(plan.tokenOut).safeTransfer(recipient, amountOut);"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 363,
+            "text": "IERC20(pairToken).forceApprove(se, amount);"
+          },
+          {
+            "line": 377,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 393,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 398,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 1041,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol",
+      "sha256": "81b2364821bac7d4df3ef5ac206767ff1000f5d15001a43a4b08df8e20b2f414",
+      "line_count": 407,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol",
+      "sha256": "4e65f8a34e6c94cc7ac13572bfe5ae8285d363c094f5d1d6d71f10867b61580f",
+      "line_count": 283,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget.sol",
+      "sha256": "3e3d40594ec2def60b0c2ffc2a993c379b1dd1093eeb13dc310553bb7fb01e79",
+      "line_count": 458,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget.sol",
+      "sha256": "713de0243ddb6e79bf3878e1742f90f00c509eea55e7914b36aa98eea6593413",
+      "line_count": 357,
+      "sites": {
+        "callback": [
+          {
+            "line": 224,
+            "text": "function beforeSwap(address, PoolKey calldata, SwapParams calldata params, bytes calldata)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookInitTarget.sol",
+      "sha256": "1a3224943f153700080530f2f2f26c5037d013bdf525a76f08308e39d3164915",
+      "line_count": 98,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol",
+      "sha256": "9b4d8801987362143909f3d76ab1a0b2138ee60bd195df44c72b0329eeedf5af",
+      "line_count": 115,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPairPoolLib.sol",
+      "sha256": "ac9fe9c5669cf311baf3002296f416db2baf68c450e666e46fe58bd9e2ca2823",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol",
+      "sha256": "f363bce74c2b1b108192f1207da98554b99128e8d60e8782bd7868d13a2668ce",
+      "line_count": 89,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookRepo.sol",
+      "sha256": "f5f765bbc9f3e894141c7675c88d4e8e187164eedaed386b26a816db6b7d9771",
+      "line_count": 95,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "sha256": "dea3ab4a19fae01655bd321e2f339ba5f9762d09a0fd41d6eec9bb10982ed2d2",
+      "line_count": 193,
+      "sites": {
+        "credit": [
+          {
+            "line": 105,
+            "text": "_securePull(IERC20(address(tokenIn)), amountIn, pretransferred);"
+          },
+          {
+            "line": 145,
+            "text": "_pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);"
+          },
+          {
+            "line": 166,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          },
+          {
+            "line": 188,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookTarget.sol",
+      "sha256": "23a5f34a651a7e71978e5917b8b59ed685ba2c831775901e1670b47734cae6df",
+      "line_count": 24,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+      "sha256": "7a4b8f57d58bb799cea736bf3356b9341c02fa544ec59a42f246c789653cca65",
+      "line_count": 307,
+      "sites": {
+        "payout": [
+          {
+            "line": 205,
+            "text": "IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);"
+          },
+          {
+            "line": 211,
+            "text": "IERC20(tokenOut).safeTransfer(to, amountOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService.sol",
+      "sha256": "aeea9c63973e429bef7b6bfaecfb5cecaf756794f27c740cb05df29657ca341b",
+      "line_count": 104,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol",
+      "sha256": "487d0f64091a48ca9327c81e194e32b1fd09ba450a10ae0bb1246e4886feb0fb",
+      "line_count": 57,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol",
+      "sha256": "da080a6a79cf7b33f6ba008cdea8bd2cb9927e7ed089e404ee0a69a82327547b",
+      "line_count": 103,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookInitFacet.sol",
+      "sha256": "965c5a6241db7d3cd346dbbe78c8c48cb603880da94fd7c294816b30da3faa56",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol",
+      "sha256": "9bba7440d7cc6dfa36afe9f17d644a6ae47c463f9221cca1947107bf8f5a27b5",
+      "line_count": 53,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol",
+      "sha256": "81968c4c2a997b8cd88e51e035206e7f1cb67a341ca3804d8b5b6c890f59c568",
+      "line_count": 50,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol",
+      "sha256": "fd3842fbaed680acbd15ef97d38370a8ebeae0d55827a6f1d5e4365e59c72340",
+      "line_count": 227,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHookInit.sol",
+      "sha256": "2505f96d5be98dae6a7b6c7434a6ab3911cd23d35606b8fbdb3c3faf28aec5d9",
+      "line_count": 14,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.sol",
+      "sha256": "54900007dedfe15916d3097e4c48cb68cb83da81cc88de7fd2d7321791cce44c",
+      "line_count": 77,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookBeforeInitializeLib.sol",
+      "sha256": "dd9b91e4df690a730b2cd3cb0a3ee708dd7f279253b2e17d12334bf85551bfbc",
+      "line_count": 40,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol",
+      "sha256": "88003c9cca9b10e630d32064bbb0d590284cc5edf23ad21cae9ad1a4716b107e",
+      "line_count": 459,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 334,
+            "text": "(bool ok, bytes memory data) = rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+      "sha256": "f4c9be6c631bb389d1c916325d8384f7d5db3c14ac6734dd81b7e5e5b4665e76",
+      "line_count": 2342,
+      "sites": {
+        "credit": [
+          {
+            "line": 34,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 2199,
+            "text": "function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)"
+          },
+          {
+            "line": 2212,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 2213,
+            "text": "uint256 U = _unbookedBalance(tokenIn);"
+          },
+          {
+            "line": 2222,
+            "text": "function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)"
+          },
+          {
+            "line": 2225,
+            "text": "_securePull(token, used, pretransferred);"
+          },
+          {
+            "line": 2227,
+            "text": "uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);"
+          },
+          {
+            "line": 2233,
+            "text": "function _unbookedBalance(IERC20 token) internal view returns (uint256) {"
+          },
+          {
+            "line": 2237,
+            "text": "return LocalCreditLib.available(token.balanceOf(address(this)), booked);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 530,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(_poolManager()), amount);"
+          },
+          {
+            "line": 1446,
+            "text": "if (a0 > 0) IERC20(l.token0).safeTransfer(to, a0);"
+          },
+          {
+            "line": 1451,
+            "text": "if (pairOut > 0) IERC20(l.token0).safeTransfer(to, pairOut);"
+          },
+          {
+            "line": 1456,
+            "text": "if (a1 > 0) IERC20(l.token1).safeTransfer(to, a1);"
+          },
+          {
+            "line": 1461,
+            "text": "if (pairOut > 0) IERC20(l.token1).safeTransfer(to, pairOut);"
+          },
+          {
+            "line": 1466,
+            "text": "if (a2 > 0) IERC20(l.token2).safeTransfer(to, a2);"
+          },
+          {
+            "line": 1471,
+            "text": "if (pairOut > 0) IERC20(l.token2).safeTransfer(to, pairOut);"
+          },
+          {
+            "line": 1864,
+            "text": "if (amt > 0) IERC20(token).safeTransfer(to, amt);"
+          },
+          {
+            "line": 1870,
+            "text": "IERC20(se).safeTransfer(to, seOut);"
+          },
+          {
+            "line": 1873,
+            "text": "if (pairOut > 0) IERC20(token).safeTransfer(to, pairOut);"
+          },
+          {
+            "line": 2183,
+            "text": "if (bal > opening) IERC20(token).safeTransfer(to, bal - opening);"
+          },
+          {
+            "line": 2228,
+            "text": "if (credit > used) token.safeTransfer(msg.sender, credit - used);"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 640,
+            "text": "IERC20(token).forceApprove(se, amount);"
+          },
+          {
+            "line": 644,
+            "text": "IERC20(token).forceApprove(se, 0);"
+          },
+          {
+            "line": 702,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 706,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 719,
+            "text": "IERC20(se).forceApprove(se, maxIn);"
+          },
+          {
+            "line": 724,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol",
+      "sha256": "40880f8db11190ef8b04711a90cc0f0088557845ece3669791356549caccdcaf",
+      "line_count": 419,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositCore.sol",
+      "sha256": "746987a4d4ea41b1cb7f3d41f11556e6c66ef997cea94d1739de07e4dae2af72",
+      "line_count": 347,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleTarget.sol",
+      "sha256": "a94444df4c3900249b792b3c6c6186164e2cc8ae599bcaac4bb1e6b0cebc442a",
+      "line_count": 55,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget.sol",
+      "sha256": "e8299369feba6e830a95bf3f7697d0762def2e1f87cde21206c91349d0a42734",
+      "line_count": 91,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositTarget.sol",
+      "sha256": "2556537374615b9ae5c40f3716c3e13122afd367dd61e3a249bbc26c247cafc7",
+      "line_count": 61,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget.sol",
+      "sha256": "c24287cfe3122cc9cf5ae83e3d576d381f3e0f531ba4467aaab1a47cfcfbbb56",
+      "line_count": 40,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol",
+      "sha256": "bd7f6c106ca3fc580e0d57ebc560334349b63a253d13dc69fa0cb7fdc9f27757",
+      "line_count": 455,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol",
+      "sha256": "12beb4202d1534f1024136a57aa86cc70d88c1deae761581cd07f91043dca69a",
+      "line_count": 475,
+      "sites": {
+        "callback": [
+          {
+            "line": 272,
+            "text": "function beforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookInitTarget.sol",
+      "sha256": "e3ac856405538cb8a47205248985c1a29ef9fc4430f515c0dfb1c1d2c1a19280",
+      "line_count": 108,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol",
+      "sha256": "8c7be553384f840d7831370d58087b3d3e36c0730b719e2385608c6efe8960cc",
+      "line_count": 601,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol",
+      "sha256": "e4512e1fd7aad2d72fa0799a1b397508ebaf0bae01594c58d089f43099cf1384",
+      "line_count": 49,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol",
+      "sha256": "6d03284f03e3770340b3521ab58db120f4b8762c449d23cc7fc2cbab1c0944a8",
+      "line_count": 173,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookSeTarget.sol",
+      "sha256": "114b0b46577a12fb659c847649e7066000522bb38c5bb32d0f9e585b0446664e",
+      "line_count": 267,
+      "sites": {
+        "credit": [
+          {
+            "line": 122,
+            "text": "_securePull(IERC20(tin), amountIn, pretransferred);"
+          },
+          {
+            "line": 170,
+            "text": "_pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);"
+          },
+          {
+            "line": 208,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          },
+          {
+            "line": 230,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 185,
+            "text": "IERC20(tout).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 263,
+            "text": "IERC20(tokenOut).safeTransfer(recipient, amountOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookTarget.sol",
+      "sha256": "14bb53cf27d6ee354bd5bcbea60e7278f99f71457d4003fe2e762d5fdc5b298a",
+      "line_count": 24,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget.sol",
+      "sha256": "abf7f1b0cec0f3c135e2b7a2a13fa72050ef73c3ed8c0e6e7d083d83383983fe",
+      "line_count": 243,
+      "sites": {
+        "payout": [
+          {
+            "line": 171,
+            "text": "IERC20(tokenOut).safeTransfer(to, amountOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol",
+      "sha256": "f6b47880dd03d6f3818641ebbda6b55c42c0ee36445bb1fed0bc3fa8cf946058",
+      "line_count": 121,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol",
+      "sha256": "376e62bd9ed4afb1f9895cb4b34659649d40b7fbeb75f5339422c17cd0ac6dbc",
+      "line_count": 46,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet.sol",
+      "sha256": "320ae50ff9e917804fec9ff34d26a59efac4fcece88f1aacb80025a91fb33510",
+      "line_count": 39,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol",
+      "sha256": "47029c11daf449dea328713820ec2451da19e8de44b4bcf020d693c3cb3a87d1",
+      "line_count": 53,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol",
+      "sha256": "93f10c549ab5f01612f64846ca6cfac47d222fbfae30db2ccb9395d619790d71",
+      "line_count": 45,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+      "sha256": "66830b8cff106445135e9ac9dab05d75f2185f7bbce4fed8ba81884d6a884fdd",
+      "line_count": 112,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookInitFacet.sol",
+      "sha256": "4ca8d0b54763b548ec1343ef46e0dcde6d85f2578206a128b178b0072bb4925d",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol",
+      "sha256": "b81dbebb50629d0df931bebb39948d1e44ee376002a71382cd64b0d187ab537a",
+      "line_count": 53,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol",
+      "sha256": "2bc9f2a53c1897aaeab825569395c13b9df033a36b763e336442b2c2befb354b",
+      "line_count": 55,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol",
+      "sha256": "f555a2a71cd8976bd71406703e1615f1ac089f4097daf8cc3974933a16823594",
+      "line_count": 241,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookInit.sol",
+      "sha256": "2fc374a7bd598491e56b686d99b7f790e748ffb4a94101ed77e6632612834851",
+      "line_count": 14,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol",
+      "sha256": "4a1f741f869d1082eecf0ab8794b106349f0b770a514bd40577f314cedc87dbe",
+      "line_count": 92,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookBeforeInitializeLib.sol",
+      "sha256": "b7610366e8e603dcee2e232593b42c9a1117c733ca14424ed3b5fe83dd2d9001",
+      "line_count": 35,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookCommon.sol",
+      "sha256": "532a127310bce030f8491f29c1d1b8e6017e1945dce09883869a7f1ef205cdef",
+      "line_count": 176,
+      "sites": {
+        "payout": [
+          {
+            "line": 174,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(Repo._poolManager(), amount);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookDFPkg.sol",
+      "sha256": "ccbbf91da9f8ab58d7535450eaab975f0b44484fe829f3bf631129da5f88278f",
+      "line_count": 279,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookInitTarget.sol",
+      "sha256": "867474ec0b6a34984f50273dfd7a4f040249eca932466617e9c34b547bfdcabe",
+      "line_count": 85,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookPairPoolLib.sol",
+      "sha256": "2502ca16fa2d2f8a4d34dcd2b94e2b2f02f3d55df62fccf1e72b6219aeaea379",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookRepo.sol",
+      "sha256": "6dedcf2c2be5409b2fc4a2d3ec99356f2ba8800a9d579fb288e074d2b9347848",
+      "line_count": 69,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookTarget.sol",
+      "sha256": "223134f33304ef9afd57eec7e5a92eda9a56593700da07f45873c0180f96b671",
+      "line_count": 280,
+      "sites": {
+        "callback": [
+          {
+            "line": 117,
+            "text": "function beforeSwap(address, PoolKey calldata, SwapParams calldata params, bytes calldata)"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 201,
+            "text": "IERC20(_pair()).forceApprove(_se(), pairIn);"
+          },
+          {
+            "line": 214,
+            "text": "IERC20(_pair()).forceApprove(_se(), amountIn);"
+          },
+          {
+            "line": 227,
+            "text": "IERC20(_se()).forceApprove(_se(), seIn);"
+          },
+          {
+            "line": 229,
+            "text": "IERC20(_se()).forceApprove(_se(), 0);"
+          },
+          {
+            "line": 244,
+            "text": "IERC20(_se()).forceApprove(_se(), seIn);"
+          },
+          {
+            "line": 246,
+            "text": "IERC20(_se()).forceApprove(_se(), 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHook_FactoryService.sol",
+      "sha256": "c26f46a9307a219b8fae233417545bc7d2f930679929f20fe94e129be69a08e9",
+      "line_count": 70,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/facets/UniswapV4SingleStandardExchangeBufferHookFacet.sol",
+      "sha256": "a3a4eff4baf6823dd80c896127550f30055e107ac8ea59e4b2c15b847802fad0",
+      "line_count": 71,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/facets/UniswapV4SingleStandardExchangeBufferHookInitFacet.sol",
+      "sha256": "921b15668cbd3e2e479385e9f0ff5e8ee3d6bf0f6bde25c39a77192aec86809b",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHook.sol",
+      "sha256": "dbe4f5e3ee37bfe2495c8951c8e2822e80f29763b68b8aa614a109aeb691778b",
+      "line_count": 43,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHookInit.sol",
+      "sha256": "2e88905cd2819830116c569437bff00f0eca86c8b2fdf05ff5fec22ee5c5c98c",
+      "line_count": 12,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHookPackage.sol",
+      "sha256": "e625b4649c99621e8fe14021169a1f71a56d8efd896d4de88c706cd654cc8213",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4BalancerStableLiquidityUnitsCore.sol",
+      "sha256": "7a80c04370207b719d6690519d1aa631ff3cd691f0b22d0724b2675290d90886",
+      "line_count": 199,
+      "sites": {
+        "payout": [
+          {
+            "line": 141,
+            "text": "if (flags[i]) IERC20(l.standardExchanges[i]).safeTransfer(to, inventory[i]);"
+          },
+          {
+            "line": 145,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, inventory[i]);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4BalancerStableLiquidityUnitsTarget.sol",
+      "sha256": "e8fd92467b946b747d9e389928f427059783d6e2cf93ef7c079b770807bcc178",
+      "line_count": 35,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookBeforeInitializeLib.sol",
+      "sha256": "b205fe8d958a2d6a35c453aec959064cb8d29af6ccabf2435b38df12e9c2b3ea",
+      "line_count": 46,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol",
+      "sha256": "47a7abffc2d0bf49a6d7e05c3e4e6bcbb42be1a0985aae8e3f8e67b1a20445c4",
+      "line_count": 356,
+      "sites": {
+        "payout": [
+          {
+            "line": 331,
+            "text": "if (to != address(this)) IERC20(pairToken).safeTransfer(to, amountOut);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 204,
+            "text": "rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 284,
+            "text": "IERC20(pairToken).forceApprove(se, amountInRaw);"
+          },
+          {
+            "line": 295,
+            "text": "IERC20(pairToken).forceApprove(se, 0);"
+          },
+          {
+            "line": 309,
+            "text": "IERC20(se).forceApprove(se, seAmount);"
+          },
+          {
+            "line": 313,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 324,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 328,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol",
+      "sha256": "8d06aca465b87fcf42f88fc54da239afbe5bb119b5c88882af4193abcdf7c236",
+      "line_count": 430,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookExitTarget.sol",
+      "sha256": "c24c5d4bb8c2dd2c02246fed80fd0d75a0ba1845f1e2690129253152dcb58541",
+      "line_count": 79,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget.sol",
+      "sha256": "5a0eb336f39fda580ecbf4a66119174c210bece5c7f1dca08a3c6bf6d0d3b601",
+      "line_count": 378,
+      "sites": {
+        "payout": [
+          {
+            "line": 346,
+            "text": "if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);"
+          }
+        ],
+        "callback": [
+          {
+            "line": 112,
+            "text": "function beforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookInitTarget.sol",
+      "sha256": "a0ba3607d5a36901455b707272997b52d2457f50e13090bb374c7c29dafedad0",
+      "line_count": 100,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore.sol",
+      "sha256": "f38b478da367664a24883c31c6d9e625be1afc146273ce29a8216e00ced45146",
+      "line_count": 519,
+      "sites": {
+        "payout": [
+          {
+            "line": 233,
+            "text": "IERC20(tokenOut).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 395,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 474,
+            "text": "IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 480,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityTarget.sol",
+      "sha256": "58d7cd9d48748c96f15afd1317698287db877c9f46b3f3959103f86dda6770ad",
+      "line_count": 56,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookMath.sol",
+      "sha256": "31a7798ab0512543df255bcc632890372715333bf8ee8100dc6ab2f62889b8d5",
+      "line_count": 361,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib.sol",
+      "sha256": "bb6ca5e97491da020688d87debb5b4fa59c05bc46c0c4b7bf21bc319f9d3a6a8",
+      "line_count": 60,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookPullLib.sol",
+      "sha256": "7cc684f061b0e9e5ad43b072f6311d697fd81df54d9cc3c6a30ab0f09b9366d8",
+      "line_count": 48,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryTarget.sol",
+      "sha256": "039e512b2a261da41da1b48dad6cc3132dca071d50bfdb2442221b23f8045009",
+      "line_count": 85,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol",
+      "sha256": "2b934e5df89408614abc9dc0a91b590e385d8958af5e34d9c9e969b3ae2c3e7c",
+      "line_count": 115,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget.sol",
+      "sha256": "f58cffa60b15e101d277e6a2a4a5ad4ecf5eb89f569ffd87ee0c3b3ea61dfcf1",
+      "line_count": 151,
+      "sites": {
+        "credit": [
+          {
+            "line": 77,
+            "text": "_securePull(IERC20(tin), amountIn, pretransferred);"
+          },
+          {
+            "line": 132,
+            "text": "_pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 142,
+            "text": "IERC20(tout).safeTransfer(recipient, amountOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget.sol",
+      "sha256": "5b95ac0bd478250c6706c52697c9c95a2dfd0d4a372ccadda617386296d0f1ec",
+      "line_count": 695,
+      "sites": {
+        "credit": [
+          {
+            "line": 20,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 267,
+            "text": "function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)"
+          },
+          {
+            "line": 280,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 290,
+            "text": "function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)"
+          },
+          {
+            "line": 293,
+            "text": "_securePull(token, used, pretransferred);"
+          },
+          {
+            "line": 295,
+            "text": "uint256 credit = LocalCreditLib.budget(_freeTokenBalance(address(token)), maxAmountIn);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 296,
+            "text": "if (credit > used) token.safeTransfer(msg.sender, credit - used);"
+          },
+          {
+            "line": 415,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(_poolManager()), amount);"
+          },
+          {
+            "line": 574,
+            "text": "if (to != address(this)) IERC20(se).safeTransfer(to, seIn);"
+          },
+          {
+            "line": 597,
+            "text": "if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 609,
+            "text": "if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 331,
+            "text": "provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 559,
+            "text": "IERC20(t).forceApprove(se, amount);"
+          },
+          {
+            "line": 564,
+            "text": "IERC20(t).forceApprove(se, 0);"
+          },
+          {
+            "line": 579,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 584,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 602,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 606,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService.sol",
+      "sha256": "928c8785207dd00521e7eaf5757538139da14ed7d58e6ea8690cfac2b7bba91f",
+      "line_count": 113,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet.sol",
+      "sha256": "ef9bba25a1aad8fdfa3be93d410dd5fd72705f90680052bf5807e4575c339388",
+      "line_count": 26,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet.sol",
+      "sha256": "43f13c257a4f372fa9dd833702effa189dfcdd9ca9fb16126b62bda53a47e3e0",
+      "line_count": 79,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookInitFacet.sol",
+      "sha256": "a4c4c7e5db21f6ff12977fad3c843fbdbf4f1d80e715409b3b671f4d7b692e46",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityFacet.sol",
+      "sha256": "7201b8706542216b9c6dd98d983c355ef9a93f8e9e605ea9fae50bdf98697a0b",
+      "line_count": 21,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryFacet.sol",
+      "sha256": "b5b8e23cd03525c56827e73c21f30af94f87230483917fc5231487e544306998",
+      "line_count": 24,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeFacet.sol",
+      "sha256": "b61beadefcbf6715ec0bf0bdf1b10e7357abeb2f502602ade60a490337f74e93",
+      "line_count": 46,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4BalancerStableLiquidityUnits.sol",
+      "sha256": "67efd6a833caec06f98ffd22b14c33f2ecff9bb6a31452aeb6807ef068e38424",
+      "line_count": 20,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHook.sol",
+      "sha256": "8b7c6df229d9558bcb4207ba969d483e27f6d5f1b8a66ae13d45d535c9f23e5a",
+      "line_count": 219,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookInit.sol",
+      "sha256": "25d5f78c7b2783bc6bcfbaed2828a2e2d330ce284c7c1e02c299bce05c2fb2a9",
+      "line_count": 14,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.sol",
+      "sha256": "50ab9a665afeaae2ea80b56ffe6130ca2dd90b9ebc1c60fc02a259da82b5b30e",
+      "line_count": 84,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookBeforeInitializeLib.sol",
+      "sha256": "3407a61aa5dd77d87625cbbebdc91d18776387823b60b693d77d8ec8da77bbe4",
+      "line_count": 46,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol",
+      "sha256": "e589f7c4028bb5707073458971ad2724367dfaebf23550b5d646f762e06a2aa3",
+      "line_count": 443,
+      "sites": {
+        "payout": [
+          {
+            "line": 418,
+            "text": "if (to != address(this)) IERC20(pairToken).safeTransfer(to, amountOut);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 114,
+            "text": "provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          },
+          {
+            "line": 289,
+            "text": "rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 34,
+            "text": "IERC20(token).forceApprove(se, amount);"
+          },
+          {
+            "line": 38,
+            "text": "IERC20(token).forceApprove(se, 0);"
+          },
+          {
+            "line": 371,
+            "text": "IERC20(pairToken).forceApprove(se, amountInRaw);"
+          },
+          {
+            "line": 382,
+            "text": "IERC20(pairToken).forceApprove(se, 0);"
+          },
+          {
+            "line": 396,
+            "text": "IERC20(se).forceApprove(se, seAmount);"
+          },
+          {
+            "line": 400,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 411,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 415,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol",
+      "sha256": "729c40599bc480e3d60c0e0c8ff49c884e37d83b53341a6e45201afaabf86bc6",
+      "line_count": 432,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget.sol",
+      "sha256": "67f8b149642fa8a87fdab8e2f257c16e6be510cd1eb6da00d40643a7fc07d3b6",
+      "line_count": 568,
+      "sites": {
+        "payout": [
+          {
+            "line": 102,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 200,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 280,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 416,
+            "text": "IERC20(se).safeTransfer(to, amt);"
+          },
+          {
+            "line": 422,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, amt);"
+          },
+          {
+            "line": 515,
+            "text": "IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 521,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol",
+      "sha256": "628ac3e44dd41453057450bf8e742fd913435f489d81d4033275fc8e6bef6687",
+      "line_count": 410,
+      "sites": {
+        "payout": [
+          {
+            "line": 334,
+            "text": "if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);"
+          }
+        ],
+        "callback": [
+          {
+            "line": 115,
+            "text": "function beforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookInitTarget.sol",
+      "sha256": "2054090b52d3910b7448607b0ac6f20049cf3d11d4940855b3b114c758ad625b",
+      "line_count": 100,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore.sol",
+      "sha256": "6a343c8aa6ab00e4253a465c152ecbaad520c7befd0b9b11cc05aa43e0e24f3d",
+      "line_count": 680,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget.sol",
+      "sha256": "096630cca1cdd352c5de44cfd15e6b9d8152d525cd590da31cea37df511f34c1",
+      "line_count": 151,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget.sol",
+      "sha256": "426c3b609908bf95fc89259c49bd4afc4c925eb8bc00b1db936275fefd042950",
+      "line_count": 96,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTarget.sol",
+      "sha256": "299bd1c4028fedef56e9af52b81cabf6bbd12b76e1b2428d3a100c75ece36139",
+      "line_count": 1135,
+      "sites": {
+        "payout": [
+          {
+            "line": 407,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 606,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 686,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 905,
+            "text": "IERC20(se).safeTransfer(to, amt);"
+          },
+          {
+            "line": 911,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, amt);"
+          },
+          {
+            "line": 1098,
+            "text": "IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 1104,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol",
+      "sha256": "29395410bba29a7e80099e9de28b8cf7b6337a8b27210034fa4eb00ba2bd3d93",
+      "line_count": 694,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol",
+      "sha256": "6c0871c590689c6a135143341ceda60efe537a056a13bf2548d6991ab4d9e553",
+      "line_count": 66,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib.sol",
+      "sha256": "dbc1f2f4f73995919e42dac3df0dfcf9a5d30b5138415005a1750296be8fe736",
+      "line_count": 58,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol",
+      "sha256": "60740e1f2db22c7bd7c10916b0f89e60f2be8f8e3fd13e9c3517909c3c5cf6a4",
+      "line_count": 139,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol",
+      "sha256": "0c88b253fb525d78aaa9ed521752fd12108e8564c62e24b61eee86b498fe9dc5",
+      "line_count": 247,
+      "sites": {
+        "credit": [
+          {
+            "line": 87,
+            "text": "_securePull(IERC20(tin), amountIn, pretransferred);"
+          },
+          {
+            "line": 148,
+            "text": "_pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);"
+          },
+          {
+            "line": 185,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          },
+          {
+            "line": 205,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 158,
+            "text": "IERC20(tout).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 223,
+            "text": "IERC20(tokenOut).safeTransfer(msg.sender, amountOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol",
+      "sha256": "1cda86d6b1f07e75703184a9c8a037ea0ba4015e01f5169602553426272dda26",
+      "line_count": 813,
+      "sites": {
+        "credit": [
+          {
+            "line": 21,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 442,
+            "text": "function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)"
+          },
+          {
+            "line": 455,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 456,
+            "text": "uint256 U = _unbookedBalance(tokenIn);"
+          },
+          {
+            "line": 465,
+            "text": "function _unbookedBalance(IERC20 token) internal view returns (uint256) {"
+          },
+          {
+            "line": 470,
+            "text": "return LocalCreditLib.available(token.balanceOf(address(this)), R);"
+          },
+          {
+            "line": 475,
+            "text": "function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)"
+          },
+          {
+            "line": 478,
+            "text": "_securePull(token, used, pretransferred);"
+          },
+          {
+            "line": 480,
+            "text": "uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 481,
+            "text": "if (credit > used) token.safeTransfer(msg.sender, credit - used);"
+          },
+          {
+            "line": 563,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(_poolManager()), amount);"
+          },
+          {
+            "line": 696,
+            "text": "if (to != address(this)) IERC20(se).safeTransfer(to, seIn);"
+          },
+          {
+            "line": 719,
+            "text": "if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 732,
+            "text": "if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 515,
+            "text": "provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 672,
+            "text": "IERC20(t).forceApprove(se, amount);"
+          },
+          {
+            "line": 676,
+            "text": "IERC20(t).forceApprove(se, 0);"
+          },
+          {
+            "line": 702,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 706,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 725,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 729,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol",
+      "sha256": "90b2d82dd224f205b5590102e14e2eb90ded6209c276e891ebd6accfead72d4d",
+      "line_count": 127,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol",
+      "sha256": "ac05239882a93cb81d3c5cb0393d3da6a378bdb817239f29e963cd75ebe0f53a",
+      "line_count": 47,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol",
+      "sha256": "d3c2d261edb6334a08549c73f2b5720b5fb12bac81fc6977dd4a7877fde4f604",
+      "line_count": 89,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookInitFacet.sol",
+      "sha256": "400bd7f8fe9f1525504a48439e486d2339200ef476bafe2760798334f86a302c",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol",
+      "sha256": "d85c988b6acb4548b2b048a785a7a6d42c866034a4e009671adf89d371e2aa25",
+      "line_count": 51,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt.sol",
+      "sha256": "e2e2c83c8f90dabe505e147e0483f80f38b03bf58d28be85a94446bab169ed0e",
+      "line_count": 59,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol",
+      "sha256": "9f1b2e16492308405a09f0a6cb357e7365e45bb847546016a74bdacc4b3c9a5d",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol",
+      "sha256": "347eeb5ae293b985d7a13002142002901d8e836609c9b44480832b4e6edf2a0b",
+      "line_count": 280,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookInit.sol",
+      "sha256": "df0de4a66a1a0edcffb5906de0f7ab1404abc59b23e18f4513a8f296aebb9078",
+      "line_count": 14,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol",
+      "sha256": "deff9408c6601026fde4226921ab247bfe307cf963eb1778ca61fb5352b87393",
+      "line_count": 88,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookBeforeInitializeLib.sol",
+      "sha256": "8ba3a738056244736108f3eb026a8577e45c2099fdf72604337df9d73b214fd1",
+      "line_count": 42,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+      "sha256": "6133a47e5cfa9c52dd8b393c12e12d7fc8ff30d359e3a7241364bdeda03f2aa5",
+      "line_count": 436,
+      "sites": {
+        "payout": [
+          {
+            "line": 376,
+            "text": "if (to != address(this)) IERC20(se).safeTransfer(to, seAmount);"
+          },
+          {
+            "line": 397,
+            "text": "if (to != address(this)) IERC20(pairToken).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 409,
+            "text": "if (to != address(this)) IERC20(pairToken).safeTransfer(to, amountOut);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 97,
+            "text": "rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 351,
+            "text": "IERC20(pairToken).forceApprove(se, amountInRaw);"
+          },
+          {
+            "line": 363,
+            "text": "IERC20(pairToken).forceApprove(se, 0);"
+          },
+          {
+            "line": 382,
+            "text": "IERC20(se).forceApprove(se, seAmount);"
+          },
+          {
+            "line": 386,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 402,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 406,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+      "sha256": "f99667130898ec7fa184cd455e8628be73fc30e61c96ae80a6836d79c6bd2c65",
+      "line_count": 460,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitCore.sol",
+      "sha256": "77cefc0e34fc597378d90fddf3e1f8eb337aede89003701ee94fe049da525188",
+      "line_count": 612,
+      "sites": {
+        "payout": [
+          {
+            "line": 220,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 287,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 392,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 484,
+            "text": "IERC20(l.standardExchanges[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 490,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 572,
+            "text": "IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 578,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget.sol",
+      "sha256": "cab44f6e4e94a93e67c40c801e23f8372b21023764fb20fe8cbc4b96b9f222ee",
+      "line_count": 186,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitTarget.sol",
+      "sha256": "2d768097596119ceee3ad9dd1692f6b5bbf50a7526f4b86e95f2ac3d0cc0595f",
+      "line_count": 89,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "sha256": "6c0b41395dcc310baf99587762aca7f7ac6e458eb5eaae41e2ca54207aba938a",
+      "line_count": 401,
+      "sites": {
+        "payout": [
+          {
+            "line": 321,
+            "text": "if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);"
+          }
+        ],
+        "callback": [
+          {
+            "line": 138,
+            "text": "function beforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookInitTarget.sol",
+      "sha256": "f5d3550ad0a09607a48ef74988c2b4b9f1ac1c1cce01c186066c70dc15e7400c",
+      "line_count": 102,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinCore.sol",
+      "sha256": "3f0a57896756819a6d17792c57205b491d06d202fd5fa14020674cb84dc3f7a3",
+      "line_count": 867,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleTarget.sol",
+      "sha256": "4004ae8469a2c3d680c83c581078c49cdf2e2e9dee0a05042f78868f533994f2",
+      "line_count": 49,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget.sol",
+      "sha256": "f5ceb2e3e5155773defc4e18e8bdd6216ca353348ea5e8fca5917e6faf1477fd",
+      "line_count": 93,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinTarget.sol",
+      "sha256": "af2bffb78a21f0df4c3129a15f95fa8b1b01f906191b5e3a0c97d05648e2198a",
+      "line_count": 62,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol",
+      "sha256": "1e401cfe57b5d9ed1ab57641cf6bc35e3331dead917c9ed6fff02b94aaaa9e08",
+      "line_count": 163,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget.sol",
+      "sha256": "62313f4c7dd91accfe3eb414aefa7d15ad02c610315893d11712189422274b4e",
+      "line_count": 1226,
+      "sites": {
+        "payout": [
+          {
+            "line": 606,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 689,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 787,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 991,
+            "text": "IERC20(l.standardExchanges[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 997,
+            "text": "IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);"
+          },
+          {
+            "line": 1189,
+            "text": "IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);"
+          },
+          {
+            "line": 1195,
+            "text": "IERC20(tokenOut).safeTransfer(to, invOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+      "sha256": "6c94a2190d46627c50bdcab28056165d0f9e134c0c9b4aa219bc318def305c1e",
+      "line_count": 528,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol",
+      "sha256": "c73f2ddeb91e53166c6e4961a8d223a345f8caef037dd080cacc1915edd410f6",
+      "line_count": 83,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol",
+      "sha256": "bbbd3eb13958aea28883b5aacbb2978b7c899deaa06dca104cc0845e6a5672e9",
+      "line_count": 46,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookRepo.sol",
+      "sha256": "155b2c71ee2eae74ccc2aed5adafb2e4b36055c50ee8abb934a6346bee2da578",
+      "line_count": 135,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol",
+      "sha256": "621f601c8e3b9725c8e3e28e544b1670f3f3603448dad84687981be6a83d174f",
+      "line_count": 282,
+      "sites": {
+        "credit": [
+          {
+            "line": 121,
+            "text": "_securePull(IERC20(tin), amountIn, pretransferred);"
+          },
+          {
+            "line": 182,
+            "text": "_pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);"
+          },
+          {
+            "line": 219,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          },
+          {
+            "line": 239,
+            "text": "_securePull(IERC20(tokenIn), amountIn, false);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 192,
+            "text": "IERC20(tout).safeTransfer(recipient, amountOut);"
+          },
+          {
+            "line": 257,
+            "text": "IERC20(tokenOut).safeTransfer(msg.sender, amountOut);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol",
+      "sha256": "b41c918068124f1e6bfcbd59d7d0ef257bd5a9e2cb18a5e32d9a4641e426b706",
+      "line_count": 646,
+      "sites": {
+        "credit": [
+          {
+            "line": 29,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 467,
+            "text": "function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)"
+          },
+          {
+            "line": 480,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 481,
+            "text": "uint256 U = _unbookedBalance(tokenIn);"
+          },
+          {
+            "line": 490,
+            "text": "function _unbookedBalance(IERC20 token) internal view returns (uint256) {"
+          },
+          {
+            "line": 495,
+            "text": "return LocalCreditLib.available(token.balanceOf(address(this)), R);"
+          },
+          {
+            "line": 500,
+            "text": "function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)"
+          },
+          {
+            "line": 503,
+            "text": "_securePull(token, used, pretransferred);"
+          },
+          {
+            "line": 505,
+            "text": "uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 383,
+            "text": "IERC20(Currency.unwrap(currency)).safeTransfer(address(_poolManager()), amount);"
+          },
+          {
+            "line": 506,
+            "text": "if (credit > used) token.safeTransfer(msg.sender, credit - used);"
+          },
+          {
+            "line": 558,
+            "text": "if (to != address(this)) IERC20(se).safeTransfer(to, seIn);"
+          },
+          {
+            "line": 581,
+            "text": "if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);"
+          },
+          {
+            "line": 593,
+            "text": "if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 544,
+            "text": "IERC20(t).forceApprove(se, amount);"
+          },
+          {
+            "line": 548,
+            "text": "IERC20(t).forceApprove(se, 0);"
+          },
+          {
+            "line": 564,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 568,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          },
+          {
+            "line": 586,
+            "text": "IERC20(se).forceApprove(se, seIn);"
+          },
+          {
+            "line": 590,
+            "text": "IERC20(se).forceApprove(se, 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol",
+      "sha256": "63d46595a4cd296f780fff6b8fc5ae9a6c844e24105dbdd302214e776a5f170b",
+      "line_count": 143,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol",
+      "sha256": "2e40b730bad9dac867ba506b5e816db1572727d093f8deea95b5d2e15ecff62f",
+      "line_count": 47,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol",
+      "sha256": "e544286a339622d18189900028239247a28a906d9763409b4a5edecce04ee7e0",
+      "line_count": 57,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "sha256": "f2fe6eb042987739a470e6f50abd44e053913048cd0078f33fd3e80d407ed26b",
+      "line_count": 90,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookInitFacet.sol",
+      "sha256": "077d167fcbfe5e7d8451674d7a8f22ad1403f1454f0edf94b13d60e796907814",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol",
+      "sha256": "d2920f047afef32d55cfbce2d3ac0d3f6e6000a5f21b68f956e76e21f82f50e9",
+      "line_count": 45,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol",
+      "sha256": "11ccb6b95fb2bd61ecdc57790bc5258374533c0b40d6b358cb48e1f206491f04",
+      "line_count": 43,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol",
+      "sha256": "9c365a63bc8d1312db7100fcae1f372b404d23419bf975547a8a329f9fc516c0",
+      "line_count": 49,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol",
+      "sha256": "0a736e6d277db28433b37132acf4473440239f6021ce06e10f8341aa248d0e01",
+      "line_count": 53,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol",
+      "sha256": "3ce9d5246f3a79cf1709f1a22b992368bc277afba80dcaa5a06fbed54404915e",
+      "line_count": 380,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookInit.sol",
+      "sha256": "f2760d29d133ad06378038e4a3ec89cce41784a059f82b964a8b755b872c9659",
+      "line_count": 14,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol",
+      "sha256": "d882677aedb2e14964b47fe2f3608b6599a45fdd316ab9c639879d2d8ca885f7",
+      "line_count": 94,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeRepo.sol",
+      "sha256": "eb2d6d37829d5cfa467c5459d0fdafda5289fcc585f0f9e9c77fd9b67f486c7c",
+      "line_count": 17,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTarget.sol",
+      "sha256": "6c9acac70ba1605a55769e1cf5bdbc6ad29a1b6a896793b3f333253e69f4ffb6",
+      "line_count": 227,
+      "sites": {
+        "payout": [
+          {
+            "line": 170,
+            "text": "p_.tokenIn.safeTransfer(address(vault_), paid_);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 61,
+            "text": "(bool ok_, bytes memory data_) = address(this).staticcall(abi.encodeWithSignature(\"ttaToken()\"));"
+          },
+          {
+            "line": 63,
+            "text": "(ok_, data_) = address(this).staticcall(abi.encodeWithSignature(\"bufferToken()\"));"
+          },
+          {
+            "line": 65,
+            "text": "(ok_, data_) = address(this).staticcall(abi.encodeWithSignature(\"pairCount()\"));"
+          },
+          {
+            "line": 69,
+            "text": "(ok_, data_) = address(this).staticcall(abi.encodeWithSignature(\"bufferToken(uint256)\", i_));"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 143,
+            "text": "if (address(p_.tokenIn) == address(this)) p_.tokenIn.forceApprove(address(this), p_.maxInput);"
+          },
+          {
+            "line": 147,
+            "text": "if (address(p_.tokenIn) == address(this)) p_.tokenIn.forceApprove(address(this), 0);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol",
+      "sha256": "91f682488993360c6f1fc28b792802b1c3b5af01ec90643d68a5edc11f5093f7",
+      "line_count": 43,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteTarget.sol",
+      "sha256": "855e2fefc776b764a3649658e82b145737f70b88fad3e5e694506b4d637a8ee5",
+      "line_count": 286,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 73,
+            "text": "(bool ok_, bytes memory data_) = address(this).staticcall(abi.encodeWithSignature(\"ttaToken()\"));"
+          },
+          {
+            "line": 75,
+            "text": "(ok_, data_) = address(this).staticcall(abi.encodeWithSignature(\"bufferToken()\"));"
+          },
+          {
+            "line": 77,
+            "text": "(ok_, data_) = address(this).staticcall(abi.encodeWithSignature(\"pairCount()\"));"
+          },
+          {
+            "line": 81,
+            "text": "(ok_, data_) = address(this).staticcall(abi.encodeWithSignature(\"bufferToken(uint256)\", i_));"
+          },
+          {
+            "line": 120,
+            "text": "(bool stable, bytes memory amp) = address(this).staticcall(abi.encodeWithSignature(\"getAmplificationParameter()\"));"
+          },
+          {
+            "line": 121,
+            "text": "(bool buffered, bytes memory buffer) = address(this).staticcall(abi.encodeWithSignature(\"virtualBuffer()\"));"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol",
+      "sha256": "312531ffc9bb968bae7911bcd2d4af58fcc6da3c00206f55a43f63809d4b9e50",
+      "line_count": 320,
+      "sites": {
+        "credit": [
+          {
+            "line": 14,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 163,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 164,
+            "text": "credit = LocalCreditLib.budget(_unbookedSurplus(tokenIn), maxAmountIn);"
+          },
+          {
+            "line": 226,
+            "text": "return LocalCreditLib.available(token_.balanceOf(address(this)), _tokenReserve[address(token_)]);"
+          },
+          {
+            "line": 236,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          }
+        ],
+        "payout": [
+          {
+            "line": 94,
+            "text": "bptToken.safeTransfer(payoutRecipient, amountOut);"
+          },
+          {
+            "line": 107,
+            "text": "tokenOut.safeTransfer(payoutRecipient, amountOut);"
+          },
+          {
+            "line": 181,
+            "text": "bptToken.safeTransfer(payoutRecipient, amountOut);"
+          },
+          {
+            "line": 196,
+            "text": "tokenOut.safeTransfer(payoutRecipient, amountOut);"
+          },
+          {
+            "line": 263,
+            "text": "tokenIn_.safeTransfer(refundRecipient_, refund_);"
+          }
+        ],
+        "allowance": [
+          {
+            "line": 271,
+            "text": "token_.forceApprove(address(router), 0);"
+          },
+          {
+            "line": 272,
+            "text": "token_.forceApprove(permit2_, 0);"
+          },
+          {
+            "line": 278,
+            "text": "token_.forceApprove(address(router), amount_);"
+          },
+          {
+            "line": 279,
+            "text": "token_.forceApprove(permit2_, amount_);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/IBalancerV3PoolLiquidityQuote.sol",
+      "sha256": "a0230f0965beb1f8170213779ead1f8cbf8979279906881c04cdf43144c9e9b8",
+      "line_count": 28,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol",
+      "sha256": "d7babe93bf4762f7c296fbdcd3a4c42026d703c2bcabaafc99c2fe31a45f558d",
+      "line_count": 429,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol",
+      "sha256": "bd0efd33f6e130f793bd9e0071417a7762408d6d53a2ef6284050d0547a58969",
+      "line_count": 138,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol",
+      "sha256": "917a5b95c824b81273a3fa748e6955abccb062850227d25939ab3f2879b14e21",
+      "line_count": 38,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol",
+      "sha256": "f945421124711c38aa9b42d0fd86799a9d56bdd1921156b54eaaddeb905afe63",
+      "line_count": 112,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol",
+      "sha256": "36a8b9dffcaf293112d38b1a8cb4f2cbaee2f6ab4dfce68b016346ec86ea0117",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol",
+      "sha256": "3f11746a94c81d59e03727733706e05e5149f76c3cd7ac1916c33d5d04dd7eb8",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol",
+      "sha256": "3651b55e93df659e12cebf433110a481eeccf2d4847dcf81b8aed65585d7e500",
+      "line_count": 33,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol",
+      "sha256": "a487b5a0826411dc66ff5bea614791a5f182b0ba9b28eea856b6810f90f0ead8",
+      "line_count": 47,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+      "sha256": "646a8d29ddaf7f1ef68e79d9f218b7f2d5d3c480cbb96a995b40e21352849437",
+      "line_count": 701,
+      "sites": {
+        "payout": [
+          {
+            "line": 515,
+            "text": "shareTok.transfer(address(vault), sharesSurplus);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 595,
+            "text": "(bool ok, bytes memory ret) = seRouter.staticcall("
+          }
+        ],
+        "callback": [
+          {
+            "line": 312,
+            "text": "function onBeforeSwap(PoolSwapParams calldata params, address pool)"
+          },
+          {
+            "line": 660,
+            "text": "function onAfterSwap(AfterSwapParams calldata params)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.sol",
+      "sha256": "2538268da7e07a8b65fca75782fec47a0a7c3d9b880c38bfcbe3176954aa4d93",
+      "line_count": 188,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolFacet.sol",
+      "sha256": "f0492a268bcf300ec0d92c666deebc2b195b6c01d47dcd7ddc2222c29faf2e27",
+      "line_count": 60,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityFacet.sol",
+      "sha256": "19ef040fbf105f154d54d1aad925d99a706cb166d5f365880e24abbc69f1e09e",
+      "line_count": 28,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityTarget.sol",
+      "sha256": "88d1dc0fc3b3f984b1e45caa47982f0febb3ef2c186aa268a41d873f29ccc924",
+      "line_count": 166,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol",
+      "sha256": "581212bc48838812c9f878c7be250a07b4e29ce1c8f3ad1843792ea347af1343",
+      "line_count": 85,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol",
+      "sha256": "0adf912f71c42f07ba122f19f29bd51ea21a0ec95c2d737a0143c25a3b8cc49c",
+      "line_count": 441,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.sol",
+      "sha256": "c68fd0486b3a26882bacd15109114163d85230e9b04f4efa9ebf04cfd229ba77",
+      "line_count": 94,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol",
+      "sha256": "80f87ea391cb97ed70538c54c8a905dc25e6844513d9d7eb895da7918aea62aa",
+      "line_count": 118,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeHookFacet.sol",
+      "sha256": "e08993855d40c29c64a6b0b193ac58f810027a7b8b8664b9d18c90c36e35b697",
+      "line_count": 67,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/BalancerV3StableBufferPoolQuoteTarget.sol",
+      "sha256": "4bb1f79322a08eb485f60d273e05727297cdbc94c0e0422998d64f310646022a",
+      "line_count": 171,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolCommon.sol",
+      "sha256": "5c205990151581980c2eb2d2d376b641bc8407556007329fddfca76abf33d4c0",
+      "line_count": 174,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolFacet.sol",
+      "sha256": "cf9c83eea3e3bc548cc1096749022a444e902b8e9a6cfac083377bb6595fdbd7",
+      "line_count": 130,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookFacet.sol",
+      "sha256": "973e56e499367ef8b9a100e637ebd58846a5778d46945cda74d81d7f8e21822c",
+      "line_count": 57,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+      "sha256": "21fdfe2c807ea7781bdcbafaf5808bd7bb1730d524c1eafc8853c1cf923b48ed",
+      "line_count": 548,
+      "sites": {
+        "payout": [
+          {
+            "line": 393,
+            "text": "shareTok.transfer(address(vault), sharesSurplus);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 337,
+            "text": "(bool ok, bytes memory ret) = address(seVault).staticcall("
+          },
+          {
+            "line": 437,
+            "text": "(bool ok, bytes memory ret) = address(seVault).staticcall("
+          },
+          {
+            "line": 501,
+            "text": "(bool ok, bytes memory ret) = seRouter.staticcall("
+          }
+        ],
+        "callback": [
+          {
+            "line": 213,
+            "text": "function onBeforeSwap(PoolSwapParams calldata params, address pool) public virtual override returns (bool) {"
+          },
+          {
+            "line": 225,
+            "text": "function onAfterSwap(AfterSwapParams calldata params) public virtual override returns (bool, uint256) {"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolLiquidityFacet.sol",
+      "sha256": "d68e398287aba3d8cf838d0968d7b6d9dcf82998090c556cd1ef664a51db1956",
+      "line_count": 31,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolLiquidityTarget.sol",
+      "sha256": "4f010736baae6240cb98c7f1d44523d2b47715bd1002859c72c5baeb531ba15d",
+      "line_count": 59,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolRepo.sol",
+      "sha256": "7d09e406885ff149ca5e131e4ad4b00d7efddae7eaf12c26c38299b828d28648",
+      "line_count": 221,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+      "sha256": "22dec271b3fec7cd6f25e7eef4a2ba55edf3462cd087b7b0d9dd5643940e1433",
+      "line_count": 542,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolTarget.sol",
+      "sha256": "7aaf97673d50c225d3be8f1a4fc32c52fbe50ffcc22e9bd5ffef379623e37921",
+      "line_count": 113,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool_FactoryService.sol",
+      "sha256": "848d3c9c2ac066da40492d34ea251b3c7b45f8441c59a950acb2adb894bfb2b6",
+      "line_count": 81,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePool.sol",
+      "sha256": "c6efc64a1c17d3b477f4bcefd3c7df16b198dd4642eb12ff0491bb919c9a345d",
+      "line_count": 63,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePoolPkg.sol",
+      "sha256": "e4b311652f979a0654853031d05923a2cf917f4693a2f6cc5a118d2a139a6912",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol",
+      "sha256": "1e1f4c54ab0fe6c1a8a49c68ab3d0d6b0042487c40527749cdfe92f4a09eeb16",
+      "line_count": 70,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol",
+      "sha256": "26159ada0da9e10300dbb364eba08b5f28ecae523759557eb3c1baf85f5c2e0e",
+      "line_count": 57,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolCommon.sol",
+      "sha256": "63b8d68a3a5558c517556f06f06e5975a3f072ee767173df26d29013bc197d9e",
+      "line_count": 177,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolFacet.sol",
+      "sha256": "db73bcc0f50c81a62b3e6a62d34bf21e39874a8957bafa28fb482aa1327ea9e4",
+      "line_count": 150,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookFacet.sol",
+      "sha256": "5d2895e6a5b9f8db52e5a8cc99d57b0c46e5ef7d2849ef94e7bdc4512a1804a9",
+      "line_count": 57,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+      "sha256": "2e5d8bca8d6aa6b2e23af4539d0d4911d99234aa692d89230fd9a6d58d8917ef",
+      "line_count": 574,
+      "sites": {
+        "payout": [
+          {
+            "line": 417,
+            "text": "shareTok.transfer(address(vault), sharesSurplus);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 361,
+            "text": "(bool ok, bytes memory ret) = address(seVault).staticcall("
+          },
+          {
+            "line": 463,
+            "text": "(bool ok, bytes memory ret) = address(seVault).staticcall("
+          },
+          {
+            "line": 527,
+            "text": "(bool ok, bytes memory ret) = seRouter.staticcall("
+          }
+        ],
+        "callback": [
+          {
+            "line": 232,
+            "text": "function onBeforeSwap(PoolSwapParams calldata params, address pool) public virtual override returns (bool) {"
+          },
+          {
+            "line": 244,
+            "text": "function onAfterSwap(AfterSwapParams calldata params) public virtual override returns (bool, uint256) {"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolLiquidityFacet.sol",
+      "sha256": "409100054c56cb50727c8ce2b911c0b55aec8ba9d915bd2049007cc7dc33b0f8",
+      "line_count": 31,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolLiquidityTarget.sol",
+      "sha256": "e21a38a4d136547f415cd653b8959f7b7b9cc23a482009bc9574a18a78b3eae8",
+      "line_count": 59,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolRepo.sol",
+      "sha256": "e3dbb58ab14d5de7ea3b5e494ac505232e6bd07f1ec25ba0e8cd225db5421f20",
+      "line_count": 264,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+      "sha256": "8bf251b878b1e46d2841677ad33ef91700539b6210ff14250340b3e6350dfb46",
+      "line_count": 580,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolTarget.sol",
+      "sha256": "8fc0faeec1c3c04e687386e5fa4c60aaa147f6967ccf4dd316976dc9231052b7",
+      "line_count": 119,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool_FactoryService.sol",
+      "sha256": "a78efe09edefb262b6189c0f9d3dcec9895e9c12f211cdc3256d6b037b77dcc2",
+      "line_count": 81,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolCommon.sol",
+      "sha256": "6c1a040e5ed1ce1c9ece7f0e0734cd9f5a05d2ed807a10fc6bac2182a3b54b4e",
+      "line_count": 203,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolFacet.sol",
+      "sha256": "c6bf0e95b7a42242a3a8bc61541ecbbb82003ea994c8e0cf9ae3f0893a724a88",
+      "line_count": 140,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookFacet.sol",
+      "sha256": "08729138dbbbc7ab626121b9ab688194c0624a03691e2ad28eabf0d517c46aae",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+      "sha256": "d038c0e0b9e7eb1fd9eab1b27ce7ecafa0447a216e848982f5d0d402561868da",
+      "line_count": 592,
+      "sites": {
+        "payout": [
+          {
+            "line": 426,
+            "text": "shareTok.transfer(address(vault), sharesSurplus);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 367,
+            "text": "(bool ok, bytes memory ret) = address(seVault).staticcall("
+          },
+          {
+            "line": 474,
+            "text": "(bool ok, bytes memory ret) = address(seVault).staticcall("
+          },
+          {
+            "line": 545,
+            "text": "(bool ok, bytes memory ret) = seRouter.staticcall("
+          }
+        ],
+        "callback": [
+          {
+            "line": 231,
+            "text": "function onBeforeSwap(PoolSwapParams calldata params, address pool) public virtual override returns (bool) {"
+          },
+          {
+            "line": 243,
+            "text": "function onAfterSwap(AfterSwapParams calldata params)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolLiquidityFacet.sol",
+      "sha256": "f40485a10f48b04bed14c6f50f379c66015d81f09358fa71ab6217434610d285",
+      "line_count": 33,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolLiquidityTarget.sol",
+      "sha256": "cbe88c592760e02bf64bc5b8cad7728bd22119dca671a41899c1ce6b0fad28c3",
+      "line_count": 58,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolRepo.sol",
+      "sha256": "97329063c0b910cbb8c05a627fe8a5d795ab7e6f118fc673e8df8be08d6305c5",
+      "line_count": 235,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+      "sha256": "0a636cee17e9e1824e436bb2541937fca3f14803d35fc3988238492ba937b770",
+      "line_count": 594,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolTarget.sol",
+      "sha256": "0da569a82fac35239324d091e762e8b7ef5178d46e8eeae4bba322c8341acdcb",
+      "line_count": 83,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool_FactoryService.sol",
+      "sha256": "099995c11d541dded934cbda79e9ab136c02ed47449136eadd6fa13b552a47d5",
+      "line_count": 81,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPool.sol",
+      "sha256": "6d63f61ee2a3b715a51930fba05ed83567db11754633100f1d0815b7091b07a8",
+      "line_count": 71,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPoolPkg.sol",
+      "sha256": "71b3f09e7d22859476224c85c2a352cfc463d0edce8e7c07c02c1614b4c787b7",
+      "line_count": 57,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPool.sol",
+      "sha256": "e7b58ccd9f21b3e62afc7665fbdc32b44afdfacc216df57b6b5a6f0a2e609295",
+      "line_count": 63,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol",
+      "sha256": "e253f88215c25e42b2b0b2f7d22ded5a4ca6cc51a5f94036e0032ae6ee1a6e89",
+      "line_count": 59,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol",
+      "sha256": "4bfd5121a5971a92953fd7594487fe5050810683b037ce43708e17e326ab73ea",
+      "line_count": 112,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolFacet.sol",
+      "sha256": "6e106f4bef36c1d0dd27c8f76810b53f2723d7e9f8f53c68281923b6b88299a6",
+      "line_count": 123,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookFacet.sol",
+      "sha256": "ebcc51b009c9927bf79f1f647bd8a690af9e3f54f3c5762ccb3f5be5d76ae224",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+      "sha256": "15d6b29ad123127ec7863f62ac220ffb89d2dc49a1ff873059c3d39225515f71",
+      "line_count": 525,
+      "sites": {
+        "payout": [
+          {
+            "line": 425,
+            "text": "shareTok.transfer(address(vault), sharesSurplus);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 441,
+            "text": "(bool ok, bytes memory ret) = seRouter.staticcall("
+          }
+        ],
+        "callback": [
+          {
+            "line": 212,
+            "text": "function onBeforeSwap(PoolSwapParams calldata params, address pool)"
+          },
+          {
+            "line": 231,
+            "text": "function onAfterSwap(AfterSwapParams calldata params)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolLiquidityFacet.sol",
+      "sha256": "b571084e63e67c0d138e26870a680f0af8d4c3de2b80286c669b616dc58b479b",
+      "line_count": 30,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolLiquidityTarget.sol",
+      "sha256": "ee256fc13e095c57e122cacd1a2211b0bcd613cf33e84ce3290c07eea0f7a568",
+      "line_count": 64,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolRepo.sol",
+      "sha256": "88b6ed7bd6beadbea6471c7f84105e045e9a3994333f458748eb62c46f103f28",
+      "line_count": 235,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol",
+      "sha256": "86ab5d2cdf157fe2699683391d42d6dd5e9b740dd6e878d80535c5b907fc6c66",
+      "line_count": 537,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolTarget.sol",
+      "sha256": "01e4bde67b5257b55c19909f6f556e361534ed22f600de9fa0b6b76c0e3fe827",
+      "line_count": 83,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool_FactoryService.sol",
+      "sha256": "e67fec6bf535f38dbe5ca0838c22bd3f5fd1c2a55a3c59e89fbf108cdfd0fb5d",
+      "line_count": 72,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol",
+      "sha256": "fc95741198213deecffb8eba3a0d4190761ad6b864572b2fed57c04700af905f",
+      "line_count": 42,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPoolPkg.sol",
+      "sha256": "05d17db9a962efdac71b9e01cd7da2d61038be9bf8084c77683d715a0db6619f",
+      "line_count": 54,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+      "sha256": "bf4ea1929ef28ab3938c9cb2813d211db1386e387bdf26b33f1127a41ac96e52",
+      "line_count": 493,
+      "sites": {
+        "payout": [
+          {
+            "line": 393,
+            "text": "shareTok.transfer(address(vault), sharesSurplus);"
+          }
+        ],
+        "soft_boundary": [
+          {
+            "line": 409,
+            "text": "(bool ok, bytes memory ret) = seRouter.staticcall("
+          }
+        ],
+        "callback": [
+          {
+            "line": 187,
+            "text": "function onBeforeSwap(PoolSwapParams calldata params, address pool)"
+          },
+          {
+            "line": 206,
+            "text": "function onAfterSwap(AfterSwapParams calldata params)"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol",
+      "sha256": "1e78f72147a9870774efbb9a25a418ac9cc6d320b03e78d3f1524b2b99c4f10d",
+      "line_count": 105,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolFacet.sol",
+      "sha256": "2dec24d467ce73adc80f7af4d9e1268b67f01935ebad05e5503bf4f226f8ef53",
+      "line_count": 94,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolLiquidityFacet.sol",
+      "sha256": "9c177718342d6f13224e66172c91978ecb0557cfdfc06d15250b7c568eae06d0",
+      "line_count": 33,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolLiquidityTarget.sol",
+      "sha256": "7e3dc88bd1337c238344acd6ee5e76def5c75046253fe470f28fb4cb1d6c9ba3",
+      "line_count": 62,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolRepo.sol",
+      "sha256": "75da8b5fbcb1c47376ff932b0fe0fabe84e9809d82852e8acc2e47e8383173d3",
+      "line_count": 197,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol",
+      "sha256": "e22da457169a82eac76881d25b5f774efb07625d3007ad5461cf11887eb64e2d",
+      "line_count": 485,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolTarget.sol",
+      "sha256": "47a47fda9f4212ce1d6c60c7bbe62b454a800bac9987ef703e9dd569842936f7",
+      "line_count": 76,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool_FactoryService.sol",
+      "sha256": "00a9961063eb22f7e282ffbc84bf7b5fd7f6446395f3fcd5b588a6e4576b6214",
+      "line_count": 78,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeHookFacet.sol",
+      "sha256": "9796f11fff24c3de11330f52f1d89bef7edd9ef5a4e76ac3edb089e40afd7b02",
+      "line_count": 52,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProvider.sol",
+      "sha256": "1ff1409f3856fa92f61c2994789ba5c2a0f7e80a1ff8c64f70b71573cd7a4fba",
+      "line_count": 11,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol",
+      "sha256": "0e2849d27f9ea4db19723017b5e74852be69eff9cd3580544203d13854573104",
+      "line_count": 31,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol",
+      "sha256": "a20a3129e9a43597dd79922d6dc57e380b7056c8aaccc09281ff95c1e4bc3a18",
+      "line_count": 132,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol",
+      "sha256": "529ded53f0c8c5897baa480b42576934f68acd65c7388d5f4b255ef22410a454",
+      "line_count": 208,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 133,
+            "text": "(bool ok, bytes memory data) = address(l.reserveVault).staticcall("
+          },
+          {
+            "line": 159,
+            "text": "(bool ok, bytes memory data) = target.staticcall(input);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderRepo.sol",
+      "sha256": "de5cd4b4654d0f996b1b4078affd9cac0cab45297571f5da4ccb04b294465f3b",
+      "line_count": 104,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol",
+      "sha256": "5279dec0cd1be7b31beba5679f8a9dbd0971353442cd8ec85ddee0eaf60cbd33",
+      "line_count": 118,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProvider.sol",
+      "sha256": "e365093fabd3bedc89f3ff68b20b0004661c2f25b945797803de5f51b1077652",
+      "line_count": 13,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProviderDFPkg.sol",
+      "sha256": "d059e0fb66c4a833a27f0de09f36b0d0b54217d646783ef0f1aa1166eae74df4",
+      "line_count": 28,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol",
+      "sha256": "84e4657636610fb97d429a9144ec63498737ee1083f01cc82d0e18a9a0567be3",
+      "line_count": 143,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 132,
+            "text": "subject_.staticcall(abi.encodeWithSelector(IERC165.supportsInterface.selector, interfaceId_));"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol",
+      "sha256": "a91072a12e67116d4be1812d50bf02a266f50c04c992e04c9ca5b0d4bcb47a22",
+      "line_count": 41,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderRepo.sol",
+      "sha256": "9b422ad7d50ee6b2723c377d58695a57f860ce8855baf82c7705fddf032f9b41",
+      "line_count": 117,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol",
+      "sha256": "c37880f160a6e7e72663ed071778649f388ed35d9b3e344e713cedc7ad1fb429",
+      "line_count": 134,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 117,
+            "text": "(bool ok, bytes memory data) = address(standardExchange_).staticcall(input);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol",
+      "sha256": "17c9e55a89e66091a2776e80250e0f8dc3e5aec17ad2b852ce97170beb933550",
+      "line_count": 109,
+      "sites": {
+        "credit": [
+          {
+            "line": 7,
+            "text": "import {LocalCreditLib} from \"contracts/utils/LocalCreditLib.sol\";"
+          },
+          {
+            "line": 62,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 77,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          },
+          {
+            "line": 94,
+            "text": "LocalCreditLib.requirePretransferCaller(msg.sender);"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+      "sha256": "e888c2841a070721d99acc3622d42a6c38ab56f13c4efffe9425f66a123d0365",
+      "line_count": 35,
+      "sites": {},
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol",
+      "sha256": "193ac13e8d640749f60e1ccc260194fd78b1436c5bedf17b274d2a90d1240a04",
+      "line_count": 144,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 27,
+            "text": "(bool ok, bytes memory data) = provider.staticcall(abi.encodeCall(IRateProvider.getRate, ()));"
+          },
+          {
+            "line": 33,
+            "text": "(bool ok, bytes memory result) = exchange.staticcall(abi.encodeCall(IERC165.supportsInterface,"
+          },
+          {
+            "line": 64,
+            "text": "(bool ok, bytes memory data) = exchange.staticcall(abi.encodeCall(IERC165.supportsInterface,"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+      "sha256": "5c6c1f49ab3e6ffccd4f5ccc806b4d1b9f96266ce273bc91fea7c0475f01eee2",
+      "line_count": 208,
+      "sites": {
+        "soft_boundary": [
+          {
+            "line": 128,
+            "text": "(bool ok, bytes memory data) = se.staticcall(abi.encodeCall(IERC165.supportsInterface,"
+          },
+          {
+            "line": 137,
+            "text": "(bool probeOk, bytes memory probeData) = provider.staticcall("
+          },
+          {
+            "line": 146,
+            "text": "(bool ok, bytes memory data) = provider.staticcall(input);"
+          },
+          {
+            "line": 175,
+            "text": "(bool ok, bytes memory data) = pair.staticcall(abi.encodeWithSelector(bytes4(0x38d52e0f)));"
+          }
+        ]
+      },
+      "inspection": "CENSUSED; semantic review only where cited in C report"
+    }
+  ],
+  "file_count": 279,
+  "scan_is_not_whole_file_audit": true
+}

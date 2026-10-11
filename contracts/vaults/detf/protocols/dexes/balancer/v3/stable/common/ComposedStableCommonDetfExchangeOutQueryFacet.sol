@@ -40,9 +40,11 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         uint256 deadline_
     ) external nonReentrant returns (uint256 paid_) {
         _requireActive(deadline_, amount_);
+        _requireExactOutRoute(in_, out_);
         if (to_ == address(0)) to_ = msg.sender;
         _updateExpansionMintOnRewards();
         paid_ = previewExchangeOut(in_, out_, amount_);
+        if (paid_ == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
         if (paid_ > maximum_) revert MaxAmountExceeded(maximum_, paid_);
         // D15: true-flag credit is `min(unbooked, maximum_)`, refund `credit - used` to the caller.
         // False-flag pulls the quoted amount and refunds nothing; quote leftover is booked at sync.
@@ -103,6 +105,18 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             in_.safeTransfer(msg.sender, credit_ - paid_);
         }
         _syncAllExpectedHoldReserves();
+    }
+
+    /// @dev Zero-return previews are discovery queries, not execution authorization.
+    /// Direct staking conversions do not require a live reserve pool.
+    function _requireExactOutRoute(IERC20 in_, IERC20 out_) internal view {
+        IERC20 staking_ = IERC20(address(Repo._layoutStruct().rebasingDetfToken));
+        if ((address(in_) == address(this) && out_ == staking_)
+            || (in_ == staking_ && address(out_) == address(this))) return;
+        if ((address(in_) != address(this) && in_ != staking_) || !_isFamilyBurnToken(out_)) {
+            revert InvalidRoute(address(in_), address(out_));
+        }
+        _requireReservePoolInitialized();
     }
 
     function facetName() public pure returns (string memory) {

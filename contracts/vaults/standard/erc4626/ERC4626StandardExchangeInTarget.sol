@@ -7,7 +7,6 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     ERC4626StandardExchangeQuoteTarget
 } from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol";
@@ -19,59 +18,9 @@ import {
  *      Non-burn tokenIn paths use durable reserve-delta `_securePull` (L-DETF-HOST-UPGRADE).
  *      Every money route end-syncs expected-hold reserves after refunds.
  */
-contract ERC4626StandardExchangeInTarget is
-    ERC4626StandardExchangeQuoteTarget,
-    ReentrancyLockModifiers,
-    IStandardExchangeIn
-{
+contract ERC4626StandardExchangeInTarget is ERC4626StandardExchangeQuoteTarget, ReentrancyLockModifiers {
     using SafeERC20 for IERC20;
     using ERC4626Service for IERC4626;
-
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        _requireNonZero(amountIn);
-        IERC4626 vault = protocolVault();
-        address underlying = vault.asset();
-
-        // Identity share→share: DETF custom mint tables probe `previewExchangeIn(se, 1, se)`.
-        if (address(tokenIn) == address(this) && address(tokenOut) == address(this)) {
-            return amountIn;
-        }
-
-        // Mint SE
-        if (address(tokenOut) == address(this)) {
-            if (address(tokenIn) == address(vault)) {
-                return _convertVaultDeltaToShares(amountIn, _receiptBacking());
-            }
-            if (address(tokenIn) == underlying) {
-                uint256 receiptEquiv = vault.convertToShares(amountIn);
-                return _convertVaultDeltaToShares(receiptEquiv, _receiptBacking());
-            }
-        }
-
-        // Underlying ↔ protocol vault pass-through
-        if (address(tokenIn) == underlying && address(tokenOut) == address(vault)) {
-            return vault.previewDeposit(amountIn);
-        }
-        if (address(tokenIn) == address(vault) && address(tokenOut) == underlying) {
-            return vault.previewRedeem(amountIn);
-        }
-
-        // Unwrap exact-in: SE → underlying (no exit fee)
-        if (address(tokenIn) == address(this) && address(tokenOut) == underlying) {
-            return _previewUnderlyingOutForSeIn(amountIn);
-        }
-
-        // SE → protocol vault exact-in
-        if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
-            return _previewRedeemShares(amountIn);
-        }
-
-        revert UnsupportedRoute();
-    }
 
     function exchangeIn(
         IERC20 tokenIn,

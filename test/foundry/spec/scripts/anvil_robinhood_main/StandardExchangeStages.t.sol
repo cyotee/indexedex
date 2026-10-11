@@ -18,7 +18,9 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
-import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
 import {LaunchState} from "scripts/foundry/anvil_robinhood_main/LaunchState.sol";
 import {RobinhoodCanonicalLib} from "scripts/foundry/anvil_robinhood_main/RobinhoodCanonicalLib.sol";
 import {Phase_05_Stage_04_UniswapV3StandardExchangePkg as V3Stage} from "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_04_UniswapV3StandardExchangePkg.sol";
@@ -77,6 +79,8 @@ contract StandardExchangeStages is TestBase_VaultComponents {
         V3Stage.execute(state);
         vm.stopPrank();
         address package_ = state.uniV3SePkg;
+        // RC-03: exercise the actual launch helper, not a filesystem assertion.
+        assertEq(IDiamondFactoryPackage(package_).packageName(), "UniswapV3FullSpreadStandardExchangeVaultDFPkg");
         bytes32 config_ = keccak256(abi.encode(IDiamondFactoryPackage(package_).diamondConfig()));
         vm.startPrank(owner);
         V3Stage.execute(state);
@@ -86,7 +90,8 @@ contract StandardExchangeStages is TestBase_VaultComponents {
         (SimpleMintableERC20 a, SimpleMintableERC20 b) = _assets();
         IUniswapV3Pool pool = IUniswapV3Pool(IUniswapV3Factory(RobinhoodCanonicalLib.v3Factory()).createPool(address(a), address(b), 3000));
         pool.initialize(uint160(1 << 96));
-        address vault = IUniswapV3StandardExchangeDFPkg(package_).deployVault(pool);
+        address vault = IUniswapV3FullSpreadStandardExchangeVaultDFPkg(package_).deployVault(pool);
+        assertTrue(IERC165(vault).supportsInterface(type(IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve).interfaceId));
         address[] memory tokens = new address[](2);
         tokens[0] = pool.token0(); tokens[1] = pool.token1();
         uint256[] memory amounts = new uint256[](2);

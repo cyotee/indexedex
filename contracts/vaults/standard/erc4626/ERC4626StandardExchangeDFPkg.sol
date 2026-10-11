@@ -58,6 +58,7 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
     IFacet public immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet public immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet public immutable EXCHANGE_IN_FACET;
+    IFacet public immutable EXCHANGE_IN_FACET_EXT;
     IFacet public immutable EXCHANGE_OUT_FACET;
     IFacet public immutable MARKER_FACET;
     IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE_QUERY;
@@ -74,6 +75,7 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
         MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         EXCHANGE_IN_FACET = pkgInit.exchangeInFacet;
+        EXCHANGE_IN_FACET_EXT = pkgInit.exchangeInFacetExt;
         EXCHANGE_OUT_FACET = pkgInit.exchangeOutFacet;
         MARKER_FACET = pkgInit.markerFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
@@ -131,7 +133,7 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
         // Multi-asset Basic + Standard (PRD §6.0.B). MultiAssetStandard replaces
         // ERC4626StandardVaultFacet for IStandardVault so vaultConfig.tokens uses
         // MultiAssetBasicVaultRepo (protocolVault + asset), avoiding FunctionAlreadyPresent.
-        cuts = new IDiamond.FacetCut[](9);
+        cuts = new IDiamond.FacetCut[](10);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
             action: IDiamond.FacetCutAction.Add,
@@ -168,11 +170,16 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
             functionSelectors: EXCHANGE_IN_FACET.facetFuncs()
         });
         cuts[7] = IDiamond.FacetCut({
+            facetAddress: address(EXCHANGE_IN_FACET_EXT),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: EXCHANGE_IN_FACET_EXT.facetFuncs()
+        });
+        cuts[8] = IDiamond.FacetCut({
             facetAddress: address(EXCHANGE_OUT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: EXCHANGE_OUT_FACET.facetFuncs()
         });
-        cuts[8] = IDiamond.FacetCut({
+        cuts[9] = IDiamond.FacetCut({
             facetAddress: address(MARKER_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MARKER_FACET.facetFuncs()

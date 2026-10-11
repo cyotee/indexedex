@@ -97,6 +97,34 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
         assertLe(facet_.code.length, 24_576);
     }
 
+    function test_directPairDepositBelowShareMinimumIsAtomic() public {
+        _assertDirectPairMinimum(nativePairA);
+        _assertDirectPairMinimum(nativePairB);
+    }
+
+    function _assertDirectPairMinimum(IERC20 token_) private {
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(address(nativeSY));
+        IERC20 shares_ = IERC20(address(nativeSY));
+        assertEq(exchange_.previewExchangeIn(token_, 1, shares_), 0, "one unit cannot mint a share");
+        uint256 payerBefore_ = token_.balanceOf(nativeUser);
+        uint256 vaultBefore_ = token_.balanceOf(address(nativeSY));
+        uint256 supplyBefore_ = shares_.totalSupply();
+        vm.startPrank(nativeUser);
+        token_.approve(address(nativeSY), 5 ether);
+        vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
+        exchange_.exchangeIn(token_, 1, shares_, 0, nativeUser, false, block.timestamp);
+        assertEq(token_.balanceOf(nativeUser), payerBefore_);
+        assertEq(token_.balanceOf(address(nativeSY)), vaultBefore_);
+        assertEq(shares_.totalSupply(), supplyBefore_);
+        uint256 quoted_ = exchange_.previewExchangeIn(token_, 5 ether, shares_);
+        assertGt(quoted_, 0, "representable positive control");
+        uint256 beforeShares_ = shares_.balanceOf(nativeUser);
+        assertEq(exchange_.exchangeIn(token_, 5 ether, shares_, quoted_, nativeUser, false, block.timestamp), quoted_);
+        assertEq(shares_.balanceOf(nativeUser) - beforeShares_, quoted_);
+        assertEq(payerBefore_ - token_.balanceOf(nativeUser), 5 ether);
+        vm.stopPrank();
+    }
+
     function test_nativeLPWrapRoundTripUsesExistingShares() public {
         address lp_ = nativeSY.yieldToken();
         uint256 burn_ = nativeSY.balanceOf(nativeUser) / 4;
@@ -130,13 +158,14 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
     }
 
     function test_nativePartialInternalRedemptionPreservesOtherHeldShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 deposit_ = nativeSY.balanceOf(nativeUser) / 2;
         uint256 burn_ = deposit_ / 2;
         address lp_ = nativeSY.yieldToken();
         vm.startPrank(nativeUser);
         nativeSY.transfer(address(nativeSY), deposit_);
         uint256 quoted_ = nativeSY.previewRedeem(lp_, burn_);
-        assertEq(nativeSY.redeem(nativeUser, burn_, lp_, quoted_, true), quoted_);
+        assertEq(abi.decode(atomic.execute(address(nativeSY), abi.encodeCall(IStandardizedYield.redeem, (nativeUser, burn_, lp_, quoted_, true))), (uint256)), quoted_);
         vm.stopPrank();
         assertEq(nativeSY.balanceOf(address(nativeSY)), deposit_ - burn_);
     }
@@ -169,6 +198,20 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairB, 7 ether, nativePairA, 1, nativeUser, false, block.timestamp);
         vm.stopPrank();
         assertGt(IPool(nativeSY.yieldToken()).index0() + IPool(nativeSY.yieldToken()).index1(), 0, "real pool fees accrued");
+    }
+
+    function test_aeroHeldRedemptionHelperIsNotPublic() public {
+        address facet_ = IDiamondLoupe(address(nativeSY)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
+        bytes memory data_ = abi.encodeWithSignature(
+            "executeNativeSyRedemption(address,address,uint256,address,uint256)",
+            address(nativeSY), nativeUser, 1, address(nativePairA), 0
+        );
+        (bool ok_, bytes memory reason_) = facet_.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("DelegateCallRequired()"));
+        (ok_, reason_) = address(nativeSY).call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", bytes4(data_)));
     }
 
     function test_aeroProjectionSelectorsAndComponentSizes() public view {

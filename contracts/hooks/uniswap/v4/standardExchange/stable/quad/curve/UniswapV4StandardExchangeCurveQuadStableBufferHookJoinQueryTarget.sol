@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib as ClaimLib} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 
@@ -7,7 +10,6 @@ import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStan
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
-import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 
 
@@ -15,6 +17,19 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore} from "contra
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget is UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore, NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
+    {
+        address implementation_ = IDiamondLoupe(address(this)).facetAddress(
+            IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector
+        );
+        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
+            "executeVaultHeldRedemption(address,uint256,address,uint256)", receiver_, shares_, tokenOut_, minimum_
+        ));
+        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
+        return abi.decode(result_, (uint256));
+    }
+
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
         external view returns (uint256)
     {
@@ -112,11 +127,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTar
             if (n.length == 0) return 0;
             out_ = n[0];
         }
-        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
-        if (pairOut == 0) return 0;
-        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
-        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
-        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+        return ClaimLib.syntheticValue(ctx, out_);
     }
 
     /// @notice Geometric native-inventory unit used for initial LP issuance and protocol LP fees.
@@ -133,18 +144,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTar
     }
 
     function getTokensIn() public view override returns (address[] memory tokens_) {
-        Repo.Layout storage l_ = Repo._layout();
-        tokens_ = new address[](uint256(Repo.N_TOKENS) * 2);
-        uint256 count_;
-        for (uint256 i_; i_ < Repo.N_TOKENS; ++i_) tokens_[count_++] = l_.tokens[i_];
-        for (uint256 i_; i_ < Repo.N_TOKENS; ++i_) {
-            address se_ = l_.standardExchanges[i_];
-            if (se_ == address(0)) continue;
-            bool found_;
-            for (uint256 j_; j_ < count_; ++j_) if (tokens_[j_] == se_) { found_ = true; break; }
-            if (!found_) tokens_[count_++] = se_;
-        }
-        assembly ("memory-safe") { mstore(tokens_, count_) }
+        return ClaimLib.nativeSyTokens();
     }
 
     function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }

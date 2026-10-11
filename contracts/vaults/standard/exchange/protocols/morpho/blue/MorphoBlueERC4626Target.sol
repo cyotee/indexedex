@@ -47,10 +47,14 @@ contract MorphoBlueERC4626Target is MorphoBlueStandardExchangeCommon, Reentrancy
     }
 
     function maxRedeem(address owner) public view virtual returns (uint256) {
-        uint256 capAssets_ = maxWithdraw(owner);
-        uint256 capShares_ = _sharesFromAssetsDown(capAssets_, _liveNav(), ERC20Repo._totalSupply());
         uint256 bal_ = ERC20Repo._balanceOf(owner);
-        return capShares_ < bal_ ? capShares_ : bal_;
+        uint256 nav_ = _liveNav();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        uint256 cash_ = _availableCash();
+        if (_assetsFromSharesDown(bal_, nav_, supply_) <= cash_) return bal_;
+        // floor(shares * assets / supply) <= cash iff shares is below
+        // the first share amount that produces cash + 1 native asset units.
+        return _sharesFromAssetsUp(cash_ + 1, nav_, supply_) - 1;
     }
 
     function previewDeposit(uint256 assets) public view virtual returns (uint256) {

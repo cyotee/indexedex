@@ -552,6 +552,13 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
         uint256 amountOutMin,
         uint256 deadline
     ) internal returns (uint256 amountOut) {
+        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline);
+    }
+
+    function _exitSingleAssetFrom(
+        address holder, address tokenOut, uint256 sharesIn, bool receiveSeShare,
+        address to, uint256 amountOutMin, uint256 deadline
+    ) internal returns (uint256 amountOut) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (sharesIn == 0) revert ZeroAmount();
@@ -565,7 +572,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
         if (amountOut < amountOutMin) revert Slippage();
         uint256 invOut = _singleExitInvOut(idx, sharesIn);
         if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
+        _burnLp(holder, sharesIn);
         Repo.Layout storage l = Repo._layout();
         if (l.standardExchanges[idx] != address(0)) {
             if (receiveSeShare) {

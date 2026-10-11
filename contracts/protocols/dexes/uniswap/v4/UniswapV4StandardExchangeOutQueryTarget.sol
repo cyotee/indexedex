@@ -35,9 +35,6 @@ abstract contract UniswapV4StandardExchangeOutQueryTarget is UniswapV4StandardEx
             (address(tokenIn) == token0 && address(tokenOut) == token1)
                 || (address(tokenIn) == token1 && address(tokenOut) == token0)
         ) {
-            if (!canOpenPoolManagerUnlock()) {
-                revert UniswapV4Exchange_PoolManagerInteractionBlocked();
-            }
             return _quoteSwapOut(amountOut, address(tokenIn) == token0);
         }
 

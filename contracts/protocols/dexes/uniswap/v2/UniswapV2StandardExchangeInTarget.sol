@@ -687,6 +687,13 @@ contract UniswapV2StandardExchangeInTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
+            if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
+            // A deposit must buy at least one vault-share unit. Reject before
+            // entering an AMM swap whose rounded output cannot fund that claim.
+            if (IStandardExchangeIn(address(this)).previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
+                revert MinAmountNotMet(1, 0);
+            }
+
             // Load the index source data.
             // Loads the underlying pool token, token 0, and token 1.
             // Also loads the reserves of the known token and the opposing token.

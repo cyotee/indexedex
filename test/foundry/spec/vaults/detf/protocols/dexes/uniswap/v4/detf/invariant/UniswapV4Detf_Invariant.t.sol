@@ -278,7 +278,8 @@ contract UniswapV4Detf_Invariant is TestBase_UniswapV4Detf_Adversarial, IUv4Detf
     }
 
     function afterInvariant() public view {
-        assertGe(handler.attempted(), 8, "campaign reached every money action and all three honest actors");
+        // Shrunk/replayed sequences may contain fewer than eight cycles.
+        // Mandatory eight-cycle/three-actor coverage lives in the deterministic test.
         handler.assertAccounting();
     }
 
@@ -286,6 +287,7 @@ contract UniswapV4Detf_Invariant is TestBase_UniswapV4Detf_Adversarial, IUv4Detf
         for (uint256 i; i < 8; ++i) {
             handler.cycle(5e16, i);
         }
+        assertEq(handler.attempted(), 8, "all three actors complete every money action");
         assertEq(handler.ghost_in(), 8);
         assertEq(handler.ghost_out(), 8);
         assertEq(handler.ghost_eoaReject(), 8);

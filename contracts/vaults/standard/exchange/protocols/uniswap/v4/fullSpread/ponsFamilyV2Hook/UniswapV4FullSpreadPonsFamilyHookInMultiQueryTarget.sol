@@ -20,7 +20,6 @@ contract UniswapV4FullSpreadPonsFamilyHookInMultiQueryTarget is UniswapV4FullSpr
             (address(tokenIn) == token0 && address(tokenOut) == token1)
                 || (address(tokenIn) == token1 && address(tokenOut) == token0)
         ) {
-            if (!canOpenPoolManagerUnlock()) return 0;
             return _quoteSwapIn(amountIn, address(tokenIn) == token0);
         }
 

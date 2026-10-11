@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -108,13 +109,14 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
     }
 
     function test_weightedSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 held_ = sy_.balanceOf(user) / 4;
         uint256 redeem_ = held_ / 3;
         uint256 quote_ = sy_.previewRedeem(se0, redeem_);
         uint256 before_ = IERC20(se0).balanceOf(user);
         vm.startPrank(user);
         sy_.transfer(hook, held_);
-        assertEq(sy_.redeem(user, redeem_, se0, quote_, true), quote_);
+        assertEq(abi.decode(atomic.execute(address(sy_), abi.encodeCall(IStandardizedYield.redeem, (user, redeem_, se0, quote_, true))), (uint256)), quote_);
         vm.stopPrank();
         assertEq(sy_.balanceOf(hook), held_ - redeem_);
         assertEq(IERC20(se0).balanceOf(user), before_ + quote_);
@@ -161,24 +163,32 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
 }
 
 contract WeightedBufferHookRestrictedSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook {
+    function setUp() public override {
+        user = address(new AtomicPretransferCaller());
+        super.setUp();
+    }
+
     function _pkgOwnerOnlyLiquidity() internal pure override returns (bool) { return true; }
     function _pkgOwner() internal view override returns (address) { return user; }
 
     function test_restrictedSYInternalRedemptionPreservesCallerAndClearsAuthorization() public {
+        AtomicPretransferCaller atomic = AtomicPretransferCaller(user);
         _seedFullBook(1_000 ether);
         IStandardizedYield sy = IStandardizedYield(hook);
         uint256 shares = sy.balanceOf(user) / 100;
         vm.prank(user); sy.transfer(hook, shares * 2);
         address output = sy.getTokensOut()[0];
-        address outsider = makeAddr("unauthorized internal SY redeemer");
-        vm.expectRevert(); vm.prank(outsider); sy.redeem(outsider, shares, output, 0, true);
+        AtomicPretransferCaller outsider = new AtomicPretransferCaller();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(outsider)));
+        outsider.execute(hook, abi.encodeCall(IStandardizedYield.redeem, (address(outsider), shares, output, 0, true)));
         assertEq(sy.balanceOf(hook), shares * 2);
         uint256 quoted = sy.previewRedeem(output, shares);
         uint256 before = IERC20(output).balanceOf(user);
-        vm.prank(user); uint256 received = sy.redeem(user, shares, output, quoted, true);
+        vm.prank(user); uint256 received = abi.decode(atomic.execute(address(sy), abi.encodeCall(IStandardizedYield.redeem, (user, shares, output, quoted, true))), (uint256));
         assertEq(IERC20(output).balanceOf(user) - before, received);
         assertEq(sy.balanceOf(hook), shares);
-        vm.expectRevert(); vm.prank(outsider); sy.redeem(outsider, shares, output, 0, true);
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(outsider)));
+        outsider.execute(hook, abi.encodeCall(IStandardizedYield.redeem, (address(outsider), shares, output, 0, true)));
         assertEq(sy.balanceOf(hook), shares, "owner's completed call leaves no public removal authority");
     }
 

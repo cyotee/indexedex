@@ -32,8 +32,8 @@ import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchan
  *      pool only while `_etherFiStakeOpen()` (not paused, not timed-paused, not blacklisted);
  *      when closed the whole input stays booked as WETH (D40). Capacity is boolean on this
  *      family: a finite `allowFace` cannot be expressed, so `limitCapacity(allowFace)` pauses the
- *      pool for any value (rounds the allowance down to zero). The row's partial assertions
- *      (`booked >= used - allow`, `booked <= used`) remain valid under that rounding.
+ *      pool for any value (rounds the allowance down to zero). The weighted row measures the pool's native ETH custody to prove the
+ *      actual deployment and reconciles that delta with the exact booked WETH increase.
  *      `seBooked()` reports the SE's booked WETH reserve (`reserveOfToken(weth)`, synced to the
  *      WETH balance at the end of every route). `armOperativeRevert` rejects the pool's
  *      `deposit()` overloads after the open precheck passes. The hermetic redemption manager is
@@ -138,6 +138,10 @@ contract SeMatrix_EtherFiFixture is SeMatrixFixture {
     ///      allowance above zero cannot be expressed on this family and is rounded down to zero.
     function limitCapacity(uint256) external override {
         pool.setPaused(true);
+    }
+
+    function partialDeploymentBalance() external view override returns (bool, uint256) {
+        return (true, address(pool).balance);
     }
 
     function openCapacity() external override {

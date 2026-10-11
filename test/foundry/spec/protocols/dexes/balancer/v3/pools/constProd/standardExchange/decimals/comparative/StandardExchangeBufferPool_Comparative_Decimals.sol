@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {TestBase_StandardExchangeBufferPool_Comparative_Decimals} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/bases/TestBase_StandardExchangeBufferPool_Comparative_Decimals.sol";
@@ -35,11 +36,18 @@ abstract contract StandardExchangeBufferPool_Comparative_Spec_Decimals is TestBa
         return TestBase_StandardExchangeBufferPool_Comparative_Decimals(address(this));
     }
 
-    /// @notice Both pools expose the same effective reserves immediately after matched init.
+    /// @dev The reference holds raw TTA; its initialization cannot fund the
+    /// fractional raw-token remainder of the buffer's scaled18 virtual reserve.
+    function _assertReferenceTtaReserve(uint256 reference_, uint256 virtual_) internal view {
+        uint256 quantum_ = 10 ** (18 - IERC20Metadata(address(tta)).decimals());
+        assertEq(reference_, virtual_ / quantum_ * quantum_, "reference TTA equals representable virtual reserve");
+    }
+
+    /// @notice Reserves match at the reference token's representable precision after init.
     function test_compare_init_liveBalancesMatch() public view {
         (uint256 bufTTA, uint256 bufShares) = _cmp().bufferEffectiveReserves();
         (uint256 refTTA, uint256 refShares) = _cmp().referenceReserves();
-        assertApproxEqAbs(refTTA, bufTTA, 1e3, "init TTA reserve mismatch");
+        _assertReferenceTtaReserve(refTTA, bufTTA);
         assertApproxEqAbs(refShares, bufShares, 1e3, "init shares reserve mismatch");
     }
 
@@ -79,8 +87,7 @@ abstract contract StandardExchangeBufferPool_Comparative_Spec_Decimals is TestBa
         behavior_compare_swap_sharesToTTA_exactIn(10e18);
     }
 
-    /// @notice After the underlying V2 trade, both pools report the same effective reserves
-    ///         (hence the same marginal/spot price) without any swap between them.
+    /// @notice The reference retains its representable virtual reserve after the underlying rate changes.
     function test_compare_spotPrice_afterRateChange() public {
         (uint256 before_, uint256 after_) = _cmp().tradeUnderlyingV2(_from18(address(tta), 50_000e18));
         assertTrue(after_ != before_, "rate did not move");
@@ -88,7 +95,7 @@ abstract contract StandardExchangeBufferPool_Comparative_Spec_Decimals is TestBa
         (uint256 bufTTA, uint256 bufShares) = _cmp().bufferEffectiveReserves();
         (uint256 refTTA, uint256 refShares) = _cmp().referenceReserves();
 
-        assertApproxEqAbs(refTTA, bufTTA, 1e3, "post-trade TTA reserve mismatch");
+        _assertReferenceTtaReserve(refTTA, bufTTA);
         assertApproxEqAbs(refShares, bufShares, 1e3, "post-trade shares reserve mismatch");
 
         uint256 bufSpot = (bufTTA * 1e18) / bufShares;

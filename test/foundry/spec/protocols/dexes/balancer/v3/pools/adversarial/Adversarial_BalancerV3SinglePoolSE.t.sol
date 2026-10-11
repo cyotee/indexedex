@@ -26,6 +26,7 @@ import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCal
 import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
 import {BalancerV3SinglePoolStandardExchange} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {BasePoolMath} from "@crane/contracts/external/balancer/v3/vault/contracts/BasePoolMath.sol";
 
 /// @dev Same-tx helper: push `used` then claim a fat max (E6). Atomic so a blocked refund reverts the push.
 contract SinglePoolE6Helper {
@@ -230,6 +231,136 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
     /* ---------------------------------------------------------------------- */
     /*  M3: leftover router / Permit2 allowance after a successful op         */
     /* ---------------------------------------------------------------------- */
+
+    /// @notice Whole BPT supply remains quotable, including locked initialization BPT.
+    function test_liquidation_fullSupplyQuote() public view {
+        uint256 quoted = adapter.previewExchangeIn(bpt, bpt.totalSupply(), dai);
+        assertGt(quoted, 0, "full supply has a liquidation quote");
+    }
+
+    /// @notice A funded large withdrawal executes a native batch and clears its approvals.
+    function test_liquidation_largeExactInAndExactOut() public {
+        _assertLargeLiquidation(dai);
+    }
+
+    function test_liquidation_lowWeightFace_largeExactInAndExactOut() public {
+        _assertLargeLiquidation(usdc);
+    }
+
+    function test_liquidation_nearTotalReserve_bothFaces() public view {
+        uint256 reserve = bpt.balanceOf(lp);
+        assertLt(reserve, bpt.totalSupply(), "initialization liquidity stays locked");
+        assertGt(adapter.previewExchangeIn(bpt, reserve, dai), 0);
+        assertGt(adapter.previewExchangeIn(bpt, reserve, usdc), 0);
+    }
+
+    function test_liquidation_supplyBelowOneShare_bothFaces() public {
+        uint256 remainingSupply = 1e14;
+        vm.startPrank(lp);
+        bpt.approve(address(router), type(uint256).max);
+        router.removeLiquidityProportional(address(bpt), bpt.totalSupply() - remainingSupply, new uint256[](2), false, "");
+        vm.stopPrank();
+        assertEq(bpt.totalSupply(), remainingSupply);
+        assertGt(adapter.previewExchangeIn(bpt, remainingSupply, dai), 0);
+        assertGt(adapter.previewExchangeIn(bpt, remainingSupply, usdc), 0);
+    }
+
+    function test_liquidation_mixedDecimals_6_18() public { _assertMixedDecimals(6, 18); }
+    function test_liquidation_mixedDecimals_9_6() public { _assertMixedDecimals(9, 6); }
+
+    function _assertMixedDecimals(uint8 firstDecimals, uint8 secondDecimals) private {
+        IERC20[] memory faces = _deployDecimalLiquidationPool(firstDecimals, secondDecimals);
+        uint256 original = vm.snapshotState();
+        for (uint256 i; i < faces.length; ++i) {
+            assertGt(adapter.previewExchangeIn(bpt, bpt.totalSupply(), faces[i]), 0);
+            _assertLargeLiquidation(faces[i]);
+            assertTrue(vm.revertToState(original));
+        }
+    }
+
+    function _deployDecimalLiquidationPool(uint8 firstDecimals, uint8 secondDecimals)
+        private returns (IERC20[] memory faces)
+    {
+        address[] memory ordered = new address[](2);
+        ordered[0] = address(new MintableERC20Decimals("Liquidation A", "LQA", firstDecimals));
+        ordered[1] = address(new MintableERC20Decimals("Liquidation B", "LQB", secondDecimals));
+        ordered = BetterAddress._sort(ordered);
+        faces = new IERC20[](2);
+        TokenConfig[] memory configs = new TokenConfig[](2);
+        uint256[] memory weights = new uint256[](2);
+        uint256[] memory amounts = new uint256[](2);
+        for (uint256 i; i < 2; ++i) {
+            MintableERC20Decimals token = MintableERC20Decimals(ordered[i]);
+            faces[i] = IERC20(ordered[i]);
+            configs[i] = standardTokenConfig(faces[i]);
+            weights[i] = 5e17;
+            amounts[i] = 1000 * 10 ** uint256(token.decimals());
+            token.mint(lp, amounts[i]);
+            _approveForAllUsers(faces[i]);
+            _approveSpenderForAllUsers(address(router), faces[i]);
+        }
+        WeightedPoolFactory factory = deployWeightedPoolFactory(IVault(address(vault)), 365 days, "LiquidationDecimals", "LD");
+        PoolRoleAccounts memory roles;
+        address decimalPool = factory.create("Liquidation decimals", "LQD", configs, weights, roles,
+            1e16, address(0), false, false, keccak256("liquidation-decimals-pool"));
+        vm.startPrank(lp);
+        _initPool(decimalPool, amounts, 0);
+        vm.stopPrank();
+        bpt = IERC20(decimalPool);
+        adapter = IStandardExchange(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory,
+                "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"),
+            abi.encode(IRouter(address(router)), decimalPool, bpt, faces), keccak256("liquidation-decimals-adapter")
+        ));
+    }
+
+    function _assertLargeLiquidation(IERC20 output) internal {
+        uint256 amount = bpt.totalSupply() * 45 / 100;
+        vm.prank(lp);
+        bpt.transfer(alice, amount + 1e18);
+        uint256 quote = adapter.previewExchangeIn(bpt, amount, output);
+        uint256 snap = vm.snapshotState();
+        uint256 before = output.balanceOf(alice);
+        vm.startPrank(alice);
+        bpt.approve(address(adapter), type(uint256).max);
+        uint256 received = adapter.exchangeIn(bpt, amount, output, quote, alice, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(received, quote);
+        assertEq(output.balanceOf(alice) - before, quote);
+        _assertNoMaxAllowances(bpt);
+        vm.revertToState(snap);
+        uint256 usedQuote = adapter.previewExchangeOut(bpt, output, quote);
+        uint256 bptBefore = bpt.balanceOf(alice);
+        vm.startPrank(alice);
+        bpt.approve(address(adapter), bptBefore);
+        uint256 used = adapter.exchangeOut(bpt, bptBefore, output, quote, alice, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(used, usedQuote);
+        assertEq(bptBefore - bpt.balanceOf(alice), usedQuote);
+        assertEq(output.balanceOf(alice) - before, quote);
+        _assertNoMaxAllowances(bpt);
+    }
+
+    /// @notice A quote beyond the bounded execution route does not authorize partial payout.
+    function test_liquidation_overCapacity_revertsAtomically() public {
+        uint256 supply = bpt.totalSupply();
+        uint256 amount = supply * 99 / 100;
+        vm.prank(lp);
+        bpt.transfer(alice, amount);
+        uint256 quote = adapter.previewExchangeIn(bpt, amount, dai);
+        assertGt(quote, 0);
+        uint256 ratio = ((supply - amount) * 1e18 + supply - 1) / supply;
+        uint256 bptBefore = bpt.balanceOf(alice);
+        uint256 assetsBefore = dai.balanceOf(alice);
+        vm.startPrank(alice);
+        bpt.approve(address(adapter), amount);
+        vm.expectRevert(abi.encodeWithSelector(BasePoolMath.InvariantRatioBelowMin.selector, ratio, 7e17));
+        adapter.exchangeIn(bpt, amount, dai, quote, alice, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(bpt.balanceOf(alice), bptBefore);
+        assertEq(dai.balanceOf(alice), assetsBefore);
+        assertEq(bpt.totalSupply(), supply);
+    }
 
     /// @notice M3: successful join must not leave max router/Permit2 allowance on adapter inventory.
     function test_M_allowance_not_max_after_exchangeIn() public {

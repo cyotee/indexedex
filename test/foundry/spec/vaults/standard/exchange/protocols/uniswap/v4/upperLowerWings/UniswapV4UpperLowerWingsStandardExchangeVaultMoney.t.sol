@@ -6,6 +6,8 @@ import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExch
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {UniswapV4UpperLowerWingsStandardExchangeVaultPoolActor as Actor} from "./reference/UniswapV4UpperLowerWingsStandardExchangeVaultPoolActor.sol";
 import {Pool} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Pool.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
@@ -21,6 +23,22 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
         token0.mint(address(trader), 1e25); token1.mint(address(trader), 1e25);
         token0.approve(address(wings0), type(uint256).max); token1.approve(address(wings1), type(uint256).max);
     }
+    function test_outsidePoolTradeDoesNotRefreshVaultBook() public {
+        _bootstrap(wings0);
+        (bytes memory state,) = IStandardExchangeTransitionQuote(address(wings0)).quoteState(address(token0), address(0));
+        assertGt(state.length, 0, "wings vault still quotes a snapshot");
+        uint256 book0 = IBasicVault(address(wings0)).reserveOfToken(address(token0));
+        uint256 book1 = IBasicVault(address(wings0)).reserveOfToken(address(token1));
+        uint256 supply = IERC20(address(wings0)).totalSupply();
+        trader.swapTo(key, false, 1e18, TickMath.getSqrtPriceAtTick(200));
+        assertEq(IBasicVault(address(wings0)).reserveOfToken(address(token0)), book0, "outside trade leaves token0 book unchanged");
+        assertEq(IBasicVault(address(wings0)).reserveOfToken(address(token1)), book1, "outside trade leaves token1 book unchanged");
+        assertEq(IERC20(address(wings0)).totalSupply(), supply, "outside trade mints no shares");
+        uint256 preview = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, 1e12, IERC20(address(wings0)));
+        uint256 minted = IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), preview, address(this), false, block.timestamp);
+        assertEq(minted, preview, "later deposit credits only the funded input");
+    }
+
     function test_targetOnlyBootstrapBothOrientations() public {
         _bootstrap(wings0); _bootstrap(wings1);
     }

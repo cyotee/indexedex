@@ -8,13 +8,27 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStataTokenV2} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/interfaces/IStataTokenV2.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {AaveV3StataStandardExchangeCommon} from "./AaveV3StataStandardExchangeCommon.sol";
+import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {
     ReceiptBackedERC4626AccountingLib
 } from "contracts/vaults/standard/erc4626/ReceiptBackedERC4626AccountingLib.sol";
 
 /// @notice SY at the existing Stata SE address; protocol rewards retain their existing fee-recipient forwarding.
-abstract contract AaveV3StataStandardYieldTarget is NativeStandardYieldTarget {
+abstract contract AaveV3StataStandardYieldTarget is NativeStandardYieldTarget, AaveV3StataStandardExchangeCommon, ReentrancyLockModifiers {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256 amount_)
+    {
+        IStataTokenV2 stata_ = _yieldVault();
+        uint256 claim_ = _convertSharesToStata(shares_);
+        ERC20Repo._burn(address(this), shares_);
+        amount_ = _deliverStata(stata_, claim_, IERC20(tokenOut_), receiver_);
+        if (amount_ < minimum_) revert SYMinimumNotMet(minimum_, amount_);
+        _collectAndForwardRewards();
+        _syncAllExpectedHoldReserves();
+    }
+
     function _yieldVault() internal view returns (IStataTokenV2) { return IStataTokenV2(address(ERC4626Repo._reserveAsset())); }
     function getTokensIn() public view override returns (address[] memory tokens_) {
         IStataTokenV2 stata_ = _yieldVault();

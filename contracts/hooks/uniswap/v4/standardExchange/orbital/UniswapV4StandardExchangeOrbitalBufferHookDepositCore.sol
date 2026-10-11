@@ -230,12 +230,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositCore is Unisw
             revert InvalidRoute(tokenIn, address(0));
         }
         if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+            _pullDirectExact(tokenIn, amountIn);
             address pair_ = l.legs.pairOfStandardExchange[tokenIn];
             uint256 pairOut_ = _unwrapSeShares(pair_, amountIn);
             return _depositSingleFromBalance(pair_, pairOut_, to, sharesMin, deadline);
         }
-        IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+        _pullDirectExact(tokenIn, amountIn);
         return _depositSingleFromBalance(tokenIn, amountIn, to, sharesMin, deadline);
     }
 

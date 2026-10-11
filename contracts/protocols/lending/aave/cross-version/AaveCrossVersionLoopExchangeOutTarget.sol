@@ -21,6 +21,18 @@ contract AaveCrossVersionLoopExchangeOutTarget is
 {
     using SafeERC20 for IERC20;
 
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address, uint256 minimum_)
+        internal override nonReentrant returns (uint256 amount_)
+    {
+        CrossVersionLoopExecutor.Market memory m_ = _market();
+        amount_ = _amountForShares(m_, shares_);
+        if (amount_ == 0) revert ZeroLoopAmount();
+        if (amount_ < minimum_) revert AmountOutNotMet(minimum_, amount_);
+        uint256 supply_ = ERC20Repo._totalSupply();
+        ERC20Repo._burn(address(this), shares_);
+        _withdrawAndPay(m_, amount_, receiver_, shares_, supply_);
+    }
+
     /// @notice Wrap exact-out (mint) under-delivered the requested SE shares. Mirrors the exact-input
     ///         redemption slippage guard; a positive input must mint at least the requested shares.
     error LoopWrapSlippage(uint256 minimumShares, uint256 mintedShares);

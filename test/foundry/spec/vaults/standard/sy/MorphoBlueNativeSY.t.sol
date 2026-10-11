@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -40,10 +42,11 @@ contract MorphoBlueNativeSYTest is TestBase_MorphoBlueStandardExchange {
         assertEq(loanToken.balanceOf(user) - before_, redemption_); assertEq(sy_.balanceOf(user), 0);
     }
     function test_morphoSYInternalRedemptionPreservesRemainingProxyShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         IStandardizedYield sy_ = _sy(); vm.prank(user); uint256 shares_ = sy_.deposit(user, address(loanToken), 1_000e18, 0);
         vm.prank(user); sy_.transfer(se, shares_);
         uint256 portion_ = shares_ / 3; uint256 quote_ = sy_.previewRedeem(address(loanToken), portion_);
-        vm.prank(user); assertEq(sy_.redeem(user, portion_, address(loanToken), quote_, true), quote_);
+        vm.prank(user); assertEq(abi.decode(atomic.execute(address(sy_), abi.encodeCall(IStandardizedYield.redeem, (user, portion_, address(loanToken), quote_, true))), (uint256)), quote_);
         assertEq(sy_.balanceOf(se), shares_ - portion_); assertEq(sy_.balanceOf(user), 0);
     }
     function test_morphoSYRateIncludesUnsettledInterestWithoutASecondRewardLedger() public {

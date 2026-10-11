@@ -45,6 +45,8 @@ contract UniswapV4FullSpreadHooklessStandardExchangeVaultInQueryTarget is Uniswa
     {
         InventoryQuote memory q = _decodeInventory(state);
         if (manager != address(_poolManager()) || !q.idle) return state;
+        // Mark the snapshot blocked so callers can tell it from the live book.
+        // Pricing ignores this flag and still uses the pool book.
         q.idle = false;
         return abi.encode(q);
     }

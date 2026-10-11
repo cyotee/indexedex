@@ -17,9 +17,21 @@ import {ReentrantERC20Harness} from "contracts/test/stubs/ReentrantERC20Harness.
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
+import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
+    /// @dev Called from the token pull. A wrong nested error fails this assertion inside the
+    ///      reverted frame; the vault then reports the pull as TransferFromFailed.
+    function observeNestedDeposit(address wrapped, address receiver) external {
+        (bool ok, bytes memory reason) = wrapped.call(abi.encodeCall(IERC4626.deposit, (uint256(1e18), receiver)));
+        assertFalse(ok, "nested deposit must be rejected");
+        assertEq(reason, abi.encodeWithSelector(IReentrancyLock.IsLocked.selector), "nested guard is IsLocked");
+        revert IReentrancyLock.IsLocked();
+    }
+
     function test_ADV_firstDepositorDonationInflationOffset() public {
         asset.mint(address(vault), 1e18);
         vm.prank(alice);
@@ -38,10 +50,14 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
     function test_ADV_cannotBurnOtherHolderViaInternalSy() public {
         vm.prank(alice);
         uint256 shares = vault.deposit(10e18, alice);
-        vm.prank(bob);
-        vm.expectRevert();
-        IStandardizedYield(address(vault)).redeem(bob, shares, address(asset), 0, true);
-        assertEq(IERC20(address(vault)).balanceOf(alice), shares);
+        uint256 aliceShares = IERC20(address(vault)).balanceOf(alice);
+        uint256 reserveBefore = IBasicVault(address(vault)).reserveOfToken(address(asset));
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, shares, 0));
+        IStandardizedYield(address(vault)).redeem(address(caller), shares, address(asset), 0, true);
+        assertEq(IERC20(address(vault)).balanceOf(alice), aliceShares, "other holder shares unchanged");
+        assertEq(IBasicVault(address(vault)).reserveOfToken(address(asset)), reserveBefore, "rejected claim books nothing");
     }
 
     function test_ADV_assetPretransferDoesNotMint() public {
@@ -113,15 +129,21 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         ReentrantERC20Harness tok = new ReentrantERC20Harness("R", "R", 18);
         IERC4626 wrapped = pkg.deployVault(IERC20Metadata(address(tok)), 10, bytes32(uint256(123)));
         tok.mint(alice, 100e18);
-        tok.setReenter(
-            address(wrapped),
-            abi.encodeWithSelector(IERC4626.deposit.selector, uint256(1e18), alice)
-        );
+        tok.setReenter(address(this), abi.encodeCall(this.observeNestedDeposit, (address(wrapped), alice)));
+        tok.setBubbleRevert(true);
+        uint256 supplyBefore = IERC20(address(wrapped)).totalSupply();
+        uint256 aliceShares = IERC20(address(wrapped)).balanceOf(alice);
+        uint256 vaultAssets = tok.balanceOf(address(wrapped));
+        uint256 reserveBefore = IBasicVault(address(wrapped)).reserveOfToken(address(tok));
         vm.startPrank(alice);
         tok.approve(address(wrapped), type(uint256).max);
-        vm.expectRevert();
+        vm.expectRevert(SafeTransferLib.TransferFromFailed.selector);
         wrapped.deposit(10e18, alice);
         vm.stopPrank();
+        assertEq(IERC20(address(wrapped)).totalSupply(), supplyBefore, "nested guard mints nothing");
+        assertEq(IERC20(address(wrapped)).balanceOf(alice), aliceShares, "nested guard credits no shares");
+        assertEq(tok.balanceOf(address(wrapped)), vaultAssets, "nested guard takes no assets");
+        assertEq(IBasicVault(address(wrapped)).reserveOfToken(address(tok)), reserveBefore, "nested guard books nothing");
     }
 
     function test_ADV07_invalidReceiverReverts() public {

@@ -264,25 +264,31 @@ abstract contract UniswapV4SingleSEBufferHook_SeMatrixBehavior is TestBase_Unisw
         }
     }
 
-    /// @dev Families with no leftover case: a dust wrap that rounds to zero SE output is either
-    ///      rejected with no state change or taken in full; it is never refunded and never left
-    ///      on the hook.
+    /// @dev Reject an unrepresentable deposit atomically; a representable one
+    /// receives exactly the quoted shares and leaves no face token on the hook.
     function _roundingToZeroControl() internal {
         uint256 userFace = _faceOf(user);
         uint256 userSe = _seOf(user);
         uint256 hookFace = _faceOf(hook);
+        uint256 supply = IERC20(seUT).totalSupply();
+        uint256 booked = fx.seBooked();
+        uint256 preview = buffer.previewWrap(1);
         (SwapParams memory p,) = _swapParams(true, -int256(1));
-        vm.prank(user);
-        try swapRouter.swapExactIn(poolKey, p, bytes("")) {
-            assertEq(userFace - _faceOf(user), 1, "dust taken, not refunded");
-            uint256 seDec_ = fx.seDecimals();
-            uint256 unitScale = seDec_ > faceDec ? 10 ** (seDec_ - faceDec) : 1;
-            assertLe(_seOf(user) - userSe, unitScale, "dust yields at most one face-unit-equivalent of shares");
-        } catch {
-            assertEq(_faceOf(user), userFace, "rejected dust leaves the caller untouched");
-            assertEq(_seOf(user), userSe, "rejected dust mints nothing");
+        if (preview == 0) {
+            vm.prank(user);
+            vm.expectRevert(_wrappedHookRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0)));
+            swapRouter.swapExactIn(poolKey, p, bytes(""));
+            assertEq(_faceOf(user), userFace, "below-minimum input is not taken");
+            assertEq(_seOf(user), userSe, "below-minimum deposit mints nothing");
+            assertEq(IERC20(seUT).totalSupply(), supply, "supply unchanged");
+            assertEq(fx.seBooked(), booked, "book unchanged");
+        } else {
+            vm.prank(user);
+            swapRouter.swapExactIn(poolKey, p, bytes(""));
+            assertEq(userFace - _faceOf(user), 1, "representable deposit taken");
+            assertEq(_seOf(user) - userSe, preview, "receipt equals preview");
         }
-        assertEq(_faceOf(hook), hookFace, "dust never rests on the hook");
+        assertEq(_faceOf(hook), hookFace, "no hook residual");
     }
 
     /// @dev No SE-like entry point exists on this diamond: `exchangeIn` is an unmatched selector

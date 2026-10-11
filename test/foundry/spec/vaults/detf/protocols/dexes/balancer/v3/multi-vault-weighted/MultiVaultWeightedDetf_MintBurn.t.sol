@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     TestBase_MultiVaultWeightedDetf
@@ -113,18 +114,19 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
 
     function test_invalidRoute_exactOut() public {
         _goLiveViaBptBond(openDetf, alice, 500e18);
-        // previewExchangeOut must InvalidRoute (binary search not implemented)
-        (bool ok, bytes memory ret) = openDetf.staticcall(
-            abi.encodeWithSignature("previewExchangeOut(address,address,uint256)", address(seShare0), openDetf, 1e18)
-        );
-        assertFalse(ok, "exact-out preview must revert");
-        // Prefer InvalidRoute when bubbled
-        if (ret.length >= 4) {
-            bytes4 sel;
-            assembly {
-                sel := mload(add(ret, 32))
-            }
-            assertEq(sel, MultiVaultWeightedDetfRepo.InvalidRoute.selector, "InvalidRoute selector");
+        IStandardExchangeOut exchange_ = IStandardExchangeOut(openDetf);
+        assertEq(exchange_.previewExchangeOut(seShare0, IERC20(openDetf), 1e18), 0, "unsupported exact-output preview");
+        uint256 supply_ = IERC20(openDetf).totalSupply();
+        uint256 held_ = seShare0.balanceOf(openDetf);
+        uint256 payer_ = seShare0.balanceOf(address(this));
+        uint256 recipient_ = IERC20(openDetf).balanceOf(bob);
+        for (uint256 flag_; flag_ < 2; ++flag_) {
+            vm.expectRevert(abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(seShare0), openDetf));
+            exchange_.exchangeOut(seShare0, 1e18, IERC20(openDetf), 1e18, bob, flag_ == 1, block.timestamp);
+            assertEq(IERC20(openDetf).totalSupply(), supply_, "no issuance");
+            assertEq(seShare0.balanceOf(openDetf), held_, "held input unchanged");
+            assertEq(seShare0.balanceOf(address(this)), payer_, "payer unchanged");
+            assertEq(IERC20(openDetf).balanceOf(bob), recipient_, "no payout");
         }
     }
 }

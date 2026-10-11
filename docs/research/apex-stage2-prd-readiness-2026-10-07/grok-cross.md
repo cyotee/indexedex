@@ -1,0 +1,11 @@
+# Grok cross-review — Stage 2 PRD readiness
+
+**Agreement.** All four: enough to draft a review/report PRD, not a fix plan. Gate, broad acceptance scope, current tree, and new vaults stay settled. No autonomous fixes. This session cannot spawn or run tests.
+
+**Own corrections.** I withdraw “unexecuted = error?” Missing runtime evidence blocks a readiness or submission claim and is not a code defect, so it does not by itself force a remediation PRD. Astra already separates missing evidence from defects (`astra-original.md:19`). I also withdraw partitioned parallel lanes and a `docs/reviews/` draft path for this council. `REVIEW_COUNCIL.md:57-62` sends the same target to four reviewers; synchronous calls may be sequential. `:102` limits `task` to those four and allows review reports under `docs/reviews/`. `:104-106` denies shell, test edits, and background. This research council cannot write `docs/reviews/`; its roots are `docs/research/`, `docs/plans/`, `docs/strategies/`, `research/`, and `plans/` (`RESEARCH_COUNCIL.md:112-116`, `:131-133`).
+
+**Not owner questions.** Severity: report every confirmed mismatch; do not drop Low. The owner decides remediation (`REVIEW_COUNCIL.md:64-69`). Test scaffolding: no. Both councils deny test edits, and the owner barred autonomous fixes. Stage-1 evidence: cite the plan’s note and the settled gate (`REMEDIATION_PRD.plan.md:91-95`, `:114-116`). Do not block on a filename Stage 1 has not written. MiniMax’s `PRD:613-621` is outside the 373-line file.
+
+**Defaults.** Four named reviewers, same snapshot, sequential allowed. Report dispositions: confirmed mismatch, unverified, residual, undecided. Remediation PRD only after owner review of a confirmed mismatch. Execution, if wanted later, needs a separate authorization. Until then, unverified execution blocks a pass claim without becoming a defect.
+
+**Unresolved dissent.** MiniMax still treats partition, scaffolding, severity threshold, and report path as owner rulings (`minimax-original.md:12-16`). Those conflict with the fixed roster and deny rules. Kimi’s separate evidence session (`kimi-original.md:11`) is optional later work, not a drafting blocker. Astra’s capacity-based lanes (`astra-original.md:17`) should not replace the four-reviewer, same-target protocol.

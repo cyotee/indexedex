@@ -28,11 +28,34 @@ import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultR
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {AerodromeStandardExchangeRepo} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeRepo.sol";
 import {IFeeCompounding} from "contracts/interfaces/IFeeCompounding.sol";
 
 // abstract
 contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
+    function _redeemLpSharesFrom(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal returns (uint256 amount_)
+    {
+        IPool pool_ = IPool(address(ERC4626Repo._reserveAsset()));
+        _claimAndCompoundFees(_buildCompoundParams(pool_, block.timestamp));
+        uint256 lp_ = BetterMath._convertToAssetsDown(
+            shares_, IERC20(address(pool_)).balanceOf(address(this)), ERC20Repo._totalSupply(), ERC4626Repo._decimalOffset()
+        );
+        ERC20Repo._burn(holder_, shares_);
+        if (tokenOut_ == address(pool_)) {
+            amount_ = lp_;
+            IERC20(tokenOut_).safeTransfer(receiver_, amount_);
+        } else {
+            IAerodromeRouter router_ = AerodromeRouterAwareRepo._aerodromeRouter();
+            IERC20(address(pool_)).approve(address(router_), lp_);
+            amount_ = _withdrawSwapVolatileSafe(router_, pool_, IERC20(tokenOut_), lp_, receiver_, block.timestamp);
+        }
+        if (amount_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, amount_);
+        ERC4626Repo._setLastTotalAssets(IERC20(address(pool_)).balanceOf(address(this)));
+        _syncAllExpectedHoldReserves();
+    }
+
     error UnreachableExactOutput();
 
     /// @dev Active D16 availability. Base checked subtraction remains the historical default.

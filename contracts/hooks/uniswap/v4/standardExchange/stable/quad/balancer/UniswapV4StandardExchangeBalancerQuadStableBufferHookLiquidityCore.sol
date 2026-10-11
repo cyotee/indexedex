@@ -456,6 +456,12 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
         uint256 amountOutMin,
         uint256 deadline
     ) internal returns (uint256 amountOut) {
+        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, to, amountOutMin, deadline);
+    }
+
+    function _exitSingleAssetFrom(
+        address holder, address tokenOut, uint256 sharesIn, address to, uint256 amountOutMin, uint256 deadline
+    ) internal returns (uint256 amountOut) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (sharesIn == 0) revert ZeroAmount();
@@ -467,7 +473,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
         Repo.Layout storage l = Repo._layout();
         uint256 invOut = _singleExitInvOut(idx, sharesIn);
         if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
+        _burnLp(holder, sharesIn);
         if (l.standardExchanges[idx] != address(0)) {
             if (seUnit) {
                 // B6: pay out SE vault shares without unwrap.

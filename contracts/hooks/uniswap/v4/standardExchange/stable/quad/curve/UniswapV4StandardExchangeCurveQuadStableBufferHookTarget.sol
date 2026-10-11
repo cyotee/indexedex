@@ -14,8 +14,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
-import {IAllowanceTransfer} from
-    "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib as PullLib} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
@@ -49,6 +48,50 @@ import {
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     using SafeERC20 for IERC20;
     using AddressSetRepo for AddressSet;
+
+    function _exitSingleAssetFrom(
+        address holder, address tokenOut, uint256 sharesIn, bool receiveSeShare, address to, uint256 amountOutMin
+    ) internal returns (uint256 amountOut) {
+        if (to == address(0)) revert ZeroAddress();
+        if (sharesIn == 0) revert ZeroAmount();
+        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        uint8 idx = _tokenIndex(tokenOut);
+        Repo.Layout storage l = Repo._layout();
+        if (receiveSeShare && l.standardExchanges[idx] == address(0)) revert SeShareNotBuffered();
+        uint256 protocolShares = _maybeMintProtocolFee();
+        uint256 invOut = _singleExitInventory(idx, sharesIn);
+        amountOut = receiveSeShare || l.standardExchanges[idx] == address(0) ? invOut
+            : IStandardExchangeIn(l.standardExchanges[idx]).previewExchangeIn(
+                IERC20(l.standardExchanges[idx]), invOut, IERC20(tokenOut)
+            );
+        if (amountOut < amountOutMin) revert Slippage();
+        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
+        _burnLp(holder, sharesIn);
+        if (l.standardExchanges[idx] != address(0)) {
+            if (receiveSeShare) IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);
+            else _unwrapSeShares(idx, invOut, to);
+        } else {
+            _debitRawIntentional(idx, invOut);
+            IERC20(tokenOut).safeTransfer(to, invOut);
+        }
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (_nativeAt(i) == 0) revert WouldZeroReserve();
+        }
+        _snapshotKLastIfFeeOn();
+        _syncVaultReserves();
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingleFlexible(
+            msg.sender, to, tokenOut, amountOut, receiveSeShare, sharesIn, protocolShares
+        );
+    }
+
+    function _singleExitInventory(uint8 idx, uint256 sharesIn) internal view returns (uint256) {
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        uint256 outS = Math.singleExitExactBptInAmountOut(
+            _invWadAll(), sharesIn, idx, _amp(), _previewSupplyAfterProtocolMint(), feeWad
+        );
+        return Math.descale(outS, Repo._layout().invScales[idx]);
+    }
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
 
@@ -580,7 +623,6 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     /// @dev I1: kLast domain = geometricMean4(invWad). Full book only for growth.
     function _rootKNow() internal view returns (uint256) {
         uint256[4] memory inv = _invWadAll();
-        if (!Math.isFullBookReserves(inv)) return 0;
         return Math.rootK(inv);
     }
 
@@ -607,7 +649,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
         (bool feeOn,, uint256 ownerFeeShare,) = _feeOnAndShare();
         Repo.Layout storage l = Repo._layout();
         if (!feeOn || l.kLast == 0) return supply;
-        uint256 rootKNow = Math.isFullBookReserves(inv) ? Math.rootK(inv) : 0;
+        uint256 rootKNow = Math.rootK(inv);
         if (rootKNow == 0) return supply;
         uint256 protocolLp = Math.protocolLpShares(supply, rootKNow, l.kLast, ownerFeeShare);
         return supply + protocolLp;
@@ -634,15 +676,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     }
 
     function _pull(address token_, uint256 amount) internal {
-        if (amount == 0) return;
-        uint256 allowance = IERC20(token_).allowance(msg.sender, address(this));
-        if (allowance >= amount) {
-            IERC20(token_).safeTransferFrom(msg.sender, address(this), amount);
-        } else {
-            IAllowanceTransfer(PERMIT2).transferFrom(
-                msg.sender, address(this), uint160(amount), token_
-            );
-        }
+        PullLib.pull(token_, msg.sender, amount);
     }
 
     function _pullAmounts(uint256[4] memory amounts) internal {

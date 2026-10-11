@@ -10,6 +10,7 @@ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {ReceiptBackedERC4626Target} from "contracts/vaults/standard/erc4626/ReceiptBackedERC4626Target.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 /**
  * @title Behavior_ReceiptBackedERC4626_CrossInterface
@@ -165,5 +166,178 @@ abstract contract Behavior_ReceiptBackedERC4626_CrossInterface is Test {
         assertEq(IERC20(_se()).balanceOf(_actor()), sharesBefore, "holder shares unchanged after reverts");
         assertEq(IBasicVault(_se()).reserveOfToken(address(_receipt())), receiptReserveBefore, "backing unchanged after reverts");
         _assertAllReservesSynced();
+    }
+
+    /// @dev Non-integral backing still advertises the full share balance when its payout fits in held receipts.
+    function test_maxRedeem_fullBalancePayableAtNonIntegralRate() public {
+        uint256 minted = _giveActorReceipts(4);
+        uint256 depositAmt = minted - (minted / 4);
+        vm.prank(_actor());
+        IERC4626(_se()).deposit(depositAmt, _actor());
+        vm.prank(_actor());
+        assertTrue(_receipt().transfer(_se(), minted / 4), "donate receipts to move the rate off 1:1");
+        uint256 balance = IERC20(_se()).balanceOf(_actor());
+        uint256 held = _receipt().balanceOf(_se());
+        uint256 preview = IERC4626(_se()).previewRedeem(balance);
+        assertGt(preview, 0, "full balance pays receipts");
+        assertLe(preview, held, "full payout fits");
+        assertTrue(preview != balance, "rate is not one receipt per share");
+        assertEq(IERC4626(_se()).maxRedeem(_actor()), balance, "payable full balance is the share cap");
+        assertEq(IERC4626(_se()).maxWithdraw(_actor()), preview, "asset cap follows the share cap");
+    }
+
+    /// @dev Booked non-receipt backing can price the full balance above held receipts. Advertise only a payable prefix.
+    function test_maxRedeem_capsWhenHeldReceiptsCannotPayFullBalance() public {
+        uint256 minted = _giveActorReceipts(2);
+        vm.prank(_actor());
+        IERC4626(_se()).deposit(minted / 2, _actor());
+        _mintUnderlying(_se(), minted);
+        uint256 more = _giveActorReceipts(1);
+        vm.prank(_actor());
+        IERC4626(_se()).deposit(more, _actor());
+        uint256 balance = IERC20(_se()).balanceOf(_actor());
+        uint256 held = _receipt().balanceOf(_se());
+        uint256 fullPreview = IERC4626(_se()).previewRedeem(balance);
+        assertGt(fullPreview, held, "fixture prices the full balance above held receipts");
+        uint256 cap = IERC4626(_se()).maxRedeem(_actor());
+        uint256 capPreview = IERC4626(_se()).previewRedeem(cap);
+        assertLt(cap, balance, "full balance is not advertised");
+        assertGe(capPreview, 1, "cap pays at least one receipt");
+        assertLe(capPreview, held, "cap fits held receipts");
+        assertEq(IERC4626(_se()).maxWithdraw(_actor()), capPreview);
+        vm.prank(_actor());
+        uint256 paid = IERC4626(_se()).redeem(cap, _actor(), _actor());
+        assertEq(paid, capPreview, "redeem pays the preview of the share cap");
+        assertLe(paid, held, "redeem transfers no more receipts than the vault held");
+        assertEq(held - _receipt().balanceOf(_se()), paid, "payout matches the receipt debit");
+    }
+
+    /// @dev A share balance whose preview pays nothing is not advertised as redeemable.
+    function test_maxRedeem_zeroPreviewIsNotAdvertised() public {
+        uint256 small = _giveActorReceipts(1);
+        vm.prank(_actor());
+        IERC4626(_se()).deposit(small, _actor());
+        address other = address(0xBEEF);
+        uint256 large = _giveActorReceipts(20);
+        vm.prank(_actor());
+        assertTrue(_receipt().transfer(other, large), "fund a second holder");
+        vm.prank(other);
+        _receipt().approve(_se(), large);
+        vm.prank(other);
+        IERC4626(_se()).deposit(large, other);
+        uint256 drain = _receipt().balanceOf(_se()) - 1;
+        vm.prank(_se());
+        assertTrue(_receipt().transfer(address(0xD0A1), drain), "leave one receipt against a large supply");
+        uint256 balance = IERC20(_se()).balanceOf(_actor());
+        assertEq(IERC4626(_se()).previewRedeem(balance), 0, "small balance rounds to zero receipts");
+        assertEq(IERC4626(_se()).maxRedeem(_actor()), 0, "zero preview is not redeemable");
+        assertEq(IERC4626(_se()).maxWithdraw(_actor()), 0, "asset cap follows the zero share cap");
+    }
+
+    /// @notice An external EOA cannot bypass D9 through the native SY self-call wrapper.
+    function test_RECURRENCE_nativeSY_internalBalanceRejectsEOA() public {
+        uint256 receipts = _giveActorReceipts(100);
+        vm.prank(_actor());
+        uint256 shares = IERC4626(_se()).deposit(receipts, _actor());
+        uint256 credit = shares / 4;
+        vm.prank(_actor());
+        IERC20(_se()).transfer(_se(), credit);
+        address recipient = makeAddr("sy-recurrence-recipient");
+        uint256 snapshot = vm.snapshotState();
+        uint256 expected = IStandardizedYield(_se()).previewRedeem(address(_receipt()), credit);
+        assertGt(expected, 0, "funded contract control has a positive payout");
+        assertEq(IStandardizedYield(_se()).redeem(recipient, credit, address(_receipt()), 0, true), expected, "contract internal-balance control");
+        assertEq(_receipt().balanceOf(recipient), expected, "control pays recipient");
+        assertTrue(vm.revertToState(snapshot), "restore funded credit");
+        address eoa = makeAddr("sy-recurrence-eoa");
+        assertEq(eoa.code.length, 0, "unambiguously code-less caller");
+        vm.prank(eoa);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardizedYield(_se()).redeem(recipient, credit, address(_receipt()), 0, true);
+        assertEq(IERC20(_se()).balanceOf(_se()), credit, "rejected EOA consumes no selfshares");
+        assertEq(_receipt().balanceOf(recipient), 0, "rejected EOA receives no assets");
+    }
+
+    function _recurrenceFundedLocalBacking() internal returns (uint256 receipts) {
+        receipts = _giveActorReceipts(200);
+        _mintUnderlying(_se(), receipts / 10);
+        vm.prank(_actor());
+        IERC4626(_se()).deposit(receipts / 2, _actor());
+        _assertAllReservesSynced();
+        assertGt(IBasicVault(_se()).reserveOfToken(address(_underlyingToken())), 0, "nonzero local backing fixture");
+    }
+
+    function _recurrenceIntakeCannotReuseCredit(bool mintShares) internal {
+        uint256 receipts = _recurrenceFundedLocalBacking();
+        uint256 local = IBasicVault(_se()).reserveOfToken(address(_underlyingToken()));
+        uint256 amount = receipts / 10;
+        if (mintShares) {
+            uint256 shares = IERC4626(_se()).previewDeposit(amount);
+            uint256 expected = IERC4626(_se()).previewMint(shares);
+            vm.prank(_actor());
+            assertEq(IERC4626(_se()).mint(shares, _actor()), expected, "mint receipt debit");
+        } else {
+            uint256 expected = IERC4626(_se()).previewDeposit(amount);
+            vm.prank(_actor());
+            assertEq(IERC4626(_se()).deposit(amount, _actor()), expected, "deposit share credit");
+        }
+        _assertAllReservesSynced();
+        uint256 supply = IERC20(_se()).totalSupply();
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        bytes memory callData = abi.encodeCall(IStandardExchangeIn.exchangeIn, (_receipt(), amount, IERC20(_se()), 0, _actor(), true, block.timestamp));
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, 0));
+        caller.execute(_se(), callData);
+        assertEq(IERC20(_se()).totalSupply(), supply, "unfunded reuse mints nothing");
+        assertEq(IBasicVault(_se()).reserveOfToken(address(_underlyingToken())), local, "local backing survives");
+        _assertAllReservesSynced();
+    }
+
+    /// @notice Adapter deposit with local backing cannot authorize a later unfunded SE input.
+    function test_RECURRENCE_B05_depositThenUnfundedSE_withLocalBacking() public { _recurrenceIntakeCannotReuseCredit(false); }
+    /// @notice Adapter mint with local backing cannot authorize a later unfunded SE input.
+    function test_RECURRENCE_B05_mintThenUnfundedSE_withLocalBacking() public { _recurrenceIntakeCannotReuseCredit(true); }
+
+    function _recurrenceExitThenAtomicCredit(bool redeemShares) internal {
+        uint256 receipts = _recurrenceFundedLocalBacking();
+        uint256 local = IBasicVault(_se()).reserveOfToken(address(_underlyingToken()));
+        uint256 amount = receipts / 10;
+        uint256 beforeReceipt = _receipt().balanceOf(_actor());
+        if (redeemShares) {
+            uint256 shares = IERC4626(_se()).previewWithdraw(amount);
+            uint256 expected = IERC4626(_se()).previewRedeem(shares);
+            vm.prank(_actor());
+            assertEq(IERC4626(_se()).redeem(shares, _actor(), _actor()), expected, "redeem payout");
+            assertEq(_receipt().balanceOf(_actor()) - beforeReceipt, expected, "redeem receipt movement");
+        } else {
+            uint256 expected = IERC4626(_se()).previewWithdraw(amount);
+            vm.prank(_actor());
+            assertEq(IERC4626(_se()).withdraw(amount, _actor(), _actor()), expected, "withdraw burn");
+            assertEq(_receipt().balanceOf(_actor()) - beforeReceipt, amount, "withdraw receipt movement");
+        }
+        _assertAllReservesSynced();
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        uint256 newCredit = amount / 10;
+        uint256 expectedMint = IStandardExchangeIn(_se()).previewExchangeIn(_receipt(), newCredit, IERC20(_se()));
+        uint256 beforeShares = IERC20(_se()).balanceOf(_actor());
+        vm.prank(_actor());
+        _receipt().approve(address(caller), newCredit);
+        bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn, (_receipt(), newCredit, IERC20(_se()), expectedMint, _actor(), true, block.timestamp));
+        caller.consumePretransfer(_receipt(), _actor(), _se(), newCredit, data);
+        assertEq(IERC20(_se()).balanceOf(_actor()) - beforeShares, expectedMint, "smaller atomic SE input receives quoted shares");
+        assertEq(IBasicVault(_se()).reserveOfToken(address(_underlyingToken())), local, "receipt route preserves local backing");
+        _assertAllReservesSynced();
+    }
+
+    /// @notice A withdraw syncs the book downward before a smaller atomic SE receipt input.
+    function test_RECURRENCE_B05_withdrawThenAtomicSE_withLocalBacking() public { _recurrenceExitThenAtomicCredit(false); }
+    /// @notice A redeem syncs the book downward before a smaller atomic SE receipt input.
+    function test_RECURRENCE_B05_redeemThenAtomicSE_withLocalBacking() public { _recurrenceExitThenAtomicCredit(true); }
+
+    /// @dev Hosts mint underlying to `to`. Default matches the mintable test tokens used by both families.
+    function _mintUnderlying(address to, uint256 amount) internal virtual {
+        (bool ok, bytes memory reason) = address(_underlyingToken()).call(
+            abi.encodeWithSignature("mint(address,uint256)", to, amount)
+        );
+        require(ok, "underlying mint");
     }
 }

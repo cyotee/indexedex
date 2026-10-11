@@ -255,10 +255,15 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         );
         assertTrue(
             _facetFuncsContains(
-                IFacet(address(exchangeInFacet)).facetFuncs(),
+                IFacet(address(exchangeInFacetExt)).facetFuncs(),
                 IStandardExchangeIn.previewExchangeIn.selector
             ),
             "J1 previewExchangeIn"
+        );
+        assertEq(
+            IDiamondLoupe(se).facetAddress(IStandardExchangeIn.previewExchangeIn.selector),
+            address(exchangeInFacetExt),
+            "J1 preview extension installed on proxy"
         );
         assertTrue(
             _facetFuncsContains(

@@ -69,6 +69,7 @@ contract ReceiptBackedERC4626_SharedFacet_Test is TestBase_AaveV3StataStandardEx
 
     function _setUpGenericSE() internal {
         IFacet inF = create3Factory.deployERC4626StandardExchangeInFacet();
+        IFacet inExt = create3Factory.deployERC4626StandardExchangeInFacetExt();
         IFacet outF = create3Factory.deployERC4626StandardExchangeOutFacet();
         IFacet mkF = create3Factory.deployERC4626StandardExchangeMarkerFacet();
         IERC4626StandardExchangeDFPkg.PkgInit memory init = IERC4626StandardExchangeDFPkg.PkgInit({
@@ -80,6 +81,7 @@ contract ReceiptBackedERC4626_SharedFacet_Test is TestBase_AaveV3StataStandardEx
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
             exchangeInFacet: inF,
+            exchangeInFacetExt: inExt,
             exchangeOutFacet: outF,
             markerFacet: mkF,
             vaultFeeOracleQuery: indexedexManager,

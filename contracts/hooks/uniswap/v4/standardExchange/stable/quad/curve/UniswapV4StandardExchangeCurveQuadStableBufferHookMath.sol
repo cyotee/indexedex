@@ -132,7 +132,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     }
 
     /// @dev I1 freeze: rootK = geoMean4(invWad).
-    function rootK(uint256[4] memory invWad) internal pure returns (uint256) {
+    function rootK(uint256[4] memory invWad) external pure returns (uint256) {
         return geometricMean4(invWad[0], invWad[1], invWad[2], invWad[3]);
     }
 

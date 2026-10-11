@@ -5,6 +5,17 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookExitTarget} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookExitTarget.sol";
 
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet is UniswapV4StandardExchangeBalancerQuadStableBufferHookExitTarget, IFacet {
+    address private immutable NATIVE_SY_SELF = address(this);
+    error DelegateCallRequired();
+
+    /// @dev Not installed on the proxy. The native SY facet retains authorization and its lock.
+    function executeVaultHeldRedemption(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        external returns (uint256 amount_)
+    {
+        if (address(this) == NATIVE_SY_SELF) revert DelegateCallRequired();
+        return _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
+    }
+
     function facetName() public pure returns (string memory) { return type(UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet).name; }
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) { interfaces = new bytes4[](0); }
     function facetFuncs() public pure returns (bytes4[] memory funcs) {

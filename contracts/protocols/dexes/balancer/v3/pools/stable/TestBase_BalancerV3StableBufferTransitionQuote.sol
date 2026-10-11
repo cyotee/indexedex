@@ -18,7 +18,7 @@ import {IVaultAdmin} from "@crane/contracts/external/balancer/v3/interfaces/cont
 import {IProtocolFeeController} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IProtocolFeeController.sol";
 import {IStandardExchangeTransitionQuote as Quote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IBalancerV3PoolLiquidityQuote} from "contracts/protocols/dexes/balancer/v3/pools/IBalancerV3PoolLiquidityQuote.sol";
-import {BalancerV3PoolStandardExchangeTransitionQuoteTarget as Adapter} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteTarget.sol";
+import {BalancerV3PoolLiquidationLib as Adapter} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolLiquidationLib.sol";
 import {BalancerV3StableBufferPoolQuoteTarget as Subject} from "contracts/protocols/dexes/balancer/v3/pools/stable/BalancerV3StableBufferPoolQuoteTarget.sol";
 import {ICommonBufferMultiVaultStablePool} from "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePool.sol";
 import {IMixedBufferMultiVaultStablePool} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol";

@@ -54,6 +54,12 @@ import {
 abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget is NativeStandardYieldTarget {
     using SafeERC20 for IERC20;
 
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
+    {
+        return _withdrawSingleFrom(address(this), shares_, tokenOut_, receiver_, minimum_, block.timestamp);
+    }
+
     event Deposit(address indexed sender, address indexed to, uint256 amount0, uint256 amount1, uint256 used0, uint256 used1, uint256 lpAmount);
     event DepositSingle(address indexed sender, address indexed to, address tokenIn, uint256 amountIn, uint256 lpAmount);
     event Withdraw(address indexed sender, address indexed to, uint256 lpAmount, uint256 amount0, uint256 amount1);
@@ -661,6 +667,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         uint256 minAmountOut,
         uint256 deadline
     ) internal returns (uint256 amountOut) {
+        return _withdrawSingleFrom(msg.sender, lpAmount, tokenOut, to, minAmountOut, deadline);
+    }
+
+    function _withdrawSingleFrom(
+        address holder, uint256 lpAmount, address tokenOut, address to, uint256 minAmountOut, uint256 deadline
+    ) internal returns (uint256 amountOut) {
         _requireDeadline(deadline);
         _requireNonZero(lpAmount);
         Repo.Layout storage l = Repo._layout();
@@ -668,14 +680,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         _requireZapEligible();
         _mintProtocolFeeIfNeeded();
 
-        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
+        if (lpAmount > ERC20Repo._balanceOf(holder)) revert InsufficientLpOut();
 
         (uint256 rawUser, uint256 seUser) = _proRataRawAndSe(lpAmount);
         ClaimLib.WithdrawalPlan memory plan = ClaimLib.withdrawalPlan(rawUser, seUser,
             IERC20(l.rawToken).balanceOf(address(this)) - rawUser, tokenOut == l.pairToken);
         amountOut = (tokenOut == l.pairToken ? plan.pairUser : rawUser) + plan.residualOut;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
-        _burnLp(msg.sender, lpAmount);
+        _burnLp(holder, lpAmount);
 
         uint256 pairUser = seUser > 0 ? _unwrapSeShares(seUser) : 0;
         if (pairUser < plan.pairUser) revert InsufficientTokenOut();

@@ -22,6 +22,7 @@ import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/P
 import {IDetfClaimPurchase} from "contracts/interfaces/IDetfClaimPurchase.sol";
 import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {ITokenStaking} from "contracts/interfaces/ITokenStaking.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TokenStakingRepo} from "contracts/protocols/staking/token/TokenStakingRepo.sol";
 import {IRebasingAwareERC4626DFPkg} from
     "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
@@ -352,15 +353,21 @@ contract TokenStakingTarget is ITokenStaking, ReentrancyLockModifiers, MultiStep
     }
 
     function _pullStakingToken(IERC20 token, uint256 amount) internal {
+        uint256 beforeBalance = token.balanceOf(address(this));
         if (token.allowance(msg.sender, address(this)) >= amount) {
             token.safeTransferFrom(msg.sender, address(this), amount);
-            return;
+        } else {
+            if (amount > type(uint160).max) {
+                revert AmountExceedsReserve(amount, type(uint160).max);
+            }
+            IPermit2 p2 = Permit2AwareRepo._permit2();
+            p2.transferFrom(msg.sender, address(this), uint160(amount), address(token));
         }
-        if (amount > type(uint160).max) {
-            revert AmountExceedsReserve(amount, type(uint160).max);
+        uint256 afterBalance = token.balanceOf(address(this));
+        uint256 received = afterBalance > beforeBalance ? afterBalance - beforeBalance : 0;
+        if (received != amount) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount, received);
         }
-        IPermit2 p2 = Permit2AwareRepo._permit2();
-        p2.transferFrom(msg.sender, address(this), uint160(amount), address(token));
     }
 
     function _withdraw(TokenStakingRepo.Storage storage layoutStruct, uint256 amount) internal {

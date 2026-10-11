@@ -20,6 +20,8 @@ import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCal
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 abstract contract BalancerStableTokenCountBase is TestBase {
@@ -161,7 +163,22 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         uint256[] memory balances = quad.ratedBalances();
         uint256 d = StableMath.computeInvariant(quad.getCurrentAmp(), balances);
         uint256 expected = StableMath.computeOutGivenExactIn(quad.getCurrentAmp(), balances, 0, j, 1 ether - quad.dexSwapFee(), d);
+        expected = _outputForRatedBudget(j, expected);
         assertEq(quad.previewSwapExactIn(ts[0], ts[j], 1 ether), expected);
+        uint256 beforeOut = IERC20(ts[j]).balanceOf(user);
+        _swapExactIn(ts[0], ts[j], 1 ether);
+        assertEq(IERC20(ts[j]).balanceOf(user) - beforeOut, expected, "reference matches delivered tokens");
+    }
+
+    /// @dev StableMath returns a rated budget. Buffered outputs redeem whole native
+    /// share units, rounded down so the payout cannot exceed that budget.
+    function _outputForRatedBudget(uint256 index, uint256 budget) internal view returns (uint256) {
+        address se = activeArgs.standardExchanges[index];
+        if (se == address(0)) return budget; // These reference cases use 18-decimal raw legs.
+        uint256 rate = IRateProvider(activeArgs.rateProviders[index]).getRate();
+        uint256 sharesWad = Math.mulDiv(budget, 1e18, rate);
+        uint256 shares = Math.mulDiv(sharesWad, 10 ** IERC20Metadata(se).decimals(), 1e18);
+        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(activeArgs.tokens[index]));
     }
 
     function test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value() public {
@@ -415,8 +432,11 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         uint256[] memory balances = quad.ratedBalances();
         uint256 d = StableMath.computeInvariant(quad.getCurrentAmp(), balances);
         uint256 expected = StableMath.computeOutGivenExactIn(quad.getCurrentAmp(), balances, 0, activeCount() - 1, 1 ether - quad.dexSwapFee(), d);
+        expected = _outputForRatedBudget(activeCount() - 1, expected);
         assertEq(quad.previewSwapExactIn(input, output, 1 ether), expected);
+        uint256 beforeOut = IERC20(output).balanceOf(user);
         _swapExactIn(input, output, 1 ether);
+        assertEq(IERC20(output).balanceOf(user) - beforeOut, expected, "donation-priced payout matches reference");
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));
         IStandardExchangeIn(hook).exchangeIn(IERC20(input), 1 ether, IERC20(output), 0, address(this), true, block.timestamp);
     }

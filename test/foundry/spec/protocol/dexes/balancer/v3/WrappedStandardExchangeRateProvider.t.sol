@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -141,6 +142,74 @@ contract WrappedStandardExchangeRateProvider_Test is TestBase_UniswapV2StandardE
         assertEq(rate, 0);
     }
 
+function _expectWrappedFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 shares) internal {
+        vm.expectCall(address(fx), abi.encodeWithSignature(
+            "previewExchangeIn(address,uint256,address)", address(balancedVault),
+            wrappedForTokenA.previewRedeem(shares), address(uniswapBalancedTokenA)
+        ), uint64(1));
+    }
+
+    function test_recurrence_D48_wrappedValuesWholeSupplyOnce() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        uint256 supply = wrappedForTokenA.totalSupply();
+        uint256 unit = 10 ** IERC20Metadata(address(wrappedForTokenA)).decimals();
+        fx.setFailBelow(wrappedForTokenA.previewRedeem(supply));
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 20e18);
+        IRateProvider provider = _deployWrappedFixtureProvider(fx);
+        _expectWrappedFixtureQuote(fx, supply);
+        vm.expectCall(address(fx), abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(1));
+        assertEq(provider.getRate(), Math.mulDiv(20e18, unit, supply, Math.Rounding.Ceil));
+    }
+
+    function test_recurrence_D48_wrappedFullSupplyOnlyQuote() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        uint256 supply = wrappedForTokenA.totalSupply();
+        uint256 unit = 10 ** IERC20Metadata(address(wrappedForTokenA)).decimals();
+        fx.setZeroBelow(wrappedForTokenA.previewRedeem(supply));
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 30e18);
+        IRateProvider provider = _deployWrappedFixtureProvider(fx);
+        _expectWrappedFixtureQuote(fx, supply);
+        assertEq(provider.getRate(), Math.mulDiv(30e18, unit, supply, Math.Rounding.Ceil));
+    }
+
+    function test_recurrence_D48_wrappedFailureAttemptsFullSupplyOnce() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.RevertCustom, 0);
+        IRateProvider provider = _deployWrappedFixtureProvider(fx);
+        _expectWrappedFixtureQuote(fx, wrappedForTokenA.totalSupply());
+        vm.expectCall(address(fx), abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(1));
+        assertEq(provider.getRate(), 0);
+    }
+
+    function test_recurrence_D48_wrappedAllInvalidPayloads() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        IRateProvider provider = _deployWrappedFixtureProvider(fx);
+        for (uint256 mode = 1; mode <= uint256(ApexD48QuoteReplyFixture.Reply.MalformedRevert); ++mode) {
+            fx.setReply(ApexD48QuoteReplyFixture.Reply(mode), 1e18);
+            assertEq(provider.getRate(), 0);
+        }
+    }
+
+    function test_recurrence_D48_wrappedRedeemAndMetadataAreHardDependencies() public {
+        // Only the external ERC4626 dependency is hostile; the rate-provider package/proxy is real.
+        ApexD48QuoteReplyFixture subject = new ApexD48QuoteReplyFixture();
+        subject.setRedeemDependency(address(balancedVault), true);
+        IRateProvider provider = wrappedRateProviderPkg.deployRateProvider(
+            IERC4626(address(subject)), IStandardExchangeIn(address(balancedVault)),
+            IERC20(address(uniswapBalancedTokenA))
+        );
+        vm.expectRevert(ApexD48QuoteReplyFixture.QuoteBoom.selector);
+        provider.getRate();
+        subject.setRedeemDependency(address(balancedVault), false);
+        assertGt(provider.getRate(), 0, "same provider with valid redeem dependency succeeds");
+        subject.setMetadataFailures(true, false);
+        vm.expectRevert(ApexD48QuoteReplyFixture.QuoteBoom.selector);
+        provider.getRate();
+        subject.setMetadataFailures(false, true);
+        vm.expectRevert(ApexD48QuoteReplyFixture.QuoteBoom.selector);
+        provider.getRate();
+    }
+
     struct RateComparison {
         uint256 standard;
         uint256 wrapped;
@@ -246,46 +315,12 @@ contract WrappedStandardExchangeRateProvider_Test is TestBase_UniswapV2StandardE
             return 0;
         }
 
-        uint256 subjectUnit = 10 ** IERC20Metadata(address(wrapper_)).decimals();
-        uint256 quoteShares = totalShares < subjectUnit ? totalShares : subjectUnit;
-        uint256 reserveShareAmount = wrapper_.previewRedeem(quoteShares);
-        uint256 out;
-        if (reserveShareAmount > 0) {
-            out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
-                IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
-            );
-        }
-
-        for (uint256 i = 0; out == 0 && quoteShares < totalShares && i < 18; ++i) {
-            uint256 nextQuote = quoteShares * 10;
-            if (nextQuote > totalShares) nextQuote = totalShares;
-            if (nextQuote == quoteShares) break;
-            quoteShares = nextQuote;
-            reserveShareAmount = wrapper_.previewRedeem(quoteShares);
-            if (reserveShareAmount == 0) continue;
-            out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
-                IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
-            );
-        }
-
-        if (out == 0 || quoteShares == 0) {
-            return 0;
-        }
-
-        if (quoteShares != subjectUnit) {
-            out = (out * subjectUnit + quoteShares - 1) / quoteShares;
-        }
-
-        uint8 targetDecimals = IERC20Metadata(address(rateTarget_)).decimals();
-
-        if (targetDecimals == 18) {
-            return out;
-        }
-
-        if (targetDecimals < 18) {
-            return out * (10 ** (18 - targetDecimals));
-        }
-
-        return out / (10 ** (targetDecimals - 18));
+        uint256 reserveShareAmount = wrapper_.previewRedeem(totalShares);
+        uint256 out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
+            IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
+        );
+        uint256 scale = 10 ** (18 + uint256(IERC20Metadata(address(wrapper_)).decimals())
+            - IERC20Metadata(address(rateTarget_)).decimals());
+        return Math.mulDiv(out, scale, totalShares, Math.Rounding.Ceil);
     }
 }

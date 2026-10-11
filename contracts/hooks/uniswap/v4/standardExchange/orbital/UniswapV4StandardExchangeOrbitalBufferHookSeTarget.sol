@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 
 import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
@@ -47,6 +49,19 @@ import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.s
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon, NativeStandardYieldTarget {
     using SafeERC20 for IERC20;
+
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256 amount_)
+    {
+        address implementation_ = IDiamondLoupe(address(this)).facetAddress(
+            IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector
+        );
+        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
+            "executeVaultHeldRedemption(address,uint256,address,uint256)", receiver_, shares_, tokenOut_, minimum_
+        ));
+        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
+        return abi.decode(result_, (uint256));
+    }
 
     function getTokensIn() public view override returns (address[] memory tokens) {
         Repo.Layout storage l = Repo._layout();

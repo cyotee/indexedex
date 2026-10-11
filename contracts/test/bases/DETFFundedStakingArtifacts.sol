@@ -9,6 +9,7 @@ import {DETFNFTVaultFacet} from "contracts/vaults/detf/common/bondNft/DETFNFTVau
 import {ERC4626PermitDFPkg} from "@crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol";
 import {ERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol";
 import {ERC4626StandardExchangeInFacet} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol";
+import {ERC4626StandardExchangeInFacetExt} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacetExt.sol";
 import {ERC4626StandardExchangeMarkerFacet} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol";
 import {ERC4626StandardExchangeOutFacet} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol";
 import {FeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";

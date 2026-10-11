@@ -408,15 +408,19 @@ library RebasingAwareERC4626Common {
         if (receiver == address(0) || receiver == address(this)) {
             revert IRebasingAwareERC4626.InvalidReceiver(receiver);
         }
+        if (source == ShareSource.CallerOrApprovedOwner) {
+            uint256 owned = ERC20Repo._balanceOf(owner);
+            if (shares > owned) revert IERC4626Errors.ERC4626ExceededMaxRedeem(owner, shares, owned);
+        } else {
+            uint256 prepaid = ERC20Repo._balanceOf(address(this));
+            if (shares > prepaid) revert ISecurePullErrors.TransferDeltaInsufficient(shares, prepaid);
+        }
         Book memory book = liveBook();
         assets = assetsForRedeem(shares, book);
         if (assets == 0) revert IRebasingAwareERC4626.ZeroOperationOutput();
         if (assets > book.assets) revert IRebasingAwareERC4626.NumericDomainExceeded();
         if (assets < minAssets) {
             revert IStandardExchangeErrors.MinAmountNotMet(minAssets, assets);
-        }
-        if (source == ShareSource.CallerOrApprovedOwner && shares > ERC20Repo._balanceOf(owner)) {
-            revert IERC4626Errors.ERC4626ExceededMaxRedeem(owner, shares, ERC20Repo._balanceOf(owner));
         }
         takeShares(owner, shares, source);
         payAssets(book.asset, receiver, assets);

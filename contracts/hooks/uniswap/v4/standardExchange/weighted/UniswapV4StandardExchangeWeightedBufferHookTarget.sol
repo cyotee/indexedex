@@ -22,8 +22,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {UniswapV4StandardExchangeWeightedBufferHookClaimLib as ClaimLib} from
     "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol";
-import {IAllowanceTransfer} from
-    "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookPullLib as PullLib} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPullLib.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
@@ -507,15 +507,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
     }
 
     function _pull(address token_, uint256 amount) internal {
-        if (amount == 0) return;
-        uint256 allowance = IERC20(token_).allowance(msg.sender, address(this));
-        if (allowance >= amount) {
-            IERC20(token_).safeTransferFrom(msg.sender, address(this), amount);
-        } else {
-            IAllowanceTransfer(PERMIT2).transferFrom(
-                msg.sender, address(this), uint160(amount), token_
-            );
-        }
+        PullLib.pull(token_, msg.sender, amount);
     }
 
     function _pullAmounts(uint256[] memory amounts) internal {

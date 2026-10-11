@@ -15,11 +15,37 @@ import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 import {CamelotV2Service} from "@crane/contracts/protocols/dexes/camelot/v2/services/CamelotV2Service.sol";
 import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {CamelotV2RouterAwareRepo} from "@crane/contracts/protocols/dexes/camelot/v2/CamelotV2RouterAwareRepo.sol";
 
 // abstract
 contract CamelotV2StandardExchangeCommon is BasicVaultCommon {
+    function _redeemLpSharesFrom(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal returns (uint256 amount_)
+    {
+        CamelotV2IndexSourceReserves memory source_;
+        source_.pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
+        bool asLp_ = tokenOut_ == address(source_.pool);
+        _loadIndexSourceReserves(source_, IERC20(asLp_ ? address(0) : tokenOut_));
+        CamelotV2StrategyVault memory vault_;
+        _loadStrategyVault(vault_, IERC20(asLp_ ? source_.token0 : tokenOut_));
+        _calcAndMintVaultFee(source_, vault_);
+        ERC20Repo._burn(holder_, shares_);
+        uint256 lp_ = BetterMath._convertToAssetsDown(shares_, vault_.vaultLpReserve, vault_.vaultTotalShares, ERC4626Repo._decimalOffset());
+        amount_ = asLp_ ? lp_ : CamelotV2Service._withdrawSwapDirect(
+            source_.pool, CamelotV2RouterAwareRepo._camelotV2Router(), lp_, IERC20(tokenOut_),
+            IERC20(ConstProdReserveVaultRepo._opposingToken(tokenOut_)),
+            address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())
+        );
+        if (amount_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, amount_);
+        BetterSafeERC20.safeTransfer(IERC20(tokenOut_), receiver_, amount_);
+        ERC4626Repo._setLastTotalAssets(source_.pool.balanceOf(address(this)));
+        _checkpointVaultReserves();
+        _syncAllExpectedHoldReserves();
+    }
+
     /// @dev Active D16 availability. Base checked subtraction remains the historical default.
     function _unbookedSurplus(IERC20 token) internal view override returns (uint256) {
         return LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));

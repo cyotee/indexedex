@@ -194,6 +194,164 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
         uint256 quote;
     }
 
+    /// @notice Real idle exits are the reference for both blocked quote and settlement paths.
+    function test_poolPrice_idleAndBlockedRedemptionsBothFaces() public {
+        _dualJoin(1_000_000 ether, 1_000_000 ether);
+        _assertPoolPriceBothFaces();
+    }
+
+    /// @notice Pending fees and crossed external ticks must survive local settlement unchanged.
+    function test_poolPrice_idleAndBlockedAfterTickCrossingBothFaces() public {
+        _dualJoin(1_000_000 ether, 1_000_000 ether);
+        swapper.swapExactIn(poolKey, true, 200_000 ether);
+        (, int24 tick,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
+        assertLt(tick, -120, "crossed the external seed range");
+        FeeSnapshot memory fees = _feeSnapshot();
+        assertGt(fees.fee0 + fees.fee1, 0, "uncollected position fees");
+        _assertPoolPriceBothFaces();
+    }
+
+    function _assertPoolPriceBothFaces() private {
+        IERC20(address(vault)).approve(address(vault), type(uint256).max);
+        for (uint256 i; i < 2; ++i) {
+            IERC20 asset = IERC20(i == 0 ? _token0() : _token1());
+            uint256 shares = vault.totalSupply() / 10_000;
+            uint256 payout = vault.previewExchangeIn(IERC20(address(vault)), shares, asset);
+            uint256 snapshot = vm.snapshotState();
+            uint256 beforeBalance = asset.balanceOf(address(this));
+            assertEq(vault.exchangeIn(IERC20(address(vault)), shares, asset, payout,
+                address(this), false, _deadline()), payout, "real idle exit equals preview");
+            assertEq(asset.balanceOf(address(this)) - beforeBalance, payout, "real idle receipt");
+            assertTrue(vm.revertToStateAndDelete(snapshot));
+            poolManager.unlock(abi.encodeCall(this.assertBlockedPoolRedemption, (asset, shares, payout, false)));
+
+            uint256 wanted = payout / 2 + 1;
+            shares = vault.previewExchangeOut(IERC20(address(vault)), asset, wanted);
+            assertGt(shares, 0);
+            assertGe(vault.previewExchangeIn(IERC20(address(vault)), shares, asset), wanted);
+            assertLt(vault.previewExchangeIn(IERC20(address(vault)), shares - 1, asset), wanted,
+                "exact-output inverse is minimal");
+            snapshot = vm.snapshotState();
+            beforeBalance = asset.balanceOf(address(this));
+            assertEq(vault.exchangeOut(IERC20(address(vault)), shares, asset, wanted,
+                address(this), false, _deadline()), shares, "real idle exact-output share charge");
+            assertEq(asset.balanceOf(address(this)) - beforeBalance, wanted, "no exact-output surplus payment");
+            assertTrue(vm.revertToStateAndDelete(snapshot));
+            poolManager.unlock(abi.encodeCall(this.assertBlockedPoolRedemption, (asset, shares, wanted, true)));
+        }
+    }
+
+    /// @notice Runs inside the real manager unlock with the same holder as the idle reference.
+    function assertBlockedPoolRedemption(IERC20 asset, uint256 shares, uint256 payout, bool exactOutput) external {
+        require(msg.sender == address(this), "self only");
+        ITransition quote = ITransition(address(vault));
+        (bytes memory state,) = quote.quoteState(address(asset), address(this));
+        UniswapV4StandardExchangeCommon.InventoryQuote memory beforeState =
+            abi.decode(state, (UniswapV4StandardExchangeCommon.InventoryQuote));
+        assertFalse(beforeState.idle);
+        assertEq(quote.quoteAssets(state, shares), vault.previewExchangeIn(IERC20(address(vault)), shares, asset),
+            "snapshot and live redemption price");
+        Step memory step;
+        (step.state, step.input, step.output, step.claim) = quote.quoteTransition(state,
+            exactOutput ? ITransition.Operation.WithdrawExactOut : ITransition.Operation.RedeemExactIn,
+            exactOutput ? payout : shares);
+        assertEq(step.input, shares, "projected share debit");
+        assertEq(step.output, payout, "projected payout equals idle execution");
+        uint256 beforeBalance = asset.balanceOf(address(this));
+        if (exactOutput) {
+            assertEq(vault.previewExchangeOut(IERC20(address(vault)), asset, payout), shares);
+            assertEq(vault.exchangeOut(IERC20(address(vault)), shares, asset, payout,
+                address(this), false, _deadline()), shares);
+        } else {
+            assertEq(vault.exchangeIn(IERC20(address(vault)), shares, asset, payout,
+                address(this), false, _deadline()), payout);
+        }
+        assertEq(asset.balanceOf(address(this)) - beforeBalance, payout, "exact local receipt");
+        (bytes memory actual, uint256 actualClaim) = quote.quoteState(address(asset), address(this));
+        _assertProjectedState(actual, step.state);
+        assertEq(actualClaim, step.claim);
+        UniswapV4StandardExchangeCommon.InventoryQuote memory afterState =
+            abi.decode(actual, (UniswapV4StandardExchangeCommon.InventoryQuote));
+        assertEq(afterState.free0, beforeState.free0 - (beforeState.token0 ? payout : 0));
+        assertEq(afterState.free1, beforeState.free1 - (beforeState.token0 ? 0 : payout));
+        assertEq(afterState.supply, beforeState.supply - shares);
+        assertEq(afterState.shares, beforeState.shares - shares);
+        assertEq(abi.encode(afterState.pool), abi.encode(beforeState.pool), "no hypothetical pool swap committed");
+        assertEq(afterState.positionLiquidity, beforeState.positionLiquidity, "no hypothetical removal committed");
+        assertEq(afterState.fees0, beforeState.fees0, "fees remain uncollected");
+        assertEq(afterState.fees1, beforeState.fees1, "fees remain uncollected");
+    }
+
+    /// @notice Quote a sequence before execution, then compare every resulting state in both contexts.
+    function test_poolPrice_projectedSequenceIdleAndBlockedBothFaces() public {
+        _dualJoin(1000 ether, 1000 ether);
+        tokenA.mint(address(this), 1000 ether);
+        tokenB.mint(address(this), 1000 ether);
+        for (uint256 i; i < 2; ++i) {
+            IERC20 asset = IERC20(i == 0 ? _token0() : _token1());
+            _assertQuoteSequence(address(vault), asset, address(this), 1 ether);
+            poolManager.unlock(abi.encodeCall(this.assertBlockedPoolSequence, (asset)));
+        }
+    }
+
+    function assertBlockedPoolSequence(IERC20 asset) external {
+        require(msg.sender == address(this), "self only");
+        _assertQuoteSequence(address(vault), asset, address(this), 1 ether);
+    }
+
+    /// @notice Local cover is a settlement limit, and failed exits leave all state unchanged.
+    function test_poolPrice_exactLocalCoverAndOneUnitShortBothFaces() public {
+        _dualJoin(1000 ether, 1000 ether);
+        for (uint256 i; i < 2; ++i) {
+            IERC20 asset = IERC20(i == 0 ? _token0() : _token1());
+            uint256 available = asset.balanceOf(address(vault));
+            uint256 shares = vault.previewExchangeOut(IERC20(address(vault)), asset, available + 1);
+            (bytes memory beforeState,) = ITransition(address(vault)).quoteState(address(asset), address(this));
+            uint256 beforeBalance = asset.balanceOf(address(this));
+            vm.expectRevert(abi.encodeWithSelector(
+                UniswapV4StandardExchangeCommon.UniswapV4Exchange_InsufficientLocalReserve.selector,
+                address(asset), available + 1, available));
+            poolManager.unlock(abi.encode(available + 1, shares, address(asset)));
+            (bytes memory afterState,) = ITransition(address(vault)).quoteState(address(asset), address(this));
+            assertEq(afterState, beforeState, "failed exit rolls back all state");
+            assertEq(asset.balanceOf(address(this)), beforeBalance);
+            shares = vault.previewExchangeOut(IERC20(address(vault)), asset, available);
+            poolManager.unlock(abi.encodeCall(this.assertBlockedPoolRedemption, (asset, shares, available, true)));
+            assertEq(asset.balanceOf(address(vault)), 0, "exact cover succeeds");
+        }
+    }
+
+    /// @notice An uncovered exact-input quote keeps its price while transition and settlement reject it.
+    function test_poolPrice_unfundedExactInputKeepsQuoteAndRollsBackBothFaces() public {
+        _dualJoin(1000 ether, 1000 ether);
+        IERC20(address(vault)).approve(address(vault), type(uint256).max);
+        for (uint256 i; i < 2; ++i) {
+            IERC20 asset = IERC20(i == 0 ? _token0() : _token1());
+            uint256 shares = vault.totalSupply() / 2;
+            uint256 payout = vault.previewExchangeIn(IERC20(address(vault)), shares, asset);
+            assertGt(payout, asset.balanceOf(address(vault)));
+            poolManager.unlock(abi.encodeCall(this.assertBlockedUnfundedRedemption, (asset, shares, payout)));
+        }
+    }
+
+    function assertBlockedUnfundedRedemption(IERC20 asset, uint256 shares, uint256 payout) external {
+        require(msg.sender == address(this), "self only");
+        ITransition quote = ITransition(address(vault));
+        (bytes memory state,) = quote.quoteState(address(asset), address(this));
+        assertEq(quote.quoteAssets(state, shares), payout, "capacity does not change the price");
+        uint256 beforeBalance = asset.balanceOf(address(this));
+        vm.expectRevert(ITransition.InvalidQuoteState.selector);
+        quote.quoteTransition(state, ITransition.Operation.RedeemExactIn, shares);
+        uint256 available = asset.balanceOf(address(vault));
+        vm.expectRevert(abi.encodeWithSelector(
+            UniswapV4StandardExchangeCommon.UniswapV4Exchange_InsufficientLocalReserve.selector,
+            address(asset), payout, available));
+        vault.exchangeIn(IERC20(address(vault)), shares, asset, payout, address(this), false, _deadline());
+        (bytes memory afterState,) = quote.quoteState(address(asset), address(this));
+        assertEq(afterState, state, "failed exact-input exit rolls back all state");
+        assertEq(asset.balanceOf(address(this)), beforeBalance);
+    }
+
     function test_accruedFees_rebalancePreservesDepositPrice() public {
         _dualJoin(10_000_000 ether, 10_000_000 ether);
         swapper.swapExactIn(poolKey, true, 1000 ether);
@@ -315,10 +473,10 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
         ERC20PermitMintableStub(address(asset)).mint(address(vault), donation);
         uint256 reserve = deposit + donation;
         uint256 wanted = bound(wanted_, 1, reserve);
-        uint256 expected = (wanted * issued + reserve - 1) / reserve;
+        uint256 expected = _referenceWithdrawalShares(asset, wanted);
         uint256 before = asset.balanceOf(address(this));
         uint256 charged = abi.decode(poolManager.unlock(abi.encode(wanted, expected)), (uint256));
-        assertEq(charged, expected, "independent ceiling over a funded two-token book");
+        assertEq(charged, expected, "minimal pool-priced shares over a funded two-token book");
         assertEq(asset.balanceOf(address(this)) - before, wanted);
         assertEq(IERC20(address(vault)).totalSupply(), issued - charged);
     }
@@ -334,7 +492,7 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
             uint256 quoted = vault.previewExchangeOut(share, asset, wanted);
             uint256 charged = vault.exchangeOut(share, quoted, asset, wanted, address(this), false, _deadline());
             assertEq(charged, quoted);
-            assertGe(asset.balanceOf(address(this)) - balanceBefore, wanted);
+            assertEq(asset.balanceOf(address(this)) - balanceBefore, wanted);
         } else {
             uint256 quoted = vault.previewExchangeIn(share, shares / 2, asset);
             uint256 received = vault.exchangeIn(share, shares / 2, asset, quoted, address(this), false, _deadline());
@@ -465,13 +623,13 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
         uint256 supply_ = IERC20(address(vault)).totalSupply();
         uint256 low_ = 1;
         uint256 high_ = supply_;
-        // Independent unchanged exact-input surface verifies the minimum and its existing buffer.
+        // Independently invert the public exact-input quote, including integer rounding.
         while (low_ < high_) {
             uint256 mid_ = low_ + (high_ - low_) / 2;
             if (vault.previewExchangeIn(IERC20(address(vault)), mid_, asset_) >= wanted_) high_ = mid_;
             else low_ = mid_ + 1;
         }
-        return Math.min(supply_, high_ + Math.max(high_ / 100, 1));
+        return high_;
     }
 
     function _assertWithdrawalBudget(IERC20 asset_, uint256 wanted_, uint256 expected_, uint256 budget_, bool prepaid_)
@@ -487,7 +645,7 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
         );
         assertEq(charged_, expected_, "budget does not change the standard charge");
         assertEq(shares_.balanceOf(address(this)), sharesBefore_ - charged_, "unused budget refunded");
-        assertGe(asset_.balanceOf(address(this)) - before_, wanted_);
+        assertEq(asset_.balanceOf(address(this)) - before_, wanted_);
     }
 
     function testFuzz_directSwap_protocolFeeQuoteMatches(bool token1_, uint16 fee_) public {
@@ -733,10 +891,19 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
     function unlockCallback(bytes calldata data) external returns (bytes memory) {
         require(msg.sender == address(poolManager));
         assertFalse(liquid.canOpenPoolManagerUnlock());
+        if (data.length != 0 && data.length != 64 && data.length != 96) {
+            (bool ok, bytes memory result) = address(this).call(data);
+            if (!ok) assembly ("memory-safe") { revert(add(result, 32), mload(result)) }
+            return result;
+        }
         if (data.length != 0) {
             (uint256 wanted, uint256 expected) = abi.decode(data, (uint256, uint256));
             IERC20 share = IERC20(address(vault));
             IERC20 asset = IERC20(_token0());
+            if (data.length == 96) {
+                (,, address output) = abi.decode(data, (uint256, uint256, address));
+                asset = IERC20(output);
+            }
             assertEq(vault.previewExchangeOut(share, asset, wanted), expected, "locked sleeve preview");
             return abi.encode(vault.exchangeOut(share, expected, asset, wanted, address(this), false, block.timestamp));
         }

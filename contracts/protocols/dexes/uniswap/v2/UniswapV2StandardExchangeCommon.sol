@@ -31,9 +31,34 @@ import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDis
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {UniswapV2RouterAwareRepo} from "@crane/contracts/protocols/dexes/uniswap/v2/aware/UniswapV2RouterAwareRepo.sol";
 
 // abstract
 contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
+    function _redeemLpSharesFrom(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal returns (uint256 amount_)
+    {
+        UnIV2IndexSourceReserves memory source_;
+        source_.pool = IUniswapV2Pair(address(ERC4626Repo._reserveAsset()));
+        bool asLp_ = tokenOut_ == address(source_.pool);
+        _loadIndexSourceReserves(source_, IERC20(asLp_ ? address(0) : tokenOut_));
+        UniV2StrategyVault memory vault_;
+        _loadStrategyVault(vault_, IERC20(asLp_ ? source_.token0 : tokenOut_));
+        _calcAndMintVaultFee(source_, vault_);
+        ERC20Repo._burn(holder_, shares_);
+        uint256 lp_ = BetterMath._convertToAssetsDown(shares_, vault_.vaultLpReserve, vault_.vaultTotalShares, ERC4626Repo._decimalOffset());
+        amount_ = asLp_ ? lp_ : UniswapV2Service._withdrawSwapDirect(
+            source_.pool, UniswapV2RouterAwareRepo._uniswapV2Router(), lp_, IERC20(tokenOut_),
+            IERC20(ConstProdReserveVaultRepo._opposingToken(tokenOut_))
+        );
+        if (amount_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, amount_);
+        IERC20(tokenOut_).safeTransfer(receiver_, amount_);
+        ERC4626Repo._setLastTotalAssets(source_.pool.balanceOf(address(this)));
+        _checkpointVaultReserves();
+        _syncAllExpectedHoldReserves();
+    }
+
     /// @dev Active D16 availability. Base checked subtraction remains the historical default.
     function _unbookedSurplus(IERC20 token) internal view override returns (uint256) {
         return LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));

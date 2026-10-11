@@ -7,6 +7,7 @@ import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/C
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
@@ -15,6 +16,18 @@ import {
 
 /// @notice Exact-output previews and native SY adapters using the installed standard routes.
 contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQueryTarget, AerodromeStandardExchangeQuoteTarget, ConstantProductStandardYieldTarget, IFacet {
+    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256)
+    {
+        address implementation_ = IDiamondLoupe(address(this)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
+        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
+            "executeNativeSyRedemption(address,address,uint256,address,uint256)",
+            holder_, receiver_, shares_, tokenOut_, minimum_
+        ));
+        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
+        return abi.decode(result_, (uint256));
+    }
+
     function facetName() public pure returns (string memory name) {
         return type(AerodromeStandardExchangeOutQueryFacet).name;
     }

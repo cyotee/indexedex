@@ -88,27 +88,19 @@ abstract contract TestBase_UniswapV4FullSpreadRateContext is Test {
     function test_shortLocalCoverCannotShrinkOnlyLiveRateProbe() public {
         _rateZeroSleeve(); _rateBootstrap();
         bool shortageExercised;
-        uint256 initialProbe = Math.min(rateVault.totalSupply(), 10 ** uint256(rateVault.decimals()));
+        uint256 initialProbe = rateVault.totalSupply();
         for (uint256 i; i < 2; ++i) {
             (bytes memory state,) = Transition(address(rateVault)).quoteState(address(rateTokens[i]), address(0));
             state = Context(address(rateVault)).quoteStateWithUnavailableUnlock(state, address(rateManager));
             uint256 probe = initialProbe;
-            // Small-decimal supplies cap the first probe to the entire supply.
-            // F2 forbids that while opposite backing remains, independently of
-            // funding. Preserve and explicitly verify that legitimate fallback.
-            if (probe == rateVault.totalSupply()) {
-                vm.expectRevert(StandardExchangeConstantProduct.InsufficientBacking.selector);
-                Transition(address(rateVault)).quoteAssets(state, probe);
-                probe /= 2;
-            }
             uint256 quantity = Transition(address(rateVault)).quoteAssets(state, probe);
             uint256 available = rateTokens[i].balanceOf(address(rateVault));
             if (quantity <= available) continue;
             shortageExercised = true;
             bytes memory callData = abi.encodeCall(IStandardExchangeIn.previewExchangeIn,
                 (IERC20(address(rateVault)), probe, rateTokens[i]));
-            vm.expectRevert(abi.encodeWithSignature("UniswapV4Exchange_InsufficientLocalReserve(address,uint256,uint256)", address(rateTokens[i]), quantity, available));
-            rateReader.readWhileUnlocked(address(rateVault), callData);
+            assertEq(abi.decode(rateReader.readWhileUnlocked(address(rateVault), callData), (uint256)), quantity,
+                "quantity quote is independent of immediate local cover");
             uint256 expected = _normalise(quantity, probe, address(rateVault), i);
             assertGt(expected, 0);
             assertEq(_blockedLiveRate(i), expected, "live must use unfunded quantity probe");
@@ -120,8 +112,7 @@ abstract contract TestBase_UniswapV4FullSpreadRateContext is Test {
     function test_independentSubjectKeepsLegacyLivePreviewPolicy() public {
         _rateBootstrap();
         IRateProvider independent = ratePackage.deployRateProvider(IStandardExchange(address(rateVault)), rateTokens[0], rateTokens[1]);
-        uint256 subjectUnit = 10 ** uint256(IERC20Metadata(address(rateTokens[0])).decimals());
-        uint256 probe = Math.min(subjectUnit, rateTokens[0].totalSupply());
+        uint256 probe = rateTokens[0].totalSupply();
         uint256 expected = _normalise(rateVault.previewExchangeIn(rateTokens[0], probe, rateTokens[1]), probe, address(rateTokens[0]), 1);
         assertGt(expected, 0); assertEq(independent.getRate(), expected);
         assertEq(RateQuote(address(independent)).quoteRate(address(rateVault), address(rateTokens[1]), hex"012345"), expected);
@@ -142,11 +133,8 @@ abstract contract TestBase_UniswapV4FullSpreadRateContext is Test {
     }
 
     function _normalise(uint256 out_, uint256 probe_, address subject_, uint256 targetLeg_) private view returns (uint256) {
-        uint256 unit = 10 ** uint256(IERC20Metadata(subject_).decimals());
-        if (probe_ != unit) out_ = Math.mulDiv(out_, unit, probe_, Math.Rounding.Ceil);
-        uint8 decimals = IERC20Metadata(address(rateTokens[targetLeg_])).decimals();
-        if (decimals < 18) return out_ * 10 ** uint256(18 - decimals);
-        if (decimals > 18) return out_ / 10 ** uint256(decimals - 18);
-        return out_;
+        uint256 scale = 10 ** (18 + uint256(IERC20Metadata(subject_).decimals())
+            - IERC20Metadata(address(rateTokens[targetLeg_])).decimals());
+        return Math.mulDiv(out_, scale, probe_, Math.Rounding.Ceil);
     }
 }

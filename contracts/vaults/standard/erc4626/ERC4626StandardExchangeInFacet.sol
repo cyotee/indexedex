@@ -26,16 +26,15 @@ contract ERC4626StandardExchangeInFacet is ERC4626StandardExchangeInTarget, ERC4
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](9);
-        funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
-        funcs[1] = IStandardExchangeIn.exchangeIn.selector;
-        funcs[2] = IStandardExchangeTransitionQuote.quoteState.selector;
-        funcs[3] = IStandardExchangeTransitionQuote.quoteTransition.selector;
-        funcs[4] = IStandardExchangeTransitionQuote.quoteAssets.selector;
-        funcs[5] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
-        funcs[6] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
-        funcs[7] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
-        funcs[8] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        funcs = new bytes4[](8);
+        funcs[0] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[1] = IStandardExchangeTransitionQuote.quoteState.selector;
+        funcs[2] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+        funcs[3] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+        funcs[4] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+        funcs[5] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+        funcs[6] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
+        funcs[7] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
         return NativeStandardYieldSelectors._append(funcs);
     }
 

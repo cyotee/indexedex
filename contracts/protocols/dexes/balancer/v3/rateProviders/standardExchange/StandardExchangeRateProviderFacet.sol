@@ -14,7 +14,6 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 /* -------------------------------------------------------------------------- */
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {ERC165Checker} from "@crane/contracts/external/openzeppelin-contracts-v5/utils/introspection/ERC165Checker.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -27,7 +26,6 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
-import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
@@ -66,24 +64,6 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         if (address(subject_) == address(0)) {
             subject_ = IERC20(address(layoutStruct.reserveVault));
         }
-        if (state.length == 0 && address(subject_) == address(layoutStruct.reserveVault)
-            && _supportsUnlockContext(address(subject_))) {
-            // Same quantity probe as projected rates when it fits. quoteState is
-            // about 50k and the redemption quote after it is larger. A chain-capped
-            // deposit that cannot pay for both must not burn its remaining stipend
-            // on a snapshot that cannot return. Failure falls through to the live
-            // supply probe instead of reverting.
-            if (gasleft() > 250_000) {
-                uint256 probeGas = gasleft() - 80_000;
-                (bool ok, bytes memory data) = address(subject_).staticcall{gas: probeGas}(
-                    abi.encodeCall(
-                        IStandardExchangeTransitionQuote.quoteState,
-                        (address(layoutStruct.rateTarget), address(0))
-                    )
-                );
-                if (ok && data.length >= 64) (state,) = abi.decode(data, (bytes, uint256));
-            }
-        }
         uint256 totalShares = state.length == 0 ? subject_.totalSupply()
             : IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);
 
@@ -94,54 +74,23 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
             return _initialRate(subject_, layoutStruct);
         }
 
-        // Quote one whole subject token, capped by actual supply. DETF and sDETF
-        // use nine decimals; treating 1e18 raw units as one token misprices them.
-        uint256 subjectUnit = 10 ** IERC20Metadata(address(subject_)).decimals();
-        uint256 quoteAmount = totalShares < subjectUnit ? totalShares : subjectUnit;
-        (bool success, uint256 out) =
-            _safePreviewExchangeIn(quoteAmount, state);
+        // Price the entire book even when settlement cannot physically exit it.
+        // A failed full-book quote must not silently become a smaller trade.
+        uint8 subjectDecimals = IERC20Metadata(address(subject_)).decimals();
+        (bool success, uint256 out) = _safePreviewExchangeIn(totalShares, state);
+        if (!success || out == 0) return 0;
+        return _normalise(out, totalShares, subjectDecimals, layoutStruct.rateTargetDecimals);
+    }
 
-        for (uint256 i = 0; !success && quoteAmount > 1 && i < 18; ++i) {
-            quoteAmount /= 2;
-            (success, out) =
-                _safePreviewExchangeIn(quoteAmount, state);
+    /// @dev One final upward rounding after full-book valuation and decimal scaling.
+    function _normalise(uint256 out, uint256 shares, uint8 subjectDecimals, uint8 targetDecimals)
+        private pure returns (uint256)
+    {
+        uint256 numeratorDecimals = 18 + uint256(subjectDecimals);
+        if (numeratorDecimals >= targetDecimals) {
+            return Math.mulDiv(out, 10 ** (numeratorDecimals - targetDecimals), shares, Math.Rounding.Ceil);
         }
-
-        if (!success || quoteAmount == 0) {
-            return 0;
-        }
-
-        for (uint256 i = 0; out == 0 && quoteAmount < totalShares && i < 18; ++i) {
-            uint256 nextQuote = quoteAmount * 10;
-            if (nextQuote > totalShares) {
-                nextQuote = totalShares;
-            }
-            if (nextQuote == quoteAmount) {
-                break;
-            }
-            (bool nextSuccess, uint256 nextOut) =
-                _safePreviewExchangeIn(nextQuote, state);
-            if (!nextSuccess) {
-                break;
-            }
-            quoteAmount = nextQuote;
-            out = nextOut;
-        }
-
-        if (quoteAmount != subjectUnit) {
-            out = out._mulDiv(subjectUnit, quoteAmount, Math.Rounding.Ceil);
-        }
-
-        uint8 targetDecimals = layoutStruct.rateTargetDecimals;
-        if (targetDecimals == 18) {
-            return out;
-        }
-
-        if (targetDecimals < 18) {
-            return out * (10 ** (18 - targetDecimals));
-        }
-
-        return out / (10 ** (targetDecimals - 18));
+        return Math.ceilDiv(Math.ceilDiv(out, shares), 10 ** (targetDecimals - numeratorDecimals));
     }
 
     /// @dev Zero-supply rate: target per whole share from the SE's own mint preview of one whole target
@@ -156,17 +105,8 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         if (!ok || data.length != 32) return 0;
         uint256 sharesForTargetUnit = abi.decode(data, (uint256));
         if (sharesForTargetUnit == 0) return 0;
-        uint256 subjectUnit = 10 ** IERC20Metadata(address(subject_)).decimals();
-        // target (native units) per whole share, then scale to 18 decimals of target like the live path.
-        uint256 out = targetUnit._mulDiv(subjectUnit, sharesForTargetUnit, Math.Rounding.Ceil);
-        uint8 targetDecimals = l.rateTargetDecimals;
-        if (targetDecimals == 18) return out;
-        if (targetDecimals < 18) return out * (10 ** (18 - targetDecimals));
-        return out / (10 ** (targetDecimals - 18));
-    }
-
-    function _supportsUnlockContext(address subject_) private view returns (bool) {
-        return ERC165Checker.supportsInterface(subject_, type(IStandardExchangeUnlockContextQuote).interfaceId);
+        return _normalise(targetUnit, sharesForTargetUnit,
+            IERC20Metadata(address(subject_)).decimals(), l.rateTargetDecimals);
     }
 
     function _safePreviewExchangeIn(uint256 quoteAmount_, bytes memory state)

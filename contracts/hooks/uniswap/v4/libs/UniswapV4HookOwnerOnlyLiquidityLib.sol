@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {NativeStandardYieldContextRepo} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 
@@ -18,10 +17,6 @@ library UniswapV4HookOwnerOnlyLiquidityLib {
     function enforceRemoval(bool restricted, address feeRecipient) internal view {
         if (!restricted) return;
         address actor = msg.sender;
-        if (actor == address(this)) {
-            address initiator = NativeStandardYieldContextRepo._initiator();
-            if (initiator != address(0)) actor = initiator;
-        }
         if (actor != feeRecipient && actor != MultiStepOwnableRepo._owner()) {
             revert IMultiStepOwnable.NotOwner(actor);
         }

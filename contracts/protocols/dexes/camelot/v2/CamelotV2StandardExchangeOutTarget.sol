@@ -758,6 +758,11 @@ contract CamelotV2StandardExchangeOutTarget is
                 ERC4626Repo._decimalOffset()
             );
 
+            // Share maximum, same units as the share-to-pool branch. LP and output are not this check.
+            if (amountIn > maxAmountIn) {
+                revert MaxAmountExceeded(maxAmountIn, amountIn);
+            }
+
             uint256 zapShareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             // Secure the burn of the underlying pool token
             _secureSelfBurn(msg.sender, amountIn, pretransferred);

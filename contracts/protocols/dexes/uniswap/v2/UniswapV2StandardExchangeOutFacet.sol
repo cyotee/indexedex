@@ -21,6 +21,12 @@ import {
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeOutTarget.sol";
 
 contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget, ConstantProductStandardYieldTarget, IFacet {
+    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256)
+    {
+        return _redeemLpSharesFrom(holder_, receiver_, shares_, tokenOut_, minimum_);
+    }
+
     function facetName() public pure returns (string memory name) {
         return type(UniswapV2StandardExchangeOutFacet).name;
     }

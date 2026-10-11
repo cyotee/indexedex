@@ -1,0 +1,548 @@
+contracts/vaults/detf/UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md:33:The unified DETF (`UniswapV4DetfDFPkg`) is the v1 Uni V4 DETF product. Gold TestBases bind **ERC-4626 wrapper** SEs. That wrapper **burns `msg.sender`** on share redeem. Production Uni V3 SE and Uni V4 SE **`safeTransferFrom`** when `pretransferred=false`. Live 4663 CP DETF burn/close failed `TransferFromFailed` (`0x7939f424`) because the hook had SE-share allowance 0. ERC-4626 suites could not fail that.
+contracts/vaults/detf/UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md:166:Share pull by SE class when `pretransferred=false`:
+contracts/vaults/detf/UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md:472:4. Do not convert leftover-pretransfer spend (L-GAPS-11).
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:90:| **D50** | Expansion clock and combined catch-up | Start the automatic-expansion clock at the **first successful bond**, with fixed **8-hour boundaries** thereafter. After inactivity, perform **one aggregate expansion mint and distribution** for all eligible pending expansion; do not replay missed distributions or compound hypothetical historical fee receipts. Only actually minted and funded DETF participates. Settle due expansion before new principal or withdrawals; rebase eligible stake before issuing its fee/creator sDETF. | 2026-09-06 |
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:92:| **D52** | No expansion catch-up caps | **Remove all expansion catch-up caps across every DETF family:** elapsed-time limits, maximum epoch counts, supply-per-update percentages and any equivalent amount ceiling. Calculate pending expansion across the entire unsettled completed-epoch interval and mint/distribute it once under D50. Remove cap configuration rather than retaining an optional capped deployment profile. Existing implementations do not override this requirement. | 2026-09-06 |
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:579:Mint does not `_mintDetf(_feeTo(), …)`. Burn does not `safeTransfer(_feeTo(), feeDetf)`. Oracle `usageFeeOfVault` is unused on these DETF mint/burn paths. `feeTo`’s DETF income is **only** `claimRewards` on token id 1.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:831:**Public function lives on the Bond NFT** (`detf/common/bondNft`), because that vault already holds the LP (D13). **Host join stays on the DETF diamond** (`onlyBondNft`). Uni V4 hooks remain owner-only add/remove (D9); the NFT must not call `depositSingle`. `IDetf.donate` is a FeeCollector forwarder onto the NFT (`minLpOut = 0`; pretransfer destination is the NFT; event donor is the collector).
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:939:Preserve existing expansion rate calculations and eligibility conditions, fee percentages, fee-oracle configuration and the gross/net issuance rules, subject to the explicitly accepted timing changes in D49/D50, removal of Open mode in D51 and removal of all expansion catch-up caps in D52. All DETFs follow these new cross-family requirements regardless of their previous implementations. Separate the bond's liquidity and purchased-allocation inputs and settle calculated fee/creator allocations as fully funded staking receipts (§24.3.1).
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:985:| Automatic expansion | At a due eight-hour boundary or later catch-up, mint the eligible pending expansion in one aggregate amount, fund staking custody, and distribute it once |
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:991:**Owner clarification — V4 multi-leg expansion (2026-09-11):** automatic expansion is eligible when any non-DETF synthetic price is strictly above the configured mint threshold. Evaluate every leg using its own creation price against the same current supply and owned reserve LP, and use the highest synthetic price in the existing premium-closure formula for one aggregate expansion. Do not require all legs to qualify, select the first leg, average the prices, or sum separate expansions. Equality to the threshold is ineligible; the positive-premium requirement above peg remains. Preview and realization must select the same highest price, and `NaturalSupplyExpanded` reports that selected price. Token-specific mint/burn gates retain their respective route prices. Test either ordered leg being highest, one or both eligible, neither eligible, threshold equality, distinct creation prices, preview/settlement parity, funded backing, catch-up, and no repeated settlement of a completed epoch.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:993:**Combined catch-up:** if several boundaries pass without interaction, the next applicable transaction realizes all eligible pending expansion in **one aggregate DETF mint and one distribution**. Apply the expansion rate calculation across **all unsettled completed eight-hour epochs**, with no cap on elapsed time, epoch count or the resulting expansion amount. Do not loop through historical distributions, mint interest on hypothetical earlier fee receipts, or multiply already funded inventory by the number of missed epochs. Advance the processed clock through the completed boundaries, retaining any unfinished interval. For example, a first interaction at hour 25 after opening settles the completed expansion interval through hour 24; the next boundary remains hour 32, not hour 33. A repeated interaction cannot pay the same completed interval again. A completed interval with zero eligible expansion advances the clock without an unfunded mint or rebase.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:995:**D52 applies uniformly to every DETF:** remove maximum catch-up seconds/days, maximum catch-up epoch counts, supply-relative per-update caps and equivalent absolute mint ceilings. Remove their deployment/configuration options; do not retain an optional capped variant or impose a replacement cap under another name. The prior `expansionCatchUpMaxSeconds`, `expansionCatchUpCapBps` and `expansionMaxCatchUpEpochs` settings are superseded. A seven-day unsettled interval contains 21 complete eight-hour epochs; all 21 contribute to the single expansion calculation rather than being shortened to one day, limited to a configured epoch count or clipped to a percentage of supply. Preserve the agreed expansion rate formula, price eligibility, completed-epoch rounding and funded-distribution requirements; none of these authorizes reinstating the removed caps.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:997:Only **actually minted and funded DETF** may enter either distribution. A pending expansion estimate is not redeemable staking backing. Elapsed time alone does not execute a contract; settlement occurs in an on-chain transaction. This is the accepted simple catch-up behavior, not a requirement for a historical snapshot/replay system.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:1123:Do not use a blanket catch of any failed mint/burn to trigger a swap. A price-gate failure is the accepted fallback trigger. Insufficient liquidity, an uninitialized reserve, unsupported routes, allowance failures and user slippage limits can still prevent execution. Preserve those existing failures; an additional fallback trigger is not part of the requested change. Use the reserve host's existing swap fees and supported routing capabilities, with no new fallback-specific surcharge or issuance bonus.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:1187:| Compound/expansion PRD and older Olympus flywheel draft | D37/D38 replace conflicting reward destinations and stake-vs-capital-bond assumptions. D49 distributes seigniorage immediately. D50 applies fixed eight-hour boundaries and one aggregate catch-up only to automatic expansion. D51 removes Open mode and D52 removes all expansion catch-up caps; preserve the rate formula subject to these new requirements |
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:1188:| Existing family expansion caps, deployment parameters and capped-catch-up tests | D52 supersedes elapsed-time caps, maximum epoch counts, supply-relative per-update caps and equivalent amount ceilings for every DETF. Remove their configuration and specify uncapped aggregate realization over all completed unsettled epochs. Historical cap behavior is not an alternative refactor implementation |
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:1217:**R3 is resolved by D47–D50 and D52 (§§24.3.1–24.3.2):** seigniorage distributes immediately in the issuing transaction. Only automatic expansion uses eight-hour epochs, anchored to the first successful bond with fixed boundaries and one aggregate catch-up mint/distribution. All expansion catch-up caps are removed, so the entire unsettled completed-epoch interval contributes. Settle due expansion before new principal or withdrawals. Both sources require actual minted/funded DETF and rebase eligible stake before issuing fee/creator sDETF. Standing fee/creator entitlements remain eligible with zero staked balances; the existing allocation calculation covers that case. The earlier all-rewards epoch queue and no-recipient carry-forward proposals are withdrawn.
+contracts/vaults/detf/DETF_ALIGNMENT_PRD.md:1223:D60 excludes Balancer-hosted DETFs and retires their reserve-LP bond-payment question. D57–D59 remain accepted for SE position vaults. D61–D64 resolve V4 reserve liquidity permissions, own-reserve LP payment and ownership accounting. **D65 is resolved: restricted liquidity can be redeemed through the current `feeTo()` Fee Collector, including after fee-recipient rotation.** D49/D50 specify the reward clocks, catch-up behavior and distribution ordering; D51 removes Open mode and D52 removes all expansion catch-up caps. D53–D55 add interface consolidation, unused-storage removal and the bond NFT artwork/metadata redesign (§24.11). The separately authorized [implementation plan](./DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) specifies staking-share and fee-weight accounting, conversion rounding/final exits, selector replacements, storage disposition, deployment changes, SY integration rules and representative bond states. Its Stage 0 verifies the exhaustive call-site, package, selector and field manifests against the implementation baseline. The accepted requirements govern every in-scope DETF; use current code to identify necessary changes, not to preserve superseded behavior. The owner subsequently authorized execution of the plan and continuation in the main repository. Production deployment and migration remain outside that authorization.
+contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md:96:- [x] Verify epoch settlement before participation changes, one aggregate catch-up, immediate issuance rewards, no duplicate distribution, and primary-gate/reserve-swap consistency between previews and execution.
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md:32:- Automatic expansion uses fixed eight-hour boundaries anchored by the first bond and one aggregate catch-up. Issuance seigniorage distributes immediately. Each distribution rebases existing stake before issuing its fee/creator receipts.
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:67:| **N3** | FeeCollector | `IDetf.donate` forwards to NFT `donate` with `minLpOut = 0`. Pretransfer destination is the **NFT**. NatSpec on `IDetf.donate` is superseded by this file. |
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:79:| **N15** | Funding | Classic `transferFrom`, **Permit2 allowance**, **Permit2 signature**, and `pretransferred` unbooked surplus (non-LP). **No native ETH.** `lpToken` credits **this-call inbound LP delta** only. |
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:122:    bool pretransferred,
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:135:Permit2 packing matches the Uni V4 CP hook `depositSingle` Permit2 paths (allowance + signature). Names may move; both Permit2 modes are required. **No native ETH.** `IDetf.donate(token, amount, pretransferred)` ABI stays frozen (void); Permit2 callers use the NFT.
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:142:   - `pretransferred=false`: `transferFrom(msg.sender, address(this), amount)` then credit **observed inbound delta** (I1 / L-CLAIM-3).
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:144:   - `pretransferred=true` and `token != lpToken`: credit **unbooked surplus** of that token (permissionless sweep of idle pair / vaultShare / DETF / SE tokens on the NFT).
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:186:function donate(IERC20 token, uint256 amount, bool pretransferred) external;
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:193:1. `bondNftVault.donate(token, amount, 0, pretransferred, block.timestamp + 1)`.
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:194:2. **Locked pretransfer destination: Bond NFT.** Collector transfers accepted **non-LP** tokens to the NFT, then calls `IDetf.donate` with `pretransferred=true`. The diamond only forwards. Do not support two different pretransfer destinations in v1.
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:341:| `pretransferred=true` on **lpToken** and no this-call inbound LP delta | revert (I1: no free credit of booked reserve LP) |
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:342:| `pretransferred=true` on **non-LP** and unbooked surplus is 0 | revert (I1) |
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:369:| **DN7** | `IDetf.donate` forwarder: non-LP tokens on the NFT, `pretransferred=true`, same id 0 credit as NFT `donate`. Event `donor` is the collector, not the diamond. |
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:371:| **DN9** | `pretransferred=true`, no inbound delta / no unbooked surplus: revert; attacker product balances unchanged. Happy-path `pretransferred=true` with a real prior non-LP transfer does not cover this. |
+contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md:412:| v0.2 | 2026-08-22 | Intent: protocol acquires LP on id 0. N4 `addToDETFNFT(id 0)`. Donate accepts DETF (self-leg join, no burn, no claim). N10 keeps decimalOffset. Event donor. Unbooked surplus pretransfer. D2 runs. O=0 credits id 0. D13 burns still dilute. D30 owner host ops while locked. |
+contracts/fee/collector/FeeCollectorManagerTarget.sol:44:        MultiAssetBasicVaultRepo._updateReserve(token, token.balanceOf(address(this)));
+contracts/fee/collector/FeeCollectorManagerTarget.sol:68:        token.safeTransfer(recipient, amount);
+contracts/vaults/detf/DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:767:| `DETFNFTVaultTarget` + Facet + DFPkg | Public donate. `nonReentrant`. Live via DETF `isReserveLive`. Deadline. `minLpOut`. Funding: `transferFrom`, Permit2, `pretransferred` unbooked surplus (non-LP). **No native ETH.** `lpToken` = this-call inbound LP delta only, then `addToDETFNFT(id 0, lpOut)` 1×. Else push exact amount to DETF, `joinDonatedCapital`, then `addToDETFNFT(id 0, lpOut)`. Reset allowance. Do **not** realize expansion. |
+contracts/vaults/detf/DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:778:| `IDetf.donate` | `bondNft.donate(..., minLpOut=0, pretransferred, block.timestamp+1)` with donor = `msg.sender`. Void. NatSpec = donation PRD. |
+contracts/vaults/detf/DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:793:Adversarial: I1/DN9, K1 (idle pair sweep intended; lpToken no double credit), A0/DN16, CROPS/DN18, J1–J3. Happy-path `pretransferred=true` does not cover DN9.
+contracts/vaults/detf/DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:861:Evidence (2026-08-22): `forge test --match-contract ReserveDonation -vv` in `{SCRATCH}/forge-d15-donate-fc-smoke.log` — CP 23/0 (includes DN9 booked-DETF pretransferred revert), Orbital/Weighted/Quad 20 each, Single SE/MVW/Mixed 20 each. Composed has no `joinDonatedCapital` / `donate`. Pretransferred DETF credits only `balance - lastRewardTokenBalance`. Last-exit leftover DETF is loop-joined to id 0 LP, not transferred onto the NFT as rewards. DN3 live-mints then transfers diamond D11 BPT. DN10 Balancer unbalanced join is not closed-form (`assertGt` both sides). DN11 N/A (L5 public join stays). Logs: `{SCRATCH}/forge-donate-balancer.log`, `{SCRATCH}/forge-donate-univ4.log`, `{SCRATCH}/forge-d15-donate-fc-smoke.log`.
+contracts/fee/collector/FeeCollectorSingleTokenPushTarget.sol:33:        MultiAssetBasicVaultRepo._updateReserve(token, token.balanceOf(address(this)));
+contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md:1290:User ABI (exact-in only). Same pull modes as today’s Uni V4 `bond` / donate: `pretransferred` on the DETF for mint; no native ETH; Permit2 is the existing pull helper, not extra hook selectors.
+contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md:1294:mint(tokenIn, amountIn, minUserDetf, recipient, pretransferred, deadline) → userDetf
+contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md:1328:bond(tokenIn, amountIn, lockDuration, recipient, pretransferred, deadline)
+contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md:1359:Public `donate` is on the **new** Uni V4 Bond NFT, not common `DETFNFTVault`. `IDetf.donate` forwards onto that NFT (`minLpOut = 0`; pretransfer destination is the NFT; event donor is the collector). N15 funding modes stay (transferFrom, Permit2 allowance, Permit2 signature, pretransferred surplus). No native ETH.
+contracts/routers/balancerV3-uniswapV4/adapters/UniswapV4UniversalRouterAdapter.sol:88:        IERC20(Currency.unwrap(settleCurrency)).safeTransfer(router, amountIn);
+contracts/routers/balancerV3-uniswapV4/adapters/UniswapV4UniversalRouterAdapter.sol:96:        IERC20(Currency.unwrap(currencyIn)).safeTransfer(router, amountIn);
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:172:function buyClaim(uint256 detfAmount, uint256 minClaimOut, address recipient, bool pretransferred, uint256 deadline)
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:275:pull DETF via delta gate (pretransferred allowed; I1–I3)
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:295:sharesBurned = claim.burnShares(claimAmount, owner, pretransferred)  // share units, NOT BPT
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:458:| M8 | `buyClaim` live, no gate; empty-vault first mint; preview==exec; I1–I3 `pretransferred`; 0 BPT join reverts; second buyer after protocol BPT ↑ gets fewer shares per BPT |
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md:477:| I1–I3 | `buyClaim` + claim redeem `pretransferred` |
+contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md:242:| D15 redeem claim → DETF only | `detf.redeemClaim` | `IRebasingClaimToken(detf.rebasingClaimToken()).redeem(amount, recipient, pretransferred)`. Assert payout token is DETF. Pair/share/SE out reverts |
+contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md:260:Do not convert leftover-pretransfer spend (L-GAPS-11). Do not add Dual bind. Do not add `buyClaim` to the DETF. Do not add an inbound refund to satisfy E6.
+contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md:417:| `test_DN9_pretransferred_noSurplus_reverts` | I1 | same |
+contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md:443:| `Adversarial_TrustFlags.t.sol` | I1/I2/I3 on `mint`, later `bond`, `donate`. `test_K1_donationNotMintCredit` (donation inventory cannot be consumed as another user’s mint credit). Happy-path pretransfer is **not** I1 | Gold all four + Stage 11 Open |
+contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md:739:| WP-UDPL-ADV | green 21/21. I1 donate = DETF-booked pair (DN7 is honest NFT pretransfer). J1–J3 include `claimLiquidity` / `previewClaimLiquidity` |
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:196:No configurable supply, rebase, elapsed-time or mint-amount ceiling is introduced. Checked numeric representation limits are not a substitute policy cap. Arithmetic stress tests must exercise large uncapped catch-up values and conversions close to representation limits.
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:312:At execution, synchronize expansion, evaluate the primary gate on that resulting state, then call either the existing primary core or the existing reserve swap core. Select the branch explicitly; do not `try/catch` arbitrary primary failures. A swap branch does not mint/burn DETF, charge issuance seigniorage, or add a fallback surcharge. A prior expansion in the same transaction may have changed supply; attribute it separately.
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:328:Required surface includes ERC-20 metadata/transfers, deposit/redeem and events, previews, exchange rate, directional token discovery/validation, asset metadata, yield-token metadata and required reward methods. `burnFromInternalBalance=true` burns SY held by the SY contract; false burns the caller's SY. It is not permission to consume arbitrary underlying inventory. Preserve the established internal-SY-balance semantics while testing their distinction from the SE pretransfer trust rules.
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:494:- [x] Implement first-bond anchored eight-hour settlement and one aggregate catch-up with every cap removed.
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:586:| A17, A22, A24, A25, A27 | Immediate seigniorage between epochs; just-before-boundary eligibility; post-boundary new stake excluded; fixed 25-hour/seven-day catch-up; one mint/distribution; no caps or hypothetical compounding |
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:603:- Stake immediately before versus after a boundary; transfer/unstake/wrap/claim at a boundary; long idle catch-up; repeated synchronization in one transaction; zero eligible expansion.
+contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md:606:- Direct donations and preexisting idle funds before SE/SY calls; false pretransfer assertions; short delivery; duplicate callback; reentrancy into mint/distribute/claim; allowance and deadline failures. Only actual credited input funds new claims.
+contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol:12:    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
+contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol:13:    function donate(IERC20 token, uint256 amount, uint256 minLpOut, bool pretransferred, uint256 deadline)
+contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol:18:    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
+contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol:24:        bool pretransferred,
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterExactInTarget.sol:72:        uint256 balBefore = IERC20(params.tokenIn).balanceOf(address(this));
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterExactInTarget.sol:77:        uint256 received = IERC20(params.tokenIn).balanceOf(address(this)) - balBefore;
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterExactInTarget.sol:113:        uint256 balBefore = IERC20(step.tokenOut).balanceOf(address(this));
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterExactInTarget.sol:117:        deltaOut = IERC20(step.tokenOut).balanceOf(address(this)) - balBefore;
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterExactInTarget.sol:134:        if (IERC20(params.tokenOut).balanceOf(address(this)) < amountOut) {
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterExactInTarget.sol:142:            IERC20(params.tokenOut).safeTransfer(params.recipient, amountOut);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol:3:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol:64:            LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol:65:            credit_ = LocalCreditLib.budget(
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol:66:                LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol:67:                    in_.balanceOf(address(this)), MultiAssetBasicVaultRepo._reserveOfToken(address(in_))
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol:75:        if (prepaid_ && credit_ > amount_) in_.safeTransfer(msg.sender, credit_ - amount_);
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:16:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:111:        uint256 before_ = backing_.balanceOf(address(this));
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:113:        uint256 received_ = backing_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:185:        if (amount_ != 0) IERC20(address(staking_)).safeTransfer(recipient_, amount_);
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:208:        token_.safeTransfer(to_, amount_);
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:252:    function donate(IERC20 token, uint256 amount, uint256 minLpOut, bool pretransferred, uint256 deadline)
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:258:            msg.sender, token, amount, minLpOut, pretransferred, deadline, _PULL_TRANSFER, bytes("")
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:268:        bool pretransferred,
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:276:            donor, token, amount, minLpOut, pretransferred, deadline, _PULL_TRANSFER, bytes("")
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:323:        bool pretransferred_,
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:337:        uint256 lpBefore_ = lp_.balanceOf(address(this));
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:341:            if (pretransferred_) {
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:345:            lpOut_ = lp_.balanceOf(address(this)) - lpBefore_;
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:355:        amountIn_ = _pullDonate(token_, amount_, donor_, pretransferred_, pullMode_, permit2Data_);
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:360:        uint256 inboundLp_ = lp_.balanceOf(address(this)) - lpBefore_;
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:395:        bool pretransferred_,
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:399:        if (pretransferred_) {
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:400:            LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:401:            uint256 available_ = LocalCreditLib.available(token_.balanceOf(address(this)), 0);
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:407:        uint256 before_ = token_.balanceOf(address(this));
+contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol:416:        actual_ = token_.balanceOf(address(this)) - before_;
+contracts/routers/balancerV3-uniswapV4/targets/BalancerV3UniswapV4CoordinatorRouterAdminTarget.sol:51:        IERC20(token).safeTransfer(to, amount);
+contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol:214:        uint256 held_ = layoutStruct_.detf.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:9:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:11:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:22:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:24:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:28:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:30:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:34:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:36:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:40:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:42:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:46:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol:48:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol:654:                } catch {}
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol:670:            try this.joinReserveSharesExternalExternal(instance_, bob, 50e18 * (i + 1)) {} catch {}
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol:675:    /// @dev External wrapper so try/catch can absorb MaxInRatio on share joins.
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:11:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:144:    /// @param pretransferred_ Integrating-contract flag only. EOA reverts `EOAPretransferNotAllowed()`.
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:149:        address recipient_, bool pretransferred_, uint256 deadline_
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:152:        _exchange(tokenIn_, tokenOut_, amountIn_, recipient_, pretransferred_, deadline_);
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:157:    /// @param pretransferred_ Integrating-contract flag only. EOA reverts `EOAPretransferNotAllowed()`.
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:162:        address recipient_, bool pretransferred_, uint256 deadline_
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:165:        _exchange(tokenIn_, tokenOut_, amountOut_, recipient_, pretransferred_, deadline_);
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:195:        IERC20 tokenIn_, IERC20 tokenOut_, uint256 amount_, address recipient_, bool pretransferred_, uint256 deadline_
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:199:        // Public pretransfer of backing is not a D32 credit surface. Reject EOA first, then
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:201:        if (pretransferred_) {
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:202:            LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:214:            s_.detf.safeTransfer(recipient_, amount_);
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:229:        uint256 before_ = s_.detf.balanceOf(address(this));
+contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol:231:        uint256 after_ = s_.detf.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeOutTarget.sol:32:        out_.safeTransfer(to_, received_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:31:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:79:        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:86:        uint256 have_ = bpt_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:131:            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:146:        return lp_.balanceOf(address(this)) + lp_.balanceOf(address(s_.bondNftVault));
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:223:    function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:224:        uint256 before_ = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:225:        if (!pretransferred_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:227:            uint256 received_ = token_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:231:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:232:        uint256 available_ = LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:240:        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:280:            IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:286:            s.bufferToken.safeTransfer(address(_reserveVault()), bufferAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:294:                s.vaultShares[i].safeTransfer(address(_reserveVault()), vaultShareAmounts_[i]);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:325:        if (detfAmount_ > 0) IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:326:        if (bufferAmount_ > 0) s.bufferToken.safeTransfer(address(_reserveVault()), bufferAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:339:        if (detfAmount_ > 0) IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:340:        if (vaultShares_ > 0) s.vaultShares[legIndex_].safeTransfer(address(_reserveVault()), vaultShares_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:352:        s.vaultShares[legIndex_].safeTransfer(address(_reserveVault()), vaultShares_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:365:        if (detfAmount_ > 0) IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:366:        if (bufferAmount_ > 0) s.bufferToken.safeTransfer(address(_reserveVault()), bufferAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:370:            if (amt_ > 0) s.vaultShares[i].safeTransfer(address(_reserveVault()), amt_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol:404:        tokenIn_.safeTransfer(address(host_), amountIn_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:19:import {LocalCreditLib} from 'contracts/utils/LocalCreditLib.sol';
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:181:    function redeem(uint256 rebasingClaimAmount, address recipient, bool pretransferred)
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:189:        uint256 actualIn = _secureTokenTransfer(IERC20(address(this)), rebasingClaimAmount, pretransferred);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:199:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:210:        uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:223:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:242:        if (pretransferred) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:243:            LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:244:            credit = LocalCreditLib.budget(
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:245:                LocalCreditLib.available(tokenIn.balanceOf(address(this)), 0), maxAmountIn
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:258:            tokenIn.safeTransfer(msg.sender, credit - amountIn);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:265:        token.safeTransfer(to, amount);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:268:    function burnShares(uint256 rebasingClaimAmount, address owner, bool pretransferred)
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:280:        if (pretransferred) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:287:        if (pretransferred) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:434:        // DETF.redeemClaim burns via burnShares (pretransferred on this claim token) and
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:465:     *      pretransferred=true with no in-call transfer (I1). Self-token pulls use internal
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:468:    function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:469:        uint256 balanceBefore = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:470:        if (!pretransferred_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:476:            uint256 observedDelta = token_.balanceOf(address(this)) - balanceBefore;
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:485:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol:486:        uint256 available_ = LocalCreditLib.available(token_.balanceOf(address(this)), 0);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol:25:        if (!Repo._layoutStruct().isReserveLive) _rejectPretransferredFirstBond(prepaid_, amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol:65:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md:122:  bool pretransferred,
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md:132:2. Pull `detfAmount` of **this** DETF with the **delta gate** (`_secureTokenTransfer` / family `_pullToken`). `pretransferred=true` is allowed; **idle inventory is not free credit** (I1–I3).
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md:443:| M8 | `buyClaim` live, no gate, empty-vault first mint allowed; preview == execution; `pretransferred` delta gate (I1–I3); 0 BPT join reverts; second buyer after compound gets **fewer shares per BPT** than 1:1 (4626). |
+contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md:502:| `buyClaim` pull | **`pretransferred` allowed** with delta gate; no free idle credit. Deadline required. `minClaimOut` = rebasing units. 0 BPT join → `ZeroAmount`. |
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol:50:                out_.safeTransfer(to_, amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol:66:            out_.safeTransfer(to_, received_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.sol:25:            if (address(out_) == address(this)) { received_ = amount_; out_.safeTransfer(to_, received_); }
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.sol:35:            received_ = _acquireDetf(in_, amount_, prepaid_, deadline_); out_.safeTransfer(to_, received_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol:444:        uint256 currentBalance = layoutStruct_.rewardToken.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol:467:            uint256 currentBalance = layoutStruct_.rewardToken.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultService.sol:43:        _safeTransfer(layout_.rewardToken, recipient_, rewards_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultService.sol:46:    function _safeTransfer(IERC20 token, address to, uint256 amount) internal {
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultService.sol:47:        DETFSafeTransferLib._safeTransfer(token, to, amount);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol:451:        token.safeTransfer(to, amount);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:10:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:12:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:19:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:21:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:25:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:27:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:31:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:33:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:37:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:39:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:43:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol:45:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeOutTarget.sol:31:        out_.safeTransfer(to_, received_);
+contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol:32:    /// above the mint threshold and peg. No historical compounding or catch-up cap.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol:21:import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol:25:    UniV4DetfPretransferHelper
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol:46:        preHelper = new UniV4DetfPretransferHelper();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol:47:        apexCaller = new AtomicPretransferCaller();
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ILegacyComposedStableCommonDetfBonding.sol:16:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol:63:                out_.safeTransfer(to_, amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol:74:                            if (untouched_ != 0) staking_.safeTransfer(msg.sender, untouched_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol:91:                            IERC20(address(this)).safeTransfer(msg.sender, refund_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol:103:            in_.safeTransfer(msg.sender, credit_ - paid_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFExchangeInTarget.sol:34:                out_.safeTransfer(to_, amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFExchangeInTarget.sol:51:            out_.safeTransfer(to_, received_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg.sol:190:        ERC4626Repo._setLastTotalAssets(args.lpToken.balanceOf(address(this)));
+contracts/vaults/detf/common/core/DETFSafeTransferLib.sol:7:    function _safeTransfer(IERC20 token_, address to_, uint256 amount_) internal {
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:15:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:168:            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:182:        tokenIn_.safeTransfer(address(host_), amountIn_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:205:        // Nested fund: push + pretransferred=true (L-DETF-PUSH-NESTED).
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:206:        if (amountIn_ > 0) tokenIn_.safeTransfer(address(route_.underlyingVault), amountIn_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:217:        if (vaultTokenOut > 0) route_.vaultToken.safeTransfer(address(selection_.poolRouter), vaultTokenOut);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:238:        if (poolBptAmountOut_ > 0) poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:260:        if (poolBptAmountOut_ > 0) poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:280:            route_.vaultToken.safeTransfer(recipient_, vaultTokenAmountOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:284:        if (vaultTokenAmountOut_ > 0) route_.vaultToken.safeTransfer(address(route_.underlyingVault), vaultTokenAmountOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:304:            route_.vaultToken.safeTransfer(recipient_, amountOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:309:        uint256 vaultTokenBal_ = route_.vaultToken.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:311:        if (vaultTokenBal_ > 0) route_.vaultToken.safeTransfer(address(underlyingVault), vaultTokenBal_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:614:        return lp_.balanceOf(address(this)) + lp_.balanceOf(address(s_.bondNftVault));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:770:        uint256 before_ = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:773:            uint256 received_ = token_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:777:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:778:        uint256 available_ = LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:786:        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:789:    /// @dev Exact-out pretransfer credit (D15): `min(unbooked, maximum)`. Contract callers only.
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:791:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:792:        return LocalCreditLib.budget(
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:793:            LocalCreditLib.available(token_.balanceOf(address(this)), MultiAssetBasicVaultRepo._reserveOfToken(address(token_))),
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:803:        for (uint256 i_; i_ < 3; ++i_) if (amounts_[i_] != 0) tokens_[i_].safeTransfer(address(_reserveVault()), amounts_[i_]);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:806:        IERC20(address(s_.reservePool)).safeTransfer(address(s_.bondNftVault), lp_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:811:        uint256 have_ = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:850:            out_.safeTransfer(to_, amount_); return amount_;
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:909:        if (out_ == p_.poolBptToken) { out_.safeTransfer(to_, bpt_); return bpt_; }
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:939:        if (out_ == p_.poolBptToken) { out_.safeTransfer(to_, amount_); return amount_; }
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:942:            p_.poolBptToken.safeTransfer(address(host_), p_.poolBptAmountOut);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:947:        if (out_ == route_.vaultToken) { out_.safeTransfer(to_, amount_); return used_; }
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:950:        route_.vaultToken.safeTransfer(address(underlying_), p_.vaultTokenAmountOut);
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:953:        if (remainder_ != 0) route_.vaultToken.safeTransfer(msg.sender, remainder_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol:125:    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol:132:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol:136:    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol:138:    function donate(IERC20 token, uint256 amount, bool pretransferred) external;
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:33:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:56:    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:57:        if (pretransferred_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:103:        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:109:        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:116:        uint256 have_ = bpt_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:181:            IERC20(address(this)).safeTransfer(address(bal_), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:184:            s.standardExchangeVaultShare.safeTransfer(address(bal_), vaultShares_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:217:        s.standardExchangeVaultShare.safeTransfer(address(bal_), vaultShares_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:226:        IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:249:            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:263:        tokenIn_.safeTransfer(address(host_), amountIn_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:280:        return lp_.balanceOf(address(this)) + lp_.balanceOf(address(s_.bondNftVault));
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:430:    function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:431:        uint256 before_ = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:432:        if (!pretransferred_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:434:            uint256 received_ = token_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:438:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:439:        uint256 available_ = LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:447:        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol:467:            out_.safeTransfer(to_, received_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:9:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:11:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:22:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:24:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:28:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:30:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:34:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:36:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:40:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:42:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:46:    ///      A caller with no bytecode reverts `EOAPretransferNotAllowed()`. Exactly the requested
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol:48:    ///      uncredited and nothing is refunded. Booked holder backing is never pretransfer credit.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol:3:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol:63:            LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol:64:            credit_ = LocalCreditLib.budget(
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol:65:                LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol:66:                    in_.balanceOf(address(this)), MultiAssetBasicVaultRepo._reserveOfToken(address(in_))
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol:74:        if (prepaid_ && credit_ > amount_) in_.safeTransfer(msg.sender, credit_ - amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol:45:    function buyClaim(uint256 detfAmount, uint256 minClaimOut, address recipient, bool pretransferred, uint256 deadline)
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol:52:            _rejectPretransferredFirstBond(prepaid_, amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/common/DETFBalancerReserveSwapTarget.sol:67:        p_.tokenIn.safeTransfer(address(vault_), paid_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/common/DETFBalancerReserveSwapTarget.sol:70:        uint256 before_ = p_.tokenOut.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/common/DETFBalancerReserveSwapTarget.sol:72:        uint256 delta_ = p_.tokenOut.balanceOf(address(this)) - before_;
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol:50:                out_.safeTransfer(to_, amount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol:66:            out_.safeTransfer(to_, received_);
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:9:///      consumed, and eligible catch-up has no time or supply-relative cap.
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:23:    /// @notice Resolve the existing annual-rate default without any catch-up parameters.
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:32:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:65:    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:66:        if (pretransferred_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:91:        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptOut_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:97:        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:104:        uint256 have_ = bpt_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:149:            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:164:        return lp_.balanceOf(address(this)) + lp_.balanceOf(address(s_.bondNftVault));
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:241:    function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:242:        uint256 before_ = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:243:        if (!pretransferred_) {
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:245:            uint256 received_ = token_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:249:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:250:        uint256 available_ = LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:258:        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:274:            IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:282:                s.vaultShares[i].safeTransfer(address(_reserveVault()), vaultShareAmounts_[i]);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:315:        s.vaultShares[legIndex_].safeTransfer(address(_reserveVault()), vaultShares_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:324:        IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:344:        if (detfAmount_ > 0) IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:345:        if (vaultShares_ > 0) s.vaultShares[legIndex_].safeTransfer(address(_reserveVault()), vaultShares_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:380:            IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol:386:            s.vaultShares[i].safeTransfer(address(_reserveVault()), vaultShareAmounts_[i]);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/NET_MORPHO_USDG_BALANCER_STABLE_DETF_PRD.md:145:Use the canonical expansion-aware synthetic context consistently in previews, gates, and execution. Natural expansion occurs under the existing Policy eligibility and epoch/catch-up rules; no new continuous price controller is specified here.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/NET_MORPHO_USDG_BALANCER_STABLE_DETF_PRD.md:227:| Q03 | Which Policy thresholds and expansion epoch/rate/catch-up parameters fit this reserve? | Model the common threshold baseline and alternatives, including spot/synthetic divergence and expansion's effect on backing and rewards; record final values. |
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:92:    /// @notice Annual 5% closure with fixed eight-hour epochs and uncapped aggregate catch-up.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:148:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:151:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:165:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:185:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:284:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:319:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:453:        try IUniswapV4Detf(d).donate(IERC20(token), amount, false) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:539:                } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol:542:            } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol:88:            try ponsV1.swapRouter.exactInputSingle{value: ethIn}(params) {} catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Adversarial.sol:21:import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Adversarial.sol:25:    UniV4DetfPretransferHelper
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Adversarial.sol:46:        preHelper = new UniV4DetfPretransferHelper();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Adversarial.sol:47:        apexCaller = new AtomicPretransferCaller();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:20:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:204:        bool pretransferred_,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:207:        if (pretransferred_) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:212:            return _stakePath(amountIn_, minAmountOut_, recipient_, pretransferred_, deadline_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:215:            if (pretransferred_) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, 0);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:219:            uint256 acquired_ = _mintPath(tokenIn_, amountIn_, minAmountOut_, address(this), pretransferred_, deadline_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:226:            return _mintPath(tokenIn_, amountIn_, minAmountOut_, recipient_, pretransferred_, deadline_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:264:        bool pretransferred_,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:277:            return _swapMintPath(tokenIn_, amountIn_, minUserDetf_, recipient_, pretransferred_, deadline_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:281:        uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:310:        bool pretransferred_, uint256 deadline_
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:314:        uint256 received_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:321:        IERC20(address(this)).safeTransfer(recipient_, out_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:330:        uint256 before_ = tokenOut_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:334:        out_ = tokenOut_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:343:    function _stakePath(uint256 amount_, uint256 minimum_, address recipient_, bool pretransferred_, uint256 deadline_)
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:348:        uint256 received_ = _pullToken(IERC20(address(this)), amount_, pretransferred_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:463:            pair_.safeTransfer(recipient_, out_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:487:                uint256 have_ = IERC20(address(this)).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:513:            if (amountOut_ > 0) IERC20(pair_).safeTransfer(recipient_, amountOut_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:537:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:547:                // A pretransfer is already protocol inventory and cannot prove this caller's ownership.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:548:                if (pretransferred) revert Repo.NotAuthorized(msg.sender);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:555:            _rejectPretransferredFirstBond(pretransferred, amountIn);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:558:        BondSeat memory seat_ = _seatBond(tokenIn, amountIn, pretransferred, deadline, s.isReserveLive);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:575:        lp_.safeTransfer(_bondLpHolder(), shares_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:602:    function _seatBond(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_, uint256 deadline_, bool live_)
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:606:        uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:705:    function _entryDonate(IERC20 token, uint256 amount, bool pretransferred) internal {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:706:        if (pretransferred) LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol:709:            .donate(msg.sender, token, amount, 0, pretransferred, block.timestamp + 1);
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:216:        uint256 before_ = s_.detf.balanceOf(address(this));
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:222:        return s_.detf.balanceOf(address(this)) - before_;
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:230:            IERC20(address(s_.staking)).safeTransfer(receiver_, native_);
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:244:            s_.detf.safeTransfer(receiver_, amount_);
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:255:        uint256 before_ = token_.balanceOf(address(this));
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:257:        uint256 received_ = token_.balanceOf(address(this)) - before_;
+contracts/vaults/detf/common/sy/DETFSYTarget.sol:263:        uint256 held_ = s_.isStaking ? s_.staking.gonsOf(address(this)) : s_.detf.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol:72:        uint256 bal = IERC20(token).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol:74:        uint256 v2Bal = IERC20(launchTokenV2).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol:258:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol:265:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol:291:            } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol:312:        } catch (bytes memory reason_) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsMix.sol:61:        uint256 v2This = IERC20(hookPair1).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:36:import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:68:    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:69:        if (pretransferred_) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:103:        uint256 held_ = lp_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:390:    function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:391:        uint256 B0 = token_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:392:        if (!pretransferred_) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:394:            actual_ = token_.balanceOf(address(this)) - B0;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:400:        LocalCreditLib.requirePretransferCaller(msg.sender);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:401:        uint256 available_ = LocalCreditLib.available(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:414:            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:472:        uint256 have_ = lp_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:481:        uint256 bal_ = lp_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:483:        lp_.safeTransfer(address(s.bondNftVault), bal_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:500:        uint256 lpBal_ = lp_.balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:502:            lp_.safeTransfer(address(s.bondNftVault), lpBal_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:512:                uint256 before_ = IERC20(tokens_[i]).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:514:                if (IERC20(tokens_[i]).balanceOf(address(this)) != before_) changed_ = true;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:517:                uint256 beforeSe_ = IERC20(ses_[j]).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:519:                if (IERC20(ses_[j]).balanceOf(address(this)) != beforeSe_) changed_ = true;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:526:        uint256 bal_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:535:            if (s.hookPairTokens._contains(token_) && _parkUnmintablePairDust(token_, IERC20(token_).balanceOf(address(this)))) return;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:536:            MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:539:        uint256 leftover_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:545:                MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:553:        leftover_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:571:            uint256 before_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:580:            uint256 after_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:596:            uint256 before_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:605:            uint256 after_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:643:                MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:646:        } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:652:        MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:665:        MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:678:        uint256 left_ = IERC20(token_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:680:        IERC20(token_).safeTransfer(Repo._layoutStruct().hook, left_ - 10);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:687:        uint256 amt_ = IERC20(pair_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:690:            uint256 before_ = IERC20(pair_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:696:            uint256 seBal_ = IERC20(se_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:697:            if (seBal_ > 10) IERC20(se_).safeTransfer(s.hook, seBal_ - 10);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:698:            uint256 after_ = IERC20(pair_).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe_Decimals.sol:282:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe_Decimals.sol:289:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:502:    /// @notice Annual 5% closure with fixed eight-hour epochs and uncapped aggregate catch-up.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:557:            catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:559:            catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:575:            catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:592:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:817:        try IUniswapV4Detf(d).donate(IERC20(token), amount, false) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:903:                } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol:906:            } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix.sol:74:        uint256 v2Bal = IERC20(launchTokenV2).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsMix_Decimals.sol:61:        uint256 v2This = IERC20(hookPair1).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UNISWAP_V4_DETF_RELEASE_GATE_REMEDIATION.md:59:no issuance/burning by the fallback itself, unchanged protocol LP, full catch-up,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceTarget.sol:14:    ///      Record remaining custody after settlement so later pretransfer claims
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceTarget.sol:31:    function donate(IERC20 token, uint256 amount, bool pretransferred) external {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceTarget.sol:32:        _entryDonate(token, amount, pretransferred);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix.sol:127:        uint256 bal = IERC20(token).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsV2Se.sol:36:        uint256 leftover = IERC20(hookPair0).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol:149:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol:156:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol:341:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol:355:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/FEE_ACCRUAL_DETF_COMPOSITION_PRD.md:108:The wrapper's approved accounting and interface rules apply: proportional actual backing, virtual asset/share offsets, donation-sensitive previews, no fees or reward tokens, rejected deposit pretransfers, supported withdrawal share pretransfers/internal-balance burning, zero previews and explicit zero-execution reverts. Use its actual metadata and backing-dependent rate; a constant provider is not valid. Test full redemption, dust, donated assets, authorization and minimum outputs through the real DETF buffer routes.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/FEE_ACCRUAL_DETF_COMPOSITION_PRD.md:218:3. Unauthorized redemption, false pretransfer claims, reentrancy, unsupported routes, and slippage/deadline failures are covered.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsV2Se_Decimals.sol:36:        uint256 leftover = IERC20(hookPair0).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_MorphoBlueSe.sol:144:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_MorphoBlueSe.sol:151:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol:115:            } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeTarget.sol:16:        bool pretransferred_,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeTarget.sol:19:        return _entryExchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se.sol:72:        uint256 bal = IERC20(token).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol:117:            try ponsV1.swapRouter.exactInputSingle{value: ethIn}(params) {} catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol:259:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol:266:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol:175:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol:182:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol:252:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol:259:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Adversarial.sol:23:import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Adversarial.sol:27:    UniV4DetfPretransferHelper
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Adversarial.sol:48:        preHelper = new UniV4DetfPretransferHelper();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Adversarial.sol:49:        apexCaller = new AtomicPretransferCaller();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:16:import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:42:contract UniV4DetfPretransferHelper {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:43:    function mintPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:56:    function bondPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:72:    function donatePretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:95:    UniV4DetfPretransferHelper internal preHelper;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:96:    AtomicPretransferCaller internal apexCaller;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:103:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:123:        preHelper = new UniV4DetfPretransferHelper();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:124:        apexCaller = new AtomicPretransferCaller();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:159:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:406:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:437:            apexCaller.consumePretransfer(IERC20(address(pairToken)), address(this), detf, resting_, data_), (uint256)
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:458:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:472:    /// @dev I1 donate: pretransferred cannot consume DETF-booked pair. Honest same-caller
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:473:    ///      NFT pretransfer is DN7. Leftover after an honest donate is I3.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:486:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:507:        preHelper.mintPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:523:        preHelper.bondPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:538:        preHelper.donatePretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:550:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:564:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:580:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:595:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol:672:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:16:import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:42:contract UniV4DetfPretransferHelper_Decimals {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:43:    function mintPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:56:    function bondPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:72:    function donatePretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:95:    UniV4DetfPretransferHelper_Decimals internal preHelper;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:96:    AtomicPretransferCaller internal apexCaller;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:103:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:123:        preHelper = new UniV4DetfPretransferHelper_Decimals();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:124:        apexCaller = new AtomicPretransferCaller();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:159:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:406:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:426:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:439:    /// @dev I1 donate: pretransferred cannot consume DETF-booked pair. Honest same-caller
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:440:    ///      NFT pretransfer is DN7. Leftover after an honest donate is I3.
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:454:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:474:        preHelper.mintPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:490:        preHelper.bondPretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:505:        preHelper.donatePretransfer(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:518:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:532:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:548:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:562:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol:621:        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:135:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:176:            } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:197:        } catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:448:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:462:        ) {} catch {}
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:543:            } catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:564:        } catch (bytes memory reason_) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol:118:            try ponsV1.swapRouter.exactInputSingle{value: ethIn}(params) {} catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol:267:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol:274:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol:404:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol:411:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol:75:        uint256 bal = IERC20(token).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsV1Se_Decimals.sol:61:            try ponsV1.swapRouter.exactInputSingle{value: ethIn}(params) {} catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol:127:        uint256 bal = IERC20(token).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol:433:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol:440:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se.sol:75:        uint256 bal = IERC20(token).balanceOf(address(this));
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol:94:            try router.exactInputSingle{value: ethIn}(params) {} catch {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol:290:        } catch (bytes memory err) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol:297:            } catch (bytes memory err2) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondTarget.sol:16:        bool pretransferred,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondTarget.sol:19:        return _entryBond(tokenIn, amountIn, lockDuration, recipient, pretransferred, deadline);

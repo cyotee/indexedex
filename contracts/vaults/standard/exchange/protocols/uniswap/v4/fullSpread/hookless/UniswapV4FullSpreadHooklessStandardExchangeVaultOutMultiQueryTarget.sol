@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4FullSpreadHooklessStandardExchangeVaultInExecutionBinding as ExitBinding} from "./interfaces/IUniswapV4FullSpreadHooklessStandardExchangeVaultComponentBindings.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {UniswapV4FullSpreadHooklessStandardExchangeVaultRouteTypes as Types} from "./UniswapV4FullSpreadHooklessStandardExchangeVaultRouteTypes.sol";
 import {UniswapV4FullSpreadHooklessStandardExchangeVaultInventoryMath as Inventory} from "./UniswapV4FullSpreadHooklessStandardExchangeVaultInventoryMath.sol";
@@ -19,6 +20,19 @@ import {
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultOutBase.sol";
 
 contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiQueryTarget is UniswapV4FullSpreadHooklessStandardExchangeVaultOutBase, NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant operationScope returns (uint256 amount_)
+    {
+        // Native SY has already authorized the held-share debit. Keep its lock
+        // and operation scope here, sharing the installed immutable exact-input delegate.
+        address delegate_ = ExitBinding(address(this)).UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE();
+        (bool ok_, bytes memory result_) = delegate_.delegatecall(abi.encodeWithSignature(
+            "executeZapOutExactIn(address,uint256,uint256,address)", tokenOut_, shares_, minimum_, receiver_
+        ));
+        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
+        amount_ = abi.decode(result_, (uint256));
+        _pokeBoundPoolTwap();
+    }
 
 
     function getTokensIn() public view override returns (address[] memory tokens) {

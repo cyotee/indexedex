@@ -415,6 +415,12 @@ contract AerodromeStandardExchangeInTarget is
                 && address(tokenOut) == address(this)
         ) {
             if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
+            // A deposit must buy at least one vault-share unit. Reject before
+            // entering an AMM swap whose rounded output cannot fund that claim.
+            if (IStandardExchangeIn(address(this)).previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
+                revert MinAmountNotMet(1, 0);
+            }
+
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
             // A0: unbooked reserve LP cannot be absorbed into a zap-in share mint.
             if (IERC20(address(pool)).balanceOf(address(this)) != ERC4626Repo._lastTotalAssets()) {

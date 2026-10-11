@@ -9,6 +9,17 @@ import {
 
 /// @notice Execute-only exchangeOut (Option 1b view/execute split).
 contract AerodromeStandardExchangeOutFacet is AerodromeStandardExchangeOutExecuteTarget, IFacet {
+    address private immutable SELF = address(this);
+    error DelegateCallRequired();
+
+    /// @dev Not installed on the vault. Native SY authorizes the holder and keeps its lock.
+    function executeNativeSyRedemption(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        external returns (uint256)
+    {
+        if (address(this) == SELF) revert DelegateCallRequired();
+        return _redeemLpSharesFrom(holder_, receiver_, shares_, tokenOut_, minimum_);
+    }
+
     function facetName() public pure returns (string memory name) {
         return type(AerodromeStandardExchangeOutFacet).name;
     }

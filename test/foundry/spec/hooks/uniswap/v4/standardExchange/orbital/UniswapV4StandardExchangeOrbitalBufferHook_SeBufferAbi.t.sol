@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -35,6 +37,19 @@ import {
  * @notice Stage 02 T2.1–T2.10: shared SE buffer ABI on the Orbital hook. n=3, two SEs.
  */
 contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
+    function test_nativeSYHeldRedemptionHelperIsNotPublic() public {
+        address facet_ = IDiamondLoupe(hook).facetAddress(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector);
+        bytes memory data_ = abi.encodeWithSignature(
+            "executeVaultHeldRedemption(address,uint256,address,uint256)", user, 1, address(token0), 0
+        );
+        (bool ok_, bytes memory reason_) = facet_.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("DelegateCallRequired()"));
+        (ok_, reason_) = hook.call(data_);
+        assertFalse(ok_);
+        assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", bytes4(data_)));
+    }
+
     function _defaultPkgArgs()
         internal
 
@@ -272,6 +287,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
     }
 
     function test_nativeSYInternalBalanceLimitsAndPriorInventory() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
         token0.mint(hook, 7 ether); token1.mint(hook, 11 ether); token2.mint(hook, 13 ether);
         IStandardizedYield sy = IStandardizedYield(hook);
@@ -281,7 +297,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()")); sy.redeem(user, amount, address(token0), quoted + 1, false);
         assertEq(sy.balanceOf(user), lp, "failed minimum rolls back burn");
         sy.transfer(hook, 3 * amount);
-        assertEq(sy.redeem(user, amount, address(token0), quoted, true), quoted);
+        assertEq(abi.decode(atomic.execute(address(sy), abi.encodeCall(IStandardizedYield.redeem, (user, amount, address(token0), quoted, true))), (uint256)), quoted);
         assertEq(sy.balanceOf(hook), 2 * amount, "only requested internal shares burned");
         vm.stopPrank();
         assertEq(token0.balanceOf(hook) - orbital.rawReserve(0), 7 ether);

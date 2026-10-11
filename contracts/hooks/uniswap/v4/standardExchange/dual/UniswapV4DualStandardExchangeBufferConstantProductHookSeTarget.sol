@@ -48,6 +48,13 @@ import {
 abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget is UniswapV4DualStandardExchangeBufferConstantProductHookCommon, NativeStandardYieldTarget {
     using SafeERC20 for IERC20;
 
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256 amount_)
+    {
+        amount_ = _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, block.timestamp);
+        if (amount_ < minimum_) revert InsufficientTokenOut();
+    }
+
     function getTokensIn() public view override returns (address[] memory tokens_) {
         Repo.Layout storage l = Repo._layout();
         tokens_ = new address[](4);

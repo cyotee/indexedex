@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -34,6 +36,38 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
 
     function _sy() internal view returns (IStandardizedYield) { return IStandardizedYield(_nativePool()); }
     function _poolApprove() internal { vm.prank(_nativeActor()); IERC20(_nativePool()).approve(_nativePool(), type(uint256).max); }
+
+    function test_poolSYFullSupplyLiquidation_everyAsset() public view {
+        IStandardizedYield sy_ = _sy();
+        address[] memory outputs_ = sy_.getTokensOut();
+        for (uint256 i_; i_ < outputs_.length; ++i_) {
+            uint256 quote_ = sy_.previewRedeem(outputs_[i_], sy_.totalSupply());
+            assertGt(quote_, 0, "whole native BPT supply remains quotable");
+            assertEq(quote_, IStandardExchange(address(sy_)).previewExchangeIn(
+                IERC20(address(sy_)), sy_.totalSupply(), IERC20(outputs_[i_])
+            ), "SY and SE whole-supply valuation");
+        }
+    }
+
+    function test_poolSYLargeLiquidation_everyAsset() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address[] memory outputs_ = sy_.getTokensOut();
+        _poolApprove();
+        uint256 snapshot_ = vm.snapshotState();
+        for (uint256 i_; i_ < outputs_.length; ++i_) {
+            uint256 amount_ = sy_.totalSupply() * 45 / 100;
+            uint256 quote_ = sy_.previewRedeem(outputs_[i_], amount_);
+            assertGt(quote_, 0, "large native withdrawal quote");
+            uint256 before_ = IERC20(outputs_[i_]).balanceOf(actor_);
+            uint256 shares_ = sy_.balanceOf(actor_);
+            vm.prank(actor_);
+            assertEq(sy_.redeem(actor_, amount_, outputs_[i_], quote_, false), quote_, "large SY payout");
+            assertEq(IERC20(outputs_[i_]).balanceOf(actor_) - before_, quote_, "actual asset credit");
+            assertEq(shares_ - sy_.balanceOf(actor_), amount_, "actual BPT burn");
+            assertTrue(vm.revertToState(snapshot_));
+        }
+    }
 
     /// @dev Obtain SE shares from an actual funded LP redemption, never test-mint SUT shares.
     function _fundInput(address token_) internal returns (uint256 amount_) {
@@ -87,14 +121,44 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             if (!_nativeVirtualBuffer(address(tokens_[i_]))) continue;
             uint256 before_ = tokens_[i_].balanceOf(actor_);
-            vm.expectRevert(); sy_.previewDeposit(address(tokens_[i_]), 1);
-            vm.expectRevert(); sy_.previewRedeem(address(tokens_[i_]), 1);
-            vm.prank(actor_); vm.expectRevert(); sy_.deposit(actor_, address(tokens_[i_]), 1, 0);
-            vm.prank(actor_); vm.expectRevert(); sy_.redeem(actor_, 1, address(tokens_[i_]), 0, false);
-            vm.prank(actor_); vm.expectRevert();
+            assertEq(sy_.previewDeposit(address(tokens_[i_]), 1), 0, "unsupported buffer deposit quote");
+            assertEq(sy_.previewRedeem(address(tokens_[i_]), 1), 0, "unsupported buffer redemption quote");
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidSYToken(address)", address(tokens_[i_]))); sy_.deposit(actor_, address(tokens_[i_]), 1, 0);
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidSYToken(address)", address(tokens_[i_]))); sy_.redeem(actor_, 1, address(tokens_[i_]), 0, false);
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(tokens_[i_]), address(sy_)));
             IStandardExchange(address(sy_)).exchangeIn(tokens_[i_], 1, IERC20(address(sy_)), 0, actor_, false, block.timestamp);
             assertEq(tokens_[i_].balanceOf(actor_), before_);
         }
+    }
+
+    /// @notice A below-minimum native BPT deposit quotes zero and reverts atomically.
+    function test_poolSYBelowMinimumRejectsWithoutTakingAssets() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address token_ = sy_.getTokensIn()[0];
+        uint256 funded_ = _fundInput(token_);
+        uint256 high_ = funded_ / 2;
+        assertGt(sy_.previewDeposit(token_, high_), 0, "funded executable upper bound");
+        uint256 low_;
+        while (high_ - low_ > 1) {
+            uint256 mid_ = low_ + (high_ - low_) / 2;
+            if (sy_.previewDeposit(token_, mid_) == 0) low_ = mid_;
+            else high_ = mid_;
+        }
+        uint256 before_ = IERC20(token_).balanceOf(actor_);
+        uint256 supply_ = sy_.totalSupply();
+        if (low_ != 0) {
+            vm.prank(actor_);
+            vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
+            sy_.deposit(actor_, token_, low_, 0);
+            assertEq(IERC20(token_).balanceOf(actor_), before_);
+            assertEq(sy_.totalSupply(), supply_);
+        }
+        uint256 quote_ = sy_.previewDeposit(token_, high_);
+        vm.prank(actor_);
+        assertEq(sy_.deposit(actor_, token_, high_, quote_), quote_, "first payable input executes exactly");
+        assertEq(before_ - IERC20(token_).balanceOf(actor_), high_);
+        assertEq(sy_.totalSupply() - supply_, quote_);
     }
 
     function test_poolSYEveryAdvertisedInputQuotesActualBptAndPreservesIdleAssets() public {
@@ -157,11 +221,12 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
     }
 
     function test_poolSYInternalBalanceConsumesOnlyRequestedShares() public {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor(); address token_ = sy_.getTokensOut()[0];
         uint256 amount_ = sy_.balanceOf(actor_) / 100; vm.prank(actor_); sy_.transfer(address(sy_), amount_ * 3);
         uint256 before_ = sy_.balanceOf(address(sy_)); uint256 q_ = sy_.previewRedeem(token_, amount_);
         address recipient_ = makeAddr("pool-sy-recipient");
-        vm.prank(makeAddr("pool-sy-router")); uint256 got_ = sy_.redeem(recipient_, amount_, token_, q_, true);
+        vm.prank(makeAddr("pool-sy-router")); uint256 got_ = abi.decode(atomic.execute(address(sy_), abi.encodeCall(IStandardizedYield.redeem, (recipient_, amount_, token_, q_, true))), (uint256));
         assertEq(got_, q_); assertEq(IERC20(token_).balanceOf(recipient_), q_);
         assertEq(before_ - sy_.balanceOf(address(sy_)), amount_);
     }

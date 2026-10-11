@@ -101,6 +101,21 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         vm.expectPartialRevert(bytes4(0xfb8f41b2)); subject.transferFrom(holder, address(this), 1 ether);
     }
 
+    /// @dev The V3 input facet exposes its immutable delegate address to other
+    /// implementations. It is implementation metadata, not a vault entry point.
+    function _assertImplementationOnlySelector(bytes4 selector) internal view returns (bool) {
+        if (keccak256(bytes(_family())) != keccak256("UniswapV3")
+            || selector != bytes4(keccak256("UNISWAP_V3_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE()"))) return false;
+        IDiamondLoupe loupe = IDiamondLoupe(address(subject));
+        assertEq(loupe.facetAddress(selector), address(0), "delegate metadata must not be installed on proxy");
+        address inputFacet = loupe.facetAddress(IStandardExchangeIn.exchangeIn.selector);
+        (bool ok, bytes memory data) = inputFacet.staticcall(abi.encodeWithSelector(selector));
+        assertTrue(ok, "input implementation exposes delegate metadata");
+        assertEq(data.length, 32, "delegate getter ABI");
+        assertGt(abi.decode(data, (address)).code.length, 0, "delegate has deployed code");
+        return true;
+    }
+
     function test_everyTargetSelectorIsInstalledOnRegistryProxy() public view {
         string[10] memory targets = [string("InTarget"), "InQueryTarget", "InMultiTarget", "InMultiQueryTarget",
             "OutExecuteTarget", "OutQueryTarget", "OutMultiTarget", "OutMultiQueryTarget", "LiquidReserveTarget", "PositionImportTarget"];
@@ -111,6 +126,7 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
             string[] memory signatures = vm.parseJsonKeys(artifact, ".methodIdentifiers");
             for (uint256 j; j < signatures.length; ++j) {
                 bytes4 selector = bytes4(keccak256(bytes(signatures[j])));
+                if (_assertImplementationOnlySelector(selector)) continue;
                 address implementation = IDiamondLoupe(address(subject)).facetAddress(selector);
                 assertTrue(implementation.code.length > 0, signatures[j]);
                 ++checked;

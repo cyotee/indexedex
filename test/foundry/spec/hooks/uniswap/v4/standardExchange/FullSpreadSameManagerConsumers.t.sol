@@ -175,6 +175,51 @@ abstract contract FullSpreadSameManagerAssertions is Test {
         }
     }
 
+    /// @notice Local settlement pays the real idle pool redemption price without changing the pool book.
+    function test_sameManager_redemptionMatchesIdleExecutionBothUnderlyingFaces() public {
+        for (uint256 i; i < 2; ++i) {
+            uint256 burn = IERC20(consumerVault).balanceOf(address(this)) / 10_000;
+            uint256 quote = _blockedPayout(i, burn);
+            uint256 saved = vm.snapshotState();
+            uint256 beforeOutput = consumerTokens[i].balanceOf(address(this));
+            uint256 paid = IStandardExchangeIn(consumerVault).exchangeIn(
+                IERC20(consumerVault), burn, consumerTokens[i], quote, address(this), false, block.timestamp
+            );
+            assertGt(paid, 0, "real pool redemption is funded");
+            assertEq(paid, quote, "ordinary preview matches actual pool redemption");
+            assertEq(consumerTokens[i].balanceOf(address(this)) - beforeOutput, paid, "actual idle payout");
+            assertTrue(vm.revertToStateAndDelete(saved));
+            _assertLocalRedemption(i, burn, paid);
+        }
+    }
+
+    function _assertLocalRedemption(uint256 i_, uint256 burn_, uint256 expected_) private {
+        assertEq(Wrapper(consumers[i_]).previewUnwrap(burn_), expected_, "projected quote uses idle execution price");
+        assertEq(abi.decode(driver.run(consumers[i_], abi.encodeCall(Wrapper.previewUnwrap, (burn_))), (uint256)),
+            expected_, "actual manager session preserves price");
+        bytes memory state = ContextQuote.snapshot(consumerVault, address(consumerTokens[i_]), address(this), address(consumerManager));
+        (bytes memory next, uint256 spent, uint256 quoted,) = Transition(consumerVault).quoteTransition(
+            state, Transition.Operation.RedeemExactIn, burn_);
+        assertEq(spent, burn_);
+        assertEq(quoted, expected_, "transition uses idle execution price");
+        uint256 localOut = consumerTokens[i_].balanceOf(consumerVault);
+        uint256 localOther = consumerTokens[1 - i_].balanceOf(consumerVault);
+        SwapObservation memory beforeState;
+        beforeState.output = consumerTokens[i_].balanceOf(address(this));
+        beforeState.shares = IERC20(consumerVault).balanceOf(address(this));
+        beforeState.supply = IERC20(consumerVault).totalSupply();
+        assertGe(localOut, expected_, "local reserve covers pool-priced payout");
+        consumerRouter.swapExactIn(consumerKeys[i_], _params(i_, false, -int256(burn_)), "");
+        assertEq(consumerTokens[i_].balanceOf(address(this)) - beforeState.output, expected_, "blocked equals real idle payout");
+        assertEq(consumerTokens[i_].balanceOf(consumerVault), localOut - expected_, "only output reserve pays");
+        assertEq(consumerTokens[1 - i_].balanceOf(consumerVault), localOther, "no opposing-token conversion");
+        assertEq(IERC20(consumerVault).balanceOf(address(this)), beforeState.shares - burn_, "exact caller share debit");
+        assertEq(IERC20(consumerVault).totalSupply(), beforeState.supply - burn_, "burn exactly once");
+        assertEq(ContextQuote.snapshot(consumerVault, address(consumerTokens[i_]), address(this), address(consumerManager)),
+            next, "local settlement matches complete projected book");
+        _assertBookedAndFlat(i_);
+    }
+
     function test_sameManager_twoLegEoRejectsPrefundedRouterBothOrientations() public {
         vm.expectCall(address(consumerManager), abi.encodeWithSelector(IPoolManager.unlock.selector), uint64(4));
         for (uint256 i; i < 2; ++i) {
@@ -208,13 +253,8 @@ abstract contract FullSpreadSameManagerAssertions is Test {
         }
     }
     function _blockedPayout(uint256 i, uint256 shares) private view returns (uint256) {
-        (uint256 d0, uint256 d1) = Reserve(consumerVault).deployedReserve();
-        uint256 outBook = consumerTokens[i].balanceOf(consumerVault) + (i == 0 ? d0 : d1);
-        uint256 otherBook = consumerTokens[1-i].balanceOf(consumerVault) + (i == 0 ? d1 : d0);
-        uint256 supply = IERC20(consumerVault).totalSupply();
-        uint256 u = outBook * shares / supply;
-        uint256 v = otherBook * shares / supply;
-        return u + (outBook-u) * v / otherBook;
+        // Capacity changes settlement availability, never the pool-based redemption price.
+        return IStandardExchangeIn(consumerVault).previewExchangeIn(IERC20(consumerVault), shares, consumerTokens[i]);
     }
 
     function test_consumer_contextHelperPreservesForeignManagerAndPropagatesDecoderFailure() public {
@@ -573,9 +613,9 @@ abstract contract FullSpreadSameManagerAssertions is Test {
         state = IStandardExchangeUnlockContextQuote(consumerVault).quoteStateWithUnavailableUnlock(state, address(consumerManager));
         uint256 projected = IStandardExchangeRateQuote(provider).quoteRate(consumerVault, pair, state);
         uint256 actual = abi.decode(driver.run(provider, abi.encodeCall(IRateProvider.getRate, ())), (uint256));
-        assertGt(actual, 0);
+        assertGt(actual, 0, "18-decimal rate of one whole token");
         assertTrue(actual != 1e18, "fixture exercises a nonunit buffered rate");
-        assertEq(projected, actual, "projected rate equals actual blocked rate");
+        assertEq(projected, actual, "locked quote equals unlocked pool quote");
     }
 
     function _assertAmmFlat(AmmFixture.Fixture memory f) private view {

@@ -188,8 +188,7 @@ abstract contract AaveCrossVersionLoopExchangeBase is ReentrancyLockModifiers, I
         if (amountIn_ == 0) amountIn_ = 1;
     }
 
-    /// @dev Public pretransfer credit is unavailable. Native SY internal-balance redemption calls
-    /// as the diamond and burns only the requested quantity from its actual self-share balance.
+    /// @dev Public exchange pretransfer credit is unavailable; this route burns the caller's shares.
     function _burnWithdrawalShares(uint256 shares_, bool prepaid_) internal {
         if (shares_ == 0) revert ZeroLoopAmount();
         if (prepaid_) revert ISecurePullErrors.TransferDeltaInsufficient(shares_, 0);

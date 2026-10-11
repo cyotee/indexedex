@@ -433,6 +433,7 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
             string[] memory signatures=vm.parseJsonKeys(artifact,".methodIdentifiers");
             for(uint256 j;j<signatures.length;++j){
                 bytes4 selector=bytes4(keccak256(bytes(signatures[j])));
+                if (_assertImplementationOnlySelector(selector)) continue;
                 address facet=IDiamondLoupe(address(subject)).facetAddress(selector); assertTrue(facet!=address(0),signatures[j]);
                 assertEq(IFacet(facet).facetName(), _expectedFacet(i, targets[i], selector), signatures[j]);
                 bytes4[] memory declared=IFacet(facet).facetFuncs(); bool found;

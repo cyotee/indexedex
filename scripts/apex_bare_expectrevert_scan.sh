@@ -15,7 +15,12 @@ roots = (
     Path("test/foundry/spec/hooks/uniswap/v4/standardExchange"),
     Path("test/foundry/spec/vaults/standard/exchange/protocols/uniswap"),
 )
+custody = (
+    Path("test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Adversarial.t.sol"),
+    Path("test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Fuzz.t.sol"),
+)
 paths = {p for root in roots for p in root.rglob("*.sol")}
+paths.update(path for path in custody if path.is_file())
 for p in Path("test/foundry/spec").rglob("*.sol"):
     if re.search(r"(?<![A-Za-z0-9])APEX(?:\b|[_0-9])", p.read_text(), re.IGNORECASE):
         paths.add(p)

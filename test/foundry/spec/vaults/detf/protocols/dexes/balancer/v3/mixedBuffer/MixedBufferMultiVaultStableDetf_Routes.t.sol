@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     TestBase_MixedBufferMultiVaultStableDetf
@@ -51,12 +52,20 @@ contract MixedBufferMultiVaultStableDetf_Routes_Test is TestBase_MixedBufferMult
     }
 
     function test_exactOut_InvalidRoute() public virtual {
-        // exact-out is not a closed-form route; diamond previewExchangeOut must revert.
-        (bool ok,) = detf.call(
-            abi.encodeWithSignature(
-                "previewExchangeOut(address,address,uint256)", address(_fixtureBufferToken()), detf, uint256(1e9)
-            )
-        );
-        assertFalse(ok, "expected InvalidRoute revert");
+        IERC20 input_ = _fixtureBufferToken();
+        IStandardExchangeOut exchange_ = IStandardExchangeOut(detf);
+        assertEq(exchange_.previewExchangeOut(input_, IERC20(detf), 1e9), 0, "unsupported exact-output preview");
+        uint256 supply_ = IERC20(detf).totalSupply();
+        uint256 held_ = input_.balanceOf(detf);
+        uint256 payer_ = input_.balanceOf(address(this));
+        uint256 recipient_ = IERC20(detf).balanceOf(bob);
+        for (uint256 flag_; flag_ < 2; ++flag_) {
+            vm.expectRevert(abi.encodeWithSelector(MixedBufferMultiVaultStableDetfRepo.InvalidRoute.selector, address(input_), detf));
+            exchange_.exchangeOut(input_, 1e18, IERC20(detf), 1e9, bob, flag_ == 1, block.timestamp);
+            assertEq(IERC20(detf).totalSupply(), supply_, "no issuance");
+            assertEq(input_.balanceOf(detf), held_, "held input unchanged");
+            assertEq(input_.balanceOf(address(this)), payer_, "payer unchanged");
+            assertEq(IERC20(detf).balanceOf(bob), recipient_, "no payout");
+        }
     }
 }

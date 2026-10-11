@@ -270,6 +270,10 @@ contract SeMatrix_FullSpreadV3Fixture is SeMatrixFixture {
         return _lr().localReserve(address(token0));
     }
 
+    function partialDeploymentBalance() external view override returns (bool, uint256) {
+        return (true, token0.balanceOf(address(pool)));
+    }
+
     /* --------------------------- operative failure ------------------------ */
 
     /// @notice Makes the SE's operative investment call (`IUniswapV3Pool.mint`, reached from

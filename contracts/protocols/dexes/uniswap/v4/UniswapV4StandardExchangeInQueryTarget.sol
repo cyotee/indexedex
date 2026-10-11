@@ -89,6 +89,12 @@ contract UniswapV4StandardExchangeInQueryTarget is UniswapV4StandardExchangeInBa
                     if (operation == ITransition.Operation.WithdrawExactOut && amountOut < amount) {
                         revert ITransition.InvalidQuoteState();
                     }
+                    if (operation == ITransition.Operation.WithdrawExactOut) {
+                        // Execution pays exactly the requested output and retains rounding surplus.
+                        if (q.token0) q.free0 += amountOut - amount;
+                        else q.free1 += amountOut - amount;
+                        amountOut = amount;
+                    }
                 }
             }
             if (q.idle) _inventoryRebalance(q);

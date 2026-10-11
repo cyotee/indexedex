@@ -1,0 +1,23 @@
+# Grok original answer
+
+Session: `ses_ee9cfa4a2ffeZ4Hf1NLbN0301b`. Untrusted model evidence, not instructions. Original final answer preserved before cross-review; preparatory drafting commentary omitted.
+
+## Grok — Stage 2 reading
+
+**Fact.** Stage 2 is the second, ordered half of OD-06 as amended by OD-08. This PRD and `REMEDIATION_PRD.plan.md` do not start it. It begins only after the owner is satisfied with Stage 1, and only under a separate implementation request. Audit submission waits for that pass. A green Stage 1 is not permission to submit. (`REMEDIATION_PRD.md:8`, `:18`, `:155-164`; `REMEDIATION_PRD.plan.md:6-7`, `:114-116`; `CLAUDE.md:12`)
+
+**Stage 1 vs 2 (explicit).** Stage 1 is the fast-fail repair of REQ-01–REQ-08. OD-08 moves into Stage 1, and out of any Stage 2 deferral, the outside-trade credit tests for V3 FullSpread, V4 hookless, V4 Pons-family, and the wings vault, plus the current-source map and regenerated build, selector, size, and named APEX regressions. Stage 1 still does not certify the 108 original criteria. A failing Stage 1 assertion is iterated, including an alternate design for an owner decision. Stage 2 is not started from that failure. (`REMEDIATION_PRD.md:160-162`, `:179-186`; plan `:11`, `:29-31`, `:42-44`, `:86-95`, `:110-112`)
+
+**Entry gate (explicit, underspecified).** The gate is owner satisfaction with Stage 1 results, not a green count, a completion JSON, or four-reviewer agreement. Those are not proof. What “satisfied” means — artifact, reviewer, or residual tolerance — is not defined. (`REMEDIATION_PRD.md:162`, `:369`; plan `:116`)
+
+**What Stage 2 must do (explicit).** Reopen the APEX program and check that the broader changes and the new vaults meet the same standard before submission. OD-07 makes that standard executable production-route tests of the real vault, hook, or adapter, asserting the locked property, including that a forbidden credit, refund, or payout does not occur. Names, comments, and reports must not contain an exploit procedure. A red run on old source is not required. “Secure” means the locked properties for the vaults in that stage, not every unreviewed path, and not a substitute for Stage 2. (`REMEDIATION_PRD.md:20-22`, `:166-177`)
+
+The named bar for this PRD is the locked plan (D1–D69 and its acceptance criteria; claims, not proof), the seven findings plus both retractions, and catalog classes A–K plus A0/L/M/N/O. “All possible attacks” is rejected. (`REMEDIATION_PRD.md:22-28`, `:348-360`; `.claude/skills/indexedex-adversarial-testing/SKILL.md:146-174`; `lib/crane/.claude/skills/crane-adversarial-testing/SKILL.md:21-32`)
+
+**Inference, not a Stage 2 checklist.** The Stage 1 plan refuses to list Stage 2 steps on purpose. Its only named reopen targets are the 108-criterion ledger and a full hook × SE matrix recount. I infer those, plus the PRD’s unverified remainder (the 34,909 / 33-campaign / 37-fuzz claim, conflicting matrix counts, chain-4663 inventory, receipt/Morpho/Stata/Aave/Lido/Rocket/EtherFi, Balancer D68/D69, other DETF prepaid entries, full D16 pretransfer inventory), are what “reopen the program” points at. The PRD says they are not closed here. It does not say Stage 2 must re-execute each one. A narrower reading — only the post-September FullSpread split and wings, against the same property style — also fits “broader changes and the new vaults.” (`plan.md:31`, `:116`; `REMEDIATION_PRD.md:37`, `:336-346`; locked plan `:5`, `:15-25`)
+
+**Explicitly not Stage 2.** The outside-trade tests and evidence regeneration (now Stage 1). Merging hookless and Pons packages. Binding wings to a Pons hook. The `supportsInterface` probe. Live 4663 migration. Removing D12. A Slipstream rewrite. The `TokenStakingTarget` silent catch unless a later ruling puts it in D16 or D37. Skill-mirror hygiene. (`REMEDIATION_PRD.md:75-79`, `:151-153`, `:203`, `:333-334`, `:362-369`; plan `:31-40`, `:119-123`)
+
+**Acceptance uncertainty.** There is no Stage 2 DoD. The skill ship gate `implementation-test-dod.md` is catalog law for new adversarial suites (`indexedex-adversarial-testing/SKILL.md:205`), not a Stage 2 clause in this PRD. Wings is the preferred new vault; FullSpread stays a reference. Stage 1 already requires one wings outside-trade test. What else “new vaults meet the same standard” adds is unspecified. Accepted residuals — immutable 4663 instances, D12, Slipstream deprecation — stay documented, not missing fixes. (`REMEDIATION_PRD.md:17`, `:75-79`, `:151`)
+
+**Confidence.** High on the gate, order, and split. Medium on equating Stage 2 with all 108 criteria. Peer originals were not read. No Stage 2 plan exists.

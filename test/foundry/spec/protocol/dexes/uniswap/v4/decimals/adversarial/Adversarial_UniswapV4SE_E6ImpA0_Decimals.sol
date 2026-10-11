@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
@@ -164,6 +165,8 @@ abstract contract Adversarial_UniswapV4SE_E6ImpA0_Decimals is UniswapV4SeDecimal
     }
 
     function test_E6_exchangeOut_zap_doesNotSweepOtherUsersShares() public {
+        // Reach prepaid-credit accounting through an eligible integrating-contract caller.
+        attacker = address(new AtomicPretransferCaller());
         uint256 leftover_ = _mintSeShares(victim, _testAmt0());
         uint256 attackerShares_ = _mintSeShares(attacker, _testAmt0());
         uint256 used_ = attackerShares_ / 2;
@@ -197,6 +200,7 @@ abstract contract Adversarial_UniswapV4SE_E6ImpA0_Decimals is UniswapV4SeDecimal
     }
 
     function test_E6_exchangeOut_zap_exactUsed_doesNotRefundBookedLeftover() public {
+        attacker = address(new AtomicPretransferCaller());
         uint256 leftover_ = _mintSeShares(victim, _testAmt0());
         uint256 attackerShares_ = _mintSeShares(attacker, _testAmt0());
 
@@ -222,6 +226,7 @@ abstract contract Adversarial_UniswapV4SE_E6ImpA0_Decimals is UniswapV4SeDecimal
     }
 
     function test_E6_exchangeIn_zapOut_fatClaim_doesNotSkimBookedShares() public {
+        attacker = address(new AtomicPretransferCaller());
         uint256 leftover_ = _mintSeShares(victim, _testAmt0());
         uint256 attackerShares_ = _mintSeShares(attacker, _u0(1));
         if (attackerShares_ == 0) attackerShares_ = _mintSeShares(attacker, _testAmt0());

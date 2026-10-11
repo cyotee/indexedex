@@ -41,7 +41,7 @@ import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
-import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
 import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {IMorphoBlueStandardExchangeDFPkg} from "contracts/vaults/standard/exchange/protocols/morpho/blue/IMorphoBlueStandardExchangeDFPkg.sol";
 import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
@@ -513,7 +513,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         if (backend == 1) {
             IUniswapV3Pool pool = SeDeploy.createUniv3PoolOneToOne(IUniswapV3Factory(V3_FACTORY), pair, other, 3000);
             SeDeploy.seedUniv3Pool(pool);
-            address vault_ = SeDeploy.deployUniv3Vault(IUniswapV3StandardExchangeDFPkg(_pin("phase05_stage04_uniswap_v3_standard_exchange_pkg.json", ".uniV3SePkg", true)), pool);
+        address vault_ = SeDeploy.deployUniv3Vault(IUniswapV3FullSpreadStandardExchangeVaultDFPkg(_pin("phase05_stage04_uniswap_v3_standard_exchange_pkg.json", ".uniV3SePkg", true)), pool);
             _activatePositionSe(vault_, pair, other);
             return vault_;
         }

@@ -22,6 +22,7 @@ interface IERC4626StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaul
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
         IFacet exchangeInFacet;
+        IFacet exchangeInFacetExt;
         IFacet exchangeOutFacet;
         IFacet markerFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;

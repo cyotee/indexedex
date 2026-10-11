@@ -3,6 +3,29 @@
 > **Current release authority:** [DETF alignment PRD D57–D59 and §24](../../../../vaults/detf/DETF_ALIGNMENT_PRD.md) and the [funded staking/SY implementation plan §7.4](../../../../vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting historical instructions below. Initial activation, including an imported position, requires actual funding in both tokens. Ordinary and imported liquidity use the maximum usable tick range. Share accounting uses proportional ownership and constant-product mathematics over exact deployed token amounts, sleeve balances and earned fees counted once. Subsequent single-token deposits and funded sleeve operations during pool locks remain available. Native Pendle SY and current facet declarations are part of the release; unread caches, unused wing state and unused import metadata are removed. V4 dual inputs follow PoolKey order, with WETH representing a native currency; numeric ERC20 address order cannot reject that mapping. Prior first-single-token, sum-of-assets issuance, unchanged imported ticks, cache-retention and pre-SY selector instructions are historical. Unfinished Slipstream work and its validation are deferred under D66.
 
 
+## Pool-priced redemption clarification (2026-10-09)
+
+The owner's pool-pricing clarification supersedes historical selected-token-only
+blocked redemption formulas and padded exact-output share quotes below.
+
+- A single-token redemption is priced as the corresponding pool exit: proportional
+  local balances and earned fees, proportional position removal, then conversion
+  of the opposing token against the pool after that removal. Use actual pool fees,
+  tick crossings, hook adjustments and execution rounding.
+- Manager availability changes settlement, not this price. A blocked exit pays
+  the same reference amount from local output-token inventory, or reverts for
+  insufficient local cover. It does not remove liquidity, swap or collect fees.
+- A blocked projected transition debits the actual local payout and burned shares
+  only. Hypothetical pool changes used to calculate the price must not be committed
+  to its next state. Live and projected rate queries use the same redemption price.
+- Supported exact-output redemptions charge the minimal sufficient shares under
+  this forward price and pay exactly the requested amount. Any rounding surplus
+  from idle execution remains in the vault; caller input budgets do not alter the
+  charge. Unachievable quantity quotes return zero and execution rejects them.
+- Validation requires real idle/blocked payout parity from the same initial state,
+  complete projected-state parity, fee/tick/decimal cases, exact local cover and
+  atomic insufficient-cover failures, plus repeated operation sequences.
+
 **Name:** Uniswap V4 Standard Exchange local liquid buffer refactor  
 **Date:** 2026-08-05  
 **Status:** **Draft v1.6 — product law for planning** (Phase 0 complete for product decisions; no implementation yet)  

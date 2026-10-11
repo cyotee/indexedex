@@ -15,13 +15,12 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 
 import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
 import {
-    UniswapV4StandardExchangeCommon
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol";
+    UniswapV4StandardExchangeInBase
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
 
 /// @dev Shared Out types/helpers for Query + Execute Targets (Option 1b — siblings of Common).
 abstract contract UniswapV4StandardExchangeOutBase is
-    UniswapV4StandardExchangeCommon,
-    ReentrancyLockModifiers
+    UniswapV4StandardExchangeInBase
 {
     error ExchangeOutNotAvailable();
 
@@ -54,16 +53,6 @@ abstract contract UniswapV4StandardExchangeOutBase is
             return 0;
         }
 
-        // Blocked: sleeve cover only — shares from total reserve of tokenOut.
-        if (!canOpenPoolManagerUnlock()) {
-            (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
-            uint256 reserveOut = tokenOut == _token0() ? reserve0 : reserve1;
-            if (reserveOut == 0) return 0;
-            // ceil(desired * totalShares / reserveOut)
-            sharesRequired = (desiredAmountOut * totalShares + reserveOut - 1) / reserveOut;
-            return sharesRequired > totalShares ? totalShares : sharesRequired;
-        }
-
         if (_supportsInventoryQuote()) {
             return _inventorySharesIn(_inventorySnapshot(tokenOut, address(this)), desiredAmountOut);
         }
@@ -75,10 +64,8 @@ abstract contract UniswapV4StandardExchangeOutBase is
             bool token0 = tokenOut == _token0();
             if ((token0 ? free1 : free0) == 0) {
                 uint256 reserve = token0 ? free0 : free1;
-                if (desiredAmountOut >= reserve) return totalShares;
-                return _bufferedInventoryShares(
-                    Math.mulDiv(desiredAmountOut, totalShares, reserve, Math.Rounding.Ceil), totalShares
-                );
+                if (reserve == 0 || desiredAmountOut > reserve) return 0;
+                return Math.mulDiv(desiredAmountOut, totalShares, reserve, Math.Rounding.Ceil);
             }
         }
 
@@ -96,12 +83,13 @@ abstract contract UniswapV4StandardExchangeOutBase is
             }
         }
 
-        return _bufferedInventoryShares(high, totalShares);
+        return _quoteZapOutAmount(tokenOut, high, totalShares) >= desiredAmountOut ? high : 0;
     }
 
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        override
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);

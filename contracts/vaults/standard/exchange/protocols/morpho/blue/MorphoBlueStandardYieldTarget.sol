@@ -4,9 +4,17 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {MorphoBlueStandardExchangeCommon} from "./MorphoBlueStandardExchangeCommon.sol";
+import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
 /// @notice Native Morpho market shares use the existing accrued loan-asset entitlement.
-abstract contract MorphoBlueStandardYieldTarget is NativeStandardYieldTarget {
+abstract contract MorphoBlueStandardYieldTarget is NativeStandardYieldTarget, MorphoBlueStandardExchangeCommon, ReentrancyLockModifiers {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address, uint256 minimum_)
+        internal override nonReentrant returns (uint256)
+    {
+        return _execUnwrapExactIn(address(this), shares_, receiver_, false, minimum_);
+    }
+
     function getTokensIn() public view override returns (address[] memory tokens_) {
         tokens_ = new address[](1); tokens_[0] = IERC4626(address(this)).asset();
     }

@@ -66,18 +66,18 @@ contract ReceiptBackedERC4626Target is ReentrancyLockModifiers, IERC4626Events, 
 
     function maxWithdraw(address owner) public view virtual returns (uint256) {
         _requireFamily();
-        uint256 ownerAssets = convertToAssets(ERC20Repo._balanceOf(owner));
-        uint256 receipts = IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this));
-        return ownerAssets < receipts ? ownerAssets : receipts;
+        return previewRedeem(maxRedeem(owner));
     }
 
+    /// @dev Share cap, not an asset cap converted back to shares. The full balance is
+    ///      advertised only when its receipt payout is at least one and fits in held receipts.
     function maxRedeem(address owner) public view virtual returns (uint256) {
         _requireFamily();
-        uint256 capAssets = maxWithdraw(owner);
-        if (capAssets == 0) return 0;
-        uint256 capShares = convertToShares(capAssets);
-        uint256 bal = ERC20Repo._balanceOf(owner);
-        return capShares < bal ? capShares : bal;
+        uint256 balance = ERC20Repo._balanceOf(owner);
+        if (balance == 0) return 0;
+        uint256 receipts = IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this));
+        if (_redeemFitsReceipts(balance, receipts)) return balance;
+        return _largestRedeemableShares(balance, receipts);
     }
 
     function previewDeposit(uint256 assets) public view virtual returns (uint256) {
@@ -168,6 +168,31 @@ contract ReceiptBackedERC4626Target is ReentrancyLockModifiers, IERC4626Events, 
         IERC20(address(ERC4626Repo._reserveAsset())).safeTransfer(receiver, assets);
         _syncAllExpectedHoldReserves();
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
+    }
+
+    function _redeemFitsReceipts(uint256 shares, uint256 receipts) internal view returns (bool) {
+        uint256 assets = previewRedeem(shares);
+        return assets >= 1 && assets <= receipts;
+    }
+
+    /// @dev Largest strictly smaller share amount that still pays at least one held receipt.
+    function _largestRedeemableShares(uint256 balance, uint256 receipts) internal view returns (uint256 best) {
+        uint256 low = 1;
+        uint256 high = balance;
+        while (low <= high) {
+            uint256 mid = low + (high - low) / 2;
+            uint256 assets = previewRedeem(mid);
+            if (assets >= 1 && assets <= receipts) {
+                best = mid;
+                low = mid + 1;
+            } else if (assets == 0) {
+                low = mid + 1;
+            } else if (mid == 0) {
+                break;
+            } else {
+                high = mid - 1;
+            }
+        }
     }
 
     function _requireFamily() internal view {

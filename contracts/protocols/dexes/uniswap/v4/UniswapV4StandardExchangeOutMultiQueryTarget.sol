@@ -8,11 +8,22 @@ import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     UniswapV4StandardExchangeOutBase
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutBase.sol";
 
 contract UniswapV4StandardExchangeOutMultiQueryTarget is UniswapV4StandardExchangeOutBase, NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override returns (uint256 amount_)
+    {
+        // The existing guarded SE entrypoint explicitly accepts self-calls using vault-held shares.
+        // Reuse its execution delegate instead of embedding a second settlement engine in the SY facet.
+        amount_ = IStandardExchangeIn(address(this)).exchangeIn(
+            IERC20(address(this)), shares_, IERC20(tokenOut_), minimum_, receiver_, false, block.timestamp
+        );
+    }
+
     function _standardRoute(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address receiver_, bool internal_)
         internal override returns (uint256)
     {
@@ -60,16 +71,6 @@ contract UniswapV4StandardExchangeOutMultiQueryTarget is UniswapV4StandardExchan
         (uint256 s0, uint256 s1) = _dualExitShareBurns(amount0, amount1, total0, total1, totalShares);
         if (s0 != s1) {
             revert IStandardExchangeOut.ExchangeOutNotAvailable();
-        }
-        if (!canOpenPoolManagerUnlock()) {
-            uint256 free0 = IERC20(_token0()).balanceOf(address(this));
-            uint256 free1 = IERC20(_token1()).balanceOf(address(this));
-            if (free0 < amount0) {
-                revert UniswapV4Exchange_InsufficientLocalReserve(_token0(), amount0, free0);
-            }
-            if (free1 < amount1) {
-                revert UniswapV4Exchange_InsufficientLocalReserve(_token1(), amount1, free1);
-            }
         }
         return s0;
     }

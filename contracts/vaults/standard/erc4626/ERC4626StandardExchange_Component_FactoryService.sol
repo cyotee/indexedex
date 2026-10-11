@@ -28,6 +28,19 @@ library ERC4626StandardExchange_Component_FactoryService {
         vm.label(address(instance), "ERC4626StandardExchangeInFacet");
     }
 
+    function deployERC4626StandardExchangeInFacetExt(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(
+            "ERC4626StandardExchangeInFacetExt.sol:ERC4626StandardExchangeInFacetExt"
+        );
+        instance = create3Factory.deployFacet(
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeInFacetExt")._hash())
+        );
+        vm.label(address(instance), "ERC4626StandardExchangeInFacetExt");
+    }
+
     function deployERC4626StandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)

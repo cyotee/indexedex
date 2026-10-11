@@ -7,7 +7,6 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardizedYield as SY} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
-import {Math} from "@crane/contracts/utils/Math.sol";
 
 interface IFullSpreadBlockedReserve {
     function canOpenPoolManagerUnlock() external view returns (bool);
@@ -116,13 +115,8 @@ abstract contract TestBase_UniswapV4FullSpreadBlockedYield is Test {
     function _yieldShortage(uint256 leg_, uint256 burn_) private view returns (bytes memory) {
         uint256 supply = yieldVault.totalSupply();
         uint256 cover = yieldTokens[leg_].balanceOf(address(yieldVault));
-        (uint256 d0, uint256 d1) = IFullSpreadBlockedReserve(address(yieldVault)).deployedReserve();
-        // These fresh activation fixtures have no uncollected own LP fees: P's
-        // launch has zero LP fees and H activation makes no external swaps.
-        uint256[2] memory backing = [d0 + yieldTokens[0].balanceOf(address(yieldVault)), d1 + yieldTokens[1].balanceOf(address(yieldVault))];
-        uint256 u = Math.mulDiv(backing[leg_], burn_, supply);
-        uint256 v = Math.mulDiv(backing[1 - leg_], burn_, supply);
-        uint256 wanted = u + (v == 0 ? 0 : Math.mulDiv(backing[leg_] - u, v, backing[1 - leg_]));
+        // An unavailable unlock affects local funding, not the pool-priced entitlement.
+        uint256 wanted = yieldVault.previewExchangeIn(IERC20(address(yieldVault)), burn_, yieldTokens[leg_]);
         assertGt(wanted, cover, "fixture must lack local output cover");
         assertLt(burn_, supply);
         return abi.encodeWithSignature("UniswapV4Exchange_InsufficientLocalReserve(address,uint256,uint256)", address(yieldTokens[leg_]), wanted, cover);

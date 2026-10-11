@@ -123,11 +123,13 @@ abstract contract BalancerV3StableBufferPoolQuoteTarget is IBalancerV3PoolLiquid
         if (p.joining) return _quoteAdd(q, p);
         if (p.exactOut) return _quoteRemoveExactOut(q, p);
         uint256 newSupply = p.supply - p.amountScaled18; // exact-in amount is BPT
+        fees = new uint256[](p.balancesLiveScaled18.length);
+        // Full-reserve valuation is defined even when execution capacity is smaller.
+        // At zero remaining supply the selected balance and taxable amount become zero.
+        if (newSupply == 0) return (p.balancesLiveScaled18[p.index], fees);
         uint256 ratio = newSupply.divUp(p.supply);
-        _checkRatio(q, ratio, false);
         uint256 newBalance = _balance(q, p.balancesLiveScaled18, p.index, ratio);
         uint256 taxable = newSupply.mulDivUp(p.balancesLiveScaled18[p.index], p.supply) - newBalance;
-        fees = new uint256[](p.balancesLiveScaled18.length);
         fees[p.index] = taxable.mulUp(p.swapFee);
         result = p.balancesLiveScaled18[p.index] - newBalance - fees[p.index];
     }
@@ -161,7 +163,6 @@ abstract contract BalancerV3StableBufferPoolQuoteTarget is IBalancerV3PoolLiquid
         next[p.index] -= p.amountScaled18;
         uint256 currentInvariant = _invariant(q, p.balancesLiveScaled18, true);
         uint256 ratio = _invariant(q, next, true).divUp(currentInvariant);
-        _checkRatio(q, ratio, false);
         uint256 taxable = ratio.mulUp(p.balancesLiveScaled18[p.index]) - next[p.index];
         fees = new uint256[](next.length);
         fees[p.index] = taxable.divUp(p.swapFee.complement()) - taxable;

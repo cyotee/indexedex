@@ -23,13 +23,12 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 
 import {UniswapV4FullSpreadPonsFamilyHookPositionRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookPositionRepo.sol";
 import {
-    UniswapV4FullSpreadPonsFamilyHookCommon
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookCommon.sol";
+    UniswapV4FullSpreadPonsFamilyHookInBase
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookInBase.sol";
 
 /// @dev Shared Out types/helpers for Query + Execute Targets (Option 1b — siblings of Common).
 abstract contract UniswapV4FullSpreadPonsFamilyHookOutBase is
-    UniswapV4FullSpreadPonsFamilyHookCommon,
-    ReentrancyLockModifiers
+    UniswapV4FullSpreadPonsFamilyHookInBase
 {
     error ExchangeOutNotAvailable();
 
@@ -80,6 +79,7 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookOutBase is
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
         internal
         view
+        override
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);

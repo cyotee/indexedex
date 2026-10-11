@@ -119,21 +119,6 @@ contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommo
         in_.forceApprove(address(stata_), 0);
     }
 
-    /// @dev Receipt outputs need actual receipts (R14.15); underlying output spends local cash first.
-    function _deliverStata(IStataTokenV2 stata_, uint256 shares_, IERC20 out_, address to_) internal returns (uint256) {
-        uint256 held_ = IERC20(address(stata_)).balanceOf(address(this));
-        if (address(out_) == address(stata_)) {
-            if (shares_ > held_) revert InsufficientReceiptInventory(shares_, held_);
-            out_.safeTransfer(to_, shares_);
-            return shares_;
-        }
-        if (address(out_) == stata_.aToken()) {
-            if (shares_ > held_) revert InsufficientReceiptInventory(shares_, held_);
-            return stata_.redeemATokens(shares_, to_, address(this));
-        }
-        return _payUnderlying(stata_, stata_.previewRedeem(shares_), to_);
-    }
-
     /// @dev Stata conversions use the current normalized income, which is fixed
     /// across same-transaction supply/withdraw operations. Keep actual receipt
     /// inventory separate from the SE supply and the buffered holder's shares.

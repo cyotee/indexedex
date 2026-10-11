@@ -1,0 +1,8 @@
+test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_RawLiquidityConversions.t.sol:52: vm.expectRevert();
+test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_N8HooklessFullSpreadGas.t.sol:62: vm.expectRevert();
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultSecurity.t.sol:39: vm.prank(outsider); vm.expectRevert();
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTokens.t.sol:55: vm.expectRevert(); _hostileDeposit();
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTokens.t.sol:63: vm.expectRevert();
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTokens.t.sol:70: vm.expectRevert();
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTokens.t.sol:73: vm.expectRevert();
+test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTokens.t.sol:89: vm.expectRevert();

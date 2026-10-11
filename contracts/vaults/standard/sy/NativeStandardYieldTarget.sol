@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {TransientSlot} from "@crane/contracts/utils/TransientSlot.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -37,33 +38,50 @@ abstract contract NativeStandardYieldTarget {
         if (receiver_ == address(0)) revert InvalidSYReceiver();
         if (shares_ == 0) revert ZeroSYAmount();
         if (!isValidTokenOut(tokenOut_)) revert InvalidSYToken(tokenOut_);
-        amount_ = _standardRoute(
-            IERC20(address(this)), shares_, IERC20(tokenOut_), minimum_, receiver_, internalBalance_
-        );
+        if (internalBalance_) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            _requireVaultHeldShares(shares_);
+            amount_ = _redeemVaultHeld(receiver_, shares_, tokenOut_, minimum_);
+        } else {
+            amount_ = _standardRoute(
+                IERC20(address(this)), shares_, IERC20(tokenOut_), minimum_, receiver_, false
+            );
+        }
+        if (amount_ < minimum_) revert SYMinimumNotMet(minimum_, amount_);
         emit IStandardizedYield.Redeem(msg.sender, receiver_, tokenOut_, shares_, amount_);
     }
 
     /// @dev Normal calls retain the original payer by delegatecalling the proxy's fixed SE
-    ///      selector. Internal-balance exits call as the proxy, burning only its own shares
-    ///      through the same holder-burn route. Do not select the legacy pretransfer route:
-    ///      some SEs refund all residual prepaid shares, which Pendle does not request.
+    ///      selector. Vault-held exits name the holder in the family's internal settlement.
     function _standardRoute(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address receiver_, bool internal_)
         internal virtual returns (uint256 received_)
     {
+        if (internal_) {
+            _requireVaultHeldShares(amount_);
+            received_ = _redeemVaultHeld(receiver_, amount_, address(out_), minimum_);
+            if (received_ < minimum_) revert SYMinimumNotMet(minimum_, received_);
+            return received_;
+        }
         bytes memory data_ = abi.encodeCall(
             IStandardExchangeIn.exchangeIn,
             (in_, amount_, out_, minimum_, receiver_, false, block.timestamp)
         );
-        bool ok_;
-        bytes memory result_;
-        if (internal_) {
-            NativeStandardYieldContextRepo._begin();
-            (ok_, result_) = address(this).call(data_);
-            NativeStandardYieldContextRepo._end();
-        } else (ok_, result_) = address(this).delegatecall(data_);
+        (bool ok_, bytes memory result_) = address(this).delegatecall(data_);
         if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
         received_ = abi.decode(result_, (uint256));
         if (received_ < minimum_) revert SYMinimumNotMet(minimum_, received_);
+    }
+
+    function _requireVaultHeldShares(uint256 shares_) internal view {
+        uint256 held_ = IERC20(address(this)).balanceOf(address(this));
+        if (held_ < shares_) revert ISecurePullErrors.TransferDeltaInsufficient(shares_, held_);
+    }
+
+    /// @dev Unsupported legacy adapters fail closed until their family supplies settlement.
+    function _redeemVaultHeld(address, uint256, address tokenOut_, uint256)
+        internal virtual returns (uint256)
+    {
+        revert InvalidSYToken(tokenOut_);
     }
 
     function previewDeposit(address tokenIn_, uint256 amount_) external view returns (uint256) {
@@ -100,22 +118,4 @@ abstract contract NativeStandardYieldTarget {
         amounts_ = new uint256[](0);
         emit IStandardizedYield.ClaimRewards(user_, new address[](0), amounts_);
     }
-}
-
-/// @notice The initiating caller during an internal-balance native SY redemption.
-/// @dev Used only to preserve existing removal authorization across the proxy's
-/// self-call. The context cannot authorize additions or spending another LP owner.
-library NativeStandardYieldContextRepo {
-    using TransientSlot for *;
-    bytes32 private constant CALLER_SLOT = keccak256("indexedex.native.sy.internal.redemption.caller");
-    error NestedInternalSYRedemption();
-
-    function _initiator() internal view returns (address) { return CALLER_SLOT.asAddress().tload(); }
-
-    function _begin() internal {
-        if (_initiator() != address(0)) revert NestedInternalSYRedemption();
-        CALLER_SLOT.asAddress().tstore(msg.sender);
-    }
-
-    function _end() internal { CALLER_SLOT.asAddress().tstore(address(0)); }
 }

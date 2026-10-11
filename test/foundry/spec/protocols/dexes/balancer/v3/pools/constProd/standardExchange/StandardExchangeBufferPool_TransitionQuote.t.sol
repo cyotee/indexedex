@@ -101,4 +101,30 @@ contract StandardExchangeBufferPool_TransitionQuote is TestBase_StandardExchange
         assertEq(q.quoteShareBalance(next), bpt + 1e18, "ReceiveShares credits holder");
         assertEq(q.quoteTotalSupply(next), IERC20(bufferPool).totalSupply(), "ReceiveShares leaves supply");
     }
+
+    /// @notice Two funded native withdrawals can exceed the original one-call size limit.
+    /// @dev Each preview is taken after the preceding real withdrawal updates the virtual book.
+    function test_largeRedeem_nativeSequenceControl() public {
+        uint256 supply = IERC20(bufferPool).totalSupply();
+        uint256 step = supply / 4;
+        vm.startPrank(alice);
+        IERC20(bufferPool).approve(bufferPool, type(uint256).max);
+        uint256 before = IERC20(address(shares)).balanceOf(alice);
+        uint256 expected;
+        for (uint256 i; i < 2; ++i) {
+            // Second step uses 25% of its own current supply, not the original supply.
+            uint256 amount = i == 0 ? step : IERC20(bufferPool).totalSupply() / 4;
+            uint256 quoted = IStandardExchangeIn(bufferPool).previewExchangeIn(
+                IERC20(bufferPool), amount, IERC20(address(shares))
+            );
+            uint256 received = IStandardExchangeIn(bufferPool).exchangeIn(
+                IERC20(bufferPool), amount, IERC20(address(shares)), quoted, alice, false, block.timestamp
+            );
+            assertEq(received, quoted, "each native step pays its live quote");
+            expected += quoted;
+        }
+        vm.stopPrank();
+        assertEq(IERC20(address(shares)).balanceOf(alice) - before, expected, "aggregate received");
+        assertLt(IERC20(bufferPool).totalSupply(), supply * 7 / 10, "aggregate burn exceeds initial native cap");
+    }
 }

@@ -7,6 +7,7 @@ import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interf
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {
     TestBase_UniswapV3FullSpreadStandardExchangeVault
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
@@ -44,6 +45,33 @@ contract UniswapV3FullSpreadStandardExchangeVault_FeeCompound_Test is TestBase_U
         return IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
             tokens, amounts, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1
         );
+    }
+
+    function test_outsidePoolTradeDoesNotRefreshVaultBook() public {
+        address token0 = pool.token0();
+        address token1 = pool.token1();
+        ERC20PermitMintableStub(token0).mint(incumbent, 200 ether);
+        ERC20PermitMintableStub(token1).mint(incumbent, 200 ether);
+        ERC20PermitMintableStub(token0).mint(attacker, 1 ether);
+        vm.startPrank(incumbent);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        IERC20(token1).approve(address(vault), type(uint256).max);
+        _seedIncumbent(token0, token1, 200 ether);
+        vm.stopPrank();
+        uint256 book0 = IBasicVault(address(vault)).reserveOfToken(token0);
+        uint256 book1 = IBasicVault(address(vault)).reserveOfToken(token1);
+        uint256 supply = IERC20(address(vault)).totalSupply();
+        _externalSwapExactIn(pool, true, 50_000 ether);
+        assertEq(IBasicVault(address(vault)).reserveOfToken(token0), book0, "outside trade leaves token0 book unchanged");
+        assertEq(IBasicVault(address(vault)).reserveOfToken(token1), book1, "outside trade leaves token1 book unchanged");
+        assertEq(IERC20(address(vault)).totalSupply(), supply, "outside trade mints no shares");
+        vm.startPrank(attacker);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        uint256 preview = vault.previewExchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)));
+        uint256 minted = vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), preview, attacker, false, block.timestamp + 1);
+        vm.stopPrank();
+        assertEq(minted, preview, "later deposit credits only the funded input");
+        assertEq(IERC20(address(vault)).balanceOf(attacker), minted, "caller receives only the funded credit");
     }
 
     function test_d27_subsequentTinyZap_doesNotDiluteIncumbentIntoFees_freeRemainsSleeve() public {
