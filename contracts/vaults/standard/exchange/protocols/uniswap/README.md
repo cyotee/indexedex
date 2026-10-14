@@ -1,6 +1,6 @@
 # Uniswap FullSpread Standard Exchange vaults
 
-The **UniswapV3FullSpreadStandardExchangeVault** and **UniswapV4FullSpreadStandardExchangeVault** packages deploy independent vault diamonds. The preserved implementations under `contracts/protocols/dexes/uniswap/v3` and `v4` remain unchanged. They are not deprecated by this work and remain vulnerable to delivery accounting that treats `reserveOfToken` as free plus deployed assets. This is not an upgrade or migration for immutable live instances.
+The **UniswapV3FullSpreadStandardExchangeVault** and **UniswapV4FullSpreadStandardExchangeVault** packages deploy independent vault diamonds. V3 FullSpread is the supported V3 vault. Its source is `contracts/vaults/standard/exchange/protocols/uniswap/v3/`. The old package under `contracts/protocols/dexes/uniswap/v3` was removed. Legacy V4 under `contracts/protocols/dexes/uniswap/v4` was retained. That retained package remains vulnerable to stored-reserve-minus-deployed credit: delivery accounting that treats `reserveOfToken` as free plus deployed assets. Removing source does not upgrade instances already deployed. This is not an upgrade or migration for immutable live instances.
 
 ## Deployment
 
@@ -10,7 +10,7 @@ The **UniswapV3FullSpreadStandardExchangeVault** and **UniswapV4FullSpreadStanda
 
 Facets and execution delegates use CREATE3; packages deploy through the IndexedEx manager vault registry. Each component/package salt is directly `keccak256(abi.encode("<FullSpread contract name>"))`. Artifact bytecode and constructor arguments remain intact but are not salt inputs. Instance salt derivation, storage field order, and storage slot strings are unchanged.
 
-[VERSION_SOURCE_MAP.json](VERSION_SOURCE_MAP.json) maps preserved source keys to the renamed replacement files. [PRESERVED_SOURCE_SHA256.json](PRESERVED_SOURCE_SHA256.json) and [PRESERVED_BUILD_CONTEXT.json](PRESERVED_BUILD_CONTEXT.json) are unchanged baseline evidence.
+[VERSION_SOURCE_MAP.json](VERSION_SOURCE_MAP.json) maps preserved source keys to the renamed replacement files. [PRESERVED_SOURCE_SHA256.json](PRESERVED_SOURCE_SHA256.json) and [PRESERVED_BUILD_CONTEXT.json](PRESERVED_BUILD_CONTEXT.json) are unchanged baseline evidence. Those source maps and hashes are historical. The old V3 tree under `contracts/protocols/dexes/uniswap/v3` is absent.
 
 ## Delivery and reserves
 
@@ -53,7 +53,7 @@ Imports issue shares only for assets collected from the NFT, excluding the exist
 
 ## Native SY, sleeves, and exits
 
-The vault's native SY external redemption transfers the caller's shares internally without allowance, then follows the measured push route. Internal-balance redemption uses the fixed proxy self-call with `pretransferred=false`: only the active Native SY context can credit the diamond's requested self-share amount. Settlement burns it once. Insufficient self-balance reverts with the exact requested and available amounts; context is restored on success or failure.
+Ordinary redemption burns the original caller's shares. Internal-balance redemption burns shares held by the vault. The holder is `address(this)`, passed to settlement. Redemption does not call `address(this)` to change `msg.sender`, and it does not set `pretransferred=true` to mean the shares were already moved.
 
 Disabling a vault or package blocks inbound pool-token routes while allowing existing share exits and SY redemptions.
 
