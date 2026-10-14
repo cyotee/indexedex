@@ -21,6 +21,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate is UniswapV
         returns (uint256 amountOut)
     {
         if (address(this) == SELF) revert DelegateCallRequired();
-        return _executeZapOutExactIn(tokenOut, sharesBurned, minAmountOut, recipient);
+        // Shares were already pulled onto the vault. The wrapper names that holder.
+        return _executeZapOutExactIn(tokenOut, sharesBurned, minAmountOut, recipient, address(this));
     }
 }

@@ -119,10 +119,12 @@ library UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryServic
         internal
         returns (IFacet instance)
     {
+        address executionDelegate = deployUniswapV4FullSpreadHooklessStandardExchangeVaultInExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet.sol:UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet"),
+            bytes.concat(ArtifactCreationCode.creationCode(create3Factory, "UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet.sol:UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet"), abi.encode(executionDelegate)),
             abi.encode("UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet")._hash()
         );
+        _requireDelegate(address(instance), "UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE()", executionDelegate);
         vm.label(address(instance), "UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet");
     }
 

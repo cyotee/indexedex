@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeOrbitalBufferHookExchangeCore} from "./UniswapV4StandardExchangeOrbitalBufferHookSeTarget.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -48,7 +49,12 @@ import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/set
 
 /// @title UniswapV4StandardExchangeOrbitalBufferHookHooksTarget
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
-abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon, IHooks {
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is UniswapV4StandardExchangeOrbitalBufferHookExchangeCore, IHooks {
+    function token0() public view returns (address) { return _bindingToken0(); }
+    function token1() public view returns (address) { return _bindingToken1(); }
+    function token2() public view returns (address) { return _bindingToken2(); }
+    function isZapEligible() public view returns (bool) { return _bindingIsZapEligible(); }
+    function isLive() public view returns (bool) { return _bindingIsLive(); }
     using SafeERC20 for IERC20;
     using AddressSetRepo for AddressSet;
 
@@ -426,34 +432,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         address out_ = _resolveNumeraire(numeraire);
         address detf_ = Repo._layout().legs.detfToken;
         if (out_ == address(0) || detf_ == address(0) || out_ == detf_) return 0;
-        Repo.Layout storage l = Repo._layout();
-        uint256 R = l.R;
-        uint256 x = _toWad(detf_, _effectiveNativeOf(detf_));
-        uint256 y = _toWad(out_, _effectiveNativeOf(out_));
-        if (R == 0 || x >= R || y >= R || y == 0) return 0;
-        // Sphere spot moves with reserve swaps. Skip pool DETF: marking it at
-        // spot cancels a swap to first order. Non-DETF inventory times spot is
-        // the pair-WAD NAV; outstanding DETF (expansion is minted to the NFT)
-        // stays in the denominator.
-        uint256 spot = ((R - x) * 1e18) / (R - y);
-        if (spot == 0) return 0;
-        uint256 others = y;
-        if (l.token0 != detf_ && l.token0 != out_) {
-            others += _toWad(l.token0, _effectiveNativeOf(l.token0));
-        }
-        if (l.token1 != detf_ && l.token1 != out_) {
-            others += _toWad(l.token1, _effectiveNativeOf(l.token1));
-        }
-        if (l.token2 != detf_ && l.token2 != out_) {
-            others += _toWad(l.token2, _effectiveNativeOf(l.token2));
-        }
-        uint256 lpSupply = _totalSupply();
-        if (lpSupply == 0 || others == 0) return 0;
-        uint256 pairWad = (others * ctx.ownedLp) / lpSupply;
-        pairWad = (pairWad * spot) / 1e18;
-        if (pairWad == 0) return 0;
-        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
-        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+        return ClaimLib.previewSyntheticBook(ctx, out_, detf_);
     }
 
     function _resolveNumeraire(address numeraire) private view returns (address) {

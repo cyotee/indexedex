@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
@@ -22,7 +23,7 @@ import {AaveV3StataStandardExchangeInFacet} from "contracts/protocols/lending/aa
 import {AaveV3StataStandardExchangeOutFacet} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutFacet.sol";
 import {AaveV3StataMarkerFacet} from "contracts/protocols/lending/aave/v3.6/AaveV3StataMarkerFacet.sol";
 
-contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataProtocolBase, TransitionQuoteAssertions {
+contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataProtocolBase, TransitionQuoteAssertions, NativeSYExecutionAssertions {
     address internal subject;
     IStandardizedYield internal sy;
     address internal constant HOLDER = address(0x5A7A);
@@ -66,7 +67,7 @@ contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataPro
         assertEq(shares_, quoted_); assertEq(sy.balanceOf(HOLDER), shares_);
     }
 
-    function test_stataBaseDepositAndUnderlyingRedemption() public {
+    function test_stataBaseDepositAndUnderlyingRedemption() public noSelfCalls(subject) {
         uint256 shares_ = _depositBase(); uint256 quote_ = sy.previewRedeem(underlying, shares_ / 2);
         uint256 before_ = IERC20(underlying).balanceOf(HOLDER);
         vm.prank(HOLDER); assertEq(sy.redeem(HOLDER, shares_ / 2, underlying, quote_, false), quote_);
@@ -74,7 +75,7 @@ contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataPro
         assertEq(sy.balanceOf(HOLDER), shares_ - shares_ / 2);
     }
 
-    function test_stataExistingYieldTokenRoundTrip() public {
+    function test_stataExistingYieldTokenRoundTrip() public noSelfCalls(subject) {
         _fundUnderlying(10 ether, HOLDER);
         vm.startPrank(HOLDER); IERC20(underlying).approve(address(stataTokenV2), 10 ether);
         uint256 amount_ = stataTokenV2.deposit(10 ether, HOLDER);
@@ -85,7 +86,7 @@ contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataPro
         vm.stopPrank(); assertEq(stataTokenV2.balanceOf(HOLDER), quote_);
     }
 
-    function test_stataATokenRouteUsesActualStataConversion() public {
+    function test_stataATokenRouteUsesActualStataConversion() public noSelfCalls(subject) {
         _fundAToken(10 ether, HOLDER);
         uint256 amount_ = IERC20(aToken).balanceOf(HOLDER);
         uint256 quote_ = sy.previewDeposit(aToken, amount_);
@@ -97,7 +98,7 @@ contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataPro
         vm.stopPrank(); assertApproxEqAbs(IERC20(aToken).balanceOf(HOLDER) - before_, expected_, 1);
     }
 
-    function test_stataInternalBalanceConsumesOnlyRequestedShares() public {
+    function test_stataInternalBalanceConsumesOnlyRequestedShares() public noSelfCalls(subject) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 shares_ = _depositBase();
         vm.prank(HOLDER); sy.transfer(subject, shares_);

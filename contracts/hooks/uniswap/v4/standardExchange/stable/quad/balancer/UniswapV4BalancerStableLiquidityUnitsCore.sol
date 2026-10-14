@@ -175,7 +175,7 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
             if (!Math.isFullBookReserves(inv)) revert NotFullBook();
             return Math.firstMintShares(_initialLiquidityValues(ordered, flags), _amp());
         }
-        return Math.unbalancedJoinShares(_ratedWadAll(), _liquidityAmounts(inv), _amp(), supply, dexSwapFee());
+        return Math.unbalancedJoinShares(_ratedWadAll(), _liquidityAmounts(inv), _amp(), supply, _bindingDexSwapFee());
     }
 
     function _entryJoinUnbalanced(address[] calldata tokens_, uint256[] calldata amounts, address to, uint256 minimum, uint256 deadline)

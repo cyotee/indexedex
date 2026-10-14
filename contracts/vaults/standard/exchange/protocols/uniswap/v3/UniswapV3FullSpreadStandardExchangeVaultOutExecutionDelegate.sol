@@ -106,6 +106,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
         uint256 inboundBefore = token.balanceOf(address(this));
         uint256 pullAmount = amountIn;
         if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
             if (amountIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, credit);
             pullAmount = credit;
         }

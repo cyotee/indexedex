@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 import {TestBase_UniswapV4UpperLowerWingsStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/test/bases/TestBase_UniswapV4UpperLowerWingsStandardExchangeVault.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -8,7 +9,7 @@ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interf
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 
 // tag::UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest[]
-contract UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest is TestBase_UniswapV4UpperLowerWingsStandardExchangeVault {
+contract UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest is TestBase_UniswapV4UpperLowerWingsStandardExchangeVault, NativeSYExecutionAssertions {
     function setUp() public override {
         super.setUp();
         token0.mint(address(this), 1e25); token0.approve(address(wings0), type(uint256).max);
@@ -54,7 +55,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest is TestBase_U
         exchange.exchangeOut(token0, required, IERC20(address(wings0)), wanted, address(this), false, block.timestamp);
         assertEq(IERC20(address(wings0)).balanceOf(address(this)) - beforeShares, wanted);
     }
-    function test_nativeSYReusesShareAndStandardMoneyRoutes() public {
+    function test_nativeSYReusesShareAndStandardMoneyRoutes() public noSelfCalls(address(wings0)) {
         IStandardizedYield sy = IStandardizedYield(address(wings0));
         assertEq(sy.yieldToken(), address(wings0));
         assertEq(sy.getTokensIn().length, 1); assertEq(sy.getTokensIn()[0], address(token0));

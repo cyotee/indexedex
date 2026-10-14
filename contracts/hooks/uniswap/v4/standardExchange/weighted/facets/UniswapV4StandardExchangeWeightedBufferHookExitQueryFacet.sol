@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeWeightedBufferHookExchangeOutPreviewTarget} from "../UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
@@ -16,6 +19,7 @@ import {
 /// @notice Exit / withdraw liquidity surface (Option 1d size split from LiquidityFacet).
 contract UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet is
     UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget,
+    UniswapV4StandardExchangeWeightedBufferHookExchangeOutPreviewTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {
@@ -29,7 +33,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](12);
+        funcs = new bytes4[](14);
         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitProportional.selector;
         funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactBptIn.selector;
         funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactTokenOut.selector;
@@ -42,7 +46,9 @@ contract UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet is
         funcs[9] = IDetfReserveQuote.previewSynthetic.selector;
         funcs[10] = IUniswapV4StandardExchangeWeightedBufferHook.rateProviders.selector; // D60
         funcs[11] = bytes4(keccak256("rateProvider(address)")); // D60
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs[12] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs[13] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs = NativeStandardYieldSelectors._appendQuery(funcs);
     }
 
     function facetMetadata()

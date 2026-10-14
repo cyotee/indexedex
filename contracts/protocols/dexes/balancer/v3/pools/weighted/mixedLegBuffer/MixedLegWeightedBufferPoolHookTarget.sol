@@ -164,7 +164,7 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
         if (pool != address(this)) return (false, amountsInRaw);
 
         if (kind == AddLiquidityKind.PROPORTIONAL) {
-            uint256 tPost = IERC20(address(this)).totalSupply();
+            uint256 tPost = IVault(_balancerV3Vault()).totalSupply(address(this));
             uint256 tPre = tPost - bptAmountOut;
             if (tPre == 0) return (true, amountsInRaw);
             _scaleVirtualsOnAdd(bptAmountOut, tPre);
@@ -201,7 +201,7 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
     ) external virtual override returns (bool, uint256[] memory) {
         if (msg.sender != _balancerV3Vault()) return (false, amountsOutRaw);
         if (pool != address(this)) return (false, amountsOutRaw);
-        uint256 tPost = IERC20(address(this)).totalSupply();
+            uint256 tPost = IVault(_balancerV3Vault()).totalSupply(address(this));
         uint256 tPre = tPost + bptAmountIn;
         if (tPre == 0) return (true, amountsOutRaw);
 

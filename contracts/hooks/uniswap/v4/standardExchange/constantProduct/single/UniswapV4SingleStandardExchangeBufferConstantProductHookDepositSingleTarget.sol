@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookInExecutionBase} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInExecutionBase.sol";
+import {NativeStandardYieldMoneyTarget as NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawalLib as Withdrawal} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawalLib.sol";
 
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
@@ -25,98 +29,37 @@ import {
 /// @title UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleTarget
 /// @notice Single-asset CP deposits sharing the reserve accounting and reentrancy guard.
 abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleTarget is
-    UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon
+    UniswapV4SingleStandardExchangeBufferConstantProductHookInExecutionBase, NativeStandardYieldExecutionTarget
 {
-    function previewSwapAfterExchange(address tokenIn, address pairToken, address rawTokenOut, uint256 amountIn)
-        external view returns (uint256 amountOut)
-    {
+    function isValidTokenIn(address token_) public view override returns (bool) {
         Repo.Layout storage l = Repo._layout();
-        if (pairToken != l.pairToken || rawTokenOut != l.rawToken) revert UnsupportedRoute();
-        UniswapV4SeBufferHookLegLib.ExternalQuote memory q = UniswapV4SeBufferHookLegLib
-            .afterExternalExchange(l.standardExchange, pairToken, tokenIn, amountIn, address(this));
-        return _swapAtExternalState(q);
+        return token_ == l.rawToken || token_ == l.pairToken || token_ == l.standardExchange;
     }
-
-    function previewBondAfterDeposit(address tokenIn, address pairToken, address detfToken, uint256 amountIn, uint256 multiplier)
-        external view returns (uint256 pairValue, uint256 purchasedDetf, uint256 liquidityDetf)
-    {
+    function isValidTokenOut(address token_) public view override returns (bool) {
         Repo.Layout storage l = Repo._layout();
-        if (pairToken != l.pairToken || detfToken != l.rawToken) revert UnsupportedRoute();
-        UniswapV4SeBufferHookLegLib.ExternalQuote memory q = UniswapV4SeBufferHookLegLib
-            .afterExternalDeposit(l.standardExchange, pairToken, tokenIn, amountIn, address(this));
-        pairValue = q.exchange.quoteAssets(q.state, q.assets);
-        if (!_isLive()) return (pairValue, 0, 0);
-        {
-            // D60: the held book at the projected state is shares x that state's provider rate.
-            (uint256 heldRated,) = ClaimLib.projectedClaimIn(address(q.exchange), q.state, q.heldShares, 0);
-            liquidityDetf = UniswapV4SeBufferHookLegLib.matchingLiquidityDetf(
-                q, IERC20(l.rawToken).balanceOf(address(this)), pairValue,
-                _supplyAfterProtocolMintForPairClaim(heldRated), Repo.MAX_DUST_WEI
-            );
-        }
-        q.assets = FullMath.mulDiv(pairValue, multiplier, 1e18);
-        purchasedDetf = _swapAtExternalState(q);
+        return token_ == l.rawToken || token_ == l.pairToken;
     }
-
-    function _swapAtExternalState(UniswapV4SeBufferHookLegLib.ExternalQuote memory q)
-        private view returns (uint256)
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
     {
-        // D60: swap reserve and claim-in are shares x provider rate at the projected states (the route's own
-        // SE transition first, then the buffer); the SE only counts shares minted.
-        (uint256 beforeClaim, uint256 claimIn) =
-            ClaimLib.projectedClaimIn(address(q.exchange), q.state, q.heldShares, q.assets);
-        if (beforeClaim == 0 && q.heldShares > 0) beforeClaim = 1;
-        return _quotePairClaimIn(beforeClaim, claimIn);
+        return Withdrawal.withdrawFrom(address(this), shares_, tokenOut_, receiver_, minimum_, block.timestamp);
     }
-
-    function _quotePairClaimIn(uint256 seClaim, uint256 claimIn) private view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return Math.fromWadFloor(Math.saleQuote(
-            Math.toWad(claimIn, _decimalsOf(l.pairToken)),
-            Math.toWad(seClaim, _decimalsOf(l.pairToken)),
-            Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), _decimalsOf(l.rawToken))
-        ), _decimalsOf(l.rawToken));
+    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        external returns (uint256)
+    {
+        if (LiquidityRoute.isLiquidityRoute(in_, out_)) return _exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+        return _swapExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
     }
 
     /// @notice CP joinSingleAssetExactIn entry point.
     function joinSingleAssetExactIn(address tokenIn, uint256 amountIn, address to, uint256 sharesMin, uint256 deadline)
         external
-        onlyLiquidityOwner
-        nonReentrant
-        accrueProtocolFee
         returns (uint256 shares)
     {
-        if (!_isLive()) revert NotLive();
-        Repo.Layout storage l = Repo._layout();
-        UniswapV4SeBufferHookLegLib.LegKind kind = UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
-        PullLib.pullErc20Single(tokenIn, amountIn);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            uint256 pairOut = _unwrapSeShares(amountIn);
-            return _depositSingle(l.pairToken, pairOut, to, sharesMin, deadline);
-        }
-        return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline);
+        return _joinLiquidityExactIn(tokenIn, amountIn, to, sharesMin, deadline, address(0));
     }
 
     /// @notice CP joinSingleAssetExactOut entry point.
-    function joinSingleAssetExactOut(
-        address tokenIn,
-        uint256 sharesOut,
-        address to,
-        uint256 amountInMax,
-        uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountIn) {
-        if (!_isLive()) revert NotLive();
-        // Preview includes pending protocol LP; quote before minting that LP into supply.
-        uint256 previewIn = IHook(address(this)).previewDepositSingle(tokenIn, amountInMax);
-        if (previewIn < sharesOut) revert InsufficientLpOut();
-        _mintProtocolFeeIfNeeded();
-        PullLib.pullErc20Single(tokenIn, amountInMax);
-        uint256 minted = _depositSingle(tokenIn, amountInMax, to, sharesOut, deadline);
-        minted;
-        return amountInMax;
-    }
-
     /// @notice CP depositSingle entry point.
     function depositSingle(address tokenIn, uint256 amountIn, address to, uint256 minLpAmount, uint256 deadline)
         external

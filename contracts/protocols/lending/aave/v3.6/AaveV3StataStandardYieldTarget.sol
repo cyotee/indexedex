@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {AaveV3StataStandardExchangeInExecutionBase} from "./AaveV3StataStandardExchangeInTarget.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -16,7 +17,7 @@ import {
 } from "contracts/vaults/standard/erc4626/ReceiptBackedERC4626AccountingLib.sol";
 
 /// @notice SY at the existing Stata SE address; protocol rewards retain their existing fee-recipient forwarding.
-abstract contract AaveV3StataStandardYieldTarget is NativeStandardYieldTarget, AaveV3StataStandardExchangeCommon, ReentrancyLockModifiers {
+abstract contract AaveV3StataStandardYieldTarget is NativeStandardYieldTarget, AaveV3StataStandardExchangeInExecutionBase {
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
         internal override nonReentrant returns (uint256 amount_)
     {

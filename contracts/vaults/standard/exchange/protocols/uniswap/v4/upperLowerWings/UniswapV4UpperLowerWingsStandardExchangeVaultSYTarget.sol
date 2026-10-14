@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4UpperLowerWingsStandardExchangeVaultInExecutionBase} from "./UniswapV4UpperLowerWingsStandardExchangeVaultInExecutionBase.sol";
+import {UniswapV4UpperLowerWingsStandardExchangeVaultQuoteBase} from "./UniswapV4UpperLowerWingsStandardExchangeVaultQuoteBase.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -8,7 +10,7 @@ import {IUniswapV4UpperLowerWingsStandardExchangeVault} from "./interfaces/IUnis
 import {UniswapV4UpperLowerWingsStandardExchangeVaultMoney as Money} from "./UniswapV4UpperLowerWingsStandardExchangeVaultMoney.sol";
 
 /// @notice Native SY uses the existing vault share and its installed standard money routes.
-contract UniswapV4UpperLowerWingsStandardExchangeVaultSYTarget is NativeStandardYieldTarget {
+contract UniswapV4UpperLowerWingsStandardExchangeVaultSYTarget is NativeStandardYieldTarget, UniswapV4UpperLowerWingsStandardExchangeVaultInExecutionBase {
     function _redeemVaultHeld(address receiver_, uint256 shares_, address, uint256 minimum_)
         internal override returns (uint256 amount_)
     {
@@ -28,6 +30,6 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultSYTarget is NativeStandard
     function exchangeRate() external view override returns (uint256) {
         uint256 supply = ERC20Repo._totalSupply();
         if (supply == 0) return 1e18;
-        return FullMath.mulDiv(IUniswapV4UpperLowerWingsStandardExchangeVault(address(this)).liquidationValue().value, 1e18, supply);
+        return FullMath.mulDiv(_liquidationValue().value, 1e18, supply);
     }
 }

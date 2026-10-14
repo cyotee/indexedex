@@ -23,7 +23,7 @@ contract UniswapV4StandardExchangeOutMultiQueryFacet is UniswapV4StandardExchang
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
         funcs = new bytes4[](1);
         funcs[0] = IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs = NativeStandardYieldSelectors._appendQuery(funcs);
     }
 
     function facetMetadata()

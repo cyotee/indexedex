@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {ICREATE3DFPkg} from "@crane/contracts/factories/create3/Create3FactoryDFPkg.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {Behavior_NativeStandardYieldExecution} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IStandardExchangeExactOutputQuantityQuote} from "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol";
 
@@ -29,6 +33,34 @@ import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/
 
 // tag::UniswapV4FullSpreadPonsFamilyHookAdmissionAndIdentityTest[]
 contract UniswapV4FullSpreadPonsFamilyHookAdmissionAndIdentityTest is Acceptance {
+    function test_inMultiFacetBindsCanonicalExecutionDelegate() public {
+        address expected = InBinding(address(uniswapV4StandardExchangeInFacet)).UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE();
+        address actual = InBinding(address(uniswapV4StandardExchangeInMultiFacet)).UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE();
+        assertEq(actual, expected);
+        assertGt(actual.code.length, 0);
+        assertEq(address(Factory.deployUniswapV4FullSpreadPonsFamilyHookInMultiFacet(create3Factory)), address(uniswapV4StandardExchangeInMultiFacet));
+        assertEq(IDiamondLoupe(address(vault)).facetAddress(SY.deposit.selector), address(uniswapV4StandardExchangeInMultiFacet));
+        assertEq(IDiamondLoupe(address(vault)).facetAddress(SY.redeem.selector), address(uniswapV4StandardExchangeInMultiFacet));
+        assertLe(address(uniswapV4StandardExchangeInMultiFacet).code.length, 24_576);
+    }
+
+    function test_occupiedInMultiFacetRejectsWrongExecutionDelegate() public {
+        address wrong = OutBinding(address(vault)).UNISWAP_V4_STANDARD_EXCHANGE_OUT_EXECUTION_DELEGATE();
+        bytes memory code = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4FullSpreadPonsFamilyHookInMultiFacet.sol:UniswapV4FullSpreadPonsFamilyHookInMultiFacet");
+        ICREATE3DFPkg factoryPackage = ICREATE3DFPkg(address(create3Factory.canonicalPackage(type(ICREATE3DFPkg).interfaceId)));
+        ICreate3FactoryProxy isolated = factoryPackage.deployCreate3Factory(address(0xB1D));
+        vm.prank(address(0xB1D));
+        isolated.setOperator(address(this), true);
+        IFacet occupied = isolated.deployFacet(bytes.concat(code, abi.encode(wrong)), keccak256(abi.encode("UniswapV4FullSpreadPonsFamilyHookInMultiFacet")));
+        assertEq(InBinding(address(occupied)).UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE(), wrong);
+        vm.expectRevert(Factory.InvalidComponentBinding.selector);
+        this.deployOccupiedInMultiFacet(isolated);
+    }
+
+    function deployOccupiedInMultiFacet(ICreate3FactoryProxy isolated) external {
+        Factory.deployUniswapV4FullSpreadPonsFamilyHookInMultiFacet(isolated);
+    }
+
     function test_nonzeroHookAndMalformedKeyRejected() public {
         PoolKey memory wrong = poolKey;
         wrong.hooks = IHooks(address(0x1234));
@@ -79,6 +111,20 @@ contract UniswapV4FullSpreadPonsFamilyHookAdmissionAndIdentityTest is Acceptance
         }
         assertEq(familySelectors, controls.length);
         for (uint256 i; i < controls.length; ++i) assertTrue(IDiamondLoupe(address(vault)).facetAddress(controls[i]) != address(0));
+    }
+
+    function test_nativeSYMoneyPathsHaveNoSelfCalls() public {
+        _bootstrap();
+        SY sy = SY(address(vault));
+        token0.approve(address(vault), type(uint256).max);
+        uint256 quote = sy.previewDeposit(address(token0), 1e18);
+        vm.startStateDiffRecording();
+        uint256 shares = sy.deposit(address(this), address(token0), 1e18, quote);
+        sy.redeem(address(this), shares / 2, address(token1), 0, false);
+        uint256 remaining = shares - shares / 2;
+        sy.transfer(address(vault), remaining);
+        sy.redeem(address(this), remaining, address(token0), 0, true);
+        Behavior_NativeStandardYieldExecution.requireNoSelfCalls(vm.stopAndReturnStateDiff(), address(vault));
     }
 
     function test_remainingQueryAndNativeSYSelectorsSmokeOnProxy() public {

@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4FullSpreadPonsFamilyHookInExecutionBase} from "./UniswapV4FullSpreadPonsFamilyHookInExecutionBase.sol";
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -27,7 +30,7 @@ interface IUniswapV4FullSpreadPonsFamilyHookPositionImport {
 }
 
 
-contract UniswapV4FullSpreadPonsFamilyHookInTarget is UniswapV4FullSpreadPonsFamilyHookInBase {
+abstract contract UniswapV4FullSpreadPonsFamilyHookInDelegateExecutionBase is UniswapV4FullSpreadPonsFamilyHookInExecutionBase {
     using Address for address;
 
     address public immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE;
@@ -39,60 +42,9 @@ contract UniswapV4FullSpreadPonsFamilyHookInTarget is UniswapV4FullSpreadPonsFam
 
 
 
-    function exchangeIn(
-        IERC20 tokenIn,
-        uint256 amountIn,
-        IERC20 tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) external nonReentrant operationScope returns (uint256 amountOut) {
-        if (address(tokenIn) != address(this)) _requireNotDisabled();
-        if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
-
-        address token0 = _token0();
-        address token1 = _token1();
-
-        if (
-            (address(tokenIn) == token0 && address(tokenOut) == token1)
-                || (address(tokenIn) == token1 && address(tokenOut) == token0)
-        ) {
-            _requireCanOpenPoolManagerUnlock();
-            if (amountIn == 0) revert UniswapV4Exchange_ZeroAmount();
-            uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            _requireExactDelivery(amountIn, actualIn);
-            amountOut = _executeDirectSwapIn(address(tokenIn), actualIn, recipient);
-            if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-            _pokeBoundPoolTwap();
-            return amountOut;
-        }
-
-        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
-            if (amountIn == 0) revert UniswapV4Exchange_ZeroAmount();
-            if (IERC20(address(this)).totalSupply() == 0) {
-                revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(this));
-            }
-            uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            _requireExactDelivery(amountIn, actualIn);
-            amountOut = _delegateExecuteZapInDeposit(address(tokenIn), actualIn, minAmountOut, recipient);
-            _pokeBoundPoolTwap();
-            return amountOut;
-        }
-
-        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
-            uint256 actualIn = _secureShareDelivery(amountIn, pretransferred);
-            _requireExactDelivery(amountIn, actualIn);
-            amountOut = _delegateExecuteZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient);
-            _pokeBoundPoolTwap();
-            return amountOut;
-        }
-
-        revert IStandardExchangeIn.ExchangeInNotAvailable();
-    }
-
-    function _delegateExecuteZapInDeposit(address tokenIn, uint256 amountIn, uint256 minSharesOut, address recipient)
+    function _executeInputDeposit(address tokenIn, uint256 amountIn, uint256 minSharesOut, address recipient)
         internal
+        override
         returns (uint256 sharesOut)
     {
         bytes memory result = UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE.functionDelegateCall(
@@ -103,12 +55,12 @@ contract UniswapV4FullSpreadPonsFamilyHookInTarget is UniswapV4FullSpreadPonsFam
         return abi.decode(result, (uint256));
     }
 
-    function _delegateExecuteZapOutExactIn(
+    function _executeInputRedeem(
         address tokenOut,
         uint256 sharesBurned,
         uint256 minAmountOut,
         address recipient
-    ) internal returns (uint256 amountOut) {
+    ) internal override returns (uint256 amountOut) {
         bytes memory result =
             UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE.functionDelegateCall(
                 abi.encodeWithSignature(
@@ -120,5 +72,16 @@ contract UniswapV4FullSpreadPonsFamilyHookInTarget is UniswapV4FullSpreadPonsFam
                 )
             );
         return abi.decode(result, (uint256));
+    }
+}
+
+contract UniswapV4FullSpreadPonsFamilyHookInTarget is UniswapV4FullSpreadPonsFamilyHookInDelegateExecutionBase {
+    constructor(address executionDelegate) UniswapV4FullSpreadPonsFamilyHookInDelegateExecutionBase(executionDelegate) {}
+    function unlockCallback(bytes calldata data) external returns (bytes memory) { return _unlockCallback(data); }
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        if (_isExchangeSwap(tokenIn, tokenOut)) return _exchangeSwapIn(tokenIn, amountIn, minimum, recipient, prepaid, deadline);
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
     }
 }

@@ -78,83 +78,83 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
     /*                              binding views                             */
     /* ---------------------------------------------------------------------- */
 
-    function poolManager() public view returns (IPoolManager) {
+    function _bindingPoolManager() internal view returns (IPoolManager) {
         return IPoolManager(Repo._layout().poolManager);
     }
 
-    function feeOracle() public view returns (IVaultFeeOracleQuery) {
+    function _bindingFeeOracle() internal view returns (IVaultFeeOracleQuery) {
         return IVaultFeeOracleQuery(Repo._layout().feeOracle);
     }
 
-    function permit2() public pure returns (address) {
+    function _bindingPermit2() internal pure returns (address) {
         return PERMIT2;
     }
 
-    function numTokens() public view returns (uint8) {
+    function _bindingNumTokens() internal view returns (uint8) {
         return uint8(Repo._numTokens());
     }
 
-    function tokens() public view returns (address[] memory) {
+    function _bindingTokens() internal view returns (address[] memory) {
         return Repo._layout().tokens;
     }
 
-    function token(uint256 index) public view returns (address) {
+    function _bindingToken(uint256 index) internal view returns (address) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().tokens[index];
     }
 
-    function baseAmp() public view returns (uint256) {
+    function _bindingBaseAmp() internal view returns (uint256) {
         return Repo._layout().baseAmp;
     }
 
     /// @notice Scaled amplification A' = baseAmp * AMP_PRECISION (1e3).
-    function getCurrentAmp() public view returns (uint256) {
+    function _bindingCurrentAmp() internal view returns (uint256) {
         return Repo._layout().baseAmp * Repo.AMP_PRECISION;
     }
 
-    function standardExchange(uint256 index) public view returns (address) {
+    function _bindingStandardExchange(uint256 index) internal view returns (address) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().standardExchanges[index];
     }
 
-    function rateProvider(uint256 index) public view returns (address) {
+    function _bindingRateProvider(uint256 index) internal view returns (address) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().rateProviders[index];
     }
 
-    function isBuffered(uint256 index) public view returns (bool) {
+    function _bindingIsBuffered(uint256 index) internal view returns (bool) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().standardExchanges[index] != address(0);
     }
 
-    function invScale(uint256 index) public view returns (uint256) {
+    function _bindingInvScale(uint256 index) internal view returns (uint256) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().invScales[index];
     }
 
-    function ratedScale(uint256 index) public view returns (uint256) {
+    function _bindingRatedScale(uint256 index) internal view returns (uint256) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().ratedScales[index];
     }
 
-    function nativeReserve(uint256 index) public view returns (uint256) {
+    function _bindingNativeReserve(uint256 index) internal view returns (uint256) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return _nativeAt(uint8(index));
     }
 
-    function nativeReserves() public view returns (uint256[] memory out) {
+    function _bindingNativeReserves() internal view returns (uint256[] memory out) {
         uint256[] memory n = _nativeAll();
         out = Math.toDynamic(n);
     }
 
-    function seBalance(uint256 index) public view returns (uint256) {
+    function _bindingSeBalance(uint256 index) internal view returns (uint256) {
         if (index >= Repo._numTokens()) revert InvalidN();
         address se = Repo._layout().standardExchanges[index];
         if (se == address(0)) return 0;
         return IERC20(se).balanceOf(address(this));
     }
 
-    function seClaim(uint256 index) public view returns (uint256) {
+    function _bindingSeClaim(uint256 index) internal view returns (uint256) {
         if (index >= Repo._numTokens()) revert InvalidN();
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[index];
@@ -165,12 +165,12 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
     }
 
-    function ratedBalance(uint256 index) public view returns (uint256) {
+    function _bindingRatedBalance(uint256 index) internal view returns (uint256) {
         if (index >= Repo._numTokens()) revert InvalidN();
         return _ratedPairUnits(uint8(index));
     }
 
-    function ratedBalances() public view returns (uint256[] memory out) {
+    function _bindingRatedBalances() internal view returns (uint256[] memory out) {
         uint256[] memory r = new uint256[](Repo._numTokens());
         for (uint8 i; i < Repo._numTokens(); ++i) {
             r[i] = _ratedPairUnits(i);
@@ -178,27 +178,27 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         out = Math.toDynamic(r);
     }
 
-    function dexSwapFee() public view returns (uint256) {
-        return feeOracle().dexSwapFeeOfVault(address(this));
+    function _bindingDexSwapFee() internal view returns (uint256) {
+        return _bindingFeeOracle().dexSwapFeeOfVault(address(this));
     }
 
-    function usageFee() public view returns (uint256) {
-        return feeOracle().usageFeeOfVault(address(this));
+    function _bindingUsageFee() internal view returns (uint256) {
+        return _bindingFeeOracle().usageFeeOfVault(address(this));
     }
 
-    function feeTo() public view returns (address) {
-        return address(feeOracle().feeTo());
+    function _bindingFeeTo() internal view returns (address) {
+        return address(_bindingFeeOracle().feeTo());
     }
 
-    function kLast() public view returns (uint256) {
+    function _bindingKLast() internal view returns (uint256) {
         return Repo._layout().kLast;
     }
 
-    function isFullBook() public view returns (bool) {
+    function _bindingIsFullBook() internal view returns (bool) {
         return Math.isFullBookReserves(_nativeAll());
     }
 
-    function pairDoorCount() public view returns (uint256) {
+    function _bindingPairDoorCount() internal view returns (uint256) {
         return PairPoolLib.pairDoorCount(Repo._numTokens());
     }
 

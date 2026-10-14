@@ -98,7 +98,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutExecuteTarg
         uint256 inboundBefore = tokenIn.balanceOf(address(this));
         uint256 pullAmount = amountIn;
         if (pretransferred) {
-            if (amountIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, credit);
+            _requirePrepaidCredit(amountIn, credit);
             pullAmount = credit;
         }
         uint256 providedAmountIn = _secureTokenTransfer(tokenIn, pullAmount, pretransferred);
@@ -135,6 +135,12 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutExecuteTarg
         return abi.decode(result, (uint256));
     }
 
+    /// @dev Caller authentication before the short-credit revert. One copy keeps the OutFacet under EIP-170.
+    function _requirePrepaidCredit(uint256 used, uint256 credit) internal view {
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
+    }
+
     function _refundExcess(IERC20 token, uint256 inboundBefore, uint256 providedAmount, uint256 usedAmount) internal {
         if (usedAmount > providedAmount) revert AccountingMismatch();
         uint256 refund = providedAmount - usedAmount;
@@ -160,7 +166,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutExecuteTarg
         frame.plan = _directOutPlan(_snapshot(frame.zeroForOne ? frame.credit : 0, frame.zeroForOne ? 0 : frame.credit), frame.zeroForOne, amountOut);
         used = frame.plan.swap.amountIn;
         if (used > maximum) revert UniswapV4ExchangeOut_InsufficientInput();
-        if (prepaid && used > frame.credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, frame.credit);
+        if (prepaid) _requirePrepaidCredit(used, frame.credit);
         frame.inboundBefore = tokenIn.balanceOf(address(this));
         frame.provided = _secureTokenTransfer(tokenIn, prepaid ? frame.credit : used, prepaid);
         if (prepaid) frame.inboundBefore -= frame.provided;

@@ -60,9 +60,8 @@ import {
  * @title UniswapV4StandardExchangeWeightedBufferHookHooksTarget
  * @notice IHooks callbacks + rated V4 swaps.
  */
-abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
-    UniswapV4StandardExchangeWeightedBufferHookTarget,
-    IHooks
+abstract contract UniswapV4StandardExchangeWeightedBufferHookSwapCore is
+    UniswapV4StandardExchangeWeightedBufferHookTarget
 {
     using SafeERC20 for IERC20;
 
@@ -75,69 +74,65 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
     /*                                  IHooks                                */
     /* ---------------------------------------------------------------------- */
 
-    function beforeInitialize(address, PoolKey calldata poolKey, uint160)
-        external
+    function _hookBeforeInitialize(address, PoolKey calldata poolKey, uint160)
+        internal
         view
-        override
         returns (bytes4)
     {
         return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
-    function afterInitialize(address, PoolKey calldata, uint160, int24)
-        external
+    function _hookAfterInitialize(address, PoolKey calldata, uint160, int24)
+        internal
         pure
-        override
         returns (bytes4)
     {
         revert HookNotImplemented();
     }
 
-    function beforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
-        external
+    function _hookBeforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
+        internal
         view
-        override
         returns (bytes4)
     {
         _onlyPoolManager();
         revert LiquidityNotAllowed();
     }
 
-    function afterAddLiquidity(
+    function _hookAfterAddLiquidity(
         address,
         PoolKey calldata,
         ModifyLiquidityParams calldata,
         BalanceDelta,
         BalanceDelta,
         bytes calldata
-    ) external pure override returns (bytes4, BalanceDelta) {
+    ) internal pure returns (bytes4, BalanceDelta) {
         revert HookNotImplemented();
     }
 
-    function beforeRemoveLiquidity(
+    function _hookBeforeRemoveLiquidity(
         address,
         PoolKey calldata,
         ModifyLiquidityParams calldata,
         bytes calldata
-    ) external view override returns (bytes4) {
+    ) internal view returns (bytes4) {
         _onlyPoolManager();
         revert LiquidityNotAllowed();
     }
 
-    function afterRemoveLiquidity(
+    function _hookAfterRemoveLiquidity(
         address,
         PoolKey calldata,
         ModifyLiquidityParams calldata,
         BalanceDelta,
         BalanceDelta,
         bytes calldata
-    ) external pure override returns (bytes4, BalanceDelta) {
+    ) internal pure returns (bytes4, BalanceDelta) {
         revert HookNotImplemented();
     }
 
-    function beforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)
-        external
-        override
+    function _hookBeforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)
+        internal
         returns (bytes4, BeforeSwapDelta swapDelta, uint24)
     {
         _onlyPoolManager();
@@ -185,29 +180,26 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
         return (IHooks.beforeSwap.selector, swapDelta, Math.feeOverridePips(feeWad));
     }
 
-    function afterSwap(address, PoolKey calldata, SwapParams calldata, BalanceDelta, bytes calldata)
-        external
+    function _hookAfterSwap(address, PoolKey calldata, SwapParams calldata, BalanceDelta, bytes calldata)
+        internal
         pure
-        override
         returns (bytes4, int128)
     {
         revert HookNotImplemented();
     }
 
-    function beforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
-        external
+    function _hookBeforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
+        internal
         view
-        override
         returns (bytes4)
     {
         _onlyPoolManager();
         revert DonateNotAllowed();
     }
 
-    function afterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
-        external
+    function _hookAfterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
+        internal
         pure
-        override
         returns (bytes4)
     {
         revert HookNotImplemented();
@@ -217,16 +209,16 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
     /*                              rated swaps                               */
     /* ---------------------------------------------------------------------- */
 
-    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
-        public
+    function _hookPreviewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        internal
         view
         returns (uint256 amountOut)
     {
         return _previewSwapExactInContext(tokenIn, tokenOut, amountIn, Repo._layout().poolManager).amountOut;
     }
 
-    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
-        public
+    function _hookPreviewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        internal
         view
         returns (uint256 amountIn)
     {
@@ -338,6 +330,40 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
     }
 
     
+}
+
+abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is UniswapV4StandardExchangeWeightedBufferHookSwapCore, IHooks {
+    function poolManager() public view returns (IPoolManager) { return _bindingPoolManager(); }
+    function permit2() public pure returns (address) { return _bindingPermit2(); }
+    function numTokens() public view returns (uint8) { return _bindingNumTokens(); }
+    function token(uint256 i) public view returns (address) { return _bindingToken(i); }
+    function getNormalizedWeights() public view returns (uint256[] memory) { return _bindingWeights(); }
+    function weight(uint256 i) public view returns (uint256) { return _bindingWeight(i); }
+    function standardExchange(uint256 i) public view returns (address) { return _bindingStandardExchange(i); }
+    function rateProvider(uint256 i) public view returns (address) { return _bindingRateProvider(i); }
+    function isBuffered(uint256 i) public view returns (bool) { return _bindingIsBuffered(i); }
+    function invScale(uint256 i) public view returns (uint256) { return _bindingInvScale(i); }
+    function ratedScale(uint256 i) public view returns (uint256) { return _bindingRatedScale(i); }
+    function nativeReserve(uint256 i) public view returns (uint256) { return _bindingNativeReserve(i); }
+    function nativeReserves() public view returns (uint256[] memory) { return _bindingNativeReserves(); }
+    function seBalance(uint256 i) public view returns (uint256) { return _bindingSeBalance(i); }
+    function seClaim(uint256 i) public view returns (uint256) { return _bindingSeClaim(i); }
+    function ratedBalance(uint256 i) public view returns (uint256) { return _bindingRatedBalance(i); }
+    function ratedBalances() public view returns (uint256[] memory) { return _bindingRatedBalances(); }
+    function kLast() public view returns (uint256) { return _bindingKLast(); }
+    function ensurePairPools() external returns (uint256) { return _ensurePairPools(); }
+    function beforeInitialize(address s, PoolKey calldata k, uint160 p) external view override returns (bytes4) { return _hookBeforeInitialize(s, k, p); }
+    function afterInitialize(address s, PoolKey calldata k, uint160 p, int24 t) external pure override returns (bytes4) { return _hookAfterInitialize(s, k, p, t); }
+    function beforeAddLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, bytes calldata d) external view override returns (bytes4) { return _hookBeforeAddLiquidity(s, k, p, d); }
+    function afterAddLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, BalanceDelta a, BalanceDelta f, bytes calldata d) external pure override returns (bytes4, BalanceDelta) { return _hookAfterAddLiquidity(s, k, p, a, f, d); }
+    function beforeRemoveLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, bytes calldata d) external view override returns (bytes4) { return _hookBeforeRemoveLiquidity(s, k, p, d); }
+    function afterRemoveLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, BalanceDelta a, BalanceDelta f, bytes calldata d) external pure override returns (bytes4, BalanceDelta) { return _hookAfterRemoveLiquidity(s, k, p, a, f, d); }
+    function beforeSwap(address s, PoolKey calldata k, SwapParams calldata p, bytes calldata d) external override returns (bytes4, BeforeSwapDelta, uint24) { return _hookBeforeSwap(s, k, p, d); }
+    function afterSwap(address s, PoolKey calldata k, SwapParams calldata p, BalanceDelta a, bytes calldata d) external pure override returns (bytes4, int128) { return _hookAfterSwap(s, k, p, a, d); }
+    function beforeDonate(address s, PoolKey calldata k, uint256 a, uint256 b, bytes calldata d) external view override returns (bytes4) { return _hookBeforeDonate(s, k, a, b, d); }
+    function afterDonate(address s, PoolKey calldata k, uint256 a, uint256 b, bytes calldata d) external pure override returns (bytes4) { return _hookAfterDonate(s, k, a, b, d); }
+    function previewSwapExactIn(address in_, address out_, uint256 amount_) public view returns (uint256) { return _hookPreviewSwapExactIn(in_, out_, amount_); }
+    function previewSwapExactOut(address in_, address out_, uint256 amount_) public view returns (uint256) { return _hookPreviewSwapExactOut(in_, out_, amount_); }
 }
 
 /// @notice Hook-only composed quotes, separated from inherited SE execution code.

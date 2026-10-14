@@ -79,6 +79,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget is Un
         uint256 inboundBefore = tokenIn.balanceOf(address(this));
         uint256 pullAmount = quotedIn;
         if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
             uint256 credit = _pretransferCredit(tokenIn, maxAmountIn);
             if (quotedIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(quotedIn, credit);
             pullAmount = credit;

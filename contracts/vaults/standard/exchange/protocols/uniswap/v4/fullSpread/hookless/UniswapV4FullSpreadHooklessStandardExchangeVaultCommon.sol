@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -72,14 +73,24 @@ import {UniswapV4FullSpreadHooklessStandardExchangeVaultQuoteService as Quotes} 
 import {UniswapV4FullSpreadHooklessStandardExchangeVaultExecutionContextRepo as ExecutionContext} from "./UniswapV4FullSpreadHooklessStandardExchangeVaultExecutionContextRepo.sol";
 import {StandardExchangeConstantProduct} from "../../../StandardExchangeConstantProduct.sol";
 
-abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnlockCallback, ISecurePullErrors {
+abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is ISecurePullErrors {
     using BetterSafeERC20 for IERC20;
 
     modifier operationScope() {
-        ExecutionContext._beginOperation(msg.sig,
-            VaultFeeOracleQueryAwareRepo._feeOracle().liquidReservePercentageOfVault(address(this)));
+        _beginOperation(msg.sig);
         _;
         ExecutionContext._endOperation();
+    }
+
+    modifier exchangeInOperationScope() {
+        _beginOperation(IStandardExchangeIn.exchangeIn.selector);
+        _;
+        ExecutionContext._endOperation();
+    }
+
+    function _beginOperation(bytes4 selector_) private {
+        ExecutionContext._beginOperation(selector_,
+            VaultFeeOracleQueryAwareRepo._feeOracle().liquidReservePercentageOfVault(address(this)));
     }
 
     using BalanceDeltaLibrary for BalanceDelta;
@@ -127,8 +138,8 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
         q.vault = address(this);
         q.token0 = asset == _token0();
         q.idle = canOpenPoolManagerUnlock();
-        q.supply = IERC20(address(this)).totalSupply();
-        q.shares = IERC20(address(this)).balanceOf(holder);
+        q.supply = ERC20Repo._totalSupply();
+        q.shares = ERC20Repo._balanceOf(holder);
         (q.free0, q.free1) = _freeBalances();
         (q.fees0, q.fees1) = _collectablePositionFees();
         q.positionLiquidity = _currentLiquidity();
@@ -512,7 +523,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token1()), IERC20(_token1()).balanceOf(address(this)));
         // Book sitting vaultShare so leftover self-shares are R, not durable U (E6 / I1).
         MultiAssetBasicVaultRepo._updateReserve(
-            IERC20(address(this)), IERC20(address(this)).balanceOf(address(this))
+            IERC20(address(this)), ERC20Repo._balanceOf(address(this))
         );
     }
 
@@ -673,7 +684,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
         UniswapV4FullSpreadHooklessStandardExchangeVaultPositionRepo._importedPositionManager().modifyLiquidities(abi.encode(actions, params), block.timestamp);
     }
 
-    function unlockCallback(bytes calldata data) external override returns (bytes memory) {
+    function _unlockCallback(bytes calldata data) internal returns (bytes memory) {
         if (msg.sender != address(_poolManager())) {
             revert UniswapV4Exchange_InvalidCallbackCaller(msg.sender);
         }
@@ -897,7 +908,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
         if (pretransferred) {
             LocalCreditLib.requirePretransferCaller(msg.sender);
             uint256 avail = LocalCreditLib.available(
-                tokenIn.balanceOf(address(this)),
+                address(tokenIn) == address(this) ? ERC20Repo._balanceOf(address(this)) : tokenIn.balanceOf(address(this)),
                 MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn))
             );
             if (avail < amountIn) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, avail);
@@ -934,7 +945,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
     function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
         return LocalCreditLib.budget(
             LocalCreditLib.available(
-                token.balanceOf(address(this)),
+                address(token) == address(this) ? ERC20Repo._balanceOf(address(this)) : token.balanceOf(address(this)),
                 MultiAssetBasicVaultRepo._reserveOfToken(address(token))
             ),
             maximum
@@ -951,7 +962,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
 
     function _refundUnusedShares(uint256 delivered, uint256 used, address recipient) internal {
         if (delivered > used) {
-            IERC20(address(this)).safeTransfer(recipient, delivered - used);
+            ERC20Repo._transfer(address(this), recipient, delivered - used);
         }
     }
 
@@ -974,7 +985,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultCommon is IUnl
     function _snapshot(uint256 credit0, uint256 credit1) internal view returns (Types.Snapshot memory state) {
         if (!_supportsInventoryQuote()) revert ITransition.InvalidQuoteState();
         state.idle = canOpenPoolManagerUnlock();
-        state.book.supply = IERC20(address(this)).totalSupply();
+        state.book.supply = ERC20Repo._totalSupply();
         (state.book.free[0], state.book.free[1]) = _freeBalances();
         (state.book.earned[0], state.book.earned[1]) = _collectablePositionFees();
         state.position.liquidity = _currentLiquidity();

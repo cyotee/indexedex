@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeWeightedBufferHookExchangeOutTarget} from "../UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
@@ -13,6 +15,7 @@ import {
 /// @dev D19 Ext: join/deposit preview selectors. CREATE3 salt is the contract name.
 contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt is
     UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget,
+    UniswapV4StandardExchangeWeightedBufferHookExchangeOutTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {
@@ -24,7 +27,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](10);
+        funcs = new bytes4[](11);
         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
         funcs[1] = bytes4(keccak256("previewJoinUnbalanced(uint256[])"));
         funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -35,6 +38,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt is
         funcs[7] = IUniswapV4StandardExchangeWeightedBufferHook.previewDepositSingleFlexible.selector;
         funcs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         funcs[9] = this.previewJoinAfterDeposit.selector;
+        funcs[10] = IStandardExchangeOut.exchangeOut.selector;
     }
 
     function facetMetadata()

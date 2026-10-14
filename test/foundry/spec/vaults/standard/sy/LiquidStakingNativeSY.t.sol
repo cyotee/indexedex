@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
@@ -31,7 +32,7 @@ import {RocketPoolRETHStandardExchangeOutFacet} from "contracts/protocols/stakin
 import {RocketPoolRETHMarkerFacet} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHMarkerFacet.sol";
 import {RocketPoolRETHRebalanceFacet} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHRebalanceFacet.sol";
 
-abstract contract LiquidStakingSYBehavior is Test {
+abstract contract LiquidStakingSYBehavior is Test, NativeSYExecutionAssertions {
     address internal constant HOLDER = address(0x51ED);
     function _subject() internal view virtual returns (address);
     function _yield() internal view virtual returns (address);
@@ -61,7 +62,7 @@ abstract contract LiquidStakingSYBehavior is Test {
         assertEq(shares_, preview_); assertEq(_sy().balanceOf(HOLDER), shares_);
     }
 
-    function test_liquidStakingYieldRoundTripMatchesStandardQuotes() public {
+    function test_liquidStakingYieldRoundTripMatchesStandardQuotes() public noSelfCalls(_subject()) {
         uint256 shares_ = _depositYield();
         uint256 amount_ = shares_ / 2;
         uint256 quote_ = _sy().previewRedeem(_yield(), amount_);
@@ -72,7 +73,7 @@ abstract contract LiquidStakingSYBehavior is Test {
         assertEq(_sy().balanceOf(HOLDER), shares_ - amount_);
     }
 
-    function test_liquidStakingInternalRedemptionKeepsUnburnedShares() public {
+    function test_liquidStakingInternalRedemptionKeepsUnburnedShares() public noSelfCalls(_subject()) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 shares_ = _depositYield();
         vm.prank(HOLDER); _sy().transfer(_subject(), shares_);

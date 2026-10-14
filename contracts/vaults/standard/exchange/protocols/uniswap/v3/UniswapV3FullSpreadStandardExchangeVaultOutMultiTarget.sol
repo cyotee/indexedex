@@ -36,6 +36,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultOutMultiTarget is UniswapV3Full
         DualExitLocal memory quoted = _quoteDualExit(tokenIn, maxAmountIn, tokensOut, amountsOut);
         uint256 pullAmount = quoted.sharesToBurn;
         if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
             pullAmount = _pretransferCredit(IERC20(address(this)), maxAmountIn);
             if (quoted.sharesToBurn > pullAmount) {
                 revert ISecurePullErrors.TransferDeltaInsufficient(quoted.sharesToBurn, pullAmount);

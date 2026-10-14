@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeWeightedBufferHookInQuoteBase} from "./UniswapV4StandardExchangeWeightedBufferHookInQuoteBase.sol";
 
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldPreviewTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
@@ -13,15 +15,9 @@ import {
 import {UniswapV4StandardExchangeWeightedBufferHookExitCore} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitCore.sol";
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
-abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is UniswapV4StandardExchangeWeightedBufferHookExitCore, NativeStandardYieldTarget {
-    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override onlyLiquidityRemover nonReentrant returns (uint256)
-    {
-        Repo.Layout storage l_ = Repo._layout();
-        bool asShare_ = UniswapV4SeBufferHookLegLib.classify(l_.legs, tokenOut_)
-            == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
-        address pair_ = asShare_ ? l_.legs.pairOfStandardExchange[tokenOut_] : tokenOut_;
-        return _exitSingleAssetFrom(address(this), pair_, shares_, asShare_, receiver_, minimum_, block.timestamp);
+abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is UniswapV4StandardExchangeWeightedBufferHookInQuoteBase, NativeStandardYieldTarget {
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
     }
 
     function previewBurnToToken(uint256 lpAmount, address tokenOut)

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -400,7 +401,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token0()), IERC20(_token0()).balanceOf(address(this)));
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token1()), IERC20(_token1()).balanceOf(address(this)));
         MultiAssetBasicVaultRepo._updateReserve(
-            IERC20(address(this)), IERC20(address(this)).balanceOf(address(this))
+            IERC20(address(this)), ERC20Repo._balanceOf(address(this))
         );
     }
 
@@ -921,7 +922,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
 
     function _refundUnusedShares(uint256 delivered, uint256 used, address recipient) internal {
         if (delivered > used) {
-            IERC20(address(this)).safeTransfer(recipient, delivered - used);
+            ERC20Repo._transfer(address(this), recipient, delivered - used);
         }
     }
 }

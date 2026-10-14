@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeWeightedBufferHookJoinCore} from "./UniswapV4StandardExchangeWeightedBufferHookJoinCore.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -60,91 +61,13 @@ import {
  * @notice Join/exit + one-token aliases (inventory domain, buffer-last).
  */
 abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
-    UniswapV4StandardExchangeWeightedBufferHookTarget
+    UniswapV4StandardExchangeWeightedBufferHookJoinCore
 {
     using SafeERC20 for IERC20;
 
 /* ---------------------------------------------------------------------- */
     /*                         liquidity: join / exit                         */
     /* ---------------------------------------------------------------------- */
-
-    function _invToPairOutPreview(uint256[] memory invOut)
-        internal
-        view
-        returns (uint256[] memory pairOut)
-    {
-        Repo.Layout storage l = Repo._layout();
-        pairOut = new uint256[](l.numTokens);
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (invOut[i] == 0) continue;
-            address se = l.standardExchanges[i];
-            if (se == address(0) || se == l.tokens[i]) {
-                pairOut[i] = invOut[i];
-            } else {
-                pairOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
-                );
-            }
-        }
-    }
-
-
-    function _edgeToInvPreview(uint256[] memory amounts, bool[] memory amountIsSeShare)
-        internal
-        view
-        returns (uint256[] memory invDeltas)
-    {
-        Repo.Layout storage l = Repo._layout();
-        invDeltas = new uint256[](l.numTokens);
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (amounts[i] == 0) continue;
-            if (amountIsSeShare[i]) {
-                invDeltas[i] = amounts[i];
-            } else {
-                address se = l.standardExchanges[i];
-                if (se == address(0) || se == l.tokens[i]) {
-                    invDeltas[i] = amounts[i];
-                } else {
-                    invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                        IERC20(l.tokens[i]), amounts[i], IERC20(se)
-                    );
-                }
-            }
-        }
-    }
-
-
-    function _validateSeShareFlags(bool[] memory flags) internal view {
-        Repo.Layout storage l = Repo._layout();
-        if (flags.length != l.numTokens) revert ArrayLengthMismatch();
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (flags[i] && l.standardExchanges[i] == address(0)) revert SeShareNotBuffered();
-        }
-    }
-
-
-    function _invToEdgeOutPreview(uint256[] memory invOut, bool[] memory receiveSeShare)
-        internal
-        view
-        returns (uint256[] memory edgeOut)
-    {
-        Repo.Layout storage l = Repo._layout();
-        edgeOut = new uint256[](l.numTokens);
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (invOut[i] == 0) continue;
-            address se = l.standardExchanges[i];
-            if (se == address(0)) {
-                edgeOut[i] = invOut[i];
-            } else if (receiveSeShare[i]) {
-                edgeOut[i] = invOut[i];
-            } else {
-                edgeOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
-                );
-            }
-        }
-    }
-
 
     function _entryPreviewBurnToToken(uint256 lpAmount, address tokenOut)
         internal

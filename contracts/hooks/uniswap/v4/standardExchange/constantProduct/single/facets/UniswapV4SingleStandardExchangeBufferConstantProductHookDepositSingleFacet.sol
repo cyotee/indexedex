@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
@@ -28,14 +30,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFa
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](7);
+        funcs = new bytes4[](5);
         funcs[0] = IHook.depositSingle.selector;
         funcs[1] = IHook.depositSingleWithPermit2Signature.selector;
         funcs[2] = IHook.depositSingleWithPermit2Allowance.selector;
         funcs[3] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
-        funcs[4] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
-        funcs[5] = this.previewSwapAfterExchange.selector;
-        funcs[6] = this.previewBondAfterDeposit.selector;
+        funcs[4] = IStandardExchangeIn.exchangeIn.selector;
+        funcs = NativeStandardYieldSelectors._appendMoney(funcs);
     }
 
     /// @inheritdoc IFacet

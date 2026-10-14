@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
@@ -36,7 +37,7 @@ import {
  * @title UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi
  * @notice Stage 02 T2.1–T2.10: shared SE buffer ABI on the Orbital hook. n=3, two SEs.
  */
-contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
+contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, NativeSYExecutionAssertions {
     function test_nativeSYHeldRedemptionHelperIsNotPublic() public {
         address facet_ = IDiamondLoupe(hook).facetAddress(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector);
         bytes memory data_ = abi.encodeWithSignature(
@@ -231,7 +232,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
     }
 
-    function test_nativeSYEveryDeclaredRoutePaysItsPreview() public {
+    function test_nativeSYEveryDeclaredRoutePaysItsPreview() public noSelfCalls(hook) {
         _joinFullBook(300 ether, 300 ether, 300 ether);
         _mintSeSharesToUser(se1, token1, 20 ether);
         _mintSeSharesToUser(se2, token2, 20 ether);
@@ -286,7 +287,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         }
     }
 
-    function test_nativeSYInternalBalanceLimitsAndPriorInventory() public {
+    function test_nativeSYInternalBalanceLimitsAndPriorInventory() public noSelfCalls(hook) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
         token0.mint(hook, 7 ether); token1.mint(hook, 11 ether); token2.mint(hook, 13 ether);

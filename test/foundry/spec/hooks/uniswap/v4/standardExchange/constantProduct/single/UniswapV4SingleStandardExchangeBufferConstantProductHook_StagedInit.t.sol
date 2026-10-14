@@ -266,7 +266,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
         assertEq(loupe.facetAddress(IHook.deposit.selector), address(hookPkg.DEPOSIT_FACET()));
         assertEq(loupe.facetAddress(IHook.currency0.selector), address(hookPkg.SE_FACET()));
         assertEq(loupe.facetAddress(IHooks.beforeInitialize.selector), address(hookPkg.SE_FACET()));
-        assertEq(loupe.facetAddress(IStandardExchangeIn.exchangeIn.selector), address(hookPkg.SE_FACET()));
+        assertEq(loupe.facetAddress(IUniswapV4HookStagedPairInit.isPairPoolLive.selector), address(0));
+        assertEq(loupe.facetAddress(IUniswapV4HookStagedPairInit.pairPoolKey.selector), address(0));
+        assertEq(loupe.facetAddress(IStandardExchangeIn.exchangeIn.selector), address(hookPkg.DEPOSIT_SINGLE_FACET()));
+        assertEq(loupe.facetAddress(IStandardExchangeIn.previewExchangeIn.selector), address(hookPkg.DEPOSIT_PREVIEW_FACET()));
         assertEq(loupe.facetAddress(IERC20.transfer.selector), address(erc20Facet));
         assertEq(
             loupe.facetAddress(IStandardVault.vaultConfig.selector),

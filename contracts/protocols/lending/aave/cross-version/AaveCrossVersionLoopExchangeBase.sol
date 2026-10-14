@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
+import {CrossVersionLoopService} from "./CrossVersionLoopService.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -30,7 +33,20 @@ import {CrossVersionLoopExecutor} from "contracts/protocols/lending/aave/cross-v
  * @notice Shared storage wiring + market builder for the cross-version loop exchange facets (In/Out).
  *         Both facets operate on the same diamond storage (AwareRepos, LoopPositionRepo, ERC20 share).
  */
-abstract contract AaveCrossVersionLoopExchangeBase is ReentrancyLockModifiers, IStandardExchangeErrors {
+abstract contract AaveCrossVersionLoopExchangeBase is NativeStandardYieldQuoteBase, ReentrancyLockModifiers, IStandardExchangeErrors {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256 amountOut)
+    {
+        ReentrancyLockRepo._onlyUnlocked();
+        CrossVersionLoopExecutor.Market memory m = _market();
+        if (address(tokenIn) == address(this) && tokenOut == m.tokenA) return _amountForShares(m, amountIn);
+        if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert IStandardExchangeIn.ExchangeInNotAvailable();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        amountOut = CrossVersionLoopService.sharesForDeposit(CrossVersionLoopExecutor.navUsd(m), supply_,
+            CrossVersionLoopExecutor.valueUsd(m, tokenIn, amountIn));
+        if (supply_ == 0) amountOut = amountOut > MINIMUM_LIQUIDITY ? amountOut - MINIMUM_LIQUIDITY : 0;
+    }
+
     using SafeERC20 for IERC20;
 
     error ZeroLoopAmount();

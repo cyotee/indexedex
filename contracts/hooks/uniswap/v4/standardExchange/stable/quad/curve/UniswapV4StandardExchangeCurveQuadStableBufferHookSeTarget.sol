@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldMoneyTarget as NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase.sol";
 
 import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 
@@ -14,7 +16,7 @@ import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSwapCore
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
@@ -27,23 +29,27 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
  *      L-GAPS-11: pretransfer credits only in-window delta (ISecurePullErrors) — leftover not free-spent.
  */
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
-    UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget,
-    IStandardExchangeIn,
+    NativeStandardYieldExecutionTarget,
+    UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase,
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSwapCore,
     IStandardExchangeOut
 {
     using SafeERC20 for IERC20;
 
-
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
-            return LiquidityRoute.previewInWithSe(tokenIn, amountIn, tokenOut, _liquiditySePair(tokenIn, tokenOut));
-        }
-        return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
+    function isValidTokenIn(address token_) public view override returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < Repo.N_TOKENS; ++i) if (token_ == l.tokens[i]) return true;
+        if (token_ == address(0)) return false;
+        for (uint256 i; i < Repo.N_TOKENS; ++i) if (token_ == l.standardExchanges[i]) return true;
+        return false;
     }
+    function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
+    {
+        return _nativeRedemption(receiver_, shares_, tokenOut_, minimum_);
+    }
+
 
     function exchangeIn(
         IERC20 tokenIn,
@@ -55,8 +61,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
         uint256 deadline
     ) external returns (uint256 amountOut) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
-            address pair_ = _liquiditySePair(tokenIn, tokenOut);
-            return LiquidityRoute.exchangeInWithSe(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline, pair_);
+            return _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
         }
         return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
     }
@@ -235,13 +240,4 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
         }
         _syncVaultReserves();
     }
-    function _liquiditySePair(IERC20 in_, IERC20 out_) private view returns (address) {
-        address edge_ = address(in_) == address(this) ? address(out_) : address(in_);
-        Repo.Layout storage l_ = Repo._layout();
-        for (uint256 i_; i_ < Repo.N_TOKENS; ++i_) {
-            if (edge_ != address(0) && edge_ == l_.standardExchanges[i_]) return l_.tokens[i_];
-        }
-        return address(0);
-    }
-
 }

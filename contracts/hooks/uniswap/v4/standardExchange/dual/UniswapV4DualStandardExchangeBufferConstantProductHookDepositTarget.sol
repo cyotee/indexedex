@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase} from "./UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase.sol";
 
 import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib}
     from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
@@ -43,7 +44,7 @@ import {
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
-abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget is UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
+abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget is UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase {
     using SafeERC20 for IERC20;
 
     function deposit(
@@ -269,17 +270,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) external nonReentrant returns (uint256 shares) {
-        if (!_isLive()) revert NotLive();
-        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenIn);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
-        _pullErc20Single(tokenIn, amountIn);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            address pair = Repo._layout().legs.pairOfStandardExchange[tokenIn];
-            uint256 pairOut = _unwrap(tokenIn, pair, amountIn);
-            return _depositSingle(pair, pairOut, to, sharesMin, deadline);
-        }
-        return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline);
+    ) external returns (uint256 shares) {
+        return _joinLiquidityExactIn(tokenIn, amountIn, to, sharesMin, deadline, address(0));
     }
 
     function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
@@ -287,20 +279,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
         view
         returns (uint256 shares)
     {
-        if (!_isLive() || amountIn == 0) return 0;
-        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenIn);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
-            if (supported) return projected;
-            address pair = Repo._layout().legs.pairOfStandardExchange[tokenIn];
-            uint256 pairOut = IStandardExchangeIn(tokenIn).previewExchangeIn(
-                IERC20(tokenIn), amountIn, IERC20(pair)
-            );
-            if (pairOut == 0) return 0;
-            return _previewDepositSingle(pair, pairOut);
-        }
-        return _previewDepositSingle(tokenIn, amountIn);
+        return _previewLiquidityJoin(tokenIn, amountIn);
     }
 
     function joinSingleAssetExactOut(

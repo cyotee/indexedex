@@ -36,9 +36,8 @@ import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCal
  * @dev R8.2 — pretransfer authorization across the three underlying money routes. An EOA caller is
  *      rejected `EOAPretransferNotAllowed()` (0xb18c67ea) on the two InTarget routes (the EOA check in
  *      `_securePull` fires before the credit check). On the OutTarget exact-out route, when the resting
- *      credit is already booked, the credit precheck in `_pullExactOutInput` fires FIRST and reverts
- *      `TransferDeltaInsufficient(used, 0)` (0x0b7f868c) before `_securePull`'s EOA check — the asserted
- *      asymmetry. A contract caller consuming only unbooked resting credit succeeds and takes nothing
+ *      credit is already booked, a code-less caller is rejected `EOAPretransferNotAllowed()` before the
+ *      credit comparison. A contract caller consuming only unbooked resting credit succeeds and takes nothing
  *      from holder inventory; claiming over the resting credit reverts `TransferDeltaInsufficient(claimed, available)`.
  *
  *      Selectors re-derived from the declaring source with `cast sig`:
@@ -203,9 +202,7 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
         );
     }
 
-    /// @dev R8.2 asymmetry: OutTarget exact-out (underlying -> SE) checks credit BEFORE the EOA check,
-    ///      so with the resting credit already booked it reverts TransferDeltaInsufficient(used, 0),
-    ///      never EOAPretransferNotAllowed.
+    /// @dev Former credit-first probe. A code-less exact-out pretransfer now reaches the caller error first.
     function test_R8_2_eoaPretransfer_outTargetExactOut_booked_reverts_TransferDelta() public {
         _wrap(alice, 100 ether);
         vm.prank(donor);
@@ -220,11 +217,10 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
         // used = amountIn the exact-out route would require.
         uint256 used = seOut.previewExchangeOut(IERC20(address(underlying)), IERC20(se), 5 ether);
         assertGt(used, 0, "non-trivial required input");
+        assertEq(eoa.code.length, 0);
 
         vm.prank(eoa);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, used, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seOut.exchangeOut(
             IERC20(address(underlying)), type(uint256).max, IERC20(se), 5 ether, eoa, true, block.timestamp
         );

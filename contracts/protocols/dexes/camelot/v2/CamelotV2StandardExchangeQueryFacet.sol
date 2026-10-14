@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ConstantProductStandardYieldPreviewTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+import {CamelotV2StandardExchangeInQuoteBase} from "./CamelotV2StandardExchangeInTarget.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {CamelotV2StandardExchangeQuoteTarget} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol";
 
 /// @notice Projected SE and pool accounting, isolated from execution to meet EIP-170.
-contract CamelotV2StandardExchangeQueryFacet is CamelotV2StandardExchangeQuoteTarget, IFacet {
+contract CamelotV2StandardExchangeQueryFacet is CamelotV2StandardExchangeQuoteTarget, CamelotV2StandardExchangeInQuoteBase, ConstantProductStandardYieldPreviewTarget, IFacet {
     function facetName() public pure returns (string memory) {
         return type(CamelotV2StandardExchangeQueryFacet).name;
     }
@@ -26,6 +29,7 @@ contract CamelotV2StandardExchangeQueryFacet is CamelotV2StandardExchangeQuoteTa
         funcs[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
         funcs[5] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
         funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        funcs = NativeStandardYieldSelectors._appendQuery(funcs);
     }
 
     function facetMetadata() external pure returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions) {

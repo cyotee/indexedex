@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {ConstantProductStandardYieldExecutionTarget as ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 
@@ -20,13 +20,7 @@ import {
     UniswapV2StandardExchangeOutTarget
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeOutTarget.sol";
 
-contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget, ConstantProductStandardYieldTarget, IFacet {
-    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override nonReentrant returns (uint256)
-    {
-        return _redeemLpSharesFrom(holder_, receiver_, shares_, tokenOut_, minimum_);
-    }
-
+contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget, IFacet {
     function facetName() public pure returns (string memory name) {
         return type(UniswapV2StandardExchangeOutFacet).name;
     }
@@ -59,7 +53,6 @@ contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget
 
         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[1] = IStandardExchangeOut.exchangeOut.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

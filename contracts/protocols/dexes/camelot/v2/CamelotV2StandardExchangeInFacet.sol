@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {ConstantProductStandardYieldExecutionTarget as ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -58,7 +58,7 @@ contract CamelotV2StandardExchangeInFacet is CamelotV2StandardExchangeInTarget, 
 
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs = NativeStandardYieldSelectors._appendExecution(funcs);
     }
 
     function facetMetadata()

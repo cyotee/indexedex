@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
@@ -15,7 +16,7 @@ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 
-contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook {
+contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook, NativeSYExecutionAssertions {
     function test_nativeSYHeldRedemptionHelperIsNotPublic() public {
         address facet_ = IDiamondLoupe(hook).facetAddress(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector);
         bytes memory data_ = abi.encodeWithSignature(
@@ -79,7 +80,7 @@ contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCu
         }
     }
 
-    function test_curveQuadSYAllPairAndShareInputsAndOutputs() public {
+    function test_curveQuadSYAllPairAndShareInputsAndOutputs() public noSelfCalls(hook) {
         address[5] memory tokens_ = [address(token0), address(token1), address(token2), address(token3), se0];
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             address in_ = tokens_[i_];
@@ -123,7 +124,7 @@ contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCu
         IStandardExchangeOut(hook).previewExchangeOut(IERC20(se0), IERC20(hook), wanted_);
     }
 
-    function test_curveQuadSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public {
+    function test_curveQuadSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public noSelfCalls(hook) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 held_ = sy_.balanceOf(user) / 4;
         uint256 redeem_ = held_ / 3;

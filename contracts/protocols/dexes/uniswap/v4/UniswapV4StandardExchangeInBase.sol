@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -16,7 +17,31 @@ import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 
-abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCommon, ReentrancyLockModifiers {
+abstract contract UniswapV4StandardExchangeInBase is NativeStandardYieldQuoteBase, UniswapV4StandardExchangeCommon, ReentrancyLockModifiers {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256 amountOut)
+    {
+        address token0 = _token0();
+        address token1 = _token1();
+
+        if (
+            (address(tokenIn) == token0 && address(tokenOut) == token1)
+                || (address(tokenIn) == token1 && address(tokenOut) == token0)
+        ) {
+            return _quoteSwapIn(amountIn, address(tokenIn) == token0);
+        }
+
+        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
+            return _previewZapInDeposit(address(tokenIn), amountIn);
+        }
+
+        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+            return _previewZapOutExactIn(address(tokenOut), amountIn);
+        }
+
+        revert IStandardExchangeIn.ExchangeInNotAvailable();
+    }
+
     error UniswapV4ExchangeIn_DeadlineExceeded();
     error UniswapV4ExchangeIn_SlippageExceeded();
     error UniswapV4ExchangeIn_PositionImportUnavailable();
@@ -92,7 +117,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             return 0;
         }
 
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) {
             return 0;
         }
@@ -118,25 +143,27 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
     }
 
-    function _executeZapOutExactIn(address tokenOut, uint256 sharesBurned, uint256 minAmountOut, address recipient)
-        internal
-        returns (uint256 amountOut)
-    {
+    function _executeZapOutExactIn(
+        address tokenOut,
+        uint256 sharesBurned,
+        uint256 minAmountOut,
+        address recipient,
+        address holder_
+    ) internal returns (uint256 amountOut) {
         if (sharesBurned == 0) {
             revert UniswapV4Exchange_ZeroAmount();
         }
 
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) {
             revert UniswapV4Exchange_ZeroAmount();
         }
 
         if (!canOpenPoolManagerUnlock()) {
             // Price the reference pool exit, then settle locally without a nested unlock.
-            // Use the installed query facet so execution does not embed another pool quoter.
-            amountOut = IStandardExchangeIn(address(this)).previewExchangeIn(
-                IERC20(address(this)), sharesBurned, IERC20(tokenOut)
-            );
+            // This is the share-input branch of the shared exact-in quote, not a generic swap or deposit.
+            if (tokenOut != _token0() && tokenOut != _token1()) revert IStandardExchangeIn.ExchangeInNotAvailable();
+            amountOut = _previewZapOutExactIn(tokenOut, sharesBurned);
             uint256 freeOut = IERC20(tokenOut).balanceOf(address(this));
             if (amountOut == 0 || freeOut < amountOut) {
                 revert UniswapV4Exchange_InsufficientLocalReserve(
@@ -144,14 +171,16 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
                 );
             }
             if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-            ERC20Repo._burn(address(this), sharesBurned);
+            ERC20Repo._burn(holder_, sharesBurned);
             _transferCurrency(tokenOut, recipient, amountOut);
             _syncVaultReserves();
             return amountOut;
         }
 
         // D3: free path always uses PoolManager even if sleeve would cover; then rebalance.
-        amountOut = _executeFreeZapOutExactIn(tokenOut, sharesBurned, totalShares, minAmountOut, recipient);
+        amountOut = _executeFreeZapOutExactIn(
+            tokenOut, sharesBurned, totalShares, minAmountOut, recipient, holder_
+        );
     }
 
     function _executeFreeZapOutExactIn(
@@ -159,8 +188,23 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         uint256 sharesBurned,
         uint256 totalShares,
         uint256 minAmountOut,
-        address recipient
+        address recipient,
+        address holder_
     ) internal returns (uint256 amountOut) {
+        amountOut = _idleZapOutAmount(tokenOut, sharesBurned, totalShares);
+        if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
+
+        ERC20Repo._burn(holder_, sharesBurned);
+        _transferCurrency(tokenOut, recipient, amountOut);
+        _syncVaultReserves();
+        _rebalanceLiquidReserveBestEffort();
+    }
+
+    /// @dev Same free-path math as before the holder argument. Split only to stay under the stack limit.
+    function _idleZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+        internal
+        returns (uint256 amountOut)
+    {
         _collectManagedFeesIfIdle();
         bool outIsToken0 = tokenOut == _token0();
         address otherToken = outIsToken0 ? _token1() : _token0();
@@ -186,16 +230,8 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         }
 
         amountOut = (IERC20(tokenOut).balanceOf(address(this)) - outBefore) + freeOutShare;
-        {
-            uint256 bal = IERC20(tokenOut).balanceOf(address(this));
-            if (amountOut > bal) amountOut = bal;
-        }
-        if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-
-        ERC20Repo._burn(address(this), sharesBurned);
-        _transferCurrency(tokenOut, recipient, amountOut);
-        _syncVaultReserves();
-        _rebalanceLiquidReserveBestEffort();
+        uint256 bal = IERC20(tokenOut).balanceOf(address(this));
+        if (amountOut > bal) amountOut = bal;
     }
 
     function _burnPositionLiquidity(uint256 sharesBurned, uint256 totalShares)
@@ -244,7 +280,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
 
         uint256 amount0Added = tokenIn == _token0() ? amountIn : 0;
         uint256 amount1Added = tokenIn == _token1() ? amountIn : 0;
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
         return _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
     }
@@ -266,7 +302,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
 
         uint256 amount0Added = tokenIn == _token0() ? amountIn : 0;
         uint256 amount1Added = tokenIn == _token1() ? amountIn : 0;
-        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
+        uint256 totalSharesBefore = ERC20Repo._totalSupply();
 
         // Post-pull totals include deposit; back out for pre-deposit reserves.
         (uint256 total0, uint256 total1) = _totalVaultReserves();
@@ -310,7 +346,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         if (amount0Added == 0 || amount1Added == 0) {
             return 0;
         }
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
         return _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
     }
@@ -331,7 +367,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
 
         _collectManagedFeesIfIdle();
 
-        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
+        uint256 totalSharesBefore = ERC20Repo._totalSupply();
         (uint256 total0, uint256 total1) = _totalVaultReserves();
         uint256 reserve0Before = total0 - amount0Added;
         uint256 reserve1Before = total1 - amount1Added;

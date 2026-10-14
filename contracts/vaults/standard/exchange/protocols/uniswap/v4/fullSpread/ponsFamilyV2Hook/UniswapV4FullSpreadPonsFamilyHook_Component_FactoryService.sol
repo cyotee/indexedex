@@ -120,10 +120,12 @@ library UniswapV4FullSpreadPonsFamilyHook_Component_FactoryService {
         internal
         returns (IFacet instance)
     {
+        address executionDelegate = deployUniswapV4FullSpreadPonsFamilyHookInExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4FullSpreadPonsFamilyHookInMultiFacet.sol:UniswapV4FullSpreadPonsFamilyHookInMultiFacet"),
+            bytes.concat(ArtifactCreationCode.creationCode(create3Factory, "UniswapV4FullSpreadPonsFamilyHookInMultiFacet.sol:UniswapV4FullSpreadPonsFamilyHookInMultiFacet"), abi.encode(executionDelegate)),
             abi.encode("UniswapV4FullSpreadPonsFamilyHookInMultiFacet")._hash()
         );
+        _requireDelegate(address(instance), "UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE()", executionDelegate);
         vm.label(address(instance), "UniswapV4FullSpreadPonsFamilyHookInMultiFacet");
     }
 

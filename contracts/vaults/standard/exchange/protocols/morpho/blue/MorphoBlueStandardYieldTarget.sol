@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {MorphoBlueStandardExchangeInExecutionBase} from "./MorphoBlueStandardExchangeInTarget.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
@@ -8,7 +10,7 @@ import {MorphoBlueStandardExchangeCommon} from "./MorphoBlueStandardExchangeComm
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
 /// @notice Native Morpho market shares use the existing accrued loan-asset entitlement.
-abstract contract MorphoBlueStandardYieldTarget is NativeStandardYieldTarget, MorphoBlueStandardExchangeCommon, ReentrancyLockModifiers {
+abstract contract MorphoBlueStandardYieldTarget is NativeStandardYieldTarget, MorphoBlueStandardExchangeInExecutionBase {
     function _redeemVaultHeld(address receiver_, uint256 shares_, address, uint256 minimum_)
         internal override nonReentrant returns (uint256)
     {
@@ -16,13 +18,13 @@ abstract contract MorphoBlueStandardYieldTarget is NativeStandardYieldTarget, Mo
     }
 
     function getTokensIn() public view override returns (address[] memory tokens_) {
-        tokens_ = new address[](1); tokens_[0] = IERC4626(address(this)).asset();
+        tokens_ = new address[](1); tokens_[0] = address(ERC4626Repo._reserveAsset());
     }
     function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
     /// @dev Morpho supply shares are ledger entries, with no separate ERC-20 yield token.
     function yieldToken() external pure override returns (address) { return address(0); }
     function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
-        address asset_ = IERC4626(address(this)).asset();
+        address asset_ = address(ERC4626Repo._reserveAsset());
         return (IStandardizedYield.AssetType.TOKEN, asset_, IERC20Metadata(asset_).decimals());
     }
     function exchangeRate() external view override returns (uint256) {

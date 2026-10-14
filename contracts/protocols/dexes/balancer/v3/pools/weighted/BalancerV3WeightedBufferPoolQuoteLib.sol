@@ -11,6 +11,9 @@ import {IBalancerV3PoolLiquidityQuote as Quote} from "../IBalancerV3PoolLiquidit
 import {IStandardExchangeBufferPool} from "../constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {ICommonBufferMultiVaultWeightedPool} from "./commonBufferMultiVault/ICommonBufferMultiVaultWeightedPool.sol";
 import {IMultiPairStandardExchangeBufferPool} from "./multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol";
+import {StandardExchangeBufferPoolRepo as Single} from "../constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
+import {MixedLegWeightedBufferPoolRepo as Mixed} from "./mixedLegBuffer/MixedLegWeightedBufferPoolRepo.sol";
+import {CommonBufferMultiVaultWeightedPoolRepo as Common} from "./commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolRepo.sol";
 
 /// @notice Sequential quote book for the four native weighted buffer-pool families.
 /// @dev Reads existing pool views; adds no pool selectors or storage. Withdrawals scale
@@ -95,6 +98,12 @@ library BalancerV3WeightedBufferPoolQuoteLib {
     function afterLiquidity(bytes memory state_, bool joining_, uint256 bpt_, uint256 supply_)
         external pure returns (bytes memory)
     {
+        return _afterLiquidity(state_, joining_, bpt_, supply_);
+    }
+
+    function _afterLiquidity(bytes memory state_, bool joining_, uint256 bpt_, uint256 supply_)
+        internal pure returns (bytes memory)
+    {
         State memory q_ = abi.decode(state_, (State));
         if (!joining_ && supply_ != 0) {
             for (uint256 i_; i_ < q_.buffers.length; ++i_) q_.buffers[i_] -= bpt_ * q_.buffers[i_] / supply_;
@@ -105,7 +114,7 @@ library BalancerV3WeightedBufferPoolQuoteLib {
         return abi.encode(q_);
     }
 
-    function _balances(State memory q_, uint256[] memory live_) private pure returns (uint256[] memory b_) {
+    function _balances(State memory q_, uint256[] memory live_) internal pure returns (uint256[] memory b_) {
         if (live_.length != q_.rates.length) revert InvalidWeightedQuote();
         b_ = new uint256[](live_.length);
         for (uint256 i_; i_ < live_.length; ++i_) b_[i_] = live_[i_];
@@ -119,9 +128,69 @@ library BalancerV3WeightedBufferPoolQuoteLib {
         }
     }
 
-    function _invariant(State memory q_, uint256[] memory live_, bool up_) private pure returns (uint256) {
+    function _invariant(State memory q_, uint256[] memory live_, bool up_) internal pure returns (uint256) {
         uint256[] memory b_ = _balances(q_, live_);
         return up_ ? WeightedMath.computeInvariantUp(q_.weights, b_) : WeightedMath.computeInvariantDown(q_.weights, b_);
+    }
+
+    function hostInvariant(bytes memory state_, uint256[] memory live_, bool up_) external view returns (uint256) {
+        State memory q_ = abi.decode(state_, (State));
+        _hostWeights(q_);
+        uint256[] memory b_ = new uint256[](live_.length);
+        for (uint256 i_; i_ < live_.length; ++i_) b_[i_] = _hostBalanceAt(q_, live_, i_);
+        return up_ ? WeightedMath.computeInvariantUp(q_.weights, b_) : WeightedMath.computeInvariantDown(q_.weights, b_);
+    }
+
+    function balance(bytes memory state_, uint256[] memory live_, uint256 index_, uint256 ratio_)
+        external view returns (uint256)
+    {
+        State memory q_ = abi.decode(state_, (State));
+        _hostWeights(q_);
+        return WeightedMath.computeBalanceOutGivenInvariant(_hostBalanceAt(q_, live_, index_), q_.weights[index_], ratio_);
+    }
+
+    function _hostWeights(State memory q_) private view {
+        if (address(Single._ttaToken()) == address(0)) return;
+        uint256 shares_ = Single._sharesIndex();
+        if (q_.rates[shares_] == 0) revert IStandardExchangeBufferPool.RateProviderZero();
+        uint256 ratio_ = Math.mulDiv(q_.rates[shares_], 1e18, Single._baselineRate());
+        uint256 weight_ = Math.mulDiv(ratio_, 1e18, ratio_ + 1e18);
+        if (weight_ < 1e16 || 1e18 - weight_ < 1e16) {
+            revert IStandardExchangeBufferPool.EffectiveWeightOutOfBounds(1e18 - weight_, weight_);
+        }
+        q_.weights[shares_] = weight_;
+        q_.weights[Single._ttaIndex()] = 1e18 - weight_;
+    }
+
+    /// @dev Join callbacks retain the host helpers' zero-rate guards, checked multiplication
+    /// grouping, and unchecked signed-offset behavior. Liquidation retains its existing quote book.
+    function _hostBalanceAt(State memory q_, uint256[] memory live_, uint256 index_) private view returns (uint256) {
+        bool single_ = address(Single._ttaToken()) != address(0);
+        if (single_ && q_.rates[q_.shareIndices[0]] == 0) revert IStandardExchangeBufferPool.RateProviderZero();
+        for (uint256 i_; i_ < q_.bufferIndices.length; ++i_) {
+            if (index_ == q_.bufferIndices[i_]) return q_.buffers[i_];
+        }
+        for (uint256 i_; i_ < q_.shareIndices.length; ++i_) {
+            if (index_ != q_.shareIndices[i_]) continue;
+            int256 h_ = q_.offsets[i_];
+            if (h_ == 0) return live_[index_];
+            if (q_.rates[index_] == 0) revert IStandardExchangeBufferPool.RateProviderZero();
+            bool mixed_ = Mixed._tokenCount() != 0;
+            uint256 raw_;
+            if (mixed_ || Common._vaultCount() != 0) {
+                unchecked { raw_ = uint256(h_ <= 0 ? -h_ : h_); }
+            } else {
+                raw_ = uint256(h_ <= 0 ? -h_ : h_);
+            }
+            uint256 delta_ = mixed_
+                ? Math.mulDiv(raw_ * q_.scaling[index_], q_.rates[index_], 1e18)
+                : Math.mulDiv(raw_, q_.scaling[index_] * q_.rates[index_], 1e18);
+            if (h_ <= 0) {
+                unchecked { return live_[index_] + delta_; }
+            }
+            return delta_ >= live_[index_] ? 0 : live_[index_] - delta_;
+        }
+        return live_[index_];
     }
 
     /// @notice Extend weighted removal valuation beyond LogExpMath's lower exponent bound.
@@ -166,6 +235,12 @@ library BalancerV3WeightedBufferPoolQuoteLib {
 
     function quote(bytes memory state_, Quote.LiquidityQuoteParams memory p_)
         external pure returns (uint256 result_, uint256[] memory fees_)
+    {
+        return _quote(state_, p_);
+    }
+
+    function _quote(bytes memory state_, Quote.LiquidityQuoteParams memory p_)
+        internal pure returns (uint256 result_, uint256[] memory fees_)
     {
         State memory q_ = abi.decode(state_, (State));
         for (uint256 i_; i_ < q_.bufferIndices.length; ++i_) {

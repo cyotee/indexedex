@@ -5,6 +5,74 @@ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interf
 
 /// @notice Canonical Pendle selectors appended to an existing SE facet without ERC-20 duplicates.
 library NativeStandardYieldSelectors {
+    function _appendMoney(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
+        uint256 n_ = existing_.length;
+        selectors_ = new bytes4[](n_ + 2);
+        for (uint256 i_; i_ < n_; ++i_) selectors_[i_] = existing_[i_];
+        selectors_[n_] = IStandardizedYield.deposit.selector;
+        selectors_[n_ + 1] = IStandardizedYield.redeem.selector;
+    }
+
+    function _appendRewards(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
+        uint256 n_ = existing_.length;
+        selectors_ = new bytes4[](n_ + 2);
+        for (uint256 i_; i_ < n_; ++i_) selectors_[i_] = existing_[i_];
+        selectors_[n_] = IStandardizedYield.rewardIndexesCurrent.selector;
+        selectors_[n_ + 1] = IStandardizedYield.claimRewards.selector;
+    }
+
+    function _appendPreviews(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
+        uint256 n_ = existing_.length;
+        selectors_ = new bytes4[](n_ + 2);
+        for (uint256 i_; i_ < n_; ++i_) selectors_[i_] = existing_[i_];
+        selectors_[n_] = IStandardizedYield.previewDeposit.selector;
+        selectors_[n_ + 1] = IStandardizedYield.previewRedeem.selector;
+    }
+
+    function _appendDiscovery(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
+        uint256 n_ = existing_.length;
+        selectors_ = new bytes4[](n_ + 10);
+        for (uint256 i_; i_ < n_; ++i_) selectors_[i_] = existing_[i_];
+        selectors_[n_] = IStandardizedYield.exchangeRate.selector;
+        selectors_[n_ + 1] = IStandardizedYield.yieldToken.selector;
+        selectors_[n_ + 2] = IStandardizedYield.assetInfo.selector;
+        selectors_[n_ + 3] = IStandardizedYield.getTokensIn.selector;
+        selectors_[n_ + 4] = IStandardizedYield.getTokensOut.selector;
+        selectors_[n_ + 5] = IStandardizedYield.isValidTokenIn.selector;
+        selectors_[n_ + 6] = IStandardizedYield.isValidTokenOut.selector;
+        selectors_[n_ + 7] = IStandardizedYield.getRewardTokens.selector;
+        selectors_[n_ + 8] = IStandardizedYield.accruedRewards.selector;
+        selectors_[n_ + 9] = IStandardizedYield.rewardIndexesStored.selector;
+    }
+
+    function _appendExecution(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
+        uint256 n_ = existing_.length;
+        selectors_ = new bytes4[](n_ + 4);
+        for (uint256 i_; i_ < n_; ++i_) selectors_[i_] = existing_[i_];
+        selectors_[n_] = IStandardizedYield.deposit.selector;
+        selectors_[n_ + 1] = IStandardizedYield.redeem.selector;
+        selectors_[n_ + 2] = IStandardizedYield.rewardIndexesCurrent.selector;
+        selectors_[n_ + 3] = IStandardizedYield.claimRewards.selector;
+    }
+
+    function _appendQuery(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
+        uint256 n_ = existing_.length;
+        selectors_ = new bytes4[](n_ + 12);
+        for (uint256 i_; i_ < n_; ++i_) selectors_[i_] = existing_[i_];
+        selectors_[n_] = IStandardizedYield.exchangeRate.selector;
+        selectors_[n_ + 1] = IStandardizedYield.yieldToken.selector;
+        selectors_[n_ + 2] = IStandardizedYield.assetInfo.selector;
+        selectors_[n_ + 3] = IStandardizedYield.getTokensIn.selector;
+        selectors_[n_ + 4] = IStandardizedYield.getTokensOut.selector;
+        selectors_[n_ + 5] = IStandardizedYield.isValidTokenIn.selector;
+        selectors_[n_ + 6] = IStandardizedYield.isValidTokenOut.selector;
+        selectors_[n_ + 7] = IStandardizedYield.previewDeposit.selector;
+        selectors_[n_ + 8] = IStandardizedYield.previewRedeem.selector;
+        selectors_[n_ + 9] = IStandardizedYield.getRewardTokens.selector;
+        selectors_[n_ + 10] = IStandardizedYield.accruedRewards.selector;
+        selectors_[n_ + 11] = IStandardizedYield.rewardIndexesStored.selector;
+    }
+
     function _append(bytes4[] memory existing_) internal pure returns (bytes4[] memory selectors_) {
         uint256 n_ = existing_.length;
         selectors_ = new bytes4[](n_ + 16);

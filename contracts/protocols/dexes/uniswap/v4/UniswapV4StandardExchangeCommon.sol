@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -60,7 +62,7 @@ import {
     UniswapV4TwapOracleAwareRepo
 } from "contracts/oracles/uniswap/v4/twap/aware/UniswapV4TwapOracleAwareRepo.sol";
 
-abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePullErrors {
+abstract contract UniswapV4StandardExchangeCommon is ISecurePullErrors {
     using BetterSafeERC20 for IERC20;
     using BalanceDeltaLibrary for BalanceDelta;
     using CurrencyLibrary for Currency;
@@ -102,8 +104,8 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         q.vault = address(this);
         q.token0 = asset == _token0();
         q.idle = canOpenPoolManagerUnlock();
-        q.supply = IERC20(address(this)).totalSupply();
-        q.shares = IERC20(address(this)).balanceOf(holder);
+        q.supply = ERC20Repo._totalSupply();
+        q.shares = ERC20Repo._balanceOf(holder);
         (q.free0, q.free1) = _freeBalances();
         (q.fees0, q.fees1) = _collectablePositionFees();
         q.positionLiquidity = _currentLiquidity();
@@ -302,13 +304,13 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         return !TransientStateLibrary.isUnlocked(_poolManager());
     }
 
-    function twapOracle() public view virtual returns (IUniswapV4MultiPoolTwapOracle) {
+    function _twapOracle() internal view returns (IUniswapV4MultiPoolTwapOracle) {
         return UniswapV4TwapOracleAwareRepo._twapOracle();
     }
 
     function _pokeBoundPoolTwap() internal {
         PoolKey memory key = _poolKey();
-        try twapOracle().update(key) returns (bool) {}
+        try _twapOracle().update(key) returns (bool) {}
         catch (bytes memory reason) {
             emit TwapOracleUpdateFailed(PoolId.unwrap(key.toId()), reason);
         }
@@ -594,7 +596,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token1()), reserve1);
         // Book sitting vaultShare so leftover self-shares are R, not durable U (E6 / I1).
         MultiAssetBasicVaultRepo._updateReserve(
-            IERC20(address(this)), IERC20(address(this)).balanceOf(address(this))
+            IERC20(address(this)), ERC20Repo._balanceOf(address(this))
         );
     }
 
@@ -979,7 +981,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(abi.encode(actions, params), block.timestamp);
     }
 
-    function unlockCallback(bytes calldata data) external override returns (bytes memory) {
+    function _unlockCallback(bytes calldata data) internal returns (bytes memory) {
         if (msg.sender != address(_poolManager())) {
             revert UniswapV4Exchange_InvalidCallbackCaller(msg.sender);
         }
@@ -1297,15 +1299,15 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
      *      `TransferDeltaInsufficient`.
      */
     function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
-        IERC20 vaultShare = IERC20(address(this));
-        uint256 b0 = vaultShare.balanceOf(address(this));
-        if (msg.sender == address(this) && !pretransferred) {
-            if (amountIn > b0) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, b0);
-            return amountIn;
-        }
+        uint256 b0 = ERC20Repo._balanceOf(address(this));
         if (!pretransferred) {
-            vaultShare.safeTransferFrom(msg.sender, address(this), amountIn);
-            return vaultShare.balanceOf(address(this)) - b0;
+            // The old ERC-20 self-call spent the vault's allowance, not the external caller's.
+            if (ERC20Repo._allowance(msg.sender, address(this)) < amountIn || ERC20Repo._balanceOf(msg.sender) < amountIn) {
+                revert SafeTransferLib.TransferFromFailed();
+            }
+            ERC20Repo._spendAllowance(msg.sender, address(this), amountIn);
+            ERC20Repo._transfer(msg.sender, address(this), amountIn);
+            return ERC20Repo._balanceOf(address(this)) - b0;
         }
         LocalCreditLib.requirePretransferCaller(msg.sender);
         uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(this));
@@ -1319,7 +1321,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
     /// @dev E6: refund only this-call unused inbound shares (`delivered - used`), never leftover R.
     function _refundUnusedShares(uint256 delivered, uint256 used, address recipient) internal {
         if (delivered > used) {
-            IERC20(address(this)).safeTransfer(recipient, delivered - used);
+            ERC20Repo._transfer(address(this), recipient, delivered - used);
         }
     }
 

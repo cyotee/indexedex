@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeOrbitalBufferHookInExecutionBase} from "./UniswapV4StandardExchangeOrbitalBufferHookInExecutionBase.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 
 import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldMoneyTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -47,62 +48,15 @@ import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.s
 
 /// @title UniswapV4StandardExchangeOrbitalBufferHookSeTarget
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
-abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon, NativeStandardYieldTarget {
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookExchangeCore is UniswapV4StandardExchangeOrbitalBufferHookInExecutionBase {
     using SafeERC20 for IERC20;
-
-    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override onlyLiquidityRemover nonReentrant returns (uint256 amount_)
-    {
-        address implementation_ = IDiamondLoupe(address(this)).facetAddress(
-            IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector
-        );
-        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
-            "executeVaultHeldRedemption(address,uint256,address,uint256)", receiver_, shares_, tokenOut_, minimum_
-        ));
-        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
-        return abi.decode(result_, (uint256));
-    }
-
-    function getTokensIn() public view override returns (address[] memory tokens) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 count = 3;
-        for (uint8 i; i < 3; ++i) if (Repo._seAt(l, i) != address(0)) ++count;
-        tokens = new address[](count);
-        count = 3;
-        for (uint8 i; i < 3; ++i) {
-            tokens[i] = Repo._tokenAt(l, i);
-            address se = Repo._seAt(l, i);
-            if (se != address(0)) tokens[count++] = se;
-        }
-    }
-    function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
-    function yieldToken() external pure override returns (address) { return address(0); }
-    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
-        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
-    }
-    function exchangeRate() external view override returns (uint256) {
-        (, uint256 supply) = _previewProtocolMintShares();
-        if (supply == 0) return 1e18;
-        (uint256 x, uint256 y, uint256 z) = _effectiveWad();
-        (,, uint256 root) = _measureK(x, y, z);
-        return FullMath.mulDiv(root, 1e18, supply);
-    }
-
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut);
-        return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
-    }
 
 
     /// @dev Exact-in credits the requested amount and refunds nothing. `pretransferred=true`
     ///      is for integrating contracts only and reverts `EOAPretransferNotAllowed` for a
     ///      caller with no bytecode. Resting unbooked face is D12 credit, not this call's refund.
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut) {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+    function _entryExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) internal returns (uint256 amountOut) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
         return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
     }
 
@@ -143,8 +97,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     }
 
 
-    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
-        external
+    function _entryPreviewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        internal
         view
         returns (uint256 amountIn)
     {
@@ -158,7 +112,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     ///      EOA pretransfer reverts `EOAPretransferNotAllowed`. Resting unbooked face beyond the credit is
     ///      D12 pretransfer credit, never this call's refund; what the SE returns during this call is counted
     ///      once, and an identity buffer's SE-share backing is not face to refund.
-    function exchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountIn) {
+    function _entryExchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut, address recipient, bool pretransferred, uint256 deadline) internal returns (uint256 amountIn) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
         return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
     }
@@ -203,13 +157,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     }
 
     /// @notice D89: owner exact-in; internal book settlement (no nested PoolManager.unlock).
-    function ownerSwapExactIn(
+    function _entryOwnerSwapExactIn(
         address tokenIn,
         address tokenOut,
         uint256 amountIn,
         uint256 minAmountOut,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal nonReentrant returns (uint256 amountOut) {
         _onlyHookOwner();
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
@@ -227,13 +181,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     }
 
     /// @notice D89: owner exact-out; internal book settlement (no nested PoolManager.unlock).
-    function ownerSwapExactOut(
+    function _entryOwnerSwapExactOut(
         address tokenIn,
         address tokenOut,
         uint256 amountOut,
         uint256 maxAmountIn,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountIn) {
+    ) internal nonReentrant returns (uint256 amountIn) {
         _onlyHookOwner();
         _requireDeadline(deadline);
         _requireNonZero(amountOut);
@@ -279,4 +233,37 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         _syncVaultReserves();
         emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut, feeWad);
     }
+}
+
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV4StandardExchangeOrbitalBufferHookExchangeCore, NativeStandardYieldTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override onlyLiquidityRemover nonReentrant returns (uint256)
+    {
+        return _exitLiquidityFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
+    }
+    function isValidTokenIn(address token_) public view override returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < 3; ++i) {
+            if (token_ == Repo._tokenAt(l, i)) return true;
+            address se = Repo._seAt(l, i);
+            if (se != address(0) && token_ == se) return true;
+        }
+        return false;
+    }
+    function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
+    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_) external returns (uint256) {
+        return _entryExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+    }
+}
+
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookExchangeOutTarget is UniswapV4StandardExchangeOrbitalBufferHookExchangeCore {
+    function previewExchangeOut(IERC20 in_, IERC20 out_, uint256 amount_) external view returns (uint256) { return _entryPreviewExchangeOut(in_, out_, amount_); }
+    function exchangeOut(IERC20 in_, uint256 maximum_, IERC20 out_, uint256 amount_, address to_, bool prepaid_, uint256 deadline_) external returns (uint256) {
+        return _entryExchangeOut(in_, maximum_, out_, amount_, to_, prepaid_, deadline_);
+    }
+}
+
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookOwnerSwapTarget is UniswapV4StandardExchangeOrbitalBufferHookExchangeCore {
+    function ownerSwapExactIn(address in_, address out_, uint256 amount_, uint256 minimum_, uint256 deadline_) external returns (uint256) { return _entryOwnerSwapExactIn(in_, out_, amount_, minimum_, deadline_); }
+    function ownerSwapExactOut(address in_, address out_, uint256 amount_, uint256 maximum_, uint256 deadline_) external returns (uint256) { return _entryOwnerSwapExactOut(in_, out_, amount_, maximum_, deadline_); }
 }

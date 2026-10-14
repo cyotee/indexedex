@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldPreviewTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
@@ -14,26 +14,6 @@ import {
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutBase.sol";
 
 contract UniswapV4StandardExchangeOutMultiQueryTarget is UniswapV4StandardExchangeOutBase, NativeStandardYieldTarget {
-    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override returns (uint256 amount_)
-    {
-        // The existing guarded SE entrypoint explicitly accepts self-calls using vault-held shares.
-        // Reuse its execution delegate instead of embedding a second settlement engine in the SY facet.
-        amount_ = IStandardExchangeIn(address(this)).exchangeIn(
-            IERC20(address(this)), shares_, IERC20(tokenOut_), minimum_, receiver_, false, block.timestamp
-        );
-    }
-
-    function _standardRoute(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address receiver_, bool internal_)
-        internal override returns (uint256)
-    {
-        if (address(in_) == address(this) && !internal_) {
-            ERC20Repo._transfer(msg.sender, address(this), amount_);
-            internal_ = true;
-        }
-        return super._standardRoute(in_, amount_, out_, minimum_, receiver_, internal_);
-    }
-
     function getTokensIn() public view override returns (address[] memory tokens) {
         tokens = new address[](2);
         tokens[0] = _token0();

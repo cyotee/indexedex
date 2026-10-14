@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 
@@ -25,10 +27,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet is
         external returns (uint256 amount_)
     {
         if (address(this) == NATIVE_SY_SELF) revert DelegateCallRequired();
-        Repo.Layout storage l_ = Repo._layout();
-        bool asShare_ = LegLib.classify(l_.legs, tokenOut_) == LegLib.LegKind.StandardExchange;
-        address pair_ = asShare_ ? l_.legs.pairOfStandardExchange[tokenOut_] : tokenOut_;
-        return _exitSingleAssetFrom(address(this), pair_, shares_, asShare_, receiver_, minimum_);
+        return _nativeRedemption(receiver_, shares_, tokenOut_, minimum_);
     }
 
     function facetName() public pure returns (string memory) {

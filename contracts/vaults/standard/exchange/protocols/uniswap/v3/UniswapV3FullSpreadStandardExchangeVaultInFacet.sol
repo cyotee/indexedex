@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV3FullSpreadStandardYieldExecutionTarget} from "./UniswapV3FullSpreadStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -17,7 +19,7 @@ import {
  * @title UniswapV3FullSpreadStandardExchangeVaultInFacet
  * @notice Facet for exchange-in routes and Uni V3 mint/swap callbacks. Constructor-injected CREATE3 delegate.
  */
-contract UniswapV3FullSpreadStandardExchangeVaultInFacet is UniswapV3FullSpreadStandardExchangeVaultInTarget, IFacet {
+contract UniswapV3FullSpreadStandardExchangeVaultInFacet is UniswapV3FullSpreadStandardYieldExecutionTarget, IFacet {
     constructor(address executionDelegate) UniswapV3FullSpreadStandardExchangeVaultInTarget(executionDelegate) {}
 
     function facetName() public pure override returns (string memory name) {
@@ -36,6 +38,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultInFacet is UniswapV3FullSpreadS
         funcs[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs[1] = IUniswapV3MintCallback.uniswapV3MintCallback.selector;
         funcs[2] = IUniswapV3SwapCallback.uniswapV3SwapCallback.selector;
+        funcs = NativeStandardYieldSelectors._appendExecution(funcs);
     }
 
     function facetMetadata()

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -26,7 +27,14 @@ import {LidoWstETHStandardExchangeRepo} from "contracts/protocols/staking/lido/L
  * @dev Share math uses BetterMath virtual offset (ERC-4626-style) to resist donation inflation.
  *      Previews never gate on liquid sleeve; execution does when paying WETH.
  */
-abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, IStandardExchangeErrors {
+abstract contract LidoWstETHStandardExchangeCommon is NativeStandardYieldQuoteBase, ILidoWstETHStandardVault, IStandardExchangeErrors {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256)
+    {
+        if (amountIn == 0) revert ZeroAmount();
+        return _quoteExactIn(address(tokenIn), amountIn, address(tokenOut));
+    }
+
     using BetterMath for uint256;
     using SafeERC20 for IERC20;
 

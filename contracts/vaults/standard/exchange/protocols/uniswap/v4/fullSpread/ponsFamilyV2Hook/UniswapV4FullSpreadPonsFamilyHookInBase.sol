@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4FullSpreadHooklessStandardExchangeVaultRouteTypes as Types} from "../hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultRouteTypes.sol";
@@ -22,7 +23,31 @@ import {
     IUniswapV4FullSpreadPonsFamilyHookLiquidReserve
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/interfaces/IUniswapV4FullSpreadPonsFamilyHookLiquidReserve.sol";
 
-abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpreadPonsFamilyHookCommon, ReentrancyLockModifiers {
+abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is NativeStandardYieldQuoteBase, UniswapV4FullSpreadPonsFamilyHookCommon, ReentrancyLockModifiers {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256 amountOut)
+    {
+        address token0 = _token0();
+        address token1 = _token1();
+
+        if (
+            (address(tokenIn) == token0 && address(tokenOut) == token1)
+                || (address(tokenIn) == token1 && address(tokenOut) == token0)
+        ) {
+            return _quoteSwapIn(amountIn, address(tokenIn) == token0);
+        }
+
+        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
+            return _previewZapInDeposit(address(tokenIn), amountIn);
+        }
+
+        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+            return _previewZapOutExactIn(address(tokenOut), amountIn);
+        }
+
+        return 0;
+    }
+
     error UniswapV4ExchangeIn_DeadlineExceeded();
     error UniswapV4ExchangeIn_SlippageExceeded();
     error UniswapV4ExchangeIn_PositionImportUnavailable();
@@ -106,7 +131,7 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
             return 0;
         }
 
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) return 0;
 
         // A quote does not open an unlock. Price the pool book whether or not it is locked.
@@ -138,7 +163,7 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
             revert UniswapV4Exchange_ZeroAmount();
         }
 
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) revert IStandardExchangeErrors.InvalidRoute(address(this), tokenOut);
 
         if (!canOpenPoolManagerUnlock()) {
@@ -297,7 +322,7 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
         if (amount0Added == 0 || amount1Added == 0) {
             return 0;
         }
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
         sharesOut = _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
         if (sharesOut == 0) return 0;
@@ -318,7 +343,7 @@ abstract contract UniswapV4FullSpreadPonsFamilyHookInBase is UniswapV4FullSpread
             _snapshot(amount0Added, amount1Added))), 0, 0);
         _collectManagedFeesIfIdle();
 
-        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
+        uint256 totalSharesBefore = ERC20Repo._totalSupply();
         (uint256 total0, uint256 total1) = _totalVaultReserves();
         uint256 reserve0Before = total0 - amount0Added;
         uint256 reserve1Before = total1 - amount1Added;

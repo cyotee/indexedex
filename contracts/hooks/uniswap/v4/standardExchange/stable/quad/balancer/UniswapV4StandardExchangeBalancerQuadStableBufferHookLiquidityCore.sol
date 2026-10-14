@@ -149,7 +149,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
             (shares,) = _firstMint(inv, amounts);
             return shares;
         }
-        return Math.unbalancedJoinShares(_ratedWadAll(), _liquidityAmounts(inv), _amp(), supply, dexSwapFee());
+        return Math.unbalancedJoinShares(_ratedWadAll(), _liquidityAmounts(inv), _amp(), supply, _bindingDexSwapFee());
     }
 
     function _entryPreviewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut) internal view returns (uint256) {
@@ -181,7 +181,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
     {
         (uint8 index, bool isShare) = _indexOfPairOrSe(tokenIn);
         uint256 scaledIn = Math.singleJoinExactOutAmountIn(
-            _ratedWadAll(), sharesOut, index, _amp(), supply, dexSwapFee()
+            _ratedWadAll(), sharesOut, index, _amp(), supply, _bindingDexSwapFee()
         );
         Repo.Layout storage l = Repo._layout();
         uint256 invIn = _liquidityInventory(index, scaledIn, true);
@@ -211,7 +211,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
             invOut = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(tokenOut), amountOut);
         }
         return Math.singleExitExactTokenOutShares(
-            _ratedWadAll(), _liquidityValue(index, invOut, true), index, _amp(), supply, dexSwapFee()
+            _ratedWadAll(), _liquidityValue(index, invOut, true), index, _amp(), supply, _bindingDexSwapFee()
         );
     }
 

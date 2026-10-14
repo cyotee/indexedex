@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeOrbitalBufferHookInExecutionBase} from "./UniswapV4StandardExchangeOrbitalBufferHookInExecutionBase.sol";
 
 import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -47,7 +48,7 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
 /// @dev Unused offered amounts and SE receipts from this call are refunded to `msg.sender`.
 ///      Resting face is unrecorded pretransfer credit (D12), never this caller's refund.
-abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon {
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is UniswapV4StandardExchangeOrbitalBufferHookInExecutionBase {
     using SafeERC20 for IERC20;
 
     function removeLiquidity(
@@ -139,15 +140,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) external onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
-        amountOut = _exitSingleAsset(tokenOut, sharesIn, to, deadline);
-        if (amountOut < amountOutMin) revert InsufficientTokenOut();
+    ) external returns (uint256 amountOut) {
+        return _exitLiquidityExactIn(tokenOut, sharesIn, to, amountOutMin, deadline, address(0));
     }
 
     function previewExitSingleAssetExactBptIn(address tokenOut, uint256 shares) external view returns (uint256) {
-        if (!_isLive() || _resolveBurnTokenOut(tokenOut) == address(0)) return 0;
-        (, uint256 supply) = _previewProtocolMintShares();
-        return ExitQuoteLib.preview(shares, supply, tokenOut);
+        return _previewLiquidityExit(tokenOut, shares);
     }
 
     function _exitSingleAsset(address tokenOut, uint256 shares, address to, uint256 deadline)

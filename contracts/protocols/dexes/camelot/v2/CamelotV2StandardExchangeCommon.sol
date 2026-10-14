@@ -224,7 +224,7 @@ contract CamelotV2StandardExchangeCommon is BasicVaultCommon {
         if (preTransferred) {
             LocalCreditLib.requirePretransferCaller(msg.sender);
             // D23/R7.3: no self-share book exists here; short self-shares revert with the shared error.
-            uint256 selfBal = IERC20(address(this)).balanceOf(address(this));
+        uint256 selfBal = ERC20Repo._balanceOf(address(this));
             if (burnAmount > selfBal) revert ISecurePullErrors.TransferDeltaInsufficient(burnAmount, selfBal);
         }
         super._secureSelfBurn(owner, burnAmount, preTransferred);

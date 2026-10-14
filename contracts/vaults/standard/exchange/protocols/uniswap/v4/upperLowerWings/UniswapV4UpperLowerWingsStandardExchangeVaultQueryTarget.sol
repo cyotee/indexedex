@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4UpperLowerWingsStandardExchangeVaultQuoteBase} from "./UniswapV4UpperLowerWingsStandardExchangeVaultQuoteBase.sol";
 import {UniswapV4UpperLowerWingsStandardExchangeVaultCommon as Common} from "./UniswapV4UpperLowerWingsStandardExchangeVaultCommon.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -9,7 +10,7 @@ import {UniswapV4UpperLowerWingsStandardExchangeVaultRepo as Repo} from "./Unisw
 import {UniswapV4UpperLowerWingsStandardExchangeVaultLiquidationQuote as Quote} from "./UniswapV4UpperLowerWingsStandardExchangeVaultLiquidationQuote.sol";
 
 // tag::UniswapV4UpperLowerWingsStandardExchangeVaultQueryTarget[]
-contract UniswapV4UpperLowerWingsStandardExchangeVaultQueryTarget is IUniswapV4UpperLowerWingsStandardExchangeVault {
+contract UniswapV4UpperLowerWingsStandardExchangeVaultQueryTarget is UniswapV4UpperLowerWingsStandardExchangeVaultQuoteBase, IUniswapV4UpperLowerWingsStandardExchangeVault {
     function poolManager() public view returns (IPoolManager) { return Repo._layout().manager; }
     function poolKey() public view returns (PoolKey memory) { return Repo._layout().key; }
     function targetToken() public view returns (address) {
@@ -25,10 +26,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultQueryTarget is IUniswapV4U
         return (owned.lower, owned.upper, owned.liquidity, Repo.salt(slot_));
     }
     function liquidationValue() public view returns (Quote.Result memory) {
-        Repo.Storage storage state = Repo._layout();
-        if (!state.initialized) revert NotInitialized();
-        if (state.busy) revert ReentrantOperation();
-        return Quote.quote(Common.quoteRequest());
+        return _liquidationValue();
     }
 }
 // end::UniswapV4UpperLowerWingsStandardExchangeVaultQueryTarget[]

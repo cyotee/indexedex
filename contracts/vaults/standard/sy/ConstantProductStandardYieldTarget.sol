@@ -6,21 +6,14 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultRepo.sol";
-import {NativeStandardYieldTarget} from "./NativeStandardYieldTarget.sol";
+import {NativeStandardYieldDiscoveryTarget, NativeStandardYieldValidation} from "./NativeStandardYieldDiscoveryTarget.sol";
+import {NativeStandardYieldPreviewTarget, NativeStandardYieldPreviewCallsTarget} from "./NativeStandardYieldPreviewTarget.sol";
+import {NativeStandardYieldExecutionTarget} from "./NativeStandardYieldExecutionTarget.sol";
 
 /// @notice Native SY metadata for existing Uni V2, Camelot V2 and Aerodrome LP-backed SE shares.
 /// @dev Accounting remains in actual LP units. Existing compound operations realize any
 ///      separately accrued pool fees into that reserve; this adapter creates no second reward.
-abstract contract ConstantProductStandardYieldTarget is NativeStandardYieldTarget {
-    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override returns (uint256)
-    {
-        return _redeemConstantProduct(address(this), receiver_, shares_, tokenOut_, minimum_);
-    }
-
-    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal virtual returns (uint256);
-
+abstract contract ConstantProductStandardYieldDiscoveryTarget is NativeStandardYieldDiscoveryTarget {
     function getTokensIn() public view override returns (address[] memory tokens_) {
         tokens_ = new address[](3);
         tokens_[0] = address(ERC4626Repo._reserveAsset());
@@ -39,4 +32,32 @@ abstract contract ConstantProductStandardYieldTarget is NativeStandardYieldTarge
     function exchangeRate() external view override returns (uint256) {
         return IERC4626(address(this)).convertToAssets(1e18);
     }
+}
+
+abstract contract ConstantProductStandardYieldPreviewTarget is
+    ConstantProductStandardYieldDiscoveryTarget, NativeStandardYieldPreviewTarget
+{}
+
+abstract contract ConstantProductStandardYieldValidation is NativeStandardYieldValidation {
+    function isValidTokenIn(address token_) public view override returns (bool) {
+        return token_ == address(ERC4626Repo._reserveAsset())
+            || token_ == ConstProdReserveVaultRepo._token0() || token_ == ConstProdReserveVaultRepo._token1();
+    }
+
+    function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
+}
+
+abstract contract ConstantProductStandardYieldPreviewCallsTarget is
+    ConstantProductStandardYieldValidation, NativeStandardYieldPreviewCallsTarget
+{}
+
+abstract contract ConstantProductStandardYieldExecutionTarget is ConstantProductStandardYieldValidation, NativeStandardYieldExecutionTarget {
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override returns (uint256)
+    {
+        return _redeemConstantProduct(address(this), receiver_, shares_, tokenOut_, minimum_);
+    }
+
+    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal virtual returns (uint256);
 }

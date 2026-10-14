@@ -1,12 +1,45 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldPreviewTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "./UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
 
 import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHookDepositCore} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositCore.sol";
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
-abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore {
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore, NativeStandardYieldPreviewTarget {
+    function getTokensIn() public view override returns (address[] memory tokens) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 count = 3;
+        for (uint8 i; i < 3; ++i) if (Repo._seAt(l, i) != address(0)) ++count;
+        tokens = new address[](count);
+        count = 3;
+        for (uint8 i; i < 3; ++i) {
+            tokens[i] = Repo._tokenAt(l, i);
+            address se = Repo._seAt(l, i);
+            if (se != address(0)) tokens[count++] = se;
+        }
+    }
+    function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
+    function yieldToken() external pure override returns (address) { return address(0); }
+    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
+        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
+    }
+    function exchangeRate() external view override returns (uint256) {
+        (, uint256 supply) = _previewProtocolMintShares();
+        if (supply == 0) return 1e18;
+        (uint256 x, uint256 y, uint256 z) = _effectiveWad();
+        (,, uint256 root) = _measureK(x, y, z);
+        return FullMath.mulDiv(root, 1e18, supply);
+    }
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
         external view returns (uint256)
     {

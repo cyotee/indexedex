@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 
 import {CAMELOTV2_FEE_DENOMINATOR} from "@crane/contracts/constants/Constants.sol";
 import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
@@ -23,10 +26,9 @@ import {
     CamelotV2StandardExchangeCommon
 } from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeCommon.sol";
 
-contract CamelotV2StandardExchangeInTarget is
-    CamelotV2StandardExchangeCommon,
-    ReentrancyLockModifiers,
-    IStandardExchangeIn
+abstract contract CamelotV2StandardExchangeInQuoteBase is
+    NativeStandardYieldQuoteBase,
+    CamelotV2StandardExchangeCommon
 {
     using CamelotV2Service for ICamelotPair;
     using CamelotV2Service for ICamelotV2Router;
@@ -34,9 +36,10 @@ contract CamelotV2StandardExchangeInTarget is
 
     /* ------------------------- IStandardExchangeIn ------------------------ */
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal
         view
+        override
         returns (uint256 amountOut)
     {
         // Determine actual token route from provided tokens.
@@ -291,11 +294,20 @@ contract CamelotV2StandardExchangeInTarget is
             );
         }
 
-        revert InvalidRoute(address(tokenIn), address(tokenOut));
+        revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
     // tag::exchangeIn[]
-    function exchangeIn(
+}
+
+abstract contract CamelotV2StandardExchangeInExecutionBase is
+    CamelotV2StandardExchangeInQuoteBase, ReentrancyLockModifiers, IStandardExchangeErrors, StandardExchangeInExecutionBase
+{
+    using CamelotV2Service for ICamelotPair;
+    using CamelotV2Service for ICamelotV2Router;
+    using SafeERC20 for IERC20;
+
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -303,7 +315,7 @@ contract CamelotV2StandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
@@ -643,7 +655,7 @@ contract CamelotV2StandardExchangeInTarget is
             if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
             // A deposit must buy at least one vault-share unit. Reject before
             // entering an AMM swap whose rounded output cannot fund that claim.
-            if (IStandardExchangeIn(address(this)).previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
+            if (_previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
                 revert MinAmountNotMet(1, 0);
             }
 
@@ -808,4 +820,15 @@ contract CamelotV2StandardExchangeInTarget is
         revert InvalidRoute(address(tokenIn), address(tokenOut));
     }
     // end::exchangeIn[]
+}
+
+contract CamelotV2StandardExchangeInTarget is CamelotV2StandardExchangeInExecutionBase, IStandardExchangeIn {
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
 }

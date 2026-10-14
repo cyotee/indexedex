@@ -15,15 +15,10 @@ import {AaveV3StataStandardExchangeCommon} from "./AaveV3StataStandardExchangeCo
 /// @notice Exact-output redemption through the same proportional Stata backing as exact-input/SY exits.
 contract AaveV3StataStandardExchangeOutTarget is AaveV3StataStandardExchangeCommon, ReentrancyLockModifiers, IStandardExchangeOut {
     using SafeERC20 for IERC20;
-    error InvalidStataRoute(address tokenIn, address tokenOut);
     error InvalidStataPayment();
     error StataMaximumExceeded(uint256 maximum, uint256 required);
     /// @notice Wrap exact-out under-delivered the requested SE shares (mirrors the exact-input StataSlippage guard).
     error StataSlippage(uint256 minimum, uint256 received);
-
-    function _stata() internal view returns (IStataTokenV2) {
-        return IStataTokenV2(IAaveV3StataStandardVault(address(this)).stataToken());
-    }
 
     function previewExchangeOut(IERC20 in_, IERC20 out_, uint256 amount_) external view returns (uint256) {
         IStataTokenV2 stata_ = _stata();

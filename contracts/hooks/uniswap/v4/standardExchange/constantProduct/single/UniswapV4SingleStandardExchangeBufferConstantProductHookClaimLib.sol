@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase as QuoteBase, ISingleBufferQuoteErrors} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
+import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -27,6 +29,142 @@ import {
  */
 library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     using SafeERC20 for IERC20;
+
+    function singleZapState(address tokenIn, uint256 sold, uint256 other, uint256 kept)
+        external view returns (QuoteBase.SingleZapQuote memory q)
+    {
+        Repo.Layout storage l = Repo._layout();
+        (q.state,) = Transition(l.standardExchange).quoteState(l.pairToken, address(this));
+        q.pairReserve = ratedClaimOfState(l.standardExchange, q.state);
+        q.rawReserve = IERC20(l.rawToken).balanceOf(address(this));
+        if (tokenIn == l.rawToken) {
+            uint256 budget = Math.fromWadFloor(Math.saleQuote(Math.toWad(sold, singleDecimals(l.rawToken)),
+                Math.toWad(q.rawReserve, singleDecimals(l.rawToken)), Math.toWad(q.pairReserve, singleDecimals(l.pairToken))), singleDecimals(l.pairToken));
+            (q.state, other, q.pairReserve) = _singleZapUnwrap(q.state, budget);
+            q.rawReserve += sold;
+            q.rawAdded = kept;
+            q.pairAdded = other;
+        } else {
+            uint256 minted;
+            (q.state,, minted, q.pairReserve) = _singleMintableDeposit(q.state, sold);
+            if (minted == 0) return q;
+            q.rawReserve -= other;
+            q.rawAdded = other;
+            q.pairAdded = kept;
+        }
+        if (q.pairReserve == 0) q.pairReserve = 1;
+    }
+
+    function singleShareZapState(bytes memory state, uint256 shares) external view returns (QuoteBase.SingleZapQuote memory q) {
+        Repo.Layout storage l = Repo._layout();
+        Transition quote = Transition(l.standardExchange);
+        q.state = state;
+        (q.state,,,) = quote.quoteTransition(q.state, Transition.Operation.ReceiveShares, shares);
+        uint256 amount;
+        (q.state,, amount,) = quote.quoteTransition(q.state, Transition.Operation.RedeemExactIn, shares);
+        q.pairReserve = ratedClaimOfState(l.standardExchange, q.state);
+        if (q.pairReserve == 0) q.pairReserve = 1;
+        q.rawReserve = IERC20(l.rawToken).balanceOf(address(this));
+        (,,, uint256 fullClaim) = _singleMintableDeposit(q.state, amount);
+        fullClaim = fullClaim > q.pairReserve ? fullClaim - q.pairReserve : 0;
+        uint256 sold = _singlePairZapSale(amount, fullClaim, q.pairReserve);
+        uint256 afterClaim;
+        (q.state,,, afterClaim) = _singleMintableDeposit(q.state, sold);
+        uint256 claimIn = afterClaim > q.pairReserve ? afterClaim - q.pairReserve : 0;
+        q.rawAdded = singlePairRawOut(claimIn, q.pairReserve, q.rawReserve);
+        q.rawReserve -= q.rawAdded;
+        q.pairReserve = afterClaim == 0 ? 1 : afterClaim;
+        q.pairAdded = amount - sold;
+    }
+
+    /// @dev Return the mutated projection because external library calls copy memory arguments.
+    function singleFinishDeposit(QuoteBase.SingleZapQuote memory q, uint256 supply)
+        external view returns (QuoteBase.SingleZapQuote memory updated, uint256 minted, uint256 finalSupply)
+    {
+        if (q.rawAdded == 0 || q.pairAdded == 0) return (q, 0, supply);
+        Repo.Layout storage l = Repo._layout();
+        (uint256 used0, uint256 used1) = singleClamp(
+            singleOrderX(q.rawReserve, q.pairReserve), singleOrderY(q.rawReserve, q.pairReserve),
+            singleOrderX(q.rawAdded, q.pairAdded), singleOrderY(q.rawAdded, q.pairAdded)
+        );
+        uint256 claimAfter;
+        uint256 sharesBefore = Transition(l.standardExchange).quoteShareBalance(q.state);
+        (q.state,,, claimAfter) = _singleMintableDeposit(q.state, l.currency0 == l.pairToken ? used0 : used1);
+        if (claimAfter == 0) claimAfter = 1;
+        uint256 sharesAfter = Transition(l.standardExchange).quoteShareBalance(q.state);
+        minted = _singleSharesAfterZap(q, sharesAfter - sharesBefore, sharesBefore, supply);
+        q.rawReserve += q.rawAdded;
+        q.pairReserve = claimAfter;
+        q.pairAdded -= l.currency0 == l.pairToken ? used0 : used1;
+        finalSupply = supply + minted;
+        updated = q;
+    }
+
+    function _singleSharesAfterZap(QuoteBase.SingleZapQuote memory q, uint256 delta, uint256 reserve, uint256 supply)
+        private view returns (uint256)
+    {
+        return Math.mintSharesLater(singleOrderX(q.rawAdded, delta), singleOrderY(q.rawAdded, delta),
+            singleOrderX(q.rawReserve, reserve), singleOrderY(q.rawReserve, reserve), supply);
+    }
+
+    function _singleMintableDeposit(bytes memory state, uint256 amount) private view returns (bytes memory, uint256, uint256, uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return quoteMintableDepositExactIn(l.standardExchange, l.pairToken, state, amount);
+    }
+
+    function _singleZapUnwrap(bytes memory state, uint256 budget) private view returns (bytes memory next, uint256 received, uint256 claimAfter) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 held = Transition(l.standardExchange).quoteShareBalance(state);
+        uint256 amount = sharesForPairUnitsDownAtState(budget, state);
+        if (amount == 0) return (state, 0, ratedClaimOfState(l.standardExchange, state));
+        if (amount >= held) revert ISingleBufferQuoteErrors.InsufficientTokenOut();
+        (next,, received,) = Transition(l.standardExchange).quoteTransition(state, Transition.Operation.RedeemExactIn, amount);
+        if (received == 0) return (state, 0, ratedClaimOfState(l.standardExchange, state));
+        claimAfter = ratedClaimOfState(l.standardExchange, next);
+    }
+
+    function _singlePairZapSale(uint256 amount, uint256 claim, uint256 reserve) private view returns (uint256 sold) {
+        uint8 decimals = singleDecimals(Repo._layout().pairToken);
+        uint256 saleClaim = Math.fromWadFloor(Math.swapDepositSaleAmt(Math.toWad(claim, decimals), Math.toWad(reserve, decimals)), decimals);
+        sold = claim == 0 ? amount / 2 : amount * saleClaim / claim;
+        if (sold > amount) sold = amount;
+        if (sold == 0 || sold >= amount) sold = amount / 2;
+    }
+
+    function singlePairRawOut(uint256 claimIn, uint256 pairReserve, uint256 rawReserve) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint8 pairDecimals = singleDecimals(l.pairToken);
+        uint8 rawDecimals = singleDecimals(l.rawToken);
+        return Math.fromWadFloor(Math.saleQuote(Math.toWad(claimIn, pairDecimals), Math.toWad(pairReserve, pairDecimals),
+            Math.toWad(rawReserve, rawDecimals)), rawDecimals);
+    }
+
+    function singleDecimals(address token) internal view returns (uint8 d) {
+        Repo.Layout storage l = Repo._layout();
+        if (token == l.currency0) d = l.decimalsCurrency0;
+        else if (token == l.currency1) d = l.decimalsCurrency1;
+        else revert ISingleBufferQuoteErrors.InvalidToken();
+        if (d == 0) d = 18;
+    }
+    function singleOrderX(uint256 raw, uint256 pair) internal view returns (uint256) {
+        return Repo._layout().currency0 == Repo._layout().rawToken ? raw : pair;
+    }
+    function singleOrderY(uint256 raw, uint256 pair) internal view returns (uint256) {
+        return Repo._layout().currency0 == Repo._layout().rawToken ? pair : raw;
+    }
+    function singleClamp(uint256 x, uint256 y, uint256 amount0, uint256 amount1) internal pure returns (uint256 used0, uint256 used1) {
+        used0 = amount0;
+        used1 = amount1;
+        if (x == 0 || y == 0) revert ISingleBufferQuoteErrors.NotLive();
+        uint256 ideal1 = (used0 * y) / x;
+        if (ideal1 <= used1) used1 = ideal1;
+        else used0 = (used1 * x) / y;
+        if (used0 == 0 || used1 == 0) {
+            if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
+            if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
+            if (used0 == 0 || used1 == 0) revert ISingleBufferQuoteErrors.ZeroAmount();
+        }
+    }
 
     struct ExactInOutput {
         uint256 amountOut;
@@ -108,7 +246,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         return Math.sharesForPairUnitsDown(units, _rate(l), invScale, ratedScale);
     }
 
-    function sharesForPairUnitsDownAtState(uint256 units, bytes memory state) external view returns (uint256) {
+    function sharesForPairUnitsDownAtState(uint256 units, bytes memory state) public view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         (uint256 invScale, uint256 ratedScale) = _scales(l);
         return Math.sharesForPairUnitsDown(units, _rateForState(l, state), invScale, ratedScale);
@@ -382,7 +520,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         bytes memory state,
         uint256 amountInRaw
     )
-        external
+        public
         view
         returns (bytes memory nextState, uint256 amountIn, uint256 amountOut, uint256 ratedHolderClaimAfter)
     {
@@ -397,7 +535,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     }
 
     /// @notice Rated holder claim for an already projected `state`: shares x the provider's rate for that state.
-    function ratedClaimOfState(address se, bytes memory state) external view returns (uint256) {
+    function ratedClaimOfState(address se, bytes memory state) public view returns (uint256) {
         return _ratedClaimOfState(Repo._layout(), se, state);
     }
 

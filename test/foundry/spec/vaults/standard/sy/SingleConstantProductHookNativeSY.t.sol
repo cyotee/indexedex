@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -14,7 +15,7 @@ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
 
-contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook {
+contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook, NativeSYExecutionAssertions {
     IStandardizedYield private sy_;
     function setUp() public override {
         super.setUp();
@@ -71,7 +72,7 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
         assertEq(sy_.balanceOf(feeTo_) - feeBefore_, feeLp_, "quoted fee dilution is actually minted by the next liquidity operation");
     }
 
-    function test_hookSYBothBookDirectionsUseSameStandardLiquidityRoutes() public {
+    function test_hookSYBothBookDirectionsUseSameStandardLiquidityRoutes() public noSelfCalls(hook) {
         vm.startPrank(user);
         pairToken.approve(se, 20 ether);
         IStandardExchangeIn(se).exchangeIn(pairToken, 20 ether, IERC20(se), 0, user, false, block.timestamp);
@@ -95,7 +96,24 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
         }
     }
 
-    function test_hookSYInternalRedemptionBurnsOnlyRequestedShares() public {
+    /// @notice Native previews use the shared quote code without calling the host's SE or metadata selectors.
+    function test_hookSYPreviewsDoNotSelfCallQuoteOrMetadata() public {
+        uint256 expectedDeposit = IStandardExchangeIn(hook).previewExchangeIn(rawToken, 1 ether, IERC20(hook));
+        uint256 shares = sy_.balanceOf(user) / 100;
+        uint256 expectedRedeem = IStandardExchangeIn(hook).previewExchangeIn(IERC20(hook), shares, pairToken);
+        vm.expectCall(hook, abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(0));
+        vm.expectCall(hook, abi.encodeWithSelector(IERC20.totalSupply.selector), uint64(0));
+        vm.expectCall(hook, abi.encodeWithSelector(IERC20.balanceOf.selector), uint64(0));
+        vm.expectCall(hook, abi.encodeWithSelector(IDiamondLoupe.facetAddress.selector), uint64(0));
+        assertEq(sy_.previewDeposit(address(rawToken), 1 ether), expectedDeposit);
+        assertEq(sy_.previewRedeem(address(pairToken), shares), expectedRedeem);
+        assertEq(sy_.previewDeposit(address(rawToken), 0), 0);
+        assertEq(sy_.previewRedeem(address(pairToken), 0), 0);
+        assertEq(sy_.previewDeposit(address(0), 1 ether), 0);
+        assertEq(sy_.previewRedeem(se, shares), 0);
+    }
+
+    function test_hookSYInternalRedemptionBurnsOnlyRequestedShares() public noSelfCalls(hook) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 held_ = sy_.balanceOf(user) / 2;
         uint256 amount_ = held_ / 3;

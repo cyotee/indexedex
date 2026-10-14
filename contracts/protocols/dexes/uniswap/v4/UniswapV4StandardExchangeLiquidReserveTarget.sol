@@ -38,10 +38,10 @@ contract UniswapV4StandardExchangeLiquidReserveTarget is
     function twapOracle()
         public
         view
-        override(UniswapV4StandardExchangeCommon, IUniswapV4StandardExchangeLiquidReserve)
+        override
         returns (IUniswapV4MultiPoolTwapOracle)
     {
-        return UniswapV4StandardExchangeCommon.twapOracle();
+        return _twapOracle();
     }
 
     /// @inheritdoc IUniswapV4StandardExchangeLiquidReserve

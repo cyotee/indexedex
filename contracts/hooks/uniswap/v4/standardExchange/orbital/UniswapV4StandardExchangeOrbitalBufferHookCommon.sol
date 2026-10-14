@@ -144,24 +144,24 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 amount2
     );
 
-    function token0() public view returns (address) {
+    function _bindingToken0() internal view returns (address) {
         return Repo._layout().token0;
     }
 
-    function token1() public view returns (address) {
+    function _bindingToken1() internal view returns (address) {
         return Repo._layout().token1;
     }
 
-    function token2() public view returns (address) {
+    function _bindingToken2() internal view returns (address) {
         return Repo._layout().token2;
     }
 
-    function isZapEligible() public view returns (bool) {
+    function _bindingIsZapEligible() internal view returns (bool) {
         if (_totalSupply() <= Repo.MINIMUM_LIQUIDITY) return false;
         return _isLive();
     }
 
-    function isLive() public view returns (bool) {
+    function _bindingIsLive() internal view returns (bool) {
         return _isLive();
     }
 
@@ -178,7 +178,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     /// @dev D89: owner may zap at MINIMUM_LIQUIDITY. Public still sees isZapEligible()==false.
     function _requireZapEligibleOrOwnerMin() internal view {
-        if (isZapEligible()) return;
+        if (_bindingIsZapEligible()) return;
         if (_totalSupply() == Repo.MINIMUM_LIQUIDITY && msg.sender == MultiStepOwnableRepo._owner()) return;
         revert NotZapEligible();
     }
@@ -856,18 +856,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 amountOut,
         uint256 feeWad
     ) internal view returns (uint256 amountIn) {
-        _requireNonZero(amountOut);
-        if (feeWad >= Math.WAD) revert Math.MathDomain();
-        SwapLiveCtx memory ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
-        ctx.feeWad = feeWad;
-        uint256 dOutNative = _faceOutToEffectiveNative(tokenOut, amountOut);
-        if (dOutNative >= ctx.eOutNative) revert Math.Drain();
-        SphereLegsWad memory legs = _loadSphereLegs(tokenIn, tokenOut, ctx.tokenZ);
-        uint256 dyWad = _toWad(tokenOut, dOutNative);
-        uint256 dxNet = _sphereExactOut(legs, dyWad);
-        uint256 dInNative = _fromWadCeil(tokenIn, Math.grossUpExactOut(dxNet, ctx.feeWad));
-        amountIn = _effectiveInToFaceIn(tokenIn, dInNative);
-        _requireNonZero(amountIn);
+        return ClaimLib.previewSwapExactOutBook(tokenIn, tokenOut, amountOut, feeWad);
     }
 
 
@@ -957,41 +946,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             if (output.sharesOut > _spendableSeShares(tokenOut)) revert Math.Drain();
         } else {
             output.amountOut = dOutNative;
-        }
-    }
-
-
-    function _faceOutToEffectiveNative(address tokenOut, uint256 amountOut)
-        private
-        view
-        returns (uint256 dOutNative)
-    {
-        dOutNative = amountOut;
-        address se = _seOf(tokenOut);
-        if (se == address(0)) return dOutNative;
-        uint256 shares = ClaimLib.invertUnwrapExactTokenOut(se, tokenOut, amountOut);
-        if (shares == 0) revert InsufficientTokenOut();
-        if (shares > _spendableSeShares(tokenOut)) revert Math.Drain();
-        address rp = _rpOf(tokenOut);
-        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
-        dOutNative = ClaimLib.ratedNative(shares, ClaimLib.getRateFailClosed(rp), se, tokenOut);
-    }
-
-
-    function _effectiveInToFaceIn(address tokenIn, uint256 dInNative)
-        private
-        view
-        returns (uint256 amountIn)
-    {
-        if (_seOf(tokenIn) != address(0)) {
-            address se = _seOf(tokenIn);
-            if (se != tokenIn && ContextQuote.supported(se)) {
-                uint256 shares = ClaimLib.sharesForNativeUp(dInNative, ClaimLib.getRateFailClosed(_rpOf(tokenIn)), se, tokenIn);
-                if (IStandardExchangeOut(se).previewExchangeOut(IERC20(tokenIn), IERC20(se), shares) == 0) revert ClaimLib.SeInvertUnavailable();
-            }
-            amountIn = _invertBufferForEffective(tokenIn, dInNative);
-        } else {
-            amountIn = dInNative;
         }
     }
 
@@ -2321,7 +2275,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
     function _pullLegs(uint256 u0, uint256 u1, uint256 u2, bytes memory permit2Data) internal {
-        address[3] memory tokens = [token0(), token1(), token2()];
+        address[3] memory tokens = [_bindingToken0(), _bindingToken1(), _bindingToken2()];
         uint256[3] memory amounts = [u0, u1, u2];
         uint256[3] memory beforeBalances;
         for (uint256 i; i < 3; ++i) {
@@ -2334,9 +2288,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
     function _transferLegs(uint256 u0, uint256 u1, uint256 u2, bytes memory permit2Data) private {
-        address t0 = token0();
-        address t1 = token1();
-        address t2 = token2();
+        address t0 = _bindingToken0();
+        address t1 = _bindingToken1();
+        address t2 = _bindingToken2();
         if (permit2Data.length == 0) {
             if (u0 > 0) IERC20(t0).safeTransferFrom(msg.sender, address(this), u0);
             if (u1 > 0) IERC20(t1).safeTransferFrom(msg.sender, address(this), u1);
@@ -2394,7 +2348,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         ISignatureTransfer.SignatureTransferDetails[] memory details =
             new ISignatureTransfer.SignatureTransferDetails[](n);
         uint256 k;
-        address[3] memory tokens = [token0(), token1(), token2()];
+        address[3] memory tokens = [_bindingToken0(), _bindingToken1(), _bindingToken2()];
         uint256[3] memory used = [u0, u1, u2];
         for (uint256 i; i < 3; i++) {
             if (used[i] == 0) continue;
@@ -2412,13 +2366,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     function _pullAllowance(uint256 u0, uint256 u1, uint256 u2) internal {
         if (u0 > 0) {
-            _pullPermit2(token0(), u0);
+            _pullPermit2(_bindingToken0(), u0);
         }
         if (u1 > 0) {
-            _pullPermit2(token1(), u1);
+            _pullPermit2(_bindingToken1(), u1);
         }
         if (u2 > 0) {
-            _pullPermit2(token2(), u2);
+            _pullPermit2(_bindingToken2(), u2);
         }
     }
 

@@ -6,7 +6,8 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldPreviewTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
@@ -17,17 +18,8 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore} from "contra
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget is UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore, NativeStandardYieldTarget {
-    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override onlyLiquidityRemover nonReentrant returns (uint256)
-    {
-        address implementation_ = IDiamondLoupe(address(this)).facetAddress(
-            IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector
-        );
-        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
-            "executeVaultHeldRedemption(address,uint256,address,uint256)", receiver_, shares_, tokenOut_, minimum_
-        ));
-        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
-        return abi.decode(result_, (uint256));
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
     }
 
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
@@ -123,7 +115,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTar
         if (!_isLive()) return 0;
         address out_ = numeraire;
         if (out_ == address(0)) {
-            address[] memory n = syntheticNumeraires();
+        address[] memory n = _bindingSyntheticNumeraires();
             if (n.length == 0) return 0;
             out_ = n[0];
         }

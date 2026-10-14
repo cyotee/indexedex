@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
@@ -14,7 +15,7 @@ import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/Trans
 
 contract UniswapV2StandardExchange_TransitionQuote is TestBase_UniswapV2StandardExchange_MultiPool, TransitionQuoteAssertions {
     function test_queryFacetDeclarationAndAllProxyCutsMeetEip170() public {
-        bytes4[] memory expected = new bytes4[](7);
+        bytes4[] memory expected = new bytes4[](19);
         expected[0] = IStandardExchangeTransitionQuote.quoteState.selector;
         expected[1] = IStandardExchangeTransitionQuote.quoteTransition.selector;
         expected[2] = IStandardExchangeTransitionQuote.quoteAssets.selector;
@@ -22,6 +23,18 @@ contract UniswapV2StandardExchange_TransitionQuote is TestBase_UniswapV2Standard
         expected[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
         expected[5] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
         expected[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        expected[7] = IStandardizedYield.exchangeRate.selector;
+        expected[8] = IStandardizedYield.yieldToken.selector;
+        expected[9] = IStandardizedYield.assetInfo.selector;
+        expected[10] = IStandardizedYield.getTokensIn.selector;
+        expected[11] = IStandardizedYield.getTokensOut.selector;
+        expected[12] = IStandardizedYield.isValidTokenIn.selector;
+        expected[13] = IStandardizedYield.isValidTokenOut.selector;
+        expected[14] = IStandardizedYield.previewDeposit.selector;
+        expected[15] = IStandardizedYield.previewRedeem.selector;
+        expected[16] = IStandardizedYield.getRewardTokens.selector;
+        expected[17] = IStandardizedYield.accruedRewards.selector;
+        expected[18] = IStandardizedYield.rewardIndexesStored.selector;
         IFacet query = uniswapV2StandardExchangeQueryFacet;
         assertTrue(Behavior_IFacet.areValid_IFacet_facetName(query, "UniswapV2StandardExchangeQueryFacet", query.facetName()));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(query, expected, query.facetFuncs()));

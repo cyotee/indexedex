@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4FullSpreadPonsFamilyHookInDelegateExecutionBase} from "./UniswapV4FullSpreadPonsFamilyHookInTarget.sol";
+import {UniswapV4FullSpreadPonsFamilyStandardYieldExecutionTarget} from "./UniswapV4FullSpreadPonsFamilyStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
@@ -7,7 +10,8 @@ import {
     UniswapV4FullSpreadPonsFamilyHookInMultiTarget
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookInMultiTarget.sol";
 
-contract UniswapV4FullSpreadPonsFamilyHookInMultiFacet is UniswapV4FullSpreadPonsFamilyHookInMultiTarget, IFacet {
+contract UniswapV4FullSpreadPonsFamilyHookInMultiFacet is UniswapV4FullSpreadPonsFamilyHookInMultiTarget, UniswapV4FullSpreadPonsFamilyStandardYieldExecutionTarget, IFacet {
+    constructor(address executionDelegate) UniswapV4FullSpreadPonsFamilyHookInDelegateExecutionBase(executionDelegate) {}
     function facetName() public pure override returns (string memory name) {
         return type(UniswapV4FullSpreadPonsFamilyHookInMultiFacet).name;
     }
@@ -20,6 +24,7 @@ contract UniswapV4FullSpreadPonsFamilyHookInMultiFacet is UniswapV4FullSpreadPon
     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
         funcs = new bytes4[](1);
         funcs[0] = IStandardExchangeInMulti.exchangeInManyToOne.selector;
+        funcs = NativeStandardYieldSelectors._appendExecution(funcs);
     }
 
     function facetMetadata()

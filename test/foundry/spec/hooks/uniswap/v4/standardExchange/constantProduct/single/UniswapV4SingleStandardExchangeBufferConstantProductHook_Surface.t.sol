@@ -85,13 +85,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
             "J1 previewSwapExactIn bool"
         );
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewSwapExactIn.selector), "J1 previewSwapExactIn addr");
-        assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
+        assertFalse(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "execution belongs to DepositSingle");
         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
-        assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewExchangeIn");
+        assertFalse(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "quote belongs to DepositPreview");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
-        assertEq(funcs_.length, 47, "J1 SeFacet facetFuncs length");
+        assertEq(funcs_.length, 45, "J1 SeFacet facetFuncs length");
     }
 
     /// @notice J1: deposit / zap / SE-share multipath money entrypoints are cut.
@@ -99,11 +99,11 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         bytes4[] memory dual_ = depositFacet.facetFuncs();
         bytes4[] memory single_ = depositSingleFacet.facetFuncs();
         bytes4[] memory preview_ = depositPreviewFacet.facetFuncs();
-        assertEq(dual_.length, 8, "dual deposit selector count"); // D60: + rateProviders / rateProvider(address)
+        assertEq(dual_.length, 15, "dual deposit selector count");
         assertTrue(_contains(dual_, IHook.rateProviders.selector), "D60 rateProviders");
         assertTrue(_contains(dual_, IHook.rateProvider.selector), "D60 rateProvider(address)");
         assertEq(single_.length, 7, "single deposit selector count");
-        assertEq(preview_.length, 10, "deposit preview selector count");
+        assertEq(preview_.length, 9, "deposit preview selector count");
         bytes4[] memory funcs_ = new bytes4[](dual_.length + single_.length + preview_.length);
         for (uint256 i; i < dual_.length; ++i) funcs_[i] = dual_[i];
         for (uint256 i; i < single_.length; ++i) funcs_[dual_.length + i] = single_[i];
@@ -133,7 +133,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector), "J1 previewJoinSingleAssetExactIn");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector), "J1 joinSingleAssetExactOut");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector), "J1 previewJoinSingleAssetExactOut");
-        assertEq(funcs_.length, 25, "J1 combined deposit selectors"); // D60: + rateProviders / rateProvider(address)
+        assertTrue(_contains(single_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
+        assertTrue(_contains(single_, IStandardizedYield.deposit.selector), "J1 SY deposit");
+        assertTrue(_contains(single_, IStandardizedYield.redeem.selector), "J1 SY redeem");
+        assertTrue(_contains(preview_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewExchangeIn");
+        assertTrue(_contains(preview_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
+        assertTrue(_contains(preview_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
+        assertEq(funcs_.length, 31, "J1 combined deposit selectors");
         for (uint256 i; i < funcs_.length; ++i) {
             for (uint256 j = i + 1; j < funcs_.length; ++j) {
                 assertTrue(funcs_[i] != funcs_[j], "deposit selectors are disjoint");
@@ -151,8 +157,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IHook.withdrawSeShares.selector), "J1 withdrawSeShares");
         assertTrue(_contains(funcs_, IHook.previewWithdrawSeShares.selector), "J1 previewWithdrawSeShares");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.exitProportional.selector), "J1 exitProportional");
-        assertTrue(_contains(funcs_, IStandardizedYield.deposit.selector), "J1 SY deposit");
-        assertTrue(_contains(funcs_, IStandardizedYield.redeem.selector), "J1 SY redeem");
+        assertFalse(_contains(funcs_, IStandardizedYield.deposit.selector), "SY deposit moved");
+        assertFalse(_contains(funcs_, IStandardizedYield.redeem.selector), "SY redeem moved");
         assertTrue(_contains(funcs_, IStandardizedYield.exchangeRate.selector), "J1 SY exchangeRate");
         assertTrue(_contains(funcs_, IStandardizedYield.yieldToken.selector), "J1 SY yieldToken");
         assertTrue(_contains(funcs_, IStandardizedYield.assetInfo.selector), "J1 SY assetInfo");
@@ -160,14 +166,14 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IStandardizedYield.getTokensOut.selector), "J1 SY getTokensOut");
         assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenIn.selector), "J1 SY isValidTokenIn");
         assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenOut.selector), "J1 SY isValidTokenOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
-        assertTrue(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
+        assertFalse(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "SY previewDeposit moved");
+        assertFalse(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "SY previewRedeem moved");
         assertTrue(_contains(funcs_, IStandardizedYield.getRewardTokens.selector), "J1 SY getRewardTokens");
         assertTrue(_contains(funcs_, IStandardizedYield.accruedRewards.selector), "J1 SY accruedRewards");
         assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesCurrent.selector), "J1 SY rewardIndexesCurrent");
         assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesStored.selector), "J1 SY rewardIndexesStored");
         assertTrue(_contains(funcs_, IStandardizedYield.claimRewards.selector), "J1 SY claimRewards");
-        assertEq(funcs_.length, 29, "J1 WithdrawFacet facetFuncs length");
+        assertEq(funcs_.length, 25, "J1 WithdrawFacet facetFuncs length");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -186,7 +192,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
 
     /// @notice Validate the split Deposit facet against interface-derived controls.
     function test_depositFacet_declaration() public {
-        bytes4[] memory expected = new bytes4[](8);
+        bytes4[] memory expected = new bytes4[](15);
         expected[0] = IHook.deposit.selector;
         expected[1] = IHook.depositWithPermit2Signature.selector;
         expected[2] = IHook.depositWithPermit2Allowance.selector;
@@ -195,6 +201,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         expected[5] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
         expected[6] = IHook.rateProviders.selector; // D60
         expected[7] = IHook.rateProvider.selector; // D60
+        expected[8] = IHook.previewDeposit.selector;
+        expected[9] = IHook.previewDepositWithSeShares.selector;
+        expected[10] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+        expected[11] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+        expected[12] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
+        expected[13] = IDetfReserveQuote.previewSwapAfterExchange.selector;
+        expected[14] = IDetfReserveQuote.previewBondAfterDeposit.selector;
         _assertDepositFacetDeclaration(depositFacet, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet", expected);
     }
 
@@ -205,25 +218,24 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         expected[1] = IHook.depositSingleWithPermit2Signature.selector;
         expected[2] = IHook.depositSingleWithPermit2Allowance.selector;
         expected[3] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
-        expected[4] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
-        expected[5] = IDetfReserveQuote.previewSwapAfterExchange.selector;
-        expected[6] = IDetfReserveQuote.previewBondAfterDeposit.selector;
+        expected[4] = IStandardExchangeIn.exchangeIn.selector;
+        expected[5] = IStandardizedYield.deposit.selector;
+        expected[6] = IStandardizedYield.redeem.selector;
         _assertDepositFacetDeclaration(depositSingleFacet, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet", expected);
     }
 
     /// @notice Validate the split DepositPreview facet against interface-derived controls.
     function test_depositPreviewFacet_declaration() public {
-        bytes4[] memory expected = new bytes4[](10);
-        expected[0] = IHook.previewDeposit.selector;
-        expected[1] = IHook.previewDepositSingle.selector;
-        expected[2] = IHook.previewZapSplit.selector;
-        expected[3] = IHook.previewDepositWithSeShares.selector;
-        expected[4] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
-        expected[5] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
-        expected[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
-        expected[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
-        expected[8] = IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector;
-        expected[9] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
+        bytes4[] memory expected = new bytes4[](9);
+        expected[0] = IHook.previewDepositSingle.selector;
+        expected[1] = IHook.previewZapSplit.selector;
+        expected[2] = IStandardExchangeIn.previewExchangeIn.selector;
+        expected[3] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+        expected[4] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+        expected[5] = IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector;
+        expected[6] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+        expected[7] = IStandardizedYield.previewDeposit.selector;
+        expected[8] = IStandardizedYield.previewRedeem.selector;
         _assertDepositFacetDeclaration(depositPreviewFacet, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet", expected);
     }
 
@@ -233,6 +245,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(Behavior_IFacet.areValid_IFacet_facetInterfaces(facet_, new bytes4[](0), facet_.facetInterfaces()));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
         assertTrue(Behavior_IFacet.isValid_IFacet_facetMetadata_consistency(facet_));
+        assertEq(facet_.facetFuncs().length, expected_.length, "exact declaration length");
+        for (uint256 i; i < expected_.length; ++i) {
+            assertEq(IDiamondLoupe(hook).facetAddress(expected_[i]), address(facet_), "independent selector owner");
+            for (uint256 j = i + 1; j < expected_.length; ++j) {
+                assertTrue(expected_[i] != expected_[j], "independent controls unique");
+            }
+        }
     }
 
     /// @notice Every independently deployed deposit component meets EIP-170.

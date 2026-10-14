@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase.sol";
 
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib as ClaimLib} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -34,84 +37,74 @@ import {
  * @notice IHooks callbacks + rated StableSwap V4 swaps (beforeSwap + beforeSwapReturnDelta).
  * @dev No BaseHook inheritance. Fee-net curve on input residual; gross buffer SE in last.
  */
-abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget is
-    UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget,
-    IHooks
+abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSwapCore is
+    UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase
 {
     using SafeERC20 for IERC20;
-
-    struct ExactInOutput {
-        uint256 amountOut;
-        uint256 sharesOut;
-    }
 
     /* ---------------------------------------------------------------------- */
     /*                                  IHooks                                */
     /* ---------------------------------------------------------------------- */
 
-    function beforeInitialize(address, PoolKey calldata poolKey, uint160)
-        external
+    function _hookBeforeInitialize(address, PoolKey calldata poolKey, uint160)
+        internal
         view
-        override
         returns (bytes4)
     {
         return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
-    function afterInitialize(address, PoolKey calldata, uint160, int24)
-        external
+    function _hookAfterInitialize(address, PoolKey calldata, uint160, int24)
+        internal
         pure
-        override
         returns (bytes4)
     {
         revert HookNotImplemented();
     }
 
-    function beforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
-        external
+    function _hookBeforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
+        internal
         view
-        override
         returns (bytes4)
     {
         _onlyPoolManager();
         revert LiquidityNotAllowed();
     }
 
-    function afterAddLiquidity(
+    function _hookAfterAddLiquidity(
         address,
         PoolKey calldata,
         ModifyLiquidityParams calldata,
         BalanceDelta,
         BalanceDelta,
         bytes calldata
-    ) external pure override returns (bytes4, BalanceDelta) {
+    ) internal pure returns (bytes4, BalanceDelta) {
         revert HookNotImplemented();
     }
 
-    function beforeRemoveLiquidity(
+    function _hookBeforeRemoveLiquidity(
         address,
         PoolKey calldata,
         ModifyLiquidityParams calldata,
         bytes calldata
-    ) external view override returns (bytes4) {
+    ) internal view returns (bytes4) {
         _onlyPoolManager();
         revert LiquidityNotAllowed();
     }
 
-    function afterRemoveLiquidity(
+    function _hookAfterRemoveLiquidity(
         address,
         PoolKey calldata,
         ModifyLiquidityParams calldata,
         BalanceDelta,
         BalanceDelta,
         bytes calldata
-    ) external pure override returns (bytes4, BalanceDelta) {
+    ) internal pure returns (bytes4, BalanceDelta) {
         revert HookNotImplemented();
     }
 
-    function beforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)
-        external
-        override
+    function _hookBeforeSwap(address, PoolKey calldata key, SwapParams calldata params, bytes calldata)
+        internal
         returns (bytes4, BeforeSwapDelta swapDelta, uint24)
     {
         BeforeInitializeLib.beforeInitialize(key);
@@ -159,29 +152,26 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
         return (IHooks.beforeSwap.selector, swapDelta, Math.feeOverridePips(feeWad));
     }
 
-    function afterSwap(address, PoolKey calldata, SwapParams calldata, BalanceDelta, bytes calldata)
-        external
+    function _hookAfterSwap(address, PoolKey calldata, SwapParams calldata, BalanceDelta, bytes calldata)
+        internal
         pure
-        override
         returns (bytes4, int128)
     {
         revert HookNotImplemented();
     }
 
-    function beforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
-        external
+    function _hookBeforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
+        internal
         view
-        override
         returns (bytes4)
     {
         _onlyPoolManager();
         revert DonateNotAllowed();
     }
 
-    function afterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
-        external
+    function _hookAfterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
+        internal
         pure
-        override
         returns (bytes4)
     {
         revert HookNotImplemented();
@@ -191,16 +181,16 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
     /*                         rated StableSwap swaps                         */
     /* ---------------------------------------------------------------------- */
 
-    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
-        public
+    function _hookPreviewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        internal
         view
         returns (uint256 amountOut)
     {
         return _previewSwapExactInContext(tokenIn, tokenOut, amountIn, false, Repo._layout().poolManager).amountOut;
     }
 
-    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
-        public
+    function _hookPreviewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        internal
         view
         returns (uint256 amountIn)
     {
@@ -225,73 +215,6 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
         internal view returns (ExactInOutput memory output)
     {
         return _previewSwapExactInContext(tokenIn, tokenOut, amountIn, funded, address(0));
-    }
-
-    function _previewSwapExactInContext(address tokenIn, address tokenOut, uint256 amountIn, bool funded, address manager)
-        private view returns (ExactInOutput memory output)
-    {
-        if (amountIn == 0) revert ZeroAmount();
-        if (tokenIn == tokenOut) revert InvalidPair();
-        uint8 i = _tokenIndex(tokenIn);
-        uint8 j = _tokenIndex(tokenOut);
-        uint256[] memory rated = manager == address(0) ? _ratedWadAllForSwapIn(i, funded ? amountIn : 0) : ClaimLib.ratedWadAllWithContext(manager);
-        if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
-
-        Repo.Layout storage l = Repo._layout();
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (feeWad >= Math.WAD) revert InvalidFeeWad();
-
-        uint256 netIn = Math.applyTradingFeeNet(amountIn, feeWad);
-        uint256 ratedInflow = manager == address(0) || l.standardExchanges[i] == address(0) || l.standardExchanges[i] == l.tokens[i]
-            ? _mapPairInToRatedWad(i, netIn) : ClaimLib.pairInWithContext(i, netIn, manager);
-        (output.amountOut, output.sharesOut) = ClaimLib.quoteSwapExactInContext(i, j, rated, ratedInflow, _amp(), manager);
-    }
-
-    /// @dev Rated book snapshot for exact-in. Raw `tokenIn` start reserve:
-    ///      - no free funding yet → live face (D21)
-    ///      - free >= amountIn (post-pull / funded pretransfer) → exclude funding so it is not double-counted
-    function _ratedWadAllForSwapIn(uint8 iIn, uint256 amountInPair)
-        internal
-        view
-        returns (uint256[] memory scaled)
-    {
-        scaled = new uint256[](Repo._numTokens());
-        Repo.Layout storage l = Repo._layout();
-        for (uint8 k; k < Repo._numTokens(); ++k) {
-            uint256 pairUnits = _ratedPairUnits(k);
-            if (k == iIn && l.standardExchanges[k] == address(0) && amountInPair > 0) {
-                uint256 face = IERC20(l.tokens[k]).balanceOf(address(this));
-                uint256 book = l.rawReserves[k];
-                uint256 free = face > book ? face - book : 0;
-                if (free >= amountInPair) {
-                    // Funding already on hook; start book excludes this trade's input.
-                    pairUnits = face - amountInPair;
-                }
-            }
-            scaled[k] = Math.scaleTo(pairUnits, l.ratedScales[k]);
-        }
-    }
-
-    function _mapPairInToRatedWad(uint8 i, uint256 pairAmount) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address se = l.standardExchanges[i];
-        if (se == address(0) || se == l.tokens[i]) {
-            // D60: a raw or self-share leg is its balance, times the rate when a provider is configured.
-            address rpRaw = l.rateProviders[i];
-            uint256 units = rpRaw == address(0)
-                ? pairAmount
-                : Math.ratedPairUnits(pairAmount, _getRateFailClosed(rpRaw), l.invScales[i], l.ratedScales[i]);
-            return Math.scaleTo(units, l.ratedScales[i]);
-        }
-        // Buffer preview → shares → pair units (rate or claim) → rated WAD
-        uint256 shares =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
-        if (shares == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
-        // D60: the SE answers the buffering quote (shares for this deposit); the rate values them.
-        uint256 pairUnits = Math.ratedPairUnits(shares, _getRateFailClosed(rp), ClaimLib.shareScale(se), l.ratedScales[i]);
-        return Math.scaleTo(pairUnits, l.ratedScales[i]);
     }
 
     function _previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
@@ -363,16 +286,58 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
     }
 
     /// @notice D60: the configured rate providers, one per leg (address(0) on a raw leg without one).
-    function rateProviders() public view returns (address[] memory) {
+    function _bindingRateProviders() internal view returns (address[] memory) {
         return Repo._layout().rateProviders;
     }
 
     /// @notice D60: the rate provider configured for `token_`, address(0) when none or unknown token.
-    function rateProvider(address token_) public view returns (address) {
+    function _bindingRateProviderOfAddress(address token_) internal view returns (address) {
         Repo.Layout storage l = Repo._layout();
         for (uint256 i; i < l.tokens.length; ++i) {
             if (l.tokens[i] == token_) return l.rateProviders[i];
         }
         return address(0);
     }
+}
+
+abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget is UniswapV4StandardExchangeBalancerQuadStableBufferHookSwapCore, IHooks {
+    function feeOracle() public view returns (IVaultFeeOracleQuery) { return _bindingFeeOracle(); }
+    function tokens() public view returns (address[] memory) { return _bindingTokens(); }
+    function dexSwapFee() public view returns (uint256) { return _bindingDexSwapFee(); }
+    function usageFee() public view returns (uint256) { return _bindingUsageFee(); }
+    function feeTo() public view returns (address) { return _bindingFeeTo(); }
+    function isFullBook() public view returns (bool) { return _bindingIsFullBook(); }
+    function pairDoorCount() public view returns (uint256) { return _bindingPairDoorCount(); }
+    function poolManager() public view returns (IPoolManager) { return _bindingPoolManager(); }
+    function permit2() public pure returns (address) { return _bindingPermit2(); }
+    function numTokens() public view returns (uint8) { return _bindingNumTokens(); }
+    function token(uint256 i) public view returns (address) { return _bindingToken(i); }
+    function baseAmp() public view returns (uint256) { return _bindingBaseAmp(); }
+    function getCurrentAmp() public view returns (uint256) { return _bindingCurrentAmp(); }
+    function standardExchange(uint256 i) public view returns (address) { return _bindingStandardExchange(i); }
+    function rateProvider(uint256 i) public view returns (address) { return _bindingRateProvider(i); }
+    function isBuffered(uint256 i) public view returns (bool) { return _bindingIsBuffered(i); }
+    function invScale(uint256 i) public view returns (uint256) { return _bindingInvScale(i); }
+    function ratedScale(uint256 i) public view returns (uint256) { return _bindingRatedScale(i); }
+    function nativeReserve(uint256 i) public view returns (uint256) { return _bindingNativeReserve(i); }
+    function nativeReserves() public view returns (uint256[] memory) { return _bindingNativeReserves(); }
+    function seBalance(uint256 i) public view returns (uint256) { return _bindingSeBalance(i); }
+    function seClaim(uint256 i) public view returns (uint256) { return _bindingSeClaim(i); }
+    function ratedBalance(uint256 i) public view returns (uint256) { return _bindingRatedBalance(i); }
+    function ratedBalances() public view returns (uint256[] memory) { return _bindingRatedBalances(); }
+    function kLast() public view returns (uint256) { return _bindingKLast(); }
+    function rateProviders() public view returns (address[] memory) { return _bindingRateProviders(); }
+    function rateProvider(address token_) public view returns (address) { return _bindingRateProviderOfAddress(token_); }
+    function beforeInitialize(address s, PoolKey calldata k, uint160 p) external view override returns (bytes4) { return _hookBeforeInitialize(s, k, p); }
+    function afterInitialize(address s, PoolKey calldata k, uint160 p, int24 t) external pure override returns (bytes4) { return _hookAfterInitialize(s, k, p, t); }
+    function beforeAddLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, bytes calldata d) external view override returns (bytes4) { return _hookBeforeAddLiquidity(s, k, p, d); }
+    function afterAddLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, BalanceDelta a, BalanceDelta f, bytes calldata d) external pure override returns (bytes4, BalanceDelta) { return _hookAfterAddLiquidity(s, k, p, a, f, d); }
+    function beforeRemoveLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, bytes calldata d) external view override returns (bytes4) { return _hookBeforeRemoveLiquidity(s, k, p, d); }
+    function afterRemoveLiquidity(address s, PoolKey calldata k, ModifyLiquidityParams calldata p, BalanceDelta a, BalanceDelta f, bytes calldata d) external pure override returns (bytes4, BalanceDelta) { return _hookAfterRemoveLiquidity(s, k, p, a, f, d); }
+    function beforeSwap(address s, PoolKey calldata k, SwapParams calldata p, bytes calldata d) external override returns (bytes4, BeforeSwapDelta, uint24) { return _hookBeforeSwap(s, k, p, d); }
+    function afterSwap(address s, PoolKey calldata k, SwapParams calldata p, BalanceDelta a, bytes calldata d) external pure override returns (bytes4, int128) { return _hookAfterSwap(s, k, p, a, d); }
+    function beforeDonate(address s, PoolKey calldata k, uint256 a, uint256 b, bytes calldata d) external view override returns (bytes4) { return _hookBeforeDonate(s, k, a, b, d); }
+    function afterDonate(address s, PoolKey calldata k, uint256 a, uint256 b, bytes calldata d) external pure override returns (bytes4) { return _hookAfterDonate(s, k, a, b, d); }
+    function previewSwapExactIn(address in_, address out_, uint256 amount_) public view returns (uint256) { return _hookPreviewSwapExactIn(in_, out_, amount_); }
+    function previewSwapExactOut(address in_, address out_, uint256 amount_) public view returns (uint256) { return _hookPreviewSwapExactOut(in_, out_, amount_); }
 }

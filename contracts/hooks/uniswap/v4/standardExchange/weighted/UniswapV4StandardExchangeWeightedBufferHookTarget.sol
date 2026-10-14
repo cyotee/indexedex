@@ -120,7 +120,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return Repo._layout().ownerOnlyLiquidity;
     }
 
-    function poolManager() public view returns (IPoolManager) {
+    function _bindingPoolManager() internal view returns (IPoolManager) {
         return IPoolManager(Repo._layout().poolManager);
     }
 
@@ -128,11 +128,11 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return IVaultFeeOracleQuery(Repo._layout().feeOracle);
     }
 
-    function permit2() public pure returns (address) {
+    function _bindingPermit2() internal pure returns (address) {
         return PERMIT2;
     }
 
-    function numTokens() public view returns (uint8) {
+    function _bindingNumTokens() internal view returns (uint8) {
         return Repo._layout().numTokens;
     }
 
@@ -140,43 +140,43 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return Repo._layout().tokens;
     }
 
-    function token(uint256 index) public view returns (address) {
+    function _bindingToken(uint256 index) internal view returns (address) {
         return Repo._layout().tokens[index];
     }
 
-    function getNormalizedWeights() public view returns (uint256[] memory) {
+    function _bindingWeights() internal view returns (uint256[] memory) {
         return Repo._layout().weights;
     }
 
-    function weight(uint256 index) public view returns (uint256) {
+    function _bindingWeight(uint256 index) internal view returns (uint256) {
         return Repo._layout().weights[index];
     }
 
-    function standardExchange(uint256 index) public view returns (address) {
+    function _bindingStandardExchange(uint256 index) internal view returns (address) {
         return Repo._layout().standardExchanges[index];
     }
 
-    function rateProvider(uint256 index) public view returns (address) {
+    function _bindingRateProvider(uint256 index) internal view returns (address) {
         return Repo._layout().rateProviders[index];
     }
 
-    function isBuffered(uint256 index) public view returns (bool) {
+    function _bindingIsBuffered(uint256 index) internal view returns (bool) {
         return Repo._layout().standardExchanges[index] != address(0);
     }
 
-    function invScale(uint256 index) public view returns (uint256) {
+    function _bindingInvScale(uint256 index) internal view returns (uint256) {
         return Repo._layout().invScales[index];
     }
 
-    function ratedScale(uint256 index) public view returns (uint256) {
+    function _bindingRatedScale(uint256 index) internal view returns (uint256) {
         return Repo._layout().ratedScales[index];
     }
 
-    function nativeReserve(uint256 index) public view returns (uint256) {
+    function _bindingNativeReserve(uint256 index) internal view returns (uint256) {
         return _nativeAt(uint8(index));
     }
 
-    function nativeReserves() public view returns (uint256[] memory out) {
+    function _bindingNativeReserves() internal view returns (uint256[] memory out) {
         Repo.Layout storage l = Repo._layout();
         out = new uint256[](l.numTokens);
         for (uint8 i; i < l.numTokens; ++i) {
@@ -184,13 +184,13 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         }
     }
 
-    function seBalance(uint256 index) public view returns (uint256) {
+    function _bindingSeBalance(uint256 index) internal view returns (uint256) {
         address se = Repo._layout().standardExchanges[index];
         if (se == address(0)) return 0;
         return IERC20(se).balanceOf(address(this));
     }
 
-    function seClaim(uint256 index) public view returns (uint256) {
+    function _bindingSeClaim(uint256 index) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[index];
         if (se == address(0)) return 0;
@@ -200,11 +200,11 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
     }
 
-    function ratedBalance(uint256 index) public view returns (uint256) {
+    function _bindingRatedBalance(uint256 index) internal view returns (uint256) {
         return _ratedPairUnits(uint8(index));
     }
 
-    function ratedBalances() public view returns (uint256[] memory out) {
+    function _bindingRatedBalances() internal view returns (uint256[] memory out) {
         Repo.Layout storage l = Repo._layout();
         out = new uint256[](l.numTokens);
         for (uint8 i; i < l.numTokens; ++i) {
@@ -224,7 +224,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return address(feeOracle().feeTo());
     }
 
-    function kLast() public view returns (uint256) {
+    function _bindingKLast() internal view returns (uint256) {
         return Repo._layout().kLast;
     }
 
@@ -275,7 +275,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return PairPoolLib.pairDoorCount(Repo._layout().numTokens);
     }
 
-    function ensurePairPools() external returns (uint256 doorsEnsured) {
+    function _ensurePairPools() internal returns (uint256 doorsEnsured) {
         Repo.Layout storage l = Repo._layout();
         doorsEnsured = PairPoolLib.ensureAllPairPools(
             IPoolManager(l.poolManager), address(this), l.tokens, 0

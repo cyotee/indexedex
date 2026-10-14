@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -16,7 +17,7 @@ import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeIn
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {TestBase_UniswapV3FullSpreadStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
 
-contract V3FullRangeNativeSYTest is TestBase_UniswapV3FullSpreadStandardExchangeVault, IUniswapV3FlashCallback, TransitionQuoteAssertions {
+contract V3FullRangeNativeSYTest is TestBase_UniswapV3FullSpreadStandardExchangeVault, IUniswapV3FlashCallback, TransitionQuoteAssertions, NativeSYExecutionAssertions {
     IUniswapV3Pool private pool;
     IStandardExchangeProxy private se;
     IStandardizedYield private sy;
@@ -81,7 +82,7 @@ contract V3FullRangeNativeSYTest is TestBase_UniswapV3FullSpreadStandardExchange
         assertEq(sy.exchangeRate(), total0 * 1e18 / se.totalSupply());
     }
 
-    function test_nativeSYLaterSingleTokenRoutesAndCallerRedemption() public {
+    function test_nativeSYLaterSingleTokenRoutesAndCallerRedemption() public noSelfCalls(address(se)) {
         _activate();
         uint256 quote = sy.previewDeposit(address(token0), 10e18);
         assertGt(quote, 0); assertEq(sy.deposit(address(this), address(token0), 10e18, quote), quote);
@@ -92,14 +93,14 @@ contract V3FullRangeNativeSYTest is TestBase_UniswapV3FullSpreadStandardExchange
         assertEq(token0.balanceOf(address(this)) - before0, out); assertEq(se.balanceOf(address(this)), shares - quote);
     }
 
-    function test_nativeSYInternalBalanceBurnsOnlyTheRequestedShares() public {
+    function test_nativeSYInternalBalanceBurnsOnlyTheRequestedShares() public noSelfCalls(address(se)) {
         _activate(); se.transfer(address(se), 5e18);
         uint256 supply = se.totalSupply(); uint256 quote = sy.previewRedeem(address(token1), 2e18);
         assertEq(sy.redeem(address(this), 2e18, address(token1), quote, true), quote);
         assertEq(se.balanceOf(address(se)), 3e18); assertEq(se.totalSupply(), supply - 2e18);
     }
 
-    function test_nativeSYAccruedFeeDepositMatchesItsPreview() public {
+    function test_nativeSYAccruedFeeDepositMatchesItsPreview() public noSelfCalls(address(se)) {
         _activate();
         _externalSwapExactIn(pool, true, 100e18); _externalSwapExactIn(pool, false, 100e18);
         uint256 quoted = sy.previewDeposit(address(token1), 7e18);
@@ -116,7 +117,7 @@ contract V3FullRangeNativeSYTest is TestBase_UniswapV3FullSpreadStandardExchange
         assertEq(se.totalSupply(), supply); assertEq(se.balanceOf(address(se)), 0);
     }
 
-    function test_nativeSYPreservesFundedSleeveOperationsDuringPoolLock() public {
+    function test_nativeSYPreservesFundedSleeveOperationsDuringPoolLock() public noSelfCalls(address(se)) {
         _activate(); lockCallback = true; pool.flash(address(this), 0, 0, ""); lockCallback = false;
     }
 

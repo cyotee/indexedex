@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ConstantProductStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -16,7 +18,13 @@ import {
     UniswapV2StandardExchangeInTarget
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInTarget.sol";
 
-contract UniswapV2StandardExchangeInFacet is UniswapV2StandardExchangeInTarget, IFacet {
+contract UniswapV2StandardExchangeInFacet is UniswapV2StandardExchangeInTarget, ConstantProductStandardYieldExecutionTarget, IFacet {
+    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256)
+    {
+        return _redeemLpSharesFrom(holder_, receiver_, shares_, tokenOut_, minimum_);
+    }
+
     function facetName() public pure returns (string memory name) {
         return type(UniswapV2StandardExchangeInFacet).name;
     }
@@ -48,6 +56,7 @@ contract UniswapV2StandardExchangeInFacet is UniswapV2StandardExchangeInTarget, 
 
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+        funcs = NativeStandardYieldSelectors._appendExecution(funcs);
     }
 
     function facetMetadata()

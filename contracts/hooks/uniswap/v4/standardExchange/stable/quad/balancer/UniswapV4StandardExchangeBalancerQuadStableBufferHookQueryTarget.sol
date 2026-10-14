@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldPreviewTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol";
@@ -10,18 +12,9 @@ import {UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as Repo} from 
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore.sol";
 
 /// @notice Liquidity quotes through the shared reserve accounting.
-abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryTarget is UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore, NativeStandardYieldTarget {
-    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override nonReentrant returns (uint256)
-    {
-        address implementation_ = IDiamondLoupe(address(this)).facetAddress(
-            IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector
-        );
-        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
-            "executeVaultHeldRedemption(address,uint256,address,uint256)", receiver_, shares_, tokenOut_, minimum_
-        ));
-        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
-        return abi.decode(result_, (uint256));
+abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryTarget is UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase, NativeStandardYieldTarget {
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
     }
 
     function previewJoinProportional(uint256[] calldata amounts)

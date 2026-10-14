@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 
 import {ONE_WAD} from '@crane/contracts/constants/Constants.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
@@ -26,16 +29,16 @@ import {
 } from 'contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 
-contract AerodromeStandardExchangeInTarget is
-    AerodromeStandardExchangeCommon,
-    ReentrancyLockModifiers,
-    IStandardExchangeIn
+abstract contract AerodromeStandardExchangeInQuoteBase is
+    NativeStandardYieldQuoteBase,
+    AerodromeStandardExchangeCommon
 {
     using BetterSafeERC20 for IERC20;
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal
         view
+        override
         returns (uint256 amountOut)
     {
         ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
@@ -180,7 +183,7 @@ contract AerodromeStandardExchangeInTarget is
 
             return _previewRoute7ZapOutWithdraw(params);
         }
-        revert InvalidRoute(address(tokenIn), address(tokenOut));
+        revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
     /// @dev Execution compounds fees first. Both the user zap and share conversion
@@ -248,7 +251,14 @@ contract AerodromeStandardExchangeInTarget is
         );
     }
 
-    function exchangeIn(
+}
+
+abstract contract AerodromeStandardExchangeInExecutionBase is
+    AerodromeStandardExchangeInQuoteBase, ReentrancyLockModifiers, IStandardExchangeErrors, StandardExchangeInExecutionBase
+{
+    using BetterSafeERC20 for IERC20;
+
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -256,7 +266,7 @@ contract AerodromeStandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         // Vault-level deadline (peer SE: Uni V2 / Camelot). Router deadline alone
         // does not cover vault-only routes (deposit / withdraw / share mint-burn).
         if (block.timestamp > deadline) {
@@ -417,7 +427,7 @@ contract AerodromeStandardExchangeInTarget is
             if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
             // A deposit must buy at least one vault-share unit. Reject before
             // entering an AMM swap whose rounded output cannot fund that claim.
-            if (IStandardExchangeIn(address(this)).previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
+            if (_previewZapDeposit(pool, tokenIn, amountIn) == 0) {
                 revert MinAmountNotMet(1, 0);
             }
 
@@ -528,4 +538,12 @@ contract AerodromeStandardExchangeInTarget is
     }
 
 
+}
+
+contract AerodromeStandardExchangeInTarget is AerodromeStandardExchangeInExecutionBase {
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
 }

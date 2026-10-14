@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldPreviewTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase} from "./UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase.sol";
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib} from "./UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
 
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
@@ -43,7 +49,28 @@ import {
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
-abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget is UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
+abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget is UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase, NativeStandardYieldPreviewTarget {
+    function getTokensIn() public view override returns (address[] memory tokens_) {
+        Repo.Layout storage l = Repo._layout();
+        tokens_ = new address[](4);
+        tokens_[0] = l.token0;
+        tokens_[1] = l.token1;
+        tokens_[2] = l.se0;
+        tokens_[3] = l.se1;
+    }
+    function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
+    function yieldToken() external pure override returns (address) { return address(0); }
+    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
+        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
+    }
+    function exchangeRate() external view override returns (uint256) {
+        uint256 supply_ = _supplyAfterProtocolMint();
+        return supply_ == 0 ? 1e18 : FullMath.mulDiv(Math.sqrt(_wadProduct()), 1e18, supply_);
+    }
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+
     using SafeERC20 for IERC20;
 
     function withdraw(
@@ -116,9 +143,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
-        amountOut = _exitSingleAsset(tokenOut, sharesIn, to, deadline);
-        if (amountOut < amountOutMin) revert InsufficientTokenOut();
+    ) external returns (uint256 amountOut) {
+        return _exitLiquidityExactIn(tokenOut, sharesIn, to, amountOutMin, deadline, address(0));
     }
 
     function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
@@ -126,8 +152,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         view
         returns (uint256 amountOut)
     {
-        if (sharesIn == 0 || !_isLive()) return 0;
-        return _previewExitSingleAsset(tokenOut, sharesIn);
+        return _previewLiquidityExit(tokenOut, sharesIn);
     }
 
     function exitSingleAssetExactTokenOut(
@@ -178,98 +203,6 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         internal returns (uint256 amountOut)
     {
         return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, to, deadline);
-    }
-
-    struct ExitQuoteLeg {
-        address se;
-        bytes state;
-        uint256 assets;
-        uint256 withdrawn;
-    }
-
-    function _previewExitSingleAsset(address tokenOut, uint256 sharesIn)
-        internal view returns (uint256 amountOut)
-    {
-        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
-        Repo.Layout storage l = Repo._layout();
-        bool asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
-        address pair = asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
-        bool outIs0 = pair == l.currency0;
-        if (!outIs0 && pair != l.currency1) return 0;
-        address other = outIs0 ? l.currency1 : l.currency0;
-        if (ClaimLib.supportsTransitionQuote(_seFor(pair), pair, address(this))
-            && ClaimLib.supportsTransitionQuote(_seFor(other), other, address(this))) {
-            return _previewSequentialExit(pair, other, sharesIn, asShare);
-        }
-        amountOut = _previewFallbackExit(pair, sharesIn, outIs0);
-        if (asShare && amountOut > 0) {
-            amountOut = IStandardExchangeIn(tokenOut).previewExchangeIn(IERC20(pair), amountOut, IERC20(tokenOut));
-        }
-    }
-
-    function _previewFallbackExit(address pair, uint256 sharesIn, bool outIs0)
-        private view returns (uint256)
-    {
-        // Quote only the proportional withdraw. Residual swap at execute is extra
-        // output and must not raise minOut above what `_withdrawAndSettle` pays.
-        pair;
-        (uint256 a0, uint256 a1) = _previewWithdraw(sharesIn);
-        return outIs0 ? a0 : a1;
-    }
-
-    function _previewSequentialExit(address pair, address other, uint256 sharesIn, bool asShare)
-        private view returns (uint256 amountOut)
-    {
-        uint256 supply = _supplyAfterProtocolMint();
-        ExitQuoteLeg memory output = _previewWithdrawLeg(pair, sharesIn, supply);
-        ExitQuoteLeg memory input = _previewWithdrawLeg(other, sharesIn, supply);
-        amountOut = output.withdrawn + _projectExitResidual(input, output, other, pair);
-        if (asShare && amountOut > 0) {
-            (,, amountOut,) = Transition(output.se).quoteTransition(
-                output.state, Transition.Operation.DepositExactIn, amountOut
-            );
-        }
-    }
-
-    function _projectExitResidual(ExitQuoteLeg memory input, ExitQuoteLeg memory output, address tokenIn, address tokenOut)
-        private view returns (uint256 received)
-    {
-        if (input.withdrawn == 0) return 0;
-        uint256 claimIn = ClaimLib.projectedBufferClaimIn(input.se, input.state, input.withdrawn);
-        uint256 budget = _exitSaleQuote(tokenIn, tokenOut, claimIn,
-            ClaimLib.ratedReserveOfState(input.se, input.state), ClaimLib.ratedReserveOfState(output.se, output.state));
-        ClaimLib.OutputQuote memory quote;
-        bytes memory next;
-        (quote, next) = ClaimLib.projectOutputExactIn(output.se, output.state, budget);
-        if (quote.amount == 0) return 0;
-        (input.state,,,) = Transition(input.se).quoteTransition(input.state, Transition.Operation.DepositExactIn, input.withdrawn);
-        output.state = next;
-        return quote.amount;
-    }
-
-    function _previewWithdrawLeg(address pair, uint256 sharesIn, uint256 supply)
-        private view returns (ExitQuoteLeg memory leg)
-    {
-        leg.se = _seFor(pair);
-        (leg.state, leg.assets) = Transition(leg.se).quoteState(pair, address(this));
-        uint256 seOut = FullMath.mulDiv(IERC20(leg.se).balanceOf(address(this)), sharesIn, supply);
-        if (seOut > 0) {
-            (leg.state,, leg.withdrawn, leg.assets) = Transition(leg.se).quoteTransition(
-                leg.state, Transition.Operation.RedeemExactIn, seOut
-            );
-        }
-    }
-
-    function _exitSaleQuote(address tokenIn, address tokenOut, uint256 claimIn, uint256 reserveIn, uint256 reserveOut)
-        private view returns (uint256)
-    {
-        if (claimIn == 0 || reserveIn == 0 || reserveOut == 0) return 0;
-        uint8 decimalsIn = _decimalsOf(tokenIn);
-        uint8 decimalsOut = _decimalsOf(tokenOut);
-        return Math.fromWadFloor(Math.saleQuote(
-            Math.toWad(claimIn, decimalsIn), Math.toWad(reserveIn, decimalsIn), Math.toWad(reserveOut, decimalsOut)
-        ), decimalsOut);
     }
 
 }

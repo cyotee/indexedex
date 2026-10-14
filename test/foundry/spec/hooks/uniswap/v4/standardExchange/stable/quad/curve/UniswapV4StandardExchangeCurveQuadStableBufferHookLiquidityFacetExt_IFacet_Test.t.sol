@@ -6,7 +6,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
-import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     IStandardExchangeMultiAssetLiquidity
@@ -49,7 +49,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt_IFa
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](11);
+        controlFuncs = new bytes4[](26);
         controlFuncs[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
         controlFuncs[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
         controlFuncs[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -61,6 +61,20 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt_IFa
         controlFuncs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         controlFuncs[9] = IDetfReserveQuote.previewSynthetic.selector;
         controlFuncs[10] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
-        controlFuncs = NativeStandardYieldSelectors._append(controlFuncs);
+        controlFuncs[11] = IStandardExchangeIn.previewExchangeIn.selector;
+        controlFuncs[12] = IStandardizedYield.exchangeRate.selector;
+        controlFuncs[13] = IStandardizedYield.yieldToken.selector;
+        controlFuncs[14] = IStandardizedYield.assetInfo.selector;
+        controlFuncs[15] = IStandardizedYield.getTokensIn.selector;
+        controlFuncs[16] = IStandardizedYield.getTokensOut.selector;
+        controlFuncs[17] = IStandardizedYield.isValidTokenIn.selector;
+        controlFuncs[18] = IStandardizedYield.isValidTokenOut.selector;
+        controlFuncs[19] = IStandardizedYield.previewDeposit.selector;
+        controlFuncs[20] = IStandardizedYield.previewRedeem.selector;
+        controlFuncs[21] = IStandardizedYield.getRewardTokens.selector;
+        controlFuncs[22] = IStandardizedYield.accruedRewards.selector;
+        controlFuncs[23] = IStandardizedYield.rewardIndexesCurrent.selector;
+        controlFuncs[24] = IStandardizedYield.rewardIndexesStored.selector;
+        controlFuncs[25] = IStandardizedYield.claimRewards.selector;
     }
 }

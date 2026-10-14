@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {AaveV3StataStandardExchangeInTarget as StataIn} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol";
+import {AaveV3StataStandardExchangeInExecutionBase as StataIn} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol";
+import {AaveV3StataStandardExchangeCommon as StataCommon} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol";
 import {AaveV3StataStandardExchangeOutTarget as StataOut} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutTarget.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -253,7 +254,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 stataShares_ = _acquireStata(attacker, amount_);
         vm.startPrank(attacker);
         IERC20(realStata).approve(realVault, stataShares_);
-        vm.expectRevert(abi.encodeWithSelector(StataIn.InvalidStataRoute.selector, realStata, address(junk_)));
+        vm.expectRevert(abi.encodeWithSelector(StataCommon.InvalidStataRoute.selector, realStata, address(junk_)));
         IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realStata), stataShares_, IERC20(address(junk_)), 0, attacker, false, _deadline()
         );

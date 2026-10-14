@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeOrbitalBufferHookExchangeOutTarget, UniswapV4StandardExchangeOrbitalBufferHookOwnerSwapTarget} from "../UniswapV4StandardExchangeOrbitalBufferHookSeTarget.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
@@ -16,6 +18,7 @@ import {
  */
 contract UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet is
     UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget,
+    UniswapV4StandardExchangeOrbitalBufferHookExchangeOutTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {
@@ -27,10 +30,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](3);
+        funcs = new bytes4[](5);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.depositSingle.selector;
         funcs[1] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
         funcs[2] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+        funcs[3] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs[4] = IStandardExchangeOut.exchangeOut.selector;
     }
 
     function facetMetadata()

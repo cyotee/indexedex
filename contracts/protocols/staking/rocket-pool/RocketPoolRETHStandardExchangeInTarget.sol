@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRocketStorage} from "@crane/contracts/protocols/staking/ethereum/rocket-pool/interfaces/IRocketStorage.sol";
 import {IRETH} from "@crane/contracts/protocols/staking/ethereum/rocket-pool/interfaces/IRETH.sol";
@@ -22,23 +23,12 @@ import {
  * @notice Exact-in Standard Exchange surface for Rocket Pool rETH SE.
  * @dev No exchangeInEth / native ETH entry. Previews never gate on sleeve/capacity/burn.
  */
-contract RocketPoolRETHStandardExchangeInTarget is
+abstract contract RocketPoolRETHStandardExchangeInExecutionBase is
     RocketPoolRETHStandardExchangeCommon,
     ReentrancyLockModifiers,
-    IStandardExchangeIn,
-    IStandardExchangeTransitionQuote,
-    IStandardExchangeExternalQuote
+    StandardExchangeInExecutionBase
 {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        if (amountIn == 0) revert ZeroAmount();
-        return _quoteExactIn(address(tokenIn), amountIn, address(tokenOut));
-    }
-
-    function exchangeIn(
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -46,7 +36,7 @@ contract RocketPoolRETHStandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         if (block.timestamp > deadline) revert DeadlineExpired();
         if (amountIn == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();
@@ -96,6 +86,20 @@ contract RocketPoolRETHStandardExchangeInTarget is
     /// @dev Validator assignment subtracts equal ETH from deposit-pool balance
     /// and queue capacity. Their signed difference therefore projects both
     /// collateral and deposit headroom without replaying individual validators.
+}
+
+contract RocketPoolRETHStandardExchangeInTarget is RocketPoolRETHStandardExchangeInExecutionBase,
+    IStandardExchangeIn, IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote
+{
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
+
     struct RocketQuoteState {
         address exchange;
         address asset;

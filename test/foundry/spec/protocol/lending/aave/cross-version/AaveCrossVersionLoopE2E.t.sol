@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {Behavior_NativeStandardYieldExecution} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -176,6 +177,8 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
 
     function test_nativeSY_depositAndRedeemUseStandardNavAndNeverBorrowForExit() public {
         IStandardizedYield sy_ = _fundedSY();
+        assertGt(address(sy_).code.length, 0);
+        vm.startStateDiffRecording();
         uint256 payment_ = 1 ether;
         _mint(tokenA, address(this), payment_);
         tokenA.approve(vault, payment_);
@@ -185,16 +188,20 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         assertEq(sy_.deposit(address(this), address(tokenA), payment_, quote_), quote_);
         assertEq(sy_.balanceOf(address(this)), before_ + quote_);
         _assertSyExit(sy_, quote_ / 4, false);
+        Behavior_NativeStandardYieldExecution.requireNoSelfCalls(vm.stopAndReturnStateDiff(), address(sy_));
     }
 
     function test_nativeSY_internalBalanceBurnsOnlyRequestedActualShares() public {
         IStandardizedYield sy_ = _fundedSY();
+        assertGt(address(sy_).code.length, 0);
+        vm.startStateDiffRecording();
         uint256 transferred_ = sy_.balanceOf(address(this)) / 20;
         sy_.transfer(vault, transferred_);
         uint256 userShares_ = sy_.balanceOf(address(this));
         _assertSyExit(sy_, transferred_ / 2, true);
         assertEq(sy_.balanceOf(vault), transferred_ - transferred_ / 2);
         assertEq(sy_.balanceOf(address(this)), userShares_);
+        Behavior_NativeStandardYieldExecution.requireNoSelfCalls(vm.stopAndReturnStateDiff(), address(sy_));
     }
 
     function test_nativeSY_slippageRevertsPreserveFundsAndPosition() public {
@@ -242,6 +249,8 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
     ///         reverts AmountOutNotMet (the never-borrow envelope), the pre-D61 unfreeable case.
     function test_nativeSY_fullSingleTokenExitUnwindsProportionally() public {
         IStandardizedYield sy_ = _fundedSY();
+        assertGt(address(sy_).code.length, 0);
+        vm.startStateDiffRecording();
         uint256 shares_ = sy_.balanceOf(address(this));
         uint256 debtV3_ = AaveV36Service.debtOf(v36Pool, address(tokenB), vault);
         uint256 out_ = sy_.previewRedeem(address(tokenA), shares_);
@@ -253,6 +262,7 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         // (1000 wei at address(1), decision 21) is unredeemable and stays behind.
         assertEq(sy_.totalSupply(), 1000, "only the permanent MINIMUM_LIQUIDITY lock remains");
         assertLe(AaveV36Service.debtOf(v36Pool, address(tokenB), vault), debtV3_, "debt repaid, never borrowed");
+        Behavior_NativeStandardYieldExecution.requireNoSelfCalls(vm.stopAndReturnStateDiff(), address(sy_));
         // An exact-out ask beyond the whole position is still unfreeable.
         IStandardizedYield fresh_ = _fundedSY();
         uint256 whole_ = fresh_.previewRedeem(address(tokenA), fresh_.balanceOf(address(this)));

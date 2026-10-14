@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -32,11 +33,19 @@ import {
  *      Soft stake on WETH→SE (capacity-capped); hard stake on WETH→rETH.
  */
 abstract contract RocketPoolRETHStandardExchangeCommon is
+    NativeStandardYieldQuoteBase,
     IRocketPoolRETHStandardVault,
     IStandardExchangeErrors
 {
     using BetterMath for uint256;
     using SafeERC20 for IERC20;
+
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256)
+    {
+        if (amountIn == 0) revert ZeroAmount();
+        return _quoteExactIn(address(tokenIn), amountIn, address(tokenOut));
+    }
 
     /// @dev Rebalance hysteresis: 10% of target liquid.
     uint256 internal constant REBALANCE_BAND_WAD = 0.10e18;

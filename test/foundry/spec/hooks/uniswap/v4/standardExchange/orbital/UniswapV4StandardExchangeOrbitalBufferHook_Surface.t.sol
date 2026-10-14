@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -85,7 +86,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.isLive.selector), "J1 isLive");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector), "J1 firstJoinMustBeFullBook");
-        assertEq(funcs_.length, 48, "J1 HooksFacet facetFuncs length"); // D60: + rateProviders(), rateProvider(address)
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+        assertEq(funcs_.length, 50, "J1 HooksFacet facetFuncs length");
     }
 
     function test_J1_deposit_targetSelectors_subseteq_facetFuncs() public view {
@@ -102,8 +105,10 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
         assertTrue(_contains(zaps_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
         assertEq(funcs_.length, 4, "J1 deposit execution selectors");
-        assertEq(queries_.length, 11, "J1 deposit query selectors");
-        assertEq(zaps_.length, 3, "J1 deposit zap selectors");
+        assertEq(queries_.length, 26, "J1 deposit query selectors");
+        assertTrue(_contains(zaps_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewExchangeOut");
+        assertTrue(_contains(zaps_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
+        assertEq(zaps_.length, 5, "J1 deposit zap selectors");
     }
 
     function test_J1_withdraw_targetSelectors_subseteq_facetFuncs() public view {
@@ -117,31 +122,55 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertEq(funcs_.length, 11, "J1 WithdrawFacet facetFuncs length");
     }
 
-    function test_J1_se_targetSelectors_subseteq_facetFuncs() public view {
-        bytes4[] memory funcs_ = seFacet.facetFuncs();
-        assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewExchangeIn");
-        assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
-        assertTrue(_contains(funcs_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewExchangeOut");
-        assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.deposit.selector), "J1 SY deposit");
-        assertTrue(_contains(funcs_, IStandardizedYield.redeem.selector), "J1 SY redeem");
-        assertTrue(_contains(funcs_, IStandardizedYield.exchangeRate.selector), "J1 SY exchangeRate");
-        assertTrue(_contains(funcs_, IStandardizedYield.yieldToken.selector), "J1 SY yieldToken");
-        assertTrue(_contains(funcs_, IStandardizedYield.assetInfo.selector), "J1 SY assetInfo");
-        assertTrue(_contains(funcs_, IStandardizedYield.getTokensIn.selector), "J1 SY getTokensIn");
-        assertTrue(_contains(funcs_, IStandardizedYield.getTokensOut.selector), "J1 SY getTokensOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenIn.selector), "J1 SY isValidTokenIn");
-        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenOut.selector), "J1 SY isValidTokenOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
-        assertTrue(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
-        assertTrue(_contains(funcs_, IStandardizedYield.getRewardTokens.selector), "J1 SY getRewardTokens");
-        assertTrue(_contains(funcs_, IStandardizedYield.accruedRewards.selector), "J1 SY accruedRewards");
-        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesCurrent.selector), "J1 SY rewardIndexesCurrent");
-        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesStored.selector), "J1 SY rewardIndexesStored");
-        assertTrue(_contains(funcs_, IStandardizedYield.claimRewards.selector), "J1 SY claimRewards");
-        assertEq(funcs_.length, 22, "J1 SeFacet facetFuncs length");
+    function test_J1_se_targetSelectors_subseteq_facetFuncs() public {
+        bytes4[] memory expected = new bytes4[](3);
+        expected[0] = IStandardExchangeIn.exchangeIn.selector;
+        expected[1] = IStandardizedYield.deposit.selector;
+        expected[2] = IStandardizedYield.redeem.selector;
+        _assertExactRole(seFacet, expected);
+    }
+
+    /// @notice Query, discovery and reward selectors remain independent of SY money execution.
+    function test_depositQueryFacet_declaration() public {
+        bytes4[] memory expected = new bytes4[](26);
+        expected[0] = IHook.previewAddLiquidity.selector;
+        expected[1] = IHook.previewDepositSingle.selector;
+        expected[2] = IHook.previewZapSplit.selector;
+        expected[3] = IHook.previewDepositFlexible.selector;
+        expected[4] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+        expected[5] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+        expected[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+        expected[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+        expected[8] = IHook.radius.selector;
+        expected[9] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
+        expected[10] = IDetfReserveQuote.previewBondAfterDeposit.selector;
+        expected[11] = IStandardExchangeIn.previewExchangeIn.selector;
+        expected[12] = IStandardizedYield.exchangeRate.selector;
+        expected[13] = IStandardizedYield.yieldToken.selector;
+        expected[14] = IStandardizedYield.assetInfo.selector;
+        expected[15] = IStandardizedYield.getTokensIn.selector;
+        expected[16] = IStandardizedYield.getTokensOut.selector;
+        expected[17] = IStandardizedYield.isValidTokenIn.selector;
+        expected[18] = IStandardizedYield.isValidTokenOut.selector;
+        expected[19] = IStandardizedYield.previewDeposit.selector;
+        expected[20] = IStandardizedYield.previewRedeem.selector;
+        expected[21] = IStandardizedYield.getRewardTokens.selector;
+        expected[22] = IStandardizedYield.accruedRewards.selector;
+        expected[23] = IStandardizedYield.rewardIndexesCurrent.selector;
+        expected[24] = IStandardizedYield.rewardIndexesStored.selector;
+        expected[25] = IStandardizedYield.claimRewards.selector;
+        _assertExactRole(depositQueryFacet, expected);
+    }
+
+    function _assertExactRole(IFacet facet_, bytes4[] memory expected_) internal {
+        assertEq(facet_.facetFuncs().length, expected_.length, "exact role count");
+        assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
+        for (uint256 i; i < expected_.length; ++i) {
+            assertEq(IDiamondLoupe(hook).facetAddress(expected_[i]), address(facet_), "independent selector owner");
+            for (uint256 j = i + 1; j < expected_.length; ++j) {
+                assertTrue(expected_[i] != expected_[j], "unique role controls");
+            }
+        }
     }
 
     /* ---------------------------------------------------------------------- */

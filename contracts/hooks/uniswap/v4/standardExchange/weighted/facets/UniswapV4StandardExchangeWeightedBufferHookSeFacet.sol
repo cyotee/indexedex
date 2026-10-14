@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -32,13 +33,9 @@ contract UniswapV4StandardExchangeWeightedBufferHookSeFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
-        funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
-        funcs[1] = IStandardExchangeIn.exchangeIn.selector;
-        funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
-        funcs[3] = IStandardExchangeOut.exchangeOut.selector;
-        funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactIn.selector;
-        funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactOut.selector;
+        funcs = new bytes4[](1);
+        funcs[0] = IStandardExchangeIn.exchangeIn.selector;
+        funcs = NativeStandardYieldSelectors._appendExecution(funcs);
     }
 
     function facetMetadata()

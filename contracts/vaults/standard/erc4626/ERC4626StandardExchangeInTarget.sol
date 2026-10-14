@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ERC4626StandardExchangeCommon} from "./ERC4626StandardExchangeCommon.sol";
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -18,11 +20,11 @@ import {
  *      Non-burn tokenIn paths use durable reserve-delta `_securePull` (L-DETF-HOST-UPGRADE).
  *      Every money route end-syncs expected-hold reserves after refunds.
  */
-contract ERC4626StandardExchangeInTarget is ERC4626StandardExchangeQuoteTarget, ReentrancyLockModifiers {
+abstract contract ERC4626StandardExchangeInExecutionBase is ERC4626StandardExchangeCommon, ReentrancyLockModifiers, StandardExchangeInExecutionBase {
     using SafeERC20 for IERC20;
     using ERC4626Service for IERC4626;
 
-    function exchangeIn(
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -30,7 +32,7 @@ contract ERC4626StandardExchangeInTarget is ERC4626StandardExchangeQuoteTarget, 
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
         IERC4626 vault = protocolVault();
@@ -114,5 +116,13 @@ contract ERC4626StandardExchangeInTarget is ERC4626StandardExchangeQuoteTarget, 
         }
 
         revert UnsupportedRoute();
+    }
+}
+
+contract ERC4626StandardExchangeInTarget is ERC4626StandardExchangeInExecutionBase {
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
     }
 }

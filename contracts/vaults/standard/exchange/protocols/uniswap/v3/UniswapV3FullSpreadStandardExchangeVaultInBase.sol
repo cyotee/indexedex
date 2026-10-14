@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {StandardExchangeConstantProduct} from "../StandardExchangeConstantProduct.sol";
 
@@ -15,7 +17,34 @@ import {
     IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
 
-abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3FullSpreadStandardExchangeVaultCommon, ReentrancyLockModifiers {
+abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is NativeStandardYieldQuoteBase, UniswapV3FullSpreadStandardExchangeVaultCommon, ReentrancyLockModifiers {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256 amountOut)
+    {
+        address token0 = _token0();
+        address token1 = _token1();
+
+        if (
+            (address(tokenIn) == token0 && address(tokenOut) == token1)
+                || (address(tokenIn) == token1 && address(tokenOut) == token0)
+        ) {
+            if (!canOpenBoundPoolOps()) {
+                revert UniswapV3Exchange_BoundPoolInteractionBlocked();
+            }
+            return _quoteSwap(address(tokenIn), address(tokenOut), amountIn);
+        }
+
+        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
+            return _previewZapInDeposit(address(tokenIn), amountIn);
+        }
+
+        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+            return _previewZapOutExactIn(address(tokenOut), amountIn);
+        }
+
+        revert IStandardExchangeIn.ExchangeInNotAvailable();
+    }
+
     error UniswapV3ExchangeIn_DeadlineExceeded();
     error UniswapV3ExchangeIn_SlippageExceeded();
     error UniswapV3ExchangeIn_ZeroDeposit();
@@ -37,7 +66,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
         }
         uint256 amount0Added = tokenIn == _token0() ? amountIn : 0;
         uint256 amount1Added = tokenIn == _token1() ? amountIn : 0;
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReservesForShareMath();
         return _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
     }
@@ -54,7 +83,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
 
         uint256 amount0Added = tokenIn == _token0() ? amountIn : 0;
         uint256 amount1Added = tokenIn == _token1() ? amountIn : 0;
-        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
+        uint256 totalSharesBefore = ERC20Repo._totalSupply();
 
         (uint256 total0, uint256 total1) = _totalVaultReservesForShareMath();
         uint256 reserve0Before = total0 - amount0Added;
@@ -92,7 +121,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
         if (amount0Added == 0 || amount1Added == 0) {
             return 0;
         }
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReservesForShareMath();
         return _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
     }
@@ -109,7 +138,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
 
         _collectIfIdle();
 
-        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
+        uint256 totalSharesBefore = ERC20Repo._totalSupply();
         (uint256 total0, uint256 total1) = _totalVaultReservesForShareMath();
         uint256 reserve0Before = total0 - amount0Added;
         uint256 reserve1Before = total1 - amount1Added;
@@ -170,7 +199,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
         if (sharesBurned == 0) {
             return 0;
         }
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) {
             return 0;
         }
@@ -180,14 +209,17 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
         return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
     }
 
-    function _executeZapOutExactIn(address tokenOut, uint256 sharesBurned, uint256 minAmountOut, address recipient)
-        internal
-        returns (uint256 amountOut)
-    {
+    function _executeZapOutExactIn(
+        address tokenOut,
+        uint256 sharesBurned,
+        uint256 minAmountOut,
+        address recipient,
+        address holder_
+    ) internal returns (uint256 amountOut) {
         if (sharesBurned == 0) {
             revert UniswapV3Exchange_ZeroAmount();
         }
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) {
             revert UniswapV3Exchange_ZeroAmount();
         }
@@ -201,13 +233,13 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
                 );
             }
             if (amountOut < minAmountOut) revert UniswapV3ExchangeIn_SlippageExceeded();
-            ERC20Repo._burn(address(this), sharesBurned);
+            ERC20Repo._burn(holder_, sharesBurned);
             _transferCurrency(tokenOut, recipient, amountOut);
             _syncVaultReserves();
             return amountOut;
         }
 
-        return _executeFreeZapOutExactIn(tokenOut, sharesBurned, totalShares, minAmountOut, recipient);
+        return _executeFreeZapOutExactIn(tokenOut, sharesBurned, totalShares, minAmountOut, recipient, holder_);
     }
 
     function _executeFreeZapOutExactIn(
@@ -215,13 +247,14 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInBase is UniswapV3Ful
         uint256 sharesBurned,
         uint256 totalShares,
         uint256 minAmountOut,
-        address recipient
+        address recipient,
+        address holder_
     ) internal returns (uint256 amountOut) {
         _collectManagedFees();
         amountOut = _idleZapOutCore(tokenOut, sharesBurned, totalShares);
         if (amountOut < minAmountOut) revert UniswapV3ExchangeIn_SlippageExceeded();
 
-        ERC20Repo._burn(address(this), sharesBurned);
+        ERC20Repo._burn(holder_, sharesBurned);
         _transferCurrency(tokenOut, recipient, amountOut);
         _syncVaultReserves();
         _rebalanceLiquidReserveBestEffort();

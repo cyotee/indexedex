@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldMoneyTarget as NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookInExecutionBase} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookInExecutionBase.sol";
 import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -13,7 +15,7 @@ import {
     UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget
+    UniswapV4StandardExchangeBalancerQuadStableBufferHookSwapCore
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget.sol";
 
 /**
@@ -23,19 +25,24 @@ import {
  *      L-GAPS-11: pretransfer credits only in-window delta (ISecurePullErrors) — leftover not free-spent.
  */
 abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget is
-    UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget,
-    IStandardExchangeIn,
-    IStandardExchangeOut
+    NativeStandardYieldExecutionTarget,
+    UniswapV4StandardExchangeBalancerQuadStableBufferHookInExecutionBase,
+    UniswapV4StandardExchangeBalancerQuadStableBufferHookSwapCore
 {
     using SafeERC20 for IERC20;
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
+    function isValidTokenIn(address token_) public view override returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < l.tokens.length; ++i) if (token_ == l.tokens[i]) return true;
+        if (token_ == address(0)) return false;
+        for (uint256 i; i < l.tokens.length; ++i) if (token_ == l.standardExchanges[i]) return true;
+        return false;
+    }
+    function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
+    function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
+        internal override nonReentrant returns (uint256)
     {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) { return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut); }
-        return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
+        return _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
     }
 
     function exchangeIn(
@@ -47,7 +54,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         bool pretransferred,
         uint256 deadline
     ) external returns (uint256 amountOut) {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
         return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
     }
 
@@ -89,8 +96,13 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         _syncVaultReserves();
     }
 
-    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
-        external
+}
+
+abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookExchangeOutCore is UniswapV4StandardExchangeBalancerQuadStableBufferHookSwapCore {
+    using SafeERC20 for IERC20;
+
+    function _entryPreviewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        internal
         view
         returns (uint256 amountIn)
     {
@@ -98,7 +110,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         return _previewSwapExactOut(address(tokenIn), address(tokenOut), amountOut);
     }
 
-    function exchangeOut(
+    function _entryExchangeOut(
         IERC20 tokenIn,
         uint256 maxAmountIn,
         IERC20 tokenOut,
@@ -106,7 +118,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external returns (uint256 amountIn) {
+    ) internal returns (uint256 amountIn) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
         return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
     }
@@ -147,5 +159,14 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
             _creditRawIntentional(ii, amountIn);
         }
         _syncVaultReserves();
+    }
+}
+
+abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookExchangeOutTarget is UniswapV4StandardExchangeBalancerQuadStableBufferHookExchangeOutCore {
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut) external view returns (uint256) {
+        return _entryPreviewExchangeOut(tokenIn, tokenOut, amountOut);
+    }
+    function exchangeOut(IERC20 tokenIn, uint256 maximum, IERC20 tokenOut, uint256 amountOut, address recipient, bool prepaid, uint256 deadline) external returns (uint256) {
+        return _entryExchangeOut(tokenIn, maximum, tokenOut, amountOut, recipient, prepaid, deadline);
     }
 }

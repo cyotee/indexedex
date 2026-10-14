@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookExitQuoteBase} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookExitQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -27,7 +29,7 @@ import {
  *      Full book only for single-asset and post-seed proportional. First mint requires all four > 0.
  */
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget is
-    UniswapV4StandardExchangeCurveQuadStableBufferHookTarget
+    UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase
 {
     using SafeERC20 for IERC20;
 
@@ -254,96 +256,6 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         return previewExitSingleAssetExactBptIn(tokenOut, sharesIn);
     }
 
-    function _exitSingleAssetExactBptIn(
-        address tokenOut,
-        uint256 sharesIn,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal returns (uint256 amountOut) {
-        _requireDeadline(deadline);
-        if (to == address(0)) revert ZeroAddress();
-        if (sharesIn == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        uint256 protocolShares = _maybeMintProtocolFee();
-        amountOut = _quoteExitSingleExactBptIn(tokenOut, sharesIn);
-        if (amountOut < amountOutMin) revert Slippage();
-        uint8 idx = _tokenIndex(tokenOut);
-        Repo.Layout storage l = Repo._layout();
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
-        if (l.standardExchanges[idx] != address(0)) {
-            _unwrapSeShares(idx, invOut, to);
-        } else {
-            _debitRawIntentional(idx, invOut);
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
-        _syncVaultReserves();
-        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingle(
-            msg.sender, to, tokenOut, amountOut, sharesIn, protocolShares
-        );
-    }
-
-    function _singleExitInvOut(uint8 idx, uint256 sharesIn) internal view returns (uint256 invOut) {
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (feeWad >= Math.WAD) revert InvalidFeeWad();
-        // Match exec: protocol mint first (when fee-on), then burn sharesIn against post-mint supply.
-        uint256 outS = Math.singleExitExactBptInAmountOut(
-            _invWadAll(), sharesIn, idx, _amp(), _previewSupplyAfterProtocolMint(), feeWad
-        );
-        invOut = Math.descale(outS, Repo._layout().invScales[idx]);
-    }
-
-    function _quoteExitSingleExactBptIn(address tokenOut, uint256 sharesIn)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        uint8 idx = _tokenIndex(tokenOut);
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        uint256[4] memory inv;
-        inv[idx] = invOut;
-        uint256[4] memory pair = _invToPairOutPreview(inv);
-        amountOut = pair[idx];
-    }
-
-    /// @dev Map user edge amounts → inventory deltas (SE shares or face). SE-share legs pass through.
-    function _edgeToInvPreview(uint256[4] memory amounts, bool[] memory amountIsSeShare)
-        internal
-        view
-        returns (uint256[4] memory invDeltas)
-    {
-        Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (amounts[i] == 0) continue;
-            if (amountIsSeShare[i]) {
-                invDeltas[i] = amounts[i];
-            } else {
-                address se = l.standardExchanges[i];
-                if (se == address(0)) {
-                    invDeltas[i] = amounts[i];
-                } else {
-                    invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                        IERC20(l.tokens[i]), amounts[i], IERC20(se)
-                    );
-                }
-            }
-        }
-    }
-
-    function _validateSeShareFlags(bool[] memory flags) internal view {
-        if (flags.length != Repo.N_TOKENS) revert ArrayLengthMismatch();
-        Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (flags[i] && l.standardExchanges[i] == address(0)) revert SeShareNotBuffered();
-        }
-    }
-
     function previewExitProportionalFlexible(uint256 shares, bool[] calldata receiveSeShare)
         public
         view
@@ -485,38 +397,6 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         returns (uint256 amountOut)
     {
         return previewExitSingleAssetExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
-    }
-
-    function _exitSingleAssetExactBptInFlexible(
-        address tokenOut,
-        uint256 sharesIn,
-        bool receiveSeShare,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal returns (uint256 amountOut) {
-        _requireDeadline(deadline);
-        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, receiveSeShare, to, amountOutMin);
-    }
-
-    function _quoteExitSingleExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        uint8 idx = _tokenIndex(tokenOut);
-        if (receiveSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
-            revert SeShareNotBuffered();
-        }
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (receiveSeShare || Repo._layout().standardExchanges[idx] == address(0)) {
-            amountOut = invOut;
-        } else {
-            address se = Repo._layout().standardExchanges[idx];
-            amountOut = IStandardExchangeIn(se).previewExchangeIn(
-                IERC20(se), invOut, IERC20(tokenOut)
-            );
-        }
     }
 
     /// @notice D60: the configured rate providers, one per leg (address(0) on a raw leg without one).

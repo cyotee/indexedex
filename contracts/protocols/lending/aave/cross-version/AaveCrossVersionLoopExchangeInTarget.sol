@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -12,25 +13,12 @@ import {CrossVersionLoopExecutor} from "./CrossVersionLoopExecutor.sol";
 import {CrossVersionLoopService} from "./CrossVersionLoopService.sol";
 
 /// @notice Canonical tokenA deposit and share redemption at the vault's retained live NAV.
-contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBase, IStandardExchangeIn {
+abstract contract AaveCrossVersionLoopExchangeInExecutionBase is AaveCrossVersionLoopExchangeBase, StandardExchangeInExecutionBase {
     using SafeERC20 for IERC20;
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external view returns (uint256 amountOut)
-    {
-        ReentrancyLockRepo._onlyUnlocked();
-        CrossVersionLoopExecutor.Market memory m = _market();
-        if (address(tokenIn) == address(this) && tokenOut == m.tokenA) return _amountForShares(m, amountIn);
-        if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert ExchangeInNotAvailable();
-        uint256 supply_ = ERC20Repo._totalSupply();
-        amountOut = CrossVersionLoopService.sharesForDeposit(CrossVersionLoopExecutor.navUsd(m), supply_,
-            CrossVersionLoopExecutor.valueUsd(m, tokenIn, amountIn));
-        if (supply_ == 0) amountOut = amountOut > MINIMUM_LIQUIDITY ? amountOut - MINIMUM_LIQUIDITY : 0;
-    }
-
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut,
+    function _exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut,
         address recipient, bool pretransferred, uint256 deadline)
-        external nonReentrant returns (uint256 amountOut)
+        internal override nonReentrant returns (uint256 amountOut)
     {
         _requireExchange(deadline, amountIn, recipient);
         CrossVersionLoopExecutor.Market memory m = _market();
@@ -43,7 +31,7 @@ contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBas
             _withdrawAndPay(m, amountOut, recipient, amountIn, supplyBefore_);
             return amountOut;
         }
-        if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert ExchangeInNotAvailable();
+        if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert IStandardExchangeIn.ExchangeInNotAvailable();
         if (pretransferred) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, 0);
         return _depositInput(m, amountIn, minAmountOut, recipient);
     }
@@ -72,5 +60,16 @@ contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBas
         if (before_ > 0) CrossVersionLoopExecutor.depositLoopAFirst(m, before_, _loopConfig());
         CrossVersionLoopExecutor.depositLoopAFirst(m, amountIn, _loopConfig());
         ERC20Repo._mint(recipient, amountOut);
+    }
+}
+
+contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeInExecutionBase, IStandardExchangeIn {
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
     }
 }

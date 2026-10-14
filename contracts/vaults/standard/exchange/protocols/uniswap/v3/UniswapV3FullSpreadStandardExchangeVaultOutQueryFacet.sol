@@ -24,7 +24,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet is UniswapV3FullS
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
         funcs = new bytes4[](1);
         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs = NativeStandardYieldSelectors._appendQuery(funcs);
     }
 
     function facetMetadata()

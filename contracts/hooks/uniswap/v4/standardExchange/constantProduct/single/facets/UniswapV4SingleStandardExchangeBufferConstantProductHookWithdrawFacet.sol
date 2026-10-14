@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldRewardsTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -14,6 +15,7 @@ import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUni
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet is
+    NativeStandardYieldRewardsTarget,
     UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget,
     IFacet
 {
@@ -41,7 +43,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet i
         funcs[10] = IUniswapV4SeBufferHook.exitSingleAssetExactTokenOut.selector;
         funcs[11] = IUniswapV4SeBufferHook.previewExitSingleAssetExactTokenOut.selector;
         funcs[12] = IDetfReserveQuote.previewBurnToToken.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs = NativeStandardYieldSelectors._appendDiscovery(funcs);
+        funcs = NativeStandardYieldSelectors._appendRewards(funcs);
     }
 
     function facetMetadata()

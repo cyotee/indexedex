@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 import {StandardExchangeConstantProduct} from "../StandardExchangeConstantProduct.sol";
 
@@ -43,7 +44,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3Fu
     function _amountInForZapMint(address tokenIn, uint256 sharesOut, uint256 prepaidCredit)
         internal view returns (uint256)
     {
-        uint256 supply = IERC20(address(this)).totalSupply();
+        uint256 supply = ERC20Repo._totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReservesForShareMath();
         return tokenIn == _token0()
             ? StandardExchangeConstantProduct._amountInForShares(reserve0 - prepaidCredit, reserve1, sharesOut, supply)
@@ -59,7 +60,7 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3Fu
             return 0;
         }
 
-        uint256 totalShares = IERC20(address(this)).totalSupply();
+        uint256 totalShares = ERC20Repo._totalSupply();
         if (totalShares == 0) {
             return 0;
         }

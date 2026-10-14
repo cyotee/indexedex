@@ -22,7 +22,7 @@ library MixedBufferMultiVaultStablePool_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode("MixedBufferMultiVaultStablePoolFacet.sol:MixedBufferMultiVaultStablePoolFacet"),
+                ArtifactCreationCode.creationCode(create3Factory, "MixedBufferMultiVaultStablePoolFacet.sol:MixedBufferMultiVaultStablePoolFacet"),
             abi.encode("MixedBufferMultiVaultStablePoolFacet")._hash()
         );
         vm.label(address(instance), "MixedBufferMultiVaultStablePoolFacet");

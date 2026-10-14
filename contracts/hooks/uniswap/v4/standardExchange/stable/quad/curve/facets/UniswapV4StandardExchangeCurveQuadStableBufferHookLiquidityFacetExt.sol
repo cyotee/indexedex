@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldRewardsTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
@@ -18,6 +20,7 @@ import {
 
 /// @dev D19 Ext: join/deposit preview selectors. CREATE3 salt is the contract name.
 contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt is
+    NativeStandardYieldRewardsTarget,
     UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget,
     IFacet
 {
@@ -32,7 +35,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](11);
+        funcs = new bytes4[](12);
         funcs[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
         funcs[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
         funcs[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -44,7 +47,9 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt is
         funcs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         funcs[9] = IDetfReserveQuote.previewSynthetic.selector;
         funcs[10] = this.previewJoinAfterDeposit.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs[11] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs = NativeStandardYieldSelectors._appendQuery(funcs);
+        funcs = NativeStandardYieldSelectors._appendRewards(funcs);
     }
 
     function facetMetadata()

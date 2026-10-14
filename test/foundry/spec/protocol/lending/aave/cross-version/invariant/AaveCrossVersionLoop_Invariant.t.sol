@@ -111,6 +111,62 @@ contract AaveCrossVersionLoop_Invariant is TestBase_AaveCrossVersionLoopV3Market
         _mint(tokenA, to, amt);
     }
 
+    /// @dev Spoke must link the V4 source-qualified artifact, not a shared basename.
+    function test_setUp_linksV4SpokeDespiteNamesakeArtifact() public view {
+        assertTrue(address(v4Spoke) != address(0));
+        address linked = v4Spoke.getLiquidationLogic();
+        assertTrue(linked != address(0));
+        assertGt(linked.code.length, 0);
+        bytes32 linkedHash = linked.codehash;
+        assertEq(linkedHash, _artifactRuntimeHash(_V4_LIQUIDATION_ARTIFACT, linked), "Spoke linked a non-V4 liquidation library");
+        assertTrue(
+            linkedHash != _artifactRuntimeHash(_V3_LIQUIDATION_ARTIFACT, linked), "Spoke linked the V3 liquidation library"
+        );
+    }
+
+    string internal constant _V4_LIQUIDATION_ARTIFACT =
+        "lib/crane/contracts/protocols/lending/aave/v4/spoke/libraries/LiquidationLogicAaveV4.sol:LiquidationLogic";
+    string internal constant _V3_LIQUIDATION_ARTIFACT =
+        "lib/crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/logic/LiquidationLogicAaveV3.sol:LiquidationLogic";
+
+    function _artifactRuntimeHash(string memory artifactId, address linked) internal view returns (bytes32) {
+        string memory json = vm.readFile(_artifactPath(artifactId));
+        bytes memory runtime = vm.parseBytes(vm.parseJsonString(json, ".deployedBytecode.object"));
+        // solc leaves the library's own address as 20 zero bytes after PUSH20. Deployment fills it.
+        if (runtime.length >= 21 && runtime[0] == 0x73) {
+            for (uint256 i; i < 20; ++i) {
+                runtime[1 + i] = bytes20(linked)[i];
+            }
+        }
+        return keccak256(runtime);
+    }
+
+    function _artifactPath(string memory artifactId) internal pure returns (string memory) {
+        bytes memory id = bytes(artifactId);
+        uint256 sep;
+        for (uint256 i; i < id.length; ++i) {
+            if (id[i] == ":") {
+                sep = i;
+                break;
+            }
+        }
+        bytes memory source = new bytes(sep);
+        for (uint256 i; i < sep; ++i) source[i] = id[i];
+        uint256 nameLen = id.length - sep - 1;
+        bytes memory name = new bytes(nameLen);
+        for (uint256 i; i < nameLen; ++i) name[i] = id[sep + 1 + i];
+        uint256 slash = source.length;
+        for (uint256 i = source.length; i > 0; --i) {
+            if (source[i - 1] == "/") {
+                slash = i;
+                break;
+            }
+        }
+        bytes memory file = new bytes(source.length - slash);
+        for (uint256 i; i < file.length; ++i) file[i] = source[slash + i];
+        return string.concat("out/", string(file), "/", string(name), ".json");
+    }
+
     function setUp() public override {
         // Only the external token dependency gains an observer. Its storage and all
         // ERC20 operations remain the canonical token package and ERC20 facet.

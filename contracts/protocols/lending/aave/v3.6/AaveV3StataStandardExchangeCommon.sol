@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -37,7 +38,44 @@ import {
  * - Reward collection from Stata + forward to feeTo on every operation
  * - ERC4626 share math helpers for Stata delta <-> SE Vault shares
  */
-contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
+contract AaveV3StataStandardExchangeCommon is NativeStandardYieldQuoteBase, BasicVaultCommon {
+    error InvalidStataRoute(address tokenIn, address tokenOut);
+
+    function _stata() internal view returns (IStataTokenV2) {
+        return IStataTokenV2(address(ERC4626Repo._reserveAsset()));
+    }
+
+    function _isStataAsset(IStataTokenV2 stata_, address token_) internal view returns (bool) {
+        return token_ == address(stata_) || token_ == stata_.asset() || token_ == stata_.aToken();
+    }
+
+    function _previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_)
+        internal view override returns (uint256)
+    {
+        return _previewStataExactIn(in_, amount_, out_);
+    }
+
+    function _previewStataExactIn(IERC20 in_, uint256 amount_, IERC20 out_) internal view returns (uint256) {
+        IStataTokenV2 stata_ = _stata();
+        if (address(in_) == address(out_)) revert InvalidStataRoute(address(in_), address(out_));
+        if (address(in_) == address(this)) {
+            if (!_isStataAsset(stata_, address(out_))) revert InvalidStataRoute(address(in_), address(out_));
+            uint256 claim_ = _convertSharesToStata(amount_);
+            return address(out_) == address(stata_) ? claim_ : stata_.previewRedeem(claim_);
+        }
+        if (!_isStataAsset(stata_, address(in_))) revert InvalidStataRoute(address(in_), address(out_));
+        if (address(out_) == address(this)) {
+            // Receipt-equivalent of the credited input; D22 mints on the full input even when
+            // Aave capacity books part of it locally.
+            uint256 delta_ = address(in_) == address(stata_) ? amount_ : stata_.previewDeposit(amount_);
+            return _convertStataDeltaToShares(delta_, _stataBacking());
+        }
+        if (address(out_) == address(stata_)) return stata_.previewDeposit(amount_);
+        if (address(in_) == address(stata_) && _isStataAsset(stata_, address(out_))) return stata_.previewRedeem(amount_);
+        if (address(in_) == stata_.asset() && address(out_) == stata_.aToken()) return amount_;
+        revert InvalidStataRoute(address(in_), address(out_));
+    }
+
     /// @dev Receipt outputs need actual receipts; underlying spends booked local cash first.
     function _deliverStata(IStataTokenV2 stata_, uint256 shares_, IERC20 out_, address to_) internal returns (uint256) {
         uint256 held_ = IERC20(address(stata_)).balanceOf(address(this));
@@ -68,7 +106,7 @@ contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
     /// @dev Same Stata backing as the shared adapter: held receipts plus one conversion of
     ///      booked underlying and booked expected-hold extras (aToken when registered).
     function _stataBacking() internal view returns (uint256) {
-        IStataTokenV2 stata_ = IStataTokenV2(IAaveV3StataStandardVault(address(this)).stataToken());
+        IStataTokenV2 stata_ = _stata();
         return ReceiptBackedERC4626AccountingLib.backingReceiptUnits(IERC4626(address(stata_)), address(this), true);
     }
 
@@ -200,7 +238,7 @@ contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
      * This is the temporary behavior (raw reward tokens go to feeTo).
      */
     function _collectAndForwardRewards() internal {
-        address stata = IAaveV3StataStandardVault(address(this)).stataToken();
+        address stata = address(_stata());
         IERC20AaveLM lm = IERC20AaveLM(stata);
 
         lm.refreshRewardTokens();
@@ -255,7 +293,7 @@ contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
         if (preTransferred) {
             LocalCreditLib.requirePretransferCaller(msg.sender);
             // D23/R7.3: no self-share book exists here; short self-shares revert with the shared error.
-            uint256 selfBal = IERC20(address(this)).balanceOf(address(this));
+            uint256 selfBal = ERC20Repo._balanceOf(address(this));
             if (burnAmount > selfBal) revert ISecurePullErrors.TransferDeltaInsufficient(burnAmount, selfBal);
         }
         super._secureSelfBurn(owner, burnAmount, preTransferred);

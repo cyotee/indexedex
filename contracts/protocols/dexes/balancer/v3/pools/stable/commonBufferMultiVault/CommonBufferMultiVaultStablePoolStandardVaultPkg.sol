@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {BalancerV3NativePoolBounds} from "../../BalancerV3NativePoolBounds.sol";
+
 import {ICommonBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePoolPkg.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -283,6 +285,7 @@ contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
         BalancerV3AuthenticationRepo._initialize(keccak256(abi.encode(address(this))));
 
         CommonBufferMultiVaultStablePoolRepo._initialize(init);
+        BalancerV3NativePoolBounds.initialize(UNBALANCED_LIQUIDITY_INVARIANT_RATIO_BOUNDS_FACET);
     }
 
     function _buildInitParams(PkgArgs memory a)

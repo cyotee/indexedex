@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeOrbitalBufferHookOwnerSwapTarget} from "../UniswapV4StandardExchangeOrbitalBufferHookSeTarget.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookExchangeOutTarget} from "../UniswapV4StandardExchangeOrbitalBufferHookSeTarget.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
@@ -27,8 +30,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet is
         external returns (uint256 amount_)
     {
         if (address(this) == NATIVE_SY_SELF) revert DelegateCallRequired();
-        amount_ = _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, block.timestamp);
-        if (amount_ < minimum_) revert InsufficientTokenOut();
+        return _exitLiquidityFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
     }
 
     function facetName() public pure returns (string memory) {

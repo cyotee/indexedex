@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 import {
     IStandardExchangeTransitionQuote,
     IStandardExchangeExternalQuote
@@ -25,23 +26,12 @@ import {
  * @notice Exact-in Standard Exchange surface for ether.fi weETH SE.
  * @dev No exchangeInEth / native ETH entry. Previews never gate on sleeve/redeem.
  */
-contract EtherFiWeETHStandardExchangeInTarget is
+abstract contract EtherFiWeETHStandardExchangeInExecutionBase is
     EtherFiWeETHStandardExchangeCommon,
     ReentrancyLockModifiers,
-    IStandardExchangeIn,
-    IStandardExchangeTransitionQuote,
-    IStandardExchangeExternalQuote
+    StandardExchangeInExecutionBase
 {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        if (amountIn == 0) revert ZeroAmount();
-        return _quoteExactIn(address(tokenIn), amountIn, address(tokenOut));
-    }
-
-    function exchangeIn(
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -49,7 +39,7 @@ contract EtherFiWeETHStandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         if (block.timestamp > deadline) revert DeadlineExpired();
         if (amountIn == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();
@@ -101,6 +91,20 @@ contract EtherFiWeETHStandardExchangeInTarget is
 
     /// @dev Project the actual global eETH share ratio, liquid sleeve, wrapped
     /// inventory and pending queue face separately. Idle eETH is not reserve NAV.
+}
+
+contract EtherFiWeETHStandardExchangeInTarget is EtherFiWeETHStandardExchangeInExecutionBase,
+    IStandardExchangeIn, IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote
+{
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
+
     struct EtherFiQuoteState {
         address exchange;
         address asset;

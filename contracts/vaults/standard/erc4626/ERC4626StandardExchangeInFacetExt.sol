@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -19,8 +20,15 @@ contract ERC4626StandardExchangeInFacetExt is ERC4626StandardExchangeInTargetExt
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](1);
+        funcs = new bytes4[](8);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs[1] = IStandardExchangeTransitionQuote.quoteState.selector;
+        funcs[2] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+        funcs[3] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+        funcs[4] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+        funcs[5] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+        funcs[6] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
+        funcs[7] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
     }
 
     function facetMetadata()

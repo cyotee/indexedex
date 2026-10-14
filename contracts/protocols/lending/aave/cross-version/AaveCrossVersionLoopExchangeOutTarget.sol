@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {AaveCrossVersionLoopExchangeInExecutionBase} from "./AaveCrossVersionLoopExchangeInTarget.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -17,7 +18,7 @@ import {LoopPositionRepo} from "./LoopPositionRepo.sol";
 
 /// @notice Exact-output withdrawals and native SY reuse the canonical funded standard routes.
 contract AaveCrossVersionLoopExchangeOutTarget is
-    AaveCrossVersionLoopExchangeBase, IStandardExchangeOut, NativeStandardYieldTarget
+    AaveCrossVersionLoopExchangeInExecutionBase, IStandardExchangeOut, NativeStandardYieldTarget
 {
     using SafeERC20 for IERC20;
 

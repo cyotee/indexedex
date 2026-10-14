@@ -22,7 +22,7 @@ library CommonBufferMultiVaultStablePool_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode("CommonBufferMultiVaultStablePoolFacet.sol:CommonBufferMultiVaultStablePoolFacet"),
+                ArtifactCreationCode.creationCode(create3Factory, "CommonBufferMultiVaultStablePoolFacet.sol:CommonBufferMultiVaultStablePoolFacet"),
             abi.encode("CommonBufferMultiVaultStablePoolFacet")._hash()
         );
         vm.label(address(instance), "CommonBufferMultiVaultStablePoolFacet");

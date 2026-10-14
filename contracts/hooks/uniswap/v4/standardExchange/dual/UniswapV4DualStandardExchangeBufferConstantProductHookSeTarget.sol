@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase} from "./UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase.sol";
 
 import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldExecutionTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldExecutionTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -45,47 +46,24 @@ import {
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
-abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget is UniswapV4DualStandardExchangeBufferConstantProductHookCommon, NativeStandardYieldTarget {
+abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget is NativeStandardYieldTarget, UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase {
     using SafeERC20 for IERC20;
 
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
         internal override nonReentrant returns (uint256 amount_)
     {
-        amount_ = _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, block.timestamp);
-        if (amount_ < minimum_) revert InsufficientTokenOut();
+        return _exitLiquidityFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
     }
 
-    function getTokensIn() public view override returns (address[] memory tokens_) {
+    function isValidTokenIn(address token_) public view virtual override returns (bool) {
         Repo.Layout storage l = Repo._layout();
-        tokens_ = new address[](4);
-        tokens_[0] = l.token0;
-        tokens_[1] = l.token1;
-        tokens_[2] = l.se0;
-        tokens_[3] = l.se1;
+        return token_ == l.token0 || token_ == l.token1 || token_ == l.se0 || token_ == l.se1;
     }
-    function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
-    function yieldToken() external pure override returns (address) { return address(0); }
-    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
-        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
-    }
-    function exchangeRate() external view override returns (uint256) {
-        uint256 supply_ = _supplyAfterProtocolMint();
-        return supply_ == 0 ? 1e18 : FullMath.mulDiv(Math.sqrt(_wadProduct()), 1e18, supply_);
-    }
-
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut);
-        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
-        return _previewSwapExactIn(zfo, amountIn);
-    }
+    function isValidTokenOut(address token_) public view virtual override returns (bool) { return isValidTokenIn(token_); }
 
 
     function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut) {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
         return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
     }
 

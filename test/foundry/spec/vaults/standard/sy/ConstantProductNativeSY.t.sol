@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {Vm} from "forge-std/Vm.sol";
@@ -28,7 +29,7 @@ import {UniswapV2StandardExchangeOutFacet} from "contracts/protocols/dexes/unisw
 import {CamelotV2StandardExchangeInFacet} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInFacet.sol";
 import {CamelotV2StandardExchangeOutFacet} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeOutFacet.sol";
 
-abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
+abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions, NativeSYExecutionAssertions {
     IStandardizedYield internal nativeSY;
     IERC20 internal nativePairA;
     IERC20 internal nativePairB;
@@ -125,7 +126,7 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
         vm.stopPrank();
     }
 
-    function test_nativeLPWrapRoundTripUsesExistingShares() public {
+    function test_nativeLPWrapRoundTripUsesExistingShares() public noSelfCalls(address(nativeSY)) {
         address lp_ = nativeSY.yieldToken();
         uint256 burn_ = nativeSY.balanceOf(nativeUser) / 4;
         uint256 quoted_ = nativeSY.previewRedeem(lp_, burn_);
@@ -142,7 +143,7 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
         assertEq(IERC20(lp_).balanceOf(nativeUser), 0);
     }
 
-    function test_nativePairDepositAndOtherPairRedemption() public {
+    function test_nativePairDepositAndOtherPairRedemption() public noSelfCalls(address(nativeSY)) {
         uint256 input_ = 5 ether;
         uint256 quoted_ = nativeSY.previewDeposit(address(nativePairA), input_);
         vm.startPrank(nativeUser);
@@ -157,7 +158,7 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
         assertEq(nativePairB.balanceOf(nativeUser), before_ + received_);
     }
 
-    function test_nativePartialInternalRedemptionPreservesOtherHeldShares() public {
+    function test_nativePartialInternalRedemptionPreservesOtherHeldShares() public noSelfCalls(address(nativeSY)) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 deposit_ = nativeSY.balanceOf(nativeUser) / 2;
         uint256 burn_ = deposit_ / 2;
@@ -208,7 +209,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         );
         (bool ok_, bytes memory reason_) = facet_.call(data_);
         assertFalse(ok_);
-        assertEq(reason_, abi.encodeWithSignature("DelegateCallRequired()"));
+        assertEq(reason_.length, 0, "removed execution helper must not exist on facet");
         (ok_, reason_) = address(nativeSY).call(data_);
         assertFalse(ok_);
         assertEq(reason_, abi.encodeWithSignature("NoTargetFor(bytes4)", bytes4(data_)));

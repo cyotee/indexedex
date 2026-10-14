@@ -39,7 +39,7 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
         q.vault = address(protocolVault());
         q.asset = asset_;
         q.holder = holder_;
-        q.holderShares = IERC20(address(this)).balanceOf(holder_);
+        q.holderShares = ERC20Repo._balanceOf(holder_);
         q.supply = ERC20Repo._totalSupply();
         q.vaultShares = IERC20(q.vault).balanceOf(address(this));
         // IERC4626 execution is authoritative here. A nested SE can expose

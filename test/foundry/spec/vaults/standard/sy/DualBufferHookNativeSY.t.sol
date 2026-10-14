@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
@@ -16,7 +17,7 @@ import {UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet} fro
 import {UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet} from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol";
 
 /// @notice Existing single-asset LP exits must work before exposing them through native SY.
-contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHook {
+contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHook, NativeSYExecutionAssertions {
     function setUp() public override {
         super.setUp();
         _depositBoth(1_000 ether, 1_000 ether);
@@ -66,7 +67,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
     }
 
-    function test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout() public {
+    function test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout() public noSelfCalls(hook) {
         IStandardizedYield sy = IStandardizedYield(hook);
         vm.startPrank(user);
         tokenA.approve(seA, 20 ether);
@@ -93,7 +94,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         vm.stopPrank();
     }
 
-    function test_dualNativeSYInternalRedemptionAndLimits() public {
+    function test_dualNativeSYInternalRedemptionAndLimits() public noSelfCalls(hook) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         IStandardizedYield sy = IStandardizedYield(hook);
         vm.startPrank(user);

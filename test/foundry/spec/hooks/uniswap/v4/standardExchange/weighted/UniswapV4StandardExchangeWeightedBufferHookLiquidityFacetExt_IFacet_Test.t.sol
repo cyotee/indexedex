@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
@@ -42,7 +43,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt_IFacet_Tes
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](10);
+        controlFuncs = new bytes4[](11);
         controlFuncs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
         controlFuncs[1] = bytes4(keccak256("previewJoinUnbalanced(uint256[])"));
         controlFuncs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -53,5 +54,6 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt_IFacet_Tes
         controlFuncs[7] = IUniswapV4StandardExchangeWeightedBufferHook.previewDepositSingleFlexible.selector;
         controlFuncs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         controlFuncs[9] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
+        controlFuncs[10] = IStandardExchangeOut.exchangeOut.selector;
     }
 }

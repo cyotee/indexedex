@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
@@ -31,7 +32,23 @@ import {
  * @notice Shared NAV, pull, mint/burn, hard Morpho.supply, and idle-first pay for SE In/Out and IERC4626.
  * @dev Two books: `reserveOfToken(loanToken)` is idle only; `totalAssets` / previews use live NAV.
  */
-abstract contract MorphoBlueStandardExchangeCommon {
+abstract contract MorphoBlueStandardExchangeCommon is NativeStandardYieldQuoteBase {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256 amountOut)
+    {
+        _requireNonZero(amountIn);
+        address se_ = address(this);
+        address loan_ = address(_loan());
+
+        if (address(tokenIn) == loan_ && address(tokenOut) == se_) {
+            return _previewWrapExactIn(amountIn);
+        }
+        if (address(tokenIn) == se_ && address(tokenOut) == loan_) {
+            return _previewUnwrapExactIn(amountIn);
+        }
+        _revertInvalidRoute(tokenIn, tokenOut);
+    }
+
     using SafeERC20 for IERC20;
     using MorphoBalancesLib for IMorpho;
 

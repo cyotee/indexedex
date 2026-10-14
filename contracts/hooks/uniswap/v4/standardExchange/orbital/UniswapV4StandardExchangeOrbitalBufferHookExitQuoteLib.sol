@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -213,7 +214,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         private view returns (uint256 pairValue, uint256 purchasedDetf, uint256 liquidityDetf)
     {
         pairValue = q.exchange.quoteAssets(q.state, q.assets);
-        if (IERC20(address(this)).totalSupply() == 0) return (pairValue, 0, 0);
+        if (ERC20Repo._totalSupply() == 0) return (pairValue, 0, 0);
         Leg[3] memory legs;
         for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
         legs[index].state = q.state;
@@ -410,7 +411,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     }
 
     function _depositSupply(Leg[3] memory legs) private view returns (uint256 supply) {
-        supply = IERC20(address(this)).totalSupply();
+        supply = ERC20Repo._totalSupply();
         Repo.Layout storage l = Repo._layout();
         IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(l.feeOracle);
         uint256 usage = oracle.usageFeeOfVault(address(this));

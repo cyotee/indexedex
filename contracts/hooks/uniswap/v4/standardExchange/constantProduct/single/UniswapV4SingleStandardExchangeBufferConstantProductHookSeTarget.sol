@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
 
 import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -59,7 +60,7 @@ import {
  *      LP supply/balances use ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo
  *      (pair reserve accounting = virtual SE claim; raw = face inventory).
  */
-abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget is IHooks {
+abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget is UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase, IHooks {
     using SafeERC20 for IERC20;
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
@@ -710,22 +711,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     }
 
     function _quoteExactInContext(bool zeroForOne, uint256 amountIn, address manager) internal view returns (ClaimLib.ExactInOutput memory output) {
-        if (amountIn == 0) revert ZeroAmount();
-        Repo.Layout storage l = Repo._layout();
-        bool rawIn = zeroForOne == _zeroForOneIsRawIn();
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
-        uint256 seClaim = manager == address(0) ? _seClaim() : ClaimLib.ratedReserveWithContext(manager);
-        if (rawIn) {
-            // face raw in → claim/pair out
-            uint256 rInN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
-            uint256 rOutN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
-            uint256 aInN = Math.toWad(amountIn, _decimalsOf(l.rawToken));
-            uint256 budget = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
-            output = manager == address(0) ? ClaimLib.previewBudget(budget) : ClaimLib.previewBudgetWithContext(budget, manager);
-        } else {
-            // pair in → claimIn → raw out
-            output.amountOut = _quotePairClaimIn(seClaim, manager == address(0) ? _previewBufferClaimIn(amountIn) : ClaimLib.previewBufferClaimInWithContext(amountIn, manager));
-        }
+        return _singleExchangeQuotePlan(zeroForOne, amountIn, manager);
     }
 
     function _quoteExactOut(bool zeroForOne, uint256 amountOut) internal view returns (uint256 amountIn) {
@@ -750,64 +736,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     /* ---------------------------------------------------------------------- */
     /*                         IStandardExchangeIn / Out                      */
     /* ---------------------------------------------------------------------- */
-
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut);
-        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
-        return _quoteExactIn(zfo, amountIn);
-    }
-
-    function exchangeIn(
-        IERC20 tokenIn,
-        uint256 amountIn,
-        IERC20 tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) external returns (uint256 amountOut) {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
-        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
-    }
-
-    function _swapExchangeIn(
-        IERC20 tokenIn,
-        uint256 amountIn,
-        IERC20 tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) internal nonReentrant returns (uint256 amountOut) {
-        _requireDeadline(deadline);
-        bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
-        // Quote on pre-pull book so inventory does not reprice the trade mid-path.
-        ClaimLib.ExactInOutput memory output = _quoteExactInPlan(zfo, amountIn);
-        amountOut = output.amountOut;
-        if (amountOut < minAmountOut) revert InsufficientTokenOut();
-        if (amountOut == 0) revert ZeroAmount();
-        // L-GAPS-11 / ISecurePullErrors: pretransfer credits claimed only when in-window
-        // delta covers it — blocks free extract of SE book / raw inventory. Leftover
-        // spendable economics unchanged (surplus delta not exact-matched).
-        _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
-
-        Repo.Layout storage l = Repo._layout();
-        bool rawIn = zfo == _zeroForOneIsRawIn();
-        if (rawIn) {
-            amountOut = ClaimLib.unwrapQuoted(output);
-            if (amountOut < minAmountOut) revert InsufficientTokenOut();
-            IERC20(l.pairToken).safeTransfer(recipient, amountOut);
-        } else {
-            _bufferPair(amountIn);
-            if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
-            IERC20(l.rawToken).safeTransfer(recipient, amountOut);
-        }
-        _syncReserves();
-    }
 
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
         external

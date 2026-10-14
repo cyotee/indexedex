@@ -6,6 +6,7 @@ import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {DeliveryTestToken} from "./DeliveryTestToken.sol";
 import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -133,8 +134,43 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
             }
         }
         assertGt(checked, 30, "nonempty independent Target ABI controls");
+        if (keccak256(bytes(_family())) == keccak256("UniswapV3")) _assertV3SYPartition();
     }
 
+    /// @dev The execution adapter is absent from the older Target ABI list above.
+    function _assertV3SYPartition() internal view {
+        bytes4[16] memory selectors = [
+            IStandardizedYield.deposit.selector, IStandardizedYield.redeem.selector,
+            IStandardizedYield.rewardIndexesCurrent.selector, IStandardizedYield.claimRewards.selector,
+            IStandardizedYield.exchangeRate.selector, IStandardizedYield.yieldToken.selector,
+            IStandardizedYield.assetInfo.selector, IStandardizedYield.getTokensIn.selector,
+            IStandardizedYield.getTokensOut.selector, IStandardizedYield.isValidTokenIn.selector,
+            IStandardizedYield.isValidTokenOut.selector, IStandardizedYield.previewDeposit.selector,
+            IStandardizedYield.previewRedeem.selector, IStandardizedYield.getRewardTokens.selector,
+            IStandardizedYield.accruedRewards.selector, IStandardizedYield.rewardIndexesStored.selector
+        ];
+        IDiamondLoupe loupe = IDiamondLoupe(address(subject));
+        address execution = loupe.facetAddress(IStandardExchangeIn.exchangeIn.selector);
+        address query = loupe.facetAddress(IStandardExchangeOut.previewExchangeOut.selector);
+        assertEq(IFacet(execution).facetName(), "UniswapV3FullSpreadStandardExchangeVaultInFacet");
+        assertEq(IFacet(query).facetName(), "UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet");
+        IDiamondLoupe.Facet[] memory facets = loupe.facets();
+        for (uint256 i; i < selectors.length; ++i) {
+            address expected = i < 4 ? execution : query;
+            assertEq(loupe.facetAddress(selectors[i]), expected, "SY role owner");
+            uint256 declared;
+            uint256 installed;
+            for (uint256 j; j < facets.length; ++j) {
+                bytes4[] memory funcs = IFacet(facets[j].facetAddress).facetFuncs();
+                for (uint256 k; k < funcs.length; ++k) if (funcs[k] == selectors[i]) ++declared;
+                for (uint256 k; k < facets[j].functionSelectors.length; ++k) {
+                    if (facets[j].functionSelectors[k] == selectors[i]) ++installed;
+                }
+            }
+            assertEq(declared, 1, "SY declared once across installed facets");
+            assertEq(installed, 1, "SY installed once");
+        }
+    }
 
 
     function test_SYFailureRollsBackAndCanRetry() public {

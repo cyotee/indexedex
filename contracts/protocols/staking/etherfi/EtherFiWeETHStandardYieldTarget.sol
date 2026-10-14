@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {EtherFiWeETHStandardExchangeInExecutionBase} from "./EtherFiWeETHStandardExchangeInTarget.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
@@ -8,7 +9,7 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
 /// @notice Native SY adapter preserving this SE's ETH reserve entitlement and liquid sleeve.
-abstract contract EtherFiWeETHStandardYieldTarget is NativeStandardYieldTarget, EtherFiWeETHStandardExchangeCommon, ReentrancyLockModifiers {
+abstract contract EtherFiWeETHStandardYieldTarget is NativeStandardYieldTarget, EtherFiWeETHStandardExchangeInExecutionBase {
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
         internal override nonReentrant returns (uint256 amount_)
     {

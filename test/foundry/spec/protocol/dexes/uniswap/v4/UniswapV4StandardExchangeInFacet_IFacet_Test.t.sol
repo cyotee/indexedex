@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
@@ -37,8 +38,12 @@ contract UniswapV4StandardExchangeInFacet_IFacet_Test is CraneTest, TestBase_IFa
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](2);
+        controlFuncs = new bytes4[](6);
         controlFuncs[0] = IStandardExchangeIn.exchangeIn.selector;
         controlFuncs[1] = IUnlockCallback.unlockCallback.selector;
+        controlFuncs[2] = IStandardizedYield.deposit.selector;
+        controlFuncs[3] = IStandardizedYield.redeem.selector;
+        controlFuncs[4] = IStandardizedYield.rewardIndexesCurrent.selector;
+        controlFuncs[5] = IStandardizedYield.claimRewards.selector;
     }
 }

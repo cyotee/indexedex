@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -39,11 +42,9 @@ import {
     UniswapV2StandardExchangeCommon
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeCommon.sol";
 
-// abstract
-contract UniswapV2StandardExchangeInTarget is
-    UniswapV2StandardExchangeCommon,
-    ReentrancyLockModifiers,
-    IStandardExchangeIn
+abstract contract UniswapV2StandardExchangeInQuoteBase is
+    NativeStandardYieldQuoteBase,
+    UniswapV2StandardExchangeCommon
 {
     using SafeERC20 for IERC20;
     using UniswapV2Service for IUniswapV2Router;
@@ -51,9 +52,10 @@ contract UniswapV2StandardExchangeInTarget is
 
     /* ------------------------- IStandardExchangeIn ------------------------ */
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal
         view
+        override
         returns (uint256 amountOut)
     {
         // Determine actual token route from provided tokens.
@@ -347,11 +349,20 @@ contract UniswapV2StandardExchangeInTarget is
             );
         }
 
-        revert InvalidRoute(address(tokenIn), address(tokenOut));
+        revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
     // tag::exchangeIn[]
-    function exchangeIn(
+}
+
+abstract contract UniswapV2StandardExchangeInExecutionBase is
+    UniswapV2StandardExchangeInQuoteBase, ReentrancyLockModifiers, IStandardExchangeErrors, StandardExchangeInExecutionBase
+{
+    using SafeERC20 for IERC20;
+    using UniswapV2Service for IUniswapV2Router;
+    using UniswapV2Service for IUniswapV2Pair;
+
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -359,7 +370,7 @@ contract UniswapV2StandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         // CROPS: inbound-only disable. vaultShare exit stays live after registry disable.
         if (address(tokenIn) != address(this)) {
             _requireNotDisabled();
@@ -690,7 +701,7 @@ contract UniswapV2StandardExchangeInTarget is
             if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
             // A deposit must buy at least one vault-share unit. Reject before
             // entering an AMM swap whose rounded output cannot fund that claim.
-            if (IStandardExchangeIn(address(this)).previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
+            if (_previewExchangeIn(tokenIn, amountIn, tokenOut) == 0) {
                 revert MinAmountNotMet(1, 0);
             }
 
@@ -867,4 +878,15 @@ contract UniswapV2StandardExchangeInTarget is
         revert InvalidRoute(address(tokenIn), address(tokenOut));
     }
     // end::exchangeIn[]
+}
+
+contract UniswapV2StandardExchangeInTarget is UniswapV2StandardExchangeInExecutionBase, IStandardExchangeIn {
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
+        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+    }
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
 }

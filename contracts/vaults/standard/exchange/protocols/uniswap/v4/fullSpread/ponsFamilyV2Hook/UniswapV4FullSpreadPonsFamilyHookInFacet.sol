@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4FullSpreadPonsFamilyStandardYieldExecutionTarget} from "./UniswapV4FullSpreadPonsFamilyStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 import {IUniswapV4FullSpreadPonsFamilyHookInExecutionBinding} from "./interfaces/IUniswapV4FullSpreadPonsFamilyHookComponentBindings.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";

@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
@@ -28,17 +31,16 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewF
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](10);
-        funcs[0] = IHook.previewDeposit.selector;
-        funcs[1] = IHook.previewDepositSingle.selector;
-        funcs[2] = IHook.previewZapSplit.selector;
-        funcs[3] = IHook.previewDepositWithSeShares.selector;
-        funcs[4] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
-        funcs[5] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
-        funcs[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
-        funcs[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
-        funcs[8] = IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector;
-        funcs[9] = this.previewJoinAfterDeposit.selector;
+        funcs = new bytes4[](9);
+        funcs[0] = IHook.previewDepositSingle.selector;
+        funcs[1] = IHook.previewZapSplit.selector;
+        funcs[2] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs[3] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+        funcs[4] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+        funcs[5] = IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector;
+        funcs[6] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+        funcs[7] = IStandardizedYield.previewDeposit.selector;
+        funcs[8] = IStandardizedYield.previewRedeem.selector;
     }
 
     /// @inheritdoc IFacet

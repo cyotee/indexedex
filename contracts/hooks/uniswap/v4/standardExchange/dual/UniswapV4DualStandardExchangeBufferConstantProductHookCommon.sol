@@ -1210,7 +1210,10 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         if (!_isBoundPairToken(tokenIn)) revert InvalidPairToken();
         (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
         if (supported) return projected;
-        return DepositQuoteLib.previewLegacy(tokenIn, amountIn, _supplyAfterProtocolMint());
+        uint256 supply = _supplyAfterProtocolMint();
+        DepositQuoteLib.DepositSinglePreview memory p;
+        (p.amountToSwap, p.amountOtherOut, p.amountKeptIn) = _previewZapSplit(tokenIn, amountIn);
+        return DepositQuoteLib.previewLegacy(tokenIn, p, supply);
     }
 
 

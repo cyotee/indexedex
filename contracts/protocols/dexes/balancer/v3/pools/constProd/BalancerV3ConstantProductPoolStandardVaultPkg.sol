@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {BalancerV3NativePoolBounds} from "../BalancerV3NativePoolBounds.sol";
+
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -377,6 +379,7 @@ contract BalancerV3ConstantProductPoolStandardVaultPkg is
             _MIN_INVARIANT_RATIO, _MAX_INVARIANT_RATIO, _MIN_SWAP_FEE_PERCENTAGE, _MAX_SWAP_FEE_PERCENTAGE, tokens
         );
         BalancerV3AuthenticationRepo._initialize(keccak256(abi.encode(address(this))));
+        BalancerV3NativePoolBounds.initialize(UNBALANCED_LIQUIDITY_INVARIANT_RATIO_BOUNDS_FACET);
     }
 
     function _roleAccounts() internal view returns (PoolRoleAccounts memory roleAccounts) {

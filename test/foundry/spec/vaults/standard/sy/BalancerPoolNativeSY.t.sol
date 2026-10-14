@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
@@ -20,6 +21,7 @@ import {IUnbalancedLiquidityInvariantRatioBounds} from "@crane/contracts/interfa
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {BalancerV3ConstantProductPool_FactoryService} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
 import {BalancerV3PoolStandardExchangeTarget} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTarget.sol";
+import {BalancerV3PoolRepo} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3PoolRepo.sol";
 
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -28,7 +30,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 interface IMintableSYPayment { function mint(address recipient, uint256 amount) external; }
 
 
-abstract contract BalancerPoolNativeSYBehavior is Test {
+abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAssertions {
     function _nativePool() internal view virtual returns (address);
     function _nativeActor() internal view virtual returns (address);
     function _nativeVault() internal view virtual returns (IVault);
@@ -37,14 +39,74 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
     function _sy() internal view returns (IStandardizedYield) { return IStandardizedYield(_nativePool()); }
     function _poolApprove() internal { vm.prank(_nativeActor()); IERC20(_nativePool()).approve(_nativePool(), type(uint256).max); }
 
-    function test_poolSYFullSupplyLiquidation_everyAsset() public view {
+    struct NativePreviewCase { uint256 amount; uint256 depositQuote; uint256 redeemQuote; }
+
+    function test_poolStoredBoundsMatchInstalledImplementation() public view {
+        address pool_ = _nativePool();
+        IUnbalancedLiquidityInvariantRatioBounds bounds_ = IUnbalancedLiquidityInvariantRatioBounds(pool_);
+        bytes32 slot_ = BalancerV3PoolRepo.STORAGE_SLOT;
+        assertEq(uint256(vm.load(pool_, slot_)), bounds_.getMinimumInvariantRatio());
+        assertEq(uint256(vm.load(pool_, bytes32(uint256(slot_) + 1))), bounds_.getMaximumInvariantRatio());
+    }
+
+    /// @notice Only caller entrypoints may reach the pool, for every advertised physical token.
+    function test_poolNativePreviewsHaveNoSelfCalls() public {
+        address pool_ = _nativePool();
+        IStandardizedYield sy_ = _sy();
+        address[] memory tokens_ = sy_.getTokensIn();
+        NativePreviewCase[] memory cases_ = new NativePreviewCase[](tokens_.length);
+        for (uint256 i_; i_ < tokens_.length; ++i_) cases_[i_].amount = _fundInput(tokens_[i_]) / 2;
+        uint256 supply_ = _nativeVault().totalSupply(pool_);
+        assertEq(sy_.totalSupply(), supply_, "BPT supply is the Vault ledger");
+        uint256 shares_ = supply_ * 45 / 100;
+        IStandardExchange se_ = IStandardExchange(pool_);
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            cases_[i_].depositQuote = se_.previewExchangeIn(IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_));
+            cases_[i_].redeemQuote = se_.previewExchangeIn(IERC20(pool_), shares_, IERC20(tokens_[i_]));
+            assertGt(cases_[i_].depositQuote, 0);
+            assertGt(cases_[i_].redeemQuote, 0);
+        }
+
+        // Empty calldata prefix counts every CALL/STATICCALL to the pool, not just known metadata selectors.
+        vm.expectCall(pool_, bytes(""), uint64(4 * tokens_.length));
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(sy_.previewDeposit(tokens_[i_], cases_[i_].amount), cases_[i_].depositQuote);
+            assertEq(sy_.previewRedeem(tokens_[i_], shares_), cases_[i_].redeemQuote);
+            assertEq(se_.previewExchangeIn(IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_)), cases_[i_].depositQuote);
+            assertEq(se_.previewExchangeIn(IERC20(pool_), shares_, IERC20(tokens_[i_])), cases_[i_].redeemQuote);
+        }
+    }
+
+    function test_poolNativeZeroAndUnsupportedPreviewsHaveNoSelfCalls() public {
+        address pool_ = _nativePool();
+        IStandardizedYield sy_ = _sy();
+        address[] memory tokens_ = sy_.getTokensIn();
+        IStandardExchange se_ = IStandardExchange(pool_);
+        vm.expectCall(pool_, bytes(""), uint64(4 * tokens_.length + 4));
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(sy_.previewDeposit(tokens_[i_], 0), 0);
+            assertEq(sy_.previewRedeem(tokens_[i_], 0), 0);
+            assertEq(se_.previewExchangeIn(IERC20(tokens_[i_]), 0, IERC20(pool_)), 0);
+            assertEq(se_.previewExchangeIn(IERC20(pool_), 0, IERC20(tokens_[i_])), 0);
+        }
+        assertEq(sy_.previewDeposit(address(0), 1), 0);
+        assertEq(sy_.previewRedeem(address(0), 1), 0);
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(0), pool_));
+        se_.previewExchangeIn(IERC20(address(0)), 0, IERC20(pool_));
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", pool_, address(0)));
+        se_.previewExchangeIn(IERC20(pool_), 0, IERC20(address(0)));
+    }
+
+    function test_poolSYFullSupplyLiquidation_everyAsset() public {
         IStandardizedYield sy_ = _sy();
         address[] memory outputs_ = sy_.getTokensOut();
+        uint256 supply_ = _nativeVault().totalSupply(address(sy_));
+        vm.expectCall(address(sy_), bytes(""), uint64(2 * outputs_.length));
         for (uint256 i_; i_ < outputs_.length; ++i_) {
-            uint256 quote_ = sy_.previewRedeem(outputs_[i_], sy_.totalSupply());
+            uint256 quote_ = sy_.previewRedeem(outputs_[i_], supply_);
             assertGt(quote_, 0, "whole native BPT supply remains quotable");
             assertEq(quote_, IStandardExchange(address(sy_)).previewExchangeIn(
-                IERC20(address(sy_)), sy_.totalSupply(), IERC20(outputs_[i_])
+                IERC20(address(sy_)), supply_, IERC20(outputs_[i_])
             ), "SY and SE whole-supply valuation");
         }
     }
@@ -161,7 +223,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
         assertEq(sy_.totalSupply() - supply_, quote_);
     }
 
-    function test_poolSYEveryAdvertisedInputQuotesActualBptAndPreservesIdleAssets() public {
+    function test_poolSYEveryAdvertisedInputQuotesActualBptAndPreservesIdleAssets() public noSelfCalls(_nativePool()) {
         IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor();
         address[] memory tokens_ = sy_.getTokensIn();
         for (uint256 i_; i_ < tokens_.length; ++i_) {
@@ -180,7 +242,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
         }
     }
 
-    function test_poolSYEveryAdvertisedOutputQuotesActualTokenAndBurnsOnlyPaidBpt() public {
+    function test_poolSYEveryAdvertisedOutputQuotesActualTokenAndBurnsOnlyPaidBpt() public noSelfCalls(_nativePool()) {
         IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor(); _poolApprove();
         address[] memory tokens_ = sy_.getTokensOut();
         for (uint256 i_; i_ < tokens_.length; ++i_) {
@@ -220,7 +282,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
         assertEq(sy_.balanceOf(address(sy_)), 0);
     }
 
-    function test_poolSYInternalBalanceConsumesOnlyRequestedShares() public {
+    function test_poolSYInternalBalanceConsumesOnlyRequestedShares() public noSelfCalls(_nativePool()) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         IStandardizedYield sy_ = _sy(); address actor_ = _nativeActor(); address token_ = sy_.getTokensOut()[0];
         uint256 amount_ = sy_.balanceOf(actor_) / 100; vm.prank(actor_); sy_.transfer(address(sy_), amount_ * 3);
@@ -407,6 +469,7 @@ contract BalancerMultiPairPoolNativeSYTest is TestBase_MultiPairStandardExchange
 }
 
 import {TestBase_MixedLegWeightedBufferPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool.sol";
+import {IMixedLegWeightedBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol";
 contract BalancerMixedLegPoolNativeSYTest is TestBase_MixedLegWeightedBufferPool, BalancerPoolNativeSYBehavior {
     function _nativeVirtualBuffer(address token_) internal view override returns (bool) {
         for (uint8 i_; i_ < _targetPairCount(); ++i_) if (token_ == address(_bufferAt(i_))) return true;
@@ -415,6 +478,24 @@ contract BalancerMixedLegPoolNativeSYTest is TestBase_MixedLegWeightedBufferPool
     function _nativePool() internal view override returns (address) { return bufferPool; }
     function _nativeActor() internal view override returns (address) { return alice; }
     function _nativeVault() internal view override returns (IVault) { return bv3Vault; }
+}
+
+contract BalancerUnpairedWeightedPoolNativeSYTest is BalancerMixedLegPoolNativeSYTest {
+    function _targetPairCount() internal pure override returns (uint8) { return 0; }
+
+    function _deployBufferPool() internal override {
+        super._deployBufferPool();
+        IMixedLegWeightedBufferPoolPkg.PkgArgs memory args_ = _buildPkgArgs(_targetUnpairedCount(), 0);
+        args_.weights[0] += 1e17;
+        args_.weights[1] -= 1e17;
+        mixedLegPool = mixedLegPkg.deployPool(args_);
+        bufferPool = mixedLegPool;
+        approveForPool(IERC20(mixedLegPool));
+    }
+}
+
+contract BalancerThreeUnpairedWeightedPoolNativeSYTest is BalancerUnpairedWeightedPoolNativeSYTest {
+    function _targetUnpairedCount() internal pure override returns (uint8) { return 3; }
 }
 
 import {TestBase_CommonBufferMultiVaultWeightedPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool.sol";

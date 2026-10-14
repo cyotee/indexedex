@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 import {TransferredTestInput, IStandardExchangeIn, IStandardExchangeOut} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/TransferredTestInput.sol";
 
 import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
@@ -17,7 +18,7 @@ import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeIn
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {TestBase_UniswapV3FullSpreadStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol";
 
-contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_UniswapV3FullSpreadStandardExchangeVault, IUniswapV3FlashCallback, TransitionQuoteAssertions {
+contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_UniswapV3FullSpreadStandardExchangeVault, IUniswapV3FlashCallback, TransitionQuoteAssertions, NativeSYExecutionAssertions {
     IUniswapV3Pool private pool;
     IStandardExchangeProxy private se;
     IStandardizedYield private sy;
@@ -82,7 +83,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_Unisw
         assertEq(sy.exchangeRate(), total0 * 1e18 / se.totalSupply());
     }
 
-    function test_nativeSYLaterSingleTokenRoutesAndCallerRedemption() public {
+    function test_nativeSYLaterSingleTokenRoutesAndCallerRedemption() public noSelfCalls(address(se)) {
         _activate();
         uint256 quote = sy.previewDeposit(address(token0), 10e18);
         assertGt(quote, 0); assertEq(sy.deposit(address(this), address(token0), 10e18, quote), quote);
@@ -93,7 +94,20 @@ contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_Unisw
         assertEq(token0.balanceOf(address(this)) - before0, out); assertEq(se.balanceOf(address(this)), shares - quote);
     }
 
-    function test_nativeSYInternalBalanceBurnsOnlyTheRequestedShares() public {
+    /// @notice SY previews share the public SE quote without any host quote or ERC-20 metadata call.
+    function test_nativeSYPreviewUsesInternalQuote() public {
+        _activate();
+        uint256 depositQuote = se.previewExchangeIn(token0, 1e18, IERC20(address(se)));
+        uint256 redeemQuote = se.previewExchangeIn(IERC20(address(se)), 1e18, token1);
+        vm.expectCall(address(se), abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(0));
+        vm.expectCall(address(se), abi.encodeWithSelector(IERC20.totalSupply.selector), uint64(0));
+        vm.expectCall(address(se), abi.encodeWithSelector(IERC20.balanceOf.selector), uint64(0));
+        vm.expectCall(address(se), abi.encodeWithSelector(IDiamondLoupe.facetAddress.selector), uint64(0));
+        assertEq(sy.previewDeposit(address(token0), 1e18), depositQuote);
+        assertEq(sy.previewRedeem(address(token1), 1e18), redeemQuote);
+    }
+
+    function test_nativeSYInternalBalanceBurnsOnlyTheRequestedShares() public noSelfCalls(address(se)) {
         _activate(); se.transfer(address(se), 5e18);
         uint256 supply = se.totalSupply(); uint256 quote = sy.previewRedeem(address(token1), 2e18);
 

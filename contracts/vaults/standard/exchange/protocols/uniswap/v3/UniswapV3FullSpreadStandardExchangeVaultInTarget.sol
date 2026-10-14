@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Address} from "@crane/contracts/utils/Address.sol";
@@ -11,7 +12,7 @@ import {
 
 /// @dev Mutate-only exchange-in (preview lives on InQueryFacet). Heavy zap via CREATE3 delegate.
 
-contract UniswapV3FullSpreadStandardExchangeVaultInTarget is UniswapV3FullSpreadStandardExchangeVaultInBase {
+contract UniswapV3FullSpreadStandardExchangeVaultInTarget is UniswapV3FullSpreadStandardExchangeVaultInBase, StandardExchangeInExecutionBase {
     using Address for address;
 
     address public immutable UNISWAP_V3_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE;
@@ -22,7 +23,13 @@ contract UniswapV3FullSpreadStandardExchangeVaultInTarget is UniswapV3FullSpread
 
 
 
-    function exchangeIn(
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
+
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -30,7 +37,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultInTarget is UniswapV3FullSpread
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         if (address(tokenIn) != address(this)) _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV3ExchangeIn_DeadlineExceeded();
 

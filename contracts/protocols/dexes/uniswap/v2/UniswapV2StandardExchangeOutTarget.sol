@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV2StandardExchangeInQuoteBase} from "./UniswapV2StandardExchangeInTarget.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -41,7 +42,7 @@ import {
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeCommon.sol";
 
 abstract contract UniswapV2StandardExchangeOutTarget is
-    UniswapV2StandardExchangeCommon,
+    UniswapV2StandardExchangeInQuoteBase,
     ReentrancyLockModifiers,
     IStandardExchangeOut
 {

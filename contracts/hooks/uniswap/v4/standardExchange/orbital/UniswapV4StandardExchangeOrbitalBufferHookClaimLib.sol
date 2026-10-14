@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -41,6 +43,78 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         address tokenZ;
         uint256 feeWad;
         uint256 eOutNative;
+    }
+
+    function previewSyntheticBook(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address out_, address detf_)
+        external view returns (uint256)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 R = l.R;
+        uint256 x = _toWad(detf_, _effectiveNativeOf(detf_));
+        uint256 y = _toWad(out_, _effectiveNativeOf(out_));
+        if (R == 0 || x >= R || y >= R || y == 0) return 0;
+        // Exclude pool DETF so its spot valuation does not cancel reserve swaps.
+        uint256 spot = ((R - x) * 1e18) / (R - y);
+        if (spot == 0) return 0;
+        uint256 others = y;
+        if (l.token0 != detf_ && l.token0 != out_) {
+            others += _toWad(l.token0, _effectiveNativeOf(l.token0));
+        }
+        if (l.token1 != detf_ && l.token1 != out_) {
+            others += _toWad(l.token1, _effectiveNativeOf(l.token1));
+        }
+        if (l.token2 != detf_ && l.token2 != out_) {
+            others += _toWad(l.token2, _effectiveNativeOf(l.token2));
+        }
+        uint256 lpSupply = ERC20Repo._totalSupply();
+        if (lpSupply == 0 || others == 0) return 0;
+        uint256 pairWad = (others * ctx.ownedLp) / lpSupply;
+        pairWad = (pairWad * spot) / 1e18;
+        if (pairWad == 0) return 0;
+        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
+
+    function previewSwapExactOutBook(address tokenIn, address tokenOut, uint256 amountOut, uint256 feeWad)
+        external view returns (uint256 amountIn)
+    {
+        if (amountOut == 0) revert ZeroAmount();
+        if (feeWad >= Math.WAD) revert Math.MathDomain();
+        SwapLiveCtx memory ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
+        ctx.feeWad = feeWad;
+        uint256 dOutNative = _faceOutToEffectiveNative(tokenOut, amountOut);
+        if (dOutNative >= ctx.eOutNative) revert Math.Drain();
+        SphereLegsWad memory legs = _loadSphereLegs(tokenIn, tokenOut, ctx.tokenZ);
+        uint256 dyWad = _toWad(tokenOut, dOutNative);
+        uint256 dxNet = _sphereExactOut(legs, dyWad);
+        uint256 dInNative = Math.fromWadCeil(Math.grossUpExactOut(dxNet, ctx.feeWad), _decimalsOf(tokenIn));
+        amountIn = _effectiveInToFaceIn(tokenIn, dInNative);
+        if (amountIn == 0) revert ZeroAmount();
+    }
+
+    function _faceOutToEffectiveNative(address tokenOut, uint256 amountOut) private view returns (uint256 dOutNative) {
+        dOutNative = amountOut;
+        address se = _seOf(tokenOut);
+        if (se == address(0)) return dOutNative;
+        uint256 shares = invertUnwrapExactTokenOut(se, tokenOut, amountOut);
+        if (shares == 0) revert InsufficientTokenOut();
+        if (shares > _spendableSeShares(tokenOut)) revert Math.Drain();
+        address rp = _rpOf(tokenOut);
+        if (rp == address(0)) revert RateProviderRequired();
+        dOutNative = ratedNative(shares, getRateFailClosed(rp), se, tokenOut);
+    }
+
+    function _effectiveInToFaceIn(address tokenIn, uint256 dInNative) private view returns (uint256 amountIn) {
+        if (_seOf(tokenIn) != address(0)) {
+            address se = _seOf(tokenIn);
+            if (se != tokenIn && ContextQuote.supported(se)) {
+                uint256 shares = sharesForNativeUp(dInNative, getRateFailClosed(_rpOf(tokenIn)), se, tokenIn);
+                if (IStandardExchangeOut(se).previewExchangeOut(IERC20(tokenIn), IERC20(se), shares) == 0) revert SeInvertUnavailable();
+            }
+            amountIn = invertBufferForEffective(se, _rpOf(tokenIn), tokenIn, dInNative);
+        } else {
+            amountIn = dInNative;
+        }
     }
 
     /// @dev PM EO uses the same sphere and buffer-gain inverse with projected manager context.
@@ -240,7 +314,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     }
 
     function invertBufferForEffective(address se, address rp, address token, uint256 dInNative)
-        external view returns (uint256 amountInRaw)
+        public view returns (uint256 amountInRaw)
     {
         if (dInNative == 0) return 0;
         BufferClaimQuote memory quote = bufferClaimQuote(se, rp, token, address(this));

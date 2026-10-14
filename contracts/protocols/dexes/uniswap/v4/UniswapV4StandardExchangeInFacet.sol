@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardYieldExecutionTarget} from "./UniswapV4StandardYieldExecutionTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
@@ -8,7 +10,7 @@ import {
     UniswapV4StandardExchangeInTarget
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
 
-contract UniswapV4StandardExchangeInFacet is UniswapV4StandardExchangeInTarget, IFacet {
+contract UniswapV4StandardExchangeInFacet is UniswapV4StandardYieldExecutionTarget, IFacet {
     constructor(address executionDelegate) UniswapV4StandardExchangeInTarget(executionDelegate) {}
 
     function facetName() public pure override returns (string memory name) {
@@ -24,6 +26,7 @@ contract UniswapV4StandardExchangeInFacet is UniswapV4StandardExchangeInTarget, 
         funcs = new bytes4[](2);
         funcs[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs[1] = IUnlockCallback.unlockCallback.selector;
+        funcs = NativeStandardYieldSelectors._appendExecution(funcs);
     }
 
     function facetMetadata()

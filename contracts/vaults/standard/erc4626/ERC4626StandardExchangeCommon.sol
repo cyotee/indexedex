@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeStandardYieldQuoteBase} from "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -30,7 +31,44 @@ import {
  *      iff `claimed <= U`; excess stays uncredited (D28). Exact-out credits `min(U, maxAmountIn)`
  *      and refunds only `credit - used` (D15).
  */
-abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
+abstract contract ERC4626StandardExchangeCommon is NativeStandardYieldQuoteBase, IERC4626StandardExchange {
+    function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        internal view override returns (uint256 amountOut)
+    {
+        _requireNonZero(amountIn);
+        IERC4626 vault = protocolVault();
+        address underlying = vault.asset();
+
+        // Identity share-to-share is used by DETF custom mint tables.
+        if (address(tokenIn) == address(this) && address(tokenOut) == address(this)) {
+            return amountIn;
+        }
+
+        if (address(tokenOut) == address(this)) {
+            if (address(tokenIn) == address(vault)) {
+                return _convertVaultDeltaToShares(amountIn, _receiptBacking());
+            }
+            if (address(tokenIn) == underlying) {
+                uint256 receiptEquiv = vault.convertToShares(amountIn);
+                return _convertVaultDeltaToShares(receiptEquiv, _receiptBacking());
+            }
+        }
+
+        if (address(tokenIn) == underlying && address(tokenOut) == address(vault)) {
+            return vault.previewDeposit(amountIn);
+        }
+        if (address(tokenIn) == address(vault) && address(tokenOut) == underlying) {
+            return vault.previewRedeem(amountIn);
+        }
+        if (address(tokenIn) == address(this) && address(tokenOut) == underlying) {
+            return _previewUnderlyingOutForSeIn(amountIn);
+        }
+        if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
+            return _previewRedeemShares(amountIn);
+        }
+        revert UnsupportedRoute();
+    }
+
     using SafeERC20 for IERC20;
 
     /// @notice Historical dust boundary retained for tests only; no production path pays residual to feeTo (APEX D6).
@@ -256,6 +294,7 @@ abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
     function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred) internal {
         uint256 credit;
         if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
             credit = _prepaidCredit(token, maxAmountIn);
             if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
         }
@@ -266,6 +305,7 @@ abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
     function _burnExactOutShares(uint256 used, uint256 maxAmountIn, bool pretransferred) internal {
         uint256 credit;
         if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
             credit = _prepaidCredit(IERC20(address(this)), maxAmountIn);
             if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
         }
@@ -282,7 +322,7 @@ abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
     function _burnSeShares(address owner, uint256 burnAmount, bool pretransferred) internal {
         if (pretransferred) {
             LocalCreditLib.requirePretransferCaller(msg.sender);
-            uint256 selfBal = IERC20(address(this)).balanceOf(address(this));
+            uint256 selfBal = ERC20Repo._balanceOf(address(this));
             if (burnAmount > selfBal) {
                 revert ISecurePullErrors.TransferDeltaInsufficient(burnAmount, selfBal);
             }

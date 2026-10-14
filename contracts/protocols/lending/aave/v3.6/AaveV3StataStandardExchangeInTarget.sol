@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
@@ -16,47 +17,13 @@ import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {AaveV3StataStandardExchangeCommon} from "./AaveV3StataStandardExchangeCommon.sol";
 
 /// @notice Exact-input Stata, underlying and aToken routes, including redemption of existing SE shares.
-contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommon, ReentrancyLockModifiers, IStandardExchangeIn, IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote {
+abstract contract AaveV3StataStandardExchangeInExecutionBase is AaveV3StataStandardExchangeCommon, ReentrancyLockModifiers, StandardExchangeInExecutionBase {
     using SafeERC20 for IERC20;
-    error InvalidStataRoute(address tokenIn, address tokenOut);
     error InvalidStataPayment();
     error StataSlippage(uint256 minimum, uint256 received);
 
-    function _stata() internal view returns (IStataTokenV2) {
-        return IStataTokenV2(IAaveV3StataStandardVault(address(this)).stataToken());
-    }
-
-    function _isStataAsset(IStataTokenV2 stata_, address token_) internal view returns (bool) {
-        return token_ == address(stata_) || token_ == stata_.asset() || token_ == stata_.aToken();
-    }
-
-    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
-        return _previewStataExactIn(in_, amount_, out_);
-    }
-
-    function _previewStataExactIn(IERC20 in_, uint256 amount_, IERC20 out_) internal view returns (uint256) {
-        IStataTokenV2 stata_ = _stata();
-        if (address(in_) == address(out_)) revert InvalidStataRoute(address(in_), address(out_));
-        if (address(in_) == address(this)) {
-            if (!_isStataAsset(stata_, address(out_))) revert InvalidStataRoute(address(in_), address(out_));
-            uint256 claim_ = _convertSharesToStata(amount_);
-            return address(out_) == address(stata_) ? claim_ : stata_.previewRedeem(claim_);
-        }
-        if (!_isStataAsset(stata_, address(in_))) revert InvalidStataRoute(address(in_), address(out_));
-        if (address(out_) == address(this)) {
-            // Receipt-equivalent of the credited input; D22 mints on the full input even when
-            // Aave capacity books part of it locally.
-            uint256 delta_ = address(in_) == address(stata_) ? amount_ : stata_.previewDeposit(amount_);
-            return _convertStataDeltaToShares(delta_, _stataBacking());
-        }
-        if (address(out_) == address(stata_)) return stata_.previewDeposit(amount_);
-        if (address(in_) == address(stata_) && _isStataAsset(stata_, address(out_))) return stata_.previewRedeem(amount_);
-        if (address(in_) == stata_.asset() && address(out_) == stata_.aToken()) return amount_;
-        revert InvalidStataRoute(address(in_), address(out_));
-    }
-
-    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
-        external nonReentrant returns (uint256 received_)
+    function _exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        internal override nonReentrant returns (uint256 received_)
     {
         if (amount_ == 0 || to_ == address(0) || block.timestamp > deadline_) revert InvalidStataPayment();
         IStataTokenV2 stata_ = _stata();
@@ -122,6 +89,20 @@ contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommo
     /// @dev Stata conversions use the current normalized income, which is fixed
     /// across same-transaction supply/withdraw operations. Keep actual receipt
     /// inventory separate from the SE supply and the buffered holder's shares.
+}
+
+contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeInExecutionBase,
+    IStandardExchangeIn, IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote
+{
+    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
+        return _previewExchangeIn(in_, amount_, out_);
+    }
+    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        external returns (uint256)
+    {
+        return _exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+    }
+
     struct StataQuoteState {
         address exchange;
         address asset;

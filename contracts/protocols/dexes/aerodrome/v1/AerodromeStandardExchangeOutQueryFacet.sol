@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {AerodromeStandardExchangeInQuoteBase} from "./AerodromeStandardExchangeInTarget.sol";
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {AerodromeStandardExchangeQuoteTarget} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeQuoteTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {ConstantProductStandardYieldPreviewCallsTarget as ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 
@@ -15,19 +18,10 @@ import {
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryTarget.sol";
 
 /// @notice Exact-output previews and native SY adapters using the installed standard routes.
-contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQueryTarget, AerodromeStandardExchangeQuoteTarget, ConstantProductStandardYieldTarget, IFacet {
-    function _redeemConstantProduct(address holder_, address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
-        internal override nonReentrant returns (uint256)
-    {
-        address implementation_ = IDiamondLoupe(address(this)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
-        (bool ok_, bytes memory result_) = implementation_.delegatecall(abi.encodeWithSignature(
-            "executeNativeSyRedemption(address,address,uint256,address,uint256)",
-            holder_, receiver_, shares_, tokenOut_, minimum_
-        ));
-        if (!ok_) assembly ("memory-safe") { revert(add(result_, 32), mload(result_)) }
-        return abi.decode(result_, (uint256));
+contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeQuoteTarget, AerodromeStandardExchangeInQuoteBase, ConstantProductStandardYieldTarget, AerodromeStandardExchangeOutQueryTarget, IFacet {
+    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
+        return _previewExchangeIn(in_, amount_, out_);
     }
-
     function facetName() public pure returns (string memory name) {
         return type(AerodromeStandardExchangeOutQueryFacet).name;
     }
@@ -40,8 +34,8 @@ contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQ
     }
 
     function facetFuncs() public pure virtual returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](8);
-        funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs = new bytes4[](9);
+        funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeTransitionQuote.quoteState.selector;
         funcs[2] = IStandardExchangeTransitionQuote.quoteAssets.selector;
         funcs[3] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
@@ -49,7 +43,8 @@ contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQ
         funcs[5] = IStandardExchangeTransitionQuote.quoteTransition.selector;
         funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
         funcs[7] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
-        funcs = NativeStandardYieldSelectors._append(funcs);
+        funcs[8] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs = NativeStandardYieldSelectors._appendPreviews(funcs);
     }
 
     function facetMetadata()

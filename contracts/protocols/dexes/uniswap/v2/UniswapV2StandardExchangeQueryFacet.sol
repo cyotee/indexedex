@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ConstantProductStandardYieldPreviewTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+import {UniswapV2StandardExchangeInQuoteBase} from "./UniswapV2StandardExchangeInTarget.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {UniswapV2StandardExchangeQuoteTarget} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol";
 
 /// @notice Projected SE and pool accounting, isolated from execution to meet EIP-170.
-contract UniswapV2StandardExchangeQueryFacet is UniswapV2StandardExchangeQuoteTarget, IFacet {
+contract UniswapV2StandardExchangeQueryFacet is UniswapV2StandardExchangeQuoteTarget, UniswapV2StandardExchangeInQuoteBase, ConstantProductStandardYieldPreviewTarget, IFacet {
     function facetName() public pure returns (string memory) {
         return type(UniswapV2StandardExchangeQueryFacet).name;
     }
@@ -26,6 +29,7 @@ contract UniswapV2StandardExchangeQueryFacet is UniswapV2StandardExchangeQuoteTa
         funcs[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
         funcs[5] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
         funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        funcs = NativeStandardYieldSelectors._appendQuery(funcs);
     }
 
     function facetMetadata() external pure returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions) {

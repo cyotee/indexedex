@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -32,7 +33,7 @@ import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/Unisw
  *      LP supply/balances use ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo
  *      (pair reserve accounting = virtual SE claim; raw = face inventory).
  */
-abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon {
+abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon is UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase {
     using SafeERC20 for IERC20;
 
     event Deposit(
@@ -255,12 +256,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _decimalsOf(address token) internal view returns (uint8 d) {
-        Repo.Layout storage l = Repo._layout();
-        if (token == l.currency0) d = l.decimalsCurrency0;
-        else if (token == l.currency1) d = l.decimalsCurrency1;
-        else revert InvalidToken();
-        // CREATE3 DETF may not exist at hook bind, so stored decimals can be 0.
-        if (d == 0) d = 18;
+        return _singleDecimals(token);
     }
 
     function _wadProduct() internal view returns (uint256) {
@@ -391,25 +387,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _quoteExactIn(bool zeroForOne, uint256 amountIn) internal view returns (uint256 amountOut) {
-        Repo.Layout storage l = Repo._layout();
-        bool rawIn = zeroForOne == _zeroForOneIsRawIn();
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
-        uint256 seClaim = _seClaim();
-        if (rawIn) {
-            // face raw in → claim/pair out
-            uint256 rInN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
-            uint256 rOutN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
-            uint256 aInN = Math.toWad(amountIn, _decimalsOf(l.rawToken));
-            uint256 budget = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
-            if (budget != 0 && ClaimLib.sharesForPairUnitsDown(budget) != 0) amountOut = ClaimLib.previewBudget(budget).amountOut;
-        } else {
-            // pair in → claimIn → raw out
-            uint256 claimIn = _previewBufferClaimIn(amountIn);
-            uint256 rInN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
-            uint256 rOutN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
-            uint256 cInN = Math.toWad(claimIn, _decimalsOf(l.pairToken));
-            amountOut = Math.fromWadFloor(Math.saleQuote(cInN, rInN, rOutN), _decimalsOf(l.rawToken));
-        }
+        return _singleSwapQuote(zeroForOne, amountIn, true);
     }
 
     function _quoteExactOut(bool zeroForOne, uint256 amountOut) internal view returns (uint256 amountIn) {
@@ -533,20 +511,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         view
         returns (uint256 used0, uint256 used1)
     {
-        used0 = amount0;
-        used1 = amount1;
-        if (x == 0 || y == 0) revert NotLive();
-        uint256 ideal1 = (used0 * y) / x;
-        if (ideal1 <= used1) {
-            used1 = ideal1;
-        } else {
-            used0 = (used1 * x) / y;
-        }
-        if (used0 == 0 || used1 == 0) {
-            if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
-            if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
-            if (used0 == 0 || used1 == 0) revert ZeroAmount();
-        }
+        return _singleClamp(x, y, amount0, amount1);
     }
 
     function _intakePoolAmounts(uint256 used0, uint256 used1) internal {
@@ -578,22 +543,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         view
         returns (uint256 used0, uint256 used1)
     {
-        used0 = amount0;
-        used1 = amount1;
-        uint256 x = reserveCurrency0();
-        uint256 y = reserveCurrency1();
-        if (x == 0 || y == 0) revert NotLive();
-        uint256 ideal1 = (used0 * y) / x;
-        if (ideal1 <= used1) {
-            used1 = ideal1;
-        } else {
-            used0 = (used1 * x) / y;
-        }
-        if (used0 == 0 || used1 == 0) {
-            if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
-            if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
-            if (used0 == 0 || used1 == 0) revert ZeroAmount();
-        }
+        return _singleClamp(reserveCurrency0(), reserveCurrency1(), amount0, amount1);
     }
 
     /// @dev D59: LP for a later join is the smaller raw-balance growth ratio (raw token, SE shares) measured
@@ -688,11 +638,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _poolOrderX(uint256 rawAmt, uint256 seClaimAmt) internal view returns (uint256) {
-        return Repo._layout().currency0 == Repo._layout().rawToken ? rawAmt : seClaimAmt;
+        return _singleOrderX(rawAmt, seClaimAmt);
     }
 
     function _poolOrderY(uint256 rawAmt, uint256 seClaimAmt) internal view returns (uint256) {
-        return Repo._layout().currency0 == Repo._layout().rawToken ? seClaimAmt : rawAmt;
+        return _singleOrderY(rawAmt, seClaimAmt);
     }
 
     /// @dev D60: rated valuation of `seBal` shares (pair units).
@@ -711,24 +661,17 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _rawReserveCurrency0() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return l.currency0 == l.rawToken ? IERC20(l.rawToken).balanceOf(address(this)) : _rawSeBalance();
+        return _singleRawReserve(Repo._layout().currency0);
     }
 
     function _rawReserveCurrency1() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return l.currency1 == l.rawToken ? IERC20(l.rawToken).balanceOf(address(this)) : _rawSeBalance();
+        return _singleRawReserve(Repo._layout().currency1);
     }
 
     /// @dev Raw units a leg gains from `used` tokens: the raw token itself, or the SE shares a pair buffer mints
     ///      (the SE's own preview, which equals execution, D73).
     function _previewRawDelta(bool forC0, uint256 used0, uint256 used1) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address c = forC0 ? l.currency0 : l.currency1;
-        uint256 used = forC0 ? used0 : used1;
-        if (c == l.rawToken || l.pairToken == l.standardExchange || used == 0) return used;
-        return IStandardExchangeIn(l.standardExchange)
-            .previewExchangeIn(IERC20(l.pairToken), used, IERC20(l.standardExchange));
+        return _singleRawDelta(forC0, used0, used1);
     }
 
     /// @dev Raw book before a pull of (amount0, amount1): the raw leg backs out its pull; an identity pair leg
@@ -919,7 +862,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _supplyAfterProtocolMint() internal view returns (uint256 supplyAdj) {
-        return _supplyAfterProtocolMintForProduct(_wadProduct());
+        return _singleSupply();
     }
 
     function _supplyAfterProtocolMintForPairClaim(uint256 pairClaim) internal view returns (uint256) {
@@ -931,12 +874,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _supplyAfterProtocolMintForProduct(uint256 product) private view returns (uint256 supplyAdj) {
-        supplyAdj = ERC20Repo._totalSupply();
-        (bool feeOn,, uint256 ownerFeeShare) = _feeOnAndShare();
-        uint256 kLast_ = Repo._layout().kLast;
-        if (feeOn && kLast_ != 0 && supplyAdj > 0) {
-            supplyAdj += Math.calculateProtocolFee(supplyAdj, product, kLast_, ownerFeeShare);
-        }
+        return _singleSupplyForProduct(product);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -1001,26 +939,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         view
         returns (uint256 saleAmt, uint256 amountOtherOut, uint256 keptIn)
     {
-        Repo.Layout storage l = Repo._layout();
-        address tokenOut = tokenIn == l.rawToken ? l.pairToken : l.rawToken;
-        bool zfo = _routeZeroForOne(tokenIn, tokenOut);
-        if (tokenIn == l.rawToken) {
-            uint256 rInN = Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), _decimalsOf(l.rawToken));
-            saleAmt = Math.fromWadFloor(
-                Math.swapDepositSaleAmt(Math.toWad(amountIn, _decimalsOf(l.rawToken)), rInN), _decimalsOf(l.rawToken)
-            );
-        } else {
-            uint256 claimInFull = _previewBufferClaimIn(amountIn);
-            uint256 rInN = Math.toWad(_seClaim(), _decimalsOf(l.pairToken));
-            uint256 saleClaim = Math.fromWadFloor(
-                Math.swapDepositSaleAmt(Math.toWad(claimInFull, _decimalsOf(l.pairToken)), rInN),
-                _decimalsOf(l.pairToken)
-            );
-            saleAmt = claimInFull == 0 ? amountIn / 2 : (amountIn * saleClaim) / claimInFull;
-        }
-        if (saleAmt > amountIn) saleAmt = amountIn;
-        if (saleAmt == 0 || saleAmt >= amountIn) saleAmt = amountIn / 2;
-        amountOtherOut = _quoteExactIn(zfo, saleAmt);
-        keptIn = amountIn - saleAmt;
+        return _singleZapSplit(tokenIn, amountIn);
     }
 }

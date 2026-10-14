@@ -172,8 +172,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
         if (address(feeTo) != address(0) && fee != 0 && l.kLast != 0 && supply != 0) {
             // D60: execution mints the protocol-fee LP from the rated book (`_wadProduct`, provider rates),
             // not from the SE's holder-asset claims; project it from the same book so previews agree to the wei.
-            uint256 k = Math.toWad(IHook(address(this)).claimSupplyCurrency0(), l.decimalsCurrency0)
-                * Math.toWad(IHook(address(this)).claimSupplyCurrency1(), l.decimalsCurrency1);
+            uint256 k = Math.toWad(ClaimLib.ratedReserve(_seFor(l.currency0)), l.decimalsCurrency0)
+                * Math.toWad(ClaimLib.ratedReserve(_seFor(l.currency1)), l.decimalsCurrency1);
             supply += Math.calculateProtocolFee(supply, k, l.kLast, fee * Repo.TRADING_FEE_DENOMINATOR / 1e18);
         }
         input; output;
@@ -193,9 +193,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
     }
 
     /// @dev Retains the legacy quote for SEs without sequential quote support.
-    function previewLegacy(address tokenIn, uint256 amountIn, uint256 supply) external view returns (uint256) {
-        DepositSinglePreview memory p;
-        (p.amountToSwap, p.amountOtherOut, p.amountKeptIn) = IHook(address(this)).previewZapSplit(tokenIn, amountIn);
+    function previewLegacy(address tokenIn, DepositSinglePreview memory p, uint256 supply) external view returns (uint256) {
         _applyZapToClaimsPreview(tokenIn, p);
         if (p.x == 0 || p.y == 0) return 0;
         _clampSingleDepositAdds(tokenIn, p);
@@ -208,8 +206,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
         Repo.Layout storage l = Repo._layout();
         uint256 claimInDelta =
             _previewBufferClaimIn(_seFor(tokenIn), tokenIn, p.amountToSwap);
-        p.x = IHook(address(this)).claimSupplyCurrency0();
-        p.y = IHook(address(this)).claimSupplyCurrency1();
+        p.x = ClaimLib.ratedReserve(_seFor(l.currency0));
+        p.y = ClaimLib.ratedReserve(_seFor(l.currency1));
         p.xs = IERC20(_seFor(l.currency0)).balanceOf(address(this));
         p.ys = IERC20(_seFor(l.currency1)).balanceOf(address(this));
         address tokenOut = tokenIn == l.currency0 ? l.currency1 : l.currency0;

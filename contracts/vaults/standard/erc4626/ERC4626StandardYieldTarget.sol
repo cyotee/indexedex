@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ERC4626StandardExchangeInExecutionBase} from "./ERC4626StandardExchangeInTarget.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -13,7 +14,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 
 /// @notice SY for the existing SE share token backed by an external ERC-4626 vault.
-abstract contract ERC4626StandardYieldTarget is NativeStandardYieldTarget, ERC4626StandardExchangeCommon, ReentrancyLockModifiers {
+abstract contract ERC4626StandardYieldTarget is NativeStandardYieldTarget, ERC4626StandardExchangeInExecutionBase {
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
         internal override nonReentrant returns (uint256 amount_)
     {

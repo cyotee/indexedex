@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -14,7 +15,7 @@ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4StandardExchangeWeightedBufferHook} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook.sol";
 
-contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook {
+contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook, NativeSYExecutionAssertions {
     IStandardizedYield private sy_;
 
     function setUp() public override {
@@ -64,7 +65,7 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         }
     }
 
-    function test_weightedSYAllPairAndShareInputsAndOutputs() public {
+    function test_weightedSYAllPairAndShareInputsAndOutputs() public noSelfCalls(hook) {
         address[3] memory tokens_ = [address(token0), address(token1), se0];
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             address in_ = tokens_[i_];
@@ -108,7 +109,7 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         IStandardExchangeOut(hook).previewExchangeOut(IERC20(se0), IERC20(hook), wanted_);
     }
 
-    function test_weightedSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public {
+    function test_weightedSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public noSelfCalls(hook) {
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         uint256 held_ = sy_.balanceOf(user) / 4;
         uint256 redeem_ = held_ / 3;

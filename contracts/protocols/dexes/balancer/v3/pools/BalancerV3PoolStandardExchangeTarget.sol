@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -8,21 +9,21 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
 import {BalancerV3VaultAwareRepo} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareRepo.sol";
 import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
-import {IBasePool} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IBasePool.sol";
-import {PoolData, Rounding, TokenType, AddLiquidityParams, AddLiquidityKind, RemoveLiquidityParams, RemoveLiquidityKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {BalancerV3PoolRepo} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3PoolRepo.sol";
+import {PoolData, Rounding, AddLiquidityParams, AddLiquidityKind, RemoveLiquidityParams, RemoveLiquidityKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
 import {BasePoolMath} from "@crane/contracts/external/balancer/v3/vault/contracts/BasePoolMath.sol";
-import {PoolDataLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolDataLib.sol";
 import {PoolConfigLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolConfigLib.sol";
 import {FixedPoint} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol";
 import {ScalingHelpers} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/helpers/ScalingHelpers.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {BalancerV3PoolStandardExchangeRepo as Repo} from "./BalancerV3PoolStandardExchangeRepo.sol";
 import {BalancerV3PoolLiquidationLib as Liquidation} from "./BalancerV3PoolLiquidationLib.sol";
+import {BalancerV3NativePoolQuoteBase, BalancerV3NativePoolQuoteLib} from "./BalancerV3NativePoolQuoteBase.sol";
 
 /// @notice Standard routes at the native Balancer pool-token address.
 /// @dev The Vault owns the BPT ledger. All issuance and burns use its actual pool
 /// liquidity operations, including the pool's configured hooks and fees.
-abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTarget, IStandardExchange {
+abstract contract BalancerV3PoolStandardExchangeTarget is StandardExchangeInExecutionBase, NativeStandardYieldTarget, BalancerV3NativePoolQuoteBase, IStandardExchange {
     using BetterSafeERC20 for IERC20;
     using FixedPoint for uint256;
 
@@ -41,6 +42,10 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
 
     function _poolVault() internal view returns (IVault) {
         return IVault(address(BalancerV3VaultAwareRepo._balancerV3Vault()));
+    }
+
+    function _vaultHeldShares() internal view override returns (uint256) {
+        return _poolVault().balanceOf(address(this), address(this));
     }
 
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
@@ -65,35 +70,20 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
 
     function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
 
-    /// @dev Native single-token liquidity operates on physical unpaired tokens and SE
-    /// shares. Buffer depths are virtual: the pool invariant ignores their raw input
-    /// delta, and its balance solver does not represent physical buffer withdrawals.
-    /// Existing pool swap/reconciliation routes remain separate from BPT issuance.
-    function _isVirtualBuffer(address token_) internal view returns (bool) {
-        (bool ok_, bytes memory data_) = address(this).staticcall(abi.encodeWithSignature("ttaToken()"));
-        if (ok_ && data_.length == 32) return token_ == abi.decode(data_, (address));
-        (ok_, data_) = address(this).staticcall(abi.encodeWithSignature("bufferToken()"));
-        if (ok_ && data_.length == 32) return token_ == abi.decode(data_, (address));
-        (ok_, data_) = address(this).staticcall(abi.encodeWithSignature("pairCount()"));
-        if (!ok_ || data_.length != 32) return false;
-        uint256 pairs_ = abi.decode(data_, (uint256));
-        for (uint256 i_; i_ < pairs_; ++i_) {
-            (ok_, data_) = address(this).staticcall(abi.encodeWithSignature("bufferToken(uint256)", i_));
-            if (ok_ && data_.length == 32 && token_ == abi.decode(data_, (address))) return true;
-        }
-        return false;
-    }
-
     function yieldToken() external pure override returns (address) { return address(0); }
     function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
         return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
     }
     function exchangeRate() external view override returns (uint256) {
-        if (IERC20(address(this)).totalSupply() == 0) return 1e18;
+        if (_poolVault().totalSupply(address(this)) == 0) return 1e18;
         return _poolVault().getBptRate(address(this));
     }
 
     function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
+        return _previewExchangeIn(in_, amount_, out_);
+    }
+
+    function _previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) internal view override returns (uint256) {
         (bool joining_, uint256 index_) = _poolRoute(in_, out_);
         if (amount_ == 0) return 0;
         return _previewPoolLiquidity(joining_, false, index_, amount_);
@@ -106,6 +96,12 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
 
     function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 min_, address to_, bool prepaid_, uint256 deadline_)
         external returns (uint256 received_)
+    {
+        return _exchangeIn(in_, amount_, out_, min_, to_, prepaid_, deadline_);
+    }
+
+    function _exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 min_, address to_, bool prepaid_, uint256 deadline_)
+        internal override returns (uint256 received_)
     {
         (, received_) = _executePoolLiquidity(
             LiquidityRequest(in_, out_, amount_, min_, to_ == address(0) ? msg.sender : to_, false), prepaid_, deadline_
@@ -152,19 +148,20 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
             revert MinAmountNotMet(1, 0);
         }
         ReentrancyLockRepo._lock();
-        uint256 before_ = p_.tokenIn.balanceOf(address(this));
+        uint256 before_ = joining_ ? p_.tokenIn.balanceOf(address(this)) : _vaultHeldShares();
         if (holder_ == address(this) && address(p_.tokenIn) == address(this)) {
             if (before_ < p_.maxInput) revert PoolLiquidityFundingMismatch(p_.maxInput, before_);
         } else {
-            p_.tokenIn.safeTransferFrom(holder_, address(this), p_.maxInput);
-            uint256 receivedInput_ = p_.tokenIn.balanceOf(address(this)) - before_;
+            if (joining_) p_.tokenIn.safeTransferFrom(holder_, address(this), p_.maxInput);
+            else _poolVault().transferFrom(address(this), holder_, address(this), p_.maxInput);
+            uint256 receivedInput_ = (joining_ ? p_.tokenIn.balanceOf(address(this)) : _vaultHeldShares()) - before_;
             if (receivedInput_ != p_.maxInput) revert PoolLiquidityFundingMismatch(p_.maxInput, receivedInput_);
         }
-        if (address(p_.tokenIn) == address(this)) p_.tokenIn.forceApprove(address(this), p_.maxInput);
+        if (!joining_) _poolVault().approve(address(this), address(this), p_.maxInput);
         Repo._setPending(keccak256(abi.encode(p_)));
         (paid_, received_) = abi.decode(_poolVault().unlock(abi.encodeCall(this.executePoolLiquidity, (p_))), (uint256, uint256));
         if (Repo._layoutStruct().pendingLiquidity != bytes32(0)) revert UnauthorizedPoolLiquidity();
-        if (address(p_.tokenIn) == address(this)) p_.tokenIn.forceApprove(address(this), 0);
+        if (!joining_) _poolVault().approve(address(this), address(this), 0);
         if (paid_ > p_.maxInput) revert MaxAmountExceeded(p_.maxInput, paid_);
         if (received_ < p_.outputLimit) revert MinAmountNotMet(p_.outputLimit, received_);
         if (p_.exactOutput && received_ != p_.outputLimit) revert PoolLiquidityFundingMismatch(p_.outputLimit, received_);
@@ -202,9 +199,9 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
     function _executeLiquidation(IVault vault_, uint256 index_, LiquidityRequest calldata p_)
         private returns (uint256 paid_, uint256 received_)
     {
-        Liquidation.PoolQuoteState memory q_ = Liquidation.snapshot(vault_, address(this), index_);
-        (,,, Liquidation.Step[] memory steps_) = Liquidation.liquidate(
-            q_, p_.exactOutput ? p_.outputLimit : p_.maxInput, p_.exactOutput
+        Liquidation.PoolQuoteState memory q_ = _nativeSnapshot(vault_, index_, false);
+        (,,, Liquidation.Step[] memory steps_) = Liquidation._liquidate(
+            q_, p_.exactOutput ? p_.outputLimit : p_.maxInput, p_.exactOutput, _nativeQuoteMath, _nativeAfterLiquidity
         );
         uint256[] memory amounts_ = new uint256[](q_.balancesRaw.length);
         for (uint256 i_; i_ < steps_.length; ++i_) {
@@ -223,47 +220,30 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
         }
     }
 
-    function _quotePoolData(bool joining_) internal view returns (PoolData memory d_) {
-        IVault vault_ = _poolVault();
-        d_ = vault_.getPoolData(address(this));
-        if (!joining_) return d_;
-        (,,uint256[] memory raw_,uint256[] memory lastLive_) = vault_.getPoolTokenInfo(address(this));
-        uint256 fee_ = PoolConfigLib.getAggregateYieldFeePercentage(d_.poolConfigBits);
-        bool yield_ = fee_ != 0 && !PoolConfigLib.isPoolInRecoveryMode(d_.poolConfigBits);
-        for (uint256 i_; i_ < raw_.length; ++i_) {
-            PoolDataLib.updateRawAndLiveBalance(d_, i_, raw_[i_], Rounding.ROUND_UP);
-            if (yield_ && d_.tokenInfo[i_].paysYieldFees && d_.tokenInfo[i_].tokenType == TokenType.WITH_RATE) {
-                uint256 due_ = PoolDataLib._computeYieldFeesDue(d_, lastLive_[i_], i_, fee_);
-                if (due_ != 0) PoolDataLib.updateRawAndLiveBalance(d_, i_, raw_[i_] - due_, Rounding.ROUND_UP);
-            }
-        }
-    }
-
     function _previewPoolLiquidity(bool joining_, bool exactOut_, uint256 index_, uint256 amount_)
         internal view returns (uint256 result_)
     {
+        Liquidation.PoolQuoteState memory q_ = _nativeSnapshot(_poolVault(), index_, joining_);
         if (!joining_) {
-            Liquidation.PoolQuoteState memory q_ = Liquidation.snapshot(_poolVault(), address(this), index_);
-            (, uint256 bpt_, uint256 assets_,) = Liquidation.liquidate(q_, amount_, exactOut_);
+            (, uint256 bpt_, uint256 assets_,) = Liquidation._liquidate(q_, amount_, exactOut_, _nativeQuoteMath, _nativeAfterLiquidity);
             return exactOut_ ? bpt_ : assets_;
         }
-        PoolData memory d_ = _quotePoolData(joining_);
-        uint256 supply_ = IERC20(address(this)).totalSupply();
+        PoolData memory d_ = BalancerV3NativePoolQuoteLib.joinData(_poolVault());
+        uint256 supply_ = q_.supply;
         uint256 fee_ = PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits);
-        IBasePool pool_ = IBasePool(address(this));
-        if (joining_ && !exactOut_) {
+        if (!exactOut_) {
             uint256[] memory amounts_ = new uint256[](d_.tokens.length);
             amounts_[index_] = ScalingHelpers.toScaled18ApplyRateRoundDown(amount_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
-            result_ = _previewUnbalancedBpt(d_.balancesLiveScaled18, amounts_, supply_, fee_, pool_);
-        } else if (joining_) {
-            (result_,) = BasePoolMath.computeAddLiquiditySingleTokenExactOut(d_.balancesLiveScaled18, index_, amount_, supply_, fee_, pool_);
-            result_ = ScalingHelpers.toRawUndoRateRoundUp(result_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
-        } else if (!exactOut_) {
-            (result_,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactIn(d_.balancesLiveScaled18, index_, amount_, supply_, fee_, pool_);
-            result_ = ScalingHelpers.toRawUndoRateRoundDown(result_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
+            result_ = _previewUnbalancedBpt(d_.balancesLiveScaled18, amounts_, supply_, fee_, q_);
         } else {
-            uint256 live_ = ScalingHelpers.toScaled18ApplyRateRoundUp(amount_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
-            (result_,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactOut(d_.balancesLiveScaled18, index_, live_, supply_, fee_, pool_);
+            uint256 newSupply_ = supply_ + amount_;
+            uint256 ratio_ = newSupply_.divUp(supply_);
+            _checkNativeMaximumRatio(ratio_);
+            uint256 next_ = _nativeBalance(q_, d_.balancesLiveScaled18, ratio_);
+            uint256 taxable_ = next_ - newSupply_ * d_.balancesLiveScaled18[index_] / supply_;
+            uint256 swapFee_ = taxable_.divUp(fee_.complement()) - taxable_;
+            result_ = next_ - d_.balancesLiveScaled18[index_] + swapFee_;
+            result_ = ScalingHelpers.toRawUndoRateRoundUp(result_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
         }
     }
 
@@ -271,21 +251,26 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
     /// a non-increasing invariant quotes zero instead of panicking. Execution
     /// rejects this minimum before custody changes and still uses the Vault math.
     function _previewUnbalancedBpt(
-        uint256[] memory balances_, uint256[] memory amounts_, uint256 supply_, uint256 fee_, IBasePool pool_
+        uint256[] memory balances_, uint256[] memory amounts_, uint256 supply_, uint256 fee_, Liquidation.PoolQuoteState memory q_
     ) private view returns (uint256) {
         uint256[] memory next_ = new uint256[](balances_.length);
         for (uint256 i_; i_ < balances_.length; ++i_) {
             next_[i_] = balances_[i_] + amounts_[i_] - 1;
         }
-        uint256 invariant_ = pool_.computeInvariant(balances_, Rounding.ROUND_UP);
-        uint256 ratio_ = pool_.computeInvariant(next_, Rounding.ROUND_DOWN).divDown(invariant_);
-        BasePoolMath.ensureInvariantRatioBelowMaximumBound(pool_, ratio_);
+        uint256 invariant_ = _nativeInvariant(q_, balances_, Rounding.ROUND_UP);
+        uint256 ratio_ = _nativeInvariant(q_, next_, Rounding.ROUND_DOWN).divDown(invariant_);
+        _checkNativeMaximumRatio(ratio_);
         for (uint256 i_; i_ < balances_.length; ++i_) {
             uint256 proportional_ = ratio_.mulDown(balances_[i_]);
             if (next_[i_] > proportional_) next_[i_] -= (next_[i_] - proportional_).mulUp(fee_);
         }
-        uint256 after_ = pool_.computeInvariant(next_, Rounding.ROUND_DOWN);
+        uint256 after_ = _nativeInvariant(q_, next_, Rounding.ROUND_DOWN);
         if (after_ <= invariant_) return 0;
         return supply_ * (after_ - invariant_) / invariant_;
+    }
+
+    function _checkNativeMaximumRatio(uint256 ratio_) private view {
+        uint256 maximum_ = BalancerV3PoolRepo._maximumInvariantRatio();
+        if (ratio_ > maximum_) revert BasePoolMath.InvariantRatioAboveMax(ratio_, maximum_);
     }
 }

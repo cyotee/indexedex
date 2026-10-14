@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookExchangeOutTarget} from "../UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
@@ -12,6 +14,7 @@ import {
 
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
     UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget,
+    UniswapV4StandardExchangeBalancerQuadStableBufferHookExchangeOutTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {
@@ -25,7 +28,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](39);
+        funcs = new bytes4[](41);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -65,6 +68,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
         funcs[36] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactOut.selector;
         funcs[37] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.rateProviders.selector;
         funcs[38] = bytes4(keccak256("rateProvider(address)"));
+        funcs[39] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs[40] = IStandardExchangeOut.exchangeOut.selector;
     }
 
     function facetMetadata()

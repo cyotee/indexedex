@@ -46,14 +46,57 @@ contract UniswapV4DualSEBCPHook_Surface_Test is TestBase {
         return false;
     }
 
+    function _assertExactSelectors(bytes4[] memory actual_, bytes4[] memory expected_) internal pure {
+        assertEq(actual_.length, expected_.length, "selector set length");
+        for (uint256 i; i < expected_.length; ++i) {
+            assertTrue(_contains(actual_, expected_[i]), "missing expected selector");
+            for (uint256 j; j < i; ++j) {
+                assertTrue(actual_[i] != actual_[j], "duplicate actual selector");
+                assertTrue(expected_[i] != expected_[j], "duplicate expected selector");
+            }
+        }
+    }
+
     function _assertFacetFuncsOnLoupe(IFacet facet_, address expectedFacet_) internal view {
         bytes4[] memory funcs_ = facet_.facetFuncs();
         IDiamondLoupe loupe_ = IDiamondLoupe(hook);
+        _assertExactSelectors(loupe_.facetFunctionSelectors(expectedFacet_), funcs_);
         for (uint256 i; i < funcs_.length; ++i) {
             address loupeFacet_ = loupe_.facetAddress(funcs_[i]);
             assertEq(loupeFacet_, expectedFacet_, "J2 loupe maps selector to CREATE3 facet");
             assertTrue(loupeFacet_ != address(0), "J2 not zero");
             assertTrue(loupeFacet_ != hook, "J2 not self-facet");
+        }
+    }
+
+    /// @dev Every role selector must occur once in the complete role union, including across facets.
+    function _assertRoleSelectorUnion() internal view {
+        bytes4[][] memory roles_ = new bytes4[][](4);
+        roles_[0] = hooksFacet.facetFuncs();
+        roles_[1] = depositFacet.facetFuncs();
+        roles_[2] = withdrawFacet.facetFuncs();
+        roles_[3] = seFacet.facetFuncs();
+        bytes4[] memory union_ = new bytes4[](95); // 43 hooks + 19 deposit + 24 withdraw + 9 SE.
+        uint256 count_;
+        for (uint256 i; i < roles_.length; ++i) {
+            for (uint256 j; j < roles_[i].length; ++j) {
+                bytes4 selector_ = roles_[i][j];
+                for (uint256 k; k < count_; ++k) {
+                    assertTrue(union_[k] != selector_, "duplicate role selector");
+                }
+                assertLt(count_, union_.length, "unexpected role selector");
+                union_[count_++] = selector_;
+            }
+        }
+        assertEq(count_, union_.length, "complete role selector union");
+
+        IDiamondLoupe loupe_ = IDiamondLoupe(hook);
+        address[4] memory facets_ = [address(hooksFacet), address(depositFacet), address(withdrawFacet), address(seFacet)];
+        for (uint256 i; i < facets_.length; ++i) {
+            _assertFacetFuncsOnLoupe(IFacet(facets_[i]), facets_[i]);
+        }
+        for (uint256 i; i < union_.length; ++i) {
+            assertTrue(loupe_.facetAddress(union_[i]) != address(0), "missing union selector on proxy");
         }
     }
 
@@ -111,40 +154,47 @@ contract UniswapV4DualSEBCPHook_Surface_Test is TestBase {
 
     function test_J1_withdraw_targetSelectors_subseteq_facetFuncs() public view {
         bytes4[] memory funcs_ = withdrawFacet.facetFuncs();
-        assertTrue(_contains(funcs_, IHook.withdraw.selector), "J1 withdraw");
-        assertTrue(_contains(funcs_, IHook.previewWithdraw.selector), "J1 previewWithdraw");
-        assertTrue(_contains(funcs_, IHook.withdrawFlexible.selector), "J1 withdrawFlexible");
-        assertTrue(_contains(funcs_, IHook.previewWithdrawFlexible.selector), "J1 previewWithdrawFlexible");
-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.exitProportional.selector), "J1 exitProportional");
-        assertTrue(_contains(funcs_, IDetfReserveQuote.previewBurnToToken.selector), "J1 previewBurnToToken");
-        assertEq(funcs_.length, 11, "J1 WithdrawFacet facetFuncs length");
+        bytes4[] memory expected_ = new bytes4[](24);
+        expected_[0] = IHook.withdraw.selector;
+        expected_[1] = IHook.previewWithdraw.selector;
+        expected_[2] = IHook.withdrawFlexible.selector;
+        expected_[3] = IHook.previewWithdrawFlexible.selector;
+        expected_[4] = IUniswapV4SeBufferHook.exitProportional.selector;
+        expected_[5] = IUniswapV4SeBufferHook.previewExitProportional.selector;
+        expected_[6] = IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector;
+        expected_[7] = IUniswapV4SeBufferHook.previewExitSingleAssetExactBptIn.selector;
+        expected_[8] = IUniswapV4SeBufferHook.exitSingleAssetExactTokenOut.selector;
+        expected_[9] = IUniswapV4SeBufferHook.previewExitSingleAssetExactTokenOut.selector;
+        expected_[10] = IDetfReserveQuote.previewBurnToToken.selector;
+        expected_[11] = IStandardExchangeIn.previewExchangeIn.selector;
+        expected_[12] = IStandardizedYield.exchangeRate.selector;
+        expected_[13] = IStandardizedYield.yieldToken.selector;
+        expected_[14] = IStandardizedYield.assetInfo.selector;
+        expected_[15] = IStandardizedYield.getTokensIn.selector;
+        expected_[16] = IStandardizedYield.getTokensOut.selector;
+        expected_[17] = IStandardizedYield.isValidTokenIn.selector;
+        expected_[18] = IStandardizedYield.isValidTokenOut.selector;
+        expected_[19] = IStandardizedYield.previewDeposit.selector;
+        expected_[20] = IStandardizedYield.previewRedeem.selector;
+        expected_[21] = IStandardizedYield.getRewardTokens.selector;
+        expected_[22] = IStandardizedYield.accruedRewards.selector;
+        expected_[23] = IStandardizedYield.rewardIndexesStored.selector;
+        _assertExactSelectors(funcs_, expected_);
     }
 
     function test_J1_se_targetSelectors_subseteq_facetFuncs() public view {
         bytes4[] memory funcs_ = seFacet.facetFuncs();
-        assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewExchangeIn");
-        assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
-        assertTrue(_contains(funcs_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewExchangeOut");
-        assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.deposit.selector), "J1 SY deposit");
-        assertTrue(_contains(funcs_, IStandardizedYield.redeem.selector), "J1 SY redeem");
-        assertTrue(_contains(funcs_, IStandardizedYield.exchangeRate.selector), "J1 SY exchangeRate");
-        assertTrue(_contains(funcs_, IStandardizedYield.yieldToken.selector), "J1 SY yieldToken");
-        assertTrue(_contains(funcs_, IStandardizedYield.assetInfo.selector), "J1 SY assetInfo");
-        assertTrue(_contains(funcs_, IStandardizedYield.getTokensIn.selector), "J1 SY getTokensIn");
-        assertTrue(_contains(funcs_, IStandardizedYield.getTokensOut.selector), "J1 SY getTokensOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenIn.selector), "J1 SY isValidTokenIn");
-        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenOut.selector), "J1 SY isValidTokenOut");
-        assertTrue(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
-        assertTrue(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
-        assertTrue(_contains(funcs_, IStandardizedYield.getRewardTokens.selector), "J1 SY getRewardTokens");
-        assertTrue(_contains(funcs_, IStandardizedYield.accruedRewards.selector), "J1 SY accruedRewards");
-        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesCurrent.selector), "J1 SY rewardIndexesCurrent");
-        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesStored.selector), "J1 SY rewardIndexesStored");
-        assertTrue(_contains(funcs_, IStandardizedYield.claimRewards.selector), "J1 SY claimRewards");
-        assertEq(funcs_.length, 22, "J1 SeFacet facetFuncs length");
+        bytes4[] memory expected_ = new bytes4[](9);
+        expected_[0] = IUniswapV4SeBufferHook.ownerSwapExactOut.selector;
+        expected_[1] = IStandardExchangeIn.exchangeIn.selector;
+        expected_[2] = IStandardExchangeOut.previewExchangeOut.selector;
+        expected_[3] = IStandardExchangeOut.exchangeOut.selector;
+        expected_[4] = IUniswapV4SeBufferHook.ownerSwapExactIn.selector;
+        expected_[5] = IStandardizedYield.deposit.selector;
+        expected_[6] = IStandardizedYield.redeem.selector;
+        expected_[7] = IStandardizedYield.rewardIndexesCurrent.selector;
+        expected_[8] = IStandardizedYield.claimRewards.selector;
+        _assertExactSelectors(funcs_, expected_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -165,6 +215,7 @@ contract UniswapV4DualSEBCPHook_Surface_Test is TestBase {
 
     function test_J2_se_facetFuncs_subseteq_loupe_onProxy() public view {
         _assertFacetFuncsOnLoupe(seFacet, address(seFacet));
+        _assertRoleSelectorUnion();
     }
 
     /* ---------------------------------------------------------------------- */
@@ -200,6 +251,11 @@ contract UniswapV4DualSEBCPHook_Surface_Test is TestBase {
 
         address loupeSe_ = loupe_.facetAddress(IStandardExchangeIn.exchangeIn.selector);
         assertEq(loupeSe_, address(seFacet), "J3 se exchangeIn loupe");
+        assertEq(
+            loupe_.facetAddress(IStandardExchangeIn.previewExchangeIn.selector),
+            address(withdrawFacet),
+            "J3 shared exact-input quote belongs to withdraw facet"
+        );
     }
 
     function test_J_facetMetadata_hooks_matches_CREATE3_facet() public view {

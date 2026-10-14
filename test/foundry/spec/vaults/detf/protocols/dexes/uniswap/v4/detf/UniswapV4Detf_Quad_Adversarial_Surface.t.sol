@@ -5,6 +5,8 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
 import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookClaimQuote, IUniswapV4SeBufferHookClaimExitQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
@@ -92,7 +94,7 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
         execution[7] = IQuadHook.depositSingleFlexible.selector;
         execution[8] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
         _assertInstalledHookFacet(execution);
-        bytes4[] memory queries = new bytes4[](27);
+        bytes4[] memory queries = new bytes4[](26);
         queries[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
         queries[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
         queries[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -103,8 +105,8 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
         queries[7] = IQuadHook.previewDepositSingleFlexible.selector;
         queries[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         queries[9] = IDetfReserveQuote.previewSynthetic.selector;
-        queries[10] = IStandardizedYield.deposit.selector;
-        queries[11] = IStandardizedYield.redeem.selector;
+        queries[10] = IStandardExchangeIn.previewExchangeIn.selector;
+        queries[11] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
         queries[12] = IStandardizedYield.exchangeRate.selector;
         queries[13] = IStandardizedYield.yieldToken.selector;
         queries[14] = IStandardizedYield.assetInfo.selector;
@@ -119,8 +121,16 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
         queries[23] = IStandardizedYield.rewardIndexesCurrent.selector;
         queries[24] = IStandardizedYield.rewardIndexesStored.selector;
         queries[25] = IStandardizedYield.claimRewards.selector;
-        queries[26] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
         _assertInstalledHookFacet(queries);
+        bytes4[] memory exchange = new bytes4[](7);
+        exchange[0] = IStandardExchangeIn.exchangeIn.selector;
+        exchange[1] = IStandardExchangeOut.previewExchangeOut.selector;
+        exchange[2] = IStandardExchangeOut.exchangeOut.selector;
+        exchange[3] = IUniswapV4SeBufferHook.ownerSwapExactIn.selector;
+        exchange[4] = IUniswapV4SeBufferHook.ownerSwapExactOut.selector;
+        exchange[5] = IStandardizedYield.deposit.selector;
+        exchange[6] = IStandardizedYield.redeem.selector;
+        _assertInstalledHookFacet(exchange);
         assertEq(IDiamondLoupe(reserveHook).facetAddress(IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector), address(0), "retired LP claim join projection absent");
         assertEq(IDiamondLoupe(reserveHook).facetAddress(IUniswapV4SeBufferHookClaimExitQuote.previewClaimExit.selector), address(0), "retired LP claim exit projection absent");
     }
@@ -129,8 +139,12 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
         address facet_ = IDiamondLoupe(reserveHook).facetAddress(expected_[0]);
         assertTrue(facet_ != address(0), "hook facet installed");
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(IFacet(facet_), expected_, IFacet(facet_).facetFuncs()));
+        assertEq(IFacet(facet_).facetFuncs().length, expected_.length, "exact hook role count");
         for (uint256 i_; i_ < expected_.length; ++i_) {
             assertEq(IDiamondLoupe(reserveHook).facetAddress(expected_[i_]), facet_, "hook selector routed exactly");
+            for (uint256 j_ = i_ + 1; j_ < expected_.length; ++j_) {
+                assertTrue(expected_[i_] != expected_[j_], "unique hook role control");
+            }
         }
     }
 }

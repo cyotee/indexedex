@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -25,8 +26,10 @@ interface IUniswapV4StandardExchangePositionImport {
     ) external returns (uint256 sharesOut);
 }
 
-contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
+contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase, StandardExchangeInExecutionBase {
     using Address for address;
+
+    function unlockCallback(bytes calldata data) external returns (bytes memory) { return _unlockCallback(data); }
 
     address immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE;
 
@@ -34,7 +37,13 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
         UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE = executionDelegate;
     }
 
-    function exchangeIn(
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256)
+    {
+        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+    }
+
+    function _exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -42,7 +51,7 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal override nonReentrant returns (uint256 amountOut) {
         _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
 

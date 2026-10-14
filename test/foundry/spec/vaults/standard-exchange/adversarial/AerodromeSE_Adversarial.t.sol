@@ -468,7 +468,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         );
         assertTrue(
             _facetFuncsContains(
-                IFacet(address(aerodromeStandardExchangeInFacet)).facetFuncs(),
+                IFacet(address(aerodromeStandardExchangeOutQueryFacet)).facetFuncs(),
                 IStandardExchangeIn.previewExchangeIn.selector
             ),
             "J1 previewExchangeIn"
