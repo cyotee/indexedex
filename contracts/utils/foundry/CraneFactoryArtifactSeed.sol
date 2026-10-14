@@ -25,14 +25,16 @@ import {StablePoolFactory} from "@crane/contracts/external/balancer/v3/pool-stab
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {HubInstance} from "@crane/contracts/protocols/lending/aave/v4/hub/instances/HubInstance.sol";
 import {SpokeInstance} from "@crane/contracts/protocols/lending/aave/v4/spoke/instances/SpokeInstance.sol";
-import {LiquidationLogic} from "@crane/contracts/protocols/lending/aave/v4/spoke/libraries/LiquidationLogic.sol";
+import {LiquidationLogic} from "@crane/contracts/protocols/lending/aave/v4/spoke/libraries/LiquidationLogicAaveV4.sol";
 import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
 import {WeightedPoolFactory} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
 
 /**
  * @title CraneFactoryArtifactSeed
  * @notice Src compile root for Crane implementations IndexedEx FactoryServices deploy.
- *         `LiquidationLogic` is named directly. Compiling `SpokeInstance` does not emit its artifact.
+ *         V3 and V4 liquidation libraries use distinct filenames so their artifacts
+ *         cannot overwrite each other. Spoke linking loads the V4 artifact by its
+ *         source-qualified id.
  * @dev Do not import this file from FactoryServices, TestBases, or scripts.
  */
 library CraneFactoryArtifactSeed {
