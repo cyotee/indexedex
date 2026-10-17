@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Errors} from "@crane/contracts/interfaces/IERC20Errors.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
@@ -144,7 +145,7 @@ contract UniswapV3FullSpreadVaultHeldRedeem_Test is TestBase_UniswapV3FullSpread
         uint256 holderBefore = vault.balanceOf(holder);
         uint256 vaultBefore = vault.balanceOf(address(vault));
         vm.prank(holder);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, holder, 0, 1));
         IStandardizedYield(address(vault)).redeem(recipient, 1, address(token0), 0, false);
         assertEq(vault.balanceOf(holder), holderBefore);
         assertEq(vault.balanceOf(address(vault)), vaultBefore);

@@ -1,8 +1,9 @@
 # Remediation PRD — no self-call for share redemption
 
-- **Status:** DRAFT
+- **Status:** DRAFT for V3 FullSpread. The legacy V4 repair in this file is WITHDRAWN, 2026-10-15.
 - **Date:** 2026-10-11
 - **Owner decision:** 2026-10-11. Apply this repair to the Uniswap V3 FullSpread vault. The ban on calls to self is project law, not a local preference.
+- **Later owner ruling, 2026-10-15:** `contracts/protocols/dexes/uniswap/v4` is being deleted. Every legacy V4 step, test, and "do not delete this package" sentence in this file is withdrawn. Do not implement them. V3 FullSpread law remains. Hookless, Pons, and Wings copies that this file says to leave alone stay left alone.
 - **ID:** RC-01
 - **Review target:** Current IndexedEx working tree, inspected 2026-10-11.
 - **This file is one concern.** It does not authorize Camelot maximums, Rocket sleeve accounting, V3 exact-output fill tests, DETF hook-zero rollback, selector evidence, or deletion of the legacy V4 package.
@@ -106,7 +107,7 @@ If the search finds another yield redemption that calls `address(this)`, it is i
 - Do not duplicate `_executeZapOutExactIn` inside the yield facet.
 - Do not treat `delegatecall` to a different execution-delegate contract as a call to self. Do not use that form on V3 FullSpread or legacy V4 yield redemption, because those facets already inherit the function.
 - Do not weaken `requirePretransferCaller` on a real external pretransfer.
-- Do not delete `contracts/protocols/dexes/uniswap/v4`.
+- The sentence that forbade deleting `contracts/protocols/dexes/uniswap/v4` is withdrawn. The owner is deleting that package.
 - Do not restore `contracts/protocols/dexes/uniswap/v3`.
 - Do not edit hookless, Pons-family, Wings, ERC-4626, or constant-product yield settlement except to cite that they already pass an explicit holder or do not call `address(this)`. If the search shows one of them calls `address(this)` from yield redemption, that call is in scope and the rest of that family is not.
 - Do not rewrite `NativeStandardYieldTarget`'s ordinary `delegatecall` for families this file says to leave alone. Do not copy that `delegatecall` into V3 FullSpread or legacy V4.

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 
@@ -57,6 +58,9 @@ contract RocketPoolRETHStandardExchangeOutTarget is
         // asset → SE mint exact-out
         if (_isSeShare(out_)) {
             if (!_isAsset(in_)) revert InvalidRoute(in_, out_);
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             // The unused part of this bounded payment is refunded, never existing backing.
             uint256 totalBefore = _reserveBeforePretransfer(in_, credit);
@@ -79,6 +83,9 @@ contract RocketPoolRETHStandardExchangeOutTarget is
         if (_isAsset(in_) && _isAsset(out_)) {
             amountIn = _quoteExactOut(in_, out_, amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
             uint256 produced = _execAssetToAsset(in_, actualIn, out_, recipient);

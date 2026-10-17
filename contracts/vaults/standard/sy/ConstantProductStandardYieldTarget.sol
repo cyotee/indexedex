@@ -8,7 +8,7 @@ import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultRepo.sol";
 import {NativeStandardYieldDiscoveryTarget, NativeStandardYieldValidation} from "./NativeStandardYieldDiscoveryTarget.sol";
 import {NativeStandardYieldPreviewTarget, NativeStandardYieldPreviewCallsTarget} from "./NativeStandardYieldPreviewTarget.sol";
-import {NativeStandardYieldExecutionTarget} from "./NativeStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldExecutionTarget} from "./NativeStandardYieldTarget.sol";
 
 /// @notice Native SY metadata for existing Uni V2, Camelot V2 and Aerodrome LP-backed SE shares.
 /// @dev Accounting remains in actual LP units. Existing compound operations realize any

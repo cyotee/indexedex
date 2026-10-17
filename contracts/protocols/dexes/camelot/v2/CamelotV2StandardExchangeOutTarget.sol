@@ -6,6 +6,7 @@ import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/
 import {ICamelotFactory} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotFactory.sol";
 import {ICamelotV2Router} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotV2Router.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
@@ -408,6 +409,9 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             // Pull tokenIn used. Do not overwrite used with swap amountOut.
             uint256 used = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
@@ -510,6 +514,9 @@ contract CamelotV2StandardExchangeOutTarget is
             // NOTE: _secureTokenTransfer returns balanceOf(this), which may exceed amountIn
             // when pretransferred with surplus. Use the computed amountIn for the withdrawal
             // and refund any excess to the caller.
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             _secureTokenTransfer(
                 // IERC20 tokenIn,
@@ -593,6 +600,9 @@ contract CamelotV2StandardExchangeOutTarget is
             // Honor pretransferred: false always pulls. Do not credit lastTotalAssets exact-gap.
             // D15: true-flag credit is `min(unbooked, maxAmountIn)`; refund only `credit - used`
             // before the LP book absorbs the balance.
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 lpCredit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             _refundExactOutCredit(tokenIn, lpCredit, amountIn, pretransferred);
@@ -660,6 +670,9 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 shareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             // Secure the burn of the underlying pool token.
             _secureSelfBurn(
@@ -763,6 +776,9 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 zapShareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             // Secure the burn of the underlying pool token
             _secureSelfBurn(msg.sender, amountIn, pretransferred);

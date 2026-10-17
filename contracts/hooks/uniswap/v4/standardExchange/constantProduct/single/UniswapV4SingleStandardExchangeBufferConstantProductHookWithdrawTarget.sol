@@ -4,7 +4,7 @@ import {UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawalLib as
 import {NativeStandardYieldDiscoveryTarget} from "contracts/vaults/standard/sy/NativeStandardYieldDiscoveryTarget.sol";
 import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
 
-import {NativeStandardYieldExecutionTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldExecutionTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";

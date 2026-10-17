@@ -52,7 +52,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookExchangeCore is Unis
     using SafeERC20 for IERC20;
 
 
-    /// @dev Exact-in credits the requested amount and refunds nothing. `pretransferred=true`
+    /// @dev The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall. `pretransferred=true`
     ///      is for integrating contracts only and reverts `EOAPretransferNotAllowed` for a
     ///      caller with no bytecode. Resting unbooked face is D12 credit, not this call's refund.
     function _entryExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) internal returns (uint256 amountOut) {

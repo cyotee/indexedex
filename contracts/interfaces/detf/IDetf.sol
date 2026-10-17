@@ -166,7 +166,7 @@ interface IDetf {
      * @dev Allowed only when `isMintingAllowed()` is true (live + Policy/Open synthetic gate).
      * @param rateAssetAmount Amount of rateAsset to deposit
      * @param recipient Address to receive DETF tokens
-     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic to avoid exposing resting credit; staged use is at integrator risk with no ownership or timing guarantee. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-input processes exactly `rateAssetAmount` when unbooked available covers it, leaves excess uncredited, and refunds nothing.
+     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic to avoid exposing resting credit; staged use is at integrator risk with no ownership or timing guarantee. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall.
      * @return detfMinted Amount of DETF minted to recipient
      */
     function mintWithRateAsset(uint256 rateAssetAmount, address recipient, bool pretransferred)
@@ -235,7 +235,7 @@ interface IDetf {
      *      Donor recorded on `ReserveDonated` is this caller's `msg.sender`.
      * @param token Family mint/bond capital, DETF, or `lpToken`.
      * @param amount Amount to donate (observed inbound / unbooked surplus is booked, not this claim alone).
-     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic; staged use is at integrator risk. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-input processes exactly the requested amount when at least that much unbooked input exists, leaves excess uncredited to this operation and refunds nothing; booked holder backing is never pretransfer credit.
+     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic; staged use is at integrator risk. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall. Booked holder backing is never pretransfer credit.
      */
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 

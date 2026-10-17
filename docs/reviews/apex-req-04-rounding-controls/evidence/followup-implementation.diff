@@ -1,0 +1,181 @@
+--- a/contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol
+@@ -127,6 +127,8 @@
+     {
+         // Split into helpers so the no-via-ir stack stays under the 16-slot limit (D62/F9).
+         uint256 sale = _saleAmount(input, amountIn);
++        // A zero-sized swap cannot fund the other leg; SE transitions may reject zero deposits.
++        if (sale == 0) return (amountIn, 0);
+         uint256 claimIn = ClaimLib.projectedBufferClaimIn(input.se, input.state, sale);
+         uint256 budget = _otherFromClaim(input, output, claimIn);
+         ClaimLib.OutputQuote memory quote;
+--- a/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore.sol
+@@ -467,7 +467,8 @@
+             return shares;
+         }
+         uint256 protocolShares = _maybeMintProtocolFee();
+-        shares = _quoteSingleJoinExactIn(tokenIn, amountIn, _totalSupply());
++        // A fee-rounded zero contribution is a zero-amount rejection, not a broken book.
++        shares = _quoteSingleJoinExactInPreview(tokenIn, amountIn, _totalSupply());
+         if (shares == 0) revert ZeroAmount();
+         if (shares < sharesMin) revert Slippage();
+         uint256[4] memory used;
+--- a/contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore.sol
+@@ -301,7 +301,8 @@
+         if (_totalSupply() == 0 || !Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+         uint256 protocolShares = _maybeMintProtocolFee();
+         (uint8 idx, bool seUnit) = _indexOfPairOrSe(tokenIn);
+-        shares = _quoteSingleJoinExactIn(tokenIn, amountIn, _totalSupply());
++        // Detect zero invariant growth before strict math can underflow.
++        shares = _quoteSingleJoinExactInPreview(tokenIn, amountIn, _totalSupply());
+         if (shares == 0) revert ZeroAmount();
+         if (shares < sharesMin) revert Slippage();
+         if (seUnit) {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior.sol
+@@ -256,7 +256,7 @@
+     function test_row_partialConsumption_bookedNotRefunded() public virtual {
+         _seed();
+         if (!fx0.hasPartialCase()) {
+-            _roundingToZeroControl();
++            _oneUnitDepositControl();
+             return;
+         }
+         _partialConsumptionRow();
+@@ -285,6 +285,28 @@
+         } else {
+             assertGe(fx0.seBooked(), bookedAfter, "sleeve-only family: booked credit is retained, never refunded");
+         }
++    }
++
++    /// @dev Default fixtures round one unit to zero. Positive fixtures override this explicitly.
++    function _oneUnitDepositControl() internal virtual {
++        _roundingToZeroControl();
++    }
++
++    function _positiveOneUnitDepositControl(uint256 expectedShares) internal {
++        uint256 userFace = IERC20(face0).balanceOf(user);
++        uint256 userShares = IERC20(hook).balanceOf(user);
++        uint256 hookFace = _hookFace(face0);
++        uint256 inventoryBefore = _hookSeShares(0);
++        uint256 expectedInventory = IStandardExchangeIn(seUT0).previewExchangeIn(IERC20(face0), 1, IERC20(seUT0));
++        assertGt(expectedShares, 0, "positive one-unit fixture");
++        assertEq(orbital.previewDepositSingle(face0, 1), expectedShares, "one-unit preview preserves positive shares");
++        vm.prank(user);
++        uint256 minted = orbital.depositSingle(face0, 1, user, expectedShares, block.timestamp + 1 hours, bytes(""));
++        assertEq(minted, expectedShares, "one-unit execution matches preview");
++        assertEq(IERC20(hook).balanceOf(user) - userShares, expectedShares, "recipient receives quoted shares");
++        assertEq(userFace - IERC20(face0).balanceOf(user), 1, "caller pays one face unit");
++        assertEq(_hookSeShares(0) - inventoryBefore, expectedInventory, "input becomes SE inventory");
++        assertEq(_hookFace(face0), hookFace, "no new face residual");
+     }
+ 
+     /// @dev A zero-rounded deposit previews zero and rejects execution without taking input.
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_RebasingAwareERC4626.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_RebasingAwareERC4626.t.sol
+@@ -15,6 +15,11 @@
+ contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_RebasingAwareERC4626 is UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior {
+     address internal sharedPkg;
+ 
++    function _oneUnitDepositControl() internal override {
++        // The custody SE preserves one face unit; Orbital's single-sided plan issues one LP unit.
++        _positiveOneUnitDepositControl(1);
++    }
++
+     function _newFixture() internal override returns (SeMatrixFixture) {
+         SeMatrix_RebasingAwareFixture f = new SeMatrix_RebasingAwareFixture(_ctx(), sharedPkg);
+         sharedPkg = f.pkg();
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBehavior.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBehavior.sol
+@@ -285,9 +285,8 @@
+         assertFalse(ok, "zero-share deposit must revert");
+         assertTrue(ret.length >= 4, "dust rejection has a selector");
+         bytes4 sel = bytes4(ret);
+-        bool named = sel == bytes4(keccak256("InsufficientTokenOut()")) || sel == bytes4(keccak256("ZeroAmount()"));
+         emit log_named_bytes32("dust execution selector", bytes32(sel));
+-        assertTrue(named, "dust rejection is ZeroAmount or InsufficientTokenOut");
++        assertEq(sel, bytes4(keccak256("ZeroAmount()")), "zero-share deposit rejects with ZeroAmount");
+         assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
+         assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
+         assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior.sol
+@@ -292,7 +292,7 @@
+     function test_row_partialConsumption_bookedNotRefunded() public virtual {
+         _seed();
+         if (!fx.hasPartialCase()) {
+-            _roundingToZeroControl();
++            _oneUnitDepositControl();
+             return;
+         }
+         uint256 allow = _f(10);
+@@ -315,6 +315,28 @@
+         } else {
+             assertGe(fx.seBooked(), bookedAfter, "sleeve-only family: booked credit is retained, never refunded");
+         }
++    }
++
++    /// @dev Default fixtures round one unit to zero. Positive fixtures override this explicitly.
++    function _oneUnitDepositControl() internal virtual {
++        _roundingToZeroControl();
++    }
++
++    function _positiveOneUnitDepositControl(uint256 expectedShares) internal {
++        uint256 userFace = IERC20(face).balanceOf(user);
++        uint256 userShares = IERC20(hook).balanceOf(user);
++        uint256 hookFace = IERC20(face).balanceOf(hook);
++        uint256 inventoryBefore = _hookSeShares();
++        uint256 expectedInventory = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), 1, IERC20(seUT));
++        assertGt(expectedShares, 0, "positive one-unit fixture");
++        assertEq(quad.previewDepositSingle(face, 1), expectedShares, "one-unit preview preserves positive shares");
++        vm.prank(user);
++        uint256 minted = quad.depositSingle(face, 1, user, expectedShares, block.timestamp + 1 hours);
++        assertEq(minted, expectedShares, "one-unit execution matches preview");
++        assertEq(IERC20(hook).balanceOf(user) - userShares, expectedShares, "recipient receives quoted shares");
++        assertEq(userFace - IERC20(face).balanceOf(user), 1, "caller pays one face unit");
++        assertEq(_hookSeShares() - inventoryBefore, expectedInventory, "input becomes SE inventory");
++        assertEq(IERC20(face).balanceOf(hook), hookFace, "no new face residual");
+     }
+ 
+     /// @dev A zero-rounded deposit previews zero and rejects execution without taking input.
+@@ -337,9 +359,8 @@
+         assertFalse(ok, "zero-share deposit must revert");
+         assertTrue(ret.length >= 4, "dust rejection has a selector");
+         bytes4 sel = bytes4(ret);
+-        bool named = sel == bytes4(keccak256("InsufficientTokenOut()")) || sel == bytes4(keccak256("ZeroAmount()"));
+         emit log_named_bytes32("dust execution selector", bytes32(sel));
+-        assertTrue(named, "dust rejection is ZeroAmount or InsufficientTokenOut");
++        assertEq(sel, bytes4(keccak256("ZeroAmount()")), "zero-share deposit rejects with ZeroAmount");
+         assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
+         assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
+         assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6.t.sol
+@@ -11,6 +11,11 @@
+ ///         TestBase only varies base-owned tokens the rows never bind (open item 1 PRD M14 / A10,
+ ///         2026-09-23 record). Same ten row controls as the 18-decimal row.
+ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6 is UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior {
++    function _oneUnitDepositControl() internal override {
++        // One 6-decimal face unit is 1e12 WAD units, enough to mint LP.
++        _positiveOneUnitDepositControl(240384615373);
++    }
++
+     function _newFixture() internal override returns (SeMatrixFixture) {
+         return new SeMatrix_SimpleYieldERC4626ControlFixture(_ctx(), erc4626StandardExchangeDFPkg, 6);
+     }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9.t.sol
+@@ -11,6 +11,11 @@
+ ///         TestBase only varies base-owned tokens the rows never bind (open item 1 PRD M14 / A10,
+ ///         2026-09-23 record). Same ten row controls as the 18-decimal row.
+ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9 is UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior {
++    function _oneUnitDepositControl() internal override {
++        // One 9-decimal face unit is 1e9 WAD units, enough to mint LP.
++        _positiveOneUnitDepositControl(240384613);
++    }
++
+     function _newFixture() internal override returns (SeMatrixFixture) {
+         return new SeMatrix_SimpleYieldERC4626ControlFixture(_ctx(), erc4626StandardExchangeDFPkg, 9);
+     }

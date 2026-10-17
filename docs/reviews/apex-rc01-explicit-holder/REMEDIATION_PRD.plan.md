@@ -1,7 +1,7 @@
 # Implementation plan — RC-01 explicit holder, no call to self
 
 - **Date:** 2026-10-11
-- **Status:** ready for a separately authorized implementation session
+- **Status:** V3 FullSpread steps remain historical. Every legacy V4 step in this plan is WITHDRAWN, 2026-10-15. Do not execute those steps. The owner is deleting `contracts/protocols/dexes/uniswap/v4`.
 - **Controlling PRD:** [REMEDIATION_PRD.md](./REMEDIATION_PRD.md), including the 2026-10-11 owner decision. Where this plan and an earlier review sentence conflict, the PRD controls.
 - **This plan does not authorize code changes.** A later session must be explicitly asked to implement it. Writing this plan is not that request.
 - **Council input:** Astra, Grok, MiniMax M3, and Kimi K3 each reported no blocking question and wrote a plan draft under `reviewers/`. This file is the coordinator consolidation. It is not a claim that the four drafts were identical.

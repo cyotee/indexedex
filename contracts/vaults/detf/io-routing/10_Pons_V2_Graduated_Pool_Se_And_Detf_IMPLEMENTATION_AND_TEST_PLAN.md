@@ -1,3 +1,5 @@
+> **Legacy SE retirement (2026-10-15):** references below to `UniswapV4StandardExchangeDFPkg` or `contracts/protocols/dexes/uniswap/v4/` describe a deleted family and do not authorize restoring it. Supported V4 SE consumers use the Full Spread Hookless, Full Spread Pons, or Upper/Lower Wings families under `contracts/vaults/standard/exchange/protocols/uniswap/v4/`. Other product requirements in this document remain in force. See `docs/reviews/legacy-v4-removal/EXECUTION_REPORT.md`.
+
 # Stage 10 — pons v2 graduated V4 pool as Uni V4 SE + DETF bound leg (R20)
 
 > **Funded-design supersession (2026-09-07):** This document records earlier requirements or implementation evidence. For the authorized funded DETF refactor, [alignment PRD D32–D55 / §24](../DETF_ALIGNMENT_PRD.md) and the [funded implementation plan](../DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) take precedence over conflicting Open-mode, LP-claim, rebasing, reward, epoch, decimal, cap and public-route instructions below. Unrelated host behavior remains applicable. Historical completion marks do not certify the funded refactor.

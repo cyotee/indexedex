@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeWeightedBufferHookInExecutionBase} from "./UniswapV4StandardExchangeWeightedBufferHookInExecutionBase.sol";
-import {NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {UniswapV4StandardExchangeWeightedBufferHookRepo as Repo} from "./UniswapV4StandardExchangeWeightedBufferHookRepo.sol";
 import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 

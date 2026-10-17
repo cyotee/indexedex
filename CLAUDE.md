@@ -21,6 +21,8 @@ Lean, always-on instructions for agents in this monorepo. **Full product law** (
 
 Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as current roadmap.
 
+**Legacy Uni V4 Standard Exchange retired (owner ruling 2026-10-15):** the family formerly under `contracts/protocols/dexes/uniswap/v4/` and its dedicated `test/foundry/spec/protocol/dexes/uniswap/v4/` suites are deleted. Its architecture, ERC5115 remediation, and interface-split plans are historical and must not be implemented or used to restore this family. Supported Uni V4 SE families remain under `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/{hookless,ponsFamilyV2Hook}/` and `upperLowerWings/`. Crane's `lib/crane/contracts/protocols/dexes/uniswap/v4/`, buffer hooks, and DETFs remain supported. See the [removal report](docs/reviews/legacy-v4-removal/EXECUTION_REPORT.md).
+
 ---
 
 ## Non-negotiables (always apply)

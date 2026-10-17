@@ -11,6 +11,11 @@ import {UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior} 
 ///         TestBase only varies base-owned tokens the rows never bind (open item 1 PRD M14 / A10,
 ///         2026-09-23 record). Same ten row controls as the 18-decimal row.
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6 is UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior {
+    function _oneUnitDepositControl() internal override {
+        // One 6-decimal face unit is 1e12 WAD units, enough to mint LP.
+        _positiveOneUnitDepositControl(240384615373);
+    }
+
     function _newFixture() internal override returns (SeMatrixFixture) {
         return new SeMatrix_SimpleYieldERC4626ControlFixture(_ctx(), erc4626StandardExchangeDFPkg, 6);
     }

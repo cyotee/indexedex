@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {NativeStandardYieldTarget as Errors} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
-import {NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldExecutionTarget.sol";
+import {NativeStandardYieldErrors as Errors} from "contracts/vaults/standard/sy/NativeStandardYieldErrors.sol";
+import {NativeStandardYieldExecutionTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {UniswapV3FullSpreadStandardExchangeVaultInTarget} from "./UniswapV3FullSpreadStandardExchangeVaultInTarget.sol";
 
 abstract contract UniswapV3FullSpreadStandardYieldExecutionTarget is UniswapV3FullSpreadStandardExchangeVaultInTarget, NativeStandardYieldExecutionTarget {

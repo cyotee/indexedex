@@ -1,0 +1,1 @@
+PASS: IN, ERC-5115 and OUT multi-query artifact ABIs expose exactly their assigned product methods plus IFacet metadata.

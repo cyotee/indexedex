@@ -1,0 +1,69 @@
+Deleted types and shim imports in repository Solidity
+$ rg -n --glob '*.sol' 'UniswapV4StandardExchange(Common|InBase|OutBase|InExecutionDelegate|OutExecutionDelegate|OutTarget)|NativeStandardYieldExecutionTarget\.sol' .
+exit=0
+./implementation-artifacts/detf-funded-staking/hermetic-followups-before-validation-remediation/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol:905:import {UniswapV4StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol";
+./implementation-artifacts/detf-funded-staking/hermetic-followups-before-validation-remediation/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol:911:import {UniswapV4StandardExchangeOutExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol";
+
+
+Removed legacy helpers in the family
+$ rg -n '_delegateExecuteZap|_deployExcessImported|_increaseImportedPosition' contracts/protocols/dexes/uniswap/v4
+exit=0
+contracts/protocols/dexes/uniswap/v4/legacy-v4-standard-exchange-architecture-redesign.md:75:   - [ ] Remove normal-operation imported-position growth, approval setup, and maintenance branches, including `_deployExcessImported`, `_increaseImportedPositionCommon`, and the forwarding `_increaseImportedPosition` helper. Preserve the import's required decrease/collect operation.
+
+
+Self-call/delegation candidates in family targets and libraries
+$ rg -n --glob '*.sol' 'delegatecall|functionDelegateCall|address\(this\)\)\.|\bthis\.' contracts/protocols/dexes/uniswap/v4/internal contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCallbackTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecuteTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol
+exit=1
+(no matches)
+
+
+Disable guard call sites
+$ rg -n _requireNotDisabled contracts/protocols/dexes/uniswap/v4
+exit=0
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecuteTarget.sol:32:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiTarget.sol:27:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol:34:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol:52:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol:23:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol:32:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol:31:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveTarget.sol:81:        Config._requireNotDisabled();
+contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeConfig.sol:26:    function _requireNotDisabled() internal view {
+
+
+Quote helpers retained and their consumers
+$ rg -n --glob '*.sol' '_quoteZapOutAmount|_quoteInitialShares|_quoteSharesOut|_quoteSharesIn|_quotedWithdrawalShares|_withdrawalAssets' .
+exit=0
+./contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutTarget.sol:115:            uint256 quotedAmountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
+./contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutTarget.sol:134:    function _quoteZapOutAmount(IERC20 tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:491:    function _quoteInitialShares(uint256 amount0, uint256 amount1) internal view returns (uint256) {
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:534:    function _quoteSharesOut(uint256 amount0Added, uint256 amount1Added, uint256 totalSharesBefore)
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:543:    function _quoteSharesIn(uint256 amount0Out, uint256 amount1Out, uint256 totalShares)
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:615:        return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:618:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:694:            uint256 amountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:703:        return _quoteZapOutAmount(tokenOut, high, totalShares) >= desiredAmountOut ? high : 0;
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:706:    function _quotedWithdrawalShares(address tokenOut, uint256 amountOut, uint256 shareBudget)
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:715:                _withdrawalAssets(tokenOut, shareBudget) >= amountOut
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:716:                    && _withdrawalAssets(tokenOut, shareBudget - 1) < amountOut
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol:724:    function _withdrawalAssets(address tokenOut, uint256 shares) internal view returns (uint256) {
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangePoolOps.sol:575:            sharesBurned = Accounting._quotedWithdrawalShares(tokenOut, minAmountOut, maxSharesToBurn);
+./contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangePoolOps.sol:598:        sharesBurned = Accounting._quotedWithdrawalShares(tokenOut, minAmountOut, maxSharesToBurn);
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol:653:    function _quoteInitialShares(uint256 amount0, uint256 amount1) internal view returns (uint256) {
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol:182:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol:209:        return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportTarget.sol:213:        sharesOut = _quoteInitialShares(amount0 + p.owed0 + fee0, amount1 + p.owed1 + fee1);
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol:91:        uint256 above = _quoteZapOutAmount(tokenOut, high, totalShares);
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol:104:            uint256 amountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
+./contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol:125:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookOutBase.sol:79:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./implementation-artifacts/detf-funded-staking/user-failure-remediation/before/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol:71:            uint256 amountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
+./implementation-artifacts/detf-funded-staking/user-failure-remediation/before/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol:88:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookInBase.sol:138:        return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookInBase.sol:141:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookInBase.sol:172:            amountOut = _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultOutBase.sol:79:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultInBase.sol:138:        return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultInBase.sol:141:    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+./contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVaultInBase.sol:172:            amountOut = _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+

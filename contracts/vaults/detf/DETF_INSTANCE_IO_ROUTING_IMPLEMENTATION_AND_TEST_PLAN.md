@@ -1,3 +1,5 @@
+> **Legacy SE retirement (2026-10-15):** references below to `UniswapV4StandardExchangeDFPkg` or `contracts/protocols/dexes/uniswap/v4/` describe a deleted family and do not authorize restoring it. Supported V4 SE consumers use the Full Spread Hookless, Full Spread Pons, or Upper/Lower Wings families under `contracts/vaults/standard/exchange/protocols/uniswap/v4/`. Other product requirements in this document remain in force. See `docs/reviews/legacy-v4-removal/EXECUTION_REPORT.md`.
+
 # Implementation & Test Plan: DETF instance I/O routing + Uni V4 hook ABI
 
 > **Current V4 close cleanup:** The owner explicitly approved removing `closeRouteMode` / `closeRoutes`, their getters and obsolete storage. New V4 deployments have mint, burn, bond and donation configuration only. Purchased bonds pay funded sDETF through principal/reward/combined claims; standard staking/exchange/SY exits remain. Historical close-configuration instructions below are superseded by the [funded plan](DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) and its recorded owner approval. Balancer DETF exclusion (D60) and Slipstream deferral (D66) remain in force.

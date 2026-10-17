@@ -1,3 +1,5 @@
+> **Scope update (2026-10-15):** the legacy Uni V4 SE family under `contracts/protocols/dexes/uniswap/v4/` and its dedicated tests were deleted by owner instruction. References to that family below are historical, not outstanding work. Aave, Balancer, Full Spread, Upper/Lower Wings, and other surviving product scopes are unaffected. See `docs/reviews/legacy-v4-removal/EXECUTION_REPORT.md`.
+
 # Work Package Backlog — Stage 1 Coverage Audit
 
 | Field | Value |

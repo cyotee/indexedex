@@ -42,7 +42,9 @@ Coordinator re-read supports the council on these points. Runtime remains unveri
 - **RC-06 helper body:** `_retainSubSharePairResidual` books only after `previewExchangeIn` of that leftover returns zero, writes the full local balance, and does not catch the preview (`UniswapV4DetfCommon.sol:625-637`).
 - **RC-07:** recorded ignore. Not a repair, and not evidence that replacement packages were size-checked.
 
-## REQ-C01 — Legacy V4 internal-balance redemption still re-enters `exchangeIn`
+## REQ-C01 — WITHDRAWN. Legacy V4 internal-balance redemption still re-enters `exchangeIn`
+
+Owner ruling, 2026-10-15: `contracts/protocols/dexes/uniswap/v4` is being deleted. Do not implement this item. The historical text below is not a current requirement.
 
 - **Severity:** Medium. Astra cross-review retains Low because the shared entry now rejects a code-less internal-balance caller before settlement, and no unauthorized payout was established. That dissent is unresolved. The missing check is not the dispute. The forbidden call shape is.
 - **File and line:** `contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol:17-25`. Acceptance branch: `contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol:1302-1305`. Ordinary override also stages caller shares and sets the internal route at `OutMultiQueryTarget.sol:27-34`.
@@ -101,13 +103,13 @@ Coordinator re-read supports the council on these points. Runtime remains unveri
 
 - **Severity:** Low
 - **File and line:** `contracts/vaults/standard/exchange/protocols/uniswap/README.md:3` and `:56`.
-- **Intended behavior:** After RC-03 and RC-01, the supported V3 vault is V3 FullSpread. Legacy V3 source under `contracts/protocols/dexes/uniswap/v3` is gone. Internal-balance redemption does not use a proxy self-call on the repaired families. Legacy V4 remains, and its remaining self-call is REQ-C01, not a reason to say the deleted V3 tree is preserved.
+- **Intended behavior:** After RC-03 and RC-01, the supported V3 vault is V3 FullSpread. Legacy V3 source under `contracts/protocols/dexes/uniswap/v3` is gone. Internal-balance redemption does not use a proxy self-call on the repaired families. The owner is deleting `contracts/protocols/dexes/uniswap/v4`. That deletion is not a reason to say the deleted V3 tree is preserved, and it is not REQ-C01.
 - **Broken requirement or invariant:** The README says the preserved V3 and V4 implementations remain unchanged and remain vulnerable, and that internal-balance redemption uses the fixed proxy self-call. The V3 package path is absent. The shared adapter no longer uses that self-call. The prose can send a later editor to a deleted tree or to a withdrawn mechanism.
 - **Acceptance criteria:**
   - The README states that legacy V3 source was removed and that V3 FullSpread is the supported V3 vault.
   - It does not describe the current FullSpread internal-balance path as an external self-call.
-  - Any warning about legacy V4 is labeled as the retained package, not as the deleted V3 tree.
-- **Non-goals:** Do not recreate `contracts/protocols/dexes/uniswap/v3`. Do not delete legacy V4 to make the README true. Other documents that may still cite the deleted package were not re-read by the coordinator and are not closed by this item.
+  - Do not describe the deleted V3 tree as retained. A warning that names the legacy V4 package as retained is withdrawn with that package.
+- **Non-goals:** Do not recreate `contracts/protocols/dexes/uniswap/v3`. Do not keep `contracts/protocols/dexes/uniswap/v4` to make an old README sentence true. Other documents that may still cite a deleted package were not re-read by the coordinator and are not closed by this item.
 
 ## REQ-C06 — Exact-output credit shortfall still precedes the named caller error
 
@@ -137,4 +139,4 @@ Coordinator re-read supports the council on these points. Runtime remains unveri
 
 ## Non-goals for the whole draft
 
-No code, test, config, or deployment changes in this review session. No live-instance upgrade. No deletion of legacy V4. No restoration of legacy V3. No new catch. No EtherFi change. No Camelot, Rocket, or DETF helper rewrite where the later specification already matches the re-read. No repair of `scripts/r12_selector_size_compare.py`. No exploit procedure, proof-of-concept, payload, or attack parameter. Owner approval of a later implementation task is a separate decision.
+No code, test, config, or deployment changes in this review session. No live-instance upgrade. No restoration of legacy V3. No new catch. No EtherFi change. No Camelot, Rocket, or DETF helper rewrite where the later specification already matches the re-read. No repair of `scripts/r12_selector_size_compare.py`. No exploit procedure, proof-of-concept, payload, or attack parameter. Owner approval of a later implementation task is a separate decision.

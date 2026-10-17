@@ -1,0 +1,57 @@
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_MultiPairStandardExchangeBufferPool.t.sol:UniswapV4DualSEBCPHook_SeMatrix_MultiPairStandardExchangeBufferPool
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 5655857)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_AerodromeStandardExchange.t.sol:UniswapV4DualSEBCPHook_SeMatrix_AerodromeStandardExchange
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 2809602)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_CommonBufferMultiVaultWeightedPool.t.sol:UniswapV4DualSEBCPHook_SeMatrix_CommonBufferMultiVaultWeightedPool
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 4365917)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_MorphoBlueStandardExchange.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_MorphoBlueStandardExchange
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 2146254)
+Execution selector: 0x00bf0cb2
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_RebasingAwareERC4626.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_RebasingAwareERC4626
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 1463188)
+Execution selector: 0x00bf0cb2
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 1670439)
+Execution selector: 0x00bf0cb2
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/decimals/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 1670417)
+Execution selector: 0x00bf0cb2
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/decimals/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 1670417)
+Execution selector: 0x00bf0cb2
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_CommonBufferMultiVaultStablePool.t.sol:UniswapV4DualSEBCPHook_SeMatrix_CommonBufferMultiVaultStablePool
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 4201725)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_RebasingAwareERC4626.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_RebasingAwareERC4626
+[FAIL: dust preview rounds to zero shares: 1 != 0] test_row_partialConsumption_bookedNotRefunded() (gas: 1948653)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_StandardExchangeBufferPool.t.sol:UniswapV4DualSEBCPHook_SeMatrix_StandardExchangeBufferPool
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 5876935)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_RebasingAwareERC4626.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_RebasingAwareERC4626
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 2779472)
+Execution selector: 0x4e487b71
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F6
+[FAIL: dust preview rounds to zero shares: 240384615373 != 0] test_row_partialConsumption_bookedNotRefunded() (gas: 2309939)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9
+[FAIL: dust preview rounds to zero shares: 240384613 != 0] test_row_partialConsumption_bookedNotRefunded() (gas: 2304987)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_Permit2Recurrence.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_Permit2Recurrence
+[FAIL: dust rejection is ZeroAmount or InsufficientTokenOut] test_row_partialConsumption_bookedNotRefunded() (gas: 1463210)
+Execution selector: 0x00bf0cb2
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_MixedBufferMultiVaultStablePool.t.sol:UniswapV4DualSEBCPHook_SeMatrix_MixedBufferMultiVaultStablePool
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 4553290)
+
+test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_MixedLegWeightedBufferPool.t.sol:UniswapV4DualSEBCPHook_SeMatrix_MixedLegWeightedBufferPool
+[FAIL: dust preview must succeed] test_row_partialConsumption_bookedNotRefunded() (gas: 6502044)

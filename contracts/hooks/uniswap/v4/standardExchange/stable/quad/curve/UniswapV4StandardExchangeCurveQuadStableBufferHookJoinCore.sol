@@ -441,7 +441,11 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
         view
         returns (uint256 shares)
     {
-        return _entryPreviewJoinSingleAssetExactIn(tokenIn, amountIn);
+        if (!_isLive() || amountIn == 0) return 0;
+        (bool ok,, bool isSeShare) = _tryResolveJoinToken(tokenIn);
+        if (!ok) return 0;
+        if (isSeShare) return _entryPreviewJoinSingleAssetExactIn(tokenIn, amountIn);
+        return _quoteSingleJoinExactInPreview(tokenIn, amountIn, _previewSupplyAfterProtocolMint());
     }
 
     function _joinSingleAssetExactIn(
@@ -463,7 +467,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
             return shares;
         }
         uint256 protocolShares = _maybeMintProtocolFee();
-        shares = _quoteSingleJoinExactIn(tokenIn, amountIn, _totalSupply());
+        // A fee-rounded zero contribution is a zero-amount rejection, not a broken book.
+        shares = _quoteSingleJoinExactInPreview(tokenIn, amountIn, _totalSupply());
+        if (shares == 0) revert ZeroAmount();
         if (shares < sharesMin) revert Slippage();
         uint256[4] memory used;
         used[idx] = amountIn;
@@ -490,6 +496,26 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
         pair[idx] = amountIn;
         uint256[4] memory invIn = _pairToInvPreview(pair);
         shares = Math.singleJoinExactInShares(
+            _invWadAll(),
+            Math.scaleTo(invIn[idx], Repo._layout().invScales[idx]),
+            idx,
+            _amp(),
+            supply,
+            feeWad
+        );
+    }
+    function _quoteSingleJoinExactInPreview(address tokenIn, uint256 amountIn, uint256 supply)
+        internal
+        view
+        returns (uint256 shares)
+    {
+        uint8 idx = _tokenIndex(tokenIn);
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        uint256[4] memory pair;
+        pair[idx] = amountIn;
+        uint256[4] memory invIn = _pairToInvPreview(pair);
+        shares = Math.previewSingleJoinExactInShares(
             _invWadAll(),
             Math.scaleTo(invIn[idx], Repo._layout().invScales[idx]),
             idx,

@@ -1,0 +1,83 @@
+ M .cspell/custom-dictionary.txt
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol
+ M contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol
+ D contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol
+ D contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol
+ D contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveTarget.sol
+ D contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutBase.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecuteTarget.sol
+ D contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryTarget.sol
+ D contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol
+ M contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol
+ M contracts/test/bases/TestBase_FullSpreadG5GuardClosure.sol
+ M contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardYieldExecutionTarget.sol
+ M contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardYieldExecutionTarget.sol
+ M contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyStandardYieldExecutionTarget.sol
+ M contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol
+ D contracts/vaults/standard/sy/NativeStandardYieldExecutionTarget.sol
+ M contracts/vaults/standard/sy/NativeStandardYieldTarget.sol
+ M docs/audits/apex-2026-09-17-evidence/bare-expectrevert.txt
+ M docs/reviews/apex-req-c04-hook-zero/REMEDIATION_PRD.md
+ M docs/reviews/apex-req-c04-hook-zero/REMEDIATION_PRD.plan.md
+ M scripts/apex_bare_expectrevert_scan.sh
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet_IFacet_Test.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeVaultHeldRedeem.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_Decimals.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol
+ M test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Adversarial.t.sol
+ M test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Fuzz.t.sol
+ M test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultSurfaces.t.sol
+?? contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCallbackFacet.sol
+?? contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCallbackTarget.sol
+?? contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldFacet.sol
+?? contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldTarget.sol
+?? contracts/protocols/dexes/uniswap/v4/internal/
+?? contracts/protocols/dexes/uniswap/v4/legacy-v4-standard-exchange-architecture-redesign.md
+?? contracts/vaults/standard/sy/NativeStandardYieldErrors.sol
+?? docs/reviews/apex-remediation-application-2026-10-14/
+?? docs/reviews/apex-req-02-execution-confirmation/
+?? docs/reviews/apex-req-02-residual-preview-internal/
+?? docs/reviews/apex-req-03-custody-negatives/
+?? docs/reviews/apex-req-03-execution-confirmation/
+?? docs/reviews/apex-req-v4-01-internal-settlement/
+?? docs/reviews/legacy-v4-architecture-redesign-prd-review/
+?? docs/reviews/legacy-v4-erc5115-interface/
+?? docs/reviews/legacy-v4-interface-facet-split/
+?? docs/reviews/legacy-v4-removal/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPreview.t.sol
+?? test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeCallbackFacet_IFacet_Test.t.sol
+?? test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Architecture.t.sol
+?? test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_ERC5115.t.sol
+?? test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardYieldFacet_IFacet_Test.t.sol

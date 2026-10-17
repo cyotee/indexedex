@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {stdError} from "forge-std/StdError.sol";
+import {IERC20Errors} from "@crane/contracts/interfaces/IERC20Errors.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
@@ -260,7 +260,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
     }
 
     /// @notice R7.5 (2026-09-23): a non-pretransferred owner burn beyond the caller's own share balance fails
-    ///         at the share ledger (`ERC20Repo._burn` underflows: arithmetic panic) and changes nothing; no
+    ///         at the share ledger (`ERC20Repo._burn` reverts `ERC20InsufficientBalance`) and changes nothing; no
     ///         allowance is involved on this path because the SE burns from `msg.sender` directly.
     function test_O7_ownerBurn_insufficientBalance_revertsAndRollsBack() public {
         _seedLiquidity(100 ether);
@@ -268,7 +268,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         uint256 supply = IERC20(se).totalSupply();
         uint256 uBefore = underlying.balanceOf(user);
         vm.prank(user);
-        vm.expectRevert(stdError.arithmeticError);
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, user, seBal, seBal + 1));
         seIn.exchangeIn(IERC20(se), seBal + 1, IERC20(address(underlying)), 0, user, false, block.timestamp);
         assertEq(IERC20(se).balanceOf(user), seBal, "shares untouched");
         assertEq(IERC20(se).totalSupply(), supply, "supply untouched");

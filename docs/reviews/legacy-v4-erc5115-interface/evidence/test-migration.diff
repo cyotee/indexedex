@@ -1,0 +1,313 @@
+--- /tmp/legacy-v4-erc5115-test-baseline/UniswapV4StandardExchangeInFacet_IFacet_Test.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet_IFacet_Test.t.sol
+@@ -2,7 +2,7 @@
+ pragma solidity ^0.8.0;
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+ import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
+ import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
+@@ -37,11 +37,9 @@
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](5);
++        controlFuncs = new bytes4[](3);
+         controlFuncs[0] = IStandardExchangeIn.exchangeIn.selector;
+-        controlFuncs[1] = IStandardizedYield.deposit.selector;
+-        controlFuncs[2] = IStandardizedYield.redeem.selector;
+-        controlFuncs[3] = IStandardizedYield.rewardIndexesCurrent.selector;
+-        controlFuncs[4] = IStandardizedYield.claimRewards.selector;
++        controlFuncs[1] = IERC5115_StandardizedYield.deposit.selector;
++        controlFuncs[2] = IERC5115_StandardizedYield.redeem.selector;
+     }
+ }
+--- /tmp/legacy-v4-erc5115-test-baseline/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+ import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
+@@ -34,23 +34,17 @@
+     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
+         controlInterfaces = new bytes4[](2);
+         controlInterfaces[0] = type(IStandardExchangeOutMulti).interfaceId;
+-        controlInterfaces[1] = type(IStandardizedYield).interfaceId;
++        controlInterfaces[1] = type(IERC5115_StandardizedYield).interfaceId;
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](13);
++        controlFuncs = new bytes4[](7);
+         controlFuncs[0] = IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector;
+-        controlFuncs[1] = IStandardizedYield.exchangeRate.selector;
+-        controlFuncs[2] = IStandardizedYield.yieldToken.selector;
+-        controlFuncs[3] = IStandardizedYield.assetInfo.selector;
+-        controlFuncs[4] = IStandardizedYield.getTokensIn.selector;
+-        controlFuncs[5] = IStandardizedYield.getTokensOut.selector;
+-        controlFuncs[6] = IStandardizedYield.isValidTokenIn.selector;
+-        controlFuncs[7] = IStandardizedYield.isValidTokenOut.selector;
+-        controlFuncs[8] = IStandardizedYield.previewDeposit.selector;
+-        controlFuncs[9] = IStandardizedYield.previewRedeem.selector;
+-        controlFuncs[10] = IStandardizedYield.getRewardTokens.selector;
+-        controlFuncs[11] = IStandardizedYield.accruedRewards.selector;
+-        controlFuncs[12] = IStandardizedYield.rewardIndexesStored.selector;
++        controlFuncs[1] = IERC5115_StandardizedYield.exchangeRate.selector;
++        controlFuncs[2] = IERC5115_StandardizedYield.getTokensIn.selector;
++        controlFuncs[3] = IERC5115_StandardizedYield.getTokensOut.selector;
++        controlFuncs[4] = IERC5115_StandardizedYield.yieldToken.selector;
++        controlFuncs[5] = IERC5115_StandardizedYield.previewDeposit.selector;
++        controlFuncs[6] = IERC5115_StandardizedYield.previewRedeem.selector;
+     }
+ }
+--- /tmp/legacy-v4-erc5115-test-baseline/UniswapV4StandardExchangeVaultHeldRedeem.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeVaultHeldRedeem.t.sol
+@@ -6,7 +6,7 @@
+ import {Vm} from "forge-std/Vm.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+ import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+ import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+@@ -90,7 +90,7 @@
+         address eoa = makeAddr("v4SyEoa");
+         vm.prank(eoa);
+         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+-        IStandardizedYield(address(vault)).redeem(recipient, 1, address(token0), 0, true);
++        IERC5115_StandardizedYield(address(vault)).redeem(recipient, 1, address(token0), 0, true);
+         assertEq(vault.balanceOf(address(this)), callerBefore);
+         assertEq(vault.balanceOf(address(vault)), vaultBefore);
+         assertEq(token0.balanceOf(recipient), 0);
+@@ -104,9 +104,9 @@
+         uint256 outBefore = token0.balanceOf(recipient);
+         address third = makeAddr("v4Third");
+         vm.expectCall(address(vault), abi.encodeWithSelector(IStandardExchangeIn.exchangeIn.selector), 0);
+-        uint256 quoted = IStandardizedYield(address(vault)).previewRedeem(address(token0), requested);
++        uint256 quoted = IERC5115_StandardizedYield(address(vault)).previewRedeem(address(token0), requested);
+         assertGt(quoted, 0);
+-        uint256 paid = IStandardizedYield(address(vault)).redeem(recipient, requested, address(token0), quoted, true);
++        uint256 paid = IERC5115_StandardizedYield(address(vault)).redeem(recipient, requested, address(token0), quoted, true);
+         assertEq(paid, quoted);
+         assertEq(vault.balanceOf(address(this)), callerBefore, "caller shares are not the holder");
+         assertEq(vault.balanceOf(address(vault)), vaultBefore - requested, "burns only the requested vault shares");
+@@ -124,7 +124,7 @@
+         uint256 thirdBefore = vault.balanceOf(address(this));
+         vm.expectCall(address(vault), abi.encodeWithSelector(IStandardExchangeIn.exchangeIn.selector), 0);
+         vm.prank(holder);
+-        uint256 paid = IStandardizedYield(address(vault)).redeem(recipient, requested, address(token0), 0, false);
++        uint256 paid = IERC5115_StandardizedYield(address(vault)).redeem(recipient, requested, address(token0), 0, false);
+         assertGt(paid, 0);
+         assertEq(vault.balanceOf(holder), holderBefore - requested, "burns the code-less caller");
+         assertEq(vault.balanceOf(address(vault)), vaultBefore, "does not move shares onto the vault");
+@@ -139,7 +139,7 @@
+         vault.transfer(holder, requested * 2);
+         assertTrue(IUniswapV4StandardExchangeLiquidReserve(address(vault)).canOpenPoolManagerUnlock());
+         vm.prank(holder);
+-        uint256 poolPaid = IStandardizedYield(address(vault)).redeem(recipient, requested, address(token0), 0, false);
++        uint256 poolPaid = IERC5115_StandardizedYield(address(vault)).redeem(recipient, requested, address(token0), 0, false);
+         assertGt(poolPaid, 0);
+         assertEq(vault.balanceOf(holder), requested, "pool-access burn used the same holder");
+ 
+@@ -155,7 +155,7 @@
+         uint256 vaultBefore = vault.balanceOf(address(vault));
+         vm.prank(holder);
+         vm.expectRevert();
+-        IStandardizedYield(address(vault)).redeem(recipient, 1, address(token0), 0, false);
++        IERC5115_StandardizedYield(address(vault)).redeem(recipient, 1, address(token0), 0, false);
+         assertEq(vault.balanceOf(holder), holderBefore);
+         assertEq(vault.balanceOf(address(vault)), vaultBefore);
+         assertEq(token0.balanceOf(recipient), 0);
+@@ -170,7 +170,7 @@
+         uint256 outBefore = token0.balanceOf(recipient);
+         vm.prank(holder);
+         vm.expectRevert(UniswapV4StandardExchangeConfig.UniswapV4ExchangeIn_SlippageExceeded.selector);
+-        IStandardizedYield(address(vault)).redeem(recipient, requested, address(token0), type(uint256).max, false);
++        IERC5115_StandardizedYield(address(vault)).redeem(recipient, requested, address(token0), type(uint256).max, false);
+         assertEq(vault.balanceOf(holder), holderBefore);
+         assertEq(vault.balanceOf(address(vault)), vaultBefore);
+         assertEq(token0.balanceOf(recipient), outBefore);
+@@ -282,7 +282,7 @@
+             "sleeve path requires the pool manager lock"
+         );
+         VM.prank(holder);
+-        IStandardizedYield(vault).redeem(receiver, shares, tokenOut, 0, false);
++        IERC5115_StandardizedYield(vault).redeem(receiver, shares, tokenOut, 0, false);
+         return "";
+     }
+ }
+--- /tmp/legacy-v4-erc5115-test-baseline/UniswapV4StandardExchange_Architecture.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Architecture.t.sol
+@@ -5,7 +5,7 @@
+ import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+@@ -44,18 +44,24 @@
+             assertEq(cuts[i].facetAddress, expected[i]);
+             assertEq(addresses[i], expected[i]);
+             assertEq(uint256(cuts[i].action), uint256(IDiamond.FacetCutAction.Add));
+-            assertLe(expected[i].code.length, 24_576);
+             for (uint256 j; j < cuts[i].functionSelectors.length; ++j) {
+                 assertEq(IDiamondLoupe(address(vault)).facetAddress(cuts[i].functionSelectors[j]), expected[i]);
+             }
+         }
+         assertEq(cuts[5].functionSelectors.length, 1);
+         assertEq(cuts[5].functionSelectors[0], IUnlockCallback.unlockCallback.selector);
+-        assertEq(cuts[6].functionSelectors.length, 5);
+-        assertEq(cuts[15].functionSelectors.length, 13);
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IStandardizedYield.deposit.selector), expected[6]);
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IStandardizedYield.redeem.selector), expected[6]);
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IStandardizedYield.previewRedeem.selector), expected[15]);
++        assertEq(cuts[6].functionSelectors.length, 3);
++        assertEq(cuts[15].functionSelectors.length, 7);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.deposit.selector), expected[6]);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.redeem.selector), expected[6]);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.previewRedeem.selector), expected[15]);
++    }
++
++    /// @notice Retain the deployment size gate independently of selector behavior.
++    function test_runtimeFacetSizes_withinEip170() public view {
++        address[] memory facets =
++            ILegacyV4PackageFacetAddresses(address(uniswapV4StandardExchangeDFPkg)).facetAddresses();
++        for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576, "EIP-170");
+     }
+ 
+     function test_callback_rejectsCallerBeforeDecode() public {
+@@ -75,21 +81,21 @@
+         bytes memory disabled =
+             abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(vault));
+         vm.expectRevert(disabled);
+-        IStandardizedYield(address(vault)).deposit(recipient, address(token0), 1 ether, 0);
++        IERC5115_StandardizedYield(address(vault)).deposit(recipient, address(token0), 1 ether, 0, false);
+         vm.expectRevert(disabled);
+-        IStandardizedYield(address(vault)).redeem(recipient, shares, address(token0), 0, false);
++        IERC5115_StandardizedYield(address(vault)).redeem(recipient, shares, address(token0), 0, false);
+         vm.expectRevert(disabled);
+-        IStandardizedYield(address(vault)).redeem(recipient, shares, address(token0), 0, true);
++        IERC5115_StandardizedYield(address(vault)).redeem(recipient, shares, address(token0), 0, true);
+         assertEq(vault.balanceOf(address(this)), callerShares);
+         assertEq(vault.balanceOf(address(vault)), heldShares);
+         assertEq(token0.balanceOf(address(this)), callerAssets);
+         assertEq(token0.balanceOf(address(vault)), vaultAssets);
+         assertEq(token0.balanceOf(recipient), 0);
+-        assertGt(IStandardizedYield(address(vault)).previewRedeem(address(token0), shares), 0);
++        assertGt(IERC5115_StandardizedYield(address(vault)).previewRedeem(address(token0), shares), 0);
+     }
+ 
+     function test_deposit_hasNoSelfCall() public noSelfCalls(address(vault)) {
+-        uint256 shares = IStandardizedYield(address(vault)).deposit(recipient, address(token0), 1 ether, 1);
++        uint256 shares = IERC5115_StandardizedYield(address(vault)).deposit(recipient, address(token0), 1 ether, 1, false);
+         assertEq(vault.balanceOf(recipient), shares);
+     }
+ 
+--- /tmp/legacy-v4-erc5115-test-baseline/UniswapV4StandardExchange_FullRangeBook.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol
+@@ -757,7 +757,7 @@
+         (int24 lower, int24 upper) = _fullRangeTicks();
+         assertGt(_liquidityAtOn(address(bound), lower, upper, bytes32(0)), 0);
+         assertEq(_liquidityAtOn(address(bound), -120, 120, bytes32(0)), 0);
+-        IStandardizedYield sy = IStandardizedYield(address(bound));
++        IERC5115_StandardizedYield sy = IERC5115_StandardizedYield(address(bound));
+         assertGt(sy.exchangeRate(), 0);
+         uint256 out = sy.previewRedeem(_token0(), shares / 10);
+         assertEq(sy.redeem(address(this), shares / 10, _token0(), out, false), out);
+@@ -838,14 +838,11 @@
+         return FixedPointMathLib.mulSqrt(amount0, amount1);
+     }
+ 
+-    function test_nativeSYMetadataRateAndFacetSize() public {
++    function test_nativeSYMetadataRate() public {
+         _dualJoin(1000 ether, 1000 ether);
+-        IStandardizedYield sy = IStandardizedYield(address(vault));
+-        assertTrue(IERC165(address(vault)).supportsInterface(type(IStandardizedYield).interfaceId));
++        IERC5115_StandardizedYield sy = IERC5115_StandardizedYield(address(vault));
++        assertTrue(IERC165(address(vault)).supportsInterface(type(IERC5115_StandardizedYield).interfaceId));
+         assertEq(sy.yieldToken(), address(0));
+-        (IStandardizedYield.AssetType kind, address asset, uint8 decimals) = sy.assetInfo();
+-        assertEq(uint8(kind), uint8(IStandardizedYield.AssetType.LIQUIDITY));
+-        assertEq(asset, address(poolManager)); assertEq(decimals, 18);
+         (int24 lower, int24 upper) = _fullRangeTicks();
+         (uint160 price,,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
+         (uint256 amount0, uint256 amount1) = ReferenceLiquidityAmounts.getAmountsForLiquidity(
+@@ -854,20 +851,23 @@
+         amount0 += IERC20(_token0()).balanceOf(address(vault));
+         amount1 += IERC20(_token1()).balanceOf(address(vault));
+         assertEq(sy.exchangeRate(), FixedPointMathLib.mulSqrt(amount0, amount1) * 1e18 / IERC20(address(vault)).totalSupply());
+-        assertEq(sy.getRewardTokens().length, 0);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IUnlockCallback.unlockCallback.selector), address(uniswapV4StandardExchangeCallbackFacet));
++    }
++
++    /// @notice Size remains a separate deployment gate while behavior is evaluated.
++    function test_runtimeFacetSizes_withinEip170() public view {
+         address[] memory facets = IDiamondLoupe(address(vault)).facetAddresses();
+         for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576, "EIP-170");
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IUnlockCallback.unlockCallback.selector), address(uniswapV4StandardExchangeCallbackFacet));
+     }
+ 
+     function test_nativeSYRoutesInternalBalancesAndSlippage() public {
+         _dualJoin(1000 ether, 1000 ether);
+-        IStandardizedYield sy = IStandardizedYield(address(vault));
++        IERC5115_StandardizedYield sy = IERC5115_StandardizedYield(address(vault));
+         ERC20PermitMintableStub(_token0()).mint(address(this), 10 ether);
+         IERC20(_token0()).approve(address(vault), 10 ether);
+         uint256 quote = sy.previewDeposit(_token0(), 10 ether);
+         assertGt(quote, 0);
+-        assertEq(sy.deposit(address(this), _token0(), 10 ether, quote), quote);
++        assertEq(sy.deposit(address(this), _token0(), 10 ether, quote, false), quote);
+         uint256 out = sy.previewRedeem(_token1(), quote / 2);
+         uint256 supply = IERC20(address(vault)).totalSupply();
+         address token = _token1();
+@@ -907,9 +907,9 @@
+             assertEq(vault.previewExchangeOut(share, asset, wanted), expected, "locked sleeve preview");
+             return abi.encode(vault.exchangeOut(share, expected, asset, wanted, address(this), false, block.timestamp));
+         }
+-        IStandardizedYield sy = IStandardizedYield(address(vault));
++        IERC5115_StandardizedYield sy = IERC5115_StandardizedYield(address(vault));
+         uint256 quote = sy.previewDeposit(_token0(), 4 ether);
+-        assertGt(quote, 0); assertEq(sy.deposit(address(this), _token0(), 4 ether, quote), quote);
++        assertGt(quote, 0); assertEq(sy.deposit(address(this), _token0(), 4 ether, quote, false), quote);
+         uint256 out = sy.previewRedeem(_token1(), 1 ether);
+         assertGt(out, 0); assertEq(sy.redeem(address(this), 1 ether, _token1(), out, false), out);
+         assertGt(sy.exchangeRate(), 0);
+@@ -1039,7 +1039,7 @@
+ 
+ import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
+ 
+-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ 
+ import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+ 
+--- /tmp/legacy-v4-erc5115-test-baseline/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol
+@@ -6,7 +6,7 @@
+ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+ import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
+ import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
+-import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+ import {PositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PositionManager.sol";
+ import {PositionDescriptor} from "@crane/contracts/protocols/dexes/uniswap/v4/PositionDescriptor.sol";
+@@ -231,7 +231,7 @@
+         (int24 lower, int24 upper) = _fullRangeTicks();
+         assertGt(_liquidityAtOn(address(bound), lower, upper, bytes32(0)), 0);
+         assertEq(_liquidityAtOn(address(bound), lowerImport, upperImport, bytes32(0)), 0);
+-        IStandardizedYield sy = IStandardizedYield(address(bound));
++        IERC5115_StandardizedYield sy = IERC5115_StandardizedYield(address(bound));
+         assertGt(sy.exchangeRate(), 0);
+         uint256 out = sy.previewRedeem(_token0(), shares / 10);
+         assertEq(sy.redeem(address(this), shares / 10, _token0(), out, false), out);

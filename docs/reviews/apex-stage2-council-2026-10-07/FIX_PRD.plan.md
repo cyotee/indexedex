@@ -126,7 +126,7 @@ Delete the old Uniswap V3 Standard Exchange under `contracts/protocols/dexes/uni
   - `scripts/foundry/anvil_robinhood_main/Phase_05_Stage_04_UniswapV3StandardExchangePkg.sol`
   - `scripts/foundry/anvil_robinhood_fee_detf/Script_05_DeployUniV3SeOnRichPool.s.sol`
   - `contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol`
-- Do not delete `contracts/protocols/dexes/uniswap/v4`. That package was not given this replacement.
+- The 2026-10-07 sentence that forbade deleting `contracts/protocols/dexes/uniswap/v4` is withdrawn. The owner is deleting that package. This RC-03 step still must not treat that deletion as the V3 FullSpread replacement.
 
 FullSpread already credits `balanceOf(this) - _reserveOfToken(token)`. That book is the full locally held balance of the token. It is not dust, not a leftover slice, and not local plus deployed. Deployed amounts are not an input. A pull still measures the wallet increase from the actual transfer.
 

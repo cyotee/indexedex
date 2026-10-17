@@ -1,0 +1,16 @@
+[
+  {
+    "facet": "UniswapV4StandardExchangeInFacet",
+    "before_erc5115_recorded_bytes": 28818,
+    "after_erc5115_measured_bytes": 27885,
+    "reduction_bytes": 933,
+    "eip170_excess_bytes": 3309
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutFacet",
+    "before_erc5115_recorded_bytes": 30033,
+    "after_erc5115_measured_bytes": 30033,
+    "reduction_bytes": 0,
+    "eip170_excess_bytes": 5457
+  }
+]

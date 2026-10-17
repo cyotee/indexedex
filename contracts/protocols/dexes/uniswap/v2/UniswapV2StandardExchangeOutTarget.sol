@@ -14,6 +14,7 @@ import {
     UNISWAPV2_PROTOCOL_FEE_SHARE
 } from "@crane/contracts/constants/Constants.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
@@ -459,6 +460,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             }
 
             // Pull tokenIn used. Do not overwrite used with swap amountOut.
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             uint256 used = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
@@ -544,6 +548,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             // NOTE: _secureTokenTransfer returns balanceOf(this), which may exceed amountIn
             // when pretransferred with surplus. Use the computed amountIn for operations
             // and refund any excess to the caller.
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             _secureTokenTransfer(
                 // IERC20 tokenIn,
@@ -620,6 +627,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap (I1).
             // D15: true-flag credit is `min(unbooked, maxAmountIn)`; refund only `credit - used`
             // before the LP book absorbs the balance.
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 lpCredit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             _refundExactOutCredit(tokenIn, lpCredit, amountIn, pretransferred);
@@ -690,6 +700,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             }
 
             // Secure the burn of the underlying pool token.
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 shareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             _secureSelfBurn(
                 // address owner,
@@ -791,6 +804,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
             // Secure the burn of the underlying pool token
             if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+            }
             uint256 zapShareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
             _refundExactOutCredit(IERC20(address(this)), zapShareCredit, amountIn, pretransferred);
@@ -902,6 +918,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             revert MaxAmountExceeded(maxAmountIn, amountIn);
         }
 
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+        }
         uint256 zapCredit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
         // Secure tokenIn from the caller.
         amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
@@ -969,6 +988,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
         );
         if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+        }
         uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
         amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
         uint256 lpOut = UniswapV2RouterAwareRepo._uniswapV2Router()._swapDeposit(

@@ -105,20 +105,20 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         assertGe(dai.balanceOf(address(adapter)), residual_, "seed remains after honest join");
     }
 
-    function _assertNoMaxAllowances(IERC20 token_) internal view {
+    function _assertNoMaxAllowances(IStandardExchange subject_, IERC20 token_) internal view {
         assertTrue(
-            token_.allowance(address(adapter), address(router)) != type(uint256).max,
+            token_.allowance(address(subject_), address(router)) != type(uint256).max,
             "M3: ERC20 router allowance must not stay max"
         );
         assertTrue(
-            token_.allowance(address(adapter), address(permit2)) != type(uint256).max,
+            token_.allowance(address(subject_), address(permit2)) != type(uint256).max,
             "M3: ERC20 Permit2 allowance must not stay max"
         );
         (uint160 permitAmt_,,) =
-            IPermit2(address(permit2)).allowance(address(adapter), address(token_), address(router));
+            IPermit2(address(permit2)).allowance(address(subject_), address(token_), address(router));
         assertTrue(permitAmt_ != type(uint160).max, "M3: Permit2 packed allowance must not stay uint160.max");
-        assertEq(token_.allowance(address(adapter), address(router)), 0, "M3: router allowance reset");
-        assertEq(token_.allowance(address(adapter), address(permit2)), 0, "M3: Permit2 ERC20 allowance reset");
+        assertEq(token_.allowance(address(subject_), address(router)), 0, "M3: router allowance reset");
+        assertEq(token_.allowance(address(subject_), address(permit2)), 0, "M3: Permit2 ERC20 allowance reset");
         assertEq(permitAmt_, 0, "M3: Permit2 packed amount reset");
     }
 
@@ -327,7 +327,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         vm.stopPrank();
         assertEq(received, quote);
         assertEq(output.balanceOf(alice) - before, quote);
-        _assertNoMaxAllowances(bpt);
+        _assertNoMaxAllowances(adapter, bpt);
         vm.revertToState(snap);
         uint256 usedQuote = adapter.previewExchangeOut(bpt, output, quote);
         uint256 bptBefore = bpt.balanceOf(alice);
@@ -338,7 +338,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         assertEq(used, usedQuote);
         assertEq(bptBefore - bpt.balanceOf(alice), usedQuote);
         assertEq(output.balanceOf(alice) - before, quote);
-        _assertNoMaxAllowances(bpt);
+        _assertNoMaxAllowances(adapter, bpt);
     }
 
     /// @notice A quote beyond the bounded execution route does not authorize partial payout.
@@ -371,7 +371,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         vm.stopPrank();
         assertGt(out_, 0, "honest join");
 
-        _assertNoMaxAllowances(dai);
+        _assertNoMaxAllowances(adapter, dai);
     }
 
     /// @notice M3: successful exact-out join must not leave max allowance.
@@ -385,7 +385,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         assertGt(in_, 0, "honest exact-out");
         assertLe(in_, maxIn_, "used <= max");
 
-        _assertNoMaxAllowances(dai);
+        _assertNoMaxAllowances(adapter, dai);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -517,7 +517,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         assertEq(probe.inFlightRouter(), amountIn_, "in-flight router allowance is the route budget");
         assertEq(probe.inFlightPermit2(), amountIn_, "in-flight Permit2 allowance is the route budget");
         assertTrue(probe.inFlightRouter() != type(uint256).max, "approval is not unlimited");
-        _assertNoMaxAllowances(IERC20(address(probe)));
+        _assertNoMaxAllowances(locked_, IERC20(address(probe)));
         assertEq(probe.balanceOf(address(locked_)), 0, "join input was consumed");
     }
 

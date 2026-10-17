@@ -22,8 +22,7 @@ import {
  * @notice Shared helpers for generic ERC-4626 SE in/out routes.
  *
  * @dev APEX 2026-09-17 (D6/D15/D22/D31/R14): every residual, dust included, is retained as
- *      booked local reserve for holders; nothing is paid to the fee recipient and exact-input
- *      routes never refund. Under-consumed underlying (capacity or pause) is booked and swept
+ *      booked local reserve for holders; nothing is paid to the fee recipient; exact-input routes process the declared input only when present unbooked input covers it and do not refund tokens above the declaration. Under-consumed underlying (capacity or pause) is booked and swept
  *      into the protocol vault by a later investing operation. Under-delivery of amountOut is Slippage.
  *
  * @dev Token-in pull is durable reserve-delta (BasicVault peer / L-DETF-HOST-UPGRADE):

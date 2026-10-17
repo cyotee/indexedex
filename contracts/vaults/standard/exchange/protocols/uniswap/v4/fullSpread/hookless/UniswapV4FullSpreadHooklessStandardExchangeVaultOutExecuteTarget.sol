@@ -91,6 +91,9 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutExecuteTarg
         bool pretransferred
     ) internal returns (uint256 amountIn) {
         if (sharesOut == 0) revert UniswapV4Exchange_ZeroAmount();
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+        }
         uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
         amountIn = _amountInForZapMint(address(tokenIn), sharesOut, credit);
         if (amountIn > maxAmountIn) revert UniswapV4ExchangeOut_InsufficientInput();
@@ -162,6 +165,9 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultOutExecuteTarg
         if (amountOut == 0) revert UniswapV4Exchange_ZeroAmount();
         DirectOutFrame memory frame;
         frame.zeroForOne = address(tokenIn) == _token0();
+        if (prepaid) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+        }
         frame.credit = prepaid ? _pretransferCredit(tokenIn, maximum) : 0;
         frame.plan = _directOutPlan(_snapshot(frame.zeroForOne ? frame.credit : 0, frame.zeroForOne ? 0 : frame.credit), frame.zeroForOne, amountOut);
         used = frame.plan.swap.amountIn;

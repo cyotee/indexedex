@@ -15,6 +15,11 @@ import {
 contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_RebasingAwareERC4626 is UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior {
     address internal sharedPkg;
 
+    function _oneUnitDepositControl() internal override {
+        // The custody SE preserves one face unit; Orbital's single-sided plan issues one LP unit.
+        _positiveOneUnitDepositControl(1);
+    }
+
     function _newFixture() internal override returns (SeMatrixFixture) {
         SeMatrix_RebasingAwareFixture f = new SeMatrix_RebasingAwareFixture(_ctx(), sharedPkg);
         sharedPkg = f.pkg();

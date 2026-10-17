@@ -1,0 +1,50 @@
+29 build roots; 218 sources in import closure; 29 runtime artifact IDs.
+forge build contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeQuoteFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareVaultMetadataFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol
+forge test -vv --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/dexes/**' --skip 'test/foundry/spec/protocols/l2s/**' --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_APEX_Recurrence.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Accounting.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_BufferInvariant.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Balancer.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Curve.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Detf.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Dual.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Orbital.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Weighted.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_DetfInvariant.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Invariant.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_LaunchCompatibility.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Packaging.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_ReleaseFuzz.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_ReleaseReview.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StakedDETF.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StandardExchange.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StandardYield.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_TokenStaking.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_TransitionQuote.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareOracle.sol --skip 'test/foundry/spec/protocols/staking/rebasingVault/oracle/**' --skip 'test/foundry/spec/protocols/staking/token/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip 'test/foundry/spec/vaults/**'
+No files changed, compilation skipped
+Compiling 2 files with Solc 0.8.35
+Solc 0.8.35 finished in 14.72s
+Compiler run successful!
+[31mThe application panicked (crashed).[0m
+Message:  [36mAttempted to create a NULL object.[0m
+Location: [35m/Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/system-configuration-0.6.1/src/dynamic_store.rs[0m:[35m154[0m
+
+This is a bug. Consider reporting it at https://github.com/foundry-rs/foundry
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ BACKTRACE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [96m                              ⋮ 7 frames hidden ⋮                               [0m
+   8: [91msystem_configuration::dynamic_store::SCDynamicStoreBuilder<T>::build[0m[90m::h347fb2a3bf9ed157[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+   9: [91mhyper_util::client::proxy::matcher::mac::with_system[0m[90m::hd89e2263e70c4e96[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  10: [91mhyper_util::client::proxy::matcher::Builder::from_system[0m[90m::h1fe26d9b11906285[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  11: [91mhyper_util::client::proxy::matcher::Matcher::from_system[0m[90m::h088d0495c9e1f4c9[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  12: [91mreqwest::async_impl::client::ClientBuilder::build[0m[90m::he56239488ecec6f3[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  13: [91mfoundry_evm_traces::identifier::external::ExternalIdentifier::new[0m[90m::h3eea8b455a2936ac[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  14: [91mfoundry_evm_traces::identifier::TraceIdentifiers::with_external[0m[90m::h22ba278774b89579[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  15: [91mforge::cmd::test::TestArgs::run_tests_inner::{{closure}}[0m[90m::h5498076cde408a1f[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  16: [91mforge::cmd::test::TestArgs::run_tests::{{closure}}[0m[90m::hada77b0b86401c62[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  17: [91mforge::cmd::test::TestArgs::compile_and_run::{{closure}}[0m[90m::hd65619f7e176682a[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  18: [91m<core::pin::Pin<P> as core::future::future::Future>::poll[0m[90m::hc04a6c29bfa49325[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  19: [91mforge::args::run_command[0m[90m::haf19206aabc6da37[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  20: [91mforge::args::run[0m[90m::heaea23c90a0a0f8b[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  21: [91mforge::main[0m[90m::h2cbb74bb332e8483[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  22: [32mstd::sys::backtrace::__rust_begin_short_backtrace[0m[90m::hfda8117882e87836[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+  23: [32m_main[0m[90m<unknown>[0m
+      at [35m<unknown source file>[0m:[35m<unknown line>[0m
+
+Run with COLORBT_SHOW_HIDDEN=1 environment variable to disable frame filtering.
+Run with RUST_BACKTRACE=full to include source snippets.

@@ -1,6 +1,6 @@
 # Remediation PRD — correct the Uniswap family README
 
-- **Status:** DRAFT
+- **Status:** DRAFT for the deleted-V3 and self-call sentences. The requirement to retain `contracts/protocols/dexes/uniswap/v4`, and to label that package as retained, is WITHDRAWN, 2026-10-15. The owner is deleting that tree. Do not keep it to satisfy this README.
 - **Date:** 2026-10-11
 - **ID:** REQ-C05
 - **Severity:** Low

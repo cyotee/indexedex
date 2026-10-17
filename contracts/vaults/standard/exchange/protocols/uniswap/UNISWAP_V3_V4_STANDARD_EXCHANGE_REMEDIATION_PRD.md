@@ -1,3 +1,5 @@
+> **Legacy SE retirement (2026-10-15):** references below to `UniswapV4StandardExchangeDFPkg` or `contracts/protocols/dexes/uniswap/v4/` describe a deleted family and do not authorize restoring it. Supported V4 SE consumers use the Full Spread Hookless, Full Spread Pons, or Upper/Lower Wings families under `contracts/vaults/standard/exchange/protocols/uniswap/v4/`. Other product requirements in this document remain in force. See `docs/reviews/legacy-v4-removal/EXECUTION_REPORT.md`.
+
 # Uniswap V3 and V4 Standard Exchange — Shared Remediation PRD
 
 **Implementation:** See [new-version code and integration notes](README.md) and the linked validation record. This PRD retains the broader release matrix.

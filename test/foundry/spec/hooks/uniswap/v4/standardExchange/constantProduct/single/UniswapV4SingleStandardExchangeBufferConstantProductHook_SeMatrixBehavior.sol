@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Vm} from "forge-std/Vm.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -263,8 +265,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         }
     }
 
-    /// @dev Families with no leftover case: a dust deposit that rounds to zero SE output is either
-    ///      rejected with no state change or retained by the hook; it is never refunded.
+    /// @dev A zero-rounded deposit previews zero and rejects execution without taking input.
     function _roundingToZeroControl() internal {
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 hookFace = IERC20(face).balanceOf(hook);
@@ -272,6 +273,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         (bool previewOk, bytes memory previewRet) = address(single).staticcall(
             abi.encodeWithSignature("previewDepositSingle(address,uint256)", face, uint256(1))
         );
+        assertTrue(previewOk, "dust preview must succeed");
+        assertEq(abi.decode(previewRet, (uint256)), 0, "dust preview rounds to zero shares");
         vm.prank(user);
         (bool ok, bytes memory ret) = address(single).call(
             abi.encodeWithSignature(
@@ -279,28 +282,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
                 face, uint256(1), user, uint256(0), block.timestamp + 1 hours
             )
         );
-        if (!ok) {
-            assertTrue(ret.length >= 4, "dust rejection has a selector");
-            bytes4 sel = bytes4(ret);
-            bool named = sel == bytes4(keccak256("InsufficientTokenOut()")) || sel == bytes4(keccak256("ZeroAmount()"));
-            bool previewMatch = !previewOk && previewRet.length >= 4 && sel == bytes4(previewRet);
-            assertTrue(named || previewMatch, "dust rejection is ZeroAmount or InsufficientTokenOut");
-            assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
-            assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
-            assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
-            return;
-        }
-        uint256 shares = abi.decode(ret, (uint256));
-        if (previewOk && previewRet.length >= 32) {
-            assertEq(shares, abi.decode(previewRet, (uint256)), "dust execution matches its preview");
-        }
-        assertEq(userFace - IERC20(face).balanceOf(user), 1, "dust taken, not refunded");
-        if (shares == 0) {
-            assertTrue(
-                IERC20(face).balanceOf(hook) == hookFace + 1 || fx.seBooked() == bookedBefore + 1,
-                "zero output retains the dust in the book"
-            );
-        }
+        assertFalse(ok, "zero-share deposit must revert");
+        assertTrue(ret.length >= 4, "dust rejection has a selector");
+        bytes4 sel = bytes4(ret);
+        bool named = sel == bytes4(keccak256("InsufficientTokenOut()")) || sel == bytes4(keccak256("ZeroAmount()"));
+        emit log_named_bytes32("dust execution selector", bytes32(sel));
+        assertTrue(named, "dust rejection is ZeroAmount or InsufficientTokenOut");
+        assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
+        assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
+        assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
     }
 
     function test_row_hookSwap_exactIn_eoaPretransferRejected() public virtual {
@@ -332,17 +322,37 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
+        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
         );
+        vm.recordLogs();
         uint256 used = abi.decode(rowCaller.consumePretransfer(tin, address(this), hook, fatMax, data), (uint256));
         assertGt(used, 0);
         assertLe(used, fatMax, "used within the bounded credit");
         assertEq(tout.balanceOf(address(rowCaller)) - callerOutBefore, wantOut, "exact output delivered");
         assertEq(tin.balanceOf(address(rowCaller)), fatMax - used, "refund is credit - used");
         assertEq(tin.balanceOf(address(this)), 0, "payer spent fatMax");
-        assertLt(_hookSeShares(), seBefore, "SE shares burned only for the delivered face");
+        assertEq(
+            seBefore + _faceSharesMintedToHook(), _hookSeShares() + expectedDebit,
+            "SE share debit matches the exact-output quote including minted-back shares"
+        );
+    }
+
+    /// @dev Count only face-leg SE mints to this hook during the recorded settlement call.
+    function _faceSharesMintedToHook() internal returns (uint256 minted) {
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        for (uint256 i; i < logs.length; ++i) {
+            if (
+                logs[i].emitter == seUT && logs[i].topics.length == 3
+                    && logs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                    && logs[i].topics[1] == bytes32(0)
+                    && logs[i].topics[2] == bytes32(uint256(uint160(hook)))
+            ) {
+                minted += abi.decode(logs[i].data, (uint256));
+            }
+        }
     }
 
     function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public virtual {

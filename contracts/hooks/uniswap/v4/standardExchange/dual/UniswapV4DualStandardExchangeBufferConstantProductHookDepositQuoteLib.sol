@@ -127,6 +127,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
     {
         // Split into helpers so the no-via-ir stack stays under the 16-slot limit (D62/F9).
         uint256 sale = _saleAmount(input, amountIn);
+        // A zero-sized swap cannot fund the other leg; SE transitions may reject zero deposits.
+        if (sale == 0) return (amountIn, 0);
         uint256 claimIn = ClaimLib.projectedBufferClaimIn(input.se, input.state, sale);
         uint256 budget = _otherFromClaim(input, output, claimIn);
         ClaimLib.OutputQuote memory quote;

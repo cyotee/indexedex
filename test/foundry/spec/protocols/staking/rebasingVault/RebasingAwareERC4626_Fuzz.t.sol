@@ -98,6 +98,7 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
         assertEq(asset.balanceOf(alice), aliceAssets - need, "exact funding debits the quoted assets");
         assertEq(asset.balanceOf(address(vault)), vaultAssets + need, "exact funding credits the quoted assets");
         assertEq(IBasicVault(address(vault)).reserveOfToken(address(asset)), vaultAssets + need, "exact funding books the quoted assets");
+        assertEq(IERC20(address(vault)).totalSupply(), supplyBefore + shares, "exact funding increases supply by the quoted shares");
     }
 
     function testFuzz_FUZZ03_closedCycleNoProfit(uint96 assets) public {

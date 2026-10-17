@@ -42,7 +42,7 @@ Copy into every subagent prompt. Full text: PRD §1.1 / §4.
 | **L-RSRV-SYNC-ROUTES** | **Every** deposit / withdraw / compound / harvest / rebalance / zap / fee-compound / other balance-mutating money path. Not view/quote. |
 | **L-RSRV-HOLD-SET** | Expected-hold = underlyings + package sleeve + compound/rebalance residuals. **Not** vault share token. |
 | **L-RSRV-SYNC-FULL** | Sync **full** expected-hold set every money op — **not** route-touched-only. |
-| **L-RSRV-ABSORB** | `claimed < U` surplus → absorb into `R` at sync. **No** refund of `U − claimed`. Exact-in pretransfer never refunds. Pretransferred exact-out refunds only `credit - used`. False-flag exact-out pulls quoted used and refunds nothing. |
+| **L-RSRV-ABSORB** | `claimed < U` surplus → absorb into `R` at sync. **No** refund of `U − claimed`. The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall. Pretransferred exact-out refunds only `credit - used`. False-flag exact-out pulls quoted used and refunds nothing. |
 | **L-RSRV-COMPOUND-DUST** | Retained compound dust included in end-of-op `R` (booked → I1). |
 | **L-RSRV-DUST** | Crude recovery only for **not-yet-synced** / **non-expected-hold** inventory. |
 | **L-RSRV-BOOTSTRAP** | Init `R = 0`; live balance fully unbooked until claim/sync. |

@@ -419,7 +419,7 @@ IFacet / behavior tests implement the usual virtuals (`facetTestInstance()`, etc
 
 | Failure class | Required bar |
 |---------------|--------------|
-| **Trust-flag free mint** (`pretransferred=true` / claimed `amountIn` while vault already holds inventory) | EOA reverts `EOAPretransferNotAllowed()`. Contract I1 reverts `TransferDeltaInsufficient(claimed, 0)`. Credit is `LocalCreditLib.available(balance, booked)` capped by the declared amount. Exact-in never refunds. False-flag exact-out pulls quoted used. See `docs/vaults/BASIC_VAULT_RESERVE_DELTA_PRETRANSFER_PRD.md` and APEX 2026-09-17 D9/D15 |
+| **Trust-flag free mint** (`pretransferred=true` / claimed `amountIn` while vault already holds inventory) | EOA reverts `EOAPretransferNotAllowed()`. Contract I1 reverts `TransferDeltaInsufficient(claimed, 0)`. Credit is `LocalCreditLib.available(balance, booked)` capped by the declared amount. The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall. False-flag exact-out pulls quoted used. See `docs/vaults/BASIC_VAULT_RESERVE_DELTA_PRETRANSFER_PRD.md` and APEX 2026-09-17 D9/D15 |
 | **Incomplete `facetFuncs`** | Controls from **Target/product API**; after DFPkg deploy, loupe + smoke call every product selector on the **proxy** (J1–J3) |
 | **Happy-path-only security** | Adversarial catalog A–K P0 (or explicit NatSpec defer); happy path is not a security bar |
 

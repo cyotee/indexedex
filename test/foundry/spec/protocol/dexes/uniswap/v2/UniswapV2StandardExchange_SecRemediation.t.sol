@@ -22,6 +22,252 @@ import {UniswapV2StandardExchangeCommon} from "contracts/protocols/dexes/uniswap
 contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2StandardExchange_MultiPool {
     address internal attacker;
 
+
+    /// @dev REQ-C06 fixtures use distinct callers and recipients, a live share book, and zero short credit.
+    struct C06Route {
+        IStandardExchangeProxy target;
+        IERC20 input;
+        IERC20 output;
+        uint256 requested;
+        uint256 quoted;
+        uint256 maximum;
+        uint256 deadline;
+        uint256 poolOutputBefore;
+    }
+
+    /// @dev Snapshot every fixture token/share balance and reserve for caller, recipient, payer and vault.
+    function _c06State(C06Route memory r, address caller, address recipient) internal view returns (bytes32 state) {
+        IERC20[] memory tokens = _c06Tokens();
+        address[4] memory accounts = [caller, recipient, address(this), address(r.target)];
+        state = keccak256(abi.encode(r.target.totalSupply(), _c06Book()));
+        for (uint256 i; i < tokens.length; ++i) {
+            state = keccak256(abi.encode(state, r.target.reserveOfToken(address(tokens[i]))));
+            for (uint256 j; j < accounts.length; ++j) {
+                state = keccak256(abi.encode(state, tokens[i].balanceOf(accounts[j])));
+            }
+        }
+    }
+
+    function _c06Data(C06Route memory r, address recipient, bool prepaid) internal pure returns (bytes memory) {
+        return abi.encodeCall(IStandardExchangeOut.exchangeOut,
+            (r.input, r.maximum, r.output, r.requested, recipient, prepaid, r.deadline));
+    }
+
+    function _c06Reject(uint8 branch, bool contractCaller) internal {
+        C06Route memory r = _c06Route(branch);
+        address recipient = makeAddr("C06 recipient");
+        AtomicPretransferCaller wallet = new AtomicPretransferCaller();
+        address caller = contractCaller ? address(wallet) : makeAddr("C06 EOA");
+        assertEq(caller.code.length == 0, !contractCaller, "caller kind");
+        bytes memory data = _c06Data(r, recipient, true);
+        bytes32 beforeState = _c06State(r, caller, recipient);
+        if (contractCaller) {
+            vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, r.quoted, 0));
+            wallet.execute(address(r.target), data);
+        } else {
+            vm.prank(caller);
+            vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+            r.target.exchangeOut(r.input, r.maximum, r.output, r.requested, recipient, true, r.deadline);
+        }
+        assertEq(_c06State(r, caller, recipient), beforeState, "all balances, supply and books unchanged");
+    }
+
+    function _c06Pull(C06Route memory r) internal returns (uint256 paid) {
+        address caller = makeAddr("C06 pull EOA");
+        address recipient = makeAddr("C06 recipient");
+        assertEq(caller.code.length, 0);
+        r.input.transfer(caller, r.maximum);
+        uint256 beforeInput = r.input.balanceOf(caller);
+        uint256 beforeOutput = r.output.balanceOf(recipient);
+        uint256 beforeSupply = r.target.totalSupply();
+        vm.startPrank(caller);
+        r.input.approve(address(r.target), r.maximum);
+        uint256 used = r.target.exchangeOut(r.input, r.maximum, r.output, r.requested, recipient, false, r.deadline);
+        vm.stopPrank();
+        assertEq(used, r.quoted, "input equals fixture quote");
+        assertLe(used, r.maximum, "maximum respected");
+        assertEq(beforeInput - r.input.balanceOf(caller), used, "pull debits only used");
+        paid = r.output.balanceOf(recipient) - beforeOutput;
+        _c06Payout(r, paid);
+        _c06Supply(r, beforeSupply, used);
+    }
+
+    function _c06Success(uint8 branch, bool prepaid) internal {
+        C06Route memory r = _c06Route(branch);
+        if (!prepaid) { _c06Pull(r); return; }
+        // Compare the same unchanged route on the same initial state, including zap rounding.
+        uint256 snap = vm.snapshotState();
+        uint256 expectedPayout = _c06Pull(r);
+        assertTrue(vm.revertToState(snap));
+        AtomicPretransferCaller wallet = new AtomicPretransferCaller();
+        address recipient = makeAddr("C06 recipient");
+        uint256 beforeInput = r.input.balanceOf(address(this));
+        uint256 beforeOutput = r.output.balanceOf(recipient);
+        uint256 beforeSupply = r.target.totalSupply();
+        r.input.approve(address(wallet), r.maximum);
+        uint256 used = abi.decode(wallet.consumePretransfer(r.input, address(this), address(r.target), r.maximum,
+            _c06Data(r, recipient, true)), (uint256));
+        assertEq(used, r.quoted, "prepaid input equals quote");
+        assertLe(used, r.maximum);
+        assertEq(beforeInput - r.input.balanceOf(address(this)), r.maximum, "payer supplies credited maximum");
+        assertEq(r.input.balanceOf(address(wallet)), r.maximum - used, "refund is credit minus used");
+        assertEq(beforeInput - r.input.balanceOf(address(this)) - r.input.balanceOf(address(wallet)), used,
+            "net input reconciles");
+        assertEq(r.output.balanceOf(recipient) - beforeOutput, expectedPayout, "unchanged route payout");
+        _c06Supply(r, beforeSupply, used);
+    }
+
+    function _c06Supply(C06Route memory r, uint256 beforeSupply, uint256 used) internal view {
+        if (address(r.output) == address(r.target)) {
+            assertEq(r.target.totalSupply(), beforeSupply + r.requested, "exact share issue");
+        } else if (address(r.input) == address(r.target)) {
+            assertEq(r.target.totalSupply(), beforeSupply - used, "shares burned equal input");
+        } else {
+            assertEq(r.target.totalSupply(), beforeSupply, "no share issue or burn");
+        }
+    }
+
+    function _c06Tokens() internal view returns (IERC20[] memory tokens) {
+        tokens = new IERC20[](4);
+        tokens[0] = IERC20(address(uniswapBalancedTokenA)); tokens[1] = IERC20(address(uniswapBalancedTokenB));
+        tokens[2] = IERC20(address(_pair())); tokens[3] = IERC20(address(_vault()));
+    }
+
+    function _c06Book() internal view returns (uint256) { return _vault().totalAssets(); }
+
+    function _c06Payout(C06Route memory r, uint256 paid) internal view {
+        if (address(r.output) == address(r.target) || (address(r.input) == address(r.target)
+            && address(r.output) == address(_c06Tokens()[2])) || (address(r.input) == address(_c06Tokens()[0])
+            && address(r.output) == address(_c06Tokens()[1]))) {
+            assertEq(paid, r.requested, "exact requested output");
+        } else {
+            IERC20 lp = _c06Tokens()[2];
+            if (address(r.output) == address(lp)) {
+                assertGe(paid, r.requested, "zap-in pays all LP produced, at least requested");
+            } else {
+                // Zap-out pays every output token released by the pool, retaining its existing rounding.
+                assertGt(paid, 0, "nonzero zap payout");
+                assertEq(paid, r.poolOutputBefore - r.output.balanceOf(address(lp)), "all pool proceeds paid");
+            }
+        }
+    }
+
+    function _c06Route(uint8 branch) internal returns (C06Route memory r) {
+        r.target = _vault();
+        IERC20 lp = IERC20(address(_pair()));
+        uint256 seed = lp.balanceOf(address(this)) / 10;
+        assertGt(seed, 0, "LP seed available");
+        lp.approve(address(r.target), seed);
+        r.target.exchangeIn(lp, seed, IERC20(address(r.target)), 1, address(this), false, block.timestamp + 1 hours);
+        IERC20 a = IERC20(address(uniswapBalancedTokenA));
+        IERC20 b = IERC20(address(uniswapBalancedTokenB));
+        IERC20 share = IERC20(address(r.target));
+        if (branch == 0) { r.input = a; r.output = b; }
+        else if (branch == 1) { r.input = lp; r.output = a; }
+        else if (branch == 2) { r.input = lp; r.output = share; }
+        else if (branch == 3) { r.input = share; r.output = lp; }
+        else if (branch == 4) { r.input = share; r.output = a; }
+        else if (branch == 5) { r.input = a; r.output = share; }
+        else { r.input = a; r.output = lp; }
+        r.requested = address(r.output) == address(r.target) ? r.target.totalSupply() / 1000 : 1 ether;
+        assertGt(r.target.totalSupply(), 0, "nonempty share book");
+        assertGt(r.requested, 0, "positive output");
+        r.poolOutputBefore = r.output.balanceOf(address(lp));
+        r.deadline = block.timestamp + 1 hours;
+        r.quoted = r.target.previewExchangeOut(r.input, r.output, r.requested);
+        assertGt(r.quoted, 0, "supported positive quote");
+        r.maximum = r.quoted + r.quoted / 10 + 1;
+        assertGe(r.maximum, r.quoted, "ceiling admits quote");
+        assertGe(r.deadline, block.timestamp, "valid deadline");
+        assertEq(r.input.balanceOf(address(r.target)), r.target.reserveOfToken(address(r.input)), "no unbooked input");
+        if (address(r.input) == address(a)) uniswapBalancedTokenA.mint(address(this), r.maximum);
+        assertGe(r.input.balanceOf(address(this)), r.maximum, "funded control available");
+    }
+
+    /// @notice REQ-C06 tokenSwap: Code-less short-credit caller is rejected before credit.
+    function test_C06_tokenSwap_eoaShort() public { _c06Reject(0, false); }
+
+    /// @notice REQ-C06 tokenSwap: Allowed contract caller retains the exact short-credit error.
+    function test_C06_tokenSwap_contractShort() public { _c06Reject(0, true); }
+
+    /// @notice REQ-C06 tokenSwap: Code-less false-flag caller pays the quoted input.
+    function test_C06_tokenSwap_eoaPull() public { _c06Success(0, false); }
+
+    /// @notice REQ-C06 tokenSwap: Funded contract prepayment reconciles output and refund.
+    function test_C06_tokenSwap_contractFunded() public { _c06Success(0, true); }
+
+    /// @notice REQ-C06 lpToToken: Code-less short-credit caller is rejected before credit.
+    function test_C06_lpToToken_eoaShort() public { _c06Reject(1, false); }
+
+    /// @notice REQ-C06 lpToToken: Allowed contract caller retains the exact short-credit error.
+    function test_C06_lpToToken_contractShort() public { _c06Reject(1, true); }
+
+    /// @notice REQ-C06 lpToToken: Code-less false-flag caller pays the quoted input.
+    function test_C06_lpToToken_eoaPull() public { _c06Success(1, false); }
+
+    /// @notice REQ-C06 lpToToken: Funded contract prepayment reconciles output and refund.
+    function test_C06_lpToToken_contractFunded() public { _c06Success(1, true); }
+
+    /// @notice REQ-C06 lpToShare: Code-less short-credit caller is rejected before credit.
+    function test_C06_lpToShare_eoaShort() public { _c06Reject(2, false); }
+
+    /// @notice REQ-C06 lpToShare: Allowed contract caller retains the exact short-credit error.
+    function test_C06_lpToShare_contractShort() public { _c06Reject(2, true); }
+
+    /// @notice REQ-C06 lpToShare: Code-less false-flag caller pays the quoted input.
+    function test_C06_lpToShare_eoaPull() public { _c06Success(2, false); }
+
+    /// @notice REQ-C06 lpToShare: Funded contract prepayment reconciles output and refund.
+    function test_C06_lpToShare_contractFunded() public { _c06Success(2, true); }
+
+    /// @notice REQ-C06 shareToLp: Code-less short-credit caller is rejected before credit.
+    function test_C06_shareToLp_eoaShort() public { _c06Reject(3, false); }
+
+    /// @notice REQ-C06 shareToLp: Allowed contract caller retains the exact short-credit error.
+    function test_C06_shareToLp_contractShort() public { _c06Reject(3, true); }
+
+    /// @notice REQ-C06 shareToLp: Code-less false-flag caller pays the quoted input.
+    function test_C06_shareToLp_eoaPull() public { _c06Success(3, false); }
+
+    /// @notice REQ-C06 shareToLp: Funded contract prepayment reconciles output and refund.
+    function test_C06_shareToLp_contractFunded() public { _c06Success(3, true); }
+
+    /// @notice REQ-C06 shareToToken: Code-less short-credit caller is rejected before credit.
+    function test_C06_shareToToken_eoaShort() public { _c06Reject(4, false); }
+
+    /// @notice REQ-C06 shareToToken: Allowed contract caller retains the exact short-credit error.
+    function test_C06_shareToToken_contractShort() public { _c06Reject(4, true); }
+
+    /// @notice REQ-C06 shareToToken: Code-less false-flag caller pays the quoted input.
+    function test_C06_shareToToken_eoaPull() public { _c06Success(4, false); }
+
+    /// @notice REQ-C06 shareToToken: Funded contract prepayment reconciles output and refund.
+    function test_C06_shareToToken_contractFunded() public { _c06Success(4, true); }
+
+    /// @notice REQ-C06 tokenToShare: Code-less short-credit caller is rejected before credit.
+    function test_C06_tokenToShare_eoaShort() public { _c06Reject(5, false); }
+
+    /// @notice REQ-C06 tokenToShare: Allowed contract caller retains the exact short-credit error.
+    function test_C06_tokenToShare_contractShort() public { _c06Reject(5, true); }
+
+    /// @notice REQ-C06 tokenToShare: Code-less false-flag caller pays the quoted input.
+    function test_C06_tokenToShare_eoaPull() public { _c06Success(5, false); }
+
+    /// @notice REQ-C06 tokenToShare: Funded contract prepayment reconciles output and refund.
+    function test_C06_tokenToShare_contractFunded() public { _c06Success(5, true); }
+
+    /// @notice REQ-C06 tokenToLp: Code-less short-credit caller is rejected before credit.
+    function test_C06_tokenToLp_eoaShort() public { _c06Reject(6, false); }
+
+    /// @notice REQ-C06 tokenToLp: Allowed contract caller retains the exact short-credit error.
+    function test_C06_tokenToLp_contractShort() public { _c06Reject(6, true); }
+
+    /// @notice REQ-C06 tokenToLp: Code-less false-flag caller pays the quoted input.
+    function test_C06_tokenToLp_eoaPull() public { _c06Success(6, false); }
+
+    /// @notice REQ-C06 tokenToLp: Funded contract prepayment reconciles output and refund.
+    function test_C06_tokenToLp_contractFunded() public { _c06Success(6, true); }
+
     function setUp() public virtual override {
         super.setUp();
         attacker = makeAddr("univ2SeAttacker");

@@ -99,6 +99,9 @@ contract UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
     ) external returns (uint256 amountIn) {
         if (sharesOut == 0) revert UniswapV3Exchange_ZeroAmount();
         IERC20 token = IERC20(tokenIn);
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+        }
         uint256 credit = pretransferred ? _pretransferCredit(token, maxAmountIn) : 0;
         amountIn = _amountInForZapMint(tokenIn, sharesOut, credit);
         if (amountIn > maxAmountIn) revert UniswapV3ExchangeOut_InsufficientInput();
@@ -106,7 +109,6 @@ contract UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
         uint256 inboundBefore = token.balanceOf(address(this));
         uint256 pullAmount = amountIn;
         if (pretransferred) {
-            LocalCreditLib.requirePretransferCaller(msg.sender);
             if (amountIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, credit);
             pullAmount = credit;
         }

@@ -1,0 +1,38 @@
+29 build roots; 218 sources in import closure; 29 runtime artifact IDs.
+forge build contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeQuoteFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldFacet.sol contracts/protocols/staking/rebasingVault/RebasingAwareVaultMetadataFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol
+forge test -vv --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/dexes/**' --skip 'test/foundry/spec/protocols/l2s/**' --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_APEX_Recurrence.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Accounting.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_BufferInvariant.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Balancer.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Curve.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Detf.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Dual.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Orbital.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Buffers_Weighted.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_DetfInvariant.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Invariant.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_LaunchCompatibility.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Packaging.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_ReleaseFuzz.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_ReleaseReview.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StakedDETF.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StandardExchange.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StandardYield.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_TokenStaking.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_TransitionQuote.t.sol --skip test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareOracle.sol --skip 'test/foundry/spec/protocols/staking/rebasingVault/oracle/**' --skip 'test/foundry/spec/protocols/staking/token/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip 'test/foundry/spec/vaults/**'
+No files changed, compilation skipped
+No files changed, compilation skipped
+
+Ran 13 tests for test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Adversarial.t.sol:RebasingAwareERC4626_Adversarial
+[PASS] test_ADV02_insufficientSharePretransferReverts() (gas: 460856)
+[PASS] test_ADV03_nestedDepositIsLocked_outerDepositCompletes() (gas: 7665912)
+[PASS] test_ADV03_reentrancyDuringDepositReverts() (gas: 7587803)
+[PASS] test_ADV07_invalidReceiverReverts() (gas: 161298)
+[PASS] test_ADV08_taxedOutboundFailsClosed() (gas: 8082564)
+[PASS] test_ADV09_unauthorizedDiamondCutReverts() (gas: 8987)
+[PASS] test_ADV16_zeroPayoutBurnReverts() (gas: 30641)
+[PASS] test_ADV_assetPretransferDoesNotMint() (gas: 76725)
+[PASS] test_ADV_cannotBurnOtherHolderViaInternalSy() (gas: 485175)
+[PASS] test_ADV_crossVaultIsolation() (gas: 6584448)
+[PASS] test_ADV_disableDoesNotBlockExit() (gas: 203377)
+[PASS] test_ADV_firstDepositorDonationInflationOffset() (gas: 223868)
+[PASS] test_ADV_publicSharesArePublic() (gas: 476429)
+Suite result: ok. 13 passed; 0 failed; 0 skipped; finished in 76.33ms (26.54ms CPU time)
+
+Ran 12 tests for test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Fuzz.t.sol:RebasingAwareERC4626_Fuzz
+[PASS] testFuzz_FUZZ01_crossInterfaceSameSnapshot(uint96) (runs: 16, μ: 442519, ~: 442391)
+[PASS] testFuzz_FUZZ01_depositMatchesOracle(uint96) (runs: 16, μ: 147499, ~: 147285)
+[PASS] testFuzz_FUZZ01_previewMatchesDeposit(uint96) (runs: 16, μ: 155255, ~: 155238)
+[PASS] testFuzz_FUZZ02_exactOutMinimals(uint96) (runs: 16, μ: 264230, ~: 264486)
+[PASS] testFuzz_FUZZ03_closedCycleNoProfit(uint96) (runs: 16, μ: 142790, ~: 142790)
+[PASS] testFuzz_FUZZ04_donationDoesNotMintShares(uint96) (runs: 16, μ: 51826, ~: 51622)
+[PASS] testFuzz_FUZZ06_allowanceOwnerRedeem(uint96) (runs: 16, μ: 205048, ~: 205116)
+[PASS] testFuzz_FUZZ09_assetPretransferAlwaysReverts(uint96,bool) (runs: 16, μ: 70770, ~: 70631)
+[PASS] testFuzz_FUZZ10_sharePretransferRefundConservation(uint96) (runs: 16, μ: 536428, ~: 536428)
+[PASS] testFuzz_FUZZ11_quoteDepositMatchesExecution(uint96) (runs: 16, μ: 186988, ~: 187081)
+[PASS] testFuzz_FUZZ13_zeroAmountAlwaysReverts(uint8) (runs: 16, μ: 27495, ~: 27603)
+[PASS] testFuzz_redeemDoesNotExceedBacking(uint96) (runs: 16, μ: 143081, ~: 142985)
+Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 81.75ms (329.85ms CPU time)
+
+Ran 2 test suites in 1.14s (158.09ms CPU time): 25 tests passed, 0 failed, 0 skipped (25 total tests)

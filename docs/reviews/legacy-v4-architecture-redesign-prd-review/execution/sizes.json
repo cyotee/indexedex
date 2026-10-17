@@ -1,0 +1,114 @@
+[
+  {
+    "facet": "ERC20Facet",
+    "runtime_bytes": 3164,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/ERC20Facet.sol/ERC20Facet.json"
+  },
+  {
+    "facet": "ERC5267Facet",
+    "runtime_bytes": 1447,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/ERC5267Facet.sol/ERC5267Facet.json"
+  },
+  {
+    "facet": "ERC2612Facet",
+    "runtime_bytes": 2173,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/ERC2612Facet.sol/ERC2612Facet.json"
+  },
+  {
+    "facet": "MultiAssetBasicVaultFacet",
+    "runtime_bytes": 1720,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/MultiAssetBasicVaultFacet.sol/MultiAssetBasicVaultFacet.json"
+  },
+  {
+    "facet": "MultiAssetStandardVaultFacet",
+    "runtime_bytes": 1747,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/MultiAssetStandardVaultFacet.sol/MultiAssetStandardVaultFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeCallbackFacet",
+    "runtime_bytes": 4441,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeCallbackFacet.sol/UniswapV4StandardExchangeCallbackFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeInFacet",
+    "runtime_bytes": 28818,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeInFacet.sol/UniswapV4StandardExchangeInFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeInQueryFacet",
+    "runtime_bytes": 19673,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeInQueryFacet.sol/UniswapV4StandardExchangeInQueryFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangePositionImportFacet",
+    "runtime_bytes": 15293,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangePositionImportFacet.sol/UniswapV4StandardExchangePositionImportFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutFacet",
+    "runtime_bytes": 30033,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeOutFacet.sol/UniswapV4StandardExchangeOutFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutQueryFacet",
+    "runtime_bytes": 18541,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeOutQueryFacet.sol/UniswapV4StandardExchangeOutQueryFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeLiquidReserveFacet",
+    "runtime_bytes": 13119,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeLiquidReserveFacet.sol/UniswapV4StandardExchangeLiquidReserveFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeInMultiFacet",
+    "runtime_bytes": 15454,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeInMultiFacet.sol/UniswapV4StandardExchangeInMultiFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeInMultiQueryFacet",
+    "runtime_bytes": 16003,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeInMultiQueryFacet.sol/UniswapV4StandardExchangeInMultiQueryFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutMultiFacet",
+    "runtime_bytes": 15733,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeOutMultiFacet.sol/UniswapV4StandardExchangeOutMultiFacet.json"
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutMultiQueryFacet",
+    "runtime_bytes": 17912,
+    "hard_limit": 24576,
+    "advisory_limit": 23000,
+    "artifact": "out/UniswapV4StandardExchangeOutMultiQueryFacet.sol/UniswapV4StandardExchangeOutMultiQueryFacet.json"
+  }
+]

@@ -23,6 +23,9 @@ import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferL
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
+    bool internal nestedAttempted;
+    bytes internal nestedReason;
+
     /// @dev Called from the token pull. A wrong nested error fails this assertion inside the
     ///      reverted frame; the vault then reports the pull as TransferFromFailed.
     function observeNestedDeposit(address wrapped, address receiver) external {
@@ -30,6 +33,12 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         assertFalse(ok, "nested deposit must be rejected");
         assertEq(reason, abi.encodeWithSelector(IReentrancyLock.IsLocked.selector), "nested guard is IsLocked");
         revert IReentrancyLock.IsLocked();
+    }
+
+    function recordNestedDeposit(address wrapped, address receiver) external {
+        (, bytes memory reason) = wrapped.call(abi.encodeCall(IERC4626.deposit, (uint256(1e18), receiver)));
+        nestedAttempted = true;
+        nestedReason = reason;
     }
 
     function test_ADV_firstDepositorDonationInflationOffset() public {
@@ -144,6 +153,35 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         assertEq(IERC20(address(wrapped)).balanceOf(alice), aliceShares, "nested guard credits no shares");
         assertEq(tok.balanceOf(address(wrapped)), vaultAssets, "nested guard takes no assets");
         assertEq(IBasicVault(address(wrapped)).reserveOfToken(address(tok)), reserveBefore, "nested guard books nothing");
+    }
+
+    function test_ADV03_nestedDepositIsLocked_outerDepositCompletes() public {
+        ReentrantERC20Harness tok = new ReentrantERC20Harness("R", "R", 18);
+        IERC4626 wrapped = pkg.deployVault(IERC20Metadata(address(tok)), 10, bytes32(uint256(123)));
+        tok.mint(alice, 100e18);
+        tok.setReenter(address(this), abi.encodeCall(this.recordNestedDeposit, (address(wrapped), alice)));
+        tok.setBubbleRevert(true);
+        nestedAttempted = false;
+        delete nestedReason;
+        uint256 depositAssets = 10e18;
+        uint256 expectedShares = wrapped.previewDeposit(depositAssets);
+        uint256 supplyBefore = IERC20(address(wrapped)).totalSupply();
+        uint256 aliceSharesBefore = IERC20(address(wrapped)).balanceOf(alice);
+        uint256 aliceAssetsBefore = tok.balanceOf(alice);
+        uint256 vaultAssetsBefore = tok.balanceOf(address(wrapped));
+        assertGt(expectedShares, 0, "previewed shares");
+        vm.startPrank(alice);
+        tok.approve(address(wrapped), type(uint256).max);
+        uint256 minted = wrapped.deposit(depositAssets, alice);
+        vm.stopPrank();
+        assertGt(minted, 0, "outer deposit finished");
+        assertEq(minted, expectedShares, "outer deposit matches preview");
+        assertEq(IERC20(address(wrapped)).balanceOf(alice), aliceSharesBefore + minted, "recipient shares are the outer mint");
+        assertEq(IERC20(address(wrapped)).totalSupply(), supplyBefore + minted, "supply grew by the outer mint");
+        assertEq(tok.balanceOf(alice), aliceAssetsBefore - depositAssets, "caller paid the outer assets");
+        assertEq(tok.balanceOf(address(wrapped)), vaultAssetsBefore + depositAssets, "vault received the outer assets");
+        assertTrue(nestedAttempted, "nested deposit was attempted");
+        assertEq(nestedReason, abi.encodeWithSelector(IReentrancyLock.IsLocked.selector), "nested guard is IsLocked");
     }
 
     function test_ADV07_invalidReceiverReverts() public {

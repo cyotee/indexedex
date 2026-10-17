@@ -123,7 +123,7 @@ interface IUniswapV4Detf {
         returns (uint256 purchasedDetf, uint256 principalDetf, uint256 rewardsDetf, uint256 liquidityDetf);
 
     /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
-    ///        Exact-input credits the requested amount from unbooked available and refunds nothing.
+    ///        The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall.
     function bond(
         IERC20 tokenIn,
         uint256 amountIn,
@@ -134,7 +134,7 @@ interface IUniswapV4Detf {
     ) external returns (uint256 tokenId, uint256 shares);
 
     /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
-    ///        Exact-input credits the requested amount from unbooked available and refunds nothing.
+    ///        The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall.
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 
     function sweepDust() external;

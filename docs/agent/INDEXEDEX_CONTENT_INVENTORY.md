@@ -82,11 +82,14 @@ Cartographer (2026-08-09): IndexedEx graph ~5408 files / 7264 nodes under `.cart
 
 ## Protocols (IndexedEx product adapters)
 
+The legacy Uni V4 SE local liquid buffer family formerly at `contracts/protocols/dexes/uniswap/v4/` was deleted by owner instruction on 2026-10-15. Its old plans are superseded; see the [removal report](../reviews/legacy-v4-removal/EXECUTION_REPORT.md).
+
 | path | purpose | owner | PRD | test root |
 |------|---------|-------|-----|-----------|
 | `contracts/protocols/dexes/balancer/v3/pools/**` | Buffer / multi-vault Balancer pool packages | IndexedEx | co-located pool PRDs | `test/foundry/spec/protocols/dexes/balancer/...` |
 | `contracts/protocols/dexes/uniswap/v3/` | Uni V3 SE vault product | IndexedEx | `UNISWAP_V3_STANDARD_EXCHANGE_VAULT_PRD.md` | TestBases under `contracts/test/bases/` |
-| `contracts/protocols/dexes/uniswap/v4/` | Uni V4 SE local liquid buffer | IndexedEx | V4 SE PRD | — |
+| `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/{hookless,ponsFamilyV2Hook}/` | Supported Uni V4 Full Spread SE vaults | IndexedEx | co-located family PRDs | `test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/` |
+| `contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/` | Supported Uni V4 Upper/Lower Wings SE vault | IndexedEx | co-located family PRD | `test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/` |
 | `contracts/protocols/staking/{lido,etherfi,rocket-pool}/` | LST Standard Exchange vaults | IndexedEx | co-located staking PRDs | `TestBase_*StandardExchange.sol` |
 | `contracts/protocols/lending/**` | Lending-related IX adapters (e.g. Aave loops/Stata) | IndexedEx | — | `TestBase_Aave*`, `TestBase_ERC4626MorphoHermetic` |
 

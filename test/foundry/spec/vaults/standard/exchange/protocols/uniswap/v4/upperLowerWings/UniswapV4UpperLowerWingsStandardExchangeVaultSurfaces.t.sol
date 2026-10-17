@@ -6,7 +6,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldErrors as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldErrors.sol";
 
 // tag::UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest[]
 contract UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest is TestBase_UniswapV4UpperLowerWingsStandardExchangeVault, NativeSYExecutionAssertions {

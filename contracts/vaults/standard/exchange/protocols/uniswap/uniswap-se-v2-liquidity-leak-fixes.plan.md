@@ -9,6 +9,8 @@ This file is the execute artifact. Give implementation execution this path. Foll
 
 Execution baseline: `/private/tmp/fullspread-baseline-dpp0i66f` contains the starting working-tree diff, revision, status, and original evidence files. The initial 96/96 preserved-source gate passed. Existing unrelated skill/documentation changes are retained. Final FullSpread artifact build and all 654 tests in 49 suites passed. Both 64 × 96 invariant campaigns completed without unexpected reverts. All 26 deployed artifacts fit (largest: V3 InQueryFacet, 24,099 bytes), so AC74 requires no split. The final 96/96 preserved-source gate and unchanged-manifest checks passed. See `VALIDATION.md`, `REGRESSION_RESULTS.txt`, and `VALIDATED_ARTIFACTS.json`.
 
+Current-law note (2026-10-16, REQ-SEP-04): the prepaid rule is declared-bound. Exact-input processes the declared amount and does not refund undeclared tokens. Exact-output refunds only the unused part of `min(unbooked, declared maximum)` credit. A declaration differing from the whole surplus does not revert. The checked items at lines 65, 88, 117, 229, 251, 261, and 333 are historical records and are not current requirements.
+
 ## Objective
 
 Rename the current Uniswap V3/V4 Standard Exchange V2 packages in place to FullSpread and close the specified first-mint, delivery, refund, and imported-position allowance leaks. Book only diamond-held ERC-20 balances in `reserveOfToken`; continue pricing shares from live free assets, deployed assets, and uncollected fees. Deliver production-proxy regression evidence, preserve old packages byte-for-byte, and leave live deployments untouched.

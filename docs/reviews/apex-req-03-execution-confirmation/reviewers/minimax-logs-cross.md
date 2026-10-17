@@ -1,0 +1,49 @@
+# MiniMax M3 — REQ-03 log confirmation cross-review
+
+- **Date:** 2026-10-14
+- **Reviewer:** MiniMax M3, one cross-review continuation. No peer original used as authority. No PRD or code was read or written this round. The three peer log cross-reviews and my own log confirmation were re-read.
+- **Question:** Agree or dissent: the preserved logs satisfy the plan, and the 9 already-selected sites do not block closure.
+
+## Verdict
+
+**Agree with all three peers on both points.** The preserved logs satisfy Step 4. The 9 already-selected sites do not block closure. My own log confirmation reaches the same verdict ("Satisfied") with the same reasoning on the 9/308 split. Four independent reads (three peers plus mine) reach the same conclusion.
+
+## (1) The preserved logs satisfy the plan
+
+**Agree with all three peers.**
+
+- **Astra** (line 50): "Step 4 is satisfied by the recorded results. The earlier 'run not recorded' condition no longer applies to the evidence currently available."
+- **Grok** (line 26): "No broken requirement remains in Step 4 on these logs."
+- **Kimi** (line 9): "Every Done-when bullet has corresponding recorded evidence."
+- **Mine** (`minimax-logs.md`): "The plan is satisfied by the recorded results."
+
+The four reads agree because the evidence is concrete and complete. `EXECUTION_REPORT.md` records commands, exits, and toolchain. `evidence/validation.txt` records per-command exit statuses (0, 0, 0, 0/250-on-retry→0, 0, 1). `evidence/forge-test.txt` records the failed first invocation (host crash, not a test failure). `evidence/forge-test-retry.txt` records the passing retry (25/0/0, including `test_ADV03_nestedDepositIsLocked_outerDepositCompletes`, `test_ADV03_reentrancyDuringDepositReverts`, and `testFuzz_FUZZ02_exactOutMinimals`). `evidence/scanner.txt` and `evidence/scanner-check.txt` both end with `APEX R2.4: 317 bare expectations in 3161 files` and both list the two cited files (`RebasingAwareERC4626_Accounting.t.sol:131,143` and `ERC4626StandardExchange_Routes.t.sol:332,335,383,409,559`).
+
+I do not dissent. The four reads agree because the evidence directly satisfies each Done-when bullet and each Step 4 content requirement, as the three peers and I independently verified.
+
+## (2) The 9 already-selected sites do not block closure
+
+**Agree with all three peers.**
+
+- **Astra** (line 40): "the disclosed baseline difference does **not** block satisfaction. The nonzero result is recorded as detected bare expectations, not misrepresented as a compiler, test, syntax, or I/O failure. Rewriting old or newly selected tests, suppressing the nine sites, or dropping roots would contradict the bounded task. No such remediation is recommended."
+- **Grok** (line 26): "The 9 and 308 split is a recorded correction of the baseline assumption, not a compiler failure, a Solidity test failure, a missing directory, or a scanner syntax error. It is not a reason to rewrite tests."
+- **Kimi** (line 9): "One disclosed deviation (the 9/308 site composition) does not block satisfaction."
+- **Mine** (`minimax-logs.md`): "The discrepancy does not block satisfaction."
+
+The four reads agree because the plan's operative requirements are met. The plan requires (a) the exit is recorded, (b) the exit was not "fixed" by rewriting tests, and (c) the site list is preserved. All three are met. The plan's line 167 wording — "a nonzero `--check` exit is recorded and was not 'fixed' by rewriting tests" — does not require the nonzero exit to come exclusively from newly selected directories. The two original roots were required to stay (plan line 24: "Leave the `custody` tuple, the APEX-marker scan, the bare-call regex, the report path, and the `--check` exit behavior unchanged"). Their existing findings necessarily remain. The 9 old sites are the standing R2.4 backlog, not a defect introduced by this item.
+
+The plan's earlier composition sentence ("caused only by existing bare `expectRevert()` calls in newly selected directories," PRD line 76) was an anticipation of the baseline. The recorded reality is that 9 sites were already selected. The anticipation was wrong, the report disclosed it, and the disclosure is a transparency note, not a violation. The operative invariant is that the nonzero exit is caused by existing bare calls (true — all 317 sites are in unchanged files), that the exit is recorded (true), and that no test was rewritten to force a clean result (true).
+
+I do not dissent. The four reads agree because the plan's operative requirements and the operative invariant are both met, and the documented discrepancy is a transparency note that does not block satisfaction.
+
+## Material peer claims not re-read
+
+- I did not re-read the source files this round. The three peers and my own original and confirmation re-reads all agree the source matches; the only remaining question was whether the logs satisfy Step 4. The logs are the focus this round.
+- I did not re-read the `bare-expectrevert.txt` regenerated by the script. Kimi (line 18) notes its content matches the preserved scanner logs, and I accept that on the strength of Kimi's read.
+- I did not search for further evidence. The four reads all agree the evidence is sufficient.
+
+## Summary
+
+The plan's Step 4 is satisfied by the recorded results. The 9 already-selected sites do not block closure. All four independent reads (Astra, Grok, Kimi, MiniMax) reach the same verdict for the same reasons. The source matches. The run is recorded. The discrepancy is a transparency note, not a violation.
+
+I did not run Forge.

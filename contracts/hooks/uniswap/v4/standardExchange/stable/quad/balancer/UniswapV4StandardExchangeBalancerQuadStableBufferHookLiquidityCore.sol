@@ -285,7 +285,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
         view
         returns (uint256 shares)
     {
-        return _entryPreviewJoinSingleAssetExactIn(tokenIn, amountIn);
+        return _quoteSingleJoinExactInPreview(tokenIn, amountIn, _previewSupplyAfterProtocolMint());
     }
 
     function _joinSingleAssetExactIn(
@@ -301,7 +301,9 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
         if (_totalSupply() == 0 || !Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
         uint256 protocolShares = _maybeMintProtocolFee();
         (uint8 idx, bool seUnit) = _indexOfPairOrSe(tokenIn);
-        shares = _quoteSingleJoinExactIn(tokenIn, amountIn, _totalSupply());
+        // Detect zero invariant growth before strict math can underflow.
+        shares = _quoteSingleJoinExactInPreview(tokenIn, amountIn, _totalSupply());
+        if (shares == 0) revert ZeroAmount();
         if (shares < sharesMin) revert Slippage();
         if (seUnit) {
             // B6: pull SE vault shares directly into inventory (no buffer wrap).
@@ -339,6 +341,32 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidity
             invIn = _pairToInvPreview(pair)[idx];
         }
         shares = Math.singleJoinExactInShares(
+            _ratedWadAll(),
+            _liquidityValue(idx, invIn, false),
+            idx,
+            _amp(),
+            supply,
+            feeWad
+        );
+    }
+    function _quoteSingleJoinExactInPreview(address tokenIn, uint256 amountIn, uint256 supply)
+        internal
+        view
+        returns (uint256 shares)
+    {
+        (uint8 idx, bool seUnit) = _indexOfPairOrSe(tokenIn);
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        uint256 invIn;
+        if (seUnit) {
+            // Inventory unit already (SE share amount).
+            invIn = amountIn;
+        } else {
+            uint256[] memory pair = new uint256[](Repo._numTokens());
+            pair[idx] = amountIn;
+            invIn = _pairToInvPreview(pair)[idx];
+        }
+        shares = Math.previewSingleJoinExactInShares(
             _ratedWadAll(),
             _liquidityValue(idx, invIn, false),
             idx,

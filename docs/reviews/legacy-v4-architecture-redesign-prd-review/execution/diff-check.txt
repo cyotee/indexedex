@@ -1,0 +1,9 @@
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryTarget.sol:36: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiTarget.sol:42: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol:49: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol:87: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveTarget.sol:87: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecuteTarget.sol:71: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol:48: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryTarget.sol:45: new blank line at EOF.
+contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol:44: new blank line at EOF.

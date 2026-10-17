@@ -14,6 +14,21 @@ if sys.argv[1:] not in ([], ["--check"]):
 roots = (
     Path("test/foundry/spec/hooks/uniswap/v4/standardExchange"),
     Path("test/foundry/spec/vaults/standard/exchange/protocols/uniswap"),
+    Path("test/foundry/spec/vaults/standard/erc4626"),
+    Path("test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue"),
+    Path("test/foundry/spec/protocols/staking/rebasingVault"),
+    Path("test/foundry/spec/protocol/staking/rocket-pool"),
+    Path("test/foundry/spec/protocol/staking/lido"),
+    Path("test/foundry/spec/protocol/staking/etherfi"),
+    Path("test/foundry/spec/protocol/lending/aave/v3.6"),
+    Path("test/foundry/spec/protocol/lending/aave/cross-version"),
+    Path("test/foundry/spec/protocol/dexes/uniswap/v2"),
+    Path("test/foundry/spec/protocol/dexes/camelot/v2"),
+    Path("test/foundry/spec/protocol/dexes/aerodrome/v1"),
+    Path("test/foundry/spec/protocols/dexes/aerodrome/slipstream"),
+    Path("test/foundry/spec/protocol/dexes/balancer/v3"),
+    Path("test/foundry/spec/protocols/dexes/balancer/v3"),
+    Path("test/foundry/spec/vaults/detf"),
 )
 custody = (
     Path("test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Adversarial.t.sol"),

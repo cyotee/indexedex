@@ -465,6 +465,44 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         if (shares == 0) revert ZeroAmount();
     }
 
+    /// @dev Preserve strict book validation; a zero-rounded join previews zero shares.
+    function previewSingleJoinExactInShares(
+        uint256[4] memory invWad,
+        uint256 amountInWad,
+        uint256 tokenInIndex,
+        uint256 amp,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) external pure returns (uint256 shares) {
+        if (supply == 0) revert ZeroAmount();
+        if (swapFeeWad >= WAD) revert InvalidFeeWad();
+        if (tokenInIndex >= N_TOKENS) revert MathDomain();
+        for (uint256 i; i < N_TOKENS; ++i) {
+            if (invWad[i] == 0) revert MathDomain();
+        }
+
+        if (amountInWad == 0) return 0;
+        uint256 D0 = _getD(invWad, amp);
+        // Deep-copy: memory→memory assignment is a reference (would mutate invWad).
+        uint256[4] memory newXp;
+        newXp[0] = invWad[0];
+        newXp[1] = invWad[1];
+        newXp[2] = invWad[2];
+        newXp[3] = invWad[3];
+        newXp[tokenInIndex] = invWad[tokenInIndex] + amountInWad;
+        uint256 D1 = _getD(newXp, amp);
+        if (D1 <= D0) return 0;
+
+        // Ideal proportional contribution of this leg for D growth
+        uint256 idealAmount = (invWad[tokenInIndex] * (D1 - D0)) / D0;
+        uint256 taxable = amountInWad > idealAmount ? amountInWad - idealAmount : 0;
+        uint256 feeAmount = mulUp(taxable, swapFeeWad);
+        newXp[tokenInIndex] = invWad[tokenInIndex] + amountInWad - feeAmount;
+        uint256 D2 = _getD(newXp, amp);
+        if (D2 <= D0) return 0;
+        shares = (supply * (D2 - D0)) / D0;
+    }
+
     /**
      * @notice Single-asset exact-BPT-in exit on inventory WAD with taxable fee.
      */

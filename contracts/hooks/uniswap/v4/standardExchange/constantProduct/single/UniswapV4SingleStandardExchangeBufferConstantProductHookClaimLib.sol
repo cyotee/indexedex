@@ -381,7 +381,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
 
     /// @dev Residual maintenance only. A zero quote means the amount cannot enter
     /// the vault yet and stays owned locally.
-    function previewResidualBuffer(uint256 amount) external view returns (uint256 shares) {
+    function previewResidualBuffer(uint256 amount) internal view returns (uint256 shares) {
         Repo.Layout storage l = Repo._layout();
         return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)

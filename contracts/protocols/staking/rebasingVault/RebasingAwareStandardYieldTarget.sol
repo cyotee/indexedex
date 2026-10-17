@@ -38,10 +38,12 @@ contract RebasingAwareStandardYieldTarget is ReentrancyLockModifiers {
             RebasingAwareERC4626Common.executeDeposit(amountTokenToDeposit, receiver, minSharesOut, true);
     }
 
-    /// @param burnFromInternalBalance Integrating-contract flag only when true and `msg.sender != address(this)`.
-    ///        Transfer-and-consume must be atomic; staged use is at integrator risk. Callers with no bytecode
-    ///        revert `EOAPretransferNotAllowed()`. Burns exactly `amountSharesToRedeem` from vault-held shares
-    ///        and refunds nothing (API-12). The vault's own self-call path is unaffected.
+    /// @param burnFromInternalBalance When true, the explicit holder is the vault and redemption burns
+    ///        exactly `amountSharesToRedeem` of its shares and refunds nothing (API-12). When false, the
+    ///        explicit holder is `msg.sender`. This function does not call `address(this)`. Transfer-and-consume
+    ///        must be atomic; staged use is at integrator risk. When true and `msg.sender != address(this)`,
+    ///        a caller with no bytecode reverts `EOAPretransferNotAllowed()`. This comment does not claim
+    ///        that the `msg.sender == address(this)` exemption is reachable.
     function redeem(
         address receiver,
         uint256 amountSharesToRedeem,

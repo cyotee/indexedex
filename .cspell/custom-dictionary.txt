@@ -43,6 +43,7 @@ Calcing
 callability
 calldatacopy
 calldatasize
+ceffeVhry
 chainid
 Chainlink
 cheatcode
@@ -108,15 +109,19 @@ endswith
 ERC
 esbuild
 Ethena
+etherfi
 ethskills
 eventsource
 executability
+expectrevert
 FAKEGAS
 Farcaster
 fastmcp
 FBAL
+ffee
 ffeid
 ffej
+ffeqs
 FIFTYK
 FIVEHUNDREDM
 FIVEK
@@ -199,6 +204,7 @@ Muldiv
 mulmod
 Mult
 multicall
+nargs
 NFTDF
 NFTID
 nohup

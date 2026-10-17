@@ -1,0 +1,22 @@
+[
+  {
+    "facet": "UniswapV4StandardExchangeInFacet",
+    "runtime_bytes": 26687,
+    "over_limit_bytes": 2111
+  },
+  {
+    "facet": "UniswapV4StandardYieldFacet",
+    "runtime_bytes": 29373,
+    "over_limit_bytes": 4797
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutMultiQueryFacet",
+    "runtime_bytes": 6114,
+    "over_limit_bytes": 0
+  },
+  {
+    "facet": "UniswapV4StandardExchangeOutFacet",
+    "runtime_bytes": 30033,
+    "over_limit_bytes": 5457
+  }
+]

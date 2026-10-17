@@ -1,0 +1,17 @@
+{
+  "profile": "default",
+  "config": {
+    "solc": "0.8.35",
+    "via_ir": false,
+    "optimizer": true,
+    "optimizer_runs": 1,
+    "evm_version": "prague",
+    "src": "contracts",
+    "test": "test/foundry/spec",
+    "out": "out",
+    "cache_path": "cache_forge"
+  },
+  "forge": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+  "base_commit": "f35186e57ba8b23c5fca67c42b5ccbaa8fc0a5e2",
+  "branch": "fix/legacy-v4-erc5115-interface"
+}

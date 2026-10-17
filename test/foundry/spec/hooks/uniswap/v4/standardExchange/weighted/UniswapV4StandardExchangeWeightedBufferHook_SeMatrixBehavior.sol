@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Vm} from "forge-std/Vm.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -216,28 +218,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         (bool previewOk, bytes memory previewRet) = address(weighted).staticcall(
             abi.encodeWithSignature("previewDepositSingle(address,uint256)", face, uint256(1))
         );
+        assertTrue(previewOk, "dust preview must succeed");
+        assertEq(abi.decode(previewRet, (uint256)), 0, "dust preview rounds to zero shares");
         vm.prank(user);
-        if (!previewOk) {
-            vm.expectRevert(previewRet);
-            weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
-            assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
-            assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
-            assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
-        } else {
-            uint256 preview = abi.decode(previewRet, (uint256));
-            if (preview == 0) {
-                vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
-                weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
-                assertEq(IERC20(face).balanceOf(user), userFace, "below-minimum input is not taken");
-                assertEq(IERC20(face).balanceOf(hook), hookFace, "hook custody unchanged");
-                assertEq(fx.seBooked(), bookedBefore, "book unchanged");
-            } else {
-                uint256 shares = weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
-                assertEq(shares, preview, "dust execution matches its preview");
-                assertEq(userFace - IERC20(face).balanceOf(user), 1, "representable deposit taken");
-                assertGt(shares, 0, "every taken deposit receives a representable claim");
-            }
-        }
+        vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
+        weighted.depositSingle(face, 1, user, 0, block.timestamp + 1 hours);
+        assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
+        assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
+        assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
     }
 
     function test_row_hookSwap_exactIn_eoaPretransferRejected() public virtual {
@@ -269,17 +257,37 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
+        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
         );
+        vm.recordLogs();
         uint256 used = abi.decode(rowCaller.consumePretransfer(tin, address(this), hook, fatMax, data), (uint256));
         assertGt(used, 0);
         assertLe(used, fatMax, "used within the bounded credit");
         assertEq(tout.balanceOf(address(rowCaller)) - callerOutBefore, wantOut, "exact output delivered");
         assertEq(tin.balanceOf(address(rowCaller)), fatMax - used, "refund is credit - used");
         assertEq(tin.balanceOf(address(this)), 0, "payer spent fatMax");
-        assertLt(_hookSeShares(), seBefore, "SE shares burned only for the delivered face");
+        assertEq(
+            seBefore + _faceSharesMintedToHook(), _hookSeShares() + expectedDebit,
+            "SE share debit matches the exact-output quote including minted-back shares"
+        );
+    }
+
+    /// @dev Count only face-leg SE mints to this hook during the recorded settlement call.
+    function _faceSharesMintedToHook() internal returns (uint256 minted) {
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        for (uint256 i; i < logs.length; ++i) {
+            if (
+                logs[i].emitter == seUT && logs[i].topics.length == 3
+                    && logs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                    && logs[i].topics[1] == bytes32(0)
+                    && logs[i].topics[2] == bytes32(uint256(uint160(hook)))
+            ) {
+                minted += abi.decode(logs[i].data, (uint256));
+            }
+        }
     }
 
     function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public virtual {

@@ -1,0 +1,11 @@
+{
+  "test/foundry/spec/vaults/standard/sy/V3FullRangeNativeSY.t.sol": "f62a3aac9c56265b9bdd23709df1e0a5947dcc66d7038db11abf7dc35a2b8d55",
+  "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol": "f43261d5b677f59c0f97c7e290a39b9974f6125ba0c1a42d837ab4b80307f443",
+  "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol": "48218e44e503f1762fde0d5d389575880edfbe996fd6e091bf154227dba7abbf",
+  "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol": "5f987565778554a67d07866731b72d2ad42b38f134bcfe0014f4830f3fac76ec",
+  "contracts/vaults/standard/sy/NativeStandardYieldQuoteBase.sol": "6bf8a1edade4a34a946e185a7f2767a8eac89e9bd4934032b9b0cff5439c8a13",
+  "contracts/vaults/standard/sy/NativeStandardYieldDiscoveryTarget.sol": "d398f068e017bfb73e84656750d57dc5890d3463f05993bf2461cf7a752dff59",
+  "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol": "b1f21051052994d16d0858774023a6570bca0e08b376305db2edc89c96f54a22",
+  "contracts/vaults/standard/sy/NativeStandardYieldErrors.sol": "00756b05aab836358af3c7b7307c31ed2f1793241a91293a3942cb368c398b0d",
+  "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol": "bf4a314858ffd264eaf780f03f992da4b27cb3c22899ed54b23cd1fcf1313d01"
+}

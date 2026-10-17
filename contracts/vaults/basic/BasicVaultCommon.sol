@@ -73,7 +73,7 @@ contract BasicVaultCommon is ISecurePullErrors {
      * @param pretransferred When true, no transfer is performed in this call; credit requires
      *        `claimed <= unbooked surplus` relative to durable reserve. Public true-flag
      *        callers must already have passed `LocalCreditLib.requirePretransferCaller`.
-     *        Exact-in credits exactly `amountTokenToDeposit` and refunds nothing.
+     *        The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall.
      * @return actualIn Credited amount: claimed when pretransferred and surplus-sufficient;
      *         otherwise the observed inbound pull delta.
      */

@@ -29,13 +29,13 @@ IStandardExchangeIn(vault).exchangeIn(
 );
 ```
 
-No `preparePretransfer` call is used or exposed. The measured pushed input is `balanceOf(vault) - reserveOfToken(token)` captured before settlement changes balances. Exact-in credits exactly `amountIn` when unbooked availability is sufficient. An exact-in excess push does not revert merely for being excess, and exact-in never refunds. A short push reverts `TransferDeltaInsufficient`.
+No `preparePretransfer` call is used or exposed. The measured pushed input is `balanceOf(vault) - reserveOfToken(token)` captured before settlement changes balances. The caller declares the bound. The vault processes only the amount needed for the requested output, and only from present unbooked tokens within that declaration. It refunds the unused part of the declaration to the caller. It does not refund unbooked tokens the caller did not declare. A shortfall is not filled from booked inventory. A pretransfer outside an atomic operation is the sender's responsibility. A short push reverts `TransferDeltaInsufficient`.
 
 `exchangeOut` requires `used <= max`. False-flag exact-out and dual exits pull the quoted used amount and refund nothing. They do not pull max, a quote buffer, or max shares. True-flag exact-out refunds only `credit - used` to `msg.sender`. Booked inventory cannot fund refunds.
 
 Single-output exact-out share exits burn only used shares directly from the caller without share allowance.
 
-Unsolicited transfers on a live vault are donor risk: unbooked surplus can count as a later caller's delivery. An exact-in call whose declared amount differs from that surplus reverts. This does not permit spending inventory already booked by a vault operation.
+Unsolicited transfers remain donor risk and can later count toward a declared bound. They are not refunded to a later caller merely because they are unbooked. This does not permit spending inventory already booked by a vault operation.
 
 ## Activation and ownership
 

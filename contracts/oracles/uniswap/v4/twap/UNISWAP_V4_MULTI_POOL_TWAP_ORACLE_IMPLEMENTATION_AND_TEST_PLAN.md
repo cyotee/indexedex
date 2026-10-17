@@ -1,3 +1,5 @@
+> **Legacy SE retirement (2026-10-15):** references below to `UniswapV4StandardExchangeDFPkg` or `contracts/protocols/dexes/uniswap/v4/` describe a deleted family and do not authorize restoring it. Supported V4 SE consumers use the Full Spread Hookless, Full Spread Pons, or Upper/Lower Wings families under `contracts/vaults/standard/exchange/protocols/uniswap/v4/`. Other product requirements in this document remain in force. See `docs/reviews/legacy-v4-removal/EXECUTION_REPORT.md`.
+
 # Implementation & Test Plan: Uniswap V4 multi-pool TWAP oracle
 
 **Status:** Ready for coding (product law frozen)  

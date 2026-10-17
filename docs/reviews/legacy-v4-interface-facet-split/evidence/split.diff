@@ -1,0 +1,787 @@
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol
+@@ -4,8 +4,6 @@
+ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+-import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
+-import {Math} from "@crane/contracts/utils/Math.sol";
+ 
+ import {
+     UniswapV4StandardExchangeConfig as Config
+@@ -15,27 +13,6 @@
+ } from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeAccounting.sol";
+ 
+ contract UniswapV4StandardExchangeOutMultiQueryTarget {
+-    function getTokensIn() public view returns (address[] memory tokens) {
+-        tokens = new address[](2);
+-        tokens[0] = Config._token0();
+-        tokens[1] = Config._token1();
+-    }
+-
+-    function getTokensOut() public view returns (address[] memory) {
+-        return getTokensIn();
+-    }
+-
+-    function yieldToken() external pure returns (address) {
+-        return address(0);
+-    }
+-
+-    function exchangeRate() external view returns (uint256) {
+-        uint256 supply = ERC20Repo._totalSupply();
+-        if (supply == 0) return 1e18;
+-        (uint256 reserve0, uint256 reserve1) = Accounting._totalVaultReserves();
+-        return Math.mulDiv(FixedPointMathLib.mulSqrt(reserve0, reserve1), 1e18, supply);
+-    }
+-
+     function previewExchangeOutOneToMany(IERC20 tokenIn, address[] calldata tokensOut, uint256[] calldata amountsOut)
+         external
+         view
+@@ -59,13 +36,4 @@
+         return s0;
+     }
+ 
+-    function previewDeposit(address tokenIn_, uint256 amount_) external view returns (uint256) {
+-        if (!Config._isValidToken(tokenIn_)) return 0;
+-        return Accounting._previewExchangeIn(IERC20(tokenIn_), amount_, IERC20(address(this)));
+-    }
+-
+-    function previewRedeem(address tokenOut_, uint256 shares_) external view returns (uint256) {
+-        if (!Config._isValidToken(tokenOut_)) return 0;
+-        return Accounting._previewExchangeIn(IERC20(address(this)), shares_, IERC20(tokenOut_));
+-    }
+ }
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+-import {UniswapV4StandardYieldExecutionTarget} from "./UniswapV4StandardYieldExecutionTarget.sol";
+-import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+@@ -9,7 +7,7 @@
+     UniswapV4StandardExchangeInTarget
+ } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
+ 
+-contract UniswapV4StandardExchangeInFacet is UniswapV4StandardYieldExecutionTarget, IFacet {
++contract UniswapV4StandardExchangeInFacet is UniswapV4StandardExchangeInTarget, IFacet {
+     function facetName() public pure override returns (string memory name) {
+         return type(UniswapV4StandardExchangeInFacet).name;
+     }
+@@ -20,10 +18,8 @@
+     }
+ 
+     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](3);
++        funcs = new bytes4[](1);
+         funcs[0] = IStandardExchangeIn.exchangeIn.selector;
+-        funcs[1] = IERC5115_StandardizedYield.deposit.selector;
+-        funcs[2] = IERC5115_StandardizedYield.redeem.selector;
+     }
+ 
+     function facetMetadata()
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol
+@@ -1,20 +1,9 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
+-import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+-import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
+-import {
+-    UniswapV4StandardExchangeConfig as Config
+-} from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeConfig.sol";
+-import {
+-    UniswapV4StandardExchangeCustody as Custody
+-} from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeCustody.sol";
+-import {
+-    UniswapV4StandardExchangePoolOps as PoolOps
+-} from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangePoolOps.sol";
++import {UniswapV4StandardExchangeInExecution} from "./internal/UniswapV4StandardExchangeInExecution.sol";
+ 
+ interface IUniswapV4StandardExchangePositionImport {
+     function importPosition(
+@@ -27,7 +16,7 @@
+     ) external returns (uint256 sharesOut);
+ }
+ 
+-contract UniswapV4StandardExchangeInTarget is ReentrancyLockModifiers, StandardExchangeInExecutionBase {
++contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInExecution {
+     function exchangeIn(
+         IERC20 tokenIn,
+         uint256 amountIn,
+@@ -39,49 +28,4 @@
+     ) external returns (uint256) {
+         return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+     }
+-
+-    function _exchangeIn(
+-        IERC20 tokenIn,
+-        uint256 amountIn,
+-        IERC20 tokenOut,
+-        uint256 minAmountOut,
+-        address recipient,
+-        bool pretransferred,
+-        uint256 deadline
+-    ) internal override nonReentrant returns (uint256 amountOut) {
+-        Config._requireNotDisabled();
+-        if (deadline < block.timestamp) revert Config.UniswapV4ExchangeIn_DeadlineExceeded();
+-
+-        address token0 = Config._token0();
+-        address token1 = Config._token1();
+-
+-        if (
+-            (address(tokenIn) == token0 && address(tokenOut) == token1)
+-                || (address(tokenIn) == token1 && address(tokenOut) == token0)
+-        ) {
+-            uint256 actualIn = Custody._secureTokenTransfer(tokenIn, amountIn, pretransferred);
+-            amountOut = PoolOps._executeDirectSwapIn(address(tokenIn), actualIn, recipient);
+-            if (amountOut < minAmountOut) revert Config.UniswapV4ExchangeIn_SlippageExceeded();
+-            Config._pokeBoundPoolTwap();
+-            return amountOut;
+-        }
+-
+-        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
+-            uint256 actualIn = Custody._secureTokenTransfer(tokenIn, amountIn, pretransferred);
+-            amountOut = PoolOps._executeZapInDeposit(address(tokenIn), actualIn, minAmountOut, recipient);
+-            Config._pokeBoundPoolTwap();
+-            return amountOut;
+-        }
+-
+-        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+-            uint256 actualIn = Custody._secureShareDelivery(amountIn, pretransferred);
+-            amountOut =
+-                PoolOps._executeZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient, address(this));
+-            Config._pokeBoundPoolTwap();
+-            return amountOut;
+-        }
+-
+-        revert IStandardExchangeIn.ExchangeInNotAvailable();
+-    }
+ }
+-
+--- before/contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol
++++ after/contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol
+@@ -38,6 +38,7 @@
+         IFacet uniswapV4StandardExchangeInMultiQueryFacet;
+         IFacet uniswapV4StandardExchangeOutMultiFacet;
+         IFacet uniswapV4StandardExchangeOutMultiQueryFacet;
++        IFacet uniswapV4StandardYieldFacet;
+         IVaultFeeOracleQuery vaultFeeOracleQuery;
+         IVaultRegistryDeployment vaultRegistryDeployment;
+         IPermit2 permit2;
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldTarget.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldTarget.sol
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
++import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {UniswapV4StandardExchangeConfig as Config} from "./internal/UniswapV4StandardExchangeConfig.sol";
++import {UniswapV4StandardExchangeAccounting as Accounting} from "./internal/UniswapV4StandardExchangeAccounting.sol";
++import {UniswapV4StandardYieldExecutionTarget} from "./UniswapV4StandardYieldExecutionTarget.sol";
++
++/// @notice Complete ERC-5115 surface for the legacy V4 Standard Exchange.
++contract UniswapV4StandardYieldTarget is UniswapV4StandardYieldExecutionTarget {
++    function getTokensIn() public view override returns (address[] memory tokens) {
++        tokens = new address[](2);
++        tokens[0] = Config._token0();
++        tokens[1] = Config._token1();
++    }
++
++    function getTokensOut() public view override returns (address[] memory) {
++        return getTokensIn();
++    }
++
++    function yieldToken() external pure override returns (address) {
++        return address(0);
++    }
++
++    function exchangeRate() external view override returns (uint256) {
++        uint256 supply = ERC20Repo._totalSupply();
++        if (supply == 0) return 1e18;
++        (uint256 reserve0, uint256 reserve1) = Accounting._totalVaultReserves();
++        return Math.mulDiv(FixedPointMathLib.mulSqrt(reserve0, reserve1), 1e18, supply);
++    }
++
++    function previewDeposit(address tokenIn_, uint256 amount_) external view override returns (uint256) {
++        if (!Config._isValidToken(tokenIn_)) return 0;
++        return Accounting._previewExchangeIn(IERC20(tokenIn_), amount_, IERC20(address(this)));
++    }
++
++    function previewRedeem(address tokenOut_, uint256 shares_) external view override returns (uint256) {
++        if (!Config._isValidToken(tokenOut_)) return 0;
++        return Accounting._previewExchangeIn(IERC20(address(this)), shares_, IERC20(tokenOut_));
++    }
++}
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol
+@@ -51,6 +51,17 @@
+         vm.label(address(instance), "UniswapV4StandardExchangeInFacet");
+     }
+ 
++    function deployUniswapV4StandardYieldFacet(ICreate3FactoryProxy create3Factory)
++        internal
++        returns (IFacet instance)
++    {
++        instance = create3Factory.deployFacet(
++            ArtifactCreationCode.creationCode("UniswapV4StandardYieldFacet.sol:UniswapV4StandardYieldFacet"),
++            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardYieldFacet")._hash())
++        );
++        vm.label(address(instance), "UniswapV4StandardYieldFacet");
++    }
++
+     function deployUniswapV4StandardExchangeInQueryFacet(ICreate3FactoryProxy create3Factory)
+         internal
+         returns (IFacet instance)
+@@ -210,6 +221,7 @@
+         IFacet multiAssetStandardVaultFacet;
+         IFacet uniswapV4StandardExchangeCallbackFacet;
+         IFacet uniswapV4StandardExchangeInFacet;
++        IFacet uniswapV4StandardYieldFacet;
+         IFacet uniswapV4StandardExchangeInQueryFacet;
+         IFacet uniswapV4StandardExchangePositionImportFacet;
+         IFacet uniswapV4StandardExchangeOutFacet;
+@@ -234,6 +246,7 @@
+         pkgInit.multiAssetStandardVaultFacet = a.multiAssetStandardVaultFacet;
+         pkgInit.uniswapV4StandardExchangeCallbackFacet = a.uniswapV4StandardExchangeCallbackFacet;
+         pkgInit.uniswapV4StandardExchangeInFacet = a.uniswapV4StandardExchangeInFacet;
++        pkgInit.uniswapV4StandardYieldFacet = a.uniswapV4StandardYieldFacet;
+         pkgInit.uniswapV4StandardExchangeInQueryFacet = a.uniswapV4StandardExchangeInQueryFacet;
+         pkgInit.uniswapV4StandardExchangePositionImportFacet = a.uniswapV4StandardExchangePositionImportFacet;
+         pkgInit.uniswapV4StandardExchangeOutFacet = a.uniswapV4StandardExchangeOutFacet;
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol
+@@ -82,6 +82,7 @@
+     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET;
+     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET;
+     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET;
++    IFacet immutable UNISWAP_V4_STANDARD_YIELD_FACET;
+     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
+     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
+     IPermit2 immutable PERMIT2;
+@@ -107,6 +108,7 @@
+         UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET = pkgInit.uniswapV4StandardExchangeInMultiQueryFacet;
+         UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET = pkgInit.uniswapV4StandardExchangeOutMultiFacet;
+         UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET = pkgInit.uniswapV4StandardExchangeOutMultiQueryFacet;
++        UNISWAP_V4_STANDARD_YIELD_FACET = pkgInit.uniswapV4StandardYieldFacet;
+         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
+         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
+         PERMIT2 = pkgInit.permit2;
+@@ -168,7 +170,7 @@
+     }
+ 
+     function facetCuts() public view override returns (IDiamond.FacetCut[] memory facetCuts_) {
+-        facetCuts_ = new IDiamond.FacetCut[](16);
++        facetCuts_ = new IDiamond.FacetCut[](17);
+         facetCuts_[0] = IDiamond.FacetCut({
+             facetAddress: address(ERC20_FACET),
+             action: IDiamond.FacetCutAction.Add,
+@@ -248,6 +250,11 @@
+             facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET),
+             action: IDiamond.FacetCutAction.Add,
+             functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET.facetFuncs()
++        });
++        facetCuts_[16] = IDiamond.FacetCut({
++            facetAddress: address(UNISWAP_V4_STANDARD_YIELD_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: UNISWAP_V4_STANDARD_YIELD_FACET.facetFuncs()
+         });
+     }
+ 
+@@ -307,7 +314,7 @@
+     }
+ 
+     function facetAddresses() public view returns (address[] memory facetAddresses_) {
+-        facetAddresses_ = new address[](16);
++        facetAddresses_ = new address[](17);
+         facetAddresses_[0] = address(ERC20_FACET);
+         facetAddresses_[1] = address(ERC5267_FACET);
+         facetAddresses_[2] = address(ERC2612_FACET);
+@@ -324,6 +331,7 @@
+         facetAddresses_[13] = address(UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET);
+         facetAddresses_[14] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET);
+         facetAddresses_[15] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET);
++        facetAddresses_[16] = address(UNISWAP_V4_STANDARD_YIELD_FACET);
+     }
+ 
+     function packageMetadata()
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol
+@@ -12,16 +12,16 @@
+ import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+-import {UniswapV4StandardExchangeInTarget} from "./UniswapV4StandardExchangeInTarget.sol";
++import {UniswapV4StandardExchangeInExecution} from "./internal/UniswapV4StandardExchangeInExecution.sol";
+ 
+-abstract contract UniswapV4StandardYieldExecutionTarget is UniswapV4StandardExchangeInTarget {
++abstract contract UniswapV4StandardYieldExecutionTarget is UniswapV4StandardExchangeInExecution, IERC5115_StandardizedYield {
+     function deposit(
+         address receiver_,
+         address tokenIn_,
+         uint256 amount_,
+         uint256 minimum_,
+         bool depositFromInternalBalance_
+-    ) public returns (uint256 shares_) {
++    ) public override returns (uint256 shares_) {
+         Config._requireNotDisabled();
+         if (receiver_ == address(0)) revert NativeStandardYieldErrors.InvalidSYReceiver();
+         if (amount_ == 0) revert NativeStandardYieldErrors.ZeroSYAmount();
+@@ -42,6 +42,7 @@
+ 
+     function redeem(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_, bool internalBalance_)
+         public
++        override
+         returns (uint256 amount_)
+     {
+         Config._requireNotDisabled();
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldFacet.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldFacet.sol
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
++import {UniswapV4StandardYieldTarget} from "./UniswapV4StandardYieldTarget.sol";
++
++/// @notice Owns all eight ERC-5115 methods on the legacy V4 vault proxy.
++contract UniswapV4StandardYieldFacet is UniswapV4StandardYieldTarget, IFacet {
++    function facetName() public pure override returns (string memory name) {
++        return type(UniswapV4StandardYieldFacet).name;
++    }
++
++    function facetInterfaces() public pure override returns (bytes4[] memory interfaces) {
++        interfaces = new bytes4[](1);
++        interfaces[0] = type(IERC5115_StandardizedYield).interfaceId;
++    }
++
++    function facetFuncs() public pure override returns (bytes4[] memory funcs) {
++        funcs = new bytes4[](8);
++        funcs[0] = IERC5115_StandardizedYield.deposit.selector;
++        funcs[1] = IERC5115_StandardizedYield.redeem.selector;
++        funcs[2] = IERC5115_StandardizedYield.exchangeRate.selector;
++        funcs[3] = IERC5115_StandardizedYield.getTokensIn.selector;
++        funcs[4] = IERC5115_StandardizedYield.getTokensOut.selector;
++        funcs[5] = IERC5115_StandardizedYield.yieldToken.selector;
++        funcs[6] = IERC5115_StandardizedYield.previewDeposit.selector;
++        funcs[7] = IERC5115_StandardizedYield.previewRedeem.selector;
++    }
++
++    function facetMetadata()
++        external
++        pure
++        override
++        returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions)
++    {
++        name_ = facetName();
++        interfaces = facetInterfaces();
++        functions = facetFuncs();
++    }
++}
+--- before/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol
++++ after/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol
+@@ -1,7 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
+ import {
+@@ -14,20 +13,13 @@
+     }
+ 
+     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](2);
++        interfaces = new bytes4[](1);
+         interfaces[0] = type(IStandardExchangeOutMulti).interfaceId;
+-        interfaces[1] = type(IERC5115_StandardizedYield).interfaceId;
+     }
+ 
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](7);
++        funcs = new bytes4[](1);
+         funcs[0] = IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector;
+-        funcs[1] = IERC5115_StandardizedYield.exchangeRate.selector;
+-        funcs[2] = IERC5115_StandardizedYield.getTokensIn.selector;
+-        funcs[3] = IERC5115_StandardizedYield.getTokensOut.selector;
+-        funcs[4] = IERC5115_StandardizedYield.yieldToken.selector;
+-        funcs[5] = IERC5115_StandardizedYield.previewDeposit.selector;
+-        funcs[6] = IERC5115_StandardizedYield.previewRedeem.selector;
+     }
+ 
+     function facetMetadata()
+--- before/contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol
++++ after/contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol
+@@ -44,6 +44,7 @@
+     IWETH internal weth;
+     IFacet internal uniswapV4StandardExchangeCallbackFacet;
+     IFacet internal uniswapV4StandardExchangeInFacet;
++    IFacet internal uniswapV4StandardYieldFacet;
+     IFacet internal uniswapV4StandardExchangeInQueryFacet;
+     IFacet internal uniswapV4StandardExchangePositionImportFacet;
+     IFacet internal uniswapV4StandardExchangeOutFacet;
+@@ -78,6 +79,7 @@
+             twapOraclePkg.deployOracle(IUniswapV4MultiPoolTwapOracleDFPkg.PkgArgs({poolManager: address(poolManager)}));
+         uniswapV4StandardExchangeCallbackFacet = create3Factory.deployUniswapV4StandardExchangeCallbackFacet();
+         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
++        uniswapV4StandardYieldFacet = create3Factory.deployUniswapV4StandardYieldFacet();
+         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
+         uniswapV4StandardExchangePositionImportFacet =
+             create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
+@@ -122,6 +124,7 @@
+         a.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+         a.uniswapV4StandardExchangeCallbackFacet = uniswapV4StandardExchangeCallbackFacet;
+         a.uniswapV4StandardExchangeInFacet = uniswapV4StandardExchangeInFacet;
++        a.uniswapV4StandardYieldFacet = uniswapV4StandardYieldFacet;
+         a.uniswapV4StandardExchangeInQueryFacet = uniswapV4StandardExchangeInQueryFacet;
+         a.uniswapV4StandardExchangePositionImportFacet = uniswapV4StandardExchangePositionImportFacet;
+         a.uniswapV4StandardExchangeOutFacet = uniswapV4StandardExchangeOutFacet;
+--- before/contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeInExecution.sol
++++ after/contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeInExecution.sol
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
++import {StandardExchangeInExecutionBase} from "contracts/vaults/standard/exchange/StandardExchangeInExecutionBase.sol";
++import {
++    UniswapV4StandardExchangeConfig as Config
++} from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeConfig.sol";
++import {
++    UniswapV4StandardExchangeCustody as Custody
++} from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeCustody.sol";
++import {
++    UniswapV4StandardExchangePoolOps as PoolOps
++} from "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangePoolOps.sol";
++
++/// @notice Internal exact-input execution without an external interface entrypoint.
++abstract contract UniswapV4StandardExchangeInExecution is ReentrancyLockModifiers, StandardExchangeInExecutionBase {
++    function _exchangeIn(
++        IERC20 tokenIn,
++        uint256 amountIn,
++        IERC20 tokenOut,
++        uint256 minAmountOut,
++        address recipient,
++        bool pretransferred,
++        uint256 deadline
++    ) internal override nonReentrant returns (uint256 amountOut) {
++        Config._requireNotDisabled();
++        if (deadline < block.timestamp) revert Config.UniswapV4ExchangeIn_DeadlineExceeded();
++
++        address token0 = Config._token0();
++        address token1 = Config._token1();
++
++        if (
++            (address(tokenIn) == token0 && address(tokenOut) == token1)
++                || (address(tokenIn) == token1 && address(tokenOut) == token0)
++        ) {
++            uint256 actualIn = Custody._secureTokenTransfer(tokenIn, amountIn, pretransferred);
++            amountOut = PoolOps._executeDirectSwapIn(address(tokenIn), actualIn, recipient);
++            if (amountOut < minAmountOut) revert Config.UniswapV4ExchangeIn_SlippageExceeded();
++            Config._pokeBoundPoolTwap();
++            return amountOut;
++        }
++
++        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
++            uint256 actualIn = Custody._secureTokenTransfer(tokenIn, amountIn, pretransferred);
++            amountOut = PoolOps._executeZapInDeposit(address(tokenIn), actualIn, minAmountOut, recipient);
++            Config._pokeBoundPoolTwap();
++            return amountOut;
++        }
++
++        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
++            uint256 actualIn = Custody._secureShareDelivery(amountIn, pretransferred);
++            amountOut =
++                PoolOps._executeZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient, address(this));
++            Config._pokeBoundPoolTwap();
++            return amountOut;
++        }
++
++        revert IStandardExchangeIn.ExchangeInNotAvailable();
++    }
++}
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet_IFacet_Test.t.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet_IFacet_Test.t.sol
+@@ -2,7 +2,6 @@
+ pragma solidity ^0.8.0;
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+-import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+ import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
+ import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
+@@ -37,9 +36,7 @@
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](3);
++        controlFuncs = new bytes4[](1);
+         controlFuncs[0] = IStandardExchangeIn.exchangeIn.selector;
+-        controlFuncs[1] = IERC5115_StandardizedYield.deposit.selector;
+-        controlFuncs[2] = IERC5115_StandardizedYield.redeem.selector;
+     }
+ }
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol
+@@ -36,23 +36,25 @@
+ 
+         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
+         assertEq(interfaces.length, 15, "interface count");
+-        assertEq(facets.length, 15, "facet count");
++        assertEq(facets.length, 17, "facet count");
+ 
+         assertEq(facets[0], address(erc20Facet), "erc20 facet");
+         assertEq(facets[1], address(erc5267Facet), "erc5267 facet");
+         assertEq(facets[2], address(erc2612Facet), "erc2612 facet");
+         assertEq(facets[3], address(multiAssetBasicVaultFacet), "basic vault facet");
+         assertEq(facets[4], address(multiAssetStandardVaultFacet), "standard vault facet");
+-        assertEq(facets[5], address(uniswapV4StandardExchangeInFacet), "exchange in facet");
+-        assertEq(facets[6], address(uniswapV4StandardExchangeInQueryFacet), "exchange in query facet");
+-        assertEq(facets[7], address(uniswapV4StandardExchangePositionImportFacet), "position import facet");
+-        assertEq(facets[8], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
+-        assertEq(facets[9], address(uniswapV4StandardExchangeOutQueryFacet), "exchange out query facet");
+-        assertEq(facets[10], address(uniswapV4StandardExchangeLiquidReserveFacet), "liquid reserve facet");
+-        assertEq(facets[11], address(uniswapV4StandardExchangeInMultiFacet), "exchange in multi facet");
+-        assertEq(facets[12], address(uniswapV4StandardExchangeInMultiQueryFacet), "exchange in multi query facet");
+-        assertEq(facets[13], address(uniswapV4StandardExchangeOutMultiFacet), "exchange out multi facet");
+-        assertEq(facets[14], address(uniswapV4StandardExchangeOutMultiQueryFacet), "exchange out multi query facet");
++        assertEq(facets[5], address(uniswapV4StandardExchangeCallbackFacet), "callback facet");
++        assertEq(facets[6], address(uniswapV4StandardExchangeInFacet), "exchange in facet");
++        assertEq(facets[7], address(uniswapV4StandardExchangeInQueryFacet), "exchange in query facet");
++        assertEq(facets[8], address(uniswapV4StandardExchangePositionImportFacet), "position import facet");
++        assertEq(facets[9], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
++        assertEq(facets[10], address(uniswapV4StandardExchangeOutQueryFacet), "exchange out query facet");
++        assertEq(facets[11], address(uniswapV4StandardExchangeLiquidReserveFacet), "liquid reserve facet");
++        assertEq(facets[12], address(uniswapV4StandardExchangeInMultiFacet), "exchange in multi facet");
++        assertEq(facets[13], address(uniswapV4StandardExchangeInMultiQueryFacet), "exchange in multi query facet");
++        assertEq(facets[14], address(uniswapV4StandardExchangeOutMultiFacet), "exchange out multi facet");
++        assertEq(facets[15], address(uniswapV4StandardExchangeOutMultiQueryFacet), "exchange out multi query facet");
++        assertEq(facets[16], address(uniswapV4StandardYieldFacet), "ERC-5115 facet");
+     }
+ 
+     function test_deployVault_registersVaultAndInitializesConfig() public {
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Architecture.t.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Architecture.t.sol
+@@ -20,7 +20,7 @@
+         IDiamond.FacetCut[] memory cuts = uniswapV4StandardExchangeDFPkg.facetCuts();
+         address[] memory addresses =
+             ILegacyV4PackageFacetAddresses(address(uniswapV4StandardExchangeDFPkg)).facetAddresses();
+-        address[16] memory expected = [
++        address[17] memory expected = [
+             address(erc20Facet),
+             address(erc5267Facet),
+             address(erc2612Facet),
+@@ -36,10 +36,11 @@
+             address(uniswapV4StandardExchangeInMultiFacet),
+             address(uniswapV4StandardExchangeInMultiQueryFacet),
+             address(uniswapV4StandardExchangeOutMultiFacet),
+-            address(uniswapV4StandardExchangeOutMultiQueryFacet)
++            address(uniswapV4StandardExchangeOutMultiQueryFacet),
++            address(uniswapV4StandardYieldFacet)
+         ];
+-        assertEq(cuts.length, 16);
+-        assertEq(addresses.length, 16);
++        assertEq(cuts.length, 17);
++        assertEq(addresses.length, 17);
+         for (uint256 i; i < cuts.length; ++i) {
+             assertEq(cuts[i].facetAddress, expected[i]);
+             assertEq(addresses[i], expected[i]);
+@@ -50,11 +51,12 @@
+         }
+         assertEq(cuts[5].functionSelectors.length, 1);
+         assertEq(cuts[5].functionSelectors[0], IUnlockCallback.unlockCallback.selector);
+-        assertEq(cuts[6].functionSelectors.length, 3);
+-        assertEq(cuts[15].functionSelectors.length, 7);
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.deposit.selector), expected[6]);
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.redeem.selector), expected[6]);
+-        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.previewRedeem.selector), expected[15]);
++        assertEq(cuts[6].functionSelectors.length, 1);
++        assertEq(cuts[15].functionSelectors.length, 1);
++        assertEq(cuts[16].functionSelectors.length, 8);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.deposit.selector), expected[16]);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.redeem.selector), expected[16]);
++        assertEq(IDiamondLoupe(address(vault)).facetAddress(IERC5115_StandardizedYield.previewRedeem.selector), expected[16]);
+     }
+ 
+     /// @notice Retain the deployment size gate independently of selector behavior.
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol
+@@ -1,7 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+ import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
+@@ -32,19 +31,12 @@
+     }
+ 
+     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
+-        controlInterfaces = new bytes4[](2);
++        controlInterfaces = new bytes4[](1);
+         controlInterfaces[0] = type(IStandardExchangeOutMulti).interfaceId;
+-        controlInterfaces[1] = type(IERC5115_StandardizedYield).interfaceId;
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](7);
++        controlFuncs = new bytes4[](1);
+         controlFuncs[0] = IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector;
+-        controlFuncs[1] = IERC5115_StandardizedYield.exchangeRate.selector;
+-        controlFuncs[2] = IERC5115_StandardizedYield.getTokensIn.selector;
+-        controlFuncs[3] = IERC5115_StandardizedYield.getTokensOut.selector;
+-        controlFuncs[4] = IERC5115_StandardizedYield.yieldToken.selector;
+-        controlFuncs[5] = IERC5115_StandardizedYield.previewDeposit.selector;
+-        controlFuncs[6] = IERC5115_StandardizedYield.previewRedeem.selector;
+     }
+ }
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_ERC5115.t.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_ERC5115.t.sol
+@@ -4,6 +4,8 @@
+ import {UniswapV4StandardExchangeVaultHeldRedeem_Test} from "./UniswapV4StandardExchangeVaultHeldRedeem.t.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+ import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
+ import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
+ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -13,6 +15,13 @@
+     /// @notice Pendle-only selectors are absent and every ERC-5115 method keeps its assigned facet.
+     function test_erc5115_proxySelectorOwners() public view {
+         IDiamondLoupe loupe = IDiamondLoupe(address(vault));
++        assertEq(loupe.facetAddress(IStandardExchangeIn.exchangeIn.selector), address(uniswapV4StandardExchangeInFacet));
++        assertEq(
++            loupe.facetAddress(IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector),
++            address(uniswapV4StandardExchangeOutMultiQueryFacet)
++        );
++        assertNotEq(address(uniswapV4StandardYieldFacet), address(uniswapV4StandardExchangeInFacet));
++        assertNotEq(address(uniswapV4StandardYieldFacet), address(uniswapV4StandardExchangeOutMultiQueryFacet));
+         bytes4[9] memory removed = [
+             IStandardizedYield.deposit.selector,
+             IStandardizedYield.claimRewards.selector,
+@@ -27,8 +36,8 @@
+         for (uint256 i; i < removed.length; ++i) {
+             assertEq(loupe.facetAddress(removed[i]), address(0), "Pendle-only selector remains installed");
+         }
+-        assertEq(loupe.facetAddress(IERC5115_StandardizedYield.deposit.selector), address(uniswapV4StandardExchangeInFacet));
+-        assertEq(loupe.facetAddress(IERC5115_StandardizedYield.redeem.selector), address(uniswapV4StandardExchangeInFacet));
++        assertEq(loupe.facetAddress(IERC5115_StandardizedYield.deposit.selector), address(uniswapV4StandardYieldFacet));
++        assertEq(loupe.facetAddress(IERC5115_StandardizedYield.redeem.selector), address(uniswapV4StandardYieldFacet));
+         bytes4[6] memory reads = [
+             IERC5115_StandardizedYield.exchangeRate.selector,
+             IERC5115_StandardizedYield.getTokensIn.selector,
+@@ -38,7 +47,7 @@
+             IERC5115_StandardizedYield.previewRedeem.selector
+         ];
+         for (uint256 i; i < reads.length; ++i) {
+-            assertEq(loupe.facetAddress(reads[i]), address(uniswapV4StandardExchangeOutMultiQueryFacet));
++            assertEq(loupe.facetAddress(reads[i]), address(uniswapV4StandardYieldFacet));
+         }
+         assertTrue(IERC165(address(vault)).supportsInterface(type(IERC5115_StandardizedYield).interfaceId));
+         assertFalse(IERC165(address(vault)).supportsInterface(type(IStandardizedYield).interfaceId));
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardYieldFacet_IFacet_Test.t.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardYieldFacet_IFacet_Test.t.sol
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
++import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
++import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
++import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
++
++import {IERC5115_StandardizedYield} from "@crane/contracts/tokens/ERC5115/IERC5115_StandardizedYield.sol";
++import {
++    UniswapV4StandardYieldFacet
++} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldFacet.sol";
++import {
++    UniswapV4_Component_FactoryService
++} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
++
++contract UniswapV4StandardYieldFacet_IFacet_Test is CraneTest, TestBase_IFacet {
++    using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
++
++    function setUp() public override(CraneTest, TestBase_IFacet) {
++        CraneTest.setUp();
++        TestBase_IFacet.setUp();
++    }
++
++    function facetTestInstance() public override returns (IFacet) {
++        return create3Factory.deployUniswapV4StandardYieldFacet();
++    }
++
++    function controlFacetName() public pure override returns (string memory) {
++        return type(UniswapV4StandardYieldFacet).name;
++    }
++
++    function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
++        controlInterfaces = new bytes4[](1);
++        controlInterfaces[0] = type(IERC5115_StandardizedYield).interfaceId;
++    }
++
++    function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
++        controlFuncs = new bytes4[](8);
++        controlFuncs[0] = IERC5115_StandardizedYield.deposit.selector;
++        controlFuncs[1] = IERC5115_StandardizedYield.redeem.selector;
++        controlFuncs[2] = IERC5115_StandardizedYield.exchangeRate.selector;
++        controlFuncs[3] = IERC5115_StandardizedYield.getTokensIn.selector;
++        controlFuncs[4] = IERC5115_StandardizedYield.getTokensOut.selector;
++        controlFuncs[5] = IERC5115_StandardizedYield.yieldToken.selector;
++        controlFuncs[6] = IERC5115_StandardizedYield.previewDeposit.selector;
++        controlFuncs[7] = IERC5115_StandardizedYield.previewRedeem.selector;
++    }
++}
+--- before/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol
++++ after/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol
+@@ -39,23 +39,25 @@
+ 
+         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
+         assertEq(interfaces.length, 15, "interface count");
+-        assertEq(facets.length, 15, "facet count");
++        assertEq(facets.length, 17, "facet count");
+ 
+         assertEq(facets[0], address(erc20Facet), "erc20 facet");
+         assertEq(facets[1], address(erc5267Facet), "erc5267 facet");
+         assertEq(facets[2], address(erc2612Facet), "erc2612 facet");
+         assertEq(facets[3], address(multiAssetBasicVaultFacet), "basic vault facet");
+         assertEq(facets[4], address(multiAssetStandardVaultFacet), "standard vault facet");
+-        assertEq(facets[5], address(uniswapV4StandardExchangeInFacet), "exchange in facet");
+-        assertEq(facets[6], address(uniswapV4StandardExchangeInQueryFacet), "exchange in query facet");
+-        assertEq(facets[7], address(uniswapV4StandardExchangePositionImportFacet), "position import facet");
+-        assertEq(facets[8], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
+-        assertEq(facets[9], address(uniswapV4StandardExchangeOutQueryFacet), "exchange out query facet");
+-        assertEq(facets[10], address(uniswapV4StandardExchangeLiquidReserveFacet), "liquid reserve facet");
+-        assertEq(facets[11], address(uniswapV4StandardExchangeInMultiFacet), "exchange in multi facet");
+-        assertEq(facets[12], address(uniswapV4StandardExchangeInMultiQueryFacet), "exchange in multi query facet");
+-        assertEq(facets[13], address(uniswapV4StandardExchangeOutMultiFacet), "exchange out multi facet");
+-        assertEq(facets[14], address(uniswapV4StandardExchangeOutMultiQueryFacet), "exchange out multi query facet");
++        assertEq(facets[5], address(uniswapV4StandardExchangeCallbackFacet), "callback facet");
++        assertEq(facets[6], address(uniswapV4StandardExchangeInFacet), "exchange in facet");
++        assertEq(facets[7], address(uniswapV4StandardExchangeInQueryFacet), "exchange in query facet");
++        assertEq(facets[8], address(uniswapV4StandardExchangePositionImportFacet), "position import facet");
++        assertEq(facets[9], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
++        assertEq(facets[10], address(uniswapV4StandardExchangeOutQueryFacet), "exchange out query facet");
++        assertEq(facets[11], address(uniswapV4StandardExchangeLiquidReserveFacet), "liquid reserve facet");
++        assertEq(facets[12], address(uniswapV4StandardExchangeInMultiFacet), "exchange in multi facet");
++        assertEq(facets[13], address(uniswapV4StandardExchangeInMultiQueryFacet), "exchange in multi query facet");
++        assertEq(facets[14], address(uniswapV4StandardExchangeOutMultiFacet), "exchange out multi facet");
++        assertEq(facets[15], address(uniswapV4StandardExchangeOutMultiQueryFacet), "exchange out multi query facet");
++        assertEq(facets[16], address(uniswapV4StandardYieldFacet), "ERC-5115 facet");
+     }
+ 
+     function test_deployVault_registersVaultAndInitializesConfig() public {

@@ -1,8 +1,8 @@
 # Implementation plan — hook preview of zero rolls back
 
 - **Date:** 2026-10-11
-- **Status:** ready for a separately authorized implementation session
-- **Controlling PRD:** [REMEDIATION_PRD.md](./REMEDIATION_PRD.md). Where this plan and an earlier review sentence conflict, the PRD controls.
+- **Status:** WITHDRAWN 2026-10-15. Do not execute this plan. The owner replaced the preview-and-revert rule. The controlling text is [REMEDIATION_PRD.md](./REMEDIATION_PRD.md). This file remains only as the withdrawn draft.
+- **Controlling PRD:** [REMEDIATION_PRD.md](./REMEDIATION_PRD.md). Where this plan conflicts with that PRD, the PRD controls.
 - **This plan does not authorize code changes.** A later session must be explicitly asked to implement it.
 - **Council input:** Astra, Grok, MiniMax M3, and Kimi K3 each reported no blocking question and wrote a plan draft under `reviewers/`. This file is the coordinator consolidation.
 

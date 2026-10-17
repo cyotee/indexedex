@@ -301,6 +301,28 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookMath {
         return unbalancedJoinShares(balances, amounts, amp, supply, feeWad);
     }
 
+    /// @dev Same pinned single-join formula, returning zero when invariant growth rounds away.
+    function previewSingleJoinExactInShares(uint256[] memory balances, uint256 amount, uint256 index, uint256 amp, uint256 supply, uint256 feeWad)
+        internal pure returns (uint256)
+    {
+        if (index >= balances.length) revert InvalidN();
+        if (supply == 0) revert ZeroAmount();
+        _fee(feeWad);
+        if (amount == 0) return 0;
+        uint256[] memory next = new uint256[](balances.length);
+        for (uint256 i; i < next.length; ++i) next[i] = balances[i] + (i == index ? amount : 0) - 1;
+        uint256 currentD = _invariant(balances, amp, true);
+        uint256 ratio = FixedPointMathLib.fullMulDiv(_invariant(next, amp, false), WAD, currentD);
+        _maxRatio(ratio);
+        for (uint256 i; i < next.length; ++i) {
+            uint256 proportional = FixedPointMathLib.fullMulDiv(ratio, balances[i], WAD);
+            if (next[i] > proportional) next[i] -= mulUp(next[i] - proportional, feeWad);
+        }
+        uint256 nextD = _invariant(next, amp, false);
+        if (nextD <= currentD) return 0;
+        return FixedPointMathLib.fullMulDiv(supply, nextD - currentD, currentD);
+    }
+
     function singleJoinExactOutAmountIn(uint256[] memory balances, uint256 shares, uint256 index, uint256 amp, uint256 supply, uint256 feeWad)
         internal pure returns (uint256)
     {

@@ -156,7 +156,7 @@ Price entry or full crossing is not a guaranteed profitable conversion. Price ca
 
 **C2.** Establish current-call credit before fee collection or synchronization can absorb it. Pull mode measures exact received delta and rejects short delivery. Public push mode applies the shared caller-bytecode restriction; no-transfer, short-transfer and replayed-credit calls fail with precise errors and complete rollback.
 
-**C3.** Exact-input push processes exactly the declared amount and refunds nothing. Excess available unbooked inventory is not automatically this call's input. Exact-output push credit is `min(available, max)` and only unused credited input may be refunded. Exact-output pull transfers quoted used input only, not max-then-refund. Document self-share/SY internal context separately.
+**C3.** The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall. Excess available unbooked inventory is not automatically this call's input. Exact-output push credit is `min(available, max)` and only unused credited input may be refunded. Exact-output pull transfers quoted used input only, not max-then-refund. Document self-share/SY internal context separately.
 
 **C4.** Match current source-agnostic unbooked-surplus law: authenticated contract callers can supply credit from valid unbooked availability. Do not simultaneously promise original-donor ownership of unsolicited surplus. No caller can claim previously booked inventory. Pre-activation residual allocation and live donations must be specified separately.
 

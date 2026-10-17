@@ -1,0 +1,21 @@
+[
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol",
+  "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldTarget.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldExecutionTarget.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardYieldFacet.sol",
+  "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol",
+  "contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol",
+  "contracts/protocols/dexes/uniswap/v4/internal/UniswapV4StandardExchangeInExecution.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet_IFacet_Test.t.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Architecture.t.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_ERC5115.t.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardYieldFacet_IFacet_Test.t.sol",
+  "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol"
+]

@@ -416,7 +416,7 @@ Requirements:
 - No mandatory pull-only restriction.
 - Integrators ensure transfer and deposit or withdrawal occur atomically.
 - Apply the existing contract-caller guard and its documented account semantics.
-- Exact-in refunds nothing.
+- The declared input is processed only when present unbooked input covers it. Tokens above the declaration are not refunded. A difference between the declaration and the whole surplus does not by itself revert. Booked inventory does not fill a shortfall.
 - Absorb unclaimed surplus into the book at successful workflow completion.
 - Already-booked inventory cannot be re-credited without new unbooked balance.
 

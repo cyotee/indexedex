@@ -20,7 +20,7 @@ import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfac
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {StandardExchangeConstantProduct} from "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol";
-import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {NativeStandardYieldErrors as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldErrors.sol";
 import {FullSpreadG5GuardToken} from "contracts/test/stubs/FullSpreadG5GuardToken.sol";
 import {FullSpreadG5CreditHandler} from "contracts/test/stubs/FullSpreadG5CreditHandler.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
