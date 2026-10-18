@@ -877,7 +877,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         _calcAndMintVaultFee(indexSource, vault);
         // A0: unbooked reserve LP cannot be absorbed by zap-in mint.
         if (indexSource.pool.balanceOf(address(this)) != vault.vaultLpReserve) {
-            revert();
+            revert UniswapV2LpBacking.LPReserveMismatch(
+                indexSource.pool.balanceOf(address(this)), vault.vaultLpReserve
+            );
         }
 
         // Step 1: ERC-4626 inverse (post-deposit accounting) — shares → LP.
@@ -1004,7 +1006,11 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
         UniV2StrategyVault memory vault2;
         _loadStrategyVault(vault2, tokenIn);
-        if (indexSource.pool.balanceOf(address(this)) != vault2.vaultLpReserve) revert();
+        if (indexSource.pool.balanceOf(address(this)) != vault2.vaultLpReserve) {
+            revert UniswapV2LpBacking.LPReserveMismatch(
+                indexSource.pool.balanceOf(address(this)), vault2.vaultLpReserve
+            );
+        }
     }
 }
 
@@ -1013,6 +1019,10 @@ library UniswapV2LpBacking {
     /// @custom:signature InsufficientLPBacking(uint256,uint256)
     /// @custom:selector 0xc4021158
     error InsufficientLPBacking(uint256 held, uint256 required);
+
+    /// @notice Held LP is not exactly the booked LP reserve.
+    /// @custom:signature LPReserveMismatch(uint256,uint256)
+    error LPReserveMismatch(uint256 held, uint256 booked);
 
     function requireHeld(uint256 held, uint256 required) internal pure {
         if (held < required) revert InsufficientLPBacking(held, required);
