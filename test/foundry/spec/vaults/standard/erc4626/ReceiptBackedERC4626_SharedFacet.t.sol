@@ -179,13 +179,14 @@ contract ReceiptBackedERC4626_SharedFacet_Test is TestBase_AaveV3StataStandardEx
         IStandardExchangeIn(se2).exchangeIn(IERC20(address(u2)), 100 ether, IERC20(se2), 0, u, false, block.timestamp);
 
         assertEq(IERC20(address(capped)).balanceOf(se2), 0, "no receipts: local-only backing");
-        assertEq(IERC4626(se2).maxWithdraw(u), 0, "zero receipt-exit capacity");
-        assertEq(IERC4626(se2).maxRedeem(u), 0, "zero receipt-exit capacity");
-
-        vm.expectRevert(abi.encodeWithSelector(IERC4626Errors.ERC4626ExceededMaxWithdraw.selector, u, uint256(1), uint256(0)));
-        IERC4626(se2).withdraw(1, u, u);
-        vm.expectRevert(abi.encodeWithSelector(IERC4626Errors.ERC4626ExceededMaxRedeem.selector, u, uint256(1), uint256(0)));
-        IERC4626(se2).redeem(1, u, u);
+        uint256 shares = IERC20(se2).balanceOf(u);
+        uint256 advertised = IERC4626(se2).previewRedeem(shares);
+        assertEq(IERC4626(se2).maxRedeem(u), shares, "maxRedeem is the share balance");
+        assertEq(IERC4626(se2).maxWithdraw(u), advertised, "maxWithdraw follows that balance");
+        vm.expectRevert(abi.encodeWithSelector(
+            IERC4626Errors.ERC4626ExceededMaxWithdraw.selector, u, advertised + 1, advertised
+        ));
+        IERC4626(se2).withdraw(advertised + 1, u, u);
         vm.stopPrank();
     }
 

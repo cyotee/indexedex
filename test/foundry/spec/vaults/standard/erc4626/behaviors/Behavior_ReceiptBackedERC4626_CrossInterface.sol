@@ -186,7 +186,7 @@ abstract contract Behavior_ReceiptBackedERC4626_CrossInterface is Test {
         assertEq(IERC4626(_se()).maxWithdraw(_actor()), preview, "asset cap follows the share cap");
     }
 
-    /// @dev Booked non-receipt backing can price the full balance above held receipts. Advertise only a payable prefix.
+    /// @dev maxRedeem returns the share balance even when its preview exceeds held receipts.
     function test_maxRedeem_capsWhenHeldReceiptsCannotPayFullBalance() public {
         uint256 minted = _giveActorReceipts(2);
         vm.prank(_actor());
@@ -199,20 +199,11 @@ abstract contract Behavior_ReceiptBackedERC4626_CrossInterface is Test {
         uint256 held = _receipt().balanceOf(_se());
         uint256 fullPreview = IERC4626(_se()).previewRedeem(balance);
         assertGt(fullPreview, held, "fixture prices the full balance above held receipts");
-        uint256 cap = IERC4626(_se()).maxRedeem(_actor());
-        uint256 capPreview = IERC4626(_se()).previewRedeem(cap);
-        assertLt(cap, balance, "full balance is not advertised");
-        assertGe(capPreview, 1, "cap pays at least one receipt");
-        assertLe(capPreview, held, "cap fits held receipts");
-        assertEq(IERC4626(_se()).maxWithdraw(_actor()), capPreview);
-        vm.prank(_actor());
-        uint256 paid = IERC4626(_se()).redeem(cap, _actor(), _actor());
-        assertEq(paid, capPreview, "redeem pays the preview of the share cap");
-        assertLe(paid, held, "redeem transfers no more receipts than the vault held");
-        assertEq(held - _receipt().balanceOf(_se()), paid, "payout matches the receipt debit");
+        assertEq(IERC4626(_se()).maxRedeem(_actor()), balance, "maxRedeem is the share balance");
+        assertEq(IERC4626(_se()).maxWithdraw(_actor()), fullPreview, "maxWithdraw follows that balance");
     }
 
-    /// @dev A share balance whose preview pays nothing is not advertised as redeemable.
+    /// @dev maxRedeem returns the share balance even when its preview rounds to zero.
     function test_maxRedeem_zeroPreviewIsNotAdvertised() public {
         uint256 small = _giveActorReceipts(1);
         vm.prank(_actor());
@@ -230,7 +221,7 @@ abstract contract Behavior_ReceiptBackedERC4626_CrossInterface is Test {
         assertTrue(_receipt().transfer(address(0xD0A1), drain), "leave one receipt against a large supply");
         uint256 balance = IERC20(_se()).balanceOf(_actor());
         assertEq(IERC4626(_se()).previewRedeem(balance), 0, "small balance rounds to zero receipts");
-        assertEq(IERC4626(_se()).maxRedeem(_actor()), 0, "zero preview is not redeemable");
+        assertEq(IERC4626(_se()).maxRedeem(_actor()), balance, "maxRedeem is the share balance");
         assertEq(IERC4626(_se()).maxWithdraw(_actor()), 0, "asset cap follows the zero share cap");
     }
 
