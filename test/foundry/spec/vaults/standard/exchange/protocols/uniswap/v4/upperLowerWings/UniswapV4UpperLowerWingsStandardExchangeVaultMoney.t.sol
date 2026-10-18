@@ -30,10 +30,29 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
         uint256 book0 = IBasicVault(address(wings0)).reserveOfToken(address(token0));
         uint256 book1 = IBasicVault(address(wings0)).reserveOfToken(address(token1));
         uint256 supply = IERC20(address(wings0)).totalSupply();
+        uint256 transferAmount = 7 * 10 ** uint256(token0.decimals());
+        uint256 heldBefore = token0.balanceOf(address(wings0));
         trader.swapTo(key, false, 1e18, TickMath.getSqrtPriceAtTick(200));
         assertEq(IBasicVault(address(wings0)).reserveOfToken(address(token0)), book0, "outside trade leaves token0 book unchanged");
         assertEq(IBasicVault(address(wings0)).reserveOfToken(address(token1)), book1, "outside trade leaves token1 book unchanged");
         assertEq(IERC20(address(wings0)).totalSupply(), supply, "outside trade mints no shares");
+        assertEq(token0.balanceOf(address(wings0)), heldBefore, "outside trade adds no held tokens");
+        uint256 unbookedBefore = heldBefore - IBasicVault(address(wings0)).reserveOfToken(address(token0));
+        assertTrue(token0.transfer(address(wings0), transferAmount));
+        uint256 credit = token0.balanceOf(address(wings0)) - IBasicVault(address(wings0)).reserveOfToken(address(token0));
+        assertEq(credit, unbookedBefore + transferAmount, "credit is held tokens only");
+        uint256 balanceAfter = token0.balanceOf(address(wings0));
+        uint256 bookAfter = IBasicVault(address(wings0)).reserveOfToken(address(token0));
+        uint256 supplyAfter = IERC20(address(wings0)).totalSupply();
+        vm.expectRevert(abi.encodeWithSelector(
+            ISecurePullErrors.TransferDeltaInsufficient.selector, credit + 1, credit
+        ));
+        IStandardExchangeIn(address(wings0)).exchangeIn(
+            token0, credit + 1, IERC20(address(wings0)), 0, address(this), true, block.timestamp
+        );
+        assertEq(token0.balanceOf(address(wings0)), balanceAfter, "rejected credit moves no tokens");
+        assertEq(IBasicVault(address(wings0)).reserveOfToken(address(token0)), bookAfter, "rejected credit books nothing");
+        assertEq(IERC20(address(wings0)).totalSupply(), supplyAfter, "rejected credit mints nothing");
         uint256 preview = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, 1e12, IERC20(address(wings0)));
         uint256 minted = IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), preview, address(this), false, block.timestamp);
         assertEq(minted, preview, "later deposit credits only the funded input");
