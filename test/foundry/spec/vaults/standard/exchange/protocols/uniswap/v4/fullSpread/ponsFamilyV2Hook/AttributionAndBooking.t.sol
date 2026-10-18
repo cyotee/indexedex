@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {TestBase_UniswapV4FullSpreadPonsFamilyHook_Acceptance as Acceptance} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/test/bases/TestBase_UniswapV4FullSpreadPonsFamilyHook_Acceptance.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 
@@ -39,10 +40,27 @@ contract UniswapV4FullSpreadPonsFamilyHookAttributionAndBookingTest is Acceptanc
         uint256 book0 = IBasicVault(address(vault)).reserveOfToken(address(token0));
         uint256 book1 = IBasicVault(address(vault)).reserveOfToken(address(token1));
         uint256 supply = IERC20(address(vault)).totalSupply();
+        uint256 transferAmount = 7 * 10 ** uint256(IERC20Metadata(address(token0)).decimals());
+        uint256 heldBefore = token0.balanceOf(address(vault));
         _externalSwap(false, 100e18);
         assertEq(IBasicVault(address(vault)).reserveOfToken(address(token0)), book0, "outside trade leaves token0 book unchanged");
         assertEq(IBasicVault(address(vault)).reserveOfToken(address(token1)), book1, "outside trade leaves token1 book unchanged");
         assertEq(IERC20(address(vault)).totalSupply(), supply, "outside trade mints no shares");
+        assertEq(token0.balanceOf(address(vault)), heldBefore, "outside trade adds no held tokens");
+        uint256 unbookedBefore = heldBefore - IBasicVault(address(vault)).reserveOfToken(address(token0));
+        assertTrue(token0.transfer(address(vault), transferAmount));
+        uint256 credit = token0.balanceOf(address(vault)) - IBasicVault(address(vault)).reserveOfToken(address(token0));
+        assertEq(credit, unbookedBefore + transferAmount, "credit is held tokens only");
+        uint256 balanceAfter = token0.balanceOf(address(vault));
+        uint256 bookAfter = IBasicVault(address(vault)).reserveOfToken(address(token0));
+        uint256 supplyAfter = IERC20(address(vault)).totalSupply();
+        vm.expectRevert(abi.encodeWithSelector(
+            ISecurePullErrors.TransferDeltaInsufficient.selector, credit + 1, credit
+        ));
+        vault.exchangeIn(token0, credit + 1, IERC20(address(vault)), 0, address(this), true, block.timestamp);
+        assertEq(token0.balanceOf(address(vault)), balanceAfter, "rejected credit moves no tokens");
+        assertEq(IBasicVault(address(vault)).reserveOfToken(address(token0)), bookAfter, "rejected credit books nothing");
+        assertEq(IERC20(address(vault)).totalSupply(), supplyAfter, "rejected credit mints nothing");
         uint256 beforeShares = IERC20(address(vault)).balanceOf(address(this));
         uint256 preview = vault.previewExchangeIn(token1, 1e18, IERC20(address(vault)));
         uint256 minted = vault.exchangeIn(token1, 1e18, IERC20(address(vault)), preview, address(this), false, block.timestamp);
