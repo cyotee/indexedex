@@ -23,6 +23,46 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
 
 ## Applied locally
 
+### Retained OnchainKit starter repair
+
+- Restored the missing Pages Router scaffold, providers, wallet/identity
+  components, chain reads, and explicit message-signing example. It does not
+  submit transactions. Configuration, error recovery, and documentation now
+  describe the actual files and capabilities rather than the old missing demo.
+- Migrated the template to Next/eslint-config-next 16.4.2, React/React DOM
+  19.3.1, OnchainKit 1.1.3 and compatible Wagmi 2 tooling. Added a reproducible
+  npm lock, real lint/type validation, and scoped React-store/WebSocket repairs.
+  `scripts/vendor-patches/bankr/002-onchainkit-starter.patch` preserves this work
+  across vendor refreshes.
+- The implementation worker verified an isolated clean install, ESLint,
+  TypeScript, production build, and `npm ls --all --omit=optional`, all exit 0.
+  Browser QA covered desktop/mobile and light/dark states, connection
+  rejection/success, switching networks, identity fallback, balance/block reads,
+  rejected/successful signatures, RPC failure/recovery, and disconnect.
+  The generated signature was cryptographically verified; no transaction was
+  requested. The parent reviewed the source and desktop/mobile screenshots.
+  Both maintained vendor patches replayed against the pre-repair baseline and
+  reproduced all 18 template files and the PMFI lockfile byte-for-byte.
+  Source whitespace checks passed. The stored template patch contains three
+  whitespace warnings on deleted upstream lines; their original bytes are
+  retained so the patch matches upstream exactly.
+- Live Coinbase/MetaMask extensions, WalletConnect relay, and credential-backed
+  CDP identity were not exercised. CLI validation used Node 26.11.1; LSP servers
+  were unavailable.
+- All 34 template snapshot ranges exclude installed Next 16.4.2. The full
+  template audit still exits 1 with 33 affected entries (28 moderate, 5 high),
+  involving braces, decode-uri-component, stream-json, UUID and their wallet,
+  miniapp or lint parents. These are not claimed fixed by the Next migration.
+- Combined result: 40/47 requested remaining records are candidate-cleared
+  locally; the original inventory is now 416/423 candidate-cleared. The seven
+  remaining records are TEVM #7, #34, #270, #704, #709, #825 and #826.
+  No GitHub alerts have been dismissed or claimed closed.
+- The full goal remains active under the owner's reaffirmed EthereumJS and
+  upstream-only constraints. A persistent six-hour registry watch
+  (`mon_VXWEWA8RZ41EB3Q5`) will notify this thread of TEVM next releases newer
+  than 1.0.0-next.149 for compatibility review. It does not automatically install
+  anything and expires under the monitor service's seven-day limit.
+
 ### Wallet integration repairs with the existing UI
 
 - Scoped npm overrides now resolve MetaMask UUID consumers to 11.1.1,

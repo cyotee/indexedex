@@ -1,0 +1,57 @@
+:root {
+  color-scheme: light dark;
+  --background: #f5f7fb;
+  --surface: #ffffff;
+  --ink: #172033;
+  --muted: #526079;
+  --border: #d6deeb;
+  --action: #1652f0;
+  --action-ink: #ffffff;
+  --space: 0.5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #101522;
+    --surface: #1a2233;
+    --ink: #f2f5fc;
+    --muted: #b3c0d7;
+    --border: #39465e;
+    --action: #a9c6ff;
+    --action-ink: #101522;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--ink); font-family: system-ui, sans-serif; line-height: 1.6; }
+.shell { max-width: 64rem; margin-inline: auto; padding: 2rem 1.5rem; }
+.header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.brand { font-weight: 700; }
+.badge { border: 1px solid var(--border); border-radius: 2rem; padding: 0.5rem 1rem; font-size: 0.875rem; }
+.intro { padding-block: 3rem 2rem; max-width: 44rem; }
+.eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: var(--muted); }
+h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; letter-spacing: -0.04em; margin-block: 0.5rem 1rem; overflow-wrap: anywhere; }
+h2 { font-size: 1.5rem; line-height: 1.3; margin-block: 0.5rem; }
+h3 { font-size: 1rem; }
+p { color: var(--muted); margin-block: 0.5rem 1rem; overflow-wrap: anywhere; }
+.panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; align-items: start; }
+.panel { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; }
+.actions { display: grid; gap: 0.5rem; margin-block: 1.5rem; }
+button { display: block; min-height: 44px; padding: 0.75rem 1rem; border: 1px solid transparent; border-radius: 0.5rem; background: var(--action); color: var(--action-ink); font: inherit; font-weight: 600; cursor: pointer; max-width: 100%; margin-block: 0.5rem; }
+button:hover:not(:disabled) { filter: brightness(0.92); }
+button:focus-visible { outline: 3px solid var(--action); outline-offset: 3px; }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+button.secondary { background: var(--surface); color: var(--ink); border-color: var(--border); }
+.note, footer { font-size: 0.875rem; }
+.profile, .message { border-top: 1px solid var(--border); padding-top: 1.5rem; margin-top: 1.5rem; }
+.address, .signature { font-family: ui-monospace, monospace; font-size: 0.875rem; overflow-wrap: anywhere; }
+.signature { display: block; }
+.stats { margin-block: 1.5rem; }
+.stats > div { padding-block: 0.5rem; border-bottom: 1px solid var(--border); }
+dt { color: var(--muted); font-size: 0.875rem; }
+dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+blockquote { margin: 1rem 0; color: var(--ink); }
+footer { padding-top: 2rem; color: var(--muted); }
+@media (max-width: 44rem) {
+  .panels { grid-template-columns: minmax(0, 1fr); }
+  .shell { padding: 1.5rem 1rem; }
+  .intro { padding-block: 2rem 1.5rem; }
+}

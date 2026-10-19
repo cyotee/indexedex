@@ -16,3 +16,7 @@ isolated copy instead of running that sync merely to test a repair.
 
 - `001-pmfi-ethers.patch`: refresh the existing ethers 6 range to a release
   containing patched WebSocket dependencies. No PMFI transaction logic changes.
+- `002-onchainkit-starter.patch`: restore the documented standalone starter,
+  migrate Next/React and their tooling, and include its reproducible npm lock.
+  This resolves the snapshot's Next findings, not every inherited OnchainKit
+  wallet/miniapp or lint dependency advisory.

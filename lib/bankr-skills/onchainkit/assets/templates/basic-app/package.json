@@ -6,24 +6,35 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "validate": "node -e \"console.log('Validation script would check OnchainKit setup')\""
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run lint && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=22.13.0"
   },
   "dependencies": {
-    "@coinbase/onchainkit": "^1.1.0",
-    "@tanstack/react-query": "^5.28.0",
-    "next": "14.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "viem": "^2.27.0",
-    "wagmi": "^2.16.0"
+    "@coinbase/onchainkit": "1.1.3",
+    "@tanstack/react-query": "5.104.5",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "viem": "2.57.7",
+    "wagmi": "2.19.5"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0",
-    "typescript": "^5"
+    "@types/node": "^22",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.2",
+    "typescript-eslint": "8.71.2",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "valtio": {
+      "use-sync-external-store": "1.7.0"
+    },
+    "ws@>=8 <9": "8.22.0"
   }
 }
