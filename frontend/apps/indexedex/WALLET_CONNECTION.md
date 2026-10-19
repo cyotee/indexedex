@@ -35,6 +35,16 @@ RainbowKit is pinned to 2.2.11 with a checked-in `frontend/patches/` patch appli
 
 When upgrading RainbowKit, review or remove this patch and rerun the wallet regressions. Keep lifecycle scripts enabled when installing dependencies (`npm install` or `npm ci` from `frontend/`). These browser tests use an EIP-1193 fixture; they do not verify the real MetaMask extension's popup behavior. If MetaMask reports a pending request, open its extension icon and approve or dismiss that request before retrying.
 
+The workspace also maintains scoped security overrides for MetaMask UUID,
+WalletConnect's nested Viem WebSocket dependency, and query-string's URI decoder.
+Equivalent Yarn Classic resolutions are declared alongside npm overrides.
+The `query-string+7.1.3.patch` selects the new decoder's ESM default export;
+retain the documented Node 22.13+ runtime and enabled install scripts.
+`npm run test:dependencies -w @indexedex/app-indexedex` exercises real
+WalletConnect pairing and deep-link parsing and is included in `npm run check`.
+Review these overrides and the decoder patch together when upgrading the wallet
+stack. They do not change RainbowKit/Wagmi versions or TEVM dependencies.
+
 Next's webpack configuration resolves the Base wallet SDK to its published browser entry during SSR too. This keeps its unrelated Node payment SDK out of the wallet bundle. Wallet SDKs are no longer aliased to empty modules. The dev/typecheck scripts resolve npm's hoisted workspace packages without a `node_modules` symlink.
 
 ## Verification

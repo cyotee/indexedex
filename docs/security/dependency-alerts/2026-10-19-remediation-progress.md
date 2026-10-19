@@ -23,6 +23,49 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
 
 ## Applied locally
 
+### Wallet integration repairs with the existing UI
+
+- Scoped npm overrides now resolve MetaMask UUID consumers to 11.1.1,
+  WalletConnect's nested Viem WebSocket copies to 8.21.0, and query-string's
+  decoder to 0.5.0. Yarn Classic resolutions mirror those scopes.
+  RainbowKit, Wagmi, wallet selection, application providers, and all retained
+  TEVM package records are unchanged.
+- The decoder is now ESM. A one-line query-string patch selects its default
+  export under the already documented Node 22.13+ runtime. Clean npm install
+  applied both this patch and the existing RainbowKit patch. A negative control
+  confirmed that unpatched query-string throws with the new decoder.
+- Two new real-library regressions cover WalletConnect pairing parameters and
+  nested deep-link/Unicode/repeated-value decoding; they are part of the app
+  check command. An initial new-test assumption that `parseUri().protocol`
+  returns `"wc"` was incorrect: unchanged WalletConnect 2.21.1 strips that
+  prefix and returns an empty field. The test now records that existing behavior;
+  the library was not changed to conceal it.
+- Validation passed: app lint (0 errors, 78 existing warnings), app and protocol
+  typechecks, 498 unit tests with one existing skip, deployment-config test,
+  both new dependency regressions, both production builds, 10 IndexedEx and
+  22 DTF deployment browser tests, and all 14 existing wallet UI browser tests.
+  The latter cover picker/discovery, explicit selection, permission ordering,
+  rejection, reconnect/disconnect, account/network changes and mobile sizing.
+  They use the existing EIP-1193 fixture, not a real extension or QR pairing.
+- Offline checks exercised UUID generation/validation and buffer-bound rejection
+  through all 10 MetaMask dependency parents, plus real localhost WebSocket
+  request/response exchanges through all four repaired WalletConnect paths.
+- An isolated wallet-only Yarn install applied the decoder patch and passed both
+  regressions and exact dependency-path checks. A full fresh frontend Yarn
+  install remains blocked by the pre-existing unconstrained Voltaire/TEVM
+  resolution reaching unavailable ZEVM platform packages; no ZEVM migration or
+  TEVM policy change was made. The authoritative npm clean install passed.
+- Full npm dependency-tree validation still reports the existing missing
+  Webpack/Ink peers and Zod conflict. LSP diagnostics remain unavailable
+  (missing Biome and daemon timeouts). These were not suppressed.
+- Fresh frontend audit: 25 affected package entries (1 low, 2 moderate, 20 high,
+  2 critical), down from 49. Remaining entries include the retained TEVM chain
+  and pre-existing frontend braces/tooling findings outside these four snapshot
+  records. This is not a zero-vulnerability audit.
+- Snapshot records 253, 326, 719 and 730 are candidate-cleared locally. With
+  PMFI, this is 382/423 candidate-cleared and 41 remaining: 34 template records
+  and seven upstream-only TEVM records. Publication is still unauthorized.
+
 ### Retained PMFI vendor repair
 
 - Refreshed the existing ethers range to 6.17.0, including its exact ws 8.21.0
