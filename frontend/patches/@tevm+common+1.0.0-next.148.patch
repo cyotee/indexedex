@@ -1,0 +1,154 @@
+diff --git a/node_modules/@tevm/common/dist/index.js b/node_modules/@tevm/common/dist/index.js
+--- a/node_modules/@tevm/common/dist/index.js
++++ b/node_modules/@tevm/common/dist/index.js
+@@ -4,4 +4,5 @@
+ import { createLogger } from '@tevm/logger';
+ import { keccak256 } from '@tevm/utils';
+ import { defineChain, bytesToHex } from 'viem';
+-import { abstractTestnet as abstractTestnet$1, acala as acala$1, ancient8 as ancient8$1, ancient8Sepolia as ancient8Sepolia$1, anvil as anvil$1, apexTestnet as apexTestnet$1, arbitrum as arbitrum$1, arbitrumGoerli as arbitrumGoerli$1, arbitrumNova as arbitrumNova$1, arbitrumSepolia as arbitrumSepolia$1, areonNetwork as areonNetwork$1, areonNetworkTestnet as areonNetworkTestnet$1, artelaTestnet as artelaTestnet$1, assetChainTestnet as assetChainTestnet$1, astar as astar$1, astarZkEVM as astarZkEVM$1, astarZkyoto as astarZkyoto$1, atletaOlympia as atletaOlympia$1, aurora as aurora$1, auroraTestnet as auroraTestnet$1, auroria as auroria$1, avalanche as avalanche$1, avalancheFuji as avalancheFuji$1, b3 as b3$1, b3Sepolia as b3Sepolia$1, bahamut as bahamut$1, base as base$1, baseGoerli as baseGoerli$1, baseSepolia as baseSepolia$1, beam as beam$1, beamTestnet as beamTestnet$1, bearNetworkChainMainnet as bearNetworkChainMainnet$1, bearNetworkChainTestnet as bearNetworkChainTestnet$1, berachainTestnet as berachainTestnet$1, berachainTestnetbArtio as berachainTestnetbArtio$1, bevmMainnet as bevmMainnet$1, bitkub as bitkub$1, bitkubTestnet as bitkubTestnet$1, bitTorrent as bitTorrent$1, bitTorrentTestnet as bitTorrentTestnet$1, blast as blast$1, blastSepolia as blastSepolia$1, bob as bob$1, boba as boba$1, bobaSepolia as bobaSepolia$1, bobSepolia as bobSepolia$1, botanixTestnet as botanixTestnet$1, bronos as bronos$1, bronosTestnet as bronosTestnet$1, bsc as bsc$1, bscGreenfield as bscGreenfield$1, bscTestnet as bscTestnet$1, btr as btr$1, btrTestnet as btrTestnet$1, bxn as bxn$1, bxnTestnet as bxnTestnet$1, canto as canto$1, celo as celo$1, celoAlfajores as celoAlfajores$1, chiliz as chiliz$1, chips as chips$1, classic as classic$1, confluxESpace as confluxESpace$1, confluxESpaceTestnet as confluxESpaceTestnet$1, coreDao as coreDao$1, crab as crab$1, cronos as cronos$1, cronosTestnet as cronosTestnet$1, cronoszkEVM as cronoszkEVM$1, cronoszkEVMTestnet as cronoszkEVMTestnet$1, crossbell as crossbell$1, curtis as curtis$1, cyber as cyber$1, cyberTestnet as cyberTestnet$1, darwinia as darwinia$1, dchain as dchain$1, dchainTestnet as dchainTestnet$1, defichainEvm as defichainEvm$1, defichainEvmTestnet as defichainEvmTestnet$1, degen as degen$1, dfk as dfk$1, dodochainTestnet as dodochainTestnet$1, dogechain as dogechain$1, dreyerxMainnet as dreyerxMainnet$1, dreyerxTestnet as dreyerxTestnet$1, edgeless as edgeless$1, edgelessTestnet as edgelessTestnet$1, edgeware as edgeware$1, edgewareTestnet as edgewareTestnet$1, ekta as ekta$1, ektaTestnet as ektaTestnet$1, eon as eon$1, eos as eos$1, eosTestnet as eosTestnet$1, etherlink as etherlink$1, etherlinkTestnet as etherlinkTestnet$1, evmos as evmos$1, evmosTestnet as evmosTestnet$1, fantom as fantom$1, fantomSonicTestnet as fantomSonicTestnet$1, fantomTestnet as fantomTestnet$1, fibo as fibo$1, filecoin as filecoin$1, filecoinCalibration as filecoinCalibration$1, filecoinHyperspace as filecoinHyperspace$1, flare as flare$1, flareTestnet as flareTestnet$1, flowMainnet as flowMainnet$1, flowPreviewnet as flowPreviewnet$1, flowTestnet as flowTestnet$1, fluence as fluence$1, fluenceStage as fluenceStage$1, fluenceTestnet as fluenceTestnet$1, forma as forma$1, foundry as foundry$1, fraxtal as fraxtal$1, fraxtalTestnet as fraxtalTestnet$1, funkiMainnet as funkiMainnet$1, funkiSepolia as funkiSepolia$1, fuse as fuse$1, fuseSparknet as fuseSparknet$1, gnosis as gnosis$1, gnosisChiado as gnosisChiado$1, gobi as gobi$1, goerli as goerli$1, gravity as gravity$1, ham as ham$1, haqqMainnet as haqqMainnet$1, haqqTestedge2 as haqqTestedge2$1, hardhat as hardhat$1, harmonyOne as harmonyOne$1, hashkeyTestnet as hashkeyTestnet$1, hedera as hedera$1, hederaPreviewnet as hederaPreviewnet$1, hederaTestnet as hederaTestnet$1, holesky as holesky$1, immutableZkEvm as immutableZkEvm$1, immutableZkEvmTestnet as immutableZkEvmTestnet$1, inEVM as inEVM$1, iota as iota$1, iotaTestnet as iotaTestnet$1, iotex as iotex$1, iotexTestnet as iotexTestnet$1, jbc as jbc$1, jbcTestnet as jbcTestnet$1, kaia as kaia$1, kairos as kairos$1, kakarotSepolia as kakarotSepolia$1, karura as karura$1, kava as kava$1, kavaTestnet as kavaTestnet$1, kcc as kcc$1, klaytn as klaytn$1, klaytnBaobab as klaytnBaobab$1, koi as koi$1, kroma as kroma$1, kromaSepolia as kromaSepolia$1, l3x as l3x$1, l3xTestnet as l3xTestnet$1, lightlinkPegasus as lightlinkPegasus$1, lightlinkPhoenix as lightlinkPhoenix$1, linea as linea$1, lineaGoerli as lineaGoerli$1, lineaSepolia as lineaSepolia$1, lineaTestnet as lineaTestnet$1, lisk as lisk$1, liskSepolia as liskSepolia$1, localhost as localhost$1, lukso as lukso$1, luksoTestnet as luksoTestnet$1, lycan as lycan$1, lyra as lyra$1, mainnet as mainnet$1, mandala as mandala$1, manta as manta$1, mantaSepoliaTestnet as mantaSepoliaTestnet$1, mantaTestnet as mantaTestnet$1, mantle as mantle$1, mantleSepoliaTestnet as mantleSepoliaTestnet$1, mantleTestnet as mantleTestnet$1, merlin as merlin$1, metachain as metachain$1, metachainIstanbul as metachainIstanbul$1, metalL2 as metalL2$1, meter as meter$1, meterTestnet as meterTestnet$1, metis as metis$1, metisGoerli as metisGoerli$1, mev as mev$1, mevTestnet as mevTestnet$1, mintSepoliaTestnet as mintSepoliaTestnet$1, mode as mode$1, modeTestnet as modeTestnet$1, moonbaseAlpha as moonbaseAlpha$1, moonbeam as moonbeam$1, moonbeamDev as moonbeamDev$1, moonriver as moonriver$1, morphHolesky as morphHolesky$1, morphSepolia as morphSepolia$1, nautilus as nautilus$1, neonDevnet as neonDevnet$1, neonMainnet as neonMainnet$1, nexi as nexi$1, nexilix as nexilix$1, oasisTestnet as oasisTestnet$1, oasys as oasys$1, okc as okc$1, oortMainnetDev as oortMainnetDev$1, opBNB as opBNB$1, opBNBTestnet as opBNBTestnet$1, optimism as optimism$1, optimismGoerli as optimismGoerli$1, optimismSepolia as optimismSepolia$1, otimDevnet as otimDevnet$1, palm as palm$1, palmTestnet as palmTestnet$1, pgn as pgn$1, pgnTestnet as pgnTestnet$1, phoenix as phoenix$1, playfiAlbireo as playfiAlbireo$1, plinga as plinga$1, plumeTestnet as plumeTestnet$1, polygon as polygon$1, polygonAmoy as polygonAmoy$1, polygonMumbai as polygonMumbai$1, polygonZkEvm as polygonZkEvm$1, polygonZkEvmCardona as polygonZkEvmCardona$1, polygonZkEvmTestnet as polygonZkEvmTestnet$1, pulsechain as pulsechain$1, pulsechainV4 as pulsechainV4$1, qMainnet as qMainnet$1, qTestnet as qTestnet$1, real as real$1, redbellyTestnet as redbellyTestnet$1, redstone as redstone$1, reyaNetwork as reyaNetwork$1, rollux as rollux$1, rolluxTestnet as rolluxTestnet$1, ronin as ronin$1, root as root$1, rootPorcini as rootPorcini$1, rootstock as rootstock$1, rootstockTestnet as rootstockTestnet$1, rss3 as rss3$1, rss3Sepolia as rss3Sepolia$1, saigon as saigon$1, sapphire as sapphire$1, sapphireTestnet as sapphireTestnet$1, satoshiVM as satoshiVM$1, satoshiVMTestnet as satoshiVMTestnet$1, scroll as scroll$1, scrollSepolia as scrollSepolia$1, sei as sei$1, seiDevnet as seiDevnet$1, seiTestnet as seiTestnet$1, sepolia as sepolia$1, shapeSepolia as shapeSepolia$1, shardeumSphinx as shardeumSphinx$1, shibarium as shibarium$1, shibariumTestnet as shibariumTestnet$1, shimmer as shimmer$1, shimmerTestnet as shimmerTestnet$1, skaleBlockBrawlers as skaleBlockBrawlers$1, skaleCalypso as skaleCalypso$1, skaleCalypsoTestnet as skaleCalypsoTestnet$1, skaleCryptoBlades as skaleCryptoBlades$1, skaleCryptoColosseum as skaleCryptoColosseum$1, skaleEuropa as skaleEuropa$1, skaleEuropaTestnet as skaleEuropaTestnet$1, skaleExorde as skaleExorde$1, skaleHumanProtocol as skaleHumanProtocol$1, skaleNebula as skaleNebula$1, skaleNebulaTestnet as skaleNebulaTestnet$1, skaleRazor as skaleRazor$1, skaleTitan as skaleTitan$1, skaleTitanTestnet as skaleTitanTestnet$1, sketchpad as sketchpad$1, soneiumMinato as soneiumMinato$1, songbird as songbird$1, songbirdTestnet as songbirdTestnet$1, sophonTestnet as sophonTestnet$1, spicy as spicy$1, storyTestnet as storyTestnet$1, stratis as stratis$1, syscoin as syscoin$1, syscoinTestnet as syscoinTestnet$1, taiko as taiko$1, taikoHekla as taikoHekla$1, taikoJolnir as taikoJolnir$1, taikoKatla as taikoKatla$1, taikoTestnetSepolia as taikoTestnetSepolia$1, taraxa as taraxa$1, taraxaTestnet as taraxaTestnet$1, telcoinTestnet as telcoinTestnet$1, telos as telos$1, telosTestnet as telosTestnet$1, tenet as tenet$1, thaiChain as thaiChain$1, thunderTestnet as thunderTestnet$1, tron as tron$1, unreal as unreal$1, vechain as vechain$1, wanchain as wanchain$1, wanchainTestnet as wanchainTestnet$1, wemix as wemix$1, wemixTestnet as wemixTestnet$1, x1Testnet as x1Testnet$1, xai as xai$1, xaiTestnet as xaiTestnet$1, xdc as xdc$1, xdcTestnet as xdcTestnet$1, xLayer as xLayer$1, xLayerTestnet as xLayerTestnet$1, xrSepolia as xrSepolia$1, yooldoVerse as yooldoVerse$1, yooldoVerseTestnet as yooldoVerseTestnet$1, zetachain as zetachain$1, zetachainAthensTestnet as zetachainAthensTestnet$1, zhejiang as zhejiang$1, zilliqa as zilliqa$1, zilliqaTestnet as zilliqaTestnet$1, zircuitTestnet as zircuitTestnet$1, zkFair as zkFair$1, zkFairTestnet as zkFairTestnet$1, zkLinkNova as zkLinkNova$1, zkLinkNovaSepoliaTestnet as zkLinkNovaSepoliaTestnet$1, zksync as zksync$1, zksyncInMemoryNode as zksyncInMemoryNode$1, zksyncLocalNode as zksyncLocalNode$1, zksyncSepoliaTestnet as zksyncSepoliaTestnet$1, zora as zora$1, zoraSepolia as zoraSepolia$1, zoraTestnet as zoraTestnet$1 } from 'viem/chains';
++import { abstractTestnet as abstractTestnet$1, acala as acala$1, ancient8 as ancient8$1, ancient8Sepolia as ancient8Sepolia$1, anvil as anvil$1, apexTestnet as apexTestnet$1, arbitrum as arbitrum$1, arbitrumGoerli as arbitrumGoerli$1, arbitrumNova as arbitrumNova$1, arbitrumSepolia as arbitrumSepolia$1, areonNetwork as areonNetwork$1, areonNetworkTestnet as areonNetworkTestnet$1, artelaTestnet as artelaTestnet$1, assetChainTestnet as assetChainTestnet$1, astar as astar$1, astarZkEVM as astarZkEVM$1, astarZkyoto as astarZkyoto$1, atletaOlympia as atletaOlympia$1, aurora as aurora$1, auroraTestnet as auroraTestnet$1, auroria as auroria$1, avalanche as avalanche$1, avalancheFuji as avalancheFuji$1, b3 as b3$1, b3Sepolia as b3Sepolia$1, bahamut as bahamut$1, base as base$1, baseGoerli as baseGoerli$1, baseSepolia as baseSepolia$1, beam as beam$1, beamTestnet as beamTestnet$1, bearNetworkChainMainnet as bearNetworkChainMainnet$1, bearNetworkChainTestnet as bearNetworkChainTestnet$1, berachainTestnet as berachainTestnet$1, berachainTestnetbArtio as berachainTestnetbArtio$1, bevmMainnet as bevmMainnet$1, bitkub as bitkub$1, bitkubTestnet as bitkubTestnet$1, bitTorrent as bitTorrent$1, bitTorrentTestnet as bitTorrentTestnet$1, blast as blast$1, blastSepolia as blastSepolia$1, bob as bob$1, boba as boba$1, bobaSepolia as bobaSepolia$1, bobSepolia as bobSepolia$1, botanixTestnet as botanixTestnet$1, bronos as bronos$1, bronosTestnet as bronosTestnet$1, bsc as bsc$1, bscGreenfield as bscGreenfield$1, bscTestnet as bscTestnet$1, btr as btr$1, btrTestnet as btrTestnet$1, bxn as bxn$1, bxnTestnet as bxnTestnet$1, canto as canto$1, celo as celo$1, celoAlfajores as celoAlfajores$1, chiliz as chiliz$1, chips as chips$1, classic as classic$1, confluxESpace as confluxESpace$1, confluxESpaceTestnet as confluxESpaceTestnet$1, coreDao as coreDao$1, crab as crab$1, cronos as cronos$1, cronosTestnet as cronosTestnet$1, cronoszkEVM as cronoszkEVM$1, cronoszkEVMTestnet as cronoszkEVMTestnet$1, crossbell as crossbell$1, curtis as curtis$1, cyber as cyber$1, cyberTestnet as cyberTestnet$1, darwinia as darwinia$1, dchain as dchain$1, dchainTestnet as dchainTestnet$1, defichainEvm as defichainEvm$1, defichainEvmTestnet as defichainEvmTestnet$1, degen as degen$1, dfk as dfk$1, dodochainTestnet as dodochainTestnet$1, dogechain as dogechain$1, dreyerxMainnet as dreyerxMainnet$1, dreyerxTestnet as dreyerxTestnet$1, edgeless as edgeless$1, edgelessTestnet as edgelessTestnet$1, edgeware as edgeware$1, edgewareTestnet as edgewareTestnet$1, eon as eon$1, eos as eos$1, eosTestnet as eosTestnet$1, etherlink as etherlink$1, etherlinkTestnet as etherlinkTestnet$1, evmos as evmos$1, evmosTestnet as evmosTestnet$1, fantom as fantom$1, fantomSonicTestnet as fantomSonicTestnet$1, fantomTestnet as fantomTestnet$1, fibo as fibo$1, filecoin as filecoin$1, filecoinCalibration as filecoinCalibration$1, filecoinHyperspace as filecoinHyperspace$1, flare as flare$1, flareTestnet as flareTestnet$1, flowMainnet as flowMainnet$1, flowPreviewnet as flowPreviewnet$1, flowTestnet as flowTestnet$1, fluence as fluence$1, fluenceStage as fluenceStage$1, fluenceTestnet as fluenceTestnet$1, forma as forma$1, foundry as foundry$1, fraxtal as fraxtal$1, fraxtalTestnet as fraxtalTestnet$1, funkiMainnet as funkiMainnet$1, funkiSepolia as funkiSepolia$1, fuse as fuse$1, fuseSparknet as fuseSparknet$1, gnosis as gnosis$1, gnosisChiado as gnosisChiado$1, gobi as gobi$1, goerli as goerli$1, gravity as gravity$1, ham as ham$1, haqqMainnet as haqqMainnet$1, haqqTestedge2 as haqqTestedge2$1, hardhat as hardhat$1, harmonyOne as harmonyOne$1, hashkeyTestnet as hashkeyTestnet$1, hedera as hedera$1, hederaPreviewnet as hederaPreviewnet$1, hederaTestnet as hederaTestnet$1, holesky as holesky$1, immutableZkEvm as immutableZkEvm$1, immutableZkEvmTestnet as immutableZkEvmTestnet$1, inEVM as inEVM$1, iota as iota$1, iotaTestnet as iotaTestnet$1, iotex as iotex$1, iotexTestnet as iotexTestnet$1, jbc as jbc$1, jbcTestnet as jbcTestnet$1, kaia as kaia$1, kairos as kairos$1, kakarotSepolia as kakarotSepolia$1, karura as karura$1, kava as kava$1, kavaTestnet as kavaTestnet$1, kcc as kcc$1, klaytn as klaytn$1, klaytnBaobab as klaytnBaobab$1, koi as koi$1, kroma as kroma$1, kromaSepolia as kromaSepolia$1, l3x as l3x$1, l3xTestnet as l3xTestnet$1, lightlinkPegasus as lightlinkPegasus$1, lightlinkPhoenix as lightlinkPhoenix$1, linea as linea$1, lineaGoerli as lineaGoerli$1, lineaSepolia as lineaSepolia$1, lineaTestnet as lineaTestnet$1, lisk as lisk$1, liskSepolia as liskSepolia$1, localhost as localhost$1, lukso as lukso$1, luksoTestnet as luksoTestnet$1, lycan as lycan$1, lyra as lyra$1, mainnet as mainnet$1, mandala as mandala$1, manta as manta$1, mantaSepoliaTestnet as mantaSepoliaTestnet$1, mantaTestnet as mantaTestnet$1, mantle as mantle$1, mantleSepoliaTestnet as mantleSepoliaTestnet$1, mantleTestnet as mantleTestnet$1, merlin as merlin$1, metachain as metachain$1, metachainIstanbul as metachainIstanbul$1, metalL2 as metalL2$1, meter as meter$1, meterTestnet as meterTestnet$1, metis as metis$1, metisGoerli as metisGoerli$1, mev as mev$1, mevTestnet as mevTestnet$1, mintSepoliaTestnet as mintSepoliaTestnet$1, mode as mode$1, modeTestnet as modeTestnet$1, moonbaseAlpha as moonbaseAlpha$1, moonbeam as moonbeam$1, moonbeamDev as moonbeamDev$1, moonriver as moonriver$1, morphHolesky as morphHolesky$1, morphSepolia as morphSepolia$1, nautilus as nautilus$1, neonDevnet as neonDevnet$1, neonMainnet as neonMainnet$1, nexi as nexi$1, nexilix as nexilix$1, oasisTestnet as oasisTestnet$1, oasys as oasys$1, okc as okc$1, oortMainnetDev as oortMainnetDev$1, opBNB as opBNB$1, opBNBTestnet as opBNBTestnet$1, optimism as optimism$1, optimismGoerli as optimismGoerli$1, optimismSepolia as optimismSepolia$1, otimDevnet as otimDevnet$1, palm as palm$1, palmTestnet as palmTestnet$1, pgn as pgn$1, pgnTestnet as pgnTestnet$1, phoenix as phoenix$1, playfiAlbireo as playfiAlbireo$1, plinga as plinga$1, plumeTestnet as plumeTestnet$1, polygon as polygon$1, polygonAmoy as polygonAmoy$1, polygonMumbai as polygonMumbai$1, polygonZkEvm as polygonZkEvm$1, polygonZkEvmCardona as polygonZkEvmCardona$1, polygonZkEvmTestnet as polygonZkEvmTestnet$1, pulsechain as pulsechain$1, pulsechainV4 as pulsechainV4$1, qMainnet as qMainnet$1, qTestnet as qTestnet$1, real as real$1, redbellyTestnet as redbellyTestnet$1, redstone as redstone$1, reyaNetwork as reyaNetwork$1, rollux as rollux$1, rolluxTestnet as rolluxTestnet$1, ronin as ronin$1, root as root$1, rootPorcini as rootPorcini$1, rootstock as rootstock$1, rootstockTestnet as rootstockTestnet$1, rss3 as rss3$1, rss3Sepolia as rss3Sepolia$1, saigon as saigon$1, sapphire as sapphire$1, sapphireTestnet as sapphireTestnet$1, satoshiVM as satoshiVM$1, satoshiVMTestnet as satoshiVMTestnet$1, scroll as scroll$1, scrollSepolia as scrollSepolia$1, sei as sei$1, seiTestnet as seiTestnet$1, sepolia as sepolia$1, shapeSepolia as shapeSepolia$1, shardeumSphinx as shardeumSphinx$1, shibarium as shibarium$1, shibariumTestnet as shibariumTestnet$1, shimmer as shimmer$1, shimmerTestnet as shimmerTestnet$1, skaleBlockBrawlers as skaleBlockBrawlers$1, skaleCalypso as skaleCalypso$1, skaleCalypsoTestnet as skaleCalypsoTestnet$1, skaleCryptoBlades as skaleCryptoBlades$1, skaleCryptoColosseum as skaleCryptoColosseum$1, skaleEuropa as skaleEuropa$1, skaleEuropaTestnet as skaleEuropaTestnet$1, skaleExorde as skaleExorde$1, skaleHumanProtocol as skaleHumanProtocol$1, skaleNebula as skaleNebula$1, skaleNebulaTestnet as skaleNebulaTestnet$1, skaleRazor as skaleRazor$1, skaleTitan as skaleTitan$1, skaleTitanTestnet as skaleTitanTestnet$1, sketchpad as sketchpad$1, soneiumMinato as soneiumMinato$1, songbird as songbird$1, songbirdTestnet as songbirdTestnet$1, sophonTestnet as sophonTestnet$1, spicy as spicy$1, storyTestnet as storyTestnet$1, stratis as stratis$1, syscoin as syscoin$1, syscoinTestnet as syscoinTestnet$1, taiko as taiko$1, taikoHekla as taikoHekla$1, taikoJolnir as taikoJolnir$1, taikoKatla as taikoKatla$1, taikoTestnetSepolia as taikoTestnetSepolia$1, taraxa as taraxa$1, taraxaTestnet as taraxaTestnet$1, telcoinTestnet as telcoinTestnet$1, telos as telos$1, telosTestnet as telosTestnet$1, tenet as tenet$1, thaiChain as thaiChain$1, thunderTestnet as thunderTestnet$1, tron as tron$1, unreal as unreal$1, vechain as vechain$1, wanchain as wanchain$1, wanchainTestnet as wanchainTestnet$1, wemix as wemix$1, wemixTestnet as wemixTestnet$1, x1Testnet as x1Testnet$1, xai as xai$1, xaiTestnet as xaiTestnet$1, xdc as xdc$1, xdcTestnet as xdcTestnet$1, xLayer as xLayer$1, xLayerTestnet as xLayerTestnet$1, xrSepolia as xrSepolia$1, yooldoVerse as yooldoVerse$1, yooldoVerseTestnet as yooldoVerseTestnet$1, zetachain as zetachain$1, zetachainAthensTestnet as zetachainAthensTestnet$1, zhejiang as zhejiang$1, zilliqa as zilliqa$1, zilliqaTestnet as zilliqaTestnet$1, zkFair as zkFair$1, zkFairTestnet as zkFairTestnet$1, zkLinkNova as zkLinkNova$1, zkLinkNovaSepoliaTestnet as zkLinkNovaSepoliaTestnet$1, zksync as zksync$1, zksyncInMemoryNode as zksyncInMemoryNode$1, zksyncLocalNode as zksyncLocalNode$1, zksyncSepoliaTestnet as zksyncSepoliaTestnet$1, zora as zora$1, zoraSepolia as zoraSepolia$1, zoraTestnet as zoraTestnet$1 } from 'viem/chains';
++import { ekta as ekta$1, ektaTestnet as ektaTestnet$1, seiDevnet as seiDevnet$1, zircuitTestnet as zircuitTestnet$1 } from './legacyChains.cjs';
+diff --git a/node_modules/@tevm/common/dist/index.cjs b/node_modules/@tevm/common/dist/index.cjs
+--- a/node_modules/@tevm/common/dist/index.cjs
++++ b/node_modules/@tevm/common/dist/index.cjs
+@@ -5,4 +5,4 @@
+ var logger = require('@tevm/logger');
+ var utils = require('@tevm/utils');
+ var viem = require('viem');
+-var chains = require('viem/chains');
++var chains = { ...require('viem/chains'), ...require('./legacyChains.cjs') };
+diff --git a/node_modules/@tevm/common/dist/legacyChains.cjs b/node_modules/@tevm/common/dist/legacyChains.cjs
+new file mode 100644
+--- /dev/null
++++ b/node_modules/@tevm/common/dist/legacyChains.cjs
+@@ -0,0 +1,130 @@
++/*
++Legacy chain definitions retained from viem 2.23.2 for TEVM next.148.
++MIT License
++
++Copyright (c) 2023-present weth, LLC
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
++*/
++
++const { defineChain } = require('viem');
++const { chainConfig } = require('viem/op-stack');
++const sourceId = 11_155_111;
++
++exports.ekta = defineChain({
++    id: 1994,
++    name: 'Ekta',
++    nativeCurrency: {
++        decimals: 18,
++        name: 'EKTA',
++        symbol: 'EKTA',
++    },
++    rpcUrls: {
++        default: { http: ['https://main.ekta.io'] },
++    },
++    blockExplorers: {
++        default: {
++            name: 'Ektascan',
++            url: 'https://ektascan.io',
++            apiUrl: 'https://ektascan.io/api',
++        },
++    },
++});
++
++exports.ektaTestnet = defineChain({
++    id: 1004,
++    name: 'Ekta Testnet',
++    nativeCurrency: {
++        decimals: 18,
++        name: 'EKTA',
++        symbol: 'EKTA',
++    },
++    rpcUrls: {
++        default: { http: ['https://test.ekta.io:8545'] },
++    },
++    blockExplorers: {
++        default: {
++            name: 'Test Ektascan',
++            url: 'https://test.ektascan.io',
++            apiUrl: 'https://test.ektascan.io/api',
++        },
++    },
++    testnet: true,
++});
++
++exports.seiDevnet = defineChain({
++    id: 713_715,
++    name: 'Sei Devnet',
++    nativeCurrency: { name: 'Sei', symbol: 'SEI', decimals: 18 },
++    rpcUrls: {
++        default: {
++            http: ['https://evm-rpc-arctic-1.sei-apis.com'],
++        },
++    },
++    blockExplorers: {
++        default: {
++            name: 'Seitrace',
++            url: 'https://seitrace.com',
++        },
++    },
++    testnet: true,
++});
++
++exports.zircuitTestnet = defineChain({
++    ...chainConfig,
++    id: 48899,
++    name: 'Zircuit Testnet',
++    nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
++    rpcUrls: {
++        default: {
++            http: [
++                'https://zircuit1-testnet.p2pify.com',
++                'https://zircuit1-testnet.liquify.com',
++            ],
++        },
++    },
++    blockExplorers: {
++        default: {
++            name: 'Zircuit Testnet Explorer',
++            url: 'https://explorer.testnet.zircuit.com',
++        },
++    },
++    contracts: {
++        multicall3: {
++            address: '0xcA11bde05977b3631167028862bE2a173976CA11',
++            blockCreated: 6040287,
++        },
++        l2OutputOracle: {
++            [sourceId]: {
++                address: '0x740C2dac453aEf7140809F80b72bf0e647af8148',
++            },
++        },
++        portal: {
++            [sourceId]: {
++                address: '0x787f1C8c5924178689E0560a43D848bF8E54b23e',
++            },
++        },
++        l1StandardBridge: {
++            [sourceId]: {
++                address: '0x0545c5fe980098C16fcD0eCB5E79753afa6d9af9',
++            },
++        },
++    },
++    testnet: true,
++});

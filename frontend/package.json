@@ -30,7 +30,13 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod-validation-error": "4.0.2",
-    "patch-package": "8.0.1"
+    "patch-package": "8.0.1",
+    "effect": "3.22.3",
+    "ink": "6.8.0",
+    "pastel": "4.0.1",
+    "tmp": "0.2.7",
+    "webpack": "5.112.0",
+    "zod": "4.3.6"
   },
   "overrides": {
     "react": "19.3.0",
@@ -56,13 +62,80 @@
     },
     "query-string@7.1.3": {
       "decode-uri-component": "0.5.0"
-    }
+    },
+    "solc": {
+      "tmp": "0.2.7"
+    },
+    "effect@3.18.1": "3.22.3",
+    "@tevm/memory-client": {
+      "vitest": "4.1.11"
+    },
+    "@tevm/cli": {
+      "pastel": "4.0.1"
+    },
+    "abitype@1.0.6": "1.2.3",
+    "abitype@1.0.8": "1.2.3"
   },
   "resolutions": {
     "**/@metamask/utils/uuid": "11.1.1",
     "**/@metamask/sdk/uuid": "11.1.1",
     "**/@metamask/sdk-communication-layer/uuid": "11.1.1",
     "**/@walletconnect/utils/viem/ws": "8.21.0",
-    "**/query-string/decode-uri-component": "0.5.0"
+    "**/query-string/decode-uri-component": "0.5.0",
+    "**/solc/tmp": "0.2.7",
+    "**/effect": "3.22.3",
+    "**/@tevm/memory-client/vitest": "4.1.11",
+    "**/@tevm/cli/pastel": "4.0.1",
+    "**/@coinbase/cdp-sdk/abitype": "1.2.3",
+    "**/@walletconnect/utils/viem/abitype": "1.2.3",
+    "**/@tevm/actions": "1.0.0-next.149",
+    "**/@tevm/address": "1.0.0-next.148",
+    "**/@tevm/base-bundler": "1.0.0-next.149",
+    "**/@tevm/block": "1.0.0-next.148",
+    "**/@tevm/blockchain": "1.0.0-next.148",
+    "**/@tevm/bun-plugin": "1.0.0-next.148",
+    "**/@tevm/bundler-cache": "1.0.0-next.148",
+    "**/@tevm/chains": "0.0.1",
+    "**/@tevm/cli": "1.0.0-next.148",
+    "**/@tevm/client-types": "1.0.0-next.148",
+    "**/@tevm/common": "1.0.0-next.148",
+    "**/@tevm/compiler": "1.0.0-next.148",
+    "**/@tevm/config": "1.0.0-next.148",
+    "**/@tevm/contract": "1.0.0-next.149",
+    "**/@tevm/decorators": "1.0.0-next.148",
+    "**/@tevm/effect": "1.0.0-next.148",
+    "**/@tevm/errors": "1.0.0-next.148",
+    "**/@tevm/esbuild-plugin": "1.0.0-next.148",
+    "**/@tevm/evm": "1.0.0-next.148",
+    "**/@tevm/http-client": "1.0.0-next.148",
+    "**/@tevm/jsonrpc": "1.0.0-next.148",
+    "**/@tevm/logger": "1.0.0-next.148",
+    "**/@tevm/memory-client": "1.0.0-next.148",
+    "**/@tevm/node": "1.0.0-next.148",
+    "**/@tevm/precompiles": "1.0.0-next.148",
+    "**/@tevm/predeploys": "1.0.0-next.148",
+    "**/@tevm/receipt-manager": "1.0.0-next.148",
+    "**/@tevm/resolutions": "1.0.0-next.148",
+    "**/@tevm/rlp": "1.0.0-next.148",
+    "**/@tevm/rollup-plugin": "1.0.0-next.148",
+    "**/@tevm/rspack-plugin": "1.0.0-next.148",
+    "**/@tevm/runtime": "1.0.0-next.148",
+    "**/@tevm/server": "1.0.0-next.148",
+    "**/@tevm/solc": "1.0.0-next.148",
+    "**/@tevm/state": "1.0.0-next.148",
+    "**/@tevm/sync-storage-persister": "1.0.0-next.148",
+    "**/@tevm/test-utils": "1.0.0-next.148",
+    "**/@tevm/trie": "1.0.0-next.148",
+    "**/@tevm/ts-plugin": "1.0.0-next.148",
+    "**/@tevm/tsconfig": "1.0.0-next.142",
+    "**/@tevm/tsupconfig": "1.0.0-next.148",
+    "**/@tevm/tx": "1.0.0-next.148",
+    "**/@tevm/txpool": "1.0.0-next.148",
+    "**/@tevm/unplugin": "1.0.0-next.148",
+    "**/@tevm/utils": "1.0.0-next.148",
+    "**/@tevm/viem": "1.0.0-next.148",
+    "**/@tevm/vite-plugin": "1.0.0-next.148",
+    "**/@tevm/vm": "1.0.0-next.148",
+    "**/@tevm/webpack-plugin": "1.0.0-next.148"
   }
 }

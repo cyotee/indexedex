@@ -14,7 +14,7 @@
     "typecheck": "node scripts/typecheck.mjs",
     "test": "vitest run",
     "test:deployment": "node --test scripts/site-deployment.test.cjs",
-    "test:dependencies": "node --test scripts/wallet-dependencies.test.cjs",
+    "test:dependencies": "node --test scripts/wallet-dependencies.test.cjs scripts/tevm-dependencies.test.cjs",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:deployment": "playwright test --config playwright.deployment.config.ts",
@@ -32,7 +32,7 @@
     "react-dom": "19.3.0",
     "tevm": "1.0.0-next.149",
     "viem": "^2.43.5",
-    "voltaire": "npm:@tevm/voltaire",
+    "voltaire": "npm:@tevm/voltaire@0.4.0",
     "wagmi": "^2.19.5",
     "@indexedex/protocol": "*",
     "@rainbow-me/rainbowkit": "2.2.11"

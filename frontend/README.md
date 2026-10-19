@@ -27,6 +27,32 @@ npm run test:e2e:dtf   # Announcement navigation checks
 App details: [shared application](apps/indexedex/README.md).
 Product roadmap: [ROADMAP.md](ROADMAP.md). Vercel configuration and rollout: [SITE_DEPLOYMENT.md](SITE_DEPLOYMENT.md).
 
+## TEVM dependency maintenance
+
+TEVM remains on its EthereumJS-backed next release; Voltaire is pinned to the
+retained 0.4.0 release. Scoped npm overrides and matching Yarn resolutions repair
+Effect, Solc's Tmp dependency, the memory client's Vitest dependency, and the
+CLI's Pastel/Zod compatibility. Solc's compiler version is not replaced merely
+to repair its temporary-file dependency.
+
+The workspace explicitly supplies shared Effect, Tmp, Pastel, Ink, Webpack and
+Zod dependencies so clean installs have their required runtime and peer targets.
+Older wallet-owned ABIType copies are aligned with the Zod 4-compatible release.
+Yarn's TEVM family pins prevent a fresh install from selecting ZEVM-backed RC
+packages through prerelease ranges.
+
+The `@tevm+common+1.0.0-next.148.patch` preserves four chain definitions removed
+from newer Viem exports. Both ESM and CommonJS keep the original chain identities;
+this does not establish that those legacy networks are still operational.
+Keep lifecycle scripts enabled so this and the wallet patches are applied.
+
+Run `npm run test:dependencies -w @indexedex/app-indexedex` after changing these
+versions or patches. It covers real Solidity compilation through TEVM/Effect,
+in-memory contract execution, both module formats, CLI argument handling,
+Solc temporary-file transport/cleanup, and wallet URI parsing. The temporary-file
+test exercises process I/O, not an external SMT solver's mathematical results.
+Also run the full app checks and both deployment builds/browser suites.
+
 The token-list guidance below applies to both deployments. `NEXT_PUBLIC_SITE_DEPLOYMENT=indexedex` (default) or `dtf` selects the landing notice at build time. There is no separate DTF application directory or hostname detection. Local development uses separate `.next-indexedex` and `.next-dtf` caches. Production builds use `.next`; build and test each variant in sequence locally.
 
 ---

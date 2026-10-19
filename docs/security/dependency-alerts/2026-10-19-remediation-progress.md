@@ -6,11 +6,11 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
 ## Owner constraints
 
 - npm is authoritative; manifests and scripts must remain usable with Yarn.
-- For the final 47 records, the owner reaffirmed upstream-only TEVM repairs,
-  approved wallet integration patches that preserve the current UI, and
-  approved retaining and locally repairing the OnchainKit starter and PMFI.
-  Seven TEVM records still await compatible upstream releases; this is not
-  completion of the full-resolution goal.
+- For the final 47 records, the owner approved wallet integration patches that
+  preserve the UI and retaining/repairing the OnchainKit starter and PMFI.
+  The owner subsequently removed the TEVM upstream-only restriction and
+  authorized the dependency and compatibility changes needed to leave the
+  project working. The previous upstream wait is superseded.
 - Stop and ask before application behavior changes or unresolved migration,
   removal, or tooling-policy choices.
 - Retain TEVM and Voltaire, and retain TEVM's EthereumJS execution backend.
@@ -22,6 +22,59 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
   have been performed.
 
 ## Applied locally
+
+### Authorized TEVM security and compatibility repair
+
+- Replaced vulnerable Effect 3.18.1 with 3.22.3 and Solc's Tmp 0.0.33 with
+  0.2.7. Solc compiler versions and all TEVM/EthereumJS package versions remain
+  unchanged. The memory client's Vitest dependency now shares patched 4.1.11;
+  nested Vitest/Mocker 3 and Tinypool 1 are removed.
+- Upgraded the CLI's Pastel dependency to 4.0.1 for its existing Zod 4/React 19
+  contract. Supplied missing Ink/Webpack peers and explicit shared toolchain
+  targets. Older wallet ABIType copies now use the Zod 4-compatible 1.2.3
+  release rather than leaving invalid peers or breaking TEVM's ABI schemas.
+- A maintained `@tevm/common` patch preserves Ekta, Ekta Testnet, Sei Devnet and
+  Zircuit Testnet definitions removed from newer Viem exports. It repairs both
+  module formats rather than deleting public chain exports or changing EVM
+  backends. The copied definitions retain their upstream MIT notice.
+- Yarn resolutions preserve the existing TEVM next package family instead of
+  selecting ZEVM RC packages through prerelease ranges. Voltaire's existing
+  0.4.0 version is explicit. npm remains authoritative.
+- Regression tests exercise actual Effect-backed asynchronous/synchronous
+  Solidity compilation, deployment and reads in the in-memory EVM, ESM client
+  initialization, preserved chain IDs, CLI help/valid/invalid options, and
+  Solc's real temporary-file process I/O and cleanup. The SMT process fixture
+  does not claim to validate solver mathematics. The upstream CLI's compile
+  command is an argument/rendering smoke check; real compilation is tested
+  through `@tevm/compiler`.
+- The initial baseline caught a test API mistake (`address` instead of `to`);
+  correcting the input made both original runtime checks pass. Later checks
+  exposed the existing ESM missing-export bug and the CLI's Pastel/Zod mismatch.
+  A root Zod 3 experiment broke TEVM ABI schema validation and was reversed.
+  Stale npm override placements were repaired rather than ignored. Final
+  runtime checks and the complete npm tree pass with no dependency problems.
+- Exact-range reconciliation now finds all seven TEVM records candidate-cleared:
+  #7, #34, #270, #704, #709, #825 and #826. Combined with prior verified work,
+  all 47 requested remaining records and all 423 original snapshot records are
+  candidate-cleared locally. GitHub closure is not verified: nothing is pushed
+  or dismissed.
+- Fresh frontend audit is not zero: seven high affected-package entries remain
+  in the pre-existing braces/fast-glob/micromatch lint/patch tooling chain.
+  There are no remaining TEVM findings, moderate findings, or critical findings.
+  The retained template's separately documented 33 inherited findings remain
+  outside these original snapshot repairs.
+- Final clean npm install and complete dependency tree both exit 0. App
+  lint has 0 errors and 78 existing warnings; app/protocol typechecks pass;
+  498 unit tests pass with one existing skip; the deployment-config test and
+  all nine dependency regressions pass. Both production builds pass, followed
+  by 10 IndexedEx and 22 DTF deployment browser checks. All 14 wallet connection
+  regressions also pass after the ABIType peer alignment.
+- A full isolated Yarn Classic install now succeeds and passes all nine
+  dependency regressions, including real CLI execution. Yarn still reports
+  override-range and peer warnings; they are not suppressed. Retained Voltaire
+  address conversion and a known Keccak digest also pass offline checks.
+  Validation used Node 26.11.1. LSP diagnostics remain unavailable because the
+  daemon times out; executable checks provide the validation evidence.
 
 ### Retained OnchainKit starter repair
 
@@ -57,11 +110,9 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
   locally; the original inventory is now 416/423 candidate-cleared. The seven
   remaining records are TEVM #7, #34, #270, #704, #709, #825 and #826.
   No GitHub alerts have been dismissed or claimed closed.
-- The full goal remains active under the owner's reaffirmed EthereumJS and
-  upstream-only constraints. A persistent six-hour registry watch
-  (`mon_VXWEWA8RZ41EB3Q5`) will notify this thread of TEVM next releases newer
-  than 1.0.0-next.149 for compatibility review. It does not automatically install
-  anything and expires under the monitor service's seven-day limit.
+- At this checkpoint the upstream-only policy blocked the last seven records.
+  The speculative registry watch was subsequently stopped, and the owner then
+  authorized the local TEVM repair recorded above.
 
 ### Wallet integration repairs with the existing UI
 
