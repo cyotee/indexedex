@@ -15,6 +15,9 @@ import {
 import {
     ICommonBufferMultiVaultWeightedPool
 } from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPool.sol";
+import {
+    ICommonBufferMultiVaultWeightedPoolPkg
+} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPoolPkg.sol";
 import {CoordinatorSeRouterDeployLib} from "test/foundry/spec/routers/balancerV3-uniswapV4/helpers/CoordinatorSeRouterDeployLib.sol";
 import {
     TestBase_CommonBufferMultiVaultWeightedPool
@@ -88,8 +91,32 @@ contract CommonBufferMultiVaultWeightedPool_D49_Test is TestBase_CommonBufferMul
         return 2;
     }
 
+    /// @dev Put the rounding remainder on the buffer so both share weights remain exactly equal.
+    function _buildPkgArgs(uint8 unpairedCount, uint8 vaultCount)
+        internal
+        view
+        override
+        returns (ICommonBufferMultiVaultWeightedPoolPkg.PkgArgs memory args)
+    {
+        args = super._buildPkgArgs(unpairedCount, vaultCount);
+        uint256 remainder = 1e18 % args.weights.length;
+        args.weights[0] -= remainder;
+        uint256 bufferIndex;
+        for (uint256 i; i < args.unpairedTokens.length; ++i) {
+            if (address(args.unpairedTokens[i]) < address(args.bufferToken)) ++bufferIndex;
+        }
+        for (uint256 i; i < args.standardExchangeVaults.length; ++i) {
+            if (address(args.standardExchangeVaults[i]) < address(args.bufferToken)) ++bufferIndex;
+        }
+        args.weights[bufferIndex] += remainder;
+    }
+
     function setUp() public virtual override {
         super.setUp();
+        assertEq(_pool().weight(_pool().shareIndex(0)), _pool().weight(_pool().shareIndex(1)), "equal share weights");
+        assertEq(_pool().depthPerWeight(0), _pool().depthPerWeight(1), "equal initial ranking scores");
+        assertEq(_pool().mostNeededVault(), 0, "deposit tie selects vault 0");
+        assertEq(_pool().mostExcessVault(), 0, "redemption tie selects vault 0");
         seRouterReal = CoordinatorSeRouterDeployLib.deploy(create3Factory, diamondPackageFactory, bv3Vault, permit2, IWETH(address(weth)));
         vm.label(address(seRouterReal), "SeRouterReal");
         vm.startPrank(alice);
