@@ -63,6 +63,8 @@ library UniswapV4HookDiamondPackageCallBackFactory_FactoryService {
 
     /**
      * @notice Off-chain mine helper (pure loop). Prefer premine in production; auto-mine is gas-risky.
+     * @dev Search beyond the on-chain auto-mine cap; valid bindings can first match after MAX_LOOP.
+     *      The deployed factory's bounded deploy() path is unchanged.
      */
     function findMineNonce(
         IUniswapV4HookDiamondPackageCallBackFactory factory,
@@ -73,7 +75,7 @@ library UniswapV4HookDiamondPackageCallBackFactory_FactoryService {
         bytes32 packageSalt = pkg.calcSalt(processed);
         uint160 flags = pkg.requiredHookFlags();
         return Create2Lib.findMineNonce(
-            address(factory), factory.PROXY_INIT_HASH(), packageSalt, flags, Create2Lib.MAX_LOOP
+            address(factory), factory.PROXY_INIT_HASH(), packageSalt, flags, type(uint256).max
         );
     }
 }
