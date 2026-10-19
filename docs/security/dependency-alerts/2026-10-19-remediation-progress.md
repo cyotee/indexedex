@@ -400,3 +400,84 @@ change, so previous production/browser validation stands.
 
 This clears snapshot #295 locally. Together with OpenCode retirement (#686),
 the comparison is 374/423 candidate-cleared, with 49 still affected or unchanged.
+
+## Remaining decision gates after checkpoint
+
+Verified commits:
+
+- `e14994ee`: checkpoint of all earlier verified remediation.
+- `a11f9aa3`: owner-approved OpenCode lock retirement.
+- `b6d50bdf`: nested Vite/esbuild repair without changing major branches.
+
+### Wallet and Permit2: five snapshot records
+
+Current npm metadata confirms Wagmi 2.19.5 is the newest version satisfying the
+app's existing range. RainbowKit's current 2.2.11 release still peers Wagmi
+`^2.9.0`; Wagmi 3.7.7 requires TypeScript >=5.9.3 and a coordinated connector
+migration. A blind major update would violate the current RainbowKit contract.
+The active UI exposes injected wallets, MetaMask, Rainbow, Coinbase and
+WalletConnect, with explicit local-network restrictions. Its permission-before-
+chain-lookup and immediate-rejection patch must be preserved or deliberately
+ported with regression coverage.
+
+Searches across 353 frontend source/config files found no Permit2 SDK imports.
+`frontend/packages/protocol/src/permit2-signature.ts` uses Viem directly.
+The SDK is the sole locked owner of ethers 5, which owns the Elliptic signing
+dependency. Retiring the unused SDK is a separate owner approval; it could clear
+the Elliptic record, but other wallet branches still retain vulnerable ws copies.
+No direct frontend test of the named Permit2 hash helpers was found; no signing
+implementation change is proposed as part of dependency retirement.
+
+Choices: preserve RainbowKit and await a supported connector path, or authorize
+a coordinated wallet UI/connector migration. Removing the unused SDK can be
+reviewed independently; it has not been removed.
+
+### Vendored OnchainKit and PMFI: 36 snapshot records
+
+The checked upstream Bankr files still contain the same vulnerable Next 14.1.0
+template and ethers 6.16.0/ws 8.17.1 PMFI lock. A refresh alone therefore does not
+provide these fixes. `scripts/sync-bankr-skills.sh:57` deletes and replaces the
+vendor tree; no patch reapplication mechanism exists.
+
+The OnchainKit template contains only its manifest, Next config, README and
+environment example. The README describes pages/components that are absent,
+and its validation command only prints a message. A credible retained-template
+migration must align Next/React/OnchainKit, update lint/configuration, and
+validate a real generated scaffold rather than claiming the incomplete template
+already builds. This requires a retain-and-repair versus retirement decision.
+
+PMFI's ethers 6.17.0 update fits its current range and admits fixed ws. It needs
+an explicit maintained-vendor-fix policy so the next refresh does not undo it.
+Validation should use a clean isolated install, no-argument CLI/module loading,
+and local ABI checks. Its transaction/dry-run paths are not suitable generic
+smoke commands because they can contact Bankr or chain endpoints.
+
+Recommendation: if these vendor assets are retained, maintain narrow reviewed
+patches with explicit upstream provenance and checked reapplication during
+refresh. Neither vendor package nor the sync script has been changed.
+
+### Token-list glob dependency: one snapshot record
+
+Braces remains at upstream 3.0.3 without a recorded fixed release. The generator
+uses fast-glob only in `scripts/node/src/readFragments.ts:3`; its patterns are
+fixed taxonomy paths ending in `/**/*.json`, not caller-supplied glob syntax.
+That limits the observed input surface but does not remove the vulnerable
+dependency or justify dismissing its alert.
+
+A replacement must preserve recursion, hidden-file handling, symlink traversal,
+deduplication and generated token-list output. Existing reader tests cover a
+two-fragment fixture and a missing directory, not those edge cases. Recommend
+a narrowly scoped replacement plus differential fixture checks, subject to
+approval before changing this reader. No generator behavior has changed.
+
+### TEVM: seven snapshot records
+
+Fresh registry metadata still identifies `1.0.0-next.149` as the newest TEVM
+next release. The current EVM package uses EthereumJS; the investigated RC EVM
+uses ZEVM. The existing EthereumJS/upstream-only decision therefore remains
+binding. Effect, Solc/Tmp and nested Vitest/Mocker/Tinypool constraints remain
+unresolved, including the two critical frontend audit entries.
+
+No further major migration, package retirement, vendor ownership change or
+generator behavior change has been applied at these gates. No alerts have been
+dismissed and none of the commits has been pushed.
