@@ -6,6 +6,11 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
 ## Owner constraints
 
 - npm is authoritative; manifests and scripts must remain usable with Yarn.
+- For the final 47 records, the owner reaffirmed upstream-only TEVM repairs,
+  approved wallet integration patches that preserve the current UI, and
+  approved retaining and locally repairing the OnchainKit starter and PMFI.
+  Seven TEVM records still await compatible upstream releases; this is not
+  completion of the full-resolution goal.
 - Stop and ask before application behavior changes or unresolved migration,
   removal, or tooling-policy choices.
 - Retain TEVM and Voltaire, and retain TEVM's EthereumJS execution backend.
@@ -17,6 +22,28 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
   have been performed.
 
 ## Applied locally
+
+### Retained PMFI vendor repair
+
+- Refreshed the existing ethers range to 6.17.0, including its exact ws 8.21.0
+  dependency and ENS normalization 1.11.1. PMFI application logic is unchanged.
+- Snapshot records 439 and 440 are candidate-cleared locally. The remaining
+  snapshot count is 45: the previous 376 plus these two PMFI records give
+  378 of 423 candidate-cleared.
+- Captured the lockfile repair in
+  `scripts/vendor-patches/bankr/001-pmfi-ethers.patch`. Vendor refresh applies
+  maintained patches to its temporary clone before replacing the current tree;
+  conflicts fail before replacement. Upstream provenance remains intact.
+- Validation passed in a disposable copy restored from the committed vendor
+  baseline: patch check/application, exact lockfile comparison, clean npm
+  install, complete dependency tree, and npm audit (zero vulnerabilities).
+  The actual PMFI CLI loaded without arguments and its offline inspect command
+  printed selectors. Ethers ABI encoding/decoding, unit conversion, selector
+  checks, and a real localhost WebSocket round trip passed. No Bankr request,
+  chain RPC, signing, or transaction was performed.
+- `bash -n scripts/sync-bankr-skills.sh` passed. Bash LSP diagnostics were
+  unavailable because bash-language-server is not installed. The full refresh
+  was not run because it also writes to the parent workspace.
 
 - Documented npm/package-lock ownership and retained Yarn Classic compatibility.
   Root `test` invokes `forge test` directly instead of requiring Yarn internally.

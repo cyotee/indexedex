@@ -54,6 +54,18 @@ refresh_vendor() {
   tmp="$(mktemp -d)"
   echo "Cloning $REPO_URL (shallow)..."
   git clone --depth 1 "$REPO_URL" "$tmp/bankr-skills"
+  # Apply maintained repairs before replacing the current vendor tree. A changed
+  # upstream context must be reviewed, not silently overwrite a local repair.
+  local patch
+  for patch in "$ROOT"/scripts/vendor-patches/bankr/*.patch; do
+    [[ -f "$patch" ]] || continue
+    if ! git -C "$tmp/bankr-skills" apply --check "$patch" ||
+       ! git -C "$tmp/bankr-skills" apply "$patch"; then
+      echo "Bankr patch needs review: $patch; current vendor tree preserved" >&2
+      rm -rf "$tmp"
+      return 1
+    fi
+  done
   rm -rf "$CANON"
   mkdir -p "$CANON"
   local count=0
@@ -76,7 +88,8 @@ These skill packages are synced into the parent DeFi workspace
 External stubs (EthSkills, Base, Uniswap) are expanded from their upstream repos
 via `./scripts/sync-bankr-skills.sh --expand-stubs` (also runs on `--refresh`).
 
-Do not edit skill content here for long-lived customizations; re-sync will overwrite.
+Maintained local repairs live in scripts/vendor-patches/bankr/*.patch and are
+applied before refresh replaces the vendor tree. See that directory's README.md.
 IndexedEx-local skills stay under IndexedEx `.claude/skills/` (mirrored to OpenCode/Grok).
 EOF
   (
