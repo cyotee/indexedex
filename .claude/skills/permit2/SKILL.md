@@ -21,3 +21,13 @@ Resolve a topic's relative references from that topic's directory. Repository ru
 | permit2-signature-transfer-contract | [permit2-signature-transfer-contract](../../../lib/crane/.claude/skills/permit2-signature-transfer-contract/SKILL.md) |
 | permit2-types | [permit2-types](../../../lib/crane/.claude/skills/permit2-types/SKILL.md) |
 | permit2-wagmi-integration | [permit2-wagmi-integration](../../../lib/crane/.claude/skills/permit2-wagmi-integration/SKILL.md) |
+
+## Additional reviewed topics
+
+Read these topics from their canonical source. Resolve discovery symlinks before
+following relative links. Current IndexedEx product/testing rules take precedence.
+
+| Topic | Guidance |
+| --- | --- |
+| permit2-allowance-cast | [permit2-allowance-cast](../permit2-allowance-cast/SKILL.md) |
+| permit2-signature-notes | [permit2-signature-notes](../permit2-signature-notes/SKILL.md) |

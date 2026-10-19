@@ -29,6 +29,8 @@ def metadata(path):
             value = value[1:-1].replace("''", "'")
         elif value.startswith((">", "|")):
             raise ValueError(f"Use a concise, one-line {field} in discoverable skill: {path}")
+        elif re.search(r":(?:\s|$)", value):
+            raise ValueError(f"Quote YAML {field} containing a mapping separator: {path}")
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"Empty {field}: {path}")
         fields[field] = value

@@ -1,6 +1,6 @@
 ---
 name: indexedex-ui-refactor
-description: IndexedEx frontend deployment-environment and address-registry refactor: Sepolia vs local supersim toggle, artifact loading, wagmi transports, chain-id helpers.
+description: "IndexedEx frontend deployment-environment and address-registry refactor: Sepolia vs local supersim toggle, artifact loading, wagmi transports, chain-id helpers."
 ---
 
 # Indexedex UI Refactor

@@ -22,3 +22,15 @@ Resolve a topic's relative references from that topic's directory. Repository ru
 | balancer-v3-vault | [balancer-v3-vault](../../../lib/crane/.claude/skills/balancer-v3-vault/SKILL.md) |
 | balancer-v3-weighted-pool | [balancer-v3-weighted-pool](../../../lib/crane/.claude/skills/balancer-v3-weighted-pool/SKILL.md) |
 | crane-balancer | [crane-balancer](../../../lib/crane/.claude/skills/crane-balancer/SKILL.md) |
+
+## Additional reviewed topics
+
+Read these topics from their canonical source. Resolve discovery symlinks before
+following relative links. Current IndexedEx product/testing rules take precedence.
+
+| Topic | Guidance |
+| --- | --- |
+| balancer-v3-add-remove-liquidity | [balancer-v3-add-remove-liquidity](../balancer-v3-add-remove-liquidity/SKILL.md) |
+| balancer-v3-addresses | [balancer-v3-addresses](../balancer-v3-addresses/SKILL.md) |
+| balancer-v3-router-swap | [balancer-v3-router-swap](../balancer-v3-router-swap/SKILL.md) |
+| balancer-v3-vault-read | [balancer-v3-vault-read](../balancer-v3-vault-read/SKILL.md) |

@@ -1,6 +1,6 @@
 ---
 name: indexedex-uniswap-v4-hook-packages
-description: IndexedEx Uniswap V4 Hook Diamond Packages: registry deploy, CREATE2 flag mining, HookFlags, immutable postDeploy, tests. Not for legacy CREATE3 hooks.
+description: "IndexedEx Uniswap V4 Hook Diamond Packages: registry deploy, CREATE2 flag mining, HookFlags, immutable postDeploy, tests. Not for legacy CREATE3 hooks."
 license: MIT
 ---
 

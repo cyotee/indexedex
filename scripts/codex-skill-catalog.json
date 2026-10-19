@@ -81,7 +81,11 @@
         "balancer-v3-stable-pool": "lib/crane/.claude/skills/balancer-v3-stable-pool",
         "balancer-v3-vault": "lib/crane/.claude/skills/balancer-v3-vault",
         "balancer-v3-weighted-pool": "lib/crane/.claude/skills/balancer-v3-weighted-pool",
-        "crane-balancer": "lib/crane/.claude/skills/crane-balancer"
+        "crane-balancer": "lib/crane/.claude/skills/crane-balancer",
+        "balancer-v3-add-remove-liquidity": ".claude/skills/balancer-v3-add-remove-liquidity",
+        "balancer-v3-addresses": ".claude/skills/balancer-v3-addresses",
+        "balancer-v3-router-swap": ".claude/skills/balancer-v3-router-swap",
+        "balancer-v3-vault-read": ".claude/skills/balancer-v3-vault-read"
       }
     },
     "battlechain": {
@@ -147,7 +151,9 @@
         "permit2-signature-transfer": "lib/crane/.claude/skills/permit2-signature-transfer",
         "permit2-signature-transfer-contract": "lib/crane/.claude/skills/permit2-signature-transfer-contract",
         "permit2-types": "lib/crane/.claude/skills/permit2-types",
-        "permit2-wagmi-integration": "lib/crane/.claude/skills/permit2-wagmi-integration"
+        "permit2-wagmi-integration": "lib/crane/.claude/skills/permit2-wagmi-integration",
+        "permit2-allowance-cast": ".claude/skills/permit2-allowance-cast",
+        "permit2-signature-notes": ".claude/skills/permit2-signature-notes"
       }
     },
     "pons": {
@@ -291,7 +297,11 @@
         "ethskills-standards": ".claude/skills/ethskills-standards",
         "ethskills-testing": ".claude/skills/ethskills-testing",
         "ethskills-tools": ".claude/skills/ethskills-tools",
-        "ethskills-wallets": ".claude/skills/ethskills-wallets"
+        "ethskills-wallets": ".claude/skills/ethskills-wallets",
+        "approval-ops": ".claude/skills/approval-ops",
+        "erc20-ops": ".claude/skills/erc20-ops",
+        "units-and-amounts": ".claude/skills/units-and-amounts",
+        "weth-ops": ".claude/skills/weth-ops"
       }
     },
     "crane-libraries": {
@@ -321,7 +331,9 @@
         "forge-signing": "lib/crane/.claude/skills/forge-signing",
         "forge-testing": "lib/crane/.claude/skills/forge-testing",
         "foundry-project": "lib/crane/.claude/skills/foundry-project",
-        "supersim": "lib/crane/.claude/skills/supersim"
+        "supersim": "lib/crane/.claude/skills/supersim",
+        "foundry-agent-safety": ".claude/skills/foundry-agent-safety",
+        "foundry-script-ops": ".claude/skills/foundry-script-ops"
       }
     },
     "indexedex-discovery": {
@@ -339,6 +351,51 @@
         "indexedex-balancer-se-router": ".opencode/skills/indexedex-balancer-se-router",
         "indexedex-detf-user-flows": ".opencode/skills/indexedex-detf-user-flows",
         "indexedex-standard-exchange": ".opencode/skills/indexedex-standard-exchange"
+      }
+    },
+    "evm-development": {
+      "source": ".claude/skills/evm-development",
+      "topics": {
+        "chainlink-local-testing": "lib/crane/.claude/skills/chainlink-local-testing",
+        "chainlink-vrf-architecture": "lib/crane/.claude/skills/chainlink-vrf-architecture",
+        "crane-chainlink-local-testing": "lib/crane/.claude/skills/crane-chainlink-local-testing",
+        "crane-chainlink-vrf": "lib/crane/.claude/skills/crane-chainlink-vrf",
+        "viem": ".claude/skills/viem",
+        "defisaver-public-transient-store": ".claude/skills/defisaver-public-transient-store",
+        "fluid-liquidate-muldiv-clamp": ".claude/skills/fluid-liquidate-muldiv-clamp"
+      }
+    },
+    "defi-ui-testing": {
+      "source": ".claude/skills/defi-ui-testing",
+      "topics": {
+        "defi-ui-anvil-fixtures": ".claude/skills/defi-ui-anvil-fixtures",
+        "defi-ui-mock-connector": ".claude/skills/defi-ui-mock-connector",
+        "defi-ui-synpress-metamask": ".claude/skills/defi-ui-synpress-metamask",
+        "defi-ui-test-patterns": ".claude/skills/defi-ui-test-patterns",
+        "defi-ui-testing-overview": ".claude/skills/defi-ui-testing-overview",
+        "metamask-extension-testing": ".claude/skills/metamask-extension-testing",
+        "metamask-networks-accounts": ".claude/skills/metamask-networks-accounts",
+        "metamask-overview": ".claude/skills/metamask-overview",
+        "metamask-transactions-approvals": ".claude/skills/metamask-transactions-approvals",
+        "synpress-metamask-api": ".claude/skills/synpress-metamask-api",
+        "synpress-overview": ".claude/skills/synpress-overview",
+        "synpress-playwright": ".claude/skills/synpress-playwright",
+        "synpress-wallet-setup": ".claude/skills/synpress-wallet-setup"
+      }
+    },
+    "solidity-security": {
+      "source": ".claude/skills/solidity-security",
+      "topics": {
+        "audit-prep-assistant": ".claude/skills/audit-prep-assistant",
+        "code-maturity-assessor": ".claude/skills/code-maturity-assessor",
+        "differential-review": ".claude/skills/differential-review",
+        "guidelines-advisor": ".claude/skills/guidelines-advisor",
+        "property-based-testing": ".claude/skills/property-based-testing",
+        "secure-workflow-guide": ".claude/skills/secure-workflow-guide",
+        "sharp-edges": ".claude/skills/sharp-edges",
+        "spec-to-code-compliance": ".claude/skills/spec-to-code-compliance",
+        "token-integration-analyzer": ".claude/skills/token-integration-analyzer",
+        "variant-analysis": ".claude/skills/variant-analysis"
       }
     }
   }

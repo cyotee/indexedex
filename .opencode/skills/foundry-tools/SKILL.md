@@ -19,3 +19,13 @@ Resolve a topic's relative references from that topic's directory. Repository ru
 | forge-testing | [forge-testing](../../../lib/crane/.claude/skills/forge-testing/SKILL.md) |
 | foundry-project | [foundry-project](../../../lib/crane/.claude/skills/foundry-project/SKILL.md) |
 | supersim | [supersim](../../../lib/crane/.claude/skills/supersim/SKILL.md) |
+
+## Additional reviewed topics
+
+Read these topics from their canonical source. Resolve discovery symlinks before
+following relative links. Current IndexedEx product/testing rules take precedence.
+
+| Topic | Guidance |
+| --- | --- |
+| foundry-agent-safety | [foundry-agent-safety](../foundry-agent-safety/SKILL.md) |
+| foundry-script-ops | [foundry-script-ops](../foundry-script-ops/SKILL.md) |

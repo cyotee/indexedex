@@ -1,6 +1,6 @@
 ---
 name: indexedex-testing
-description: Production-first Foundry testing law for IndexedEx vaults, DETFs and Standard Exchanges: gold TestBases, proxy surface matrix, trust-flag negatives.
+description: "Production-first Foundry testing law for IndexedEx vaults, DETFs and Standard Exchanges: gold TestBases, proxy surface matrix, trust-flag negatives."
 license: MIT
 ---
 

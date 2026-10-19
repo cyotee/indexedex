@@ -28,3 +28,15 @@ Resolve a topic's relative references from that topic's directory. Repository ru
 | ethskills-testing | [ethskills-testing](../ethskills-testing/SKILL.md) |
 | ethskills-tools | [ethskills-tools](../ethskills-tools/SKILL.md) |
 | ethskills-wallets | [ethskills-wallets](../ethskills-wallets/SKILL.md) |
+
+## Additional reviewed topics
+
+Read these topics from their canonical source. Resolve discovery symlinks before
+following relative links. Current IndexedEx product/testing rules take precedence.
+
+| Topic | Guidance |
+| --- | --- |
+| approval-ops | [approval-ops](../approval-ops/SKILL.md) |
+| erc20-ops | [erc20-ops](../erc20-ops/SKILL.md) |
+| units-and-amounts | [units-and-amounts](../units-and-amounts/SKILL.md) |
+| weth-ops | [weth-ops](../weth-ops/SKILL.md) |

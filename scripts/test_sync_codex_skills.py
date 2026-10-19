@@ -144,6 +144,27 @@ class SkillCatalogTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Empty description"):
             skills.sync(self.root)
 
+    def test_unquoted_mapping_separator_is_rejected_before_sync(self):
+        # Given an otherwise valid catalog with an ambiguous YAML scalar.
+        path = self.root / ".claude/skills/testing/SKILL.md"
+        for value in ("key: value", "key:", "key:\tvalue"):
+            with self.subTest(value=value):
+                path.write_text(f"---\nname: testing\ndescription: {value}\n---\n")
+                # When synchronization validates the discovery metadata.
+                with self.assertRaisesRegex(ValueError, "Quote YAML description"):
+                    skills.sync(self.root)
+                # Then no discovery tree is created for metadata Native cannot load.
+                self.assertFalse((self.root / skills.DISCOVERY).exists())
+
+        # Given an explicitly quoted scalar with the same mapping separator.
+        for value in ('"key: value"', "'key: value'"):
+            with self.subTest(quoted=value):
+                path.write_text(f"---\nname: testing\ndescription: {value}\n---\n")
+                # When the catalog reads the scalar.
+                result = skills.metadata(path)
+                # Then the machine-consumed description is preserved.
+                self.assertEqual(result["description"], "key: value")
+
 
 if __name__ == "__main__":
     unittest.main()
