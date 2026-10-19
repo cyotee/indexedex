@@ -13,7 +13,8 @@ Reference: [update-impact assessment](2026-10-19-update-impact.md).
 - Hardhat 3 and its coordinated plugin migration were explicitly approved.
 - The owner confirmed no local Task Master use and explicitly approved retiring
   root Task Master/FastMCP and their three npm aliases.
-  No alert dismissals, commits or pushes have been performed.
+  Checkpoint commits are explicitly authorized. No alert dismissals or pushes
+  have been performed.
 
 ## Applied locally
 
@@ -105,7 +106,7 @@ checks above stand for the unchanged application dependency paths.
 ## Static alert impact
 
 Comparing the current local resolutions to the captured vulnerable ranges
-marks **372 of 423 snapshot records as candidate-cleared**. GitHub's comma-
+marks **373 of 423 snapshot records as candidate-cleared**. GitHub's comma-
 separated range clauses are normalized to semver conjunctions before comparison.
 This includes the Express, Coinbase SDK, additional audit batches and the
 Hardhat 3 migration and approved Task Master/FastMCP retirement. Hardhat's full
@@ -119,11 +120,12 @@ package versions did not change during removal.
 | package-lock.json | 127 |
 | yarn.lock | 140 |
 | scripts/node/package-lock.json | 14 |
+| .opencode/package-lock.json (retired) | 1 |
 
-There are 14 still-affected records in changed install roots and 37 unchanged
-records in vendored/orphan manifests. This is a static comparison, not a fresh
+There are 14 still-affected records in changed install roots and 36 unchanged
+records in vendored manifests. This is a static comparison, not a fresh
 audit of every new transitive dependency, not proof of exploitability, and not
-372 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
+373 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
 423. The paired npm/Yarn records are not independent vulnerability counts.
 
 ### Fresh npm audit
@@ -246,8 +248,9 @@ or ownership policies; no unresolved risk has been accepted on the owner's behal
 - **Vendored skills:** the OnchainKit template requires a framework/React migration;
   PMFI has a compatible ethers update but vendor refresh can overwrite local edits.
   Choose upstream refresh versus maintained local vendor changes before editing.
-- **Orphan lock:** `.opencode/package-lock.json` has no matching manifest. Decide
-  whether the tool still owns it before recreating or deleting files.
+- **OpenCode lock:** the owner confirmed OpenCode is no longer used and explicitly
+  approved deleting `.opencode/package-lock.json`. Shared skills and other
+  `.opencode` content remain intact.
 - **TEVM and no-fix packages:** upstream-only policy keeps unresolved pins and
   advisories open. Vite layout changes and compiler-version changes remain gated.
 
@@ -358,6 +361,20 @@ Validation completed:
 - `git diff --check`: passed. Existing dependency deprecation warnings were
   not suppressed. No additional application or contract changes were made.
 
-The snapshot comparison now marks 372/423 records candidate-cleared locally;
-51 remain affected or unchanged. No GitHub closure, dismissal, commit or push
-is claimed. Frontend TEVM remains subject to the EthereumJS/upstream-only policy.
+At the retirement checkpoint, the comparison marked 372/423 records
+candidate-cleared locally, with 51 still affected or unchanged.
+Frontend TEVM remains subject to the EthereumJS/upstream-only policy.
+
+### Checkpoint and OpenCode lock retirement
+
+Checkpoint commit `e14994ee` contains all verified remediation through Task
+Master/FastMCP retirement. The owner then confirmed OpenCode is no longer used
+and approved deleting its orphan lock, which has no corresponding manifest.
+Only `.opencode/package-lock.json` was deleted; shared skills, plugins and
+configuration were not removed. No application or dependency resolution changed,
+so prior runtime checks stand.
+
+Deleting the retired lock removes the local dependency record for snapshot alert
+#686 (TOML), bringing the comparison to 373/423 candidate-cleared, with 50
+remaining. GitHub closure is not claimed until the changes are pushed and
+reprocessed. Nothing has been pushed and no alert has been dismissed.
