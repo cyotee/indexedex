@@ -106,7 +106,7 @@ checks above stand for the unchanged application dependency paths.
 ## Static alert impact
 
 Comparing the current local resolutions to the captured vulnerable ranges
-marks **374 of 423 snapshot records as candidate-cleared**. GitHub's comma-
+marks **375 of 423 snapshot records as candidate-cleared**. GitHub's comma-
 separated range clauses are normalized to semver conjunctions before comparison.
 This includes the Express, Coinbase SDK, additional audit batches and the
 Hardhat 3 migration and approved Task Master/FastMCP retirement. Hardhat's full
@@ -115,34 +115,34 @@ package versions did not change during removal.
 
 | Manifest | Candidate-cleared records |
 | --- | ---: |
-| frontend/package-lock.json | 85 |
+| frontend/package-lock.json | 86 |
 | frontend/apps/indexedex/package.json | 7 |
 | package-lock.json | 127 |
 | yarn.lock | 140 |
 | scripts/node/package-lock.json | 14 |
 | .opencode/package-lock.json (retired) | 1 |
 
-There are 13 still-affected records in changed install roots and 36 unchanged
+There are 12 still-affected records in changed install roots and 36 unchanged
 records in vendored manifests. This is a static comparison, not a fresh
 audit of every new transitive dependency, not proof of exploitability, and not
-374 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
+375 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
 423. The paired npm/Yarn records are not independent vulnerability counts.
 
 ### Fresh npm audit
 
 The root audit after retirement exits 0 with no vulnerabilities. The latest
-frontend audit after the nested Vite repair and the previously recorded
+frontend audit after Permit2 SDK retirement and the previously recorded
 scripts/node audit returned findings (npm exit 1). Counts include affected parent packages
 and are not comparable one-for-one with the 423 Dependabot records:
 
 | Install root | Low | Moderate | High | Critical | Total |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Root, after retirement | 0 | 0 | 0 | 0 | 0 |
-| Frontend | 13 | 27 | 21 | 2 | 63 |
+| Frontend | 1 | 25 | 21 | 2 | 49 |
 | scripts/node | 0 | 0 | 3 | 0 | 3 |
 
-The frontend audit includes the isolated Voltaire Effect update and nested Vite
-repair. TEVM's pinned Effect copy still triggers its advisory.
+The frontend audit includes the isolated Voltaire Effect update, nested Vite
+repair and Permit2 SDK retirement. TEVM's pinned Effect copy still triggers its advisory.
 
 Frontend critical findings are the retained TEVM Vitest/Tinypool subtree.
 Remaining automatic fix suggestions include the rejected TEVM RC backend
@@ -409,7 +409,7 @@ Verified commits:
 - `a11f9aa3`: owner-approved OpenCode lock retirement.
 - `b6d50bdf`: nested Vite/esbuild repair without changing major branches.
 
-### Wallet and Permit2: five snapshot records
+### Wallet and Permit2 assessment before SDK retirement: five snapshot records
 
 Current npm metadata confirms Wagmi 2.19.5 is the newest version satisfying the
 app's existing range. RainbowKit's current 2.2.11 release still peers Wagmi
@@ -429,8 +429,8 @@ No direct frontend test of the named Permit2 hash helpers was found; no signing
 implementation change is proposed as part of dependency retirement.
 
 Choices: preserve RainbowKit and await a supported connector path, or authorize
-a coordinated wallet UI/connector migration. Removing the unused SDK can be
-reviewed independently; it has not been removed.
+a coordinated wallet UI/connector migration. The unused SDK was subsequently
+approved for retirement and removed as recorded below.
 
 ### Vendored OnchainKit and PMFI: 36 snapshot records
 
@@ -478,6 +478,25 @@ uses ZEVM. The existing EthereumJS/upstream-only decision therefore remains
 binding. Effect, Solc/Tmp and nested Vitest/Mocker/Tinypool constraints remain
 unresolved, including the two critical frontend audit entries.
 
-No further major migration, package retirement, vendor ownership change or
-generator behavior change has been applied at these gates. No alerts have been
-dismissed and none of the commits has been pushed.
+The owner subsequently approved Permit2 SDK retirement and a behavior-preserving
+fragment-discovery dependency replacement. Wallet UI and vendor ownership
+decisions remain gated. No alerts have been dismissed and none of the commits
+has been pushed.
+
+## Approved Permit2 SDK retirement
+
+Removed only `@uniswap/permit2-sdk` from the app manifest and refreshed the
+frontend lock. This pruned 44 package entries, including ethers 5 and Elliptic,
+without changing retained package versions. The project's Viem-based Permit2
+signing implementation, wallet UI and existing RainbowKit patch are unchanged.
+
+Validation passed: clean npm install; app lint/type/unit/deployment checks
+(498 unit tests passed, one existing skip); protocol typecheck; both production
+builds; 10 IndexedEx and 22 DTF browser checks. Existing warnings remain.
+The fresh frontend audit has 49 affected package entries, down from 63, with
+no Elliptic finding. Two critical TEVM entries remain unresolved.
+
+Snapshot #15 is candidate-cleared locally. The current comparison is 375/423
+candidate-cleared and 48 still affected or unchanged. Vulnerable wallet-owned
+WebSocket copies remain, so removing the SDK is not counted as clearing their
+records.
