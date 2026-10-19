@@ -105,6 +105,11 @@ contract UniswapV4CurveQuadStableSwapHook_Zap_Test is TestBase_UniswapV4CurveQua
         (uint256 pred, uint256[4] memory usedPred) = quad.previewZapIn(huge);
         assertTrue(pred > 0, "clamp path still mints");
 
+        // Enforce sharesMin against the quoted state, before a successful zap changes the book.
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSignature("Slippage()"));
+        quad.zapIn(huge, user, pred + 1);
+
         vm.prank(user);
         (uint256 shares, uint256[4] memory used) = quad.zapIn(huge, user, 0);
         assertApproxEqAbs(shares, pred, DUST);
@@ -120,11 +125,5 @@ contract UniswapV4CurveQuadStableSwapHook_Zap_Test is TestBase_UniswapV4CurveQua
             assertTrue(rAfter[i] > 0, "reserve leg remains positive after clamp zap");
         }
         assertTrue(rAfter[0] > rBefore[0], "surplus leg reserve increased");
-
-        // sharesMin still enforced on the same clamped path
-        (uint256 pred2,) = quad.previewZapIn(huge);
-        vm.prank(user);
-        vm.expectRevert(abi.encodeWithSignature("Slippage()"));
-        quad.zapIn(huge, user, pred2 + 1);
     }
 }
