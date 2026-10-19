@@ -1,8 +1,12 @@
 import { readFile, stat } from 'node:fs/promises'
+import { cpus } from 'node:os'
 import { join, relative, sep, posix } from 'node:path'
-import fg from 'fast-glob'
+import { promisify } from 'node:util'
+import { walk } from '@nodelib/fs.walk'
 import type { ManifestFragment } from './types.js'
 import { knownTypeDirs } from './deriveTags.js'
+
+const walkDirectory = promisify(walk)
 
 /**
  * Reads all fragments under the given absolute fragments root.
@@ -16,8 +20,22 @@ export async function readFragmentsForInput(fragmentsRoot: string): Promise<Mani
     return []
   }
 
-  const patterns = knownTypeDirs().map((d) => `${d}/**/*.json`)
-  const files = await fg(patterns, { cwd: fragmentsRoot, absolute: true })
+  // The taxonomy roots are fixed and non-overlapping. Reuse the same walker
+  // and traversal settings without a general-purpose glob/brace parser.
+  const concurrency = Math.max(cpus().length, 1)
+  const entries = await Promise.all(knownTypeDirs().map((typeDir) =>
+    walkDirectory(join(fragmentsRoot, typeDir), {
+      concurrency,
+      pathSegmentSeparator: '/',
+      followSymbolicLinks: true,
+      throwErrorOnBrokenSymbolicLink: false,
+      deepFilter: (entry) => !entry.name.startsWith('.'),
+      entryFilter: (entry) =>
+        entry.dirent.isFile() && !entry.name.startsWith('.') && entry.name.endsWith('.json'),
+      errorFilter: (error) => error.code === 'ENOENT',
+    })
+  ))
+  const files = entries.flat().map((entry) => entry.path)
 
   const fragments: ManifestFragment[] = []
   for (const file of files) {

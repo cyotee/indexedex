@@ -10,10 +10,10 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@nodelib/fs.walk": "^1.2.8",
     "@uniswap/token-lists": "1.0.0-beta.35",
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
-    "fast-glob": "^3.3.2"
+    "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

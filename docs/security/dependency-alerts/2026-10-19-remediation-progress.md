@@ -106,7 +106,7 @@ checks above stand for the unchanged application dependency paths.
 ## Static alert impact
 
 Comparing the current local resolutions to the captured vulnerable ranges
-marks **375 of 423 snapshot records as candidate-cleared**. GitHub's comma-
+marks **376 of 423 snapshot records as candidate-cleared**. GitHub's comma-
 separated range clauses are normalized to semver conjunctions before comparison.
 This includes the Express, Coinbase SDK, additional audit batches and the
 Hardhat 3 migration and approved Task Master/FastMCP retirement. Hardhat's full
@@ -119,27 +119,27 @@ package versions did not change during removal.
 | frontend/apps/indexedex/package.json | 7 |
 | package-lock.json | 127 |
 | yarn.lock | 140 |
-| scripts/node/package-lock.json | 14 |
+| scripts/node/package-lock.json | 15 |
 | .opencode/package-lock.json (retired) | 1 |
 
-There are 12 still-affected records in changed install roots and 36 unchanged
+There are 11 still-affected records in changed install roots and 36 unchanged
 records in vendored manifests. This is a static comparison, not a fresh
 audit of every new transitive dependency, not proof of exploitability, and not
-375 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
+376 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
 423. The paired npm/Yarn records are not independent vulnerability counts.
 
 ### Fresh npm audit
 
-The root audit after retirement exits 0 with no vulnerabilities. The latest
-frontend audit after Permit2 SDK retirement and the previously recorded
-scripts/node audit returned findings (npm exit 1). Counts include affected parent packages
+The root audit after retirement and scripts/node audit after glob replacement
+exit 0 with no vulnerabilities. The latest frontend audit after Permit2 SDK
+retirement returned findings (npm exit 1). Counts include affected parent packages
 and are not comparable one-for-one with the 423 Dependabot records:
 
 | Install root | Low | Moderate | High | Critical | Total |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Root, after retirement | 0 | 0 | 0 | 0 | 0 |
 | Frontend | 1 | 25 | 21 | 2 | 49 |
-| scripts/node | 0 | 0 | 3 | 0 | 3 |
+| scripts/node | 0 | 0 | 0 | 0 | 0 |
 
 The frontend audit includes the isolated Voltaire Effect update, nested Vite
 repair and Permit2 SDK retirement. TEVM's pinned Effect copy still triggers its advisory.
@@ -456,7 +456,7 @@ Recommendation: if these vendor assets are retained, maintain narrow reviewed
 patches with explicit upstream provenance and checked reapplication during
 refresh. Neither vendor package nor the sync script has been changed.
 
-### Token-list glob dependency: one snapshot record
+### Token-list glob assessment before replacement: one snapshot record
 
 Braces remains at upstream 3.0.3 without a recorded fixed release. The generator
 uses fast-glob only in `scripts/node/src/readFragments.ts:3`; its patterns are
@@ -465,10 +465,9 @@ That limits the observed input surface but does not remove the vulnerable
 dependency or justify dismissing its alert.
 
 A replacement must preserve recursion, hidden-file handling, symlink traversal,
-deduplication and generated token-list output. Existing reader tests cover a
-two-fragment fixture and a missing directory, not those edge cases. Recommend
-a narrowly scoped replacement plus differential fixture checks, subject to
-approval before changing this reader. No generator behavior has changed.
+deduplication and generated token-list output. The original reader tests covered
+a two-fragment fixture and a missing directory, not those edge cases. The owner
+subsequently approved the scoped replacement and differential checks recorded below.
 
 ### TEVM: seven snapshot records
 
@@ -500,3 +499,44 @@ Snapshot #15 is candidate-cleared locally. The current comparison is 375/423
 candidate-cleared and 48 still affected or unchanged. Vulnerable wallet-owned
 WebSocket copies remain, so removing the SDK is not counted as clearing their
 records.
+
+## Approved fragment-discovery dependency replacement
+
+Replaced the fast-glob declaration with its existing `@nodelib/fs.walk` 1.2.8
+dependency. Discovery still traverses the same fixed, non-overlapping taxonomy
+roots in the same order; native file/directory filters replace the unnecessary
+glob/brace parser. The walker, concurrency, symlink-following behavior,
+broken-link handling and non-ENOENT error propagation are preserved.
+
+The lock pruned 11 entries, including fast-glob, micromatch and braces, without
+changing retained package versions or adding a new runtime requirement.
+
+Four added regression cases passed against the original implementation before
+replacement. They cover recursive JSON discovery and taxonomy ordering, ignored
+hidden/unknown paths, file and directory symlinks with their logical source
+paths, dangling links, traversal errors and malformed JSON. The first replacement
+run caught a differing broken-symlink default; explicitly preserving fast-glob's
+`throwErrorOnBrokenSymbolicLink: false` restored that behavior without weakening
+the test.
+
+Validation:
+
+- Clean npm install: exit 0.
+- Full generator suite: 24 tests passed across five files.
+- Focused strict TypeScript check of the changed source and test: exit 0.
+- Full dependency tree and fresh scripts/node npm audit: exit 0, zero
+  vulnerabilities.
+- The checked-in sample's fragment metadata, ordering, schema result, version
+  bump and complete emitted token-list object match the captured pre-change
+  result with a fixed timestamp. No published token-list artifacts were written.
+- Project-wide `tsc --noEmit` still reports two pre-existing errors in unchanged
+  files: obsolete `environments` in `fixtures/tokenlists.fixture.config.ts:6`
+  and incompatible extension typing in `src/normalize.ts:37`. Their source,
+  referenced types and retained dependency versions were unchanged. These
+  errors were not suppressed or edited away. LSP diagnostics remained unavailable
+  due to daemon timeouts.
+
+Snapshot #840 is candidate-cleared locally. Combined with Permit2 SDK retirement
+(#15), the comparison is 376/423 candidate-cleared, with 47 remaining: 11
+frontend records and 36 vendor records. Wallet UI/vendor migrations and the
+EthereumJS/upstream-only TEVM policy remain unchanged.
