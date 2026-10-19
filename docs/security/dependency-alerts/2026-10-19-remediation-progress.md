@@ -106,7 +106,7 @@ checks above stand for the unchanged application dependency paths.
 ## Static alert impact
 
 Comparing the current local resolutions to the captured vulnerable ranges
-marks **373 of 423 snapshot records as candidate-cleared**. GitHub's comma-
+marks **374 of 423 snapshot records as candidate-cleared**. GitHub's comma-
 separated range clauses are normalized to semver conjunctions before comparison.
 This includes the Express, Coinbase SDK, additional audit batches and the
 Hardhat 3 migration and approved Task Master/FastMCP retirement. Hardhat's full
@@ -115,35 +115,34 @@ package versions did not change during removal.
 
 | Manifest | Candidate-cleared records |
 | --- | ---: |
-| frontend/package-lock.json | 84 |
+| frontend/package-lock.json | 85 |
 | frontend/apps/indexedex/package.json | 7 |
 | package-lock.json | 127 |
 | yarn.lock | 140 |
 | scripts/node/package-lock.json | 14 |
 | .opencode/package-lock.json (retired) | 1 |
 
-There are 14 still-affected records in changed install roots and 36 unchanged
+There are 13 still-affected records in changed install roots and 36 unchanged
 records in vendored manifests. This is a static comparison, not a fresh
 audit of every new transitive dependency, not proof of exploitability, and not
-373 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
+374 closed GitHub alerts. Nothing has been pushed; GitHub's baseline remains
 423. The paired npm/Yarn records are not independent vulnerability counts.
 
 ### Fresh npm audit
 
-The root audit after retirement exits 0 with no vulnerabilities. The previously
-recorded frontend and scripts/node audits returned findings (npm exit 1); those
-unchanged install roots were not rerun. Counts include affected parent packages
+The root audit after retirement exits 0 with no vulnerabilities. The latest
+frontend audit after the nested Vite repair and the previously recorded
+scripts/node audit returned findings (npm exit 1). Counts include affected parent packages
 and are not comparable one-for-one with the 423 Dependabot records:
 
 | Install root | Low | Moderate | High | Critical | Total |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Root, after retirement | 0 | 0 | 0 | 0 | 0 |
-| Frontend | 14 | 27 | 21 | 2 | 64 |
+| Frontend | 13 | 27 | 21 | 2 | 63 |
 | scripts/node | 0 | 0 | 3 | 0 | 3 |
 
-The frontend audit count precedes the isolated Voltaire Effect update. The TEVM copy
-still triggers the Effect advisory, so no additional snapshot record is claimed
-cleared by patching Voltaire alone.
+The frontend audit includes the isolated Voltaire Effect update and nested Vite
+repair. TEVM's pinned Effect copy still triggers its advisory.
 
 Frontend critical findings are the retained TEVM Vitest/Tinypool subtree.
 Remaining automatic fix suggestions include the rejected TEVM RC backend
@@ -252,7 +251,8 @@ or ownership policies; no unresolved risk has been accepted on the owner's behal
   approved deleting `.opencode/package-lock.json`. Shared skills and other
   `.opencode` content remain intact.
 - **TEVM and no-fix packages:** upstream-only policy keeps unresolved pins and
-  advisories open. Vite layout changes and compiler-version changes remain gated.
+  advisories open. Compiler-version changes remain gated. The nested Vite branch
+  was repaired without changing either Vite major line.
 
 ### Hardhat migration preflight
 
@@ -378,3 +378,25 @@ Deleting the retired lock removes the local dependency record for snapshot alert
 #686 (TOML), bringing the comparison to 373/423 candidate-cleared, with 50
 remaining. GitHub closure is not claimed until the changes are pushed and
 reprocessed. Nothing has been pushed and no alert has been dismissed.
+
+### Nested Vite repair
+
+The two nested Vite 7.3.5 copies now resolve 7.3.7, whose upstream dependency
+range admits fixed esbuild 0.28.2. The existing top-level Vite 8.3.4 and
+@wagmi/cli's separate esbuild 0.25.12 remain unchanged.
+
+A temporary direct Vite 8.3.4 resolution constraint prevented npm from
+downgrading the top-level branch. It was removed before installation; the
+frontend manifest is byte-for-byte unchanged. Only the lockfile update remains,
+with no overrides, backports, TEVM runtime, Effect or Solidity compiler changes.
+
+Validation passed: clean npm install; app lint/type/unit/deployment checks
+(498 unit tests passed, one existing skip); protocol typecheck; and TypeScript
+transform/execution smoke checks through each installed Vite 7 copy. Existing
+lint warnings remain. The fresh frontend audit no longer reports esbuild;
+63 affected package entries remain, including the two retained TEVM critical
+entries. Application sources and production framework dependency paths did not
+change, so previous production/browser validation stands.
+
+This clears snapshot #295 locally. Together with OpenCode retirement (#686),
+the comparison is 374/423 candidate-cleared, with 49 still affected or unchanged.
