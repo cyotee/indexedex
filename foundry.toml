@@ -91,7 +91,8 @@ exclude_lints = [
     "unsafe-typecast",
     "unwrapped-modifier-logic",
     "unsafe-cheatcode",
-    "named-struct-fields"
+    "named-struct-fields",
+    "environment-read-across-mutation"
 ]
 ignore = [
     "lib/crane/",
