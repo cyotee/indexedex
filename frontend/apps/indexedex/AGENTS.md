@@ -3,7 +3,7 @@
 Read the repository's [CLAUDE.md](../../../CLAUDE.md) and
 [frontend roadmap](../../ROADMAP.md) before changing this app.
 
-Next.js is pinned to 16.3.5. Version-matched documentation is bundled at
+Next.js is pinned to 16.3.8. Version-matched documentation is bundled at
 `../../node_modules/next/dist/docs/` from this directory (npm workspace hoisting).
 Read its upgrade/API guides when changing framework configuration or route APIs.
 

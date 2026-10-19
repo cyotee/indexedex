@@ -153,12 +153,29 @@ cd indexedex
 # Initialize submodules
 git submodule update --init --recursive
 
-# Install dependencies
-npm install
+# Install the reviewed dependency resolution
+npm ci
 
 # Install Foundry dependencies
 forge install
 ```
+
+### Package manager compatibility
+
+npm and `package-lock.json` are authoritative for dependency updates and release
+verification. The frontend workspace and `scripts/node` keep their own npm
+lockfiles; install dependencies from the relevant package root.
+
+The manifests and scripts remain usable with Yarn Classic. For example, both
+`npm test -- --help` and `yarn test --help` forward to the same Foundry command.
+No package-manager enforcement hook is used. The existing root `yarn.lock`
+is retained for Yarn compatibility and must be updated and checked alongside
+the npm resolution when its dependencies change; a successful npm update alone
+does not establish that the Yarn tree is fixed.
+
+Bun is not the authoritative installer for this repository. Its existing root
+lockfile is retained pending dependency reconciliation; tools that use Bun in
+their own external checkout, such as Cartographer, are unaffected.
 
 ### Build
 
@@ -172,6 +189,41 @@ forge test
 # Run with verbosity for detailed output
 forge test -vvv
 ```
+
+### Hardhat tooling
+
+The root Hardhat 3 project requires Node.js 22.13 or newer and uses ESM.
+`lib/package.json` preserves CommonJS for vendored scripts without their own
+package boundary; independently packaged tools keep their own module settings.
+Its compiler settings match the default Foundry profile: Solidity 0.8.35,
+Osaka, optimizer enabled with 1 run, and `viaIR: false`. Keep these settings
+aligned when changing either configuration.
+
+```bash
+# Build all configured Hardhat sources
+npx hardhat build
+
+# Build the existing Crane Lock fixture and run the retained Mocha tests
+npm run test:hardhat
+
+# Check the config and tests after generating their artifact types
+npm run typecheck:hardhat
+```
+
+The same scripts can be invoked with Yarn. Hardhat uses `cache/`, `artifacts/`
+and `typechain/`; Foundry retains `cache_forge/` and `out/`. The Lock suite's
+TypeScript source and tracked JavaScript mirror are both retained and executed.
+
+The active config preserves Viem as the Ignition adapter, with Ethers, Mocha,
+TypeChain and verification plugins also available. Do not register the complete
+Ethers toolbox alongside the Viem toolbox: their Ignition adapters conflict.
+Hardhat 3 supplies gas statistics and coverage through `--gas-stats` and
+`--coverage`. The archived `hardhat.config.ts.old` remains historical.
+
+Remote network variables are resolved only when those networks are selected.
+Local tests do not need private keys or public RPC endpoints. The separate root
+Wagmi generator still needs its pre-existing missing address file and placeholder
+project path configured before it can generate hooks.
 
 ## 🧪 Testing
 

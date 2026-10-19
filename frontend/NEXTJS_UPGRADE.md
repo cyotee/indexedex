@@ -12,8 +12,19 @@ Versions checked against npm stable tags on 2026-09-14:
 
 Next.js requires Node 20.9+ and TypeScript 5.1+. Use Node 22.13+ for the full
 current toolchain; verification uses Node 22.23.1 and Vercel uses Node 24.
-TypeScript remains 5.4.5. ESLint 9 is retained for the supported peer range of
+The initial upgrade retained TypeScript 5.4.5. ESLint 9 is retained for the supported peer range of
 `eslint-plugin-react`; moving to ESLint 10 is a separate compatibility update.
+
+## Security maintenance (2026-10-19)
+
+Next.js and eslint-config-next are now pinned together at 16.3.8; the npm
+lockfile resolves Sharp 0.35.5 and its corresponding native packages.
+The owner approved aligning the app and protocol TypeScript pins at 5.7.3
+to satisfy the existing @wagmi/cli 2.10.0 peer requirement. React 19.3.0,
+the wallet stack, Webpack alias and RainbowKit patch remain unchanged.
+
+Current remediation checks and unresolved items are recorded in
+[`2026-10-19-remediation-progress.md`](../docs/security/dependency-alerts/2026-10-19-remediation-progress.md).
 
 ## Migration choices
 

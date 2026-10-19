@@ -1,8 +1,10 @@
 import { defineConfig } from '@wagmi/cli'
 import { foundry, react } from '@wagmi/cli/plugins'
 import { sepolia } from 'wagmi/chains'
+import { createRequire } from 'node:module'
 
 // Import deployment addresses from addresses.json
+const require = createRequire(import.meta.url)
 const addresses = require('./addresses.json')
 
 export default defineConfig({

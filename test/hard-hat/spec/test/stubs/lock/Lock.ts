@@ -1,10 +1,15 @@
-import {
-  time,
-  loadFixture,
-} from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
 import { expect } from "chai";
-import hre from "hardhat";
+import { network } from "hardhat";
+import { after, describe, it } from "mocha";
 import { getAddress, parseGwei } from "viem";
+
+const connection = await network.create();
+const { viem, networkHelpers } = connection;
+const { time, loadFixture } = networkHelpers;
+
+after(async function () {
+  await connection.close();
+});
 
 describe("Lock", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -17,13 +22,13 @@ describe("Lock", function () {
     const unlockTime = BigInt((await time.latest()) + ONE_YEAR_IN_SECS);
 
     // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await hre.viem.getWalletClients();
+    const [owner, otherAccount] = await viem.getWalletClients();
 
-    const lock = await hre.viem.deployContract("Lock", [unlockTime], {
+    const lock = await viem.deployContract("Lock", [unlockTime], {
       value: lockedAmount,
     });
 
-    const publicClient = await hre.viem.getPublicClient();
+    const publicClient = await viem.getPublicClient();
 
     return {
       lock,
@@ -66,7 +71,7 @@ describe("Lock", function () {
       // We don't use the fixture here because we want a different deployment
       const latestTime = BigInt(await time.latest());
       await expect(
-        hre.viem.deployContract("Lock", [latestTime], {
+        viem.deployContract("Lock", [latestTime], {
           value: 1n,
         })
       ).to.be.rejectedWith("Unlock time should be in the future");
@@ -92,7 +97,7 @@ describe("Lock", function () {
         await time.increaseTo(unlockTime);
 
         // We retrieve the contract with a different account to send a transaction
-        const lockAsOtherAccount = await hre.viem.getContractAt(
+        const lockAsOtherAccount = await viem.getContractAt(
           "Lock",
           lock.address,
           { client: { wallet: otherAccount } }
