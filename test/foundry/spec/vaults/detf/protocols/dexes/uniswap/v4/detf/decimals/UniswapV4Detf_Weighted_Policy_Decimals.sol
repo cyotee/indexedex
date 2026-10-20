@@ -28,6 +28,12 @@ abstract contract UniswapV4Detf_Weighted_Policy_Decimals is
         TestBase_UniswapV4Detf_Weighted_Decimals.setUp();
         policyCreator = makeAddr("creator");
     }
+
+    /// @dev Use native-scaled funding and a separate trader for every D22 decimal book.
+    function _prepareD22MintBlocked(address d) internal override {
+        _prepareD22FundedDeadband(d, 25, 8);
+    }
+
     function _baseArgs() internal virtual override returns (IUniswapV4Detf.PkgArgs memory) {
         return _nLegDetfArgs(2);
     }

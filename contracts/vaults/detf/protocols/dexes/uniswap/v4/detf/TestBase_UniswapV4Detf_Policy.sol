@@ -92,9 +92,14 @@ abstract contract V4FundedPolicyAssertions is Test {
     /// @dev D22 opt-in: preserve the claimant's sDETF and fund a separate market actor.
     /// Both decimal fixtures derive the bond payment from the actual payment token.
     function _prepareD22FundedDeadband(address d) internal {
+        _prepareD22FundedDeadband(d, 100, 1);
+    }
+
+    /// @dev Size each funding bond within host input-ratio limits and fund enough reserve trades.
+    function _prepareD22FundedDeadband(address d, uint256 bondPaymentUnits_, uint256 fundingBonds_) internal {
         address trader_ = makeAddr("D22 funded market trader");
         assertTrue(trader_ != _fundedPolicyUser(), "D22 independent trader");
-        _fundD22TradingBudget(d, trader_);
+        _fundD22TradingBudget(d, trader_, bondPaymentUnits_, fundingBonds_);
         IUniswapV4Detf info_ = IUniswapV4Detf(d);
         address hook_ = info_.hook();
         for (uint256 i_; i_ < 64; ++i_) {
@@ -120,32 +125,32 @@ abstract contract V4FundedPolicyAssertions is Test {
         assertFalse(info_.isMintingAllowed(), "D22 funded rebalance iteration bound");
     }
 
-    /// @dev Purchase with 100 native-scaled pair units; only actual claimed DETF funds swaps.
-    function _fundD22TradingBudget(address d, address trader_) private {
+    /// @dev Use native-scaled payments; only actual claimed DETF funds swaps.
+    function _fundD22TradingBudget(address d, address trader_, uint256 bondPaymentUnits_, uint256 fundingBonds_) private {
         assertEq(IERC20(d).balanceOf(trader_), 0, "D22 trader starts without DETF");
-        uint256 id_;
-        {
+        uint256[] memory ids_ = new uint256[](fundingBonds_);
+        for (uint256 i_; i_ < fundingBonds_; ++i_) {
             IERC20 token_ = _fundedPolicyMintToken(d);
-            uint256 payment_ = _policyTokenUnits(token_, 100);
+            uint256 payment_ = _policyTokenUnits(token_, bondPaymentUnits_);
             _fundedPolicyFundToken(address(token_), trader_, payment_);
             uint256 before_ = token_.balanceOf(trader_);
             vm.startPrank(trader_);
             token_.approve(d, payment_);
-            (id_,) = IUniswapV4Detf(d).bond(
+            (ids_[i_],) = IUniswapV4Detf(d).bond(
                 token_, payment_, _fundedPolicyLock(), trader_, false, block.timestamp + 1 hours
             );
             vm.stopPrank();
             assertEq(before_ - token_.balanceOf(trader_), payment_, "D22 actual bond payment");
         }
         uint256 funded_;
-        {
+        for (uint256 i_; i_ < ids_.length; ++i_) {
             IDetfBondNFT nft_ = IDetfBondNFT(IUniswapV4Detf(d).bondNftVault());
-            DETFFundedStakingMath.BondPosition memory position_ = nft_.positionOf(id_);
+            DETFFundedStakingMath.BondPosition memory position_ = nft_.positionOf(ids_[i_]);
             uint256 maturity_ = position_.startTimestamp + position_.vestingDuration;
             if (block.timestamp < maturity_) vm.warp(maturity_);
             vm.prank(trader_);
-            (uint256 principal_, uint256 rewards_) = nft_.claimBond(id_, trader_);
-            funded_ = principal_ + rewards_;
+            (uint256 principal_, uint256 rewards_) = nft_.claimBond(ids_[i_], trader_);
+            funded_ += principal_ + rewards_;
         }
         assertGt(funded_, 0, "D22 bond must fund trading inventory");
         IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());

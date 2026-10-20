@@ -31,6 +31,11 @@ contract UniswapV4Detf_Weighted_Alignment_RedeemD15 is
         TestBase_UniswapV4Detf_Weighted_Policy.setUp();
     }
 
+    /// @dev Fund a separate trader so preparing D22 preserves the claimant's sDETF.
+    function _prepareD22MintBlocked(address d) internal override {
+        _prepareD22FundedDeadband(d, 25, 8);
+    }
+
     function _firstBond(uint256 pairAmount_)
         internal
         override(TestBase_UniswapV4Detf, TestBase_UniswapV4Detf_Weighted_Policy)
