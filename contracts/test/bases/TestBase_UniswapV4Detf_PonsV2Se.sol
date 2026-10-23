@@ -58,16 +58,14 @@ import {UniswapV4Detf_Pkg_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
-import {
-    TestBase_UniswapV4StandardExchange_PonsV2
-} from "contracts/test/bases/TestBase_UniswapV4StandardExchange_PonsV2.sol";
+import {TestBase_UniswapV4WingsSeSurface} from "contracts/test/bases/TestBase_UniswapV4WingsSeSurface.sol";
 
 /**
  * @title TestBase_UniswapV4Detf_PonsV2Se
- * @notice Unified UniswapV4DetfDFPkg whose bound SE is the pons v2 graduated Uni V4 vault.
- *         Same PoolManager. Hook pair / mintToken is the pons v2 launch token (R-5).
+ * @notice Unified UniswapV4DetfDFPkg whose bound SE is an UpperLowerWings vault.
+ *         The historical `ponsSe` name is the Wings vault. The pair token is `launchToken`.
  */
-abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardExchange_PonsV2 {
+abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4WingsSeSurface {
     using BetterEfficientHashLib for bytes;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for ICreate3FactoryProxy;
@@ -95,12 +93,8 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     IStandardExchangeIn internal detfExchangeIn;
     address internal detfUser = address(0xD37F);
 
-    function _ponsHookFeeBps() internal pure override returns (uint16) {
-        return 0;
-    }
-
     function setUp() public virtual override {
-        TestBase_UniswapV4StandardExchange_PonsV2.setUp();
+        TestBase_UniswapV4WingsSeSurface.setUp();
         _activatePonsSe();
 
         _deployHookFactoryAndCpPkg();

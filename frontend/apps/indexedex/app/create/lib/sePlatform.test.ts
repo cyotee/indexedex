@@ -53,150 +53,39 @@ describe('Standard Exchange package identities', () => {
     expect(looksLikeV3SePkg('UniswapV3StandardExchangeDFPkg')).toBe(true)
   })
 
-  it('does not treat a legacy name match as permission to deploy the new family', () => {
+  it('does not treat a historical name as permission to deploy a deprecated family', () => {
     expect(looksLikeV4SePkg('UniswapV4StandardExchangeDFPkg')).toBe(true)
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        uniV4SePkgName: 'UniswapV4StandardExchangeDFPkg',
-        hooks: ZERO_ADDRESS,
-      }),
-    ).toEqual({ status: 'stale', family: 'hookless', pkg: null })
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        uniV4PonsSePkgName: 'UniswapV4StandardExchangeDFPkg',
-        hooks: PONS_HOOK,
-      }),
-    ).toEqual({ status: 'stale', family: 'pons', pkg: null })
-  })
-})
-
-describe('selectV4SePkg', () => {
-  it('selects hookless for a zero-hook key when H has the current family name', () => {
     expect(selectV4SePkg({ ...namedBoth, hooks: ZERO_ADDRESS })).toEqual({
-      status: 'ready',
-      family: 'hookless',
-      pkg: HOOKLESS_PKG,
-    })
-    expect(selectV4SePkg({ ...namedBoth, hooks: '' })).toEqual({
-      status: 'ready',
-      family: 'hookless',
-      pkg: HOOKLESS_PKG,
-    })
-    expect(selectV4SePkg({ ...namedBoth, hooks: null })).toEqual({
-      status: 'ready',
-      family: 'hookless',
-      pkg: HOOKLESS_PKG,
-    })
-  })
-
-  it('reports missing hookless when a zero-hook key has no H artifact', () => {
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        hooks: ZERO_ADDRESS,
-        uniV4SePkg: null,
-      }),
-    ).toEqual({ status: 'missing', family: 'hookless', pkg: null })
-    expect(
-      v4SePkgSelectionMessage({ status: 'missing', family: 'hookless', pkg: null }),
-    ).toBe('No Uniswap V4 SE package on this network.')
-  })
-
-  it('rejects unnamed historical H addresses as stale, not ready', () => {
-    const stale = selectV4SePkg({
-      ...namedBoth,
-      hooks: ZERO_ADDRESS,
-      uniV4SePkgName: null,
-    })
-    expect(stale).toEqual({ status: 'stale', family: 'hookless', pkg: null })
-    expect(v4SePkgSelectionMessage(stale)).toBe(
-      'This Uniswap V4 SE package is not the current family.',
-    )
-  })
-
-  it('rejects the wrong family name on a hookless address', () => {
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        hooks: ZERO_ADDRESS,
-        uniV4SePkgName: PONS_V4_SE_PKG_NAME,
-      }),
-    ).toEqual({ status: 'stale', family: 'hookless', pkg: null })
-  })
-
-  it('selects Pons when the exported hook binding and current P name match', () => {
-    expect(selectV4SePkg({ ...namedBoth, hooks: PONS_HOOK })).toEqual({
-      status: 'ready',
-      family: 'pons',
-      pkg: PONS_PKG,
-    })
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        hooks: '0xaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaA',
-      }),
-    ).toEqual({
-      status: 'ready',
-      family: 'pons',
-      pkg: PONS_PKG,
-    })
-  })
-
-  it('does not fall back to H when the Pons hook is set and P is missing', () => {
-    const missingP = selectV4SePkg({
-      ...namedBoth,
-      hooks: PONS_HOOK,
-      uniV4PonsSePkg: null,
-    })
-    expect(missingP).toEqual({ status: 'missing', family: 'pons', pkg: null })
-    expect(missingP.pkg).not.toBe(HOOKLESS_PKG)
-    expect(v4SePkgSelectionMessage(missingP)).toBe('No Pons SE package on this network.')
-  })
-
-  it('rejects missing or wrong Pons family metadata as stale', () => {
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        hooks: PONS_HOOK,
-        uniV4PonsSePkgName: null,
-      }),
-    ).toEqual({ status: 'stale', family: 'pons', pkg: null })
-    expect(
-      selectV4SePkg({
-        ...namedBoth,
-        hooks: PONS_HOOK,
-        uniV4PonsSePkgName: HOOKLESS_V4_SE_PKG_NAME,
-      }),
-    ).toEqual({ status: 'stale', family: 'pons', pkg: null })
-  })
-
-  it('fails closed for a nonzero hook when the canonical hook binding is missing', () => {
-    const noBinding = selectV4SePkg({
-      ...namedBoth,
-      uniV4PonsSeHook: null,
-      hooks: PONS_HOOK,
-    })
-    expect(noBinding).toEqual({ status: 'unsupported', family: null, pkg: null })
-    expect(noBinding.pkg).not.toBe(HOOKLESS_PKG)
-    expect(v4SePkgSelectionMessage(noBinding)).toBe('This Uniswap V4 hook is not supported.')
-  })
-
-  it('rejects an unsupported hook before any family package can be used', () => {
-    const unsupported = selectV4SePkg({ ...namedBoth, hooks: OTHER_HOOK })
-    expect(unsupported).toEqual({ status: 'unsupported', family: null, pkg: null })
-    expect(v4SePkgSelectionMessage(unsupported)).toBe('This Uniswap V4 hook is not supported.')
-  })
-
-  it('rejects a non-address hook instead of treating it as hookless', () => {
-    expect(selectV4SePkg({ ...namedBoth, hooks: 'not-an-address' })).toEqual({
       status: 'unsupported',
       family: null,
       pkg: null,
     })
+    expect(v4SePkgSelectionMessage({ status: 'unsupported', family: null, pkg: null })).
+      toBe('Uniswap V4 FullSpread vaults were removed.')
   })
 })
+
+describe('selectV4SePkg', () => {
+  it.each([ZERO_ADDRESS, '', null, PONS_HOOK, OTHER_HOOK, 'not-an-address'])(
+    'rejects FullSpread deployment for %s',
+    (hooks) => {
+      expect(selectV4SePkg({ ...namedBoth, hooks })).toEqual({
+        status: 'unsupported',
+        family: null,
+        pkg: null,
+      })
+      expect(selectV4SePkg({ ...namedBoth, hooks }).pkg).not.toBe(HOOKLESS_PKG)
+      expect(selectV4SePkg({ ...namedBoth, hooks }).pkg).not.toBe(PONS_PKG)
+    },
+  )
+
+  it('uses the deprecation message for the unsupported selection', () => {
+    expect(v4SePkgSelectionMessage({ status: 'unsupported', family: null, pkg: null })).toBe(
+      'Uniswap V4 FullSpread vaults were removed.',
+    )
+  })
+})
+
 
 describe('resolveSePlatform FullSpread packages', () => {
   it('exposes P package, hook binding, and family names from backend export metadata', () => {
@@ -225,7 +114,7 @@ describe('resolveSePlatform FullSpread packages', () => {
         uniV4PonsSePkgName: platform.uniV4PonsSePkgName,
         uniV4PonsSeHook: platform.uniV4PonsSeHook,
       }),
-    ).toEqual({ status: 'ready', family: 'hookless', pkg: HOOKLESS_PKG })
+    ).toEqual({ status: 'unsupported', family: null, pkg: null })
   })
 
   it('rejects a zero hook binding as missing, not a Pons identity', () => {
@@ -252,7 +141,7 @@ describe('resolveSePlatform FullSpread packages', () => {
         uniV4PonsSePkgName: platform.uniV4PonsSePkgName,
         uniV4PonsSeHook: platform.uniV4PonsSeHook,
       }),
-    ).toEqual({ status: 'stale', family: 'hookless', pkg: null })
+    ).toEqual({ status: 'unsupported', family: null, pkg: null })
     expect(
       selectV4SePkg({
         hooks: OTHER_HOOK,

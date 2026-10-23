@@ -125,17 +125,11 @@ import "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/
 import "test/foundry/spec/fee/collector/FeeCollectorManagerFacet_IFacet.t.sol";
 import "test/foundry/spec/fee/collector/FeeCollectorProxy_Selectors.t.sol";
 
-import {HooklessCoreSettlementTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/CoreSettlement.t.sol";
 
-import {HooklessQuoteExecutionParityTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/QuoteExecutionParity.t.sol";
 
-import {HooklessEquivalentInterfacesTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/EquivalentInterfaces.t.sol";
 
-import {UniswapV4FullSpreadPonsFamilyHookCoreSettlementTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/CoreSettlement.t.sol";
 
-import {UniswapV4FullSpreadPonsFamilyHookQuoteExecutionParityTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/QuoteExecutionParity.t.sol";
 
-import {UniswapV4FullSpreadPonsFamilyHookEquivalentInterfacesTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/EquivalentInterfaces.t.sol";
 
 import {UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol";
 
@@ -157,7 +151,6 @@ import {MorphoBlueStandardExchange_TransitionQuote} from "test/foundry/spec/vaul
 
 import {UniswapV4Detf_FacetPackaging} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol";
 
-import {HooklessRouteFundingClosureTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/RouteFundingClosure.t.sol";
 
 import {Adversarial_A0Crops} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_A0Crops.t.sol";
 import {Adversarial_TrustFlags} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_TrustFlags.t.sol";
@@ -291,9 +284,6 @@ import {UniswapV4Detf_Donate_P9_R18} from "test/foundry/spec/vaults/detf/protoco
 
 import {UniswapV4Detf_Donate_P9_R6} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Donate_P9_R6.t.sol";
 
-import {UniswapV4StandardExchange_PonsV2Pool} from "test/foundry/spec/protocols/dexes/uniswap/v4/pons/UniswapV4StandardExchange_PonsV2Pool.t.sol";
-import {UniswapV4StandardExchange_PonsV2Pool_P18_R6} from "test/foundry/spec/protocols/dexes/uniswap/v4/pons/decimals/UniswapV4StandardExchange_PonsV2Pool_P18_R6.t.sol";
-import {UniswapV4StandardExchange_PonsV2Pool_P18_R9} from "test/foundry/spec/protocols/dexes/uniswap/v4/pons/decimals/UniswapV4StandardExchange_PonsV2Pool_P18_R9.t.sol";
 
 import {UniswapV2NativeSYTest} from "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol";
 
@@ -313,6 +303,5 @@ import {WrappedStandardExchangeRateProvider_Test} from "test/foundry/spec/protoc
 
 import {ERC4626StandardExchange_Morpho_Test} from "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_Morpho.t.sol";
 
-import {UniswapV4FullSpreadPonsFamilyHookRegisteredLaunchTest} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/RegisteredLaunch.t.sol";
 
 import {UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol";

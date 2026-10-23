@@ -13,8 +13,6 @@ import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
-import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
-import {IUniswapV4FullSpreadPonsFamilyHookDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/IUniswapV4FullSpreadPonsFamilyHookDFPkg.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -38,7 +36,6 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_04_01 = "phase04_stage01_fee_collector_and_manager.json";
     string internal constant FILE_05_01 = "phase05_stage01_se_rate_provider_pkg.json";
     string internal constant FILE_05_02 = "phase05_stage02_uniswap_v4_twap_oracle.json";
-    string internal constant FILE_05_03 = "phase05_stage03_uniswap_v4_standard_exchange_pkg.json";
     string internal constant FILE_05_04 = "phase05_stage04_uniswap_v3_standard_exchange_pkg.json";
     string internal constant FILE_05_06 = "phase05_stage06_uniswap_v2_standard_exchange_pkg.json";
     string internal constant FILE_05_05 = "phase05_stage05_morpho_blue_standard_exchange_pkg.json";
@@ -160,17 +157,6 @@ abstract contract LaunchIo is DeploymentBase {
         );
     }
 
-    function _requireUniV4SePkg(LaunchState storage s) internal {
-        address a = _loadAddr(FILE_05_03, "uniV4SePkg");
-        require(_hasCode(a), "run Phase 05 Stage 03 first");
-        s.uniV4SePkg = IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(a);
-        require(keccak256(bytes(s.uniV4SePkg.packageName())) == keccak256("UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg"), "Phase 05-03: stale hookless package");
-        a = _loadAddr(FILE_05_03, "uniV4PonsSePkg");
-        require(_hasCode(a), "run Phase 05 Stage 03 (Pons) first");
-        s.uniV4PonsSePkg = IUniswapV4FullSpreadPonsFamilyHookDFPkg(a);
-        require(keccak256(bytes(s.uniV4PonsSePkg.packageName())) == keccak256("UniswapV4FullSpreadPonsFamilyHookDFPkg"), "Phase 05-03: stale Pons package");
-    }
-
     function _requireUniV3SePkg(LaunchState storage s) internal {
         address a = _loadAddr(FILE_05_04, "uniV3SePkg");
         require(_hasCode(a), "run Phase 05 Stage 04 first");
@@ -268,15 +254,6 @@ abstract contract LaunchIo is DeploymentBase {
         _writeJson(json, FILE_04_01);
     }
 
-    function _exportUniV4SePackages(LaunchState storage s) internal {
-        vm.serializeAddress("p0503", "uniV4SePkg", address(s.uniV4SePkg));
-        vm.serializeAddress("p0503", "uniV4PonsSePkg", address(s.uniV4PonsSePkg));
-        vm.serializeString("p0503", "uniV4SePkgName", s.uniV4SePkg.packageName());
-        vm.serializeString("p0503", "uniV4PonsSePkgName", s.uniV4PonsSePkg.packageName());
-        string memory json = vm.serializeUint("p0503", "chainId", block.chainid);
-        _writeJson(json, FILE_05_03);
-    }
-
     function _exportPkg(string memory obj, string memory file, string memory key, address pkg) internal {
         string memory json;
         json = vm.serializeAddress(obj, key, pkg);
@@ -365,7 +342,6 @@ abstract contract LaunchIo is DeploymentBase {
         _exportFeeCollectorAndManager(s);
         _exportPkg("p0501", FILE_05_01, "rateProviderPkg", address(s.rateProviderPkg));
         _exportTwapOracle(s);
-        _exportUniV4SePackages(s);
         _exportPkg("p0504", FILE_05_04, "uniV3SePkg", s.uniV3SePkg);
         _exportPkg("p0506", FILE_05_06, "uniV2SePkg", s.uniV2SePkg);
         _exportPkg("p0505", FILE_05_05, "morphoBlueSePkg", s.morphoBlueSePkg);
@@ -385,7 +361,6 @@ abstract contract LaunchIo is DeploymentBase {
         _requireManager(s);
         _requireRateProviderPkg(s);
         _requireTwapOracle(s);
-        _requireUniV4SePkg(s);
         _requireUniV3SePkg(s);
         _requireUniV2SePkg(s);
         _requireMorphoBlueSePkg(s);

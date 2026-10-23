@@ -3,7 +3,7 @@
 **PRD (product + layout SoT):** [`ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md`](./ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md) (**Accepted**)  
 **This plan (implementor SoT):** file map, Stage numbers, skip keys, shells, cutover  
 **Date:** 2026-08-23  
-**Status:** **READY FOR EXECUTION**
+**Status:** historical layout plan. Phase 05 Stage 03 and later V4 FullSpread instance stages were retired on 2026-10-23 and must not be executed.
 
 ---
 

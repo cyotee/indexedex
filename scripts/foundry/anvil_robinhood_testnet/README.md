@@ -36,7 +36,7 @@ Each Stage simulates, then broadcasts. Never `--skip-simulation`. `FORCE=1` / `-
 | 04 | 02 | `Phase_04_Stage_02_Erc20MinterFacade.s.sol` | Minter facade only |
 | 05 | 01 | `Phase_05_Stage_01_SeRateProviderPkg.s.sol` | SE rate-provider DFPkg |
 | 05 | 02 | `Phase_05_Stage_02_UniswapV4TwapOracle.s.sol` | Uni V4 TWAP facet + DFPkg + canonical instance + adapter factory |
-| 05 | 03 | `Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol` | Uni V4 SE DFPkg (`PkgInit.twapOracle` from 05-02) |
+| 05 | 03 | deleted | V4 FullSpread stage files were deleted. Do not restore or broadcast them. |
 | 05 | 04 | `Phase_05_Stage_04_UniswapV3StandardExchangePkg.s.sol` | Uni V3 SE DFPkg (no instances) |
 | 05 | 05 | `Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol` | Morpho Blue SE DFPkg (no vaults) |
 | 06 | 01 | `Phase_06_Stage_01_BondNftPkg.s.sol` | Bond NFT DFPkg |
@@ -48,8 +48,8 @@ Each Stage simulates, then broadcasts. Never `--skip-simulation`. `FORCE=1` / `-
 | 06 | 07 | `Phase_06_Stage_07_UniswapV4DetfPkg.s.sol` | Unified Uni V4 DETF DFPkg |
 | 07 | 01 | `Phase_07_Stage_01_CoreTestTokens.s.sol` | `DTF`, `TTUSDG`, `TTUSDE`, `TTWETH` |
 | 07 | 02 | `Phase_07_Stage_02_Mag7TestTokens.s.sol` | Mag7 `TTNVDA`…`TTTSLA` |
-| 07 | 03 | `Phase_07_Stage_03_UniV4SeDtfWeth.s.sol` | Uni V4 SE `DTF`/`TTWETH` |
-| 07 | 04 | `Phase_07_Stage_04_UniV4SeUsd.s.sol` | Three Uni V4 USD SEs for `TTDOL-Q` |
+| 07 | 03 | deleted | The V4 FullSpread `DTF`/`TTWETH` stage was deleted. |
+| 07 | 04 | deleted | The V4 FullSpread USD stage was deleted. |
 | 08 | 01 | `Phase_08_Stage_01_FeeDetf.s.sol` | `DTF-DETF` / `DTF-CLAIM` |
 | 08 | 02 | `Phase_08_Stage_02_TtDolQ.s.sol` | `TTDOL-Q` |
 | 09 | 01 | `Phase_09_Stage_01_ExportFrontend.s.sol` | Frontend `chain/46630/` export. No txs |

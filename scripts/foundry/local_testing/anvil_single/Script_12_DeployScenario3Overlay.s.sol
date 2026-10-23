@@ -33,10 +33,6 @@ import {
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
-import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
-import {
-    UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService as HooklessFactory
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -54,7 +50,6 @@ import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/d
 import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
@@ -63,10 +58,9 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {IUniswapV4LiquiditySeeder} from "scripts/foundry/shared/IUniswapV4LiquiditySeeder.sol";
 
 /// @title Script_12_DeployScenario3Overlay
-/// @notice Deploys Scenario 3: SingleStandardExchangeDETF + Uni V4 SE leg + outer Balancer WETH/DETF pool.
+/// @notice Scenario 3 overlay. New V4 FullSpread deployment is retired and reverts.
 contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     using BetterEfficientHashLib for bytes;
-    using HooklessFactory for ICreate3FactoryProxy;
     using UniswapV4TwapOracleFactoryService for ICreate3FactoryProxy;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
@@ -109,21 +103,10 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private multiAssetStandardVaultFacet;
     IFacet private singleStandardExchangeDetfExchangeInFacet;
     IFacet private detfNFTVaultFacet;
-    IFacet private uniswapV4StandardExchangeInFacet;
-    IFacet private uniswapV4StandardExchangeInQueryFacet;
-    IFacet private uniswapV4StandardExchangePositionImportFacet;
-    IFacet private uniswapV4StandardExchangeOutFacet;
-    IFacet private uniswapV4StandardExchangeOutQueryFacet;
-    IFacet private uniswapV4StandardExchangeLiquidReserveFacet;
-    IFacet private uniswapV4StandardExchangeInMultiFacet;
-    IFacet private uniswapV4StandardExchangeInMultiQueryFacet;
-    IFacet private uniswapV4StandardExchangeOutMultiFacet;
-    IFacet private uniswapV4StandardExchangeOutMultiQueryFacet;
     IFacet private erc721Facet;
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
     IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
-    IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg private underlyingVaultPkg;
     ISingleStandardExchangeDETDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
     IUniswapV4MultiPoolTwapOracle private twapOracle;
@@ -239,11 +222,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         if (nftPkgAddr != address(0)) {
             detfNFTVaultPkg = IDetfSelfNftInventoryDFPkg(nftPkgAddr);
         }
-        (address underlyingVaultPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "underlyingVaultPkg");
-        if (underlyingVaultPkgAddr != address(0)) {
-            underlyingVaultPkg = IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(underlyingVaultPkgAddr);
-            require(keccak256(bytes(underlyingVaultPkg.packageName())) == keccak256("UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg"), "Scenario 3: stale V4 family");
-        }
         (address seederAddr, ) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (seederAddr != address(0) && seederAddr.code.length > 0) {
             liquiditySeeder = IUniswapV4LiquiditySeeder(seederAddr);
@@ -275,16 +253,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         singleStandardExchangeDetfExchangeInFacet = create3Factory.deployExchangeInFacet();
 
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
-        uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInFacet();
-        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInQueryFacet();
-        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultPositionImportFacet();
-        uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutFacet();
-        uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutQueryFacet();
-        uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserveFacet();
-        uniswapV4StandardExchangeInMultiFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet();
-        uniswapV4StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryFacet();
-        uniswapV4StandardExchangeOutMultiFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiFacet();
-        uniswapV4StandardExchangeOutMultiQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiQueryFacet();
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
@@ -367,108 +335,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             )
         );
 
-        underlyingVaultPkg = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkgFromVaultRegistry(
-            vaultRegistry,
-            HooklessFactory.attachTwapOracle(
-            HooklessFactory.attachUniswapV4FullSpreadHooklessStandardExchangeVaultMultiFacets(
-                HooklessFactory.buildArgsUniswapV4FullSpreadHooklessStandardExchangeVaultPkgInit(
-                    HooklessFactory.Univ4SePkgInitCore({
-                        erc20Facet: erc20Facet,
-                        erc5267Facet: erc5267Facet,
-                        erc2612Facet: erc2612Facet,
-                        multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-                        uniswapV4StandardExchangeInFacet: uniswapV4StandardExchangeInFacet,
-                        uniswapV4StandardExchangeInQueryFacet: uniswapV4StandardExchangeInQueryFacet,
-                        uniswapV4StandardExchangePositionImportFacet: uniswapV4StandardExchangePositionImportFacet,
-                        uniswapV4StandardExchangeOutFacet: uniswapV4StandardExchangeOutFacet,
-                        uniswapV4StandardExchangeOutQueryFacet: uniswapV4StandardExchangeOutQueryFacet,
-                        uniswapV4StandardExchangeLiquidReserveFacet: uniswapV4StandardExchangeLiquidReserveFacet,
-                        vaultFeeOracleQuery: feeOracle,
-                        vaultRegistryDeployment: vaultRegistry,
-                        permit2: permit2,
-                        poolManager: poolManager,
-                        weth: weth
-                    })
-                ),
-                uniswapV4StandardExchangeInMultiFacet,
-                uniswapV4StandardExchangeInMultiQueryFacet,
-                uniswapV4StandardExchangeOutMultiFacet,
-                uniswapV4StandardExchangeOutMultiQueryFacet
-            ),
-                twapOracle
-            )
-        );
-
-        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
-        rebasingClaimTokenPkg = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
-            create3Factory,
-            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
-                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
-            )
-        );
-
-        // Single SE DETF PkgInit: factories/facets only — no underlying vault pkg on DETF init.
-        inventoryDetfPkg = vaultRegistry.deployPkg(
-            ISingleStandardExchangeDETDFPkg.PkgInit({
-                erc20Facet: erc20Facet,
-                erc5267Facet: erc5267Facet,
-                erc2612Facet: erc2612Facet,
-                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-                exchangeInFacet: singleStandardExchangeDetfExchangeInFacet,
-                bondingFacet: create3Factory.deployBondingFacet(),
-                feeOracle: feeOracle,
-                vaultRegistryDeployment: vaultRegistry,
-                balancerV3Router: balancerV3StandardExchangeRouter,
-                balancerV3Vault: balancerV3Vault,
-                weightedPoolFactory: weightedPoolFactory,
-                rateProviderPkg: rateProviderPkg,
-                bondNftVaultPkg: detfNFTVaultPkg,
-                rebasingClaimTokenPkg: rebasingClaimTokenPkg,
-                syPkg: DetfPkgFactoryService.deployDETFSYComponents(
-                    create3Factory, vaultRegistry, feeOracle, erc5267Facet, erc2612Facet
-                ),
-                diamondFactory: diamondPackageFactory
-            })
-        );
+        revert("V4 FullSpread SE deprecated");
     }
 
-    /// @dev Deploy Uni V4 SE vault separately, inject address into Single SE DETF PkgArgs (DETF stays SE-opaque).
-    function _deployUniV4SeVaultAndDetf() internal {
-        underlyingVault = underlyingVaultPkg.deployVault(_buildPoolKey());
-
-        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
-            name: "Single Standard Exchange DETF CHIR",
-            symbol: "CHIR",
-            standardExchangeVault: IStandardExchangeProxy(underlyingVault),
-            standardExchangeVaultShare: IERC20(address(0)),
-            rateTarget: IERC20(address(weth)),
-            detfWeight: 0,
-            vaultShareWeight: 0,
-            mintThreshold: 0,
-            burnThreshold: 0,
-        expansionClosureRatePerSecond: 0,
-            creator: address(0),
-            claimName: "",
-            claimSymbol: "",
-            bondName: "",
-            bondSymbol: "",
-            reserveName: "",
-            reserveSymbol: ""
-        });
-
-        inventoryDetf = vaultRegistry.deployVault(
-            IStandardVaultPkg(address(inventoryDetfPkg)),
-            abi.encode(args)
-        );
-
-        ISingleStandardExchangeDETFInfo detfInfo = ISingleStandardExchangeDETFInfo(inventoryDetf);
-        protocolNftVault = detfInfo.bondNftVault();
-        rebasingClaimToken = detfInfo.rebasingClaimToken();
-        reservePool = detfInfo.reservePool();
-        underlyingVault = detfInfo.standardExchangeVault();
+    function _deployUniV4SeVaultAndDetf() internal pure {
+        revert("V4 FullSpread SE deprecated");
     }
+
 
     function _deployOuterPool() internal {
         TokenConfig[] memory cfg = new TokenConfig[](2);
@@ -505,7 +378,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         json = vm.serializeAddress("scenario3", "weightedPoolFactory", address(weightedPoolFactory));
         json = vm.serializeAddress("scenario3", "inventoryDetfPkg", address(inventoryDetfPkg));
         json = vm.serializeAddress("scenario3", "detfNFTVaultPkg", address(detfNFTVaultPkg));
-        json = vm.serializeAddress("scenario3", "underlyingVaultPkg", address(underlyingVaultPkg));
         json = vm.serializeAddress("scenario3", "poolManager", address(poolManager));
         json = vm.serializeAddress("scenario3", "liquiditySeeder", address(liquiditySeeder));
         json = vm.serializeAddress("scenario3", "inventoryDetf", inventoryDetf);

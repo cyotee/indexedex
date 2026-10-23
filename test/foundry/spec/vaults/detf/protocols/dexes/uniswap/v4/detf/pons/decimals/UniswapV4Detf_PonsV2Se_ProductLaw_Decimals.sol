@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IUniswapV4FullSpreadPonsFamilyHookLiquidReserve} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/interfaces/IUniswapV4FullSpreadPonsFamilyHookLiquidReserve.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
@@ -38,6 +37,8 @@ import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4DetfRepo} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
+import {UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib} from
+    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol";
 import {Uv4DetfDonateDuringUnlockHarness} from
     "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol";
 import {UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals} from
@@ -418,11 +419,8 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         vm.prank(detfUser);
         IERC20(launchToken).transfer(address(ponsSe), dust_);
         uint256 Rh = IBasicVault(address(ponsSe)).reserveOfToken(launchToken);
-        (uint256 deployed0_, uint256 deployed1_) = IUniswapV4FullSpreadPonsFamilyHookLiquidReserve(address(ponsSe)).deployedReserve();
-        uint256 deployed_ = launchToken < address(weth) ? deployed0_ : deployed1_;
-        uint256 faceBooked_ = Rh > deployed_ ? Rh - deployed_ : 0;
         uint256 Bh = IERC20(launchToken).balanceOf(address(ponsSe));
-        uint256 U = Bh > faceBooked_ ? Bh - faceBooked_ : 0;
+        uint256 U = Bh > Rh ? Bh - Rh : 0;
         assertTrue(U > 0, "need surplus");
         uint256 claimOver_ = U + 1;
         vm.expectRevert();
@@ -779,7 +777,6 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
     function test_DN22_donate_whilePoolManagerUnlocked() public {
         _ensureLiveBond();
         _buyDonationRaw(10 ether);
-        DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         Uv4DetfDonateDuringUnlockHarness harness =
             new Uv4DetfDonateDuringUnlockHarness(IPoolManager(address(poolManager)));
         // Launch token transfer can re-enter PoolManager; donate DETF self-leg instead.
@@ -793,7 +790,12 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         // Pretransfer into the NFT: DETF transferFrom during an open PoolManager unlock reverts.
         vm.prank(address(harness));
         tok_.transfer(address(nft_), send_);
-        bytes memory ret_ = harness.run(
+        DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
+        // Wings prices the SE leg through the pool. That quote cannot run while the manager is unlocked.
+        vm.expectRevert(
+            UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.RateProviderFailed.selector
+        );
+        harness.run(
             address(nft_),
             abi.encodeWithSelector(
                 bytes4(keccak256("donate(address,uint256,uint256,bool,uint256)")),
@@ -804,7 +806,10 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
                 _deadline()
             )
         );
-        uint256 lpOut_ = abi.decode(ret_, (uint256));
-        _assertR12aUnassigned(before_, lpOut_);
+        assertEq(
+            keccak256(abi.encode(_snapLive(dnUserOriginal))),
+            keccak256(abi.encode(before_)),
+            "unlocked Wings quote does not credit LP"
+        );
     }
 }

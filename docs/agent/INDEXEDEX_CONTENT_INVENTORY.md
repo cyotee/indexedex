@@ -88,7 +88,6 @@ The legacy Uni V4 SE local liquid buffer family formerly at `contracts/protocols
 |------|---------|-------|-----|-----------|
 | `contracts/protocols/dexes/balancer/v3/pools/**` | Buffer / multi-vault Balancer pool packages | IndexedEx | co-located pool PRDs | `test/foundry/spec/protocols/dexes/balancer/...` |
 | `contracts/protocols/dexes/uniswap/v3/` | Uni V3 SE vault product | IndexedEx | `UNISWAP_V3_STANDARD_EXCHANGE_VAULT_PRD.md` | TestBases under `contracts/test/bases/` |
-| `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/{hookless,ponsFamilyV2Hook}/` | Supported Uni V4 Full Spread SE vaults | IndexedEx | co-located family PRDs | `test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/` |
 | `contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/` | Supported Uni V4 Upper/Lower Wings SE vault | IndexedEx | co-located family PRD | `test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/` |
 | `contracts/protocols/staking/{lido,etherfi,rocket-pool}/` | LST Standard Exchange vaults | IndexedEx | co-located staking PRDs | `TestBase_*StandardExchange.sol` |
 | `contracts/protocols/lending/**` | Lending-related IX adapters (e.g. Aave loops/Stata) | IndexedEx | — | `TestBase_Aave*`, `TestBase_ERC4626MorphoHermetic` |

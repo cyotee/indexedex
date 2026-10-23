@@ -26,17 +26,14 @@ import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_PonsV2Se} from
     "contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
-import {UniswapV4FullSpreadConsumerLiquidityProvider} from
-    "contracts/test/stubs/UniswapV4FullSpreadConsumerLiquidityProvider.sol";
 
 /**
  * @title TokenStaking_PonsUv4Detf
- * @notice E2E: Pons v2 DTF/WETH pool → Uni V4 SE → Single SE buffer CP hook DETF
- *         (Custom I/O WETH + DTF) → TokenStaking deposit/reward = DTF.
- * @dev Funded staking is backed by raw DETF; mint/bond/burn/donate routes list
- *      both WETH and the launch token. Bond claims pay sDETF without an asset-selecting close.
+ * @notice E2E: launch-token / WETH pool → UpperLowerWings SE → Single SE buffer CP hook DETF
+ *         → TokenStaking deposit/reward = launch token.
+ * @dev Funded staking is backed by raw DETF. Wings lists only its target token, so the
+ *      custom route table is the launch token through that vault. Bond claims pay sDETF
+ *      without an asset-selecting close.
  */
 contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
     using VaultComponentFactoryService for ICreate3FactoryProxy;
@@ -47,7 +44,7 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
 
     function _defaultDetfArgs() internal view override returns (IUniswapV4Detf.PkgArgs memory args) {
         args = super._defaultDetfArgs();
-        IUniswapV4Detf.IoRoute[] memory routes_ = _wethAndDtfRoutes();
+        IUniswapV4Detf.IoRoute[] memory routes_ = _wingsTargetRoutes();
         args.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
         args.mintRoutes = routes_;
         args.burnRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
@@ -56,17 +53,6 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         args.bondRoutes = routes_;
         args.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
         args.donateRoutes = routes_;
-    }
-
-    /// @dev Graduation leaves a 4.2 ETH book. The two-route deploy quotes a WETH leg
-    ///      that misses 50 bp on that book. Deepen before activation; do not widen the bound.
-    function _activatePonsSe() internal override {
-        UniswapV4FullSpreadConsumerLiquidityProvider provider = new UniswapV4FullSpreadConsumerLiquidityProvider();
-        uint256 funding = 1_000_000_000_000 ether;
-        deal(address(weth), address(provider), funding);
-        deal(launchToken, address(provider), funding);
-        provider.addV4(IPoolManager(address(poolManager)), graduatedPoolKey, IWETH(address(weth)), 10_000_000 ether);
-        super._activatePonsSe();
     }
 
     function setUp() public override {
@@ -86,12 +72,10 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         IERC20(launchToken).approve(detf, type(uint256).max);
     }
 
-    function _wethAndDtfRoutes() internal view returns (IUniswapV4Detf.IoRoute[] memory routes_) {
-        routes_ = new IUniswapV4Detf.IoRoute[](2);
+    function _wingsTargetRoutes() internal view returns (IUniswapV4Detf.IoRoute[] memory routes_) {
+        routes_ = new IUniswapV4Detf.IoRoute[](1);
         routes_[0] =
             IUniswapV4Detf.IoRoute({token: IERC20(launchToken), vault: IStandardExchange(address(ponsSe))});
-        routes_[1] =
-            IUniswapV4Detf.IoRoute({token: IERC20(address(weth)), vault: IStandardExchange(address(ponsSe))});
     }
 
     function _deployStaking() internal {
@@ -146,11 +130,11 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         );
     }
 
-    function test_routes_declare_weth_and_dtf() public view {
-        _assertRoutesHaveWethAndDtf(detfInfo.mintRoutes());
-        _assertRoutesHaveWethAndDtf(detfInfo.burnRoutes());
-        _assertRoutesHaveWethAndDtf(detfInfo.bondRoutes());
-        _assertRoutesHaveWethAndDtf(detfInfo.donateRoutes());
+    function test_routes_declare_wings_target() public view {
+        _assertRoutesUseWingsTarget(detfInfo.mintRoutes());
+        _assertRoutesUseWingsTarget(detfInfo.burnRoutes());
+        _assertRoutesUseWingsTarget(detfInfo.bondRoutes());
+        _assertRoutesUseWingsTarget(detfInfo.donateRoutes());
     }
 
     function test_stakingBacking_is_nativeDetf() public view {
@@ -360,15 +344,13 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         assertEq(IERC20(receipt_).allowance(address(staking), address(staking.claimVault())), 0, "wrapper approval cleared");
     }
 
-    function _assertRoutesHaveWethAndDtf(IUniswapV4Detf.IoRoute[] memory rows_) internal view {
-        bool dtf_;
-        bool weth_;
+    function _assertRoutesUseWingsTarget(IUniswapV4Detf.IoRoute[] memory rows_) internal view {
+        bool target_;
         for (uint256 i; i < rows_.length; ++i) {
-            if (address(rows_[i].token) == launchToken) dtf_ = true;
-            if (address(rows_[i].token) == address(weth)) weth_ = true;
-            assertEq(address(rows_[i].vault), address(ponsSe), "route vault is pons SE");
+            if (address(rows_[i].token) == launchToken) target_ = true;
+            assertTrue(address(rows_[i].token) != address(weth), "WETH is not a Wings vault token");
+            assertEq(address(rows_[i].vault), address(ponsSe), "route vault is Wings SE");
         }
-        assertTrue(dtf_, "DTF on table");
-        assertTrue(weth_, "WETH on table");
+        assertTrue(target_, "launch token on table");
     }
 }

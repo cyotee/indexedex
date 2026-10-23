@@ -11,7 +11,6 @@ import {Phase_03_Stage_01_CommonFacets} from "./Phase_03_Stage_01_CommonFacets.s
 import {Phase_04_Stage_01_FeeCollectorAndManager} from "./Phase_04_Stage_01_FeeCollectorAndManager.sol";
 import {Phase_05_Stage_01_SeRateProviderPkg} from "./Phase_05_Stage_01_SeRateProviderPkg.sol";
 import {Phase_05_Stage_02_UniswapV4TwapOracle} from "./Phase_05_Stage_02_UniswapV4TwapOracle.sol";
-import {Phase_05_Stage_03_UniswapV4StandardExchangePkg} from "./Phase_05_Stage_03_UniswapV4StandardExchangePkg.sol";
 import {Phase_05_Stage_04_UniswapV3StandardExchangePkg} from "./Phase_05_Stage_04_UniswapV3StandardExchangePkg.sol";
 import {Phase_05_Stage_06_UniswapV2StandardExchangePkg} from "./Phase_05_Stage_06_UniswapV2StandardExchangePkg.sol";
 import {Phase_05_Stage_05_MorphoBlueStandardExchangePkg} from "./Phase_05_Stage_05_MorphoBlueStandardExchangePkg.sol";
@@ -45,7 +44,7 @@ contract Script_SimulateArchitecture is LaunchIo {
         Phase_04_Stage_01_FeeCollectorAndManager.execute(s, owner);
         Phase_05_Stage_01_SeRateProviderPkg.execute(s);
         Phase_05_Stage_02_UniswapV4TwapOracle.execute(s);
-        Phase_05_Stage_03_UniswapV4StandardExchangePkg.execute(s);
+        // Phase 05 Stage 03 was deleted with both V4 FullSpread families.
         Phase_05_Stage_04_UniswapV3StandardExchangePkg.execute(s);
         Phase_05_Stage_05_MorphoBlueStandardExchangePkg.execute(s);
         Phase_05_Stage_06_UniswapV2StandardExchangePkg.execute(s);
@@ -65,8 +64,6 @@ contract Script_SimulateArchitecture is LaunchIo {
         _logAddress("Create3Factory:", address(s.create3Factory));
         _logAddress("IndexedexManager:", address(s.indexedexManager));
         _logAddress("twapOracle:", address(s.twapOracle));
-        _logAddress("uniV4SePkg:", address(s.uniV4SePkg));
-        _logAddress("uniV4PonsSePkg:", address(s.uniV4PonsSePkg));
         _logAddress("uniV3SePkg:", s.uniV3SePkg);
         _logAddress("uniV2SePkg:", s.uniV2SePkg);
         _logAddress("morphoBlueSePkg:", s.morphoBlueSePkg);

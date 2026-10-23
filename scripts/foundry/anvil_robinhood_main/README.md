@@ -34,7 +34,7 @@ After a pons Family sale, add a **later** Stage that deploys the Protocol DETF i
 | 04 | 01 | `Phase_04_Stage_01_FeeCollectorAndManager.s.sol` | FeeCollector + Manager diamonds, fee defaults |
 | 05 | 01 | `Phase_05_Stage_01_SeRateProviderPkg.s.sol` | SE rate-provider DFPkg |
 | 05 | 02 | `Phase_05_Stage_02_UniswapV4TwapOracle.s.sol` | TWAP facet + DFPkg + canonical instance + adapter factory |
-| 05 | 03 | `Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol` | Uni V4 SE DFPkg (`PkgInit.twapOracle` from 05-02) |
+| 05 | 03 | deleted | V4 FullSpread stage files were deleted. Do not restore or broadcast them. |
 | 05 | 05 | `Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol` | Morpho Blue SE DFPkg (no vaults; Morpho is `PkgArgs`) |
 | 06 | 01 | `Phase_06_Stage_01_BondNftPkg.s.sol` | Uni V4 Bond NFT DFPkg (R12a) |
 | 06 | 02 | `Phase_06_Stage_02_RebasingClaimPkg.s.sol` | Rebasing claim DFPkg |

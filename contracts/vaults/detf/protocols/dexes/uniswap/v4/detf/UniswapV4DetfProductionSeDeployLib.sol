@@ -89,20 +89,6 @@ import {
 import {
     IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
-import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
-import {UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService as HooklessFactory} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService.sol";
-import {IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/interfaces/IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve.sol";
-import {IUniswapV4FullSpreadPonsFamilyHookDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/IUniswapV4FullSpreadPonsFamilyHookDFPkg.sol";
-import {UniswapV4FullSpreadPonsFamilyHook_Component_FactoryService as PonsFactory} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHook_Component_FactoryService.sol";
-import {
-    IUniswapV4MultiPoolTwapOracle
-} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
-import {
-    IUniswapV4MultiPoolTwapOracleDFPkg
-} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
-import {
-    UniswapV4TwapOracleFactoryService
-} from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapOracleFactoryService.sol";
 import {
     IMorphoBlueStandardExchangeDFPkg
 } from "contracts/vaults/standard/exchange/protocols/morpho/blue/IMorphoBlueStandardExchangeDFPkg.sol";
@@ -204,7 +190,6 @@ library UniswapV4DetfProductionSeDeployLib {
     uint24 public constant GENERIC_V4_FEE = 3000;
     int24 public constant GENERIC_V4_TICK_SPACING = 60;
     uint256 internal constant V3_LIQUID_RESERVE_PCT = 0.20e18;
-    uint256 internal constant V4_LIQUID_RESERVE_PCT = 0.2e18;
     uint256 internal constant MORPHO_LLTV = 0.8e18;
     uint256 internal constant PONS_LAUNCH_FEE = 0.0005 ether;
     uint256 internal constant PONS_SUPPLY = 1_000_000_000 ether;
@@ -242,18 +227,6 @@ library UniswapV4DetfProductionSeDeployLib {
     struct Univ3SePkg {
         IUniswapV3Factory factory;
         IUniswapV3FullSpreadStandardExchangeVaultDFPkg pkg;
-    }
-
-    struct Univ4SePkg {
-        IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg pkg;
-        IUniswapV4MultiPoolTwapOracle twap;
-        IWETH weth;
-    }
-
-    struct PonsV2SePkg {
-        IUniswapV4FullSpreadPonsFamilyHookDFPkg pkg;
-        IUniswapV4MultiPoolTwapOracle twap;
-        IWETH weth;
     }
 
     struct PonsV1Stack {
@@ -446,100 +419,6 @@ library UniswapV4DetfProductionSeDeployLib {
         vm.label(vault, "UniV3Se");
     }
 
-    struct Univ4SeFacets {
-        IFacet inFacet;
-        IFacet inQuery;
-        IFacet posImport;
-        IFacet outFacet;
-        IFacet outQuery;
-        IFacet liquidReserve;
-        IFacet inMulti;
-        IFacet inMultiQuery;
-        IFacet outMulti;
-        IFacet outMultiQuery;
-    }
-
-    function _deployUniv4Twap(CraneCtx memory ctx, IPoolManager pm)
-        internal
-        returns (IUniswapV4MultiPoolTwapOracle twap)
-    {
-        IFacet twapFacet =
-            UniswapV4TwapOracleFactoryService.deployUniswapV4MultiPoolTwapOracleFacet(ctx.create3Factory);
-        IUniswapV4MultiPoolTwapOracleDFPkg twapPkg = UniswapV4TwapOracleFactoryService
-            .deployUniswapV4MultiPoolTwapOracleDFPkg(ctx.create3Factory, twapFacet, ctx.diamondPackageFactory);
-        twap = twapPkg.deployOracle(
-            IUniswapV4MultiPoolTwapOracleDFPkg.PkgArgs({poolManager: address(pm)})
-        );
-    }
-
-    function _deployUniv4SeFacets(ICreate3FactoryProxy create3Factory)
-        internal
-        returns (Univ4SeFacets memory f)
-    {
-        f.inFacet = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInFacet(create3Factory);
-        f.inQuery = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInQueryFacet(create3Factory);
-        f.posImport =
-            HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultPositionImportFacet(create3Factory);
-        f.outFacet = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutFacet(create3Factory);
-        f.outQuery = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutQueryFacet(create3Factory);
-        f.liquidReserve =
-            HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserveFacet(create3Factory);
-        f.inMulti = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet(create3Factory);
-        f.inMultiQuery =
-            HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryFacet(create3Factory);
-        f.outMulti = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiFacet(create3Factory);
-        f.outMultiQuery =
-            HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiQueryFacet(create3Factory);
-    }
-
-    function _univ4SeCore(CraneCtx memory ctx, Univ4SeFacets memory f, IPoolManager pm, IWETH weth)
-        internal
-        pure
-        returns (HooklessFactory.Univ4SePkgInitCore memory core)
-    {
-        core.erc20Facet = ctx.erc20Facet;
-        core.erc5267Facet = ctx.erc5267Facet;
-        core.erc2612Facet = ctx.erc2612Facet;
-        core.multiAssetBasicVaultFacet = ctx.multiAssetBasicVaultFacet;
-        core.multiAssetStandardVaultFacet = ctx.multiAssetStandardVaultFacet;
-        core.uniswapV4StandardExchangeInFacet = f.inFacet;
-        core.uniswapV4StandardExchangeInQueryFacet = f.inQuery;
-        core.uniswapV4StandardExchangePositionImportFacet = f.posImport;
-        core.uniswapV4StandardExchangeOutFacet = f.outFacet;
-        core.uniswapV4StandardExchangeOutQueryFacet = f.outQuery;
-        core.uniswapV4StandardExchangeLiquidReserveFacet = f.liquidReserve;
-        core.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(ctx.indexedexManager));
-        core.vaultRegistryDeployment = IVaultRegistryDeployment(address(ctx.indexedexManager));
-        core.permit2 = ctx.permit2;
-        core.poolManager = pm;
-        core.weth = weth;
-    }
-
-    function deployUniv4SePkg(CraneCtx memory ctx, IPoolManager pm, IWETH weth)
-        internal
-        returns (Univ4SePkg memory out)
-    {
-        out.weth = weth;
-        out.twap = _deployUniv4Twap(ctx, pm);
-        Univ4SeFacets memory f = _deployUniv4SeFacets(ctx.create3Factory);
-        IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.PkgInit memory pkgInit =
-            HooklessFactory.buildArgsUniswapV4FullSpreadHooklessStandardExchangeVaultPkgInit(
-                _univ4SeCore(ctx, f, pm, weth)
-            );
-        pkgInit = HooklessFactory.attachTwapOracle(pkgInit, out.twap);
-        pkgInit = HooklessFactory.attachUniswapV4FullSpreadHooklessStandardExchangeVaultMultiFacets(
-            pkgInit, f.inMulti, f.inMultiQuery, f.outMulti, f.outMultiQuery
-        );
-        vm.startPrank(ctx.owner);
-        IVaultFeeOracleManager(address(ctx.indexedexManager)).setDefaultLiquidReservePercentageOfTypeId(
-            type(IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve).interfaceId, V4_LIQUID_RESERVE_PCT
-        );
-        out.pkg = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(
-            ctx.indexedexManager, pkgInit
-        );
-        vm.stopPrank();
-    }
-
     function genericV4PoolKey(address tokenA, address tokenB) internal pure returns (PoolKey memory key) {
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         key = PoolKey({
@@ -588,61 +467,6 @@ library UniswapV4DetfProductionSeDeployLib {
         seeder.addLiquidity(key, tickLower, tickUpper, liq);
     }
 
-    function deployUniv4Vault(IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg pkg, PoolKey memory key)
-        internal
-        returns (address vault)
-    {
-        require(address(key.hooks) == address(0), "hookless pool required");
-        vault = pkg.deployVault(key);
-        vm.label(vault, "UniV4HooklessSe");
-    }
-
-    /// @dev Hermetic binding comes from the actual Pons stack, never from a pool's claimed hook.
-    /// The P package independently checks the registered launch and fixed package identity.
-    function deployPonsV2SePkg(CraneCtx memory ctx, IPoolManager pm, IWETH weth, PonsV2Stack memory stack)
-        internal returns (PonsV2SePkg memory out)
-    {
-        out.weth = weth;
-        out.twap = _deployUniv4Twap(ctx, pm);
-        IUniswapV4FullSpreadPonsFamilyHookDFPkg.PkgInit memory init;
-        init.erc20Facet = ctx.erc20Facet;
-        init.erc5267Facet = ctx.erc5267Facet;
-        init.erc2612Facet = ctx.erc2612Facet;
-        init.multiAssetBasicVaultFacet = ctx.multiAssetBasicVaultFacet;
-        init.multiAssetStandardVaultFacet = ctx.multiAssetStandardVaultFacet;
-        init.uniswapV4StandardExchangeInFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookInFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeInQueryFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookInQueryFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangePositionImportFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookPositionImportFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeOutFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookOutFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeOutQueryFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookOutQueryFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeLiquidReserveFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookLiquidReserveFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeInMultiFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookInMultiFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeInMultiQueryFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookInMultiQueryFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeOutMultiFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookOutMultiFacet(ctx.create3Factory);
-        init.uniswapV4StandardExchangeOutMultiQueryFacet = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookOutMultiQueryFacet(ctx.create3Factory);
-        init.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(ctx.indexedexManager));
-        init.vaultRegistryDeployment = IVaultRegistryDeployment(address(ctx.indexedexManager));
-        init.permit2 = ctx.permit2;
-        init.poolManager = pm;
-        init.positionManager = stack.positionManager;
-        init.twapOracle = out.twap;
-        init.weth = weth;
-        init.expectedHook = address(stack.memeHook);
-        vm.startPrank(ctx.owner);
-        IVaultFeeOracleManager(address(ctx.indexedexManager)).setDefaultLiquidReservePercentageOfTypeId(
-            type(IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve).interfaceId, V4_LIQUID_RESERVE_PCT
-        );
-        out.pkg = PonsFactory.deployUniswapV4FullSpreadPonsFamilyHookDFPkg(ctx.indexedexManager, init);
-        vm.stopPrank();
-    }
-
-    function deployPonsV2Vault(IUniswapV4FullSpreadPonsFamilyHookDFPkg pkg, PoolKey memory key)
-        internal returns (address vault)
-    {
-        require(address(key.hooks) != address(0), "Pons hook required");
-        vault = pkg.deployVault(key);
-        vm.label(vault, "UniV4PonsV2Se");
-    }
 
     function newWeth() internal returns (IWETH weth) {
         weth = IWETH(address(new WETH9()));

@@ -42,7 +42,6 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
-import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {IMorphoBlueStandardExchangeDFPkg} from "contracts/vaults/standard/exchange/protocols/morpho/blue/IMorphoBlueStandardExchangeDFPkg.sol";
 import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {IUniswapV4HookStagedPairInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -127,38 +126,29 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
 
     function test_orbital_v2() public { _rehearse(3, 0); }
     function test_orbital_v3() public { _rehearse(3, 1); }
-    function test_orbital_v4() public { _rehearse(3, 2); }
     function test_orbital_morpho() public { _rehearse(3, 3); }
-    function test_orbital_v4_publicLiquidity() public { _rehearse(3, 2, false); }
 
     function test_cp_v2() public { _rehearse(0, 0); }
     function test_cp_v3() public { _rehearse(0, 1); }
-    function test_cp_v4() public { _rehearse(0, 2); }
     function test_cp_morpho() public { _rehearse(0, 3); }
     function test_weighted_v2() public { _rehearse(1, 0); }
     function test_weighted_v3() public { _rehearse(1, 1); }
-    function test_weighted_v4() public { _rehearse(1, 2); }
     function test_weighted_morpho() public { _rehearse(1, 3); }
     function test_quad_v2() public { _rehearse(2, 0); }
     function test_quad_v3() public { _rehearse(2, 1); }
-    function test_quad_v4() public { _rehearse(2, 2); }
     function test_quad_morpho() public { _rehearse(2, 3); }
 
     function test_balancer_n2_v2() public { _rehearseBalancer(2, 0); }
     function test_balancer_n2_v3() public { _rehearseBalancer(2, 1); }
-    function test_balancer_n2_v4() public { _rehearseBalancer(2, 2); }
     function test_balancer_n2_morpho() public { _rehearseBalancer(2, 3); }
     function test_balancer_n3_v2() public { _rehearseBalancer(3, 0); }
     function test_balancer_n3_v3() public { _rehearseBalancer(3, 1); }
-    function test_balancer_n3_v4() public { _rehearseBalancer(3, 2); }
     function test_balancer_n3_morpho() public { _rehearseBalancer(3, 3); }
     function test_balancer_n4_v2() public { _rehearseBalancer(4, 0); }
     function test_balancer_n4_v3() public { _rehearseBalancer(4, 1); }
-    function test_balancer_n4_v4() public { _rehearseBalancer(4, 2); }
     function test_balancer_n4_morpho() public { _rehearseBalancer(4, 3); }
     function test_balancer_n5_v2() public { _rehearseBalancer(5, 0); }
     function test_balancer_n5_v3() public { _rehearseBalancer(5, 1); }
-    function test_balancer_n5_v4() public { _rehearseBalancer(5, 2); }
     function test_balancer_n5_morpho() public { _rehearseBalancer(5, 3); }
     function test_balancer_n2_v2_mixed() public { _rehearseBalancer(2, 0, true); }
     function test_balancer_n5_v2_mixed() public { _rehearseBalancer(5, 0, true); }
@@ -445,9 +435,6 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         assertEq(IERC20(tokenOut).balanceOf(detfUser) - beforeOut, 0.5 ether, "Balancer exact-out settlement");
     }
 
-    function test_cp_v4_publicLiquidity() public { _rehearse(0, 2, false); }
-    function test_weighted_v4_publicLiquidity() public { _rehearse(1, 2, false); }
-    function test_quad_v4_publicLiquidity() public { _rehearse(2, 2, false); }
 
     function _rehearse(uint256 family, uint256 backend) internal { _rehearse(family, backend, true); }
 
@@ -514,16 +501,6 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
             IUniswapV3Pool pool = SeDeploy.createUniv3PoolOneToOne(IUniswapV3Factory(V3_FACTORY), pair, other, 3000);
             SeDeploy.seedUniv3Pool(pool);
         address vault_ = SeDeploy.deployUniv3Vault(IUniswapV3FullSpreadStandardExchangeVaultDFPkg(_pin("phase05_stage04_uniswap_v3_standard_exchange_pkg.json", ".uniV3SePkg", true)), pool);
-            _activatePositionSe(vault_, pair, other);
-            return vault_;
-        }
-        if (backend == 2) {
-            PoolKey memory key = SeDeploy.initAndSeedUniv4Pool(pm, pair, other);
-            // Stage 05-03 now produces H at this pin, not the legacy generic-hook package.
-            IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg pkg_ =
-                IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(_pin("phase05_stage03_uniswap_v4_standard_exchange_pkg.json", ".uniV4SePkg", true));
-            assertEq(pkg_.packageName(), "UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg", "stale V4 package pin");
-            address vault_ = SeDeploy.deployUniv4Vault(pkg_, key);
             _activatePositionSe(vault_, pair, other);
             return vault_;
         }

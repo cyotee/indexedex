@@ -94,16 +94,9 @@ export RPC_URL="${RPC_URL:-https://rpc.mainnet.chain.robinhood.com}"
 
 Each Stage: simulate, then broadcast. Never `--skip-simulation`.
 
-### 1. Optional: Uni V4 SE package
+### 1. Uni V4 FullSpread SE package — retired
 
-Only if Uni V4 SE bytecode changed and the CREATE3 salt is new (script NatSpec: salts include `wethWrap`).
-
-```bash
-FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol \
-  --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol \
-  --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
-```
+Phase 05 Stage 03 was deleted. Both V4 FullSpread families are gone. Do not restore the script.
 
 ### 2. Optional: Morpho Blue SE package
 

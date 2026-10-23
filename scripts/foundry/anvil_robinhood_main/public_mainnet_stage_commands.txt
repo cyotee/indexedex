@@ -36,8 +36,7 @@ forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_01_SeRateProvid
 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
 
-forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+# DELETED 2026-10-23: V4 FullSpread package deployment was removed. Do not restore Phase 05 Stage 03.
 
 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300

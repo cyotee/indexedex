@@ -7,7 +7,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {ISwapRouter} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/interfaces/ISwapRouter.sol";
@@ -53,10 +52,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
     IUniswapV3Factory internal univ3Factory;
     IWETH internal weth;
     SeLib.Univ3SePkg internal univ3SePkg;
-    SeLib.Univ4SePkg internal univ4SePkg;
-    SeLib.PonsV2SePkg internal ponsV2SePkg;
     SeLib.PonsV1Stack internal ponsV1;
-    SeLib.PonsV2Stack internal ponsV2;
     SeLib.MorphoStack internal morphoStack;
 
     function setUp() public virtual override {
@@ -120,6 +116,10 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
         ctx.owner = owner;
     }
 
+    function _ensureWeth() internal {
+        if (address(weth) == address(0)) weth = SeLib.newWeth();
+    }
+
     function _ensureUniv3SePkg() internal {
         if (address(univ3Factory) == address(0)) {
             univ3Factory = SeLib.newUniv3Factory();
@@ -128,17 +128,6 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
             univ3SePkg.factory = univ3Factory;
             univ3SePkg.pkg = SeLib.deployUniv3SePkg(_craneCtx(), univ3Factory);
         }
-    }
-
-    function _ensureUniv4SePkg() internal {
-        if (address(weth) == address(0)) weth = SeLib.newWeth();
-        if (address(univ4SePkg.pkg) == address(0)) {
-            univ4SePkg = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
-        }
-    }
-
-    function _ensureWeth() internal {
-        if (address(weth) == address(0)) weth = SeLib.newWeth();
     }
 
     function _deployVanillaUniv3Se(address pair) internal returns (address vault) {
@@ -151,24 +140,9 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
         vault = SeLib.deployUniv3Vault(univ3SePkg.pkg, pool);
     }
 
-    function _deployVanillaUniv4Se(address pair) internal returns (address vault) {
-        _ensureUniv4SePkg();
-        MintableERC20Decimals rate = new MintableERC20Decimals("Rate", "RATE", 18);
-        PoolKey memory key = SeLib.initAndSeedUniv4Pool(pm, pair, address(rate));
-        vault = SeLib.deployUniv4Vault(univ4SePkg.pkg, key);
-    }
-
     function _deployPonsV1Univ3Se(address launchToken) internal returns (address vault) {
         _ensureUniv3SePkg();
         vault = SeLib.deployUniv3Vault(univ3SePkg.pkg, SeLib.ponsV1Pool(launchToken));
-    }
-
-    function _deployPonsV2Univ4Se(PoolKey memory key) internal returns (address vault) {
-        _ensureWeth();
-        if (address(ponsV2SePkg.pkg) == address(0)) {
-            ponsV2SePkg = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, ponsV2);
-        }
-        vault = SeLib.deployPonsV2Vault(ponsV2SePkg.pkg, key);
     }
 
     function tryLaunchPonsV1(bytes32 saltStart) external returns (address token) {

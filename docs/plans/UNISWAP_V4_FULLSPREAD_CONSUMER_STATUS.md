@@ -1,5 +1,7 @@
 # FullSpread consumer rehoming status
 
+**Deprecated 2026-10-23.** Both V4 FullSpread families are retired. Do not use this status document to deploy or extend them. See `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/DEPRECATED.md`. The notes below are historical.
+
 ## Latest residual compatibility and verification checkpoint
 
 This section supersedes the older failure counts and performance investigations
