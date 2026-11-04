@@ -1,0 +1,62 @@
+{
+  "production": [
+    "contracts/protocols/strategy/weir/WeirVaults.sol",
+    "contracts/protocols/strategy/weir/base/WeirBase.sol",
+    "contracts/protocols/strategy/weir/libraries/LiquidityAmounts.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/access/Ownable.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/access/Ownable2Step.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/interfaces/IERC1363.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/interfaces/IERC165.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/interfaces/IERC20.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/token/ERC20/IERC20.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/token/ERC20/utils/SafeERC20.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/utils/Context.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/utils/Pausable.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/utils/ReentrancyGuard.sol",
+    "lib/crane/contracts/external/openzeppelin-contracts-v5/utils/introspection/IERC165.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/libraries/BitMath.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint128.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/libraries/FixedPoint96.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/libraries/SafeCast.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/IExtsload.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/IExttload.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/IProtocolFees.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/external/IERC20Minimal.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/interfaces/external/IERC6909Claims.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/CustomRevert.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityMath.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/Position.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/types/BeforeSwapDelta.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol",
+    "lib/crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol",
+    "lib/crane/contracts/utils/BetterEfficientHashLib.sol"
+  ],
+  "test": [],
+  "compilationTarget": {
+    "contracts/protocols/strategy/weir/WeirVaults.sol": "WeirVaults"
+  },
+  "note": "Test source set is empty until a test artifact is compiled. WP-09 records the test graph from compiled test metadata.",
+  "compilerPropagatedErrors": [
+    {
+      "type": "error",
+      "name": "InvalidTick",
+      "inputs": [
+        {
+          "name": "tick",
+          "type": "int24",
+          "internalType": "int24"
+        }
+      ]
+    }
+  ],
+  "listedErrorCount": 18
+}

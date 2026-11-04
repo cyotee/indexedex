@@ -78,8 +78,7 @@ abstract contract TestBase_FundedComposedDETF is TestBase_FundedBalancerDETF {
     function _seedInnerPools(IERC20[] memory tokens_) internal {
         deal(address(dai), owner, 200_000e18, true); deal(address(weth), owner, 100_000e18, true);
         vm.startPrank(owner);
-        dai.approve(address(daiUsdcVault), 200_000e18);
-        uint256 shares_ = IStandardExchangeIn(address(daiUsdcVault)).exchangeIn(dai, 200_000e18, IERC20(address(daiUsdcVault)), 0, owner, false, block.timestamp);
+        dai.approve(address(daiUsdcVault), 200_000e18);(uint256 shares_,) = IStandardExchangeIn(address(daiUsdcVault)).exchangeIn(dai, 200_000e18, IERC20(address(daiUsdcVault)), 0, owner, false, block.timestamp);
         for (uint256 i_; i_ < 2; ++i_) {
             tokens_[i_].approve(address(permit2), type(uint256).max);
             IPermit2(address(permit2)).approve(address(tokens_[i_]), address(router), type(uint160).max, type(uint48).max);

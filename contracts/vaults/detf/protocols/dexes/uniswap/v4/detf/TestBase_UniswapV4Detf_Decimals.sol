@@ -545,8 +545,7 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 // Failure supplies no proof; check the full-input forward route.
             }
         }
-        if (!subShare_) {
-            uint256 shares_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
+        if (!subShare_) {(uint256 shares_,) = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
             if (shares_ != 0) _assertResidualHookAlignment(pair_, retained_);
         }
         assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");
@@ -610,10 +609,9 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
     function _assertFundedUnstake(address d_, address holder_, uint256 amount_) internal {
         IStakedDETF staking_ = IStakedDETF(IUniswapV4Detf(d_).rebasingClaimToken());
         uint256 before_ = IERC20(d_).balanceOf(holder_);
-        assertEq(staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(d_)), amount_, "one-to-one unstake quote");
-        vm.prank(holder_);
-        uint256 out_ = staking_.exchangeIn(
-            IERC20(address(staking_)), amount_, IERC20(d_), amount_, holder_, false, block.timestamp + 1 hours
+        (uint256 previewAmountOut1,) = staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(d_));
+        assertEq(previewAmountOut1, amount_, "one-to-one unstake quote");
+        vm.prank(holder_);(uint256 out_,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d_), amount_, holder_, false, block.timestamp + 1 hours
         );
         assertEq(out_, amount_, "one-to-one unstake execution");
         assertEq(IERC20(d_).balanceOf(holder_) - before_, amount_, "actual held DETF redemption");

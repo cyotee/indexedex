@@ -16,8 +16,8 @@ import {UniswapV4StandardExchangeWeightedBufferHookExitCore} from "contracts/hoo
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is UniswapV4StandardExchangeWeightedBufferHookInQuoteBase, NativeStandardYieldTarget {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
     function previewBurnToToken(uint256 lpAmount, address tokenOut)

@@ -102,8 +102,8 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         (bool ok, bytes memory data) = address(l.reserveVault).staticcall(
             abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (l.rateTarget, targetUnit, subject_))
         );
-        if (!ok || data.length != 32) return 0;
-        uint256 sharesForTargetUnit = abi.decode(data, (uint256));
+        if (!ok || data.length != 64) return 0;
+        (uint256 sharesForTargetUnit,) = abi.decode(data, (uint256, uint256));
         if (sharesForTargetUnit == 0) return 0;
         return _normalise(targetUnit, sharesForTargetUnit,
             IERC20Metadata(address(subject_)).decimals(), l.rateTargetDecimals);
@@ -121,8 +121,10 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
             : abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (subject_, quoteAmount_, rateTarget_));
         address target = address(reserveVault_);
         (bool ok, bytes memory data) = target.staticcall(input);
-        if (!ok || data.length != 32) return (false, 0);
-        return (true, abi.decode(data, (uint256)));
+        if (!ok || data.length != (state.length != 0 ? 32 : 64)) return (false, 0);
+        if (state.length != 0) return (true, abi.decode(data, (uint256)));
+        (out_,) = abi.decode(data, (uint256, uint256));
+        return (true, out_);
     }
 
     /* ---------------------------------------------------------------------- */

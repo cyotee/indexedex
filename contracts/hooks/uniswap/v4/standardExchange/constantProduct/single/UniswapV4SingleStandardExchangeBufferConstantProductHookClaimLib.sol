@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase as QuoteBase, ISingleBufferQuoteErrors} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
@@ -194,9 +195,8 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
                     q.state, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, seUser);
             }
             q.rate = _rateForState(l, q.state);
-        } else {
-            q.pairUser = seUser == 0 ? 0 : l.standardExchange == l.pairToken ? seUser
-                : IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seUser, IERC20(l.pairToken));
+        } else {q.pairUser = seUser == 0 ? 0 : l.standardExchange == l.pairToken ? seUser
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.standardExchange), seUser, IERC20(l.pairToken));
             q.rate = _rate(l);
         }
         q.remainingRated = _ratedWith(l, q.remainingShares, q.rate);
@@ -217,9 +217,8 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         if (q.state.length != 0) {
             (,, q.residualOut,) = IStandardExchangeTransitionQuote(l.standardExchange).quoteTransition(
                 q.state, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, q.residualShares);
-        } else {
-            q.residualOut = l.standardExchange == l.pairToken ? q.residualShares
-                : IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), q.residualShares, IERC20(l.pairToken));
+        } else {q.residualOut = l.standardExchange == l.pairToken ? q.residualShares
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.standardExchange), q.residualShares, IERC20(l.pairToken));
         }
     }
 
@@ -257,9 +256,8 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         output.sharesOut = sharesForPairUnitsDown(ratedBudget);
         uint256 held = IERC20(l.standardExchange).balanceOf(address(this));
         if (held == 0 || output.sharesOut >= held) revert InsufficientTokenOut();
-        if (output.sharesOut == 0) return output;
-        output.amountOut = l.standardExchange == l.pairToken ? output.sharesOut
-            : IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), output.sharesOut, IERC20(l.pairToken));
+        if (output.sharesOut == 0) return output;output.amountOut = l.standardExchange == l.pairToken ? output.sharesOut
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.standardExchange), output.sharesOut, IERC20(l.pairToken));
         if (output.amountOut == 0) output.sharesOut = 0;
     }
 
@@ -300,8 +298,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         if (output.sharesOut == 0 || output.sharesOut >= IERC20(l.standardExchange).balanceOf(address(this))) revert InsufficientTokenOut();
         if (l.standardExchange == l.pairToken) return output.sharesOut;
         uint256 beforeOut = IERC20(l.pairToken).balanceOf(address(this));
-        IERC20(l.standardExchange).forceApprove(l.standardExchange, output.sharesOut);
-        IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.standardExchange), output.sharesOut,
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, output.sharesOut);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.standardExchange), output.sharesOut,
             IERC20(l.pairToken), output.amountOut, address(this), false, block.timestamp);
         IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
         amountOut = IERC20(l.pairToken).balanceOf(address(this)) - beforeOut;
@@ -382,19 +379,16 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     /// @dev Residual maintenance only. A zero quote means the amount cannot enter
     /// the vault yet and stays owned locally.
     function previewResidualBuffer(uint256 amount) internal view returns (uint256 shares) {
-        Repo.Layout storage l = Repo._layout();
-        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.pairToken), amount, IERC20(l.standardExchange)
+        Repo.Layout storage l = Repo._layout();(uint256 quotedAmountOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
+        return quotedAmountOut;
     }
 
     /// @dev Consume the immediately preceding residual quote without evaluating
     /// the same read-only composition plan a second time. The minimum is retained.
     function bufferQuotedResidual(uint256 amount, uint256 minimum) external {
         Repo.Layout storage l = Repo._layout();
-        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
-        IStandardExchangeIn(l.standardExchange).exchangeIn(
-            IERC20(l.pairToken), amount, IERC20(l.standardExchange), minimum, address(this), false, block.timestamp
+        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.pairToken), amount, IERC20(l.standardExchange), minimum, address(this), false, block.timestamp
         );
         IERC20(l.pairToken).forceApprove(l.standardExchange, 0);
     }
@@ -505,8 +499,8 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         returns (uint256)
     {
         if (amountInRaw == 0) return 0;
-        if (se == pairToken) return amountInRaw;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        if (se == pairToken) return amountInRaw;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        return quotedAmountOut;
     }
 
     /// @notice Projected SE state after depositing `amountInRaw` pair tokens, with the holder's

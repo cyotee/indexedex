@@ -401,9 +401,7 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         uint256 deadline_
     ) internal returns (uint256 amountOut_) {
         if (amountIn_ == 0) return 0;
-        tokenIn_.safeTransfer(address(host_), amountIn_);
-        amountOut_ = host_.exchangeIn(
-            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        tokenIn_.safeTransfer(address(host_), amountIn_);(amountOut_,) = host_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
         );
     }
 
@@ -511,8 +509,7 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (!s_.isReserveLive || amount_ == 0) return 0;
         if (address(token_) == address(this)) return _previewUnbalancedBpt(s_.detfIndex, amount_);
-        if (address(token_) == address(s_.bufferToken)) {
-            uint256 shares_ = s_.underlyingVaults[0].previewExchangeIn(token_, amount_, s_.vaultShares[0]);
+        if (address(token_) == address(s_.bufferToken)) {(uint256 shares_,) = s_.underlyingVaults[0].previewExchangeIn(token_, amount_, s_.vaultShares[0]);
             return _previewUnbalancedBpt(s_.shareIndexes[0], shares_);
         }
         (bool found_, uint256 leg_) = Repo._findVaultShareIndex(token_);

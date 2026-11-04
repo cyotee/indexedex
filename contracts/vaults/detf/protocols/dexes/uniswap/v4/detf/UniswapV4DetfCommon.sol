@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {
     IUniswapV4DetfSelfCall
@@ -173,8 +174,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     {
         address share_ = address(vault_);
         address pair_ = _hookPairOfVault(vault_);
-        if (address(tokenIn_) == pair_) return amountIn_;
-        uint256 out_ = vault_.previewExchangeIn(tokenIn_, amountIn_, IERC20(pair_));
+        if (address(tokenIn_) == pair_) return amountIn_;(uint256 out_,) = vault_.previewExchangeIn(tokenIn_, amountIn_, IERC20(pair_));
         if (address(tokenIn_) != share_ && out_ == 0) revert Repo.InvalidRoute(address(tokenIn_), pair_);
         return out_;
     }
@@ -258,8 +258,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _quoteMintGross(address pair_, uint256 pairEq_) internal view returns (uint256 gross_) {
         uint256 p_ = _seigniorageIncentiveWad();
-        uint256 boosted_ = Math.mulDiv(pairEq_, ONE_WAD + p_, ONE_WAD);
-        gross_ = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), boosted_, IERC20(address(this)));
+        uint256 boosted_ = Math.mulDiv(pairEq_, ONE_WAD + p_, ONE_WAD);(gross_,) = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), boosted_, IERC20(address(this)));
     }
 
     /// @dev Initial configured human price is linear; native DETF has nine decimals.
@@ -292,8 +291,8 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     function _quoteBondPurchase(address pair_, uint256 pairEq_, uint256 duration_) internal view returns (uint256) {
         uint256 multiplier_ = DETFBondNFTMathLib._bonusMultiplierOfVault(address(this), duration_);
         uint256 boosted_ = Math.mulDiv(pairEq_, multiplier_, ONE_WAD);
-        if (!Repo._layoutStruct().isReserveLive) return _openingBondQuote(pair_, boosted_);
-        return IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), boosted_, IERC20(address(this)));
+        if (!Repo._layoutStruct().isReserveLive) return _openingBondQuote(pair_, boosted_);(uint256 quotedAmountOut,) = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), boosted_, IERC20(address(this)));
+        return quotedAmountOut;
     }
 
     /// @dev Price each distinct non-DETF entitlement against the same pre-payment reserve book.
@@ -426,8 +425,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         if (amountIn_ == 0) return 0;
         // Use the standard approval-based route, including SEs whose own-share
         // redemption burns the caller's balance. Authorize only this payment.
-        tokenIn_.forceApprove(address(host_), amountIn_);
-        amountOut_ = host_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, false, deadline_);
+        tokenIn_.forceApprove(address(host_), amountIn_);(amountOut_,) = host_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, false, deadline_);
         tokenIn_.forceApprove(address(host_), 0);
     }
 
@@ -632,7 +630,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         } catch {
             return false;
         }
-        if (IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) != 0) return false;
+        if (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se_))), IERC20(pair_), amount_, IERC20(se_)) != 0) return false;
         MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
         return true;
     }
@@ -641,16 +639,13 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     function _pairQuoteIsZero(address pair_, uint256 amount_) private view returns (bool) {
         if (amount_ == 0 || !Repo._layoutStruct().hookPairTokens._contains(pair_)) return false;
         address se_ = IUniswapV4SeBufferHook(Repo._layoutStruct().hook).standardExchangeOf(pair_);
-        if (se_ == address(0) || se_ == pair_) return false;
-        return IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) == 0;
+        if (se_ == address(0) || se_ == pair_) return false;return ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se_))), IERC20(pair_), amount_, IERC20(se_)) == 0;
     }
 
     function _entrySweepPairToShare(address se_, address pair_, uint256 amount_) internal returns (uint256 shares_) {
         if (msg.sender != address(this)) revert Repo.NotAuthorized(msg.sender);
         if (se_ == pair_) return 0;
-        IERC20(pair_).forceApprove(se_, amount_);
-        shares_ = IStandardExchangeIn(se_)
-            .exchangeIn(IERC20(pair_), amount_, IERC20(se_), 0, address(this), false, block.timestamp + 1);
+        IERC20(pair_).forceApprove(se_, amount_);(shares_,) = IStandardExchangeIn(se_).exchangeIn(IERC20(pair_), amount_, IERC20(se_), 0, address(this), false, block.timestamp + 1);
         IERC20(pair_).forceApprove(se_, 0);
     }
 }

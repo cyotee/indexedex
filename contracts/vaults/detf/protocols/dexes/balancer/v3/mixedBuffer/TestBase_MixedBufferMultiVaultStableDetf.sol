@@ -371,13 +371,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBal
         returns (uint256 out_)
     {
         IERC20 buffer_ = IERC20(IMixedBufferMultiVaultStableDetfInfo(instance_).bufferToken());
-        _fundBuffer(user, bufferAmt);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(buffer_, bufferAmt, IERC20(instance_));
+        _fundBuffer(user, bufferAmt);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(buffer_, bufferAmt, IERC20(instance_));
         vm.startPrank(user);
-        buffer_.approve(instance_, bufferAmt);
-        out_ = IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, bufferAmt, IERC20(instance_), 0, user, false, block.timestamp + 1 hours
+        buffer_.approve(instance_, bufferAmt);(out_,) = IStandardExchangeIn(instance_).exchangeIn(buffer_, bufferAmt, IERC20(instance_), 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(preview_, out_, "mint buffer preview==exec");
@@ -388,13 +384,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBal
         returns (uint256 out_)
     {
         uint256 shares_ = _fundVaultShares(leg, user, fundAmt);
-        address shareToken_ = IMixedBufferMultiVaultStableDetfInfo(instance_).vaultShares()[leg];
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(IERC20(shareToken_), shares_, IERC20(instance_));
+        address shareToken_ = IMixedBufferMultiVaultStableDetfInfo(instance_).vaultShares()[leg];(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(IERC20(shareToken_), shares_, IERC20(instance_));
         vm.startPrank(user);
-        IERC20(shareToken_).approve(instance_, shares_);
-        out_ = IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(shareToken_), shares_, IERC20(instance_), 0, user, false, block.timestamp + 1 hours
+        IERC20(shareToken_).approve(instance_, shares_);(out_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(shareToken_), shares_, IERC20(instance_), 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(preview_, out_, "mint share preview==exec");
@@ -404,13 +396,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBal
         internal
         returns (uint256 out_)
     {
-        IERC20 buffer_ = IERC20(IMixedBufferMultiVaultStableDetfInfo(instance_).bufferToken());
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(IERC20(instance_), detfAmount_, buffer_);
+        IERC20 buffer_ = IERC20(IMixedBufferMultiVaultStableDetfInfo(instance_).bufferToken());(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(IERC20(instance_), detfAmount_, buffer_);
         vm.startPrank(user);
-        IERC20(instance_).approve(instance_, detfAmount_);
-        out_ = IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), detfAmount_, buffer_, 0, user, false, block.timestamp + 1 hours
+        IERC20(instance_).approve(instance_, detfAmount_);(out_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), detfAmount_, buffer_, 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         // Proportional multi-leg exit + rejoin: same closed-form order as MultiVault (≤10 wei preferred).

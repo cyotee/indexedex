@@ -177,9 +177,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
     function _mintSeSharesToUser(uint256 pairAmount) internal returns (uint256 seShares) {
         pairToken.mint(user, pairAmount);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-        seShares = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(se, type(uint256).max);(seShares,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             pairAmount,
             IERC20(se),
             0,

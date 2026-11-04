@@ -94,13 +94,13 @@ abstract contract AaveV3StataStandardExchangeInExecutionBase is AaveV3StataStand
 contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeInExecutionBase,
     IStandardExchangeIn, IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote
 {
-    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
-        return _previewExchangeIn(in_, amount_, out_);
+function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(in_, amount_, out_), 0);
     }
-    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
-        external returns (uint256)
+function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        external returns (uint256 amountOut, uint256 amountRefunded)
     {
-        return _exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+        return (_exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_), 0);
     }
 
     struct StataQuoteState {

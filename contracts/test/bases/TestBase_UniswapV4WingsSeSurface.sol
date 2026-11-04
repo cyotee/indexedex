@@ -79,9 +79,7 @@ abstract contract TestBase_UniswapV4WingsSeSurface is TestBase_VaultComponents, 
 
     function _activatePonsSe() internal virtual {
         uint256 amount_ = 10_000 ether;
-        IERC20(launchToken).approve(address(ponsSe), amount_);
-        IStandardExchangeIn(address(ponsSe)).exchangeIn(
-            IERC20(launchToken), amount_, IERC20(address(ponsSe)), 0, address(this), false, _deadline()
+        IERC20(launchToken).approve(address(ponsSe), amount_);IStandardExchangeIn(address(ponsSe)).exchangeIn(IERC20(launchToken), amount_, IERC20(address(ponsSe)), 0, address(this), false, _deadline()
         );
     }
 

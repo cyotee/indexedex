@@ -390,8 +390,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
             // Invert buffer preview: pair such that SE shares ≈ invNeeded (closed-form, no binary search).
             address se = l.standardExchanges[idx];
             address t = l.tokens[idx];
-            amountIn = invNeeded;
-            uint256 got = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
+            amountIn = invNeeded;(uint256 got,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
             if (got < invNeeded && got > 0) {
                 amountIn = (invNeeded * amountIn + got - 1) / got;
             }
@@ -590,9 +589,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
                 address se = l.standardExchanges[i];
                 if (se == address(0)) {
                     invDeltas[i] = amounts[i];
-                } else {
-                    invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                        IERC20(l.tokens[i]), amounts[i], IERC20(se)
+                } else {(invDeltas[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), amounts[i], IERC20(se)
                     );
                 }
             }

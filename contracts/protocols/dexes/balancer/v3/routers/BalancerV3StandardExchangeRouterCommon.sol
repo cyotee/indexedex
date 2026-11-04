@@ -194,7 +194,7 @@ abstract contract BalancerV3StandardExchangeRouterCommon is BalancerV3StandardEx
         address recipient
     ) internal returns (uint256 amountCalculated) {
         // Placeholder to avoid compilation errors.
-        return params.tokenOutVault
+        (uint256 quotedAmountOut,) = params.tokenOutVault
             .exchangeIn(
                 // IERC20 tokenIn,
                 IERC20(address(params.tokenOutVault)),
@@ -211,6 +211,7 @@ abstract contract BalancerV3StandardExchangeRouterCommon is BalancerV3StandardEx
                 // uint256 deadline
                 params.deadline
             );
+        return quotedAmountOut;
     }
 
     function _exchangeOutFromVault(

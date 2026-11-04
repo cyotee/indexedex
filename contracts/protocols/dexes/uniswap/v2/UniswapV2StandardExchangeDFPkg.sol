@@ -175,10 +175,7 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
      */
     function _depositLPToVault(IUniswapV2Pair pair, address vault, uint256 lpAmount, address recipient) internal {
         IERC20 lpToken = IERC20(address(pair));
-        lpToken.safeTransfer(vault, lpAmount);
-        IStandardExchangeIn(vault)
-            .exchangeIn(
-                lpToken,
+        lpToken.safeTransfer(vault, lpAmount);IStandardExchangeIn(vault).exchangeIn(lpToken,
                 lpAmount,
                 IERC20(vault), // vault share token is the vault itself
                 0, // no minimum - user already approved the action

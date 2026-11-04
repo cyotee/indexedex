@@ -13,8 +13,8 @@ import {UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore} from
 
 /// @notice Liquidity quotes through the shared reserve accounting.
 abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryTarget is UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase, NativeStandardYieldTarget {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
     function previewJoinProportional(uint256[] calldata amounts)

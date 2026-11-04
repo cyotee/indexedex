@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -93,7 +94,7 @@ library UniswapV4SeBufferHookContextQuoteLib {
         if (amount == 0) return (0, bytes(""));
         if (exchange == pair) return (amount, bytes(""));
         bytes memory state = snapshot(exchange, pair, holder, unavailableManager);
-        if (state.length == 0) return (IStandardExchangeIn(exchange).previewExchangeIn(IERC20(pair), amount, IERC20(exchange)), state);
+        if (state.length == 0) return (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange))), IERC20(pair), amount, IERC20(exchange)), state);
         (next,, shares,) = Transition(exchange).quoteTransition(state, Transition.Operation.DepositExactIn, amount);
     }
 
@@ -103,7 +104,7 @@ library UniswapV4SeBufferHookContextQuoteLib {
         if (shares == 0) return (0, bytes(""));
         if (exchange == pair) return (shares, bytes(""));
         bytes memory state = snapshot(exchange, pair, holder, unavailableManager);
-        if (state.length == 0) return (IStandardExchangeIn(exchange).previewExchangeIn(IERC20(exchange), shares, IERC20(pair)), state);
+        if (state.length == 0) return (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange))), IERC20(exchange), shares, IERC20(pair)), state);
         (next,, assets,) = Transition(exchange).quoteTransition(state, Transition.Operation.RedeemExactIn, shares);
     }
 
@@ -114,7 +115,9 @@ library UniswapV4SeBufferHookContextQuoteLib {
         if (shares == 0) return 0;
         if (exchange == pair) return shares;
         bytes memory state = snapshot(exchange, pair, address(0), unavailableManager);
-        if (state.length == 0) return IStandardExchangeIn(exchange).previewExchangeIn(IERC20(exchange), shares, IERC20(pair));
+        if (state.length == 0) {(uint256 quotedAmountOut,) = IStandardExchangeIn(exchange).previewExchangeIn(IERC20(exchange), shares, IERC20(pair));
+            return quotedAmountOut;
+        }
         (state,,,) = Transition(exchange).quoteTransition(state, Transition.Operation.ReceiveShares, shares);
         (,, assets,) = Transition(exchange).quoteTransition(state, Transition.Operation.RedeemExactIn, shares);
     }

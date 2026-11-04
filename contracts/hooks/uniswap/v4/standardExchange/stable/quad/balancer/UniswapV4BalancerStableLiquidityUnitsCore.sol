@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib as ClaimLib} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -53,9 +54,8 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         inv = new uint256[](amounts.length);
         for (uint256 i; i < amounts.length; ++i) {
             if (amounts[i] == 0) continue;
-            address se = l.standardExchanges[i];
-            inv[i] = flags[i] || se == address(0) || se == l.tokens[i] ? amounts[i]
-                : IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), amounts[i], IERC20(se));
+            address se = l.standardExchanges[i];inv[i] = flags[i] || se == address(0) || se == l.tokens[i] ? amounts[i]
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(l.tokens[i]), amounts[i], IERC20(se));
         }
     }
 
@@ -109,9 +109,8 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         Repo.Layout storage l = Repo._layout();
         amounts = new uint256[](inventory.length);
         for (uint256 i; i < inventory.length; ++i) {
-            address se = l.standardExchanges[i];
-            amounts[i] = flags[i] || se == address(0) ? inventory[i]
-                : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), inventory[i], IERC20(l.tokens[i]));
+            address se = l.standardExchanges[i];amounts[i] = flags[i] || se == address(0) ? inventory[i]
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), inventory[i], IERC20(l.tokens[i]));
         }
     }
 

@@ -341,10 +341,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
             if (params.wethIsEth && address(params.tokenOut) == address(_weth)) {
                 recipient = address(this);
             }
-            BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);
-            amountCalculated = params.tokenInVault
-                .exchangeIn(
-                    IERC20(address(params.tokenIn)),
+            BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);(amountCalculated,) = params.tokenInVault.exchangeIn(IERC20(address(params.tokenIn)),
                     params.amountGiven,
                     IERC20(address(params.tokenOut)),
                     params.limit,
@@ -397,7 +394,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
 
             BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);
             // console.log("Router: About to call vault.exchangeIn for deposit");
-            amountCalculated = params.tokenInVault
+            (amountCalculated,) = params.tokenInVault
                 .exchangeIn(
                     // IERC20 tokenIn,
                     IERC20(address(params.tokenIn)),
@@ -441,7 +438,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 // For EXACT_IN, limit is minAmountOut.
                 // Set self as recipient so WETH can be unwrapped.
                 BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
-                amountCalculated = params.tokenOutVault
+                (amountCalculated,) = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
                         IERC20(address(params.tokenOutVault)),
@@ -476,7 +473,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 // For EXACT_IN, limit is minAmountOut.
                 // Set sender as recipient.
                 BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
-                amountCalculated = params.tokenOutVault
+                (amountCalculated,) = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
                         IERC20(address(params.tokenOutVault)),
@@ -528,7 +525,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 );
             }
             BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);
-            uint256 actualVaultShares = params.tokenInVault
+            (uint256 actualVaultShares,) = params.tokenInVault
                 .exchangeIn(
                     // IERC20 tokenIn,
                     IERC20(address(params.tokenIn)),
@@ -592,7 +589,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
             // Vault swap must be defined as tokenInVault -> tokenOutVault.
             // amountGiven is denominated as tokenIn.
             // Calculate equivalent tokenInVault amount for amountGiven of tokenIn.
-            uint256 convertedAmountIn = params.tokenInVault
+            (uint256 convertedAmountIn,) = params.tokenInVault
                 .previewExchangeIn(
                     // IERC20 tokenIn,
                     IERC20(address(params.tokenIn)),
@@ -751,7 +748,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
             // _balVault.settle(IERC20(address(params.tokenOutVault)), 0);
             if (params.wethIsEth && address(params.tokenOut) == address(_weth)) {
                 BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
-                amountCalculated = params.tokenOutVault
+                (amountCalculated,) = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
                         IERC20(address(params.tokenOutVault)),
@@ -778,7 +775,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 // Unwrap tokenOut from pool, sending tokenOut to user.
                 // FIX: Pass params.limit (user's minAmountOut in tokenOut) instead of convertedLimit
-                amountCalculated = params.tokenOutVault
+                (amountCalculated,) = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
                         IERC20(address(params.tokenOutVault)),

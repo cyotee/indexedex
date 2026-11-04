@@ -18,8 +18,8 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore} from "contra
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget is UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore, NativeStandardYieldTarget {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)

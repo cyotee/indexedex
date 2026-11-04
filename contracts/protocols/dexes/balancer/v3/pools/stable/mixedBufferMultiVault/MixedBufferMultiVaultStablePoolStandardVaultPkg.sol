@@ -416,8 +416,7 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         private
         view
         returns (bool)
-    {
-        uint256 minted = vault.previewExchangeIn(buffer, amt, share);
+    {(uint256 minted,) = vault.previewExchangeIn(buffer, amt, share);
         return minted > 0;
     }
 

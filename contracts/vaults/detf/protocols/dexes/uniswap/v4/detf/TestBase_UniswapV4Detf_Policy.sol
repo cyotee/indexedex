@@ -76,13 +76,10 @@ abstract contract V4FundedPolicyAssertions is Test {
 
     function _policyPublicTrade(address hook_, IERC20 input_, IERC20 output_, uint256 amount_, address user_)
         internal returns (uint256 paid_)
-    {
-        uint256 quote_ = IStandardExchangeIn(hook_).previewExchangeIn(input_, amount_, output_);
+    {(uint256 quote_,) = IStandardExchangeIn(hook_).previewExchangeIn(input_, amount_, output_);
         uint256[2] memory before_ = [input_.balanceOf(user_), output_.balanceOf(user_)];
         vm.startPrank(user_);
-        input_.approve(hook_, amount_);
-        paid_ = IStandardExchangeIn(hook_)
-            .exchangeIn(input_, amount_, output_, quote_, user_, false, block.timestamp + 1 hours);
+        input_.approve(hook_, amount_);(paid_,) = IStandardExchangeIn(hook_).exchangeIn(input_, amount_, output_, quote_, user_, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(paid_, quote_, "public reserve preview/execution");
         assertEq(before_[0] - input_.balanceOf(user_), amount_, "actual public payment");
@@ -155,9 +152,7 @@ abstract contract V4FundedPolicyAssertions is Test {
         assertGt(funded_, 0, "D22 bond must fund trading inventory");
         IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());
         uint256 rawBefore_ = IERC20(d).balanceOf(trader_);
-        vm.prank(trader_);
-        uint256 out_ = IStandardExchangeIn(address(staking_)).exchangeIn(
-            staking_, funded_, IERC20(d), funded_, trader_, false, block.timestamp
+        vm.prank(trader_);(uint256 out_,) = IStandardExchangeIn(address(staking_)).exchangeIn(staking_, funded_, IERC20(d), funded_, trader_, false, block.timestamp
         );
         assertEq(out_, funded_, "D22 funded trading unstake is one-to-one");
         assertEq(IERC20(d).balanceOf(trader_) - rawBefore_, funded_, "D22 actual trading inventory");
@@ -253,23 +248,18 @@ abstract contract V4FundedPolicyAssertions is Test {
         if (address(in_) != d) _fundedPolicyFundToken(address(in_), _fundedPolicyUser(), amount_);
         vm.prank(_fundedPolicyUser());
         in_.approve(d, amount_);
-        IStandardExchangeIn exchange_ = IStandardExchangeIn(d);
-        uint256 quote_ = exchange_.previewExchangeIn(in_, amount_, out_);
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(d);(uint256 quote_,) = exchange_.previewExchangeIn(in_, amount_, out_);
         assertGt(quote_, 0, "executable standard route");
         bytes32 before_ = _policyFundedState(d, in_, out_);
         vm.prank(_fundedPolicyUser());
-        vm.expectRevert();
-        exchange_.exchangeIn(in_, amount_, out_, quote_ + 1, _fundedPolicyUser(), false, block.timestamp + 1 hours);
+        vm.expectRevert();exchange_.exchangeIn(in_, amount_, out_, quote_ + 1, _fundedPolicyUser(), false, block.timestamp + 1 hours);
         assertEq(_policyFundedState(d, in_, out_), before_, "failed final minimum restores funding and payment");
         uint256 snapshot_ = vm.snapshotState();
         IDETFFundedRewards(d).synchronizeRewards();
-        vm.prank(_fundedPolicyUser());
-        uint256 explicit_ =
-            exchange_.exchangeIn(in_, amount_, out_, quote_, _fundedPolicyUser(), false, block.timestamp + 1 hours);
+        vm.prank(_fundedPolicyUser());(uint256 explicit_,) = exchange_.exchangeIn(in_, amount_, out_, quote_, _fundedPolicyUser(), false, block.timestamp + 1 hours);
         bytes32 after_ = _policyFundedState(d, in_, out_);
         assertTrue(vm.revertToStateAndDelete(snapshot_));
-        vm.prank(_fundedPolicyUser());
-        paid_ = exchange_.exchangeIn(in_, amount_, out_, quote_, _fundedPolicyUser(), false, block.timestamp + 1 hours);
+        vm.prank(_fundedPolicyUser());(paid_,) = exchange_.exchangeIn(in_, amount_, out_, quote_, _fundedPolicyUser(), false, block.timestamp + 1 hours);
         assertEq(paid_, quote_, "projected preview equals actual payout");
         assertEq(paid_, explicit_, "same payout after explicit settlement");
         assertEq(_policyFundedState(d, in_, out_), after_, "same funded state and token deltas");
@@ -678,15 +668,13 @@ abstract contract TestBase_UniswapV4Detf_Policy is TestBase_UniswapV4Detf, V4Fun
             _fundToken(toks_[i], detfUser, amt * 4);
         }
         vm.startPrank(detfUser);
-        tok_.approve(d, type(uint256).max);
-        userDetf = IStandardExchangeIn(d).exchangeIn(tok_, amt, IERC20(d), 0, detfUser, false, _deadline());
+        tok_.approve(d, type(uint256).max);(userDetf,) = IStandardExchangeIn(d).exchangeIn(tok_, amt, IERC20(d), 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 
     function _burnOn(address d, uint256 detfIn, IERC20 tokenOut) internal virtual returns (uint256 amountOut) {
         vm.startPrank(detfUser);
-        IERC20(d).approve(d, type(uint256).max);
-        amountOut = IStandardExchangeIn(d).exchangeIn(IERC20(d), detfIn, tokenOut, 0, detfUser, false, _deadline());
+        IERC20(d).approve(d, type(uint256).max);(amountOut,) = IStandardExchangeIn(d).exchangeIn(IERC20(d), detfIn, tokenOut, 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 
@@ -893,16 +881,13 @@ abstract contract TestBase_UniswapV4Detf_Policy is TestBase_UniswapV4Detf, V4Fun
     }
 
     function _dumpDetfForPair(address hook_, address d, address pair_, uint256 chunk_) internal {
-        while (chunk_ >= 1e9) {
-            try IStandardExchangeIn(hook_).previewExchangeIn(IERC20(d), chunk_, IERC20(pair_))
-                returns (uint256 quote_)
+        while (chunk_ >= 1e9) {try IStandardExchangeIn(hook_).previewExchangeIn(IERC20(d), chunk_, IERC20(pair_))
+                returns (uint256 quote_, uint256)
             {
                 if (quote_ == 0) {
                     chunk_ /= 2;
                     continue;
-                }
-                try IStandardExchangeIn(hook_).exchangeIn(
-                    IERC20(d), chunk_, IERC20(pair_), 0, detfUser, false, _deadline()
+                }try IStandardExchangeIn(hook_).exchangeIn(IERC20(d), chunk_, IERC20(pair_), 0, detfUser, false, _deadline()
                 ) {
                     return;
                 } catch {
@@ -927,8 +912,7 @@ abstract contract TestBase_UniswapV4Detf_Policy is TestBase_UniswapV4Detf, V4Fun
         delete _policyInitialBond[d];
         IStakedDETF staking_ = IStakedDETF(IUniswapV4Detf(d).rebasingClaimToken());
         uint256 amount_ = principal_ + rewards_;
-        vm.prank(detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d), amount_, detfUser, false, _deadline());
+        vm.prank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d), amount_, detfUser, false, _deadline());
         assertGe(IERC20(d).balanceOf(detfUser), amt, "only actually purchased DETF can fund fixture");
     }
 

@@ -623,9 +623,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_FundedBalancerDETF
     {
         uint256 seShares_ = _fundSeSharesLeg(0, to, lpAmount);
         vm.startPrank(to);
-        seShares[0].approve(nested_, seShares_);
-        nestedShares_ = IStandardExchangeIn(nested_)
-            .exchangeIn(seShares[0], seShares_, IERC20(nested_), 0, to, false, block.timestamp + 1 hours);
+        seShares[0].approve(nested_, seShares_);(nestedShares_,) = IStandardExchangeIn(nested_).exchangeIn(seShares[0], seShares_, IERC20(nested_), 0, to, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -688,13 +686,9 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_FundedBalancerDETF
         returns (uint256 out_)
     {
         uint256 shares_ = _fundSharesForInstanceLeg(instance_, legIndex_, user, lpAmount);
-        address shareToken_ = IMultiVaultWeightedDetfInfo(instance_).vaultShares()[legIndex_];
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(IERC20(shareToken_), shares_, IERC20(instance_));
+        address shareToken_ = IMultiVaultWeightedDetfInfo(instance_).vaultShares()[legIndex_];(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(IERC20(shareToken_), shares_, IERC20(instance_));
         vm.startPrank(user);
-        IERC20(shareToken_).approve(instance_, shares_);
-        out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(shareToken_), shares_, IERC20(instance_), 0, user, false, block.timestamp + 1 hours);
+        IERC20(shareToken_).approve(instance_, shares_);(out_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(shareToken_), shares_, IERC20(instance_), 0, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(preview_, out_, "mint preview==exec");
     }
@@ -703,13 +697,9 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_FundedBalancerDETF
         internal
         returns (uint256 out_)
     {
-        address shareToken_ = IMultiVaultWeightedDetfInfo(instance_).vaultShares()[legIndex_];
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(IERC20(instance_), detfAmount_, IERC20(shareToken_));
+        address shareToken_ = IMultiVaultWeightedDetfInfo(instance_).vaultShares()[legIndex_];(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(IERC20(instance_), detfAmount_, IERC20(shareToken_));
         vm.startPrank(user);
-        IERC20(instance_).approve(instance_, detfAmount_);
-        out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), detfAmount_, IERC20(shareToken_), 0, user, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, detfAmount_);(out_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), detfAmount_, IERC20(shareToken_), 0, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertApproxEqAbs(preview_, out_, 10, "burn preview~=exec");
     }

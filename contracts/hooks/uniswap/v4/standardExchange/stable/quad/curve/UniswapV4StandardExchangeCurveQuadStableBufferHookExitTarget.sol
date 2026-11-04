@@ -349,9 +349,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
                 edgeOut[i] = invOut[i];
             } else if (receiveSeShare[i]) {
                 edgeOut[i] = invOut[i];
-            } else {
-                edgeOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
+            } else {(edgeOut[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut[i], IERC20(l.tokens[i])
                 );
             }
         }

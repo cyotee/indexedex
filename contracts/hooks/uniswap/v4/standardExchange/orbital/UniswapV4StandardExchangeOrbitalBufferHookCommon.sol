@@ -634,13 +634,10 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         }
         if (se == token) return amount;
         uint256 minOut;
-        if (quoteMin_) {
-            uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
+        if (quoteMin_) {(uint256 m,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
             minOut = m;
         }
-        IERC20(token).forceApprove(se, amount);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
+        IERC20(token).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
         IERC20(token).forceApprove(se, 0);
     }
@@ -691,8 +688,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     function _unwrapSeShares(address token, uint256 seIn) internal returns (uint256 pairOut) {
         if (seIn == 0) return 0;
         address se = _seOf(token);
-        if (se == token) return seIn;
-        uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
+        if (se == token) return seIn;(uint256 m,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
         return _unwrapSeShares(token, seIn, m > 0 ? m - 1 : 0);
     }
 
@@ -700,9 +696,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (seIn == 0) return 0;
         address se = _seOf(token);
         if (se == token) return seIn;
-        IERC20(se).forceApprove(se, seIn);
-        pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
+        IERC20(se).forceApprove(se, seIn);(pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
         );
         IERC20(se).forceApprove(se, 0);
     }

@@ -46,9 +46,7 @@ abstract contract TestBase_ERC4626StandardExchange_Decimals is TestBase_ERC4626S
     }
 
     function _seedLiquidity(uint256 underlyingIn) internal {
-        vm.prank(user);
-        seIn.exchangeIn(
-            IERC20(address(underlying)),
+        vm.prank(user);seIn.exchangeIn(IERC20(address(underlying)),
             underlyingIn,
             IERC20(se),
             0,

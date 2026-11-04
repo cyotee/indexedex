@@ -138,9 +138,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook_Decimals is
         pairToken.mint(user, _uPair(1_000_000));
         vm.startPrank(user);
         pairToken.approve(se, type(uint256).max);
-        pairToken.approve(address(swapRouter), type(uint256).max);
-        IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(address(swapRouter), type(uint256).max);IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             _uPair(200),
             IERC20(se),
             0,
@@ -150,9 +148,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook_Decimals is
         );
         // Crane ERC4626 offset-10: 6-dec pair * 1e10 can yield < 5e18 SE shares. Top up so
         // listed unwrap tests can spend 18-dec wad SE amounts (vaultShare stays 18).
-        if (IERC20(se).balanceOf(user) < 20 ether) {
-            IStandardExchangeIn(se).exchangeIn(
-                IERC20(address(pairToken)),
+        if (IERC20(se).balanceOf(user) < 20 ether) {IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
                 _uPair(10_000),
                 IERC20(se),
                 0,

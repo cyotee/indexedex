@@ -153,9 +153,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
     function _mintSeSharesToUser(uint256 pairAmount) internal returns (uint256 seShares) {
         pairToken.mint(user, pairAmount);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-        seShares = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(se, type(uint256).max);(seShares,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             pairAmount,
             IERC20(se),
             0,
@@ -200,11 +198,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
     function _assertSePreviewEqualsExec(uint256 amountIn) internal {
         pairToken.mint(user, amountIn);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-        uint256 previewIn =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(se));
-        uint256 seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(se, type(uint256).max);(uint256 previewIn,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(se));(uint256 seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             amountIn,
             IERC20(se),
             previewIn,
@@ -214,11 +208,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         );
         assertEq(seOut, previewIn, "SE pair->shares preview!=exec");
 
-        IERC20(se).approve(se, type(uint256).max);
-        uint256 previewOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seOut, IERC20(address(pairToken)));
-        uint256 pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seOut, IERC20(address(pairToken)), previewOut, user, false, block.timestamp
+        IERC20(se).approve(se, type(uint256).max);(uint256 previewOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seOut, IERC20(address(pairToken)));(uint256 pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seOut, IERC20(address(pairToken)), previewOut, user, false, block.timestamp
         );
         assertEq(pairOut, previewOut, "SE shares->pair preview!=exec");
         vm.stopPrank();

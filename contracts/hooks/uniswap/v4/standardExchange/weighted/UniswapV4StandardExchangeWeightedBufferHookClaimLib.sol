@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
@@ -67,8 +68,7 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
             return Math.scaleTo(units, l.ratedScales[i]);
         }
         address rp = l.rateProviders[i];
-        if (rp == address(0)) revert RateProviderRequired();
-        uint256 shares = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
+        if (rp == address(0)) revert RateProviderRequired();(uint256 shares,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
         uint256 pairUnits = Math.ratedPairUnits(shares, _readRate(rp), l.invScales[i], l.ratedScales[i]);
         return Math.scaleTo(pairUnits, l.ratedScales[i]);
@@ -152,8 +152,7 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
                 uint256 rate = ContextQuote.rate(se, l.tokens[j], l.rateProviders[j], manager);
                 sharesOut = FullMath.mulDiv(FullMath.mulDiv(budget, 1e18, rate), 1e18, l.invScales[j]);
             }
-            if (sharesOut >= _nativeAt(j)) revert Math.WouldZeroReserve();
-            if (manager == address(0)) amountOut = sharesOut == 0 ? 0 : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(l.tokens[j]));
+            if (sharesOut >= _nativeAt(j)) revert Math.WouldZeroReserve();if (manager == address(0)) amountOut = sharesOut == 0 ? 0 : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), sharesOut, IERC20(l.tokens[j]));
             else (amountOut,) = ContextQuote.redeem(se, l.tokens[j], address(this), sharesOut, manager);
         } else {
             amountOut = Math.descale(budget, l.ratedScales[j]);
@@ -292,8 +291,8 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
     /// @dev Live claim of SE shares → pair token units (fee-inclusive preview).
     function seClaimOf(address se, address pairToken, uint256 seAmount) external view returns (uint256) {
         if (seAmount == 0 || se == address(0)) return 0;
-        if (se == pairToken) return seAmount;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
+        if (se == pairToken) return seAmount;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
+        return quotedAmountOut;
     }
 
     /// @dev Preview shares minted when buffering `amountInRaw` pair tokens into SE.
@@ -303,8 +302,8 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         returns (uint256 sharesOut)
     {
         if (amountInRaw == 0 || se == address(0)) return 0;
-        if (se == pairToken) return amountInRaw;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        if (se == pairToken) return amountInRaw;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        return quotedAmountOut;
     }
 
     /// @dev Preview pair tokens from unwrapping `seAmount` shares.
@@ -314,8 +313,8 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         returns (uint256 amountOut)
     {
         if (seAmount == 0 || se == address(0)) return 0;
-        if (se == pairToken) return seAmount;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
+        if (se == pairToken) return seAmount;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
+        return quotedAmountOut;
     }
 
     /// @notice Shares needed so unwrap delivers at least `amountOutNative` pair tokens.
@@ -344,14 +343,10 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
     /// @return sharesOut SE shares received by hook (balance delta).
     function buffer(address se, address pairToken, uint256 amountInRaw) public returns (uint256 sharesOut) {
         if (amountInRaw == 0) return 0;
-        if (se == pairToken) return amountInRaw;
-        uint256 minOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        if (se == pairToken) return amountInRaw;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
         if (minOut == 0) revert BufferFailed();
         IERC20(pairToken).forceApprove(se, amountInRaw);
-        uint256 balBefore = IERC20(se).balanceOf(address(this));
-        sharesOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(pairToken),
+        uint256 balBefore = IERC20(se).balanceOf(address(this));(sharesOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(pairToken),
             amountInRaw,
             IERC20(se),
             minOut,
@@ -375,13 +370,9 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         if (se == pairToken) {
             if (to != address(this)) IERC20(se).safeTransfer(to, seAmount);
             return seAmount;
-        }
-        uint256 minOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
+        }(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
         if (minOut == 0) revert UnwrapFailed();
-        IERC20(se).forceApprove(se, seAmount);
-        amountOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seAmount, IERC20(pairToken), minOut, to, false, block.timestamp
+        IERC20(se).forceApprove(se, seAmount);(amountOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seAmount, IERC20(pairToken), minOut, to, false, block.timestamp
         );
         IERC20(se).forceApprove(se, 0);
         if (amountOut < minOut) revert UnwrapFailed();
@@ -408,7 +399,7 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         if (spent > seIn || received < amountOut) revert UnwrapFailed();
         if (to != address(this)) IERC20(pairToken).safeTransfer(to, amountOut);
         uint256 surplus = received - amountOut;
-        if (surplus != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), surplus, IERC20(se)) != 0) {
+        if (surplus != 0 && ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(pairToken), surplus, IERC20(se)) != 0) {
             buffer(se, pairToken, surplus);
         }
         return spent;
@@ -421,16 +412,11 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         returns (uint256)
     {
         if (amountInRaw == 0 || se == address(0)) return 0;
-        if (se == pairToken) return amountInRaw;
-        uint256 sharesOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        if (se == pairToken) return amountInRaw;(uint256 sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
         if (sharesOut == 0) return 0;
-        uint256 seBalBefore = IERC20(se).balanceOf(hook);
-        uint256 claimBefore = seBalBefore == 0
+        uint256 seBalBefore = IERC20(se).balanceOf(hook);uint256 claimBefore = seBalBefore == 0
             ? 0
-            : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBalBefore, IERC20(pairToken));
-        uint256 claimAfter =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBalBefore + sharesOut, IERC20(pairToken));
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), seBalBefore, IERC20(pairToken));(uint256 claimAfter,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBalBefore + sharesOut, IERC20(pairToken));
         return claimAfter > claimBefore ? claimAfter - claimBefore : 0;
     }
 }

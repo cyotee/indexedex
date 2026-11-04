@@ -8,12 +8,12 @@ import {
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol";
 
 contract UniswapV3FullSpreadStandardExchangeVaultInMultiQueryTarget is UniswapV3FullSpreadStandardExchangeVaultInBase {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
     function previewExchangeInManyToOne(address[] calldata tokenIn, uint256[] calldata amountsIn, IERC20 tokenOut)

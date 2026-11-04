@@ -328,8 +328,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTar
             // Invert buffer preview: pair such that SE shares ≈ invNeeded (closed-form, no binary search).
             address se = l.standardExchanges[idx];
             address t = l.tokens[idx];
-            amountIn = invNeeded;
-            uint256 got = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
+            amountIn = invNeeded;(uint256 got,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
             if (got < invNeeded && got > 0) {
                 amountIn = (invNeeded * amountIn + got - 1) / got;
             }
@@ -783,9 +782,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTar
                 address se = l.standardExchanges[i];
                 if (se == address(0)) {
                     invDeltas[i] = amounts[i];
-                } else {
-                    invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                        IERC20(l.tokens[i]), amounts[i], IERC20(se)
+                } else {(invDeltas[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), amounts[i], IERC20(se)
                     );
                 }
             }
@@ -926,9 +923,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTar
                 edgeOut[i] = invOut[i];
             } else if (receiveSeShare[i]) {
                 edgeOut[i] = invOut[i];
-            } else {
-                edgeOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
+            } else {(edgeOut[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut[i], IERC20(l.tokens[i])
                 );
             }
         }
@@ -1126,9 +1121,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTar
         if (receiveSeShare || Repo._layout().standardExchanges[idx] == address(0)) {
             amountOut = invOut;
         } else {
-            address se = Repo._layout().standardExchanges[idx];
-            amountOut = IStandardExchangeIn(se).previewExchangeIn(
-                IERC20(se), invOut, IERC20(tokenOut)
+            address se = Repo._layout().standardExchanges[idx];(amountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut, IERC20(tokenOut)
             );
         }
     }

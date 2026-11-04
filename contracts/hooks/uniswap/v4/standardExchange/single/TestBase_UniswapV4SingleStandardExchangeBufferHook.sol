@@ -136,10 +136,8 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
         pairToken.mint(user, 1_000_000 ether);
         vm.startPrank(user);
         pairToken.approve(se, type(uint256).max);
-        pairToken.approve(address(swapRouter), type(uint256).max);
-        // Seed SE shares for unwrap routes
-        IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(address(swapRouter), type(uint256).max);// Seed SE shares for unwrap routes
+        IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             200 ether,
             IERC20(se),
             0,
@@ -187,13 +185,8 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
     function _assertSePreviewEqualsExec(uint256 amountIn) internal {
         pairToken.mint(user, amountIn * 4);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-
-        // exact-in wrap
-        uint256 previewWrap =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(se));
-        uint256 seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)), amountIn, IERC20(se), previewWrap, user, false, block.timestamp
+        pairToken.approve(se, type(uint256).max);// exact-in wrap
+        (uint256 previewWrap,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(se));(uint256 seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)), amountIn, IERC20(se), previewWrap, user, false, block.timestamp
         );
         assertEq(seOut, previewWrap, "SE wrap exact-in preview!=exec");
 
@@ -208,11 +201,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
 
         // exact-in unwrap
         IERC20(se).approve(se, type(uint256).max);
-        uint256 seBal = seOut;
-        uint256 previewPair =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(address(pairToken)));
-        uint256 pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seBal, IERC20(address(pairToken)), previewPair, user, false, block.timestamp
+        uint256 seBal = seOut;(uint256 previewPair,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(address(pairToken)));(uint256 pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seBal, IERC20(address(pairToken)), previewPair, user, false, block.timestamp
         );
         assertEq(pairOut, previewPair, "SE unwrap exact-in preview!=exec");
 

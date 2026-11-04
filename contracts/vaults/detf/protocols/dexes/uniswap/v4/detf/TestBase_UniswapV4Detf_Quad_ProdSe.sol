@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -379,8 +380,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
             if (err.length >= 4) emit log_named_bytes32("R19 join revert", bytes32(err));
         }
         address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(token_);
-        if (se_ != address(0)) {
-            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w) {
+        if (se_ != address(0)) {try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w, uint256) {
                 emit log_named_uint("R19 sePreview wrap", w);
             } catch (bytes memory err2) {
                 if (err2.length >= 4) emit log_named_bytes32("R19 wrap revert", bytes32(err2));
@@ -404,12 +404,12 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
     function _assertClaimAfterMatureClose() internal {
         (uint256 bondId,) = _firstBond(100 ether);
         vm.startPrank(detfUser);
-        uint256 minted = detfExchangeIn.exchangeIn{gas: 30_000_000}(
-            IERC20(mintToken), 10 ether, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        (uint256 minted,) = detfExchangeIn.exchangeIn{gas: 30_000_000}(
+            IERC20(mintToken), 10 ether, IERC20(detf), 0, detfUser, false, vm.getBlockTimestamp() + 1 hours
         );
         IERC20(detf).approve(detf, minted / 4);
         detfExchangeIn.exchangeIn{gas: 30_000_000}(
-            IERC20(detf), minted / 4, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours
+            IERC20(detf), minted / 4, IERC20(mintToken), 0, detfUser, false, vm.getBlockTimestamp() + 1 hours
         );
         vm.stopPrank();
         _assertFundedMatureClaim(detf, bondId, detfUser);
@@ -417,13 +417,12 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
         address feeTo_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
         uint256 feeBefore_ = staking_.balanceOf(feeTo_);
         uint256 lpBefore_ = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
-        uint256 amount_ = IERC20(detf).balanceOf(detfUser) / 3;
-        uint256 quote_ = staking_.previewExchangeIn(IERC20(detf), amount_, IERC20(address(staking_)));
+        uint256 amount_ = IERC20(detf).balanceOf(detfUser) / 3;(uint256 quote_,) = staking_.previewExchangeIn(IERC20(detf), amount_, IERC20(address(staking_)));
         assertEq(quote_, amount_, "funded stake quote after mature claim");
         vm.startPrank(detfUser);
         IERC20(detf).approve(address(staking_), amount_);
-        uint256 received_ = staking_.exchangeIn{gas: 30_000_000}(
-            IERC20(detf), amount_, IERC20(address(staking_)), quote_, detfUser, false, block.timestamp + 1 hours
+        (uint256 received_,) = staking_.exchangeIn{gas: 30_000_000}(
+            IERC20(detf), amount_, IERC20(address(staking_)), quote_, detfUser, false, vm.getBlockTimestamp() + 1 hours
         );
         vm.stopPrank();
         assertEq(received_, quote_, "stake preview equals execution");

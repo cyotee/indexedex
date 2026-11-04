@@ -29,13 +29,11 @@ abstract contract TestBase_ComposedFundedRoutes is TestBase_FundedComposedDETF, 
 
     function _buyRaw(address who_, uint256 bpt_) internal returns (uint256 out_) {
         _live();
-        IERC20 input_ = _fundBpt(who_, bpt_);
-        uint256 quote_ = composedIn.previewExchangeIn(input_, bpt_, IERC20(composedDetf));
+        IERC20 input_ = _fundBpt(who_, bpt_);(uint256 quote_,) = composedIn.previewExchangeIn(input_, bpt_, IERC20(composedDetf));
         assertGt(quote_, 0, "positive funded reserve quote");
         uint256 before_ = IERC20(composedDetf).balanceOf(who_);
         vm.startPrank(who_);
-        input_.approve(composedDetf, bpt_);
-        out_ = composedIn.exchangeIn(input_, bpt_, IERC20(composedDetf), quote_, who_, false, block.timestamp);
+        input_.approve(composedDetf, bpt_);(out_,) = composedIn.exchangeIn(input_, bpt_, IERC20(composedDetf), quote_, who_, false, block.timestamp);
         vm.stopPrank();
         assertEq(out_, quote_);
         assertEq(IERC20(composedDetf).balanceOf(who_), before_ + out_);

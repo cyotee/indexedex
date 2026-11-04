@@ -19,8 +19,8 @@ import {
 
 /// @notice Exact-output previews and native SY adapters using the installed standard routes.
 contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeQuoteTarget, AerodromeStandardExchangeInQuoteBase, ConstantProductStandardYieldTarget, AerodromeStandardExchangeOutQueryTarget, IFacet {
-    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
-        return _previewExchangeIn(in_, amount_, out_);
+function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(in_, amount_, out_), 0);
     }
     function facetName() public pure returns (string memory name) {
         return type(AerodromeStandardExchangeOutQueryFacet).name;

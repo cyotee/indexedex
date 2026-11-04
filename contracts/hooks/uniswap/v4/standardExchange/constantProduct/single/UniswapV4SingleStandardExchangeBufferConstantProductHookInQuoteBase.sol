@@ -217,8 +217,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
     function _singleRawDelta(bool for0, uint256 used0, uint256 used1) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         uint256 used = for0 ? used0 : used1;
-        if ((for0 ? l.currency0 : l.currency1) == l.rawToken || l.pairToken == l.standardExchange || used == 0) return used;
-        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), used, IERC20(l.standardExchange));
+        if ((for0 ? l.currency0 : l.currency1) == l.rawToken || l.pairToken == l.standardExchange || used == 0) return used;(uint256 quotedAmountOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), used, IERC20(l.standardExchange));
+        return quotedAmountOut;
     }
     function _singleDecimals(address token) internal view returns (uint8 d) {
         return ClaimLib.singleDecimals(token);

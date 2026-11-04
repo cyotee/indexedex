@@ -92,8 +92,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
     function _previewWrap(uint256 pairIn) internal view returns (uint256 seOut) {
         _requireNonZero(pairIn);
         address se = _se();
-        address pair = _pair();
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), pairIn, IERC20(se));
+        address pair = _pair();(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), pairIn, IERC20(se));
+        return quotedAmountOut;
     }
 
     function _previewWrapExactOut(uint256 seOut) internal view returns (uint256 pairIn) {
@@ -107,8 +107,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
     function _previewUnwrap(uint256 seIn) internal view returns (uint256 pairOut) {
         _requireNonZero(seIn);
         address se = _se();
-        address pair = _pair();
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(pair));
+        address pair = _pair();(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(pair));
+        return quotedAmountOut;
     }
 
     function _previewUnwrapExactOut(uint256 pairOut) internal view returns (uint256 seIn) {
@@ -130,10 +130,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         uint256 minOut,
         bool pretransferred
     ) internal returns (uint256 amountOut) {
-        address se = _se();
-        return IStandardExchangeIn(se).exchangeIn(
-            tokenIn, amountIn, tokenOut, minOut, address(this), pretransferred, block.timestamp
+        address se = _se();(uint256 quotedAmountOut,) = IStandardExchangeIn(se).exchangeIn(tokenIn, amountIn, tokenOut, minOut, address(this), pretransferred, block.timestamp
         );
+        return quotedAmountOut;
     }
 
     function _seExchangeOut(

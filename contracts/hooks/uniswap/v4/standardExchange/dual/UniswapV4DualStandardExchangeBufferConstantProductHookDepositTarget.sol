@@ -424,9 +424,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
         if (isSe) {
             (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
             if (supported) return projected;
-            address pair = l.legs.pairOfStandardExchange[tokenIn];
-            uint256 pairOut = IStandardExchangeIn(tokenIn).previewExchangeIn(
-                IERC20(tokenIn), amountIn, IERC20(pair)
+            address pair = l.legs.pairOfStandardExchange[tokenIn];(uint256 pairOut,) = IStandardExchangeIn(tokenIn).previewExchangeIn(IERC20(tokenIn), amountIn, IERC20(pair)
             );
             if (pairOut == 0) return 0;
             return _previewDepositSingle(pair, pairOut);

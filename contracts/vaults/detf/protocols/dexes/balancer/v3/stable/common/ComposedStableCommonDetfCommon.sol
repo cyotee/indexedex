@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -179,9 +180,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         uint256 deadline_
     ) internal returns (uint256 amountOut_) {
         if (amountIn_ == 0) return 0;
-        tokenIn_.safeTransfer(address(host_), amountIn_);
-        amountOut_ = host_.exchangeIn(
-            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        tokenIn_.safeTransfer(address(host_), amountIn_);(amountOut_,) = host_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
         );
     }
 
@@ -203,9 +202,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         uint256 deadline_
     ) internal returns (uint256 poolBptOut_) {
         // Nested fund: push + pretransferred=true (L-DETF-PUSH-NESTED).
-        if (amountIn_ > 0) tokenIn_.safeTransfer(address(route_.underlyingVault), amountIn_);
-        uint256 vaultTokenOut = route_.underlyingVault.exchangeIn(
-            tokenIn_,
+        if (amountIn_ > 0) tokenIn_.safeTransfer(address(route_.underlyingVault), amountIn_);(uint256 vaultTokenOut,) = route_.underlyingVault.exchangeIn(tokenIn_,
             amountIn_,
             route_.vaultToken,
             0,
@@ -214,9 +211,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
             deadline_
         );
 
-        if (vaultTokenOut > 0) route_.vaultToken.safeTransfer(address(selection_.poolRouter), vaultTokenOut);
-        poolBptOut_ = selection_.poolRouter.exchangeIn(
-            route_.vaultToken,
+        if (vaultTokenOut > 0) route_.vaultToken.safeTransfer(address(selection_.poolRouter), vaultTokenOut);(poolBptOut_,) = selection_.poolRouter.exchangeIn(route_.vaultToken,
             vaultTokenOut,
             selection_.poolBptToken,
             0,
@@ -235,9 +230,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
     ) internal returns (uint256 vaultTokenAmountOut_) {
         IStandardExchangeIn poolExitPricer = _selectedPoolExitPricerIn(exitFromStablePool_);
 
-        if (poolBptAmountOut_ > 0) poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
-        vaultTokenAmountOut_ = poolExitPricer.exchangeIn(
-            poolBptToken_,
+        if (poolBptAmountOut_ > 0) poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);(vaultTokenAmountOut_,) = poolExitPricer.exchangeIn(poolBptToken_,
             poolBptAmountOut_,
             vaultToken_,
             0,
@@ -281,9 +274,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
             return vaultTokenAmountOut_;
         }
 
-        if (vaultTokenAmountOut_ > 0) route_.vaultToken.safeTransfer(address(route_.underlyingVault), vaultTokenAmountOut_);
-        amountOut_ = route_.underlyingVault.exchangeIn(
-            route_.vaultToken,
+        if (vaultTokenAmountOut_ > 0) route_.vaultToken.safeTransfer(address(route_.underlyingVault), vaultTokenAmountOut_);(amountOut_,) = route_.underlyingVault.exchangeIn(route_.vaultToken,
             vaultTokenAmountOut_,
             tokenOut_,
             0,
@@ -339,8 +330,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
     {
         if (router_ == address(0)) {
             return (false, 0);
-        }
-        amountOut_ = IStandardExchangeIn(router_).previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+        }(amountOut_,) = IStandardExchangeIn(router_).previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
         return (true, amountOut_);
     }
 
@@ -628,8 +618,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
     function _poolValue(bool stable_, uint256 amount_) internal view returns (uint256) {
         if (amount_ == 0) return 0;
         Repo.Storage storage s_ = Repo._layoutStruct();
-        IERC20 bpt_ = stable_ ? s_._stablePoolBpt() : s_._commonPoolBpt();
-        uint256 raw_ = _selectedPoolExitPricerIn(stable_).previewExchangeIn(bpt_, amount_, s_.rateAsset);
+        IERC20 bpt_ = stable_ ? s_._stablePoolBpt() : s_._commonPoolBpt();(uint256 raw_,) = _selectedPoolExitPricerIn(stable_).previewExchangeIn(bpt_, amount_, s_.rateAsset);
         return Math.mulDiv(raw_, ONE_WAD, 10 ** IERC20Metadata(address(s_.rateAsset)).decimals());
     }
     function _syntheticPriceForSupply(uint256 supply_) internal view returns (uint256) {
@@ -713,9 +702,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
             return (selection_, amount_, amount_);
         }
         selection_ = _selectRoutingPath(in_);
-        Repo.RouteConfig storage route_ = s_.routes[selection_.routeIndex];
-        vault_ = route_.underlyingVault.previewExchangeIn(in_, amount_, route_.vaultToken);
-        pool_ = selection_.poolRouter.previewExchangeIn(route_.vaultToken, vault_, selection_.poolBptToken);
+        Repo.RouteConfig storage route_ = s_.routes[selection_.routeIndex];(vault_,) = route_.underlyingVault.previewExchangeIn(in_, amount_, route_.vaultToken);(pool_,) = selection_.poolRouter.previewExchangeIn(route_.vaultToken, vault_, selection_.poolBptToken);
     }
     function _collectRoutedBpt(IERC20 in_, uint256 amount_, bool prepaid_, uint256 deadline_)
         internal returns (RoutedPoolSelection memory selection_, uint256 bpt_)
@@ -829,16 +816,11 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (address(out_) == address(s_.stablePool)) return stable_;
         if (address(out_) == address(s_.commonPool)) return common_;
-        if (out_ == s_.rateAsset) {
-            if (stable_ != 0) amount_ += s_.stablePoolExitPricer.previewExchangeIn(s_._stablePoolBpt(), stable_, out_);
-            if (common_ != 0) amount_ += s_.commonPoolExitPricer.previewExchangeIn(s_._commonPoolBpt(), common_, out_);
+        if (out_ == s_.rateAsset) {if (stable_ != 0) amount_ += ExchangeInAmount.previewOut(IStandardExchangeIn(address(s_.stablePoolExitPricer)), s_._stablePoolBpt(), stable_, out_);if (common_ != 0) amount_ += ExchangeInAmount.previewOut(IStandardExchangeIn(address(s_.commonPoolExitPricer)), s_._commonPoolBpt(), common_, out_);
             return amount_;
         }
         Repo.RouteConfig storage route_ = s_.routes[_routeForOutput(out_)];
-        uint256 shares_;
-        if (stable_ != 0) shares_ += s_.stablePoolExitPricer.previewExchangeIn(s_._stablePoolBpt(), stable_, route_.vaultToken);
-        if (common_ != 0) shares_ += s_.commonPoolExitPricer.previewExchangeIn(s_._commonPoolBpt(), common_, route_.vaultToken);
-        return address(out_) == address(route_.vaultToken) ? shares_ : route_.underlyingVault.previewExchangeIn(route_.vaultToken, shares_, out_);
+        uint256 shares_;if (stable_ != 0) shares_ += ExchangeInAmount.previewOut(IStandardExchangeIn(address(s_.stablePoolExitPricer)), s_._stablePoolBpt(), stable_, route_.vaultToken);if (common_ != 0) shares_ += ExchangeInAmount.previewOut(IStandardExchangeIn(address(s_.commonPoolExitPricer)), s_._commonPoolBpt(), common_, route_.vaultToken);return address(out_) == address(route_.vaultToken) ? shares_ : ExchangeInAmount.previewOut(IStandardExchangeIn(address(route_.underlyingVault)), route_.vaultToken, shares_, out_);
     }
     function _consolidatePoolBptsToTokenOut(uint256 stable_, uint256 common_, IERC20 out_, address to_, uint256 deadline_) internal returns (uint256 amount_) {
         Repo.Storage storage s_ = Repo._layoutStruct();
@@ -889,9 +871,8 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         p_.routeIndex = type(uint256).max;
         p_.exitFromStablePool = _directExitStable(out_);
         p_.poolBptToken = p_.exitFromStablePool ? Repo._stablePoolBpt() : Repo._commonPoolBpt();
-        p_.poolBptAmountOut = _quoteReserveSwap(amount_, p_.exitFromStablePool, false);
-        p_.tokenOutAmountOut = out_ == p_.poolBptToken ? p_.poolBptAmountOut
-            : _selectedPoolExitPricerIn(p_.exitFromStablePool).previewExchangeIn(p_.poolBptToken, p_.poolBptAmountOut, out_);
+        p_.poolBptAmountOut = _quoteReserveSwap(amount_, p_.exitFromStablePool, false);p_.tokenOutAmountOut = out_ == p_.poolBptToken ? p_.poolBptAmountOut
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(_selectedPoolExitPricerIn(p_.exitFromStablePool))), p_.poolBptToken, p_.poolBptAmountOut, out_);
     }
     function _selectExactOutExit(IERC20 out_, uint256 amount_) internal view returns (UnwindPreviewSelection memory p_) {
         if (!_directPoolExit(out_)) return _previewMostLiquidUnwindSelection(out_, amount_);

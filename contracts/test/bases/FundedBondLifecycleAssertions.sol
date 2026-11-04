@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -89,11 +91,9 @@ abstract contract FundedBondLifecycleAssertions is Test {
         uint256 backing_ = IERC20(instance_).balanceOf(address(staking_));
         uint256 lp_ = nft_.lpToken().balanceOf(address(nft_));
         assertGt(amount_, 0, "nonzero funded redemption");
-        assertEq(staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_)), amount_);
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), amount_, IERC20(instance_)), amount_);
         vm.prank(holder_);
-        assertEq(
-            staking_.exchangeIn(
-                IERC20(address(staking_)), amount_, IERC20(instance_), amount_, holder_, false, block.timestamp
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), amount_, IERC20(instance_), amount_, holder_, false, block.timestamp
             ),
             amount_
         );
@@ -115,8 +115,7 @@ abstract contract FundedBondLifecycleAssertions is Test {
         uint256 raw_ = IERC20(instance_).balanceOf(holder_);
         uint256 backing_ = IERC20(instance_).balanceOf(address(staking_));
         vm.prank(holder_);
-        vm.expectRevert();
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, output_, minimum_, holder_, false, block.timestamp);
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), amount_, output_, minimum_, holder_, false, block.timestamp);
         assertEq(staking_.gonsOf(holder_), gons_, "failed unstake preserves exact entitlement");
         assertEq(IERC20(instance_).balanceOf(holder_), raw_, "failed unstake pays nothing");
         assertEq(IERC20(instance_).balanceOf(address(staking_)), backing_, "failed unstake preserves backing");

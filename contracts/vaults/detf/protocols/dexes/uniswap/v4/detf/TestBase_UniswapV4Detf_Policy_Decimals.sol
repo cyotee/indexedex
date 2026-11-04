@@ -289,8 +289,7 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
             _fundToken(toks_[i], detfUser, _tokenHumanAmt(toks_[i], human_) * 4);
         }
         vm.startPrank(detfUser);
-        tok_.approve(d, type(uint256).max);
-        userDetf = IStandardExchangeIn(address(info)).exchangeIn(tok_, amt, IERC20(address(info)), 0, detfUser, false, _deadline());
+        tok_.approve(d, type(uint256).max);(userDetf,) = IStandardExchangeIn(address(info)).exchangeIn(tok_, amt, IERC20(address(info)), 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 
@@ -306,8 +305,7 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
             }
         }
         vm.startPrank(detfUser);
-        IERC20(d).approve(d, type(uint256).max);
-        amountOut = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(info)), detfIn, tokenOut, 0, detfUser, false, _deadline());
+        IERC20(d).approve(d, type(uint256).max);(amountOut,) = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(info)), detfIn, tokenOut, 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 
@@ -524,16 +522,13 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
     }
 
     function _dumpDetfForPair(address hook_, address d, address pair_, uint256 chunk_) internal {
-        while (chunk_ >= 1e9) {
-            try IStandardExchangeIn(hook_).previewExchangeIn(IERC20(d), chunk_, IERC20(pair_))
-                returns (uint256 quote_)
+        while (chunk_ >= 1e9) {try IStandardExchangeIn(hook_).previewExchangeIn(IERC20(d), chunk_, IERC20(pair_))
+                returns (uint256 quote_, uint256)
             {
                 if (quote_ == 0) {
                     chunk_ /= 2;
                     continue;
-                }
-                try IStandardExchangeIn(hook_).exchangeIn(
-                    IERC20(d), chunk_, IERC20(pair_), 0, detfUser, false, _deadline()
+                }try IStandardExchangeIn(hook_).exchangeIn(IERC20(d), chunk_, IERC20(pair_), 0, detfUser, false, _deadline()
                 ) {
                     return;
                 } catch {
@@ -558,8 +553,7 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
         delete _policyInitialBond[d];
         IStakedDETF staking_ = IStakedDETF(IUniswapV4Detf(d).rebasingClaimToken());
         uint256 amount_ = principal_ + rewards_;
-        vm.prank(detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d), amount_, detfUser, false, _deadline());
+        vm.prank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d), amount_, detfUser, false, _deadline());
         assertGe(IERC20(d).balanceOf(detfUser), amt, "only actually purchased DETF can fund fixture");
     }
 

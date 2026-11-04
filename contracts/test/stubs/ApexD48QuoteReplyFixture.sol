@@ -68,8 +68,8 @@ contract ApexD48QuoteReplyFixture {
         return decimals_;
     }
 
-    function previewExchangeIn(address, uint256 amount, address) external view returns (uint256) {
-        return _emit(amount);
+function previewExchangeIn(address, uint256 amount, address) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_emit(amount), 0);
     }
 
     function quoteAssets(bytes calldata, uint256 shares) external view returns (uint256) {
@@ -133,10 +133,12 @@ contract ApexD48QuoteReplyFixture {
         }
         if (r == Reply.OkOverlong) {
             uint256 v = okValue;
+            uint256 size = msg.sig == this.previewExchangeIn.selector ? 96 : 64;
             assembly {
                 mstore(0, v)
                 mstore(32, 1)
-                return(0, 64)
+                mstore(64, 0)
+                return(0, size)
             }
         }
         return okValue;

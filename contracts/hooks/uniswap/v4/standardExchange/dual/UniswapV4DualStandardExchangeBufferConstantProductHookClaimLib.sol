@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -73,9 +74,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
         Leg memory leg = _leg(Repo._layout(), se);
         q.shares = _budgetShares(leg, budget, _rate(leg, se));
         if (q.shares == 0) return q;
-        if (q.shares >= IERC20(se).balanceOf(address(this))) revert InsufficientTokenOut();
-        q.amount = se == leg.pair ? q.shares
-            : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), q.shares, IERC20(leg.pair));
+        if (q.shares >= IERC20(se).balanceOf(address(this))) revert InsufficientTokenOut();q.amount = se == leg.pair ? q.shares
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), q.shares, IERC20(leg.pair));
     }
 
     function projectOutputExactIn(address se, bytes memory state, uint256 budget)
@@ -239,8 +239,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
         private view returns (uint256)
     {
         if (amountInRaw == 0) return 0;
-        if (se == pairToken) return _ratedOf(l, se, amountInRaw);
-        uint256 sharesOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
+        if (se == pairToken) return _ratedOf(l, se, amountInRaw);(uint256 sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
         if (sharesOut == 0) return 0;
         Leg memory leg = _leg(l, se);
         if (!BufferClaim.supportsTransitionQuote(se, pairToken, address(this))) {

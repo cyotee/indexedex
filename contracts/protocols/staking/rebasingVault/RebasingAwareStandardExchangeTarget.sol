@@ -30,17 +30,17 @@ contract RebasingAwareStandardExchangeTarget is
     IStandardExchangeIn,
     IStandardExchangeOut
 {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         public
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         RebasingAwareERC4626Common.requireUnlocked();
-        if (amountIn == 0) return 0;
+        if (amountIn == 0) return (0, 0);
         (bool assetIn, bool shareIn) = _classify(tokenIn, tokenOut);
         RebasingAwareERC4626Common.Book memory book = RebasingAwareERC4626Common.liveBook();
-        if (assetIn) return RebasingAwareERC4626Common.sharesForDeposit(amountIn, book);
-        if (shareIn) return RebasingAwareERC4626Common.assetsForRedeem(amountIn, book);
+        if (assetIn) return (RebasingAwareERC4626Common.sharesForDeposit(amountIn, book), 0);
+        if (shareIn) return (RebasingAwareERC4626Common.assetsForRedeem(amountIn, book), 0);
         revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
@@ -58,7 +58,7 @@ contract RebasingAwareStandardExchangeTarget is
         revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -66,7 +66,7 @@ contract RebasingAwareStandardExchangeTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) public nonReentrant returns (uint256 amountOut) {
+    ) public nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         if (amountIn == 0) revert IRebasingAwareERC4626.ZeroOperationAmount();
         (bool assetIn, bool shareIn) = _classify(tokenIn, tokenOut);
         if (!assetIn && !shareIn) {
@@ -78,7 +78,7 @@ contract RebasingAwareStandardExchangeTarget is
             revert IRebasingAwareERC4626.AssetPretransferNotSupported();
         }
         if (assetIn) {
-            return RebasingAwareERC4626Common.executeDeposit(amountIn, recipient, minAmountOut, false);
+            return (RebasingAwareERC4626Common.executeDeposit(amountIn, recipient, minAmountOut, false), 0);
         }
         if (pretransferred) {
             LocalCreditLib.requirePretransferCaller(msg.sender);
@@ -87,9 +87,9 @@ contract RebasingAwareStandardExchangeTarget is
             ? RebasingAwareERC4626Common.ShareSource.PublicBalanceExactBurn
             : RebasingAwareERC4626Common.ShareSource.CallerOrApprovedOwner;
         address owner = pretransferred ? address(this) : msg.sender;
-        return RebasingAwareERC4626Common.executeRedeem(
+        return (RebasingAwareERC4626Common.executeRedeem(
             amountIn, recipient, owner, minAmountOut, source, false
-        );
+        ), 0);
     }
 
     function exchangeOut(

@@ -98,9 +98,7 @@ contract TokenStakingMigrationAdapter is ERC20, ReentrancyLockModifiers {
         stakingToken.safeTransferFrom(staking, address(this), amountIn_);
         _requireDelta(stakingToken, tokenBefore_, amountIn_);
         uint256 detfBefore_ = detfToken.balanceOf(address(this));
-        stakingToken.forceApprove(address(detfToken), amountIn_);
-        amountOut_ = IStandardExchangeIn(address(detfToken))
-            .exchangeIn(stakingToken, amountIn_, detfToken, minAmountOut_, address(this), false, deadline_);
+        stakingToken.forceApprove(address(detfToken), amountIn_);(amountOut_,) = IStandardExchangeIn(address(detfToken)).exchangeIn(stakingToken, amountIn_, detfToken, minAmountOut_, address(this), false, deadline_);
         stakingToken.forceApprove(address(detfToken), 0);
         _requireDelta(stakingToken, tokenBefore_, 0);
         _requireDelta(detfToken, detfBefore_, amountOut_);
@@ -111,7 +109,7 @@ contract TokenStakingMigrationAdapter is ERC20, ReentrancyLockModifiers {
 
     /// @notice Consume the entire approved receipt batch and deliver static staking SY directly to staking.
     /// @dev Minimum and returned output are SY units; receipt/input units are DETF.
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn_,
         uint256 amountIn_,
         IERC20 tokenOut_,
@@ -119,7 +117,7 @@ contract TokenStakingMigrationAdapter is ERC20, ReentrancyLockModifiers {
         address recipient_,
         bool pretransfer_,
         uint256 deadline_
-    ) external nonReentrant returns (uint256 amountOut_) {
+    ) external nonReentrant returns (uint256 amountOut_, uint256 amountRefunded) {
         _validateCall(amountIn_, recipient_, pretransfer_, deadline_);
         if (address(tokenIn_) != address(this) || address(tokenOut_) != rebasingClaimToken) revert InvalidRoute();
         if (amountIn_ != totalSupply() || amountIn_ != balanceOf(staking)) revert InvalidReceiptAmount();

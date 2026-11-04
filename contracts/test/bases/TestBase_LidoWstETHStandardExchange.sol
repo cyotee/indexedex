@@ -124,9 +124,7 @@ abstract contract TestBase_LidoWstETHStandardExchange is TestBase_Permit2, TestB
     function _seedVaultInventory(uint256 wethAmount, uint256 wstAmount) public {
         if (wethAmount > 0) {
             _dealWeth(address(this), wethAmount);
-            hermeticWeth.approve(seVault, wethAmount);
-            seIn.exchangeIn(
-                IERC20(address(hermeticWeth)),
+            hermeticWeth.approve(seVault, wethAmount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
                 wethAmount,
                 IERC20(seVault),
                 0,
@@ -137,9 +135,7 @@ abstract contract TestBase_LidoWstETHStandardExchange is TestBase_Permit2, TestB
         }
         if (wstAmount > 0) {
             _mintWstViaSt(address(this), wstAmount);
-            hermeticWstEth.approve(seVault, wstAmount);
-            seIn.exchangeIn(
-                IERC20(address(hermeticWstEth)),
+            hermeticWstEth.approve(seVault, wstAmount);seIn.exchangeIn(IERC20(address(hermeticWstEth)),
                 wstAmount,
                 IERC20(seVault),
                 0,

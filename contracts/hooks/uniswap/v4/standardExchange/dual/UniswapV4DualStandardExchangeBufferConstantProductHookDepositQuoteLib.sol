@@ -234,8 +234,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
 
     function _previewRawShares(address se, address pair, uint256 amount) private view returns (uint256) {
         if (amount == 0) return 0;
-        if (se == pair) return amount;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), amount, IERC20(se));
+        if (se == pair) return amount;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), amount, IERC20(se));
+        return quotedAmountOut;
     }
 
     function _decimalsOfToken(address token) private view returns (uint8) {

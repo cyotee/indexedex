@@ -9,11 +9,11 @@ import {
 
 /// @dev Preview selector only. `exchangeIn` stays on `ERC4626StandardExchangeInTarget`.
 contract ERC4626StandardExchangeInTargetExt is ERC4626StandardExchangeQuoteTarget {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 }

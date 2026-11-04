@@ -144,9 +144,7 @@ abstract contract TestBase_MorphoBlueStandardExchange is
     }
 
     function _wrapExactIn(address who, uint256 amountIn) internal returns (uint256 sharesOut) {
-        vm.prank(who);
-        sharesOut = seIn.exchangeIn(
-            IERC20(address(loanToken)), amountIn, IERC20(se), 0, who, false, _deadline()
+        vm.prank(who);(sharesOut,) = seIn.exchangeIn(IERC20(address(loanToken)), amountIn, IERC20(se), 0, who, false, _deadline()
         );
     }
 

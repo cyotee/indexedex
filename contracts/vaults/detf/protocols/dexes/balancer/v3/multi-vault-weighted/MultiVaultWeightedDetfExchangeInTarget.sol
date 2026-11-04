@@ -12,7 +12,7 @@ import {MultiVaultWeightedDetfRepo as Repo} from "./MultiVaultWeightedDetfRepo.s
 abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDetfExchangeOutTarget {
     using BetterSafeERC20 for IERC20;
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 in_,
         uint256 amount_,
         IERC20 out_,
@@ -20,8 +20,8 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
         address to_,
         bool prepaid_,
         uint256 deadline_
-    ) public virtual nonReentrant returns (uint256 received_) {
-        return _exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+    ) public virtual nonReentrant returns (uint256 received_, uint256 amountRefunded) {
+        return (_exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_), 0);
     }
 
     /// @dev Shared guarded entry body; both external exchange routes hold the lock.
@@ -42,9 +42,7 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
         if (to_ == address(0)) to_ = msg.sender;
         _updateExpansionMintOnRewards();
         if (address(in_) == address(staking_)) {
-            _pullToken(in_, amount_, prepaid_);
-            IStakedDETF(address(staking_))
-                .exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_);
+            _pullToken(in_, amount_, prepaid_);IStakedDETF(address(staking_)).exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_);
             if (address(out_) == address(this)) {
                 received_ = amount_;
                 out_.safeTransfer(to_, amount_);
@@ -55,9 +53,7 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
             uint256 principal_ = address(in_) == address(this)
                 ? _pullToken(in_, amount_, prepaid_)
                 : _acquireDetf(in_, amount_, prepaid_);
-            IERC20(address(this)).forceApprove(address(staking_), principal_);
-            received_ = IStakedDETF(address(staking_))
-                .exchangeIn(IERC20(address(this)), principal_, staking_, minimum_, to_, false, deadline_);
+            IERC20(address(this)).forceApprove(address(staking_), principal_);(received_,) = IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), principal_, staking_, minimum_, to_, false, deadline_);
             IERC20(address(this)).forceApprove(address(staking_), 0);
         } else if (address(in_) == address(this)) {
             received_ = _burnHeldDetf(_pullToken(in_, amount_, prepaid_), out_, minimum_, to_);

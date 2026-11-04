@@ -89,9 +89,7 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers, D
         if (address(token_) == address(s.rebasingClaimToken)) return 0;
         uint256 vaultShares_ = amount_;
         if (address(token_) != address(s.standardExchangeVaultShare)) {
-            if (!_isAllowlistedTokenIn(token_)) return 0;
-            vaultShares_ = IStandardExchangeIn(address(s.standardExchangeVault)).previewExchangeIn(
-                token_, amount_, s.standardExchangeVaultShare
+            if (!_isAllowlistedTokenIn(token_)) return 0;(vaultShares_,) = IStandardExchangeIn(address(s.standardExchangeVault)).previewExchangeIn(token_, amount_, s.standardExchangeVaultShare
             );
         }
         return _previewUnbalancedBpt(s.vaultShareIndex, vaultShares_);
@@ -260,9 +258,7 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers, D
         uint256 deadline_
     ) internal returns (uint256 amountOut_) {
         if (amountIn_ == 0) return 0;
-        tokenIn_.safeTransfer(address(host_), amountIn_);
-        amountOut_ = host_.exchangeIn(
-            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        tokenIn_.safeTransfer(address(host_), amountIn_);(amountOut_,) = host_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
         );
     }
 
@@ -474,14 +470,14 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers, D
     function _previewVaultSharesIn(IERC20 token_, uint256 amount_) internal view returns (uint256) {
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (!_isAllowlistedTokenIn(token_)) revert Repo.UnsupportedRoute(token_, IERC20(address(this)));
-        if (address(token_) == address(s_.standardExchangeVaultShare)) return amount_;
-        return s_.standardExchangeVault.previewExchangeIn(token_, amount_, s_.standardExchangeVaultShare);
+        if (address(token_) == address(s_.standardExchangeVaultShare)) return amount_;(uint256 quotedAmountOut,) = s_.standardExchangeVault.previewExchangeIn(token_, amount_, s_.standardExchangeVaultShare);
+        return quotedAmountOut;
     }
 
     function _previewVaultSharesOut(uint256 shares_, IERC20 token_) internal view returns (uint256) {
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (!_isAllowlistedTokenIn(token_)) revert Repo.UnsupportedRoute(IERC20(address(this)), token_);
-        if (address(token_) == address(s_.standardExchangeVaultShare)) return shares_;
-        return s_.standardExchangeVault.previewExchangeIn(s_.standardExchangeVaultShare, shares_, token_);
+        if (address(token_) == address(s_.standardExchangeVaultShare)) return shares_;(uint256 quotedAmountOut,) = s_.standardExchangeVault.previewExchangeIn(s_.standardExchangeVaultShare, shares_, token_);
+        return quotedAmountOut;
     }
 }

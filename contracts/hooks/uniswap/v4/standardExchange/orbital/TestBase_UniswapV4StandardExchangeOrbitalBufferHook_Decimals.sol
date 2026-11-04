@@ -305,9 +305,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
     {
         token.mint(user, pairAmount);
         vm.startPrank(user);
-        token.approve(se, type(uint256).max);
-        seShares = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(token)),
+        token.approve(se, type(uint256).max);(seShares,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(token)),
             pairAmount,
             IERC20(se),
             0,
@@ -449,19 +447,11 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
     {
         token.mint(user, amountIn);
         vm.startPrank(user);
-        token.approve(se, type(uint256).max);
-        uint256 previewIn =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(address(token)), amountIn, IERC20(se));
-        uint256 seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(token)), amountIn, IERC20(se), previewIn, user, false, block.timestamp
+        token.approve(se, type(uint256).max);(uint256 previewIn,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(token)), amountIn, IERC20(se));(uint256 seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(token)), amountIn, IERC20(se), previewIn, user, false, block.timestamp
         );
         _assertMoneyEq(seOut, previewIn, "SE token->shares preview!=exec");
 
-        IERC20(se).approve(se, type(uint256).max);
-        uint256 previewOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seOut, IERC20(address(token)));
-        uint256 tokenOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seOut, IERC20(address(token)), previewOut, user, false, block.timestamp
+        IERC20(se).approve(se, type(uint256).max);(uint256 previewOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seOut, IERC20(address(token)));(uint256 tokenOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seOut, IERC20(address(token)), previewOut, user, false, block.timestamp
         );
         _assertMoneyEq(tokenOut, previewOut, "SE shares->token preview!=exec");
         vm.stopPrank();

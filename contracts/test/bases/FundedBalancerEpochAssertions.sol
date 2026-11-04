@@ -106,8 +106,9 @@ abstract contract FundedBalancerEpochAssertions is Test {
         assertGt(c_.staking.balanceOf(recipient_), 0);
         uint256 rawBefore_ = IERC20(c_.detf).balanceOf(recipient_);
         vm.recordLogs(); vm.prank(recipient_);
-        assertEq(c_.staking.exchangeIn(IERC20(address(c_.staking)), 1, IERC20(c_.detf), 1,
-            recipient_, false, block.timestamp), 1);
+        (uint256 exchangeAmountOut1,) = c_.staking.exchangeIn(IERC20(address(c_.staking)), 1, IERC20(c_.detf), 1,
+            recipient_, false, block.timestamp);
+        assertEq(exchangeAmountOut1, 1);
         _assertSingleExpansionMint(vm.getRecordedLogs(), c_.detf, expected_);
         assertEq(IERC20(c_.detf).totalSupply(), s_.supply + expected_);
         assertEq(c_.staking.stakingState().accountedBacking, s_.backing + expected_ - 1);

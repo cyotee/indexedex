@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -196,8 +197,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         if (se == address(0)) return 0;
         uint256 bal = IERC20(se).balanceOf(address(this));
         if (bal == 0) return 0;
-        if (se == l.tokens[index]) return bal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+        if (se == l.tokens[index]) return bal;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+        return quotedAmountOut;
     }
 
     function _bindingRatedBalance(uint256 index) internal view returns (uint256) {
@@ -530,12 +531,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             l.rawReserves[i] += amount;
             return 0;
         }
-        if (se == t) return amount;
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
+        if (se == t) return amount;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
         if (minOut == 0) revert BufferFailed();
-        IERC20(t).forceApprove(se, amount);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
+        IERC20(t).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
         IERC20(t).forceApprove(se, 0);
         if (seOut < minOut) revert BufferFailed();
@@ -549,13 +547,10 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         if (se == t) {
             if (to != address(this)) IERC20(se).safeTransfer(to, seIn);
             return seIn;
-        }
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
+        }(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
         // Sub-asset share dust stays in the reserve for the remaining LP owners.
         if (minOut == 0) return 0;
-        IERC20(se).forceApprove(se, seIn);
-        pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
+        IERC20(se).forceApprove(se, seIn);(pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
         );
         IERC20(se).forceApprove(se, 0);
         if (pairOut < minOut) revert UnwrapFailed();
@@ -586,7 +581,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         // SE exits can round up or include execution surplus. Retain that value
         // in the shared reserve while settling exactly the hook's quoted output.
         uint256 surplus = received - amountOut;
-        if (surplus != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(t), surplus, IERC20(se)) != 0) {
+        if (surplus != 0 && ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(t), surplus, IERC20(se)) != 0) {
             _bufferToken(i, surplus);
         }
         return spent;
@@ -607,8 +602,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             if (se == address(0) || se == l.tokens[i]) continue;
             IERC20 pair_ = IERC20(l.tokens[i]);
             uint256 bal = pair_.balanceOf(address(this));
-            if (bal == 0) continue;
-            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, bal, IERC20(se));
+            if (bal == 0) continue;(uint256 preview,) = IStandardExchangeIn(se).previewExchangeIn(pair_, bal, IERC20(se));
             if (preview > 0) _bufferToken(i, bal);
             // Unconvertible remainder stays as D12 resting credit (D36).
         }
@@ -627,9 +621,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             address se = l.standardExchanges[i];
             if (se == address(0) || se == l.tokens[i]) {
                 invDeltas[i] = pairAmounts[i];
-            } else {
-                invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(l.tokens[i]), pairAmounts[i], IERC20(se)
+            } else {invDeltas[i] = ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(l.tokens[i]), pairAmounts[i], IERC20(se)
                 );
             }
         }

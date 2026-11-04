@@ -1,0 +1,16 @@
+{
+  "F0": {
+    "deposit": 1048578,
+    "liquidity": 1048576,
+    "userShares": 1047576,
+    "totalShares": 1048576,
+    "managerCostPerSide": 1048576,
+    "withdrawOutPerSide": 1047575
+  },
+  "library": {
+    "l0_3": 6,
+    "l1_3": 3,
+    "interior": 6,
+    "f0Liquidity": 1048576
+  }
+}

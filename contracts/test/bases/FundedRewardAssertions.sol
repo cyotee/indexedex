@@ -56,15 +56,13 @@ abstract contract FundedRewardAssertions is Test {
         uint256 backingBefore_ = IERC20(detf_).balanceOf(recipient_);
         vm.expectRevert();
         staking_.transferFrom(recipient_, address(0xBAD), amount_);
-        vm.prank(recipient_);
-        uint256 paid_ = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf_), amount_,
+        vm.prank(recipient_);(uint256 paid_,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf_), amount_,
             recipient_, false, block.timestamp);
         assertEq(paid_, amount_);
         assertEq(IERC20(detf_).balanceOf(recipient_) - backingBefore_, amount_);
         assertEq(staking_.balanceOf(recipient_), 0);
         assertEq(staking_.gonsOf(recipient_), 0);
-        vm.expectRevert(); vm.prank(recipient_);
-        staking_.exchangeIn(IERC20(address(staking_)), 1, IERC20(detf_), 1, recipient_, false, block.timestamp);
+        vm.expectRevert(); vm.prank(recipient_);staking_.exchangeIn(IERC20(address(staking_)), 1, IERC20(detf_), 1, recipient_, false, block.timestamp);
     }
 
     /// @dev Independent integer reference for principal funding followed by one immediate pot.

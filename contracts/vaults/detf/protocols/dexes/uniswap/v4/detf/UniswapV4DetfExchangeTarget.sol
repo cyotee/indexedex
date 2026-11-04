@@ -7,7 +7,7 @@ import {UniswapV4DetfTarget} from "contracts/vaults/detf/protocols/dexes/uniswap
 /// @notice Exchange entrypoints for the universal DETF diamond.
 abstract contract UniswapV4DetfExchangeTarget is UniswapV4DetfTarget {
     /// @notice Executes an exact-input mint, burn, or DETF-to-claim route on the diamond.
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn_,
         uint256 amountIn_,
         IERC20 tokenOut_,
@@ -15,8 +15,8 @@ abstract contract UniswapV4DetfExchangeTarget is UniswapV4DetfTarget {
         address recipient_,
         bool pretransferred_,
         uint256 deadline_
-    ) external returns (uint256 amountOut_) {
-        return _entryExchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+    ) external returns (uint256 amountOut_, uint256 amountRefunded) {
+        return (_entryExchangeIn(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_), 0);
     }
 
 }

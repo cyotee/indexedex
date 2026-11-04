@@ -51,7 +51,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
     }
 
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -59,11 +59,11 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external returns (uint256 amountOut) {
+    ) external returns (uint256 amountOut, uint256 amountRefunded) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
-            return _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+            return (_exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
         }
-        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        return (_swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
     }
 
     function _swapExchangeIn(

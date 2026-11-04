@@ -185,10 +185,7 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
                 && (address(params.pool) == address(params.tokenOutVault))
                 && (address(params.tokenIn) != address(params.tokenInVault))
                 && (address(params.tokenOut) != address(params.tokenOutVault))
-        ) {
-            amountCalculated = params.tokenInVault
-                .previewExchangeIn(
-                    IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenOut))
+        ) {(amountCalculated,) = params.tokenInVault.previewExchangeIn(IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenOut))
                 );
 
             return amountCalculated;
@@ -202,10 +199,7 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
             (address(params.pool) == address(params.tokenInVault))
                 && ((address(params.tokenIn) != address(params.tokenInVault))
                     && (address(params.tokenOut) == address(params.tokenInVault)))
-        ) {
-            amountCalculated = params.tokenInVault
-                .previewExchangeIn(
-                    IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenInVault))
+        ) {(amountCalculated,) = params.tokenInVault.previewExchangeIn(IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenInVault))
                 );
 
             return amountCalculated;
@@ -219,10 +213,7 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
             (address(params.pool) == address(params.tokenOutVault))
                 && ((address(params.tokenIn) == address(params.tokenOutVault))
                     && (address(params.tokenOut) != address(params.tokenOutVault)))
-        ) {
-            amountCalculated = params.tokenOutVault
-                .previewExchangeIn(
-                    IERC20(address(params.tokenOutVault)), params.amountGiven, IERC20(address(params.tokenOut))
+        ) {(amountCalculated,) = params.tokenOutVault.previewExchangeIn(IERC20(address(params.tokenOutVault)), params.amountGiven, IERC20(address(params.tokenOut))
                 );
 
             return amountCalculated;
@@ -236,11 +227,8 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
             ((address(params.pool) != address(params.tokenInVault))
                     && (address(params.pool) != address(params.tokenOutVault)))
                 && ((address(params.tokenInVault) != address(0)) && (address(params.tokenOutVault) == address(0)))
-        ) {
-            // Convert base token to vault shares (preview deposit)
-            uint256 sharesIn = params.tokenInVault
-                .previewExchangeIn(
-                    IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenInVault))
+        ) {// Convert base token to vault shares (preview deposit)
+            (uint256 sharesIn,) = params.tokenInVault.previewExchangeIn(IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenInVault))
                 );
 
             // Swap vault shares to base token out via Balancer pool
@@ -268,11 +256,8 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
             ((address(params.pool) != address(params.tokenInVault))
                     && (address(params.pool) != address(params.tokenOutVault)))
                 && ((address(params.tokenInVault) != address(0)) && (address(params.tokenOutVault) != address(0)))
-        ) {
-            // Convert base token to tokenInVault shares
-            uint256 sharesIn = params.tokenInVault
-                .previewExchangeIn(
-                    IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenInVault))
+        ) {// Convert base token to tokenInVault shares
+            (uint256 sharesIn,) = params.tokenInVault.previewExchangeIn(IERC20(address(params.tokenIn)), params.amountGiven, IERC20(address(params.tokenInVault))
                 );
 
             // For query flows, params.limit is commonly zero.
@@ -296,11 +281,8 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
                     limitRaw: convertedLimit,
                     userData: params.userData
                 })
-            );
-
-            // Convert tokenOutVault shares -> base tokenOut
-            uint256 finalAmountOut = params.tokenOutVault
-                .previewExchangeIn(IERC20(address(params.tokenOutVault)), sharesOut, IERC20(address(params.tokenOut)));
+            );// Convert tokenOutVault shares -> base tokenOut
+            (uint256 finalAmountOut,) = params.tokenOutVault.previewExchangeIn(IERC20(address(params.tokenOutVault)), sharesOut, IERC20(address(params.tokenOut)));
             return finalAmountOut;
         }
 
@@ -334,11 +316,8 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
                     limitRaw: convertedLimit,
                     userData: params.userData
                 })
-            );
-
-            // Convert shares to base token via vault preview
-            uint256 finalAmountOut = params.tokenOutVault
-                .previewExchangeIn(IERC20(address(params.tokenOutVault)), sharesOut, IERC20(address(params.tokenOut)));
+            );// Convert shares to base token via vault preview
+            (uint256 finalAmountOut,) = params.tokenOutVault.previewExchangeIn(IERC20(address(params.tokenOutVault)), sharesOut, IERC20(address(params.tokenOut)));
             return finalAmountOut;
         }
 

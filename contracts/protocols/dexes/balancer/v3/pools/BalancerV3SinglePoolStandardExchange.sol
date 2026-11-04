@@ -52,30 +52,30 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
         }
     }
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         if (amountIn == 0) {
-            return 0;
+            return (0, 0);
         }
 
         if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
             uint256[] memory amountsIn = _amountsIn(tokenIn, amountIn);
             amountOut = _queryAddLiquidityUnbalanced(amountsIn);
-            return amountOut;
+            return (amountOut, 0);
         }
 
         if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
             amountOut = _queryRemoveLiquiditySingleTokenExactIn(amountIn, tokenOut);
-            return amountOut;
+            return (amountOut, 0);
         }
 
         revert InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -83,7 +83,7 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         _checkDeadline(deadline);
 
         address payoutRecipient = recipient == address(0) ? msg.sender : recipient;
@@ -96,7 +96,7 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
             bptToken.safeTransfer(payoutRecipient, amountOut);
             _syncReserve(tokenIn);
             _syncReserve(bptToken);
-            return amountOut;
+            return (amountOut, 0);
         }
 
         if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
@@ -108,7 +108,7 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange, ReentrancyLo
             tokenOut.safeTransfer(payoutRecipient, amountOut);
             _syncReserve(tokenIn);
             _syncReserve(tokenOut);
-            return amountOut;
+            return (amountOut, 0);
         }
 
         revert InvalidRoute(address(tokenIn), address(tokenOut));

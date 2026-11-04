@@ -125,11 +125,11 @@ contract StakedDETFTarget is IStakedDETF, ReentrancyLockModifiers {
     }
 
     /// @notice Direct funded staking and unstaking quote one raw unit for one raw unit.
-    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
-        external view returns (uint256)
+function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
+        external view returns (uint256 amountOut, uint256 amountRefunded)
     {
         _isStake(tokenIn_, tokenOut_);
-        return amountIn_;
+        return (amountIn_, 0);
     }
 
     /// @notice Direct exact-output staking and unstaking require equal raw input.
@@ -144,13 +144,13 @@ contract StakedDETFTarget is IStakedDETF, ReentrancyLockModifiers {
     /// @param pretransferred_ Integrating-contract flag only. EOA reverts `EOAPretransferNotAllowed()`.
     ///        Public true-flag then reverts `TransferDeltaInsufficient(amount, 0)` so idle DETF
     ///        never authenticates a stake/unstake. False-flag pull remains the supported path.
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_, uint256 minAmountOut_,
         address recipient_, bool pretransferred_, uint256 deadline_
-    ) external synchronized nonReentrant returns (uint256 amountOut_) {
+    ) external synchronized nonReentrant returns (uint256 amountOut_, uint256 amountRefunded) {
         if (amountIn_ < minAmountOut_) revert MinimumOutputNotMet(minAmountOut_, amountIn_);
         _exchange(tokenIn_, tokenOut_, amountIn_, recipient_, pretransferred_, deadline_);
-        return amountIn_;
+        return (amountIn_, 0);
     }
 
     /// @notice Exact-output direct staking pulls or burns only the required native input.

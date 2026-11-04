@@ -445,8 +445,12 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers, DETFB
         Repo.Storage storage s_ = Repo._layoutStruct();
         uint256 supply_ = IERC20(s_.reservePool).totalSupply();
         if (lp_ == 0 || supply_ == 0) return 0;
-        (,, uint256[] memory raw_,) = _reserveVault().getPoolTokenInfo(s_.reservePool);
-        return Math.mulDiv(raw_[s_.vaultShareIndexes[legIndex_]], lp_, supply_);
+        uint256 tokenIndex_ = s_.vaultShareIndexes[legIndex_];
+        // Match VaultLiquidityFacet proportional removal: live scaled balance, then rate round-down.
+        uint256[] memory live_ = _reserveVault().getCurrentLiveBalances(s_.reservePool);
+        (uint256[] memory scaling_, uint256[] memory rates_) = _reserveVault().getPoolTokenRates(s_.reservePool);
+        uint256 scaledOut_ = (live_[tokenIndex_] * lp_) / supply_;
+        return scaledOut_.toRawUndoRateRoundDown(scaling_[tokenIndex_], rates_[tokenIndex_]);
     }
 
     function _syntheticPriceForSupply(uint256 supply_) internal view returns (uint256) {

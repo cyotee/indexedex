@@ -47,7 +47,7 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
     error SlipstreamExchangeIn_ZeroDeposit();
     error SlipstreamExchangeIn_SlippageExceeded();
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -55,7 +55,7 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         if (deadline < block.timestamp) revert SlipstreamExchangeIn_DeadlineExceeded();
 
         ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
@@ -67,14 +67,14 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             amountOut = _swap(address(tokenIn), address(tokenOut), actualIn, minAmountOut, recipient);
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             amountOut = _executeZapInDeposit(tokenIn, actualIn, minAmountOut, recipient);
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         revert IStandardExchangeIn.ExchangeInNotAvailable();

@@ -58,17 +58,16 @@ abstract contract FundedPrimaryRouteAssertions is Test {
 
     function _assertPrimaryMint(PrimaryContext memory c_) internal {
         assertTrue(IFundedPrimaryGate(c_.detf).isMintingAllowed(), "actual reserve capital opens primary mint");
-        IStandardExchangeIn exchange_ = IStandardExchangeIn(c_.detf);
-        uint256 quote_ = exchange_.previewExchangeIn(c_.payment, c_.amount, IERC20(c_.detf));
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(c_.detf);(uint256 quote_,) = exchange_.previewExchangeIn(c_.payment, c_.amount, IERC20(c_.detf));
         assertGt(quote_, 0);
         PrimarySnapshot memory before_ = _primarySnapshot(c_);
         vm.startPrank(c_.payer); c_.payment.approve(c_.detf, c_.amount);
-        vm.expectRevert();
-        exchange_.exchangeIn(c_.payment, c_.amount, IERC20(c_.detf), quote_ + 1, c_.payer, false, block.timestamp);
+        vm.expectRevert();exchange_.exchangeIn(c_.payment, c_.amount, IERC20(c_.detf), quote_ + 1, c_.payer, false, block.timestamp);
         vm.stopPrank();
         assertEq(abi.encode(_primarySnapshot(c_)), abi.encode(before_), "failed mint minimum rolls back every custody change");
         vm.prank(c_.payer);
-        assertEq(exchange_.exchangeIn(c_.payment, c_.amount, IERC20(c_.detf), quote_, c_.payer, false, block.timestamp), quote_);
+        (uint256 exchangeAmountOut1,) = exchange_.exchangeIn(c_.payment, c_.amount, IERC20(c_.detf), quote_, c_.payer, false, block.timestamp);
+        assertEq(exchangeAmountOut1, quote_);
         PrimarySnapshot memory after_ = _primarySnapshot(c_);
         assertEq(after_.payment, before_.payment - c_.amount);
         assertEq(after_.userDetf, before_.userDetf + quote_);
@@ -91,8 +90,9 @@ abstract contract FundedPrimaryRouteAssertions is Test {
         vm.prank(buyer_); amount_ = nft_.claimPrincipal(id_, buyer_);
         assertGt(amount_, 0);
         vm.prank(buyer_);
-        assertEq(staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf_), amount_,
-            buyer_, false, block.timestamp), amount_);
+        (uint256 exchangeAmountOut2,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf_), amount_,
+            buyer_, false, block.timestamp);
+        assertEq(exchangeAmountOut2, amount_);
     }
 
     function _externalReserveJoin(PrimaryContext memory c_, address router_, address permit2_, address outsider_, uint256 payment_) internal {
@@ -121,8 +121,7 @@ abstract contract FundedPrimaryRouteAssertions is Test {
         assertGt(externalLp_, 0);
         assertGt(lp_.totalSupply(), before_.lp, "total reserve LP includes external property");
         uint256 expectedLp_ = c_.amount * before_.lp / before_.supply;
-        assertGt(expectedLp_, 0);
-        uint256 quote_ = IStandardExchangeIn(c_.detf).previewExchangeIn(IERC20(c_.detf), c_.amount, c_.payment);
+        assertGt(expectedLp_, 0);(uint256 quote_,) = IStandardExchangeIn(c_.detf).previewExchangeIn(IERC20(c_.detf), c_.amount, c_.payment);
         assertGt(quote_, 0);
         uint256 paid_ = _executePrimaryBurn(c_, quote_);
         _assertReserveLpBurn(vm.getRecordedLogs(), address(lp_), expectedLp_);
@@ -137,9 +136,7 @@ abstract contract FundedPrimaryRouteAssertions is Test {
 
     function _executePrimaryBurn(PrimaryContext memory c_, uint256 quote_) private returns (uint256 paid_) {
         vm.startPrank(c_.payer); IERC20(c_.detf).approve(c_.detf, c_.amount);
-        vm.recordLogs();
-        paid_ = IStandardExchangeIn(c_.detf).exchangeIn(
-            IERC20(c_.detf), c_.amount, c_.payment, quote_, c_.payer, false, block.timestamp
+        vm.recordLogs();(paid_,) = IStandardExchangeIn(c_.detf).exchangeIn(IERC20(c_.detf), c_.amount, c_.payment, quote_, c_.payer, false, block.timestamp
         );
         vm.stopPrank();
     }

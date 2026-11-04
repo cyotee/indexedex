@@ -79,9 +79,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBa
                 ? pairAmount
                 : Math.ratedPairUnits(pairAmount, _getRateFailClosed(rpRaw), l.invScales[i], l.ratedScales[i]);
             return Math.scaleTo(units, l.ratedScales[i]);
-        }
-        uint256 shares =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
+        }(uint256 shares,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
         address rp = l.rateProviders[i];
         if (rp == address(0)) revert ClaimLib.RateProviderRequired();

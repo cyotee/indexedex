@@ -379,9 +379,7 @@ library UniswapV4DetfProductionSeDeployLib {
         uint256 paymentIndex = tokens[0] == payment ? 0 : 1;
         uint256[] memory amounts = new uint256[](2);
         amounts[paymentIndex] = Math.min(_humanUnits(payment, 100), IERC20(payment).balanceOf(payer) / 100);
-        address other = tokens[1 - paymentIndex];
-        amounts[1 - paymentIndex] = IStandardExchangeIn(vault).previewExchangeIn(
-            IERC20(payment), amounts[paymentIndex], IERC20(other)
+        address other = tokens[1 - paymentIndex];(amounts[1 - paymentIndex],) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(payment), amounts[paymentIndex], IERC20(other)
         );
         require(amounts[0] > 0 && amounts[1] > 0, "fund both position legs");
         if (other == weth) {

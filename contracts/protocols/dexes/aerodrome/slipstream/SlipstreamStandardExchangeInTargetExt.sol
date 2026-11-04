@@ -15,10 +15,10 @@ import {SlipstreamStandardExchangeCommon} from "contracts/protocols/dexes/aerodr
 contract SlipstreamStandardExchangeInTargetExt is SlipstreamStandardExchangeCommon {
     error SlipstreamExchangeIn_ZeroDeposit();
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
         address token0 = pool.token0();
@@ -26,11 +26,11 @@ contract SlipstreamStandardExchangeInTargetExt is SlipstreamStandardExchangeComm
 
         if ((address(tokenIn) == token0 && address(tokenOut) == token1)
             || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
-            return _quoteSwap(address(tokenIn), address(tokenOut), amountIn);
+            return (_quoteSwap(address(tokenIn), address(tokenOut), amountIn), 0);
         }
 
         if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
-            return _previewZapInDeposit(tokenIn, amountIn);
+            return (_previewZapInDeposit(tokenIn, amountIn), 0);
         }
 
         revert IStandardExchangeIn.ExchangeInNotAvailable();

@@ -495,7 +495,7 @@ contract BalancerV3StandardExchangeRouterExactOutSwapTarget is
                 && ((address(params.tokenInVault) != address(0)) && (address(params.tokenOutVault) == address(0)))
         ) {
             IVault _balVault = BalancerV3VaultAwareRepo._balancerV3Vault();
-            uint256 convertedLimit = params.tokenInVault
+            (uint256 convertedLimit,) = params.tokenInVault
                 .previewExchangeIn(
                     // IERC20 tokenIn,
                     IERC20(address(params.tokenIn)),
@@ -601,7 +601,7 @@ contract BalancerV3StandardExchangeRouterExactOutSwapTarget is
             /* --------------------- Amounts conversion --------------------- */
 
             // Convert provided limit to equivalent amount of strategy vault in.
-            uint256 convertedLimit = params.tokenInVault
+            (uint256 convertedLimit,) = params.tokenInVault
                 .previewExchangeIn(
                     // IERC20 tokenIn,
                     IERC20(address(params.tokenIn)),

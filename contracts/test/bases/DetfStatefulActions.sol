@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
@@ -122,12 +123,11 @@ abstract contract DetfStatefulActions is DetfExactOutCreditAssertions {
         uint256 amount_ = 1e15;
         uint256 excess_ = 13;
         _lifecycleFund(actor_, amount_ + excess_);
-        PrepaidSnapshot memory before_ = PrepaidSnapshot(
-            input_.balanceOf(actor_),
+        PrepaidSnapshot memory before_ = PrepaidSnapshot(input_.balanceOf(actor_),
             IERC20(detf_).balanceOf(actor_),
             input_.balanceOf(detf_),
             input_.balanceOf(address(prepaidCaller)),
-            IStandardExchangeIn(detf_).previewExchangeIn(input_, amount_, IERC20(detf_))
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(detf_))), input_, amount_, IERC20(detf_))
         );
         vm.prank(actor_);
         input_.approve(address(prepaidCaller), amount_ + excess_);
@@ -160,7 +160,10 @@ abstract contract DetfStatefulActions is DetfExactOutCreditAssertions {
         bytes memory call_ = abi.encodeCall(
             IStandardExchangeIn.exchangeIn, (input_, amount_, IERC20(detf_), minimum_, actor_, true, block.timestamp)
         );
-        return abi.decode(prepaidCaller.consumePretransfer(input_, actor_, detf_, amount_ + excess_, call_), (uint256));
+        (uint256 amountOut,) = abi.decode(
+            prepaidCaller.consumePretransfer(input_, actor_, detf_, amount_ + excess_, call_), (uint256, uint256)
+        );
+        return amountOut;
     }
 
     function _donation(address actor_) private {
@@ -247,9 +250,7 @@ abstract contract DetfStatefulActions is DetfExactOutCreditAssertions {
             (IERC20(address(input_)), amount_, IERC20(detf_), 1, address(input_), false, block.timestamp)
         );
         // Identical nested calldata has funding, approval and a valid route outside the lock.
-        vm.prank(address(input_));
-        uint256 control_ = IStandardExchangeIn(detf_)
-            .exchangeIn(IERC20(address(input_)), amount_, IERC20(detf_), 1, address(input_), false, block.timestamp);
+        vm.prank(address(input_));(uint256 control_,) = IStandardExchangeIn(detf_).exchangeIn(IERC20(address(input_)), amount_, IERC20(detf_), 1, address(input_), false, block.timestamp);
         assertGt(control_, 0);
         uint256 fundedBefore_ = input_.balanceOf(address(input_));
         input_.armForRecipient(detf_, detf_, call_);
@@ -257,9 +258,7 @@ abstract contract DetfStatefulActions is DetfExactOutCreditAssertions {
         uint256 payer_ = input_.balanceOf(actor_);
         uint256 raw_ = IERC20(detf_).balanceOf(actor_);
         vm.startPrank(actor_);
-        input_.approve(detf_, amount_);
-        uint256 minted_ = IStandardExchangeIn(detf_)
-            .exchangeIn(IERC20(address(input_)), amount_, IERC20(detf_), 1, actor_, false, block.timestamp);
+        input_.approve(detf_, amount_);(uint256 minted_,) = IStandardExchangeIn(detf_).exchangeIn(IERC20(address(input_)), amount_, IERC20(detf_), 1, actor_, false, block.timestamp);
         vm.stopPrank();
         input_.disarm();
         assertGt(input_.reentryAttempts(), 0, "callback reached");

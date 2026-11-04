@@ -112,10 +112,10 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         );
     }
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         amountOut = _previewExchangeIn(RebasingDETFTokenRepo._layoutStruct(), tokenIn, amountIn, tokenOut);
     }
@@ -190,7 +190,7 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         wethOut = _executeCommonTokenClaim(layoutStruct, actualIn, recipient == address(0) ? msg.sender : recipient);
     }
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -198,7 +198,7 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }

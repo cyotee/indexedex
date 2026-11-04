@@ -53,13 +53,10 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         _secureTokenTransfer(in_, paid_, prepaid_);
         IERC20 staking_ = IERC20(address(Repo._layoutStruct().rebasingDetfToken));
         if (out_ == staking_) {
-            in_.forceApprove(address(staking_), paid_);
-            IStakedDETF(address(staking_)).exchangeIn(in_, paid_, out_, amount_, to_, false, deadline_);
+            in_.forceApprove(address(staking_), paid_);IStakedDETF(address(staking_)).exchangeIn(in_, paid_, out_, amount_, to_, false, deadline_);
             in_.forceApprove(address(staking_), 0);
         } else {
-            if (in_ == staking_) {
-                IStakedDETF(address(staking_))
-                    .exchangeIn(in_, paid_, IERC20(address(this)), paid_, address(this), false, deadline_);
+            if (in_ == staking_) {IStakedDETF(address(staking_)).exchangeIn(in_, paid_, IERC20(address(this)), paid_, address(this), false, deadline_);
             }
             if (address(out_) == address(this)) {
                 out_.safeTransfer(to_, amount_);
@@ -76,10 +73,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
                             if (untouched_ != 0) staking_.safeTransfer(msg.sender, untouched_);
                             uint256 converted_ = paid_ - used_;
                             if (converted_ != 0) {
-                                IERC20(address(this)).forceApprove(address(staking_), converted_);
-                                IStakedDETF(address(staking_))
-                                    .exchangeIn(
-                                        IERC20(address(this)),
+                                IERC20(address(this)).forceApprove(address(staking_), converted_);IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)),
                                         converted_,
                                         staking_,
                                         converted_,

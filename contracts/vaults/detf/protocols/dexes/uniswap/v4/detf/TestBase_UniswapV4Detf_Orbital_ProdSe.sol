@@ -259,8 +259,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
             if (err.length >= 4) emit log_named_bytes32("R19 join revert", bytes32(err));
         }
         address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(token_);
-        if (se_ != address(0)) {
-            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w) {
+        if (se_ != address(0)) {try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w, uint256) {
                 emit log_named_uint("R19 sePreview wrap", w);
             } catch (bytes memory err2) {
                 if (err2.length >= 4) emit log_named_bytes32("R19 wrap revert", bytes32(err2));
@@ -293,8 +292,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
                 // Failure supplies no proof; check the full-input forward route.
             }
         }
-        if (!subShare_) {
-            uint256 shares_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
+        if (!subShare_) {(uint256 shares_,) = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
             assertEq(shares_, 0, "above-dust retention requires a successful Standard Exchange preview of zero");
         }
         assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");

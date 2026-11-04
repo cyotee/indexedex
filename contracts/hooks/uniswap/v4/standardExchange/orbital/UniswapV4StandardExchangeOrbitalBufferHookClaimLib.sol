@@ -376,9 +376,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     {
         if (amountInRaw == 0 || quote.se == address(0)) return 0;
         if (quote.se == quote.token) return amountInRaw;
-        uint256 sharesOut;
-        if (quote.state.length == 0) sharesOut = IStandardExchangeIn(quote.se).previewExchangeIn(
-            IERC20(quote.token), amountInRaw, IERC20(quote.se));
+        uint256 sharesOut;if (quote.state.length == 0) (sharesOut,) = IStandardExchangeIn(quote.se).previewExchangeIn(IERC20(quote.token), amountInRaw, IERC20(quote.se));
         else (,, sharesOut,) = Transition(quote.se).quoteTransition(quote.state, Transition.Operation.DepositExactIn, amountInRaw);
         if (sharesOut == 0) return amountInRaw;
         if (quote.rate == 0) revert RateProviderRequired();
@@ -442,8 +440,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     /// @notice SE claim of `seBal` shares → pool token (unwrap preview; fee-inclusive).
     function seClaimOf(address se, address token, uint256 seBal) internal view returns (uint256) {
         if (se == address(0) || seBal == 0) return 0;
-        if (se == token) return seBal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(token));
+        if (se == token) return seBal;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(token));
+        return quotedAmountOut;
     }
 
     /// @notice Effective native reserve for a leg: raw face, or shares×rate, or SE claim.
@@ -471,8 +469,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         returns (uint256 sharesOut)
     {
         if (amountInRaw == 0 || se == address(0)) return 0;
-        if (se == token) return amountInRaw;
-        sharesOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
+        if (se == token) return amountInRaw;(sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
     }
 
     /// @notice Preview claim-in (effective native) from buffering `amountInRaw` pool tokens into SE.
@@ -484,9 +481,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         address hook
     ) public view returns (uint256 dInNative) {
         if (amountInRaw == 0 || se == address(0)) return 0;
-        if (se == token) return amountInRaw;
-        uint256 sharesOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
+        if (se == token) return amountInRaw;(uint256 sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
         if (sharesOut == 0) return amountInRaw;
         if (rp == address(0)) revert RateProviderRequired();
         hook;
@@ -504,8 +499,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         if (rp == address(0)) revert RateProviderRequired();
         uint256 rate = getRateFailClosed(rp);
         // ceil shares for exact effective out when selling; the unwrap amount is the SE's buffering quote
-        sharesOut = sharesForNativeUp(dOutNative, rate, se, token);
-        amountOutNative = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
+        sharesOut = sharesForNativeUp(dOutNative, rate, se, token);(amountOutNative,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
         return (amountOutNative, sharesOut);
     }
 
@@ -516,8 +510,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         returns (uint256)
     {
         if (sharesOut == 0 || se == address(0)) return 0;
-        if (se == token) return sharesOut;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
+        if (se == token) return sharesOut;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
+        return quotedAmountOut;
     }
 
     /// @notice Shares needed so unwrap delivers at least `amountOutNative` pool tokens (exact-out).

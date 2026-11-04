@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 import {IUniswapV4DetfSelfCall} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
@@ -180,10 +181,9 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         IStandardExchange v_ = s.mintTable.vaultOf[address(tokenIn)];
         address pair_ = _hookPairOfVault(v_);
         uint256 pairEq_ = IUniswapV4DetfSelfCall(address(this)).peekPairEq(address(v_), address(tokenIn), amountIn);
-        if (!_mintPriceGate(pair_, true)) {
-            userDetf = address(tokenIn) != pair_
+        if (!_mintPriceGate(pair_, true)) {userDetf = address(tokenIn) != pair_
                 ? IDetfReserveQuote(s.hook).previewSwapAfterExchange(address(tokenIn), pair_, address(this), amountIn)
-                : IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), pairEq_, IERC20(address(this)));
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(address(_hook())))), IERC20(pair_), pairEq_, IERC20(address(this)));
             return (0, userDetf);
         }
         grossDetf = _quoteMintGross(pair_, pairEq_);
@@ -353,9 +353,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         internal returns (uint256 out_)
     {
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
-        IERC20(address(this)).forceApprove(staking_, amount_);
-        out_ = IStakedDETF(staking_).exchangeIn(
-            IERC20(address(this)), amount_, IERC20(staking_), minimum_, recipient_, false, deadline_
+        IERC20(address(this)).forceApprove(staking_, amount_);(out_,) = IStakedDETF(staking_).exchangeIn(IERC20(address(this)), amount_, IERC20(staking_), minimum_, recipient_, false, deadline_
         );
         IERC20(address(this)).forceApprove(staking_, 0);
         _syncAllExpectedHoldReserves();
@@ -367,9 +365,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         _realizeExpansionIfNeeded();
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
         IERC20(staking_).safeTransferFrom(msg.sender, address(this), amount_);
-        bool direct_ = address(tokenOut_) == address(this);
-        out_ = IStakedDETF(staking_).exchangeIn(
-            IERC20(staking_), amount_, IERC20(address(this)), direct_ ? minimum_ : 0,
+        bool direct_ = address(tokenOut_) == address(this);(out_,) = IStakedDETF(staking_).exchangeIn(IERC20(staking_), amount_, IERC20(address(this)), direct_ ? minimum_ : 0,
             direct_ ? recipient_ : address(this), false, deadline_
         );
         if (!direct_) out_ = _burnHeld(out_, tokenOut_, minimum_, recipient_, deadline_);
@@ -386,10 +382,9 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         if (!s.burnTable.tokens._contains(address(tokenOut))) return 0;
         IStandardExchange v_ = s.burnTable.vaultOf[address(tokenOut)];
         address pair_ = _hookPairOfVault(v_);
-        if (!_burnPriceGate(pair_, true)) {
-            uint256 acquired_ = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(address(this)), detfIn, IERC20(pair_));
-            if (address(tokenOut) == pair_) return acquired_;
-            return v_.previewExchangeIn(IERC20(pair_), acquired_, tokenOut);
+        if (!_burnPriceGate(pair_, true)) {(uint256 acquired_,) = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(address(this)), detfIn, IERC20(pair_));
+            if (address(tokenOut) == pair_) return acquired_;(uint256 quotedAmountOut,) = v_.previewExchangeIn(IERC20(pair_), acquired_, tokenOut);
+            return quotedAmountOut;
         }
         uint256 supply_ = ERC20Repo._totalSupply() + _pendingExpansionDetf();
         if (supply_ == 0) return 0;
@@ -397,8 +392,8 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         if (lpOut_ == 0) return 0;
         // Match _entryBurn(): exitProportional + rejoin DETF + pay remaining pair (H10: not exitSingleAsset).
         uint256 residual_ = _previewPropPairResidual(lpOut_, pair_);
-        if (address(tokenOut) == pair_) return residual_;
-        return v_.previewExchangeIn(IERC20(pair_), residual_, tokenOut);
+        if (address(tokenOut) == pair_) return residual_;(uint256 quotedAmountOut,) = v_.previewExchangeIn(IERC20(pair_), residual_, tokenOut);
+        return quotedAmountOut;
     }
 
     function _previewPropPairResidual(uint256 lpOut_, address pair_) private view returns (uint256 residual_) {

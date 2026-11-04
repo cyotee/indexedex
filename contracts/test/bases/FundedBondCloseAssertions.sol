@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -66,7 +67,7 @@ abstract contract FundedBondCloseAssertions is Test {
         }
         vm.expectRevert(); IFundedBondQuote(detf_).previewBond(IERC20(detf_), 1, 30 days);
         vm.expectRevert(); IFundedBondQuote(detf_).previewBond(IERC20(address(staking_)), 1, 30 days);
-        assertEq(IStandardExchangeIn(detf_).previewExchangeIn(IERC20(detf_), 1, IERC20(address(staking_))), 1);
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(detf_))), IERC20(detf_), 1, IERC20(address(staking_))), 1);
     }
 
     function _assertFinalFundedClaimPath(
@@ -104,27 +105,23 @@ abstract contract FundedBondCloseAssertions is Test {
         vm.startPrank(CLAIM_RECIPIENT);
         raw_.approve(detf_, amount_);
         _assertNotBondPayment(detf_, raw_, amount_);
-        vm.expectRevert();
-        IStandardExchangeIn(detf_).exchangeIn(raw_, amount_, IERC20(address(0xBAD)), 0,
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(detf_))), raw_, amount_, IERC20(address(0xBAD)), 0,
             CLAIM_RECIPIENT, false, block.timestamp);
         assertEq(raw_.balanceOf(CLAIM_RECIPIENT), balance_, "unsupported destination cannot spend funded input");
         assertEq(staking_.stakingState().accountedBacking, backing_);
-        assertEq(IStandardExchangeIn(detf_).exchangeIn(
-            raw_, amount_, receipt_, amount_, CLAIM_RECIPIENT, false, block.timestamp
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(detf_))), raw_, amount_, receipt_, amount_, CLAIM_RECIPIENT, false, block.timestamp
         ), amount_);
         assertEq(staking_.balanceOf(CLAIM_RECIPIENT), amount_);
         assertEq(staking_.stakingState().accountedBacking, backing_ + amount_);
         receipt_.approve(detf_, amount_);
         _assertNotBondPayment(detf_, receipt_, amount_);
         // The input is actually held and approved: rejection must be route validation.
-        vm.expectRevert();
-        IStandardExchangeIn(detf_).exchangeIn(receipt_, amount_, IERC20(address(0xBAD)), 0,
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(detf_))), receipt_, amount_, IERC20(address(0xBAD)), 0,
             CLAIM_RECIPIENT, false, block.timestamp);
         assertEq(staking_.balanceOf(CLAIM_RECIPIENT), amount_);
         assertEq(staking_.stakingState().accountedBacking, backing_ + amount_);
         assertEq(raw_.balanceOf(CLAIM_RECIPIENT), balance_ - amount_);
-        assertEq(IStandardExchangeIn(detf_).exchangeIn(
-            receipt_, amount_, raw_, amount_, CLAIM_RECIPIENT, false, block.timestamp
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(detf_))), receipt_, amount_, raw_, amount_, CLAIM_RECIPIENT, false, block.timestamp
         ), amount_);
         vm.stopPrank();
         assertEq(staking_.gonsOf(CLAIM_RECIPIENT), 0);
@@ -156,21 +153,18 @@ abstract contract FundedBondCloseAssertions is Test {
         uint256 lp_ = nft_.lpToken().balanceOf(address(nft_));
         uint256 paymentBefore_ = payment_.balanceOf(CLAIM_RECIPIENT);
         IERC20 stakeToken_ = IERC20(address(staking_));
-        assertEq(staking_.previewExchangeIn(stakeToken_, amount_, IERC20(detf_)), amount_);
-        vm.expectRevert();
-        staking_.previewExchangeIn(stakeToken_, amount_, payment_);
-        vm.expectRevert(); vm.prank(CLAIM_RECIPIENT);
-        staking_.exchangeIn(stakeToken_, amount_, IERC20(detf_), amount_ + 1,
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(staking_)), stakeToken_, amount_, IERC20(detf_)), amount_);
+        vm.expectRevert();ExchangeInAmount.previewOut(IStandardExchangeIn(address(staking_)), stakeToken_, amount_, payment_);
+        vm.expectRevert(); vm.prank(CLAIM_RECIPIENT);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), stakeToken_, amount_, IERC20(detf_), amount_ + 1,
             CLAIM_RECIPIENT, false, block.timestamp);
         assertEq(staking_.balanceOf(CLAIM_RECIPIENT), amount_, "failed minimum preserves principal");
         vm.prank(CLAIM_RECIPIENT);
-        assertEq(staking_.exchangeIn(stakeToken_, amount_, IERC20(detf_), amount_,
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), stakeToken_, amount_, IERC20(detf_), amount_,
             CLAIM_RECIPIENT, false, block.timestamp), amount_);
         assertEq(IERC20(detf_).balanceOf(CLAIM_RECIPIENT), raw_ + amount_);
         assertEq(staking_.gonsOf(CLAIM_RECIPIENT), 0, "full principal exit retires only this account");
         // A supported route with no remaining receipt cannot drain someone else's backing.
-        vm.expectRevert(); vm.prank(CLAIM_RECIPIENT);
-        staking_.exchangeIn(stakeToken_, 1, IERC20(detf_), 1, CLAIM_RECIPIENT, false, block.timestamp);
+        vm.expectRevert(); vm.prank(CLAIM_RECIPIENT);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), stakeToken_, 1, IERC20(detf_), 1, CLAIM_RECIPIENT, false, block.timestamp);
         assertEq(IERC20(detf_).balanceOf(CLAIM_RECIPIENT), raw_ + amount_);
         assertEq(staking_.gonsOf(CLAIM_RECIPIENT), 0);
         assertEq(staking_.stakingState().accountedBacking, backing_ - amount_);

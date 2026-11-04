@@ -107,9 +107,7 @@ abstract contract TestBase_BalancerV3StableBufferTransitionQuote is Test {
             );
             assertEq(used, step.amountIn, "exact-out BPT input");
         } else {
-            bool joining = op == Quote.Operation.DepositExactIn;
-            uint256 paid = IStandardExchangeIn(f.pool).exchangeIn(
-                joining ? f.asset : IERC20(f.pool), step.amountIn,
+            bool joining = op == Quote.Operation.DepositExactIn;(uint256 paid,) = IStandardExchangeIn(f.pool).exchangeIn(joining ? f.asset : IERC20(f.pool), step.amountIn,
                 joining ? IERC20(f.pool) : f.asset, step.amountOut, f.holder, false, block.timestamp
             );
             assertEq(paid, step.amountOut, "exact-in output, strict quoted min");
@@ -133,8 +131,9 @@ abstract contract TestBase_BalancerV3StableBufferTransitionQuote is Test {
         assertEq(Quote(f.pool).quoteTotalSupply(step.state), IERC20(f.pool).totalSupply(), "issued supply");
         assertEq(step.rateAfter, f.rate.getRate(), "projected rate equals live production rate provider");
         assertGt(step.rateAfter, 0, "rate comparison must not be zero/zero");
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(f.pool).previewExchangeIn(IERC20(f.pool), 1e18, f.asset);
         assertEq(Quote(f.pool).quoteAssets(step.state, 1e18),
-            IStandardExchangeIn(f.pool).previewExchangeIn(IERC20(f.pool), 1e18, f.asset), "unit share value");
+            previewAmountOut1, "unit share value");
     }
 
     function _twoTransitionSteps(Quote.Operation firstOp, uint256 aggregate, uint256 firstAmount, uint256 secondAmount)

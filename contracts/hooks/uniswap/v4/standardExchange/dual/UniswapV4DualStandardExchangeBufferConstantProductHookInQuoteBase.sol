@@ -36,9 +36,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookInQuoteB
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
             (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
             if (supported) return projected;
-            address pair = Repo._layout().legs.pairOfStandardExchange[tokenIn];
-            uint256 pairOut = IStandardExchangeIn(tokenIn).previewExchangeIn(
-                IERC20(tokenIn), amountIn, IERC20(pair)
+            address pair = Repo._layout().legs.pairOfStandardExchange[tokenIn];(uint256 pairOut,) = IStandardExchangeIn(tokenIn).previewExchangeIn(IERC20(tokenIn), amountIn, IERC20(pair)
             );
             if (pairOut == 0) return 0;
             return _previewDepositSingle(pair, pairOut);
@@ -74,8 +72,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookInQuoteB
             return _previewSequentialExit(pair, other, sharesIn, asShare);
         }
         amountOut = _previewFallbackExit(pair, sharesIn, outIs0);
-        if (asShare && amountOut > 0) {
-            amountOut = IStandardExchangeIn(tokenOut).previewExchangeIn(IERC20(pair), amountOut, IERC20(tokenOut));
+        if (asShare && amountOut > 0) {(amountOut,) = IStandardExchangeIn(tokenOut).previewExchangeIn(IERC20(pair), amountOut, IERC20(tokenOut));
         }
     }
 

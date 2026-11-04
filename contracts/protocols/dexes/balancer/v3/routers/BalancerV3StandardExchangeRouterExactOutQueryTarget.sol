@@ -237,11 +237,9 @@ contract BalancerV3StandardExchangeRouterExactOutQueryTarget is
             ((address(params.pool) != address(params.tokenInVault))
                     && (address(params.pool) != address(params.tokenOutVault)))
                 && ((address(params.tokenInVault) != address(0)) && (address(params.tokenOutVault) == address(0)))
-        ) {
-            // EXACT_OUT limit is maximum amount in.
+        ) {// EXACT_OUT limit is maximum amount in.
             // Convert provided limit to equivalent amount of strategy vault.
-            uint256 convertedLimit = params.tokenInVault
-                .previewExchangeIn(IERC20(address(params.tokenIn)), params.limit, IERC20(address(params.tokenInVault)));
+            (uint256 convertedLimit,) = params.tokenInVault.previewExchangeIn(IERC20(address(params.tokenIn)), params.limit, IERC20(address(params.tokenInVault)));
 
             // Processing a wrap/swap
             VaultSwapParams memory swapParams;
@@ -276,11 +274,9 @@ contract BalancerV3StandardExchangeRouterExactOutQueryTarget is
             ((address(params.pool) != address(params.tokenInVault))
                     && (address(params.pool) != address(params.tokenOutVault)))
                 && ((address(params.tokenInVault) != address(0)) && (address(params.tokenOutVault) != address(0)))
-        ) {
-            // Processing a wrap/swap/unwrap
+        ) {// Processing a wrap/swap/unwrap
             // Convert provided limit to equivalent amount of strategy vault in
-            uint256 convertedLimit = params.tokenInVault
-                .previewExchangeIn(IERC20(address(params.tokenIn)), params.limit, IERC20(address(params.tokenInVault)));
+            (uint256 convertedLimit,) = params.tokenInVault.previewExchangeIn(IERC20(address(params.tokenIn)), params.limit, IERC20(address(params.tokenInVault)));
             // User provided amountGiven is how much they wish to receive AFTER unwrap
             // Calculate how many vault tokens would need to be redeemed to get that amount out
             uint256 convertedAmountOut = params.tokenOutVault

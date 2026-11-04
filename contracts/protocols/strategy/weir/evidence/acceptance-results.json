@@ -1,0 +1,15 @@
+{
+  "revision": "weir-import-plan-final-r2",
+  "hermetic": {
+    "command": "python3 scripts/forge-artifacts.py test contracts/protocols/strategy/weir/WeirVaults.sol contracts/protocols/strategy/weir/base/WeirBase.sol contracts/protocols/strategy/weir/libraries/LiquidityAmounts.sol --test-root test/foundry/spec/protocols/strategy/weir",
+    "confirmingRun": "88 passed, 0 failed, 0 skipped"
+  },
+  "fork": {
+    "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test contracts/protocols/strategy/weir/WeirVaults.sol --test-root test/foundry/fork/protocols/strategy/weir",
+    "status": "PARTIAL",
+    "alias": "foundry.toml rpc_endpoints.robinhood_mainnet_alchemy",
+    "result": "1 passed, 0 failed. test_AC65_forkPreflight passed at pin 76197114",
+    "parityTrace": false,
+    "substituteChain": false
+  }
+}

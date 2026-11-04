@@ -20,25 +20,25 @@ abstract contract MultiVaultWeightedDetfExchangeQueryTarget is MultiVaultWeighte
             || (address(in_) == staking_ && address(out_) == address(this));
     }
 
-    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256) {
-        if (_directStakingRoute(in_, out_)) return amount_;
-        if (address(in_) == address(out_) || !Repo._layoutStruct().isReserveLive) return 0;
+function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256 amountOut, uint256 amountRefunded) {
+        if (_directStakingRoute(in_, out_)) return (amount_, 0);
+        if (address(in_) == address(out_) || !Repo._layoutStruct().isReserveLive) return (0, 0);
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
         if (address(in_) == address(this) || address(in_) == staking_) {
             (bool found_, uint256 leg_) = Repo._findVaultShareIndex(out_);
-            if (!found_) return 0;
-            return _previewPrimaryBurn()
+            if (!found_) return (0, 0);
+            return (_previewPrimaryBurn()
                 ? _previewBptUnwind(leg_, _bptForDetfShares(amount_, true))
-                : _quoteReserveSwap(leg_, true, amount_);
+                : _quoteReserveSwap(leg_, true, amount_), 0);
         }
         if (address(out_) == address(this) || address(out_) == staking_) {
             (bool found_, uint256 leg_) = Repo._findVaultShareIndex(in_);
-            if (!found_) return 0;
-            return _previewPrimaryMint()
+            if (!found_) return (0, 0);
+            return (_previewPrimaryMint()
                 ? _splitMintedDetf(_quoteDetfOutForVaultShares(leg_, amount_)).userDetf
-                : _quoteReserveSwap(leg_, false, amount_);
+                : _quoteReserveSwap(leg_, false, amount_), 0);
         }
-        return 0;
+        return (0, 0);
     }
 
     function previewExchangeOut(IERC20 in_, IERC20 out_, uint256 amount_) public view virtual returns (uint256) {

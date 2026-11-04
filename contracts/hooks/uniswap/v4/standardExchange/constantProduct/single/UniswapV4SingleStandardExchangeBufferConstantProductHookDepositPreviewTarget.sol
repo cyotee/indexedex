@@ -33,8 +33,8 @@ import {
 abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget is
     UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon, NativeStandardYieldPreviewTarget
 {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
     function isValidTokenIn(address token_) public view override returns (bool) {

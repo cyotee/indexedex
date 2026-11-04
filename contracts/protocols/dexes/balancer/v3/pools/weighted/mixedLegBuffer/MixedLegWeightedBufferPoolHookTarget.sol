@@ -465,8 +465,7 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
         vault.sendTo(bufferTok, address(this), xRaw);
 
         bufferTok.approve(address(seVault), xRaw);
-        _passPrepay(seRouter, address(seVault));
-        uint256 minted = seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp);
+        _passPrepay(seRouter, address(seVault));(uint256 minted,) = seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp);
         _restorePrepay(seRouter);
         if (minted == 0) revert IMixedLegWeightedBufferPool.PostSwapDepositFailed(xRaw);
 

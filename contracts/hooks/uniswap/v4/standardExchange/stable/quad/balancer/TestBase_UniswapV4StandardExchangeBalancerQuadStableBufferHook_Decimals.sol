@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -338,9 +339,8 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
     function _firstMintInvWad(uint256 humanEach) internal returns (uint256 shares) {
         uint256[] memory amounts = _balancedAmounts(humanEach);
         for (uint256 i; i < 4; ++i) {
-            address se = quad.standardExchange(i);
-            uint256 inventory = se == address(0) ? amounts[i]
-                : IStandardExchangeIn(se).previewExchangeIn(IERC20(quad.token(i)), amounts[i], IERC20(se));
+            address se = quad.standardExchange(i);uint256 inventory = se == address(0) ? amounts[i]
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(quad.token(i)), amounts[i], IERC20(se));
             assertEq(inventory * quad.invScale(i) / 1 ether, humanEach * 1 ether, "normalized bootstrap inventory");
         }
         vm.prank(user);

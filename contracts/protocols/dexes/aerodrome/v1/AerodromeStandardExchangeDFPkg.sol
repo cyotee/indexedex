@@ -151,10 +151,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
         // Step 4: If LP tokens were minted, deposit them to vault for recipient
         if (lpTokensMinted > 0) {
             IERC20 lpToken = IERC20(address(pool));
-            lpToken.safeTransfer(vault, lpTokensMinted);
-            IStandardExchangeIn(vault)
-                .exchangeIn(
-                    lpToken,
+            lpToken.safeTransfer(vault, lpTokensMinted);IStandardExchangeIn(vault).exchangeIn(lpToken,
                     lpTokensMinted,
                     IERC20(vault), // vault share token is the vault itself
                     0, // no minimum - user already approved the action

@@ -46,17 +46,17 @@ contract MockStandardExchange {
     /* ---------------------------------------------------------------------- */
 
     /// @notice Preview: amountOut = amountIn * rate / 1e18.
-    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
+function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
         external
         view
-        returns (uint256 amountOut_)
+        returns (uint256 amountOut_, uint256 amountRefunded)
     {
         amountOut_ = amountIn_ * _rate[address(tokenIn_)][address(tokenOut_)] / 1e18;
     }
 
     /// @notice Executes an exchange-in: pulls tokenIn (unless pretransferred), transfers tokenOut
     ///         from this contract's pre-loaded balance.
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn_,
         uint256 amountIn_,
         IERC20 tokenOut_,
@@ -64,7 +64,7 @@ contract MockStandardExchange {
         address recipient_,
         bool pretransferred_,
         uint256 /*deadline_*/
-    ) external returns (uint256 amountOut_) {
+    ) external returns (uint256 amountOut_, uint256 amountRefunded) {
         if (!pretransferred_) {
             tokenIn_.transferFrom(msg.sender, address(this), amountIn_);
         }

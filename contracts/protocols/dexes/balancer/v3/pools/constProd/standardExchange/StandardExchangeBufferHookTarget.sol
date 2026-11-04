@@ -367,8 +367,7 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         // 2) Best-effort deposit of the full amount.
         //    When IndexedEx router has a prepay session, pass auth to the SE (hooks==pool principal).
         ttaTok.approve(address(seVault), X_raw);
-        _passPrepay(seRouter, address(seVault));
-        uint256 minted = seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp);
+        _passPrepay(seRouter, address(seVault));(uint256 minted,) = seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp);
         _restorePrepay(seRouter);
         if (minted == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
 
@@ -576,8 +575,7 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
 
         IStandardExchange seVault = Repo._standardExchangeVault();
         IERC20 shareTok = Repo._shareToken();
-        ttaTok.approve(address(seVault), drainRaw);
-        uint256 minted = seVault.exchangeIn(ttaTok, drainRaw, shareTok, 0, address(vault), false, block.timestamp);
+        ttaTok.approve(address(seVault), drainRaw);(uint256 minted,) = seVault.exchangeIn(ttaTok, drainRaw, shareTok, 0, address(vault), false, block.timestamp);
         if (minted == 0) return;
 
         uint256 donationRaw = _bv3SharesDonationRaw(minted);

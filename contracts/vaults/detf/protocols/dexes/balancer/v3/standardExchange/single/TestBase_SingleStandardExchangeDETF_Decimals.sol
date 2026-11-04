@@ -550,9 +550,7 @@ abstract contract TestBase_SingleStandardExchangeDETF_Decimals is TestBase_Balan
         // Mint seigniorage with inventory DETF into bond vault reward pool.
         uint256 seShares_ = _fundSeShares(minter_, 50e18);
         vm.startPrank(minter_);
-        seShare.approve(instance_, seShares_);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, seShares_, IERC20(instance_), 0, minter_, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, seShares_);IStandardExchangeIn(instance_).exchangeIn(seShare, seShares_, IERC20(instance_), 0, minter_, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -647,9 +645,7 @@ abstract contract TestBase_SingleStandardExchangeDETF_Decimals is TestBase_Balan
                 if (burnAmt_ == 0) burnAmt_ = bal_ > 1e18 ? 1e18 : bal_;
                 if (burnAmt_ == 0) continue;
                 vm.startPrank(who_);
-                IERC20(instance_).approve(instance_, burnAmt_);
-                try IStandardExchangeIn(instance_)
-                    .exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, who_, false, block.timestamp + 1 hours) {
+                IERC20(instance_).approve(instance_, burnAmt_);try IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, who_, false, block.timestamp + 1 hours) {
                     burned_ = true;
                 } catch {}
                 vm.stopPrank();

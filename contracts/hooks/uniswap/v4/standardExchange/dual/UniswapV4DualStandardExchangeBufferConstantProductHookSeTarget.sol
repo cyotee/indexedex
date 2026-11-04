@@ -62,9 +62,9 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
     function isValidTokenOut(address token_) public view virtual override returns (bool) { return isValidTokenIn(token_); }
 
 
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut) {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
-        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut, uint256 amountRefunded) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return (_exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
+        return (_swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
     }
 
     function _swapExchangeIn(

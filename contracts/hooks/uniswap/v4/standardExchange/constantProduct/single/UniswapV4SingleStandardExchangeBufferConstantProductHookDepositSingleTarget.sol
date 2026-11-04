@@ -44,11 +44,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     {
         return Withdrawal.withdrawFrom(address(this), shares_, tokenOut_, receiver_, minimum_, block.timestamp);
     }
-    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
-        external returns (uint256)
+function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        external returns (uint256 amountOut, uint256 amountRefunded)
     {
-        if (LiquidityRoute.isLiquidityRoute(in_, out_)) return _exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
-        return _swapExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+        if (LiquidityRoute.isLiquidityRoute(in_, out_)) return (_exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_), 0);
+        return (_swapExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_), 0);
     }
 
     /// @notice CP joinSingleAssetExactIn entry point.

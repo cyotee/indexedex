@@ -70,13 +70,11 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawalLib {
     function bufferPair(uint256 amount) internal returns (uint256 seOut) {
         if (amount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return amount;
-        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange));
+        if (l.pairToken == l.standardExchange) return amount;(uint256 minOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange));
         if (minOut == 0) return 0;
-        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
-        return IStandardExchangeIn(l.standardExchange).exchangeIn(
-            IERC20(l.pairToken), amount, IERC20(l.standardExchange), minOut, address(this), false, block.timestamp
+        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);(uint256 quotedAmountOut,) = IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange), minOut, address(this), false, block.timestamp
         );
+        return quotedAmountOut;
     }
 
     function unwrapSeShares(uint256 seIn) internal returns (uint256 pairOut) {
@@ -84,11 +82,8 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawalLib {
         if (seIn > cap) seIn = cap;
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return seIn;
-        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken));
-        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
-        pairOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
-            IERC20(l.standardExchange), seIn, IERC20(l.pairToken), minOut, address(this), false, block.timestamp
+        if (l.pairToken == l.standardExchange) return seIn;(uint256 minOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken));
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);(pairOut,) = IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken), minOut, address(this), false, block.timestamp
         );
         IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
     }

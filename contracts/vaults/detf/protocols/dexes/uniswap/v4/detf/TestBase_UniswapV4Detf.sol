@@ -431,7 +431,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         IDetfBondNFT nft_ = IDetfBondNFT(info_.bondNftVault());
         DETFFundedStakingMath.BondPosition memory position_ = nft_.positionOf(id_);
         uint256 maturity_ = position_.startTimestamp + position_.vestingDuration;
-        if (block.timestamp < maturity_) vm.warp(maturity_);
+        if (vm.getBlockTimestamp() < maturity_) vm.warp(maturity_);
         IDETFFundedRewards(d_).synchronizeRewards();
         DETFFundedStakingMath.BondClaim memory quote_ = nft_.previewClaim(id_);
         assertEq(quote_.principalDue, position_.principal - position_.claimedPrincipal, "all remaining principal vested");
@@ -462,10 +462,9 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
     function _assertFundedUnstake(address d_, address holder_, uint256 amount_) internal {
         IStakedDETF staking_ = IStakedDETF(IUniswapV4Detf(d_).rebasingClaimToken());
         uint256 before_ = IERC20(d_).balanceOf(holder_);
-        assertEq(staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(d_)), amount_, "one-to-one unstake quote");
-        vm.prank(holder_);
-        uint256 out_ = staking_.exchangeIn(
-            IERC20(address(staking_)), amount_, IERC20(d_), amount_, holder_, false, block.timestamp + 1 hours
+        (uint256 previewAmountOut1,) = staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(d_));
+        assertEq(previewAmountOut1, amount_, "one-to-one unstake quote");
+        vm.prank(holder_);(uint256 out_,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d_), amount_, holder_, false, vm.getBlockTimestamp() + 1 hours
         );
         assertEq(out_, amount_, "one-to-one unstake execution");
         assertEq(IERC20(d_).balanceOf(holder_) - before_, amount_, "actual held DETF redemption");

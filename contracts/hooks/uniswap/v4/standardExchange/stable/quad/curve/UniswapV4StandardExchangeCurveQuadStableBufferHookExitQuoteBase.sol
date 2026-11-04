@@ -38,9 +38,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitQuoteBas
         if (receiveSeShare || Repo._layout().standardExchanges[idx] == address(0)) {
             amountOut = invOut;
         } else {
-            address se = Repo._layout().standardExchanges[idx];
-            amountOut = IStandardExchangeIn(se).previewExchangeIn(
-                IERC20(se), invOut, IERC20(tokenOut)
+            address se = Repo._layout().standardExchanges[idx];(amountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut, IERC20(tokenOut)
             );
         }
     }

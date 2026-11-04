@@ -238,12 +238,12 @@ abstract contract UniswapV4DetfQueryTarget is UniswapV4DetfTarget {
     }
 
     /// @notice Quotes the configured exact-input exchange route without changing reserve state.
-    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
+function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
         external
         view
-        returns (uint256 amountOut_)
+        returns (uint256 amountOut_, uint256 amountRefunded)
     {
-        return _entryPreviewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+        return (_entryPreviewExchangeIn(tokenIn_, amountIn_, tokenOut_), 0);
     }
 
     /// @notice Quotes physical reserve LP produced by an accepted donation input.

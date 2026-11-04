@@ -693,10 +693,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     function _previewUnwrapSe(uint256 seAmount) internal view returns (uint256) {
         if (seAmount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return seAmount;
-        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.standardExchange), seAmount, IERC20(l.pairToken)
+        if (l.pairToken == l.standardExchange) return seAmount;(uint256 quotedAmountOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seAmount, IERC20(l.pairToken)
         );
+        return quotedAmountOut;
     }
 
     /// @dev D60: rated valuation of `seBal` shares (pair units).

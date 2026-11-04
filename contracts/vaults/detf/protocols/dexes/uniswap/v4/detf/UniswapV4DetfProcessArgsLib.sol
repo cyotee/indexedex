@@ -208,13 +208,11 @@ library UniswapV4DetfProcessArgsLib {
         return false;
     }
 
-    function _requireShareRoute(IStandardExchange vault_) private view {
-        vault_.previewExchangeIn(IERC20(address(vault_)), ONE_WAD, IERC20(address(vault_)));
+    function _requireShareRoute(IStandardExchange vault_) private view {vault_.previewExchangeIn(IERC20(address(vault_)), ONE_WAD, IERC20(address(vault_)));
     }
 
     function _requireClosedForm(IStandardExchange vault_, IERC20 token_) private view {
-        IERC20 share_ = IERC20(address(vault_));
-        uint256 out_ = IStandardExchangeIn(address(vault_)).previewExchangeIn(token_, ONE_WAD, share_);
+        IERC20 share_ = IERC20(address(vault_));(uint256 out_,) = IStandardExchangeIn(address(vault_)).previewExchangeIn(token_, ONE_WAD, share_);
         if (out_ == 0) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
     }
 }

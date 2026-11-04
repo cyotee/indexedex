@@ -13,9 +13,9 @@ import {SingleStandardExchangeDETFRepo as Repo} from "./SingleStandardExchangeDE
 abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardExchangeDETFExchangeOutTarget {
     using BetterSafeERC20 for IERC20;
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 in_, uint256 amount_, IERC20 out_, uint256 min_, address to_, bool prepaid_, uint256 deadline_
-    ) public virtual nonReentrant returns (uint256 received_) {
+    ) public virtual nonReentrant returns (uint256 received_, uint256 amountRefunded) {
         _requireActive(deadline_, amount_);
         if (address(in_) == address(out_)) revert Repo.UnsupportedRoute(in_, out_);
         Repo.Storage storage s_ = Repo._layoutStruct();
@@ -25,9 +25,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
         _updateExpansionMintOnRewards();
 
         if (address(in_) == address(staking_)) {
-            _pullToken(in_, amount_, prepaid_);
-            IStakedDETF(address(staking_)).exchangeIn(
-                staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_
+            _pullToken(in_, amount_, prepaid_);IStakedDETF(address(staking_)).exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_
             );
             if (address(out_) == address(this)) {
                 received_ = amount_;
@@ -39,9 +37,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
             uint256 principal_ = address(in_) == address(this)
                 ? _pullToken(in_, amount_, prepaid_)
                 : _acquireDetf(_receiveVaultShares(in_, amount_, prepaid_, deadline_));
-            IERC20(address(this)).forceApprove(address(staking_), principal_);
-            received_ = IStakedDETF(address(staking_)).exchangeIn(
-                IERC20(address(this)), principal_, staking_, min_, to_, false, deadline_
+            IERC20(address(this)).forceApprove(address(staking_), principal_);(received_,) = IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), principal_, staking_, min_, to_, false, deadline_
             );
             IERC20(address(this)).forceApprove(address(staking_), 0);
         } else if (address(in_) == address(this)) {

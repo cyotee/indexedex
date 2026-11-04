@@ -79,8 +79,8 @@ abstract contract BalancerV3PoolStandardExchangeTarget is StandardExchangeInExec
         return _poolVault().getBptRate(address(this));
     }
 
-    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
-        return _previewExchangeIn(in_, amount_, out_);
+function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(in_, amount_, out_), 0);
     }
 
     function _previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) internal view override returns (uint256) {
@@ -94,10 +94,10 @@ abstract contract BalancerV3PoolStandardExchangeTarget is StandardExchangeInExec
         return _previewPoolLiquidity(joining_, true, index_, amount_);
     }
 
-    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 min_, address to_, bool prepaid_, uint256 deadline_)
-        external returns (uint256 received_)
+function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 min_, address to_, bool prepaid_, uint256 deadline_)
+        external returns (uint256 received_, uint256 amountRefunded)
     {
-        return _exchangeIn(in_, amount_, out_, min_, to_, prepaid_, deadline_);
+        return (_exchangeIn(in_, amount_, out_, min_, to_, prepaid_, deadline_), 0);
     }
 
     function _exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 min_, address to_, bool prepaid_, uint256 deadline_)

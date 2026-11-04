@@ -286,8 +286,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is Uniswap
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_) internal override returns (uint256) {
         return _redeemHeld(receiver_, shares_, tokenOut_, minimum_);
     }
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline) external returns (uint256) {
-        return _entryExchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline) external returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_entryExchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline), 0);
     }
 }
 

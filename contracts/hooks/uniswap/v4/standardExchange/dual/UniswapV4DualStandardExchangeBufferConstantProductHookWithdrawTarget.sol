@@ -67,8 +67,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         uint256 supply_ = _supplyAfterProtocolMint();
         return supply_ == 0 ? 1e18 : FullMath.mulDiv(Math.sqrt(_wadProduct()), 1e18, supply_);
     }
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
     using SafeERC20 for IERC20;

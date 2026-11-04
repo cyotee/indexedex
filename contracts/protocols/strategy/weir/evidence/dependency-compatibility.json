@@ -1,0 +1,59 @@
+{
+  "revision": "weir-import-plan-final-r2",
+  "status": "pass",
+  "behaviorChangingMismatch": false,
+  "surfaces": {
+    "targetFilesExist": {
+      "status": "pass",
+      "note": "All 22 selected specifiers and PoolOperation.sol exist under lib/crane. Canonical LiquidityAmounts exists at lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol and is not on the Weir relative import path."
+    },
+    "poolOperationEncoding": {
+      "status": "pass",
+      "note": "Frozen IPoolManager.ModifyLiquidityParams field order is tickLower int24, tickUpper int24, liquidityDelta int256, salt bytes32. SwapParams is zeroForOne bool, amountSpecified int256, sqrtPriceLimitX96 uint160. Canonical PoolOperation.sol free structs match that order and those types."
+    },
+    "stateLibrary": {
+      "status": "pass",
+      "note": "POOLS_SLOT is bytes32(uint256(6)). getSlot0 sign-extends the 24-bit tick with signextend(2, shr(160, data)). Position key preimage is the frozen Position.calculatePositionKey assembly, byte-identical, keccak256 of 58 packed bytes. Canonical slot helpers replace keccak256(abi.encodePacked(...)) with BetterEfficientHashLib._hash(bytes), which is keccak256 of those packed bytes."
+    },
+    "openzeppelin": {
+      "status": "pass",
+      "note": "Ownable2Step, Ownable, Context, Pausable, ReentrancyGuard, and token/ERC20/IERC20 are byte-identical to the frozen files. SafeERC20 safeTransfer, safeTransferFrom, and _callOptionalReturn are text-identical. Header differs: frozen v5.1.0 with an Address import; canonical v5.2.0 without that unused import. Used path is not a behavior change."
+    },
+    "donateAndProtocolFee": {
+      "status": "pass",
+      "note": "Fresh Pool.initialize leaves protocol fee 0. Pool.donate adds amount * Q128 / liquidity and does not skim a protocol fee. Sole liquidity K=2^20 and donate 20 accrue exactly 20. A different runtime accrual is a failed dependency gate, not a new expected value."
+    },
+    "currencyAndCustomRevert": {
+      "status": "pass",
+      "note": "Selectors were computed with cast sig from signatures read in the canonical source.",
+      "selectors": {
+        "CurrencyLibrary.NativeTransferFailed()": "0xf4b3b1bc",
+        "CurrencyLibrary.ERC20TransferFailed()": "0xf27f64e4",
+        "CustomRevert.WrappedError(address,bytes4,bytes,bytes)": "0x90bfb865",
+        "Hooks.HookCallFailed()": "0xa9e35b2f",
+        "Hooks.InvalidHookResponse()": "0x1e048e1d",
+        "IPoolManager.NonzeroNativeValue()": "0xb0ec849e",
+        "IPoolManager.CurrencyNotSettled()": "0x5212cba1",
+        "IPoolManager.AlreadyUnlocked()": "0x5090d6c6",
+        "IERC20Minimal.transfer(address,uint256)": "0xa9059cbb"
+      },
+      "envelope": "Currency.transfer failure is CustomRevert.WrappedError. Native uses target=recipient, selector bytes4(0), details=NativeTransferFailed. ERC-20 uses target=token, selector=transfer, details=ERC20TransferFailed. A reverting hook uses the same wrapper with details=HookCallFailed. This is the manager envelope, not WeirBase.NativeTransferFailed, although that error shares selector 0xf4b3b1bc."
+    },
+    "fullMath": {
+      "status": "pass",
+      "note": "Canonical and frozen mulDiv both empty-revert on denominator 0 and on a result that does not fit uint256. The prod1==0 check order differs and the rounding-up overflow check is require(result < max) versus require(++result > 0). Observable quotient and empty-revert class match."
+    },
+    "fee0Initialize": {
+      "status": "pass-static",
+      "note": "LPFeeLibrary.isValid is self <= 1000000. DYNAMIC_FEE_FLAG is 0x800000, not 0. Fee 0 is a valid static fee. Spacing 1 is accepted. Hookless address 0 is valid for a static fee. getSqrtPriceAtTick(0) equals Q96. A runtime initialize revert still stops the import."
+    },
+    "f0PositiveLiquidityRounding": {
+      "status": "pass",
+      "note": "Canonical positive-liquidity rounding at P=Q over MIN_SQRT_PRICE..MAX_SQRT_PRICE for liquidity K costs K per side. Copied LiquidityAmounts returns liquidity K for amount K per side. Round-down removal of K-1000 returns 1047575 per side. Expected values were not replaced by an observed SUT delta.",
+      "cost0": "1048576",
+      "cost1": "1048576",
+      "liquidity": "1048576",
+      "withdrawOut": "1047575"
+    }
+  }
+}

@@ -131,9 +131,7 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
     function _seedVaultInventory(uint256 wethAmount, uint256 rethAmount) public {
         if (wethAmount > 0) {
             _dealWeth(address(this), wethAmount);
-            hermeticWeth.approve(seVault, wethAmount);
-            seIn.exchangeIn(
-                IERC20(address(hermeticWeth)),
+            hermeticWeth.approve(seVault, wethAmount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
                 wethAmount,
                 IERC20(seVault),
                 0,
@@ -144,9 +142,7 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
         }
         if (rethAmount > 0) {
             _mintReth(address(this), rethAmount);
-            hermeticReth.approve(seVault, rethAmount);
-            seIn.exchangeIn(
-                IERC20(address(hermeticReth)),
+            hermeticReth.approve(seVault, rethAmount);seIn.exchangeIn(IERC20(address(hermeticReth)),
                 rethAmount,
                 IERC20(seVault),
                 0,

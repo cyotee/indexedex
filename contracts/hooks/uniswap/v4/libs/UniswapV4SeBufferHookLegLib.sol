@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -75,9 +76,8 @@ library UniswapV4SeBufferHookLegLib {
         (q.state, q.heldAssets) = q.exchange.quoteState(pair, holder);
         q.heldShares = q.exchange.quoteShareBalance(q.state);
         if (amountIn == 0) return q;
-        if (
-            tokenIn != se && !_hasContextQuote(se)
-                && IStandardExchangeIn(se).previewExchangeIn(IERC20(tokenIn), amountIn, IERC20(se)) == 0
+        if (tokenIn != se && !_hasContextQuote(se)
+                && ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(tokenIn), amountIn, IERC20(se)) == 0
         ) {
             return q;
         }
@@ -91,9 +91,8 @@ library UniswapV4SeBufferHookLegLib {
     {
         if (assets == 0) return (0, q.heldAssets);
         address se = address(q.exchange);
-        if (
-            q.pair != address(0) && q.pair != se && !_hasContextQuote(se)
-                && IStandardExchangeIn(se).previewExchangeIn(IERC20(q.pair), assets, IERC20(se)) == 0
+        if (q.pair != address(0) && q.pair != se && !_hasContextQuote(se)
+                && ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(q.pair), assets, IERC20(se)) == 0
         ) {
             return (0, q.heldAssets);
         }

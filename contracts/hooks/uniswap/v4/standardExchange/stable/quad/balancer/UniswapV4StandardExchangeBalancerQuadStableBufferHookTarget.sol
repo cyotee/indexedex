@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib as ClaimLib} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol";
 
@@ -161,8 +162,8 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         if (se == address(0)) return 0;
         uint256 bal = IERC20(se).balanceOf(address(this));
         if (bal == 0) return 0;
-        if (se == l.tokens[index]) return bal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+        if (se == l.tokens[index]) return bal;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+        return quotedAmountOut;
     }
 
     function _bindingRatedBalance(uint256 index) internal view returns (uint256) {
@@ -382,9 +383,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         values = new uint256[](amounts.length);
         for (uint8 i; i < amounts.length; ++i) {
             uint256 pairAmount = amounts[i];
-            if (sharesIn[i] && pairAmount != 0) {
-                pairAmount = IStandardExchangeIn(l.standardExchanges[i]).previewExchangeIn(
-                    IERC20(l.standardExchanges[i]), pairAmount, IERC20(l.tokens[i])
+            if (sharesIn[i] && pairAmount != 0) {(pairAmount,) = IStandardExchangeIn(l.standardExchanges[i]).previewExchangeIn(IERC20(l.standardExchanges[i]), pairAmount, IERC20(l.tokens[i])
                 );
             }
             values[i] = Math.scaleTo(pairAmount, l.ratedScales[i]);
@@ -553,13 +552,10 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             _creditRawIntentional(i, amount);
             return 0;
         }
-        if (se == t) return amount;
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
+        if (se == t) return amount;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
         if (minOut == 0) revert BufferFailed();
         IERC20(t).forceApprove(se, amount);
-        uint256 beforeShares = IERC20(se).balanceOf(address(this));
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
+        uint256 beforeShares = IERC20(se).balanceOf(address(this));(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
         IERC20(t).forceApprove(se, 0);
         if (seOut < minOut || IERC20(se).balanceOf(address(this)) - beforeShares != seOut) revert BufferFailed();
@@ -573,13 +569,10 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         if (se == t) {
             if (to != address(this)) IERC20(se).safeTransfer(to, seIn);
             return seIn;
-        }
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
+        }(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
         if (minOut == 0) return 0;
         IERC20(se).forceApprove(se, seIn);
-        uint256 beforeBalance = IERC20(t).balanceOf(to);
-        pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
+        uint256 beforeBalance = IERC20(t).balanceOf(to);(pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
         );
         IERC20(se).forceApprove(se, 0);
         if (pairOut < minOut || IERC20(t).balanceOf(to) - beforeBalance != pairOut) revert UnwrapFailed();
@@ -610,7 +603,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         // SE exits can round up or include execution surplus. Retain that value
         // in the shared reserve while settling exactly the hook's quoted output.
         uint256 surplus = received - amountOut;
-        if (surplus != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(t), surplus, IERC20(se)) != 0) {
+        if (surplus != 0 && ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(t), surplus, IERC20(se)) != 0) {
             _bufferToken(i, surplus);
         }
         return spent;
@@ -631,8 +624,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             IERC20 pair_ = IERC20(l.tokens[i]);
             uint256 bal = pair_.balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) continue;
-            uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
+            uint256 excess = bal - Repo.MAX_DUST_WEI;(uint256 preview,) = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
             if (preview > 0) {
                 _bufferToken(i, excess);
                 bal = pair_.balanceOf(address(this));
@@ -656,9 +648,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             address se = l.standardExchanges[i];
             if (se == address(0) || se == l.tokens[i]) {
                 invDeltas[i] = pairAmounts[i];
-            } else {
-                invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(l.tokens[i]), pairAmounts[i], IERC20(se)
+            } else {invDeltas[i] = ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(l.tokens[i]), pairAmounts[i], IERC20(se)
                 );
             }
         }
@@ -676,9 +666,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             address se = l.standardExchanges[i];
             if (se == address(0) || se == l.tokens[i]) {
                 pairOut[i] = invOut[i];
-            } else {
-                pairOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
+            } else {pairOut[i] = ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), invOut[i], IERC20(l.tokens[i])
                 );
             }
         }

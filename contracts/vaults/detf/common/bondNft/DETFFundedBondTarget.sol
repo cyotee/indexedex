@@ -114,8 +114,7 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
         if (received_ != principal_) revert ISecurePullErrors.TransferDeltaInsufficient(principal_, received_);
         IStakedDETF staking_ = _staking();
         uint256 beforeGons_ = staking_.gonsOf(address(this));
-        backing_.forceApprove(address(staking_), principal_);
-        staking_.exchangeIn(backing_, principal_, IERC20(address(staking_)), principal_, address(this), false, block.timestamp);
+        backing_.forceApprove(address(staking_), principal_);staking_.exchangeIn(backing_, principal_, IERC20(address(staking_)), principal_, address(this), false, block.timestamp);
         backing_.forceApprove(address(staking_), 0);
         heldGons_ = staking_.gonsOf(address(this));
         creditedGons_ = heldGons_ - beforeGons_;

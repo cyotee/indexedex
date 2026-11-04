@@ -146,9 +146,7 @@ abstract contract TestBase_EtherFiWeETHStandardExchange is TestBase_Permit2, Tes
     function _seedVaultInventory(uint256 wethAmount, uint256 weAmount) public {
         if (wethAmount > 0) {
             _dealWeth(address(this), wethAmount);
-            hermeticWeth.approve(seVault, wethAmount);
-            seIn.exchangeIn(
-                IERC20(address(hermeticWeth)),
+            hermeticWeth.approve(seVault, wethAmount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
                 wethAmount,
                 IERC20(seVault),
                 0,
@@ -159,9 +157,7 @@ abstract contract TestBase_EtherFiWeETHStandardExchange is TestBase_Permit2, Tes
         }
         if (weAmount > 0) {
             _mintWeViaE(address(this), weAmount);
-            hermeticWeEth.approve(seVault, weAmount);
-            seIn.exchangeIn(
-                IERC20(address(hermeticWeEth)),
+            hermeticWeEth.approve(seVault, weAmount);seIn.exchangeIn(IERC20(address(hermeticWeEth)),
                 weAmount,
                 IERC20(seVault),
                 0,

@@ -482,9 +482,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
     {
         pairTok.mint(user, pairAmt);
         vm.startPrank(user);
-        pairTok.approve(se, type(uint256).max);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairTok)),
+        pairTok.approve(se, type(uint256).max);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairTok)),
             pairAmt,
             IERC20(se),
             0,

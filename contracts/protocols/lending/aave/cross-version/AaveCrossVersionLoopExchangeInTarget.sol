@@ -64,12 +64,12 @@ abstract contract AaveCrossVersionLoopExchangeInExecutionBase is AaveCrossVersio
 }
 
 contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeInExecutionBase, IStandardExchangeIn {
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256) {
-        return _previewExchangeIn(tokenIn, amountIn, tokenOut);
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
-        external returns (uint256)
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minimum, address recipient, bool prepaid, uint256 deadline)
+        external returns (uint256 amountOut, uint256 amountRefunded)
     {
-        return _exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline);
+        return (_exchangeIn(tokenIn, amountIn, tokenOut, minimum, recipient, prepaid, deadline), 0);
     }
 }

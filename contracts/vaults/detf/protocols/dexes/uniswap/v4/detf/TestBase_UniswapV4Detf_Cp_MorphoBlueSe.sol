@@ -145,8 +145,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_MorphoBlueSe is TestBase_UniswapV4De
             if (err.length >= 4) emit log_named_bytes32("R19 join revert", bytes32(err));
         }
         address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(token_);
-        if (se_ != address(0)) {
-            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w) {
+        if (se_ != address(0)) {try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w, uint256) {
                 emit log_named_uint("R19 sePreview wrap", w);
             } catch (bytes memory err2) {
                 if (err2.length >= 4) emit log_named_bytes32("R19 wrap revert", bytes32(err2));

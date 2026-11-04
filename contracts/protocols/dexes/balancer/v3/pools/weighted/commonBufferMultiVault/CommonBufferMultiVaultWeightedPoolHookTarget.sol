@@ -477,8 +477,9 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
                 (Repo._bufferToken(), physicalRaw, Repo._shareToken(vaultIdx))
             )
         );
-        if (!ok || ret.length != 32) return false;
-        if (abi.decode(ret, (uint256)) == 0) return false;
+        if (!ok || ret.length != 64) return false;
+        (uint256 amountOut,) = abi.decode(ret, (uint256, uint256));
+        if (amountOut == 0) return false;
         _doReconcile(seRouter, vaultIdx, physicalRaw, bumpVirtual, virtualBump);
         return true;
     }
@@ -505,8 +506,7 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
 
         vault.sendTo(bufferTok, address(this), xRaw);
         bufferTok.approve(address(seVault), xRaw);
-        _passPrepay(seRouter, address(seVault));
-        minted = seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp);
+        _passPrepay(seRouter, address(seVault));(minted,) = seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp);
         _restorePrepay(seRouter);
         if (minted == 0) revert ICommonBufferMultiVaultWeightedPool.PostSwapDepositFailed(xRaw);
     }

@@ -11,8 +11,8 @@ import {ComposedStableCommonDetfCommon} from "./ComposedStableCommonDetfCommon.s
 import {ComposedStableCommonDetfRepo as Repo} from "./ComposedStableCommonDetfRepo.sol";
 contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, ReentrancyLockModifiers, IFacet {
     using BetterSafeERC20 for IERC20;
-    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
-        external nonReentrant returns (uint256 received_)
+function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        external nonReentrant returns (uint256 received_, uint256 amountRefunded)
     {
         _requireActive(deadline_, amount_);
         if (in_ == out_) revert InvalidRoute(address(in_), address(out_));
@@ -20,14 +20,12 @@ contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, R
         _updateExpansionMintOnRewards();
         IERC20 staking_ = IERC20(address(Repo._layoutStruct().rebasingDetfToken));
         if (in_ == staking_) {
-            _secureTokenTransfer(in_, amount_, prepaid_);
-            IStakedDETF(address(staking_)).exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_);
+            _secureTokenTransfer(in_, amount_, prepaid_);IStakedDETF(address(staking_)).exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_);
             if (address(out_) == address(this)) { received_ = amount_; out_.safeTransfer(to_, received_); }
             else received_ = _burnHeld(amount_, out_, to_, deadline_);
         } else if (out_ == staking_) {
             uint256 raw_ = address(in_) == address(this) ? _secureTokenTransfer(in_, amount_, prepaid_) : _acquireDetf(in_, amount_, prepaid_, deadline_);
-            IERC20(address(this)).forceApprove(address(staking_), raw_);
-            received_ = IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), raw_, staking_, minimum_, to_, false, deadline_);
+            IERC20(address(this)).forceApprove(address(staking_), raw_);(received_,) = IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), raw_, staking_, minimum_, to_, false, deadline_);
             IERC20(address(this)).forceApprove(address(staking_), 0);
         } else if (address(in_) == address(this)) {
             received_ = _burnHeld(_secureTokenTransfer(in_, amount_, prepaid_), out_, to_, deadline_);

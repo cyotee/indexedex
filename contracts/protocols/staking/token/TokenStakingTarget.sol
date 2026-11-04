@@ -426,8 +426,7 @@ contract TokenStakingTarget is ITokenStaking, ReentrancyLockModifiers, MultiStep
         internal
         returns (uint256 detfMinted)
     {
-        token.safeApprove(address(detf), amount);
-        detfMinted = detf.exchangeIn(token, amount, IERC20(address(detf)), 0, address(this), false, deadline);
+        token.safeApprove(address(detf), amount);(detfMinted,) = detf.exchangeIn(token, amount, IERC20(address(detf)), 0, address(this), false, deadline);
         token.safeApprove(address(detf), 0);
     }
 
@@ -437,9 +436,7 @@ contract TokenStakingTarget is ITokenStaking, ReentrancyLockModifiers, MultiStep
     {
         IERC20 detfToken = IERC20(address(detf));
         IERC20 claimToken = IERC20(detf.rebasingClaimToken());
-        detfToken.safeApprove(address(claimToken), detfMinted);
-        claimMinted = IStandardExchangeIn(address(claimToken)).exchangeIn(
-            detfToken, detfMinted, claimToken, minClaimOut, address(this), false, deadline
+        detfToken.safeApprove(address(claimToken), detfMinted);(claimMinted,) = IStandardExchangeIn(address(claimToken)).exchangeIn(detfToken, detfMinted, claimToken, minClaimOut, address(this), false, deadline
         );
         detfToken.safeApprove(address(claimToken), 0);
     }

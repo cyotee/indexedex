@@ -251,8 +251,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         return false;
     }
     function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
-    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_) external returns (uint256) {
-        return _entryExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_) external returns (uint256 amountOut, uint256 amountRefunded) {
+        return (_entryExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_), 0);
     }
 }
 

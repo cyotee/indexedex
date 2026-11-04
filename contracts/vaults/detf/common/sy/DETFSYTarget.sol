@@ -148,9 +148,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
         if (!isValidTokenIn(tokenIn_)) return 0;
         Repo.Storage storage s_ = Repo._layoutStruct();
         uint256 detfAmount_ = amount_;
-        if (tokenIn_ != address(s_.detf) && !(s_.isStaking && tokenIn_ == address(s_.staking))) {
-            detfAmount_ = IStandardExchangeIn(address(s_.detf)).previewExchangeIn(
-                IERC20(tokenIn_), amount_, s_.detf
+        if (tokenIn_ != address(s_.detf) && !(s_.isStaking && tokenIn_ == address(s_.staking))) {(detfAmount_,) = IStandardExchangeIn(address(s_.detf)).previewExchangeIn(IERC20(tokenIn_), amount_, s_.detf
             );
         }
         if (!s_.isStaking) return detfAmount_;
@@ -168,8 +166,8 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
             detfAmount_ = Math.mulDiv(shares_, StakingMath._syExchangeRate(k_), 1e18);
             if (tokenOut_ == address(s_.staking)) return detfAmount_;
         }
-        if (tokenOut_ == address(s_.detf)) return detfAmount_;
-        return IStandardExchangeIn(address(s_.detf)).previewExchangeIn(s_.detf, detfAmount_, IERC20(tokenOut_));
+        if (tokenOut_ == address(s_.detf)) return detfAmount_;(uint256 quotedAmountOut,) = IStandardExchangeIn(address(s_.detf)).previewExchangeIn(s_.detf, detfAmount_, IERC20(tokenOut_));
+        return quotedAmountOut;
     }
 
     /// @notice DETF yield is already funded into the backing index; it cannot be claimed twice.
@@ -204,8 +202,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
         // Ordinary mint's seigniorage settles before measuring the new principal's staking receipt.
         uint256 detfAmount_ = _acquireDetf(s_, tokenIn_, amount_);
         uint256 before_ = s_.staking.gonsOf(address(this));
-        s_.detf.forceApprove(address(s_.staking), detfAmount_);
-        s_.staking.exchangeIn(s_.detf, detfAmount_, IERC20(address(s_.staking)), detfAmount_, address(this), false, block.timestamp);
+        s_.detf.forceApprove(address(s_.staking), detfAmount_);s_.staking.exchangeIn(s_.detf, detfAmount_, IERC20(address(s_.staking)), detfAmount_, address(this), false, block.timestamp);
         s_.detf.forceApprove(address(s_.staking), 0);
         return s_.staking.gonsOf(address(this)) - before_;
     }
@@ -214,9 +211,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
         uint256 received_ = _pull(tokenIn_, amount_);
         if (address(tokenIn_) == address(s_.detf)) return received_;
         uint256 before_ = s_.detf.balanceOf(address(this));
-        tokenIn_.forceApprove(address(s_.detf), received_);
-        IStandardExchangeIn(address(s_.detf)).exchangeIn(
-            tokenIn_, received_, s_.detf, 0, address(this), false, block.timestamp
+        tokenIn_.forceApprove(address(s_.detf), received_);IStandardExchangeIn(address(s_.detf)).exchangeIn(tokenIn_, received_, s_.detf, 0, address(this), false, block.timestamp
         );
         tokenIn_.forceApprove(address(s_.detf), 0);
         return s_.detf.balanceOf(address(this)) - before_;
@@ -229,9 +224,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
         if (address(tokenOut_) == address(s_.staking)) {
             IERC20(address(s_.staking)).safeTransfer(receiver_, native_);
             return native_;
-        }
-        s_.staking.exchangeIn(
-            IERC20(address(s_.staking)), native_, s_.detf, native_, address(this), false, block.timestamp
+        }s_.staking.exchangeIn(IERC20(address(s_.staking)), native_, s_.detf, native_, address(this), false, block.timestamp
         );
         return _payDetf(s_, native_, tokenOut_, receiver_);
     }
@@ -244,9 +237,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
             s_.detf.safeTransfer(receiver_, amount_);
             return amount_;
         }
-        s_.detf.forceApprove(address(s_.detf), amount_);
-        out_ = IStandardExchangeIn(address(s_.detf)).exchangeIn(
-            s_.detf, amount_, tokenOut_, 0, receiver_, false, block.timestamp
+        s_.detf.forceApprove(address(s_.detf), amount_);(out_,) = IStandardExchangeIn(address(s_.detf)).exchangeIn(s_.detf, amount_, tokenOut_, 0, receiver_, false, block.timestamp
         );
         s_.detf.forceApprove(address(s_.detf), 0);
     }

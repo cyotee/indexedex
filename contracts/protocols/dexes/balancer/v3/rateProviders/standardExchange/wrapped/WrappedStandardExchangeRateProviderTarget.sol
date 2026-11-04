@@ -64,8 +64,10 @@ contract WrappedStandardExchangeRateProviderTarget is IWrappedStandardExchangeRa
             ? abi.encodeCall(IStandardExchangeTransitionQuote.quoteAssets, (state, reserveShareAmount_))
             : abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (reserveVaultToken_, reserveShareAmount_, rateTarget_));
         (bool ok, bytes memory data) = address(standardExchange_).staticcall(input);
-        if (!ok || data.length != 32) return (false, 0);
-        return (true, abi.decode(data, (uint256)));
+        if (!ok || data.length != (state.length != 0 ? 32 : 64)) return (false, 0);
+        if (state.length != 0) return (true, abi.decode(data, (uint256)));
+        (out_,) = abi.decode(data, (uint256, uint256));
+        return (true, out_);
 	}
 
 	function rateSubject() public view returns (IERC4626) {

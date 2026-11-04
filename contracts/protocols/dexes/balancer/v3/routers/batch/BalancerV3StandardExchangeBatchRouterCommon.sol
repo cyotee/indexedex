@@ -207,10 +207,7 @@ abstract contract BalancerV3StandardExchangeBatchRouterCommon is BalancerV3Stand
         // uint256 amountIn,
         uint256 minAmountOut,
         address recipient
-    ) internal returns (uint256 amountCalculated) {
-        return IStandardExchangeIn(step.pool)
-            .exchangeIn(
-                path.tokenIn,
+    ) internal returns (uint256 amountCalculated) {(uint256 quotedAmountOut,) = IStandardExchangeIn(step.pool).exchangeIn(path.tokenIn,
                 stepLocals.stepAmountIn,
                 step.tokenOut,
                 minAmountOut,
@@ -219,5 +216,6 @@ abstract contract BalancerV3StandardExchangeBatchRouterCommon is BalancerV3Stand
                 // uint256 deadline
                 params.deadline
             );
+        return quotedAmountOut;
     }
 }

@@ -215,7 +215,7 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
         IERC20(pairAddress).safeApprove(vault, lpMinted);
 
         // Exchange LP tokens for vault shares
-        uint256 vaultShares = IStandardExchangeIn(vault)
+        (uint256 vaultShares,) = IStandardExchangeIn(vault)
             .exchangeIn(
                 IERC20(pairAddress), // tokenIn: LP token
                 lpMinted, // amountIn: LP amount
