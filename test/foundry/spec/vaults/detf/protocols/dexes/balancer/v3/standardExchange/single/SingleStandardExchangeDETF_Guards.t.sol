@@ -13,16 +13,14 @@ import {
 contract SingleStandardExchangeDETF_Guards_Test is TestBase_SingleStandardExchangeDETF {
     function test_guard_zeroAmountReverts() public {
         vm.prank(alice);
-        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        detfExchangeIn.exchangeIn(seShare, 0, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);detfExchangeIn.exchangeIn(seShare, 0, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
     }
 
     function test_guard_deadlineExpiredReverts() public {
         vm.prank(alice);
         vm.expectRevert(
             abi.encodeWithSelector(SingleStandardExchangeDETFRepo.DeadlineExpired.selector, block.timestamp - 1)
-        );
-        detfExchangeIn.exchangeIn(seShare, 1e18, IERC20(detf), 0, alice, false, block.timestamp - 1);
+        );detfExchangeIn.exchangeIn(seShare, 1e18, IERC20(detf), 0, alice, false, block.timestamp - 1);
     }
 
     function test_guard_unsupportedRouteReverts() public {
@@ -32,7 +30,6 @@ contract SingleStandardExchangeDETF_Guards_Test is TestBase_SingleStandardExchan
         vm.prank(alice);
         vm.expectRevert(
             abi.encodeWithSelector(SingleStandardExchangeDETFRepo.UnsupportedRoute.selector, junkA_, junkB_)
-        );
-        detfExchangeIn.exchangeIn(junkA_, 1e18, junkB_, 0, alice, false, block.timestamp + 1 hours);
+        );detfExchangeIn.exchangeIn(junkA_, 1e18, junkB_, 0, alice, false, block.timestamp + 1 hours);
     }
 }

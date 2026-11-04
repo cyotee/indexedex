@@ -35,8 +35,7 @@ contract WingsApexRecurrenceConsumerConservationTest is Fixture {
     function test_review_curveQuadJoinAndShareExit() public { _roundTrip(Amm.Family.CurveQuad); }
     function test_review_balancerQuadJoinAndShareExit() public { _roundTrip(Amm.Family.BalancerQuad); }
 
-    function _roundTrip(Amm.Family family) private {
-        IStandardExchangeIn(address(wings0)).exchangeIn(token0, SEED, IERC20(address(wings0)), SEED, address(this), false, block.timestamp);
+    function _roundTrip(Amm.Family family) private {IStandardExchangeIn(address(wings0)).exchangeIn(token0, SEED, IERC20(address(wings0)), SEED, address(this), false, block.timestamp);
         Rebalance(address(wings0)).rebalance(0, block.timestamp);
         Amm.Fixture memory f = _deploy(family);
         uint256 shares = IERC20(address(wings0)).balanceOf(address(this)) / 2;

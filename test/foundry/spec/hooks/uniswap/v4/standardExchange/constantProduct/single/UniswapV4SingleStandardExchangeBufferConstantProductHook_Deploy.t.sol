@@ -227,8 +227,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is
         _seedLiveLiquidity();
         _accrueYield(50 ether);
         uint256 sharesBefore = IERC20(se).balanceOf(hook);
-        uint256 pairIn = 10 ether;
-        uint256 sharesIn = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), pairIn, IERC20(se));
+        uint256 pairIn = 10 ether;(uint256 sharesIn,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), pairIn, IERC20(se));
         // Over-offer raw so the pair leg binds the clamp.
         uint256 lp = _depositBoth(1_000 ether, pairIn);
         // The join accrues the protocol-fee LP for the rate growth first; measure against the supply it joined.

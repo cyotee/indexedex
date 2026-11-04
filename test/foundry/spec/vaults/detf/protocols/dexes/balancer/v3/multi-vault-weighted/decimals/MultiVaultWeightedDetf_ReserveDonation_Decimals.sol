@@ -306,9 +306,7 @@ abstract contract MultiVaultWeightedDetf_ReserveDonation_Decimals is
         uint256 burnAmt_ = userDetf_ / 3;
         if (burnAmt_ == 0) burnAmt_ = userDetf_;
         vm.startPrank(alice);
-        IERC20(detf).approve(detf, type(uint256).max);
-        uint256 pairOut_ =
-            IStandardExchangeIn(detf).exchangeIn(IERC20(detf), burnAmt_, seShare0, 0, alice, false, _dl());
+        IERC20(detf).approve(detf, type(uint256).max);(uint256 pairOut_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), burnAmt_, seShare0, 0, alice, false, _dl());
         vm.stopPrank();
         assertGt(pairOut_, 0, "N13 burn");
         if (primary_) assertLt(nft_.lpToken().balanceOf(address(nft_)), nftLp_, "primary burn uses protocol LP");
@@ -416,8 +414,7 @@ abstract contract MultiVaultWeightedDetf_ReserveDonation_Decimals is
     function _fundDonationDetf(address user_) internal returns (uint256 amount_) {
         uint256 shares_ = _fundSeShares0(user_, 20e18);
         vm.startPrank(user_);
-        seShare0.approve(detf, shares_);
-        amount_ = IStandardExchangeIn(detf).exchangeIn(seShare0, shares_, IERC20(detf), 0, user_, false, _dl());
+        seShare0.approve(detf, shares_);(amount_,) = IStandardExchangeIn(detf).exchangeIn(seShare0, shares_, IERC20(detf), 0, user_, false, _dl());
         vm.stopPrank();
         assertGt(amount_, 0, "donor bought funded DETF");
     }

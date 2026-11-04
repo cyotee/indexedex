@@ -88,11 +88,12 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
     args: address && route ? [address, route.target] : undefined,
     query: { enabled: !!spendToken && !!address && !!route?.needsAllowance },
   })
-  const { data: preview, error: previewError, isFetching: previewFetching, refetch: refreshPreview } = useReadContract({
+  const { data: previewResult, error: previewError, isFetching: previewFetching, refetch: refreshPreview } = useReadContract({
     chainId, address: route?.target, abi: insightsViewAbi, functionName: 'previewExchangeIn',
     args: route && parsed != null && parsed > 0n ? [route.tokenIn, parsed, route.tokenOut] : undefined,
     query: { enabled: !!route && parsed != null && parsed > 0n, retry: 0, refetchInterval: 15_000 },
   })
+  const preview = previewResult?.[0]
   const needApprove = !payEth && route?.needsAllowance && parsed != null && parsed > 0n && (allowance ?? 0n) < parsed
   const blockedCopy = !isConnected ? 'Connect a wallet to sign.'
     : !walletMatches ? `Switch the wallet to chain ${chainId}.`
@@ -106,7 +107,7 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
   }
   async function freshQuote() {
     if (!publicClient || !route || parsed == null) throw new Error('The staking route is unavailable.')
-    const quote = await publicClient.readContract({ address: route.target, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [route.tokenIn, parsed, route.tokenOut] })
+    const [quote] = await publicClient.readContract({ address: route.target, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [route.tokenIn, parsed, route.tokenOut] })
     if (quote <= 0n) throw new Error('No positive staking quote is available.')
     return quote
   }

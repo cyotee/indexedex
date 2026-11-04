@@ -100,8 +100,8 @@ Fixed adversarial catalogs do **not** replace:
 ## 6. Commands (evidence)
 
 ```bash
-forge test --match-path 'test/foundry/spec/<feature>/**' -vv
-forge test --match-path 'test/foundry/spec/<feature>/adversarial/**' -vv
+forge test --use solar --match-path 'test/foundry/spec/<feature>/**' -vv
+forge test --use solar --match-path 'test/foundry/spec/<feature>/adversarial/**' -vv
 # Prefer grepping for catalog IDs:
 # rg "function test_I1_|function test_J2_|function test_A0_|function test_A1_|function test_L1_|function test_M1_|function test_N1_|function test_O1_" test/...
 ```

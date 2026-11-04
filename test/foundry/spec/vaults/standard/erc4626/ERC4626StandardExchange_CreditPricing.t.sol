@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -34,16 +35,14 @@ contract ERC4626StandardExchange_CreditPricing is TestBase_ERC4626StandardExchan
         asset.mint(alice, 6);
         asset.mint(bob, 20);
         vm.startPrank(alice);
-        asset.approve(se, 6);
-        IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 3, IERC20(se), 3, alice, false, block.timestamp);
+        asset.approve(se, 6);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(asset)), 3, IERC20(se), 3, alice, false, block.timestamp);
         vm.stopPrank();
         asset.mint(address(this), 1);
         asset.approve(address(protocol), 1);
         protocol.simulateYield(1);
         protocol.setPaused(true);
         vm.prank(alice);
-        assertEq(
-            IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 3, IERC20(se), 2, alice, false, block.timestamp),
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(asset)), 3, IERC20(se), 2, alice, false, block.timestamp),
             2
         );
         protocol.setPaused(false);
@@ -73,13 +72,11 @@ contract ERC4626StandardExchange_CreditPricing is TestBase_ERC4626StandardExchan
                 + asset.balanceOf(address(atomic)),
             27,
             "native asset conservation"
-        );
-        uint256 allClaim = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), 8, IERC20(address(asset)));
+        );(uint256 allClaim,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), 8, IERC20(address(asset)));
         assertEq(allClaim, 11, "issued shares remain fully backed");
     }
 
-    function _exactIn(bool prepaid_) internal {
-        uint256 quoted_ = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(asset)), 4, IERC20(se));
+    function _exactIn(bool prepaid_) internal {(uint256 quoted_,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(asset)), 4, IERC20(se));
         assertEq(quoted_, 3, "4 assets at pre-investment3/4 native rate");
         uint256 issued_;
         if (prepaid_) {
@@ -97,9 +94,7 @@ contract ERC4626StandardExchange_CreditPricing is TestBase_ERC4626StandardExchan
                 (uint256)
             );
         } else {
-            vm.prank(bob);
-            issued_ = IStandardExchangeIn(se)
-                .exchangeIn(IERC20(address(asset)), 4, IERC20(se), quoted_, bob, false, block.timestamp);
+            vm.prank(bob);(issued_,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 4, IERC20(se), quoted_, bob, false, block.timestamp);
         }
         assertEq(issued_, quoted_);
         assertEq(protocol.convertToShares(4), 2, "post-investment conversion differs and must not reprice credit");

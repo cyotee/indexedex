@@ -74,15 +74,15 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
 
     function test_hookSYBothBookDirectionsUseSameStandardLiquidityRoutes() public noSelfCalls(hook) {
         vm.startPrank(user);
-        pairToken.approve(se, 20 ether);
-        IStandardExchangeIn(se).exchangeIn(pairToken, 20 ether, IERC20(se), 0, user, false, block.timestamp);
+        pairToken.approve(se, 20 ether);IStandardExchangeIn(se).exchangeIn(pairToken, 20 ether, IERC20(se), 0, user, false, block.timestamp);
         IERC20(se).approve(hook, type(uint256).max);
         vm.stopPrank();
         IERC20[3] memory tokens_ = [IERC20(address(rawToken)), IERC20(address(pairToken)), IERC20(se)];
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             uint256 expected_ = sy_.previewDeposit(address(tokens_[i_]), 5 ether);
             assertGt(expected_, 0);
-            assertEq(IStandardExchangeIn(hook).previewExchangeIn(tokens_[i_], 5 ether, IERC20(hook)), expected_);
+            (uint256 previewAmountOut1,) = IStandardExchangeIn(hook).previewExchangeIn(tokens_[i_], 5 ether, IERC20(hook));
+            assertEq(previewAmountOut1, expected_);
             vm.prank(user);
             uint256 minted_ = sy_.deposit(user, address(tokens_[i_]), 5 ether, expected_);
             assertEq(minted_, expected_);
@@ -97,10 +97,8 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
     }
 
     /// @notice Native previews use the shared quote code without calling the host's SE or metadata selectors.
-    function test_hookSYPreviewsDoNotSelfCallQuoteOrMetadata() public {
-        uint256 expectedDeposit = IStandardExchangeIn(hook).previewExchangeIn(rawToken, 1 ether, IERC20(hook));
-        uint256 shares = sy_.balanceOf(user) / 100;
-        uint256 expectedRedeem = IStandardExchangeIn(hook).previewExchangeIn(IERC20(hook), shares, pairToken);
+    function test_hookSYPreviewsDoNotSelfCallQuoteOrMetadata() public {(uint256 expectedDeposit,) = IStandardExchangeIn(hook).previewExchangeIn(rawToken, 1 ether, IERC20(hook));
+        uint256 shares = sy_.balanceOf(user) / 100;(uint256 expectedRedeem,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(hook), shares, pairToken);
         vm.expectCall(hook, abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(0));
         vm.expectCall(hook, abi.encodeWithSelector(IERC20.totalSupply.selector), uint64(0));
         vm.expectCall(hook, abi.encodeWithSelector(IERC20.balanceOf.selector), uint64(0));
@@ -136,8 +134,7 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
         vm.expectRevert();
         sy_.redeem(user, shares_ / 100, address(pairToken), type(uint256).max, false);
         rawToken.transfer(hook, amount_);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(rawToken, amount_, IERC20(hook), 0, user, true, block.timestamp);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(rawToken, amount_, IERC20(hook), 0, user, true, block.timestamp);
         vm.stopPrank();
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount_, 0));
@@ -159,10 +156,10 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
     }
 
     function test_hookStandardSwapStillExecutesWithoutMintingLP() public {
-        uint256 supply_ = sy_.totalSupply();
-        uint256 expected_ = IStandardExchangeIn(hook).previewExchangeIn(rawToken, 1 ether, pairToken);
+        uint256 supply_ = sy_.totalSupply();(uint256 expected_,) = IStandardExchangeIn(hook).previewExchangeIn(rawToken, 1 ether, pairToken);
         vm.prank(user);
-        assertEq(IStandardExchangeIn(hook).exchangeIn(rawToken, 1 ether, pairToken, expected_, user, false, block.timestamp), expected_);
+        (uint256 exchangeAmountOut2,) = IStandardExchangeIn(hook).exchangeIn(rawToken, 1 ether, pairToken, expected_, user, false, block.timestamp);
+        assertEq(exchangeAmountOut2, expected_);
         assertEq(sy_.totalSupply(), supply_);
     }
 }

@@ -91,9 +91,7 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
         assertEq(qState.length, 288);
 
         vm.prank(user);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        IStandardExchangeIn(address(wrapper)).exchangeIn(
-            IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
         );
 
         uint256 before = wrapper.totalAssets();
@@ -116,15 +114,11 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
         assertGt(lp, 0);
         vm.stopPrank();
 
-        uint256 rawIn = 1 ether;
-        uint256 predShares = IStandardExchangeIn(address(wrapperHook)).previewExchangeIn(
-            IERC20(address(rawToken)), rawIn, IERC20(address(wrapper))
+        uint256 rawIn = 1 ether;(uint256 predShares,) = IStandardExchangeIn(address(wrapperHook)).previewExchangeIn(IERC20(address(rawToken)), rawIn, IERC20(address(wrapper))
         );
         assertGt(predShares, 0);
         uint256 shareBefore = IERC20(address(wrapper)).balanceOf(user);
-        vm.prank(user);
-        uint256 gotShares = IStandardExchangeIn(address(wrapperHook)).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 gotShares,) = IStandardExchangeIn(address(wrapperHook)).exchangeIn(IERC20(address(rawToken)),
             rawIn,
             IERC20(address(wrapper)),
             0,
@@ -135,15 +129,11 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
         assertEq(gotShares, predShares);
         assertEq(IERC20(address(wrapper)).balanceOf(user) - shareBefore, gotShares);
 
-        uint256 shareIn = gotShares / 2;
-        uint256 predRaw = IStandardExchangeIn(address(wrapperHook)).previewExchangeIn(
-            IERC20(address(wrapper)), shareIn, IERC20(address(rawToken))
+        uint256 shareIn = gotShares / 2;(uint256 predRaw,) = IStandardExchangeIn(address(wrapperHook)).previewExchangeIn(IERC20(address(wrapper)), shareIn, IERC20(address(rawToken))
         );
         assertGt(predRaw, 0);
         uint256 rawBefore = rawToken.balanceOf(user);
-        vm.prank(user);
-        uint256 gotRaw = IStandardExchangeIn(address(wrapperHook)).exchangeIn(
-            IERC20(address(wrapper)),
+        vm.prank(user);(uint256 gotRaw,) = IStandardExchangeIn(address(wrapperHook)).exchangeIn(IERC20(address(wrapper)),
             shareIn,
             IERC20(address(rawToken)),
             0,
@@ -190,9 +180,7 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
         _deployWrapperHook();
 
         vm.prank(user);
-        vm.expectRevert();
-        IStandardExchangeIn(address(wrapperHook)).exchangeIn(
-            IERC20(address(rawToken)), 1 ether, IERC20(address(wrapper)), 0, user, false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(address(wrapperHook)).exchangeIn(IERC20(address(rawToken)), 1 ether, IERC20(address(wrapper)), 0, user, false, block.timestamp + 1 hours
         );
 
         uint256 shares = IERC20(address(wrapper)).balanceOf(user);
@@ -235,9 +223,7 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
         assertEq(IStandardVault(address(wrapperHook)).vaultFeeTypeIds(), bytes32(0));
 
         vm.prank(user);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        IStandardExchangeIn(address(wrapper)).exchangeIn(
-            IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
         );
 
         underlying.setRebaseOnTransfer(int256(1e18), address(wrapper));

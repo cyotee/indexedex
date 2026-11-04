@@ -103,15 +103,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeLifecycleTest is
     function test_1se_v4_swap_and_seExchange_on_buffered_leg() public {
         _seed1SeFull(400 ether);
         // SE In path: token1 → token0 (out is buffered)
-        uint256 amountIn = 5 ether;
-        uint256 prev = IStandardExchangeIn(seH).previewExchangeIn(
-            IERC20(address(token1)), amountIn, IERC20(address(token0))
+        uint256 amountIn = 5 ether;(uint256 prev,) = IStandardExchangeIn(seH).previewExchangeIn(IERC20(address(token1)), amountIn, IERC20(address(token0))
         );
         assertGt(prev, 0);
         uint256 before = token0.balanceOf(user);
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(seH).exchangeIn(
-            IERC20(address(token1)),
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(seH).exchangeIn(IERC20(address(token1)),
             amountIn,
             IERC20(address(token0)),
             prev,
@@ -144,18 +140,14 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeLifecycleTest is
 
         // Round-trip on raw legs 1↔2 via SE In/Out surface (same book as V4)
         for (uint256 i; i < 5; i++) {
-            vm.startPrank(user);
-            IStandardExchangeIn(seH).exchangeIn(
-                IERC20(address(token1)),
+            vm.startPrank(user);IStandardExchangeIn(seH).exchangeIn(IERC20(address(token1)),
                 5 ether,
                 IERC20(address(token2)),
                 0,
                 user,
                 false,
                 block.timestamp + 1 hours
-            );
-            IStandardExchangeIn(seH).exchangeIn(
-                IERC20(address(token2)),
+            );IStandardExchangeIn(seH).exchangeIn(IERC20(address(token2)),
                 5 ether,
                 IERC20(address(token1)),
                 0,

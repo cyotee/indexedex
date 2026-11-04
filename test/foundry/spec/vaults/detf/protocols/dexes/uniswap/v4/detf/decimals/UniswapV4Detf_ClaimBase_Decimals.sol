@@ -98,8 +98,7 @@ abstract contract UniswapV4Detf_ClaimBase_Decimals is TestBase_UniswapV4Detf_Pol
         _fundActorForDetf(d, who, amt);
         IERC20 tok_ = _leadPairOf(d);
         vm.startPrank(who);
-        tok_.approve(d, amt);
-        userDetf = IStandardExchangeIn(d).exchangeIn(tok_, amt, IERC20(d), 0, who, false, block.timestamp + 1 hours);
+        tok_.approve(d, amt);(userDetf,) = IStandardExchangeIn(d).exchangeIn(tok_, amt, IERC20(d), 0, who, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

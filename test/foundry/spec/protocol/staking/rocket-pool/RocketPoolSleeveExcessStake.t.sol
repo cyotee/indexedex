@@ -50,12 +50,10 @@ contract RocketPoolSleeveExcessStake_Test is TestBase_RocketPoolRETHStandardExch
 
     function _credit(uint256 amount_) internal {
         _dealWeth(address(this), amount_);
-        hermeticWeth.approve(seVault, amount_);
-        uint256 expected_ = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount_, IERC20(seVault));
+        hermeticWeth.approve(seVault, amount_);(uint256 expected_,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount_, IERC20(seVault));
         require(expected_ > 0, "funded credit must mint shares");
         uint256 sharesBefore_ = IERC20(seVault).balanceOf(address(this));
-        uint256 inputBefore_ = hermeticWeth.balanceOf(address(this));
-        uint256 minted_ = seIn.exchangeIn(IERC20(address(hermeticWeth)), amount_, IERC20(seVault), expected_,
+        uint256 inputBefore_ = hermeticWeth.balanceOf(address(this));(uint256 minted_,) = seIn.exchangeIn(IERC20(address(hermeticWeth)), amount_, IERC20(seVault), expected_,
             address(this), false, block.timestamp + 1 hours);
         assertEq(minted_, expected_, "preview equals minted shares");
         assertEq(IERC20(seVault).balanceOf(address(this)) - sharesBefore_, expected_);

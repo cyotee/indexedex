@@ -37,12 +37,8 @@ abstract contract UniswapV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
 
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        assertTrue(preview > 0, "Preview should be non-zero");(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         assertEq(sharesOut, preview, "Execution should match preview");
         assertEq(vault.balanceOf(recipient), preview, "Recipient should receive preview shares");
@@ -58,9 +54,7 @@ abstract contract UniswapV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
         address recipient = makeAddr("r4PreviewRecipient");
 
-        lpToken.approve(address(vault), lpAmount);
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
         assertEq(sharesOut, preview, "R4: preview == execute against pre-deposit reserve");
         assertEq(vault.balanceOf(recipient), sharesOut, "R4 recipient shares");
     }

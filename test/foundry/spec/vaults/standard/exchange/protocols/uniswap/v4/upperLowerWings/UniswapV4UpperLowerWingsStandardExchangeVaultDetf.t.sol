@@ -85,8 +85,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultDetfTest is TestBase_Unisw
         pairToken.mint(address(this), 1e24); other.mint(address(this), 1e24);
         pairToken.mint(address(lp), 1e24); other.mint(address(lp), 1e24);
         pairToken.approve(se, type(uint256).max);
-        lp.modify(key, -887220, 887220, 1e18, bytes32(0));
-        IStandardExchangeIn(se).exchangeIn(pairToken, 1_000 ether, IERC20(se), 0, address(this), false, block.timestamp);
+        lp.modify(key, -887220, 887220, 1e18, bytes32(0));IStandardExchangeIn(se).exchangeIn(pairToken, 1_000 ether, IERC20(se), 0, address(this), false, block.timestamp);
         Rebalance(se).rebalance(0, block.timestamp);
     }
 }

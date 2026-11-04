@@ -72,19 +72,14 @@ contract Adversarial_AaveV3StataSE_SecurePull is Adversarial_AaveV3StataSE_Secur
 
     function test_J3_proxyCallable_smoke_eachSelector() public {
         address inFacet_ = IDiamondLoupe(realVault).facetAddress(IStandardExchangeIn.exchangeIn.selector);
-        assertTrue(inFacet_ != address(0) && inFacet_ != realVault, "proxy cut in");
-
-        // View on proxy — ensure call does not selector-miss.
-        uint256 preview_ =
-            IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), 1e18, IERC20(realVault));
+        assertTrue(inFacet_ != address(0) && inFacet_ != realVault, "proxy cut in");// View on proxy — ensure call does not selector-miss.
+        (uint256 preview_,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), 1e18, IERC20(realVault));
         // First-deposit 1:1 when empty.
         assertEq(preview_, 1e18, "J3 preview live on proxy");
 
         // Money path on proxy: product error (not FunctionNotFound) — I1 free-credit reverts.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), 1e18, IERC20(realVault), 0, attacker, true, block.timestamp + 1 hours
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), 1e18, IERC20(realVault), 0, attacker, true, block.timestamp + 1 hours
         );
     }
 }

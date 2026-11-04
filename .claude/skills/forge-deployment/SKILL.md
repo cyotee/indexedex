@@ -19,24 +19,24 @@ For existing contracts, first read [source verification](references/source-verif
 - Managing multi-chain deployments
 - Setting up deterministic deployments (CREATE2)
 
-## Quick Deploy with forge create
+## Quick Deploy with forge create --use solar
 
 ```bash
 # Basic deployment
-forge create src/MyContract.sol:MyContract \
+forge create --use solar src/MyContract.sol:MyContract \
     --rpc-url $RPC_URL \
     --private-key $PRIVATE_KEY \
     --broadcast
 
 # With constructor arguments
-forge create src/MyContract.sol:MyContract \
+forge create --use solar src/MyContract.sol:MyContract \
     --rpc-url $RPC_URL \
     --private-key $PRIVATE_KEY \
     --constructor-args "arg1" 123 0xAddress \
     --broadcast
 
 # Deploy and verify
-forge create src/MyContract.sol:MyContract \
+forge create --use solar src/MyContract.sol:MyContract \
     --rpc-url $RPC_URL \
     --private-key $PRIVATE_KEY \
     --verify \
@@ -76,22 +76,22 @@ contract DeployScript is Script {
 
 ```bash
 # Dry run (simulation)
-forge script script/Deploy.s.sol
+forge script --use solar script/Deploy.s.sol
 
 # Broadcast to network
-forge script script/Deploy.s.sol \
+forge script --use solar script/Deploy.s.sol \
     --rpc-url $RPC_URL \
     --broadcast
 
 # Broadcast and verify
-forge script script/Deploy.s.sol \
+forge script --use solar script/Deploy.s.sol \
     --rpc-url $RPC_URL \
     --broadcast \
     --verify \
     --etherscan-api-key $ETHERSCAN_API_KEY
 
 # Resume failed broadcast
-forge script script/Deploy.s.sol \
+forge script --use solar script/Deploy.s.sol \
     --rpc-url $RPC_URL \
     --resume
 ```
@@ -128,7 +128,7 @@ ETHERSCAN_API_KEY=...
 ### During Deployment
 
 ```bash
-forge create src/MyContract.sol:MyContract \
+forge create --use solar src/MyContract.sol:MyContract \
     --rpc-url sepolia \
     --private-key $PRIVATE_KEY \
     --verify \
@@ -241,7 +241,7 @@ contract MultiChainDeploy is Script {
 
 ```bash
 # Estimate gas before deployment
-forge script script/Deploy.s.sol --rpc-url $RPC_URL
+forge script --use solar script/Deploy.s.sol --rpc-url $RPC_URL
 
 # Output shows estimated gas for each transaction
 ```
@@ -252,10 +252,10 @@ forge script script/Deploy.s.sol --rpc-url $RPC_URL
 
 ```bash
 # List pending transactions
-forge script script/Deploy.s.sol --rpc-url $RPC_URL --broadcast
+forge script --use solar script/Deploy.s.sol --rpc-url $RPC_URL --broadcast
 
 # Resume after failure
-forge script script/Deploy.s.sol --rpc-url $RPC_URL --resume
+forge script --use solar script/Deploy.s.sol --rpc-url $RPC_URL --resume
 
 # Speed up pending tx
 cast send --rpc-url $RPC_URL --gas-price 50gwei ...

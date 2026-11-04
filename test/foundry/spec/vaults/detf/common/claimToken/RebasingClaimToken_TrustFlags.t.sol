@@ -42,15 +42,13 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
                 uint256 amount_ = claims_[i_];
                 bytes memory error_ = abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount_, 0);
                 vm.prank(attacker_);
-                vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-                staking_.exchangeIn(in_, amount_, out_, 0, attacker_, true, block.timestamp);
+                vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);staking_.exchangeIn(in_, amount_, out_, 0, attacker_, true, block.timestamp);
                 vm.prank(attacker_);
                 vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
                 staking_.exchangeOut(in_, amount_, out_, amount_, attacker_, true, block.timestamp);
                 AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
                 vm.prank(address(caller_));
-                vm.expectRevert(error_);
-                staking_.exchangeIn(in_, amount_, out_, 0, address(caller_), true, block.timestamp);
+                vm.expectRevert(error_);staking_.exchangeIn(in_, amount_, out_, 0, address(caller_), true, block.timestamp);
                 vm.prank(address(caller_));
                 vm.expectRevert(error_);
                 staking_.exchangeOut(in_, amount_, out_, amount_, address(caller_), true, block.timestamp);
@@ -64,14 +62,14 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
     }
 
     function test_honestPrincipalRoutesLeaveUnsolicitedBackingUnallocated() public {
-        vm.startPrank(detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), liquid_, IERC20(detf), liquid_, detfUser, false, block.timestamp);
+        vm.startPrank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), liquid_, IERC20(detf), liquid_, detfUser, false, block.timestamp);
         uint256 donation_ = liquid_ / 7;
         IERC20(detf).transfer(address(staking_), donation_);
         IERC20(detf).approve(address(staking_), liquid_ - donation_);
         uint256 stake_ = liquid_ - donation_;
         uint256 before_ = staking_.stakingState().accountedBacking;
-        assertEq(staking_.exchangeIn(IERC20(detf), stake_, IERC20(address(staking_)), stake_, detfUser, false, block.timestamp), stake_);
+        (uint256 exchangeAmountOut1,) = staking_.exchangeIn(IERC20(detf), stake_, IERC20(address(staking_)), stake_, detfUser, false, block.timestamp);
+        assertEq(exchangeAmountOut1, stake_);
         assertEq(staking_.stakingState().accountedBacking, before_ + stake_);
         staking_.exchangeOut(IERC20(address(staking_)), stake_, IERC20(detf), stake_ / 2, detfUser, false, block.timestamp);
         vm.stopPrank();
@@ -79,12 +77,10 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
         uint256 backing_ = IERC20(detf).balanceOf(address(staking_));
         address attacker_ = makeAddr("residual staking attacker");
         vm.prank(attacker_);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        staking_.exchangeIn(IERC20(detf), donation_, IERC20(address(staking_)), 0, attacker_, true, block.timestamp);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);staking_.exchangeIn(IERC20(detf), donation_, IERC20(address(staking_)), 0, attacker_, true, block.timestamp);
         AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         vm.prank(address(caller_));
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donation_, 0));
-        staking_.exchangeIn(IERC20(detf), donation_, IERC20(address(staking_)), 0, address(caller_), true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donation_, 0));staking_.exchangeIn(IERC20(detf), donation_, IERC20(address(staking_)), 0, address(caller_), true, block.timestamp);
         assertEq(staking_.balanceOf(detfUser), remaining_);
         assertEq(staking_.balanceOf(attacker_), 0);
         assertEq(IERC20(detf).balanceOf(address(staking_)), backing_);
@@ -94,8 +90,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
     function test_exactOutputNativeLimitsAfterFundedRebase() public {
         // A funded bond reward has already moved K below its initial value.
         assertLt(staking_.stakingState().gonsPerUnit, 1e36);
-        vm.startPrank(detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), liquid_ / 2, IERC20(detf), 0, detfUser, false, block.timestamp);
+        vm.startPrank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), liquid_ / 2, IERC20(detf), 0, detfUser, false, block.timestamp);
         IERC20(detf).approve(address(staking_), type(uint256).max);
         vm.stopPrank();
         uint256[6] memory amounts_ = [uint256(1), 2, 31, 32, 1e9, liquid_ / 100];
@@ -110,16 +105,17 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
     function _checkExactOutput(IERC20 in_, IERC20 out_, uint256 amount_) private {
         uint256 quoted_ = staking_.previewExchangeOut(in_, out_, amount_);
         assertEq(quoted_, amount_, "one native balance unit always buys one native principal unit");
-        assertEq(staking_.previewExchangeIn(in_, quoted_, out_), amount_);
-        assertLt(staking_.previewExchangeIn(in_, quoted_ - 1, out_), amount_);
+        (uint256 previewAmountOut2,) = staking_.previewExchangeIn(in_, quoted_, out_);
+        assertEq(previewAmountOut2, amount_);
+        (uint256 previewAmountOut3,) = staking_.previewExchangeIn(in_, quoted_ - 1, out_);
+        assertLt(previewAmountOut3, amount_);
         uint256 inputBefore_ = in_.balanceOf(detfUser);
         uint256 outputBefore_ = out_.balanceOf(detfUser);
         bytes memory stateBefore_ = abi.encode(staking_.stakingState());
         vm.startPrank(detfUser);
         vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MaximumInputExceeded.selector, amount_ - 1, amount_));
         staking_.exchangeOut(in_, amount_ - 1, out_, amount_, detfUser, false, block.timestamp);
-        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, amount_ + 1, amount_));
-        staking_.exchangeIn(in_, amount_, out_, amount_ + 1, detfUser, false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, amount_ + 1, amount_));staking_.exchangeIn(in_, amount_, out_, amount_ + 1, detfUser, false, block.timestamp);
         vm.stopPrank();
         assertEq(abi.encode(staking_.stakingState()), stateBefore_);
         assertEq(in_.balanceOf(detfUser), inputBefore_);

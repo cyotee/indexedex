@@ -128,9 +128,7 @@ abstract contract UniswapV4Detf_OriginalPrincipalBase is Test {
         IERC20 lead_ = _principalLead();
         SimpleMintableERC20(address(lead_)).mint(BONDER, 1 ether);
         vm.startPrank(BONDER);
-        lead_.approve(d_.hook(), 1 ether);
-        received_ = IStandardExchangeIn(d_.hook()).exchangeIn(
-            lead_, 1 ether, IERC20(address(d_)), 1, BONDER, false, block.timestamp + 1 hours
+        lead_.approve(d_.hook(), 1 ether);(received_,) = IStandardExchangeIn(d_.hook()).exchangeIn(lead_, 1 ether, IERC20(address(d_)), 1, BONDER, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(received_, 0, "public pool swap funds actual DETF");
@@ -140,8 +138,7 @@ abstract contract UniswapV4Detf_OriginalPrincipalBase is Test {
         IStakedDETF staking_ = _principalStaking();
         IERC20 raw_ = IERC20(address(_principalDetf()));
         vm.startPrank(BONDER);
-        raw_.approve(address(staking_), amount_);
-        paid_ = staking_.exchangeIn(raw_, amount_, IERC20(address(staking_)), minimum_, BONDER, false, block.timestamp + 1 hours);
+        raw_.approve(address(staking_), amount_);(paid_,) = staking_.exchangeIn(raw_, amount_, IERC20(address(staking_)), minimum_, BONDER, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -151,7 +148,8 @@ abstract contract UniswapV4Detf_OriginalPrincipalBase is Test {
         IStakedDETF.StakingState memory before_ = staking_.stakingState();
         uint256 gons_ = staking_.gonsOf(BONDER);
         uint256 lp_ = IERC20(_principalDetf().hook()).balanceOf(_principalDetf().bondNftVault());
-        assertEq(staking_.previewExchangeIn(raw_, amount_, IERC20(address(staking_))), amount_, "funded stake always quotes exact raw units");
+        (uint256 previewAmountOut1,) = staking_.previewExchangeIn(raw_, amount_, IERC20(address(staking_)));
+        assertEq(previewAmountOut1, amount_, "funded stake always quotes exact raw units");
         assertEq(_principalStake(amount_, amount_), amount_, "exact issued receipt");
         assertEq(staking_.gonsOf(BONDER) - gons_, amount_ * before_.gonsPerUnit, "gons credited at funded index");
         assertEq(staking_.stakingState().accountedBacking, before_.accountedBacking + amount_, "held backing credited once");
@@ -193,8 +191,7 @@ abstract contract UniswapV4Detf_OriginalPrincipalBase is Test {
         raw_.approve(address(staking_), amount_);
         bytes32 before_ = _principalBookHash();
         vm.prank(BONDER);
-        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, amount_ + 1, amount_));
-        staking_.exchangeIn(raw_, amount_, IERC20(address(staking_)), amount_ + 1, BONDER, false, block.timestamp + 1 hours);
+        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, amount_ + 1, amount_));staking_.exchangeIn(raw_, amount_, IERC20(address(staking_)), amount_ + 1, BONDER, false, block.timestamp + 1 hours);
         assertEq(_principalBookHash(), before_, "minimum failure preserves custody, funding, gons and NFT count");
     }
 }

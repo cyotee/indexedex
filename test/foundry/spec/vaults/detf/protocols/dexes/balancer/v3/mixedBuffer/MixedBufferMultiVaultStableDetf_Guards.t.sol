@@ -20,9 +20,7 @@ contract MixedBufferMultiVaultStableDetf_Guards_Test is TestBase_MixedBufferMult
         _bootstrapDefault(detf, alice);
 
         vm.startPrank(bob);
-        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);
-        detfExchangeIn.exchangeIn(
-            IERC20(address(_fixtureBufferToken())), 0, IERC20(detf), 0, bob, false, block.timestamp + 1 hours
+        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);detfExchangeIn.exchangeIn(IERC20(address(_fixtureBufferToken())), 0, IERC20(detf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -34,9 +32,7 @@ contract MixedBufferMultiVaultStableDetf_Guards_Test is TestBase_MixedBufferMult
         _fundBuffer(bob, _fixtureAmount(10e18));
         vm.startPrank(bob);
         IERC20(address(_fixtureBufferToken())).approve(detf, _fixtureAmount(10e18));
-        vm.expectRevert();
-        detfExchangeIn.exchangeIn(
-            IERC20(address(_fixtureBufferToken())), _fixtureAmount(10e18), IERC20(detf), 0, bob, false, block.timestamp - 1
+        vm.expectRevert();detfExchangeIn.exchangeIn(IERC20(address(_fixtureBufferToken())), _fixtureAmount(10e18), IERC20(detf), 0, bob, false, block.timestamp - 1
         );
         vm.stopPrank();
     }

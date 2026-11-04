@@ -358,17 +358,17 @@ contract HostileStandardExchange {
         return true;
     }
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         tokenIn;
         tokenOut;
-        return amountIn; // 1:1
+        return (amountIn, 0); // 1:1
     }
 
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -376,7 +376,7 @@ contract HostileStandardExchange {
         address recipient,
         bool,
         uint256
-    ) external returns (uint256 amountOut) {
+    ) external returns (uint256 amountOut, uint256 amountRefunded) {
         if (failExchangeIn) revert("HostileSE: exchangeIn");
         // Pull buffer, mint shares 1:1
         tokenIn.transferFrom(msg.sender, address(this), amountIn);

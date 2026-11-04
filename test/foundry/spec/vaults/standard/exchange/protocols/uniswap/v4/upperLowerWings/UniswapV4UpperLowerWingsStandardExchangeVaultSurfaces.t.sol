@@ -47,10 +47,13 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultSurfacesTest is TestBase_U
         IStandardExchangeOut exchange = IStandardExchangeOut(address(wings0));
         exchange.exchangeOut(token0, 1e12, IERC20(address(wings0)), 1e12, address(this), false, block.timestamp);
         uint256 wanted = bound(seed_, 1, 1e10);
-        uint256 required = exchange.previewExchangeOut(token0, IERC20(address(wings0)), wanted);
-        uint256 sufficient = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, required, IERC20(address(wings0)));
+        uint256 required = exchange.previewExchangeOut(token0, IERC20(address(wings0)), wanted);(uint256 sufficient,) = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, required, IERC20(address(wings0)));
         assertGe(sufficient, wanted);
-        if (required > 1) assertLt(IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, required - 1, IERC20(address(wings0))), wanted);
+        uint256 previewAmountOut1;
+        if (required > 1) {
+            (previewAmountOut1,) = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, required - 1, IERC20(address(wings0)));
+        }
+        assertLt(previewAmountOut1, wanted);
         uint256 beforeShares = IERC20(address(wings0)).balanceOf(address(this));
         exchange.exchangeOut(token0, required, IERC20(address(wings0)), wanted, address(this), false, block.timestamp);
         assertEq(IERC20(address(wings0)).balanceOf(address(this)) - beforeShares, wanted);

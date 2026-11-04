@@ -92,9 +92,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Swap is
         assertGt(preview, 0);
 
         uint256 bal0 = token0.balanceOf(user);
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             amountIn,
             IERC20(address(token0)),
             0,

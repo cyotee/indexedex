@@ -39,8 +39,7 @@ abstract contract UniswapV4Detf_IoTables_Decimals is
             detfUser,
             false,
             block.timestamp + 1 hours
-        );
-        IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), _uPair(20), IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
+        );IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), _uPair(20), IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(tokenId, 0, "tokenId");
         assertGt(shares, 0, "lp");

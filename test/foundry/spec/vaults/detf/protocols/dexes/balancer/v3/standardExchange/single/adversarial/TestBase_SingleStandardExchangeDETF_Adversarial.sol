@@ -104,9 +104,7 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
     {
         uint256 shares_ = _fundSeShares(user, lpAmount);
         vm.startPrank(user);
-        seShare.approve(instance_, shares_);
-        out_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShare, shares_, IERC20(instance_), 0, user, false, block.timestamp + 1 hours
+        seShare.approve(instance_, shares_);(out_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, shares_, IERC20(instance_), 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }

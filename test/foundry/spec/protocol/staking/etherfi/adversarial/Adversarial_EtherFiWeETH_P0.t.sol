@@ -56,9 +56,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
 
         uint256 fakeIn = 1 ether;
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             fakeIn,
             IERC20(seVault),
             0,
@@ -86,9 +84,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         uint256 mintIn = 1 ether;
         _dealWeth(victim, mintIn);
         vm.startPrank(victim);
-        hermeticWeth.approve(seVault, mintIn);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, mintIn);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             mintIn,
             IERC20(seVault),
             1,
@@ -133,11 +129,8 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
     function test_H3_minOutFail_fullRevert() public {
         uint256 amount = 2 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
-        vm.expectRevert(IEtherFiWeETHStandardVault.Slippage.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
+        vm.expectRevert(IEtherFiWeETHStandardVault.Slippage.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             preview + 1,
@@ -215,9 +208,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         // Round-trip only the liquid sleeve portion (split mint stakes rest as weETH).
         uint256 amount = 10 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -251,20 +242,15 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
     function test_E2_roundTrip_weSe_conservation() public {
         uint256 amount = 5 ether;
         _mintWeViaE(address(this), amount);
-        hermeticWeEth.approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeEth)),
+        hermeticWeEth.approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeEth)),
             amount,
             IERC20(seVault),
             0,
             address(this),
             false,
             block.timestamp + 1 hours
-        );
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeEth)));
-        uint256 balBefore = hermeticWeEth.balanceOf(address(this));
-        seIn.exchangeIn(
-            IERC20(seVault),
+        );(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeEth)));
+        uint256 balBefore = hermeticWeEth.balanceOf(address(this));seIn.exchangeIn(IERC20(seVault),
             shares,
             IERC20(address(hermeticWeEth)),
             0,
@@ -278,9 +264,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
     }
 
     function test_E5_zeroAmount_deadline() public {
-        vm.expectRevert(IEtherFiWeETHStandardVault.ZeroAmount.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(IEtherFiWeETHStandardVault.ZeroAmount.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             0,
             IERC20(seVault),
             0,
@@ -292,9 +276,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         vm.warp(block.timestamp + 2 hours);
         _dealWeth(address(this), 1 ether);
         hermeticWeth.approve(seVault, 1 ether);
-        vm.expectRevert(IEtherFiWeETHStandardVault.DeadlineExpired.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(IEtherFiWeETHStandardVault.DeadlineExpired.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             1 ether,
             IERC20(seVault),
             0,
@@ -359,9 +341,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         );
 
         vm.startPrank(attacker);
-        hostile.approve(vault, amount);
-        uint256 shares = vin.exchangeIn(
-            IERC20(address(hostile)), amount, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
+        hostile.approve(vault, amount);(uint256 shares,) = vin.exchangeIn(IERC20(address(hostile)), amount, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -382,9 +362,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         vm.prank(attacker);
         hostile.deposit{value: seed}();
         vm.startPrank(attacker);
-        hostile.approve(vault, seed);
-        uint256 shares = vin.exchangeIn(
-            IERC20(address(hostile)), seed, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
+        hostile.approve(vault, seed);(uint256 shares,) = vin.exchangeIn(IERC20(address(hostile)), seed, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -453,9 +431,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -468,9 +444,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -501,9 +475,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I2: no in-call allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -516,9 +488,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, shortPush)
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -539,9 +509,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         uint256 victimIn = 2 ether;
         _dealWeth(victim, victimIn);
         vm.startPrank(victim);
-        hermeticWeth.approve(seVault, victimIn);
-        uint256 minted = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, victimIn);(uint256 minted,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             victimIn,
             IERC20(seVault),
             0,
@@ -560,9 +528,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I3: no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
@@ -575,9 +541,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim, uint256(0))
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
@@ -654,10 +618,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertTrue(rebFacet_ != address(0) && rebFacet_ != seVault, "J3 proxy cut rebalance");
         assertTrue(nftFacet_ != address(0) && nftFacet_ != seVault, "J3 proxy cut onERC721Received");
 
-        _seedVaultInventory(3 ether, 3 ether);
-
-        uint256 previewIn_ =
-            IStandardExchangeIn(seVault).previewExchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault));
+        _seedVaultInventory(3 ether, 3 ether);(uint256 previewIn_,) = IStandardExchangeIn(seVault).previewExchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault));
         assertGt(previewIn_, 0, "J3 previewExchangeIn live on proxy");
 
         uint256 previewOut_ =
@@ -665,9 +626,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(seVault).exchangeIn(
-            IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(seVault).exchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
         );
 
         bytes4 recv_ =
@@ -681,9 +640,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         hermeticPool.setPaused(true);
         uint256 amount = 5 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -701,9 +658,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         uint256 amount = 1 ether;
         _dealWeth(address(this), amount);
         hermeticWeth.approve(seVault, amount);
-        vm.expectRevert(HermeticLiquidityPool.ContractPaused.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(HermeticLiquidityPool.ContractPaused.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticEEth)),
             0,
@@ -718,9 +673,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         bl.setBlacklistedUntil(seVault, block.timestamp + 1);
         uint256 amount = 2 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -736,10 +689,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         hermeticPool.setPausedUntil(block.timestamp + 1);
         uint256 amount = 5 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         assertEq(shares, preview, "preview equals execution");
         assertEq(etherFiSe.liquidReserveEth(), amount, "timed pause books all");
@@ -747,9 +697,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         // Reopen: the next investing exchangeIn sweeps the sleeve-eligible booked excess (D31/D42).
         hermeticPool.setPausedUntil(0);
         _dealWeth(address(this), 1 ether);
-        hermeticWeth.approve(seVault, 1 ether);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        hermeticWeth.approve(seVault, 1 ether);seIn.exchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         uint256 total = etherFiSe.liquidReserveEth() + etherFiSe.lockedReserveEth();
         assertLt(etherFiSe.liquidReserveEth(), amount + 1 ether, "booked excess swept on the next exchangeIn");
@@ -761,9 +709,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         hermeticPool.setPaused(true);
         uint256 amount = 100 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,

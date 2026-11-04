@@ -51,9 +51,7 @@ contract Handler_SlipstreamStandardExchange is Test {
         uint256 amount = bound(amountSeed, 1e15, 5 ether);
         tin.mint(actor, amount);
         vm.startPrank(actor);
-        tin.approve(address(vault), amount);
-        try IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tin)), amount, tout, 0, actor, false, block.timestamp + 1 hours
+        tin.approve(address(vault), amount);try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tin)), amount, tout, 0, actor, false, block.timestamp + 1 hours
         ) {
             unchecked {
                 ++ghost_in;
@@ -82,9 +80,7 @@ contract Handler_SlipstreamStandardExchange is Test {
 
     function eoaPrepaidRejected(uint256 amountSeed) public {
         uint256 amount = bound(amountSeed, 1e15, 1 ether);
-        vm.prank(attacker);
-        try IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(token0)), amount, IERC20(address(token1)), 0, attacker, true, block.timestamp + 1 hours
+        vm.prank(attacker);try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(token0)), amount, IERC20(address(token1)), 0, attacker, true, block.timestamp + 1 hours
         ) {
             revert("eoa prepaid must revert");
         } catch (bytes memory reason) {

@@ -12,14 +12,12 @@ import {TestBase_UniswapV4Detf} from
 contract UniswapV4Detf_Burn is TestBase_UniswapV4Detf {
     function test_T7_9_liveBurn_previewEqExec_pair() public {
         _firstBond(100 ether);
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 20 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 20 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted, 0, "need DETF to burn");
 
         uint256 burnIn = minted / 2;
-        require(burnIn > 0, "burnIn");
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
+        require(burnIn > 0, "burnIn");(uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
         assertGt(preview, 0, "preview pair out");
 
         uint256 pairBefore = IERC20(address(pairToken)).balanceOf(detfUser);
@@ -27,8 +25,7 @@ contract UniswapV4Detf_Burn is TestBase_UniswapV4Detf {
         uint256 nftLpBefore = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
 
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours);
+        IERC20(detf).approve(detf, burnIn);(uint256 amountOut,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(amountOut, preview, "previewBurn == burn exec");
@@ -42,8 +39,7 @@ contract UniswapV4Detf_Burn is TestBase_UniswapV4Detf {
 
     function test_T7_9_previewExitProp_is_not_withdrawSingle() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 15 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 15 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         uint256 burnIn = minted / 3;
         uint256 lpOut = (burnIn * IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()))
@@ -53,8 +49,7 @@ contract UniswapV4Detf_Burn is TestBase_UniswapV4Detf {
         uint256 pairProp;
         for (uint256 i; i < toks.length; ++i) {
             if (toks[i] == address(pairToken)) pairProp = prop[i];
-        }
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
+        }(uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
         assertEq(preview, pairProp, "quote is prop pair residual, not single-asset withdraw");
     }
 }

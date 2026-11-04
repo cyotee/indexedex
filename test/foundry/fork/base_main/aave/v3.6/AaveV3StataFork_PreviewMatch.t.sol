@@ -27,14 +27,8 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
         uint256 amount = 1e18;
         if (!_liveStataDepositRoomOk(amount)) return;
         deal(liveUnderlying, address(this), amount);
-        IERC20(liveUnderlying).approve(vault, amount);
-
-        uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(
-            IERC20(liveUnderlying), amount, IERC20(vault)
-        );
-
-        uint256 out = IStandardExchangeIn(vault).exchangeIn(
-            IERC20(liveUnderlying), amount, IERC20(vault), 0, address(this), false, block.timestamp + 3600
+        IERC20(liveUnderlying).approve(vault, amount);(uint256 preview,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(liveUnderlying), amount, IERC20(vault)
+        );(uint256 out,) = IStandardExchangeIn(vault).exchangeIn(IERC20(liveUnderlying), amount, IERC20(vault), 0, address(this), false, block.timestamp + 3600
         );
 
         assertEq(out, preview, "fork: previewExchangeIn must equal returned from exchangeIn (live stata)");
@@ -46,10 +40,7 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
         uint256 dep = 2e18;
         if (!_liveStataDepositRoomOk(dep)) return;
         deal(liveUnderlying, address(this), dep);
-        IERC20(liveUnderlying).approve(vault, dep);
-
-        uint256 seReceived = IStandardExchangeIn(vault).exchangeIn(
-            IERC20(liveUnderlying), dep, IERC20(vault), 0, address(this), false, block.timestamp + 3600
+        IERC20(liveUnderlying).approve(vault, dep);(uint256 seReceived,) = IStandardExchangeIn(vault).exchangeIn(IERC20(liveUnderlying), dep, IERC20(vault), 0, address(this), false, block.timestamp + 3600
         );
 
         uint256 sharesToBurn = seReceived / 2;
@@ -73,10 +64,7 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
         uint256 dep = 1.5e18;
         if (!_liveStataDepositRoomOk(dep)) return;
         deal(liveUnderlying, address(this), dep);
-        IERC20(liveUnderlying).approve(vault, dep);
-
-        uint256 seReceived = IStandardExchangeIn(vault).exchangeIn(
-            IERC20(liveUnderlying), dep, IERC20(vault), 0, address(this), false, block.timestamp + 3600
+        IERC20(liveUnderlying).approve(vault, dep);(uint256 seReceived,) = IStandardExchangeIn(vault).exchangeIn(IERC20(liveUnderlying), dep, IERC20(vault), 0, address(this), false, block.timestamp + 3600
         );
 
         uint256 sharesToBurn = seReceived / 3;
@@ -102,13 +90,8 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
         if (maxDep < 0.01e18) return;
         amount = bound(amount, 0.01e18, maxDep < 10e18 ? maxDep : 10e18);
         deal(liveUnderlying, address(this), amount);
-        IERC20(liveUnderlying).approve(vault, amount);
-
-        uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(
-            IERC20(liveUnderlying), amount, IERC20(vault)
-        );
-        uint256 out = IStandardExchangeIn(vault).exchangeIn(
-            IERC20(liveUnderlying), amount, IERC20(vault), 0, address(this), false, block.timestamp + 3600
+        IERC20(liveUnderlying).approve(vault, amount);(uint256 preview,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(liveUnderlying), amount, IERC20(vault)
+        );(uint256 out,) = IStandardExchangeIn(vault).exchangeIn(IERC20(liveUnderlying), amount, IERC20(vault), 0, address(this), false, block.timestamp + 3600
         );
         assertEq(out, preview);
         assertEq(IERC20(vault).balanceOf(address(this)), out);
@@ -121,10 +104,7 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
         burnPct = bound(burnPct, 1, 80);
 
         deal(liveUnderlying, address(this), dep);
-        IERC20(liveUnderlying).approve(vault, dep);
-
-        uint256 seGot = IStandardExchangeIn(vault).exchangeIn(
-            IERC20(liveUnderlying), dep, IERC20(vault), 0, address(this), false, block.timestamp + 3600
+        IERC20(liveUnderlying).approve(vault, dep);(uint256 seGot,) = IStandardExchangeIn(vault).exchangeIn(IERC20(liveUnderlying), dep, IERC20(vault), 0, address(this), false, block.timestamp + 3600
         );
 
         uint256 sharesToBurn = (seGot * burnPct) / 100;
@@ -153,14 +133,10 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
             address(0),
             abi.encodeWithSelector(IVaultFeeOracleQuery.usageFeeOfVault.selector, vault),
             abi.encode(feeWad)
-        );
-
-        uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(IERC20(liveUnderlying), amount, IERC20(vault));
+        );(uint256 preview,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(liveUnderlying), amount, IERC20(vault));
 
         address user = address(0xBEEF1234);
-        uint256 balBefore = IERC20(vault).balanceOf(user);
-        uint256 out = IStandardExchangeIn(vault).exchangeIn(
-            IERC20(liveUnderlying), amount, IERC20(vault), 0, user, false, block.timestamp + 3600
+        uint256 balBefore = IERC20(vault).balanceOf(user);(uint256 out,) = IStandardExchangeIn(vault).exchangeIn(IERC20(liveUnderlying), amount, IERC20(vault), 0, user, false, block.timestamp + 3600
         );
         uint256 received = IERC20(vault).balanceOf(user) - balBefore;
 

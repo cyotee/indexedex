@@ -130,7 +130,7 @@ Bulk rewrite tips (from `DEDUPLICATION.md`):
 - Suffix-based rewrite of path fragments (works for both `@crane/` and relative forms).
 - Grep **both** `@crane/...` absolute paths **and** relative `./` / `../` forms before deleting any file.
 - Grep **inside** the vendored tree for internal consumers before deleting OZ interface files.
-- After large moves: `rm -rf cache out` then `forge build`.
+- After large moves: `rm -rf cache out` then `forge build --use solar`.
 
 ### 4. Crane wrapper surface
 

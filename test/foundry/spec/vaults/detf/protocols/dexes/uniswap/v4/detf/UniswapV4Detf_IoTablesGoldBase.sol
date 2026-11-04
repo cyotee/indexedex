@@ -113,8 +113,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         }
 
         uint256 userBefore = IERC20(custom_).balanceOf(detfUser);
-        vm.startPrank(detfUser);
-        uint256 minted_ = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted_,) = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted_, 0, "custom mint");
         assertEq(IERC20(custom_).balanceOf(detfUser) - userBefore, minted_, "user DETF");
@@ -144,9 +143,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
     function test_T7_7_liveMint_share_pairEqFromPreviewExchangeOut() public virtual {
         _firstBond(100 ether);
         uint256 wrapIn_ = 10 ether;
-        vm.startPrank(detfUser);
-        uint256 shareAmt_ = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        vm.startPrank(detfUser);(uint256 shareAmt_,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             wrapIn_,
             IERC20(se),
             0,
@@ -155,10 +152,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
             block.timestamp + 1 hours
         );
         vm.stopPrank();
-        assertGt(shareAmt_, 0, "se shares");
-
-        uint256 pairEq_ = IStandardExchange(se).previewExchangeIn(
-            IERC20(se), shareAmt_, IERC20(address(pairToken))
+        assertGt(shareAmt_, 0, "se shares");(uint256 pairEq_,) = IStandardExchange(se).previewExchangeIn(IERC20(se), shareAmt_, IERC20(address(pairToken))
         );
         assertGt(pairEq_, 0, "pairEq");
         uint256 shareInForPair_ = IStandardExchange(se).previewExchangeOut(
@@ -170,15 +164,12 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         uint256 boosted_ = Math.mulDiv(pairEq_, ONE_WAD + p_, ONE_WAD);
         uint256 swapQuote_ = IUniswapV4SeBufferHook(reserveHook).previewSwapExactIn(
             address(pairToken), detf, boosted_
-        );
-        uint256 userPred_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(se), shareAmt_, IERC20(detf));
+        );(uint256 userPred_,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(se), shareAmt_, IERC20(detf));
         uint256 expected_;
         if (detfInfo.isMintingAllowed(IERC20(se))) expected_ = Math.mulDiv(swapQuote_, ONE_WAD - p_, ONE_WAD);
         else {
             uint256 checkpoint_ = vm.snapshotState();
-            vm.prank(detfUser);
-            uint256 actualPair_ = IStandardExchangeIn(se).exchangeIn(
-                IERC20(se), shareAmt_, IERC20(address(pairToken)), pairEq_, detfUser, false, block.timestamp
+            vm.prank(detfUser);(uint256 actualPair_,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), shareAmt_, IERC20(address(pairToken)), pairEq_, detfUser, false, block.timestamp
             );
             expected_ = IUniswapV4SeBufferHook(reserveHook).previewSwapExactIn(address(pairToken), detf, actualPair_);
             assertTrue(vm.revertToStateAndDelete(checkpoint_));
@@ -187,8 +178,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         assertGt(userPred_, 0, "user preview");
 
         uint256 detfBefore_ = IERC20(detf).balanceOf(detfUser);
-        vm.startPrank(detfUser);
-        uint256 userDetf_ = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(se), shareAmt_, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 userDetf_,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(se), shareAmt_, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(userDetf_, userPred_, "preview==exec");
         assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore_, userDetf_, "user DETF");
@@ -248,8 +238,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         SimpleMintableERC20 junk_ = new SimpleMintableERC20("Junk", "JNK");
         junk_.mint(detf, 5 ether);
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        uint256 minted_ = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted_,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted_, 0, "mint despite non-joinable leftover");
         assertEq(junk_.balanceOf(detf), 5 ether, "junk leftover remains");

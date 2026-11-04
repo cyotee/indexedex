@@ -39,8 +39,7 @@ contract UniswapV4Detf_IoTables is
             detfUser,
             false,
             block.timestamp + 1 hours
-        );
-        IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), 20 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
+        );IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), 20 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(tokenId, 0, "tokenId");
         assertGt(shares, 0, "lp");

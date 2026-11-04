@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {
     LendingAccountingHandler,
@@ -143,10 +144,9 @@ contract AaveV3StataStandardExchange_Invariant is AaveV3StataStandardExchange_Re
         handler.assertLendingAccounting();
         uint256 backing = stataTokenV2.convertToAssets(IERC20(realStata).balanceOf(realVault))
             + IERC20(realBase).balanceOf(realVault);
-        uint256 supply = IERC20(realVault).totalSupply();
-        uint256 claim = supply == 0
+        uint256 supply = IERC20(realVault).totalSupply();uint256 claim = supply == 0
             ? 0
-            : IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), supply, IERC20(realBase));
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realVault), supply, IERC20(realBase));
         assertLe(claim, backing, "all Stata shares backed by protocol receipts and local principal");
     }
 

@@ -226,12 +226,8 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
     function test_SE_previewEqualsExecution_bufferRoute() public {
         tokenA.mint(address(this), 100 ether);
         tokenA.approve(seA, type(uint256).max);
-        uint256 amountIn = 10 ether;
-        uint256 pred = IStandardExchangeIn(seA).previewExchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(seA)
-        );
-        uint256 got = IStandardExchangeIn(seA).exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 amountIn = 10 ether;(uint256 pred,) = IStandardExchangeIn(seA).previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(seA)
+        );(uint256 got,) = IStandardExchangeIn(seA).exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(seA),
             pred,

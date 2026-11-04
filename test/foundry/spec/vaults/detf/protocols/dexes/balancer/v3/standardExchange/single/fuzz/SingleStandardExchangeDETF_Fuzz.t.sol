@@ -33,9 +33,7 @@ contract SingleStandardExchangeDETF_Fuzz_Test is TestBase_SingleStandardExchange
         assertGt(sharesIn_, 0, "funded SE shares");
 
         vm.startPrank(actorB);
-        seShare.approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, sharesIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
         vm.stopPrank();
         // DETF has nine decimals; bound the burn to the actual funded output.
         assertGe(detfOut_, 10, "funded DETF supports a partial burn");
@@ -43,9 +41,7 @@ contract SingleStandardExchangeDETF_Fuzz_Test is TestBase_SingleStandardExchange
         uint256 burnAmt_ = bound(burnSeed, detfOut_ / 10, detfOut_ / 2);
         uint256 sharesBefore_ = seShare.balanceOf(actorB);
         vm.startPrank(actorB);
-        IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, actorB, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, burnAmt_);(uint256 sharesBack_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, actorB, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(sharesBack_, 0, "partial burn executes");
         assertLe(sharesBack_, sharesIn_, "P-CONS: sharesBack <= sharesIn");
@@ -61,17 +57,13 @@ contract SingleStandardExchangeDETF_Fuzz_Test is TestBase_SingleStandardExchange
 
         uint256 sharesA_ = _fundSeShares(actorA, aLp);
         vm.startPrank(actorA);
-        seShare.approve(instance_, sharesA_);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, sharesA_, IERC20(instance_), 0, actorA, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, sharesA_);IStandardExchangeIn(instance_).exchangeIn(seShare, sharesA_, IERC20(instance_), 0, actorA, false, block.timestamp + 1 hours);
         vm.stopPrank();
         uint256 balA_ = IERC20(instance_).balanceOf(actorA);
 
         uint256 sharesB_ = _fundSeShares(actorB, bLp);
         vm.startPrank(actorB);
-        seShare.approve(instance_, sharesB_);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, sharesB_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, sharesB_);IStandardExchangeIn(instance_).exchangeIn(seShare, sharesB_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(IERC20(instance_).balanceOf(actorA), balA_, "P-NODILUTE");
@@ -80,6 +72,7 @@ contract SingleStandardExchangeDETF_Fuzz_Test is TestBase_SingleStandardExchange
 
     function testFuzz_zeroPreview(uint256) public {
         address instance_ = _openLive();
-        assertEq(IStandardExchangeIn(instance_).previewExchangeIn(seShare, 0, IERC20(instance_)), 0, "P-BOUND zero");
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(instance_).previewExchangeIn(seShare, 0, IERC20(instance_));
+        assertEq(previewAmountOut1, 0, "P-BOUND zero");
     }
 }

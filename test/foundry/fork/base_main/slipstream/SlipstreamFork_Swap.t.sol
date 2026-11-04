@@ -68,15 +68,10 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
         deal(tokenInAddr, address(this), amountIn);
         
         // Approve vault
-        tokenIn.approve(address(vault), amountIn);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute swap
-        uint256 amountOut = vault.exchangeIn(
-            tokenIn,
+        tokenIn.approve(address(vault), amountIn);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute swap
+        (uint256 amountOut,) = vault.exchangeIn(tokenIn,
             amountIn,
             tokenOut,
             0, // minAmountOut
@@ -120,10 +115,7 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
     //     tokenIn.approve(address(vault), amountIn);
 
     //     uint256 senderTokenInBefore = tokenIn.balanceOf(address(this));
-    //     uint256 recipientTokenOutBefore = tokenOut.balanceOf(recipient);
-
-    //     vault.exchangeIn(
-    //         tokenIn,
+    //     uint256 recipientTokenOutBefore = tokenOut.balanceOf(recipient);//     vault.exchangeIn(//         tokenIn,
     //         amountIn,
     //         tokenOut,
     //         0,
@@ -157,13 +149,8 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
     //     address recipient = makeAddr("recipient");
 
     //     deal(tokenInAddr, address(this), amountIn);
-    //     tokenIn.approve(address(vault), amountIn);
-
-    //     uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
-
-    //     // Should succeed with exact minAmountOut
-    //     uint256 amountOut = vault.exchangeIn(
-    //         tokenIn,
+    //     tokenIn.approve(address(vault), amountIn);//     (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);//     // Should succeed with exact minAmountOut
+    //     uint256 amountOut = vault.exchangeIn(//         tokenIn,
     //         amountIn,
     //         tokenOut,
     //         preview,
@@ -190,14 +177,10 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
     //     address recipient = makeAddr("recipient");
 
     //     deal(tokenInAddr, address(this), amountIn);
-    //     tokenIn.approve(address(vault), amountIn);
-
-    //     uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+    //     tokenIn.approve(address(vault), amountIn);//     (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
 
     //     // Should revert with minAmountOut too high
-    //     vm.expectRevert();
-    //     vault.exchangeIn(
-    //         tokenIn,
+    //     vm.expectRevert();//     vault.exchangeIn(//         tokenIn,
     //         amountIn,
     //         tokenOut,
     //         preview + 1,
@@ -227,10 +210,7 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
 
     //     // First swap: WETH -> USDC
     //     deal(tokenInAddr, address(this), amountIn);
-    //     tokenIn.approve(address(vault), amountIn);
-
-    //     uint256 usdcOut = vault.exchangeIn(
-    //         tokenIn,
+    //     tokenIn.approve(address(vault), amountIn);//     uint256 usdcOut = vault.exchangeIn(//         tokenIn,
     //         amountIn,
     //         tokenOut,
     //         0,
@@ -242,9 +222,7 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
     //     assertTrue(usdcOut > 0, "First swap should produce USDC");
 
     //     // Second swap: USDC -> WETH
-    //     tokenOut.approve(address(vault), usdcOut);
-    //     uint256 wethOut = vault.exchangeIn(
-    //         tokenOut,
+    //     tokenOut.approve(address(vault), usdcOut);//     uint256 wethOut = vault.exchangeIn(//         tokenOut,
     //         usdcOut,
     //         tokenIn,
     //         0,
@@ -298,13 +276,10 @@ contract SlipstreamFork_Swap_Test is TestBase_SlipstreamFork {
             // Success
         } catch {
             return; // Skip if deal fails
-        }
+        }uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        if (preview == 0) return;// Skip if preview is 0
 
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
-        if (preview == 0) return; // Skip if preview is 0
-
-        uint256 amountOut = vault.exchangeIn(
-            tokenIn,
+        (uint256 amountOut,) = vault.exchangeIn(tokenIn,
             amountIn,
             tokenOut,
             0,

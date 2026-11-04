@@ -102,14 +102,9 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
 
     function _outerMintFromNestedShares() internal {
         uint256 nestedIn_ = _mintDetfFromBuffer(nestedDetf, nestedUser, _fixtureAmount(80e18));
-        if (nestedIn_ > 20e9) nestedIn_ = 20e9;
-
-        uint256 preview_ =
-            IStandardExchangeIn(outerDetf).previewExchangeIn(IERC20(nestedDetf), nestedIn_, IERC20(outerDetf));
+        if (nestedIn_ > 20e9) nestedIn_ = 20e9;(uint256 preview_,) = IStandardExchangeIn(outerDetf).previewExchangeIn(IERC20(nestedDetf), nestedIn_, IERC20(outerDetf));
         vm.startPrank(nestedUser);
-        IERC20(nestedDetf).approve(outerDetf, nestedIn_);
-        uint256 outerOut_ = IStandardExchangeIn(outerDetf).exchangeIn(
-            IERC20(nestedDetf), nestedIn_, IERC20(outerDetf), 0, nestedUser, false, block.timestamp + 1 hours
+        IERC20(nestedDetf).approve(outerDetf, nestedIn_);(uint256 outerOut_,) = IStandardExchangeIn(outerDetf).exchangeIn(IERC20(nestedDetf), nestedIn_, IERC20(outerDetf), 0, nestedUser, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(preview_, outerOut_, "outer mint nested leg preview==exec");

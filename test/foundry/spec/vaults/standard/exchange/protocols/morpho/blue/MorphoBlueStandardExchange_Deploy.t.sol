@@ -97,9 +97,7 @@ contract MorphoBlueStandardExchange_Deploy is TestBase_MorphoBlueStandardExchang
         assertTrue(loupe.facetAddress(IStandardExchangeIn.exchangeIn.selector) != address(0), "J3 in");
         assertTrue(loupe.facetAddress(IStandardExchangeOut.exchangeOut.selector) != address(0), "J3 out");
         assertTrue(loupe.facetAddress(IERC4626.deposit.selector) != address(0), "J3 deposit");
-        assertTrue(loupe.facetAddress(IMorphoBlueStandardExchange.morpho.selector) != address(0), "J3 marker");
-
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), 1 ether, IERC20(se));
+        assertTrue(loupe.facetAddress(IMorphoBlueStandardExchange.morpho.selector) != address(0), "J3 marker");(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), 1 ether, IERC20(se));
         uint256 out = _wrapExactIn(user, 1 ether);
         assertEq(out, preview, "J3 proxy wrap smoke");
         assertEq(mbse.loanToken(), address(loanToken));

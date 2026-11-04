@@ -57,13 +57,9 @@ contract RebasingDetfHandler is Test {
         if (budget < 1e26) return;
         uint256 amount = bound(seed, 1e26, budget);
         uint256 before = wrapper.balanceOf(actor);
-        vm.startPrank(actor);
-        uint256 minted = IStandardExchangeIn(address(detf))
-            .exchangeIn(IERC20(address(wrapper)), amount, IERC20(address(detf)), 0, actor, false, block.timestamp);
+        vm.startPrank(actor);(uint256 minted,) = IStandardExchangeIn(address(detf)).exchangeIn(IERC20(address(wrapper)), amount, IERC20(address(detf)), 0, actor, false, block.timestamp);
         assertGt(minted, 0);
-        IERC20(address(detf)).approve(address(detf), minted);
-        uint256 received = IStandardExchangeIn(address(detf))
-            .exchangeIn(IERC20(address(detf)), minted, IERC20(address(wrapper)), 0, actor, false, block.timestamp);
+        IERC20(address(detf)).approve(address(detf), minted);(uint256 received,) = IStandardExchangeIn(address(detf)).exchangeIn(IERC20(address(detf)), minted, IERC20(address(wrapper)), 0, actor, false, block.timestamp);
         vm.stopPrank();
         assertGt(received, 0);
         assertLe(wrapper.balanceOf(actor), before, "closed DETF cycle extracted wrapper shares");
@@ -112,10 +108,7 @@ contract RebasingDetfHandler is Test {
                 .exchangeOut(
                     IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 1, actor, true, block.timestamp
                 );
-        } else {
-            IStandardExchangeIn(address(wrapper))
-                .exchangeIn(
-                    IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, actor, true, block.timestamp
+        } else {IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, actor, true, block.timestamp
                 );
         }
         expectedReverts++;
@@ -187,9 +180,7 @@ contract RebasingAwareERC4626_DetfInvariant is TestBase_RebasingAwareDetfComposi
         vm.expectRevert(
             abi.encodeWithSelector(bytes4(keccak256("InvalidRoute(address,address)")), address(wrapped), composed)
         );
-        vm.prank(detfUser);
-        IStandardExchangeIn(composed)
-            .exchangeIn(IERC20(address(wrapped)), 1e20, IERC20(composed), 0, detfUser, false, block.timestamp);
+        vm.prank(detfUser);IStandardExchangeIn(composed).exchangeIn(IERC20(address(wrapped)), 1e20, IERC20(composed), 0, detfUser, false, block.timestamp);
         assertEq(wrapped.balanceOf(detfUser), sharesBefore);
         assertEq(IERC20(composed).totalSupply(), supplyBefore);
     }

@@ -1,6 +1,6 @@
 ---
 name: crane-deployment
-description: This skill should be used when the user asks about "create3", "deploy", "diamond factory", "package", "deterministic deployment", "cross-chain", "DiamondPackageCallBackFactory", "FactoryService", or needs guidance on deploying Diamond proxies and facets using Crane's factory system.
+description: "Deploy Crane facets and diamond packages with CREATE3, FactoryService and deterministic factory workflows."
 license: MIT
 ---
 

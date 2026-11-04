@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -34,8 +35,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_APEX_D41 is TestBase
     function _fundProjectionShares() internal {
         token0.mint(address(this), 10 ether);
         token0.approve(se0, 10 ether);
-        assertGt(IStandardExchangeIn(se0).exchangeIn(
-            IERC20(address(token0)), 10 ether, IERC20(se0), 0,
+        assertGt(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(se0))), IERC20(address(token0)), 10 ether, IERC20(se0), 0,
             address(this), false, block.timestamp
         ), 1 ether, "external caller owns shares used by the composed quote");
     }

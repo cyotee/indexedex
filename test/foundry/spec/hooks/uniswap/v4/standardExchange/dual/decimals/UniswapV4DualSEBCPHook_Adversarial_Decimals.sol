@@ -46,8 +46,7 @@ abstract contract UniswapV4DualSEBCPHook_Adversarial_Decimals is
         _mintAndDonate(c0, address(this), donated_);
         assertEq(IERC20(c0).balanceOf(hook), donated_, "donation parked");
 
-        uint256 amountIn_ = _humanFor(c0, 5);
-        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
+        uint256 amountIn_ = _humanFor(c0, 5);(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
         assertGt(preview_, 0);
 
         if (c0 == address(tokenA)) tokenA.mint(user, amountIn_);
@@ -58,9 +57,7 @@ abstract contract UniswapV4DualSEBCPHook_Adversarial_Decimals is
         uint256 claim1Before_ = dual.claimSupplyCurrency1();
 
         vm.startPrank(user);
-        IERC20(c0).approve(hook, amountIn_);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
+        IERC20(c0).approve(hook, amountIn_);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
         );
         vm.stopPrank();
 

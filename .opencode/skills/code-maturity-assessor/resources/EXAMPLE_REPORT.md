@@ -157,7 +157,7 @@ Multi-sig is EOA-based (should upgrade to Governor contract)
 ✓ Fork tests against mainnet state
 
 **Testing Breakdown:**
-- Unit: 287 tests (forge test)
+- Unit: 287 tests (forge test --use solar)
 - Integration: 45 scenarios (end-to-end flows)
 - Fuzzing: 12 invariants (Echidna, 10k runs each)
 - Formal: 3 key properties (Certora)

@@ -43,9 +43,7 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
         vm.prank(alice);
         uint256 erc = vault.deposit(assets, alice);
         vm.revertToState(snap);
-        vm.prank(alice);
-        uint256 se = IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(asset)), assets, IERC20(address(vault)), 0, alice, false, block.timestamp
+        vm.prank(alice);(uint256 se,) = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), assets, IERC20(address(vault)), 0, alice, false, block.timestamp
         );
         vm.revertToState(snap);
         vm.prank(alice);
@@ -143,9 +141,7 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
             );
         } else {
             vm.prank(alice);
-            vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-            IStandardExchangeIn(address(vault)).exchangeIn(
-                IERC20(address(asset)), amount, IERC20(address(vault)), 0, alice, true, block.timestamp
+            vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), amount, IERC20(address(vault)), 0, alice, true, block.timestamp
             );
         }
         assertEq(IERC20(address(vault)).totalSupply(), supply);
@@ -164,9 +160,7 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
         vm.assume(burnAmt > 0);
         uint256 aliceBefore = IERC20(address(vault)).balanceOf(alice);
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
-        vm.prank(address(caller));
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
+        vm.prank(address(caller));IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
         );
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), P - burnAmt, "exact-in does not refund excess");
         assertEq(IERC20(address(vault)).balanceOf(alice), aliceBefore);
@@ -197,9 +191,7 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
             vm.expectRevert(IRebasingAwareERC4626.ZeroOperationAmount.selector);
             vault.mint(0, alice);
         } else if (route == 2) {
-            vm.expectRevert(IRebasingAwareERC4626.ZeroOperationAmount.selector);
-            IStandardExchangeIn(address(vault)).exchangeIn(
-                IERC20(address(asset)), 0, IERC20(address(vault)), 0, alice, false, block.timestamp
+            vm.expectRevert(IRebasingAwareERC4626.ZeroOperationAmount.selector);IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), 0, IERC20(address(vault)), 0, alice, false, block.timestamp
             );
         } else {
             vm.expectRevert(IRebasingAwareERC4626.ZeroOperationAmount.selector);

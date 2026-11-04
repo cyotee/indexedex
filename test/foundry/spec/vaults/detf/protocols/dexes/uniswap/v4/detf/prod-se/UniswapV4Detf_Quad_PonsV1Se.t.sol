@@ -24,10 +24,8 @@ contract UniswapV4Detf_Quad_PonsV1Se is TestBase_UniswapV4Detf_Quad_PonsV1Se {
 
     function test_H_QD_P1_mint() public {
         _firstBond(100 ether);
-        uint256 mintIn = 10 ether;
-        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
-        vm.startPrank(detfUser);
-        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 mintIn = 10 ether;(uint256 userPred,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
+        vm.startPrank(detfUser);(uint256 out,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out, 0, "out");
         assertEq(out, userPred, "previewMint==exec");
@@ -37,22 +35,19 @@ contract UniswapV4Detf_Quad_PonsV1Se is TestBase_UniswapV4Detf_Quad_PonsV1Se {
 
     function test_H_QD_P1_burn() public {
         _firstBond(100 ether);
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted, 0, "minted");
 
         uint256 burnIn = minted / 2;
         _assertR19();
-        _assertSeAllowancesZero();
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
+        _assertSeAllowancesZero();(uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
         uint256 pairBefore = IERC20(mintToken).balanceOf(detfUser);
         uint256 supplyBefore = IERC20(detf).totalSupply();
         bool primaryBurn = detfInfo.isBurningAllowed(IERC20(mintToken));
 
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        IERC20(detf).approve(detf, burnIn);(uint256 amountOut,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(amountOut, preview, "previewBurn==exec");
@@ -67,8 +62,7 @@ contract UniswapV4Detf_Quad_PonsV1Se is TestBase_UniswapV4Detf_Quad_PonsV1Se {
 
     function test_H_QD_P1_close() public {
         (uint256 tokenId,) = _firstBond(100 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertSeAllowancesZero();
         _assertFundedMatureClaim(detf, tokenId, detfUser);

@@ -94,18 +94,13 @@ contract RebasingBufferDetfHandler is Test {
         amount = bound(amount, 1e15, 2 ether);
         if (raw.balanceOf(actor) < amount) {
             raw.mint(actor, amount);
-        }
-        uint256 pred = IStandardExchangeIn(address(hook))
-            .previewExchangeIn(IERC20(address(raw)), amount, IERC20(address(wrapper)));
+        }(uint256 pred,) = IStandardExchangeIn(address(hook)).previewExchangeIn(IERC20(address(raw)), amount, IERC20(address(wrapper)));
         if (pred == 0) {
             skips[2]++;
             return;
         }
         vm.startPrank(actor);
-        raw.approve(address(hook), type(uint256).max);
-        IStandardExchangeIn(address(hook))
-            .exchangeIn(
-                IERC20(address(raw)), amount, IERC20(address(wrapper)), 0, actor, false, block.timestamp + 1 hours
+        raw.approve(address(hook), type(uint256).max);IStandardExchangeIn(address(hook)).exchangeIn(IERC20(address(raw)), amount, IERC20(address(wrapper)), 0, actor, false, block.timestamp + 1 hours
             );
         swapOk++;
         successes[2]++;

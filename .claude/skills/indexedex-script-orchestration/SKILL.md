@@ -10,7 +10,7 @@ This skill captures the scripting patterns that proved necessary for the repo's 
 ## Use This Skill For
 
 - editing `scripts/foundry/supersim/deploy_mainnet_bridge_ui.sh`
-- refactoring shell wrappers around `forge script`
+- refactoring shell wrappers around `forge script --use solar`
 - debugging sender, signer, or broadcast issues on local SuperSim forks
 - passing deployment output directories and network profiles into Solidity scripts
 - stabilizing long chain-local deployment runs
@@ -21,6 +21,7 @@ This skill captures the scripting patterns that proved necessary for the repo's 
 - Use `set -euo pipefail`.
 - Keep helper functions small and single-purpose.
 - Prefer arrays for command construction so quoting stays correct.
+- Every `forge script` / `forge build` array includes `--use solar`. Do not drop the flag to match an older log.
 - Redact API keys or provider secrets from any logged RPC URL.
 - Validate and create required output directories before broadcasting.
 
@@ -34,7 +35,7 @@ The top-level shell wrapper should own orchestration. In this repo that means:
 4. wait for both local RPC endpoints
 5. prepare the broadcast identity
 6. sweep ETH to the deployer on both forks
-7. run direct per-chain `forge script` commands
+7. run direct per-chain `forge script --use solar` commands
 8. deploy bridge infra and bridge config
 9. export frontend artifacts
 
@@ -82,7 +83,7 @@ This distinction was critical in the recent SuperSim deployment work.
 
 ## Broadcast Stability Rules
 
-- Forward `-v` through `-vvvvv` from the wrapper into `forge script`.
+- Forward `-v` through `-vvvvv` from the wrapper into `forge script --use solar`.
 - Use `--slow` for long broadcast runs to serialize sends.
 - Expect long deploy phases to appear quiet while Foundry simulates and broadcasts.
 - Treat mempool drops, upstream `429` responses, and flaky late broadcast failures as sequencing pressure first, not necessarily contract logic bugs.

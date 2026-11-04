@@ -161,8 +161,7 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         IERC20 lp = IERC20(address(pair));
         uint256 seed = lp.balanceOf(address(this)) / 10;
         assertGt(seed, 0, "LP seed available");
-        lp.approve(address(r.target), seed);
-        r.target.exchangeIn(lp, seed, IERC20(address(r.target)), 1, address(this), false, block.timestamp + 1 hours);
+        lp.approve(address(r.target), seed);r.target.exchangeIn(lp, seed, IERC20(address(r.target)), 1, address(this), false, block.timestamp + 1 hours);
         IERC20 a = IERC20(address(tokenA));
         IERC20 b = IERC20(address(tokenB));
         IERC20 share = IERC20(address(r.target));
@@ -298,8 +297,7 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         tokenA.mint(address(vault), inventory_);
         tokenA.mint(attacker, syncPull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), syncPull_);
-        vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault), syncPull_);vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         uint256 bookedR_ = vault.reserveOfToken(address(tokenA));
@@ -328,8 +326,7 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         uint256 syncPull_ = TEST_AMT / 10;
         tokenA.mint(address(vault), inventory_);
         tokenA.mint(address(this), syncPull_);
-        tokenA.approve(address(vault), syncPull_);
-        vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
+        tokenA.approve(address(vault), syncPull_);vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
 
         uint256 bookedR_ = vault.reserveOfToken(address(tokenA));
         assertEq(bookedR_, tokenA.balanceOf(address(vault)), "E6: pairToken booked after sync");
@@ -370,10 +367,8 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         uint256 attackerSharesBefore_ = vault.balanceOf(attacker);
 
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), zapIn_);
-        try vault.exchangeIn(
-            IERC20(address(tokenA)), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
-        ) returns (uint256 shares_) {
+        tokenA.approve(address(vault), zapIn_);try vault.exchangeIn(IERC20(address(tokenA)), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
+        ) returns (uint256 shares_, uint256) {
             if (shares_ > 0) {
                 vault.redeem(shares_, attacker, attacker);
             }
@@ -415,10 +410,8 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         uint256 zapIn_ = TEST_AMT;
         deal(address(tokenC_), attacker, zapIn_);
         vm.startPrank(attacker);
-        tokenC_.approve(address(emptyVault_), zapIn_);
-        try emptyVault_.exchangeIn(
-            IERC20(address(tokenC_)), zapIn_, IERC20(address(emptyVault_)), 0, attacker, false, _deadline()
-        ) returns (uint256 shares_) {
+        tokenC_.approve(address(emptyVault_), zapIn_);try emptyVault_.exchangeIn(IERC20(address(tokenC_)), zapIn_, IERC20(address(emptyVault_)), 0, attacker, false, _deadline()
+        ) returns (uint256 shares_, uint256) {
             if (shares_ > 0) {
                 emptyVault_.redeem(shares_, attacker, attacker);
             }
@@ -441,8 +434,7 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         uint256 vaultLpBefore_ = lp_.balanceOf(address(vault));
 
         vm.prank(attacker);
-        vm.expectRevert(abi.encodeWithSignature("AllowanceExpired(uint256)", 0));
-        vault.exchangeIn(lp_, gap_, IERC20(address(vault)), 0, attacker, false, _deadline());
+        vm.expectRevert(abi.encodeWithSignature("AllowanceExpired(uint256)", 0));vault.exchangeIn(lp_, gap_, IERC20(address(vault)), 0, attacker, false, _deadline());
 
         assertEq(vault.totalSupply(), supplyBefore_, "I1 lpDeposit: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1 lpDeposit: attacker shares unchanged");
@@ -489,9 +481,7 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         fot.transfer(address(fotVault), claimed_);
         uint256 observed_ = fot.balanceOf(address(fotVault));
         assertLt(observed_, claimed_, "L2: FoT delivered less than claimed");
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        fotVault.exchangeIn(
-            IERC20(address(fot)), claimed_, IERC20(address(other)), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);fotVault.exchangeIn(IERC20(address(fot)), claimed_, IERC20(address(other)), 0, attacker, true, _deadline()
         );
         vm.stopPrank();
     }

@@ -30,9 +30,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Fees is
         uint256 amountIn = 20 ether;
         token0.mint(user, amountIn);
         vm.startPrank(user);
-        token0.approve(se0, type(uint256).max);
-        uint256 seOut = IStandardExchangeIn(se0).exchangeIn(
-            IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
+        token0.approve(se0, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se0).exchangeIn(IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
         );
         require(seOut > 0, "se mint");
         IERC20(se0).transfer(hook, seOut);

@@ -26,8 +26,7 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         _mintLoan(attacker, donation);
         vm.prank(attacker);
         loanToken.transfer(se, donation);
-        uint256 depositAmt = _u(100);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), depositAmt, IERC20(se));
+        uint256 depositAmt = _u(100);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), depositAmt, IERC20(se));
         assertLt(preview, depositAmt, "A0 shares < 1:1 against donated NAV");
         assertGt(preview, 0, "A0 non-zero mint");
         uint256 shares = _wrapExactIn(user, depositAmt);
@@ -42,8 +41,7 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         loanToken.approve(address(morpho), donation);
         MorphoBlueService._supply(morpho, marketParams, donation, se);
         vm.stopPrank();
-        uint256 depositAmt = _u(100);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), depositAmt, IERC20(se));
+        uint256 depositAmt = _u(100);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), depositAmt, IERC20(se));
         assertLt(preview, depositAmt, "A0 onBehalf donation inflates NAV");
         uint256 shares = _wrapExactIn(user, depositAmt);
         assertEq(shares, preview);
@@ -68,14 +66,12 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         uint256 claimed = _u(1);
         uint256 supplyBefore = IERC20(se).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(IERC20(address(loanToken)), claimed, IERC20(se), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(loanToken)), claimed, IERC20(se), 0, attacker, true, _deadline());
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
-        );
-        seIn.exchangeIn(IERC20(address(loanToken)), claimed, IERC20(se), 0, address(caller), true, _deadline());
+        );seIn.exchangeIn(IERC20(address(loanToken)), claimed, IERC20(se), 0, address(caller), true, _deadline());
         assertEq(IERC20(se).totalSupply(), supplyBefore, "I1 no mint");
         assertEq(IERC20(se).balanceOf(attacker), 0, "I1 attacker unchanged");
     }
@@ -89,14 +85,12 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         uint256 booked = IBasicVault(se).reserveOfToken(address(loanToken));
         uint256 U = loanToken.balanceOf(se) - booked;
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(IERC20(address(loanToken)), claimed_, IERC20(se), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(loanToken)), claimed_, IERC20(se), 0, attacker, true, _deadline());
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, U)
-        );
-        seIn.exchangeIn(IERC20(address(loanToken)), claimed_, IERC20(se), 0, address(caller), true, _deadline());
+        );seIn.exchangeIn(IERC20(address(loanToken)), claimed_, IERC20(se), 0, address(caller), true, _deadline());
     }
 
     function test_I3_residualCannotFundSecondFreeMint() public {
@@ -104,17 +98,14 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         vm.prank(user);
         loanToken.transfer(se, _u(2));
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
-        vm.prank(address(caller));
-        seIn.exchangeIn(IERC20(address(loanToken)), _u(2), IERC20(se), 0, address(caller), true, _deadline());
+        vm.prank(address(caller));seIn.exchangeIn(IERC20(address(loanToken)), _u(2), IERC20(se), 0, address(caller), true, _deadline());
         uint256 supplyAfter = IERC20(se).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(IERC20(address(loanToken)), _u(1), IERC20(se), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(loanToken)), _u(1), IERC20(se), 0, attacker, true, _deadline());
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, _u(1), uint256(0))
-        );
-        seIn.exchangeIn(IERC20(address(loanToken)), _u(1), IERC20(se), 0, address(caller), true, _deadline());
+        );seIn.exchangeIn(IERC20(address(loanToken)), _u(1), IERC20(se), 0, address(caller), true, _deadline());
         assertEq(IERC20(se).totalSupply(), supplyAfter, "I3 no second mint");
     }
 
@@ -123,9 +114,7 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         uint256 shares = _wrapExactIn(user, inAmt);
         uint256 nav = _idleOf(se) + _expectedSupplyOf(se);
         assertApproxEqAbs(nav, inAmt, 1, "E1 wrap NAV");
-        vm.prank(user);
-        uint256 outAmt = seIn.exchangeIn(
-            IERC20(se), shares, IERC20(address(loanToken)), 0, user, false, _deadline()
+        vm.prank(user);(uint256 outAmt,) = seIn.exchangeIn(IERC20(se), shares, IERC20(address(loanToken)), 0, user, false, _deadline()
         );
         assertApproxEqAbs(outAmt, inAmt, 1, "E1 round-trip +/- Blue dust");
         assertLe(_idleOf(se) + _expectedSupplyOf(se), 1, "E1 residual ~0");
@@ -185,8 +174,7 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
             )
         );
         uint256 supplyBefore = IERC20(seR).totalSupply();
-        vm.prank(user);
-        inR.exchangeIn(IERC20(address(re)), _u(10), IERC20(seR), 0, user, false, _deadline());
+        vm.prank(user);inR.exchangeIn(IERC20(address(re)), _u(10), IERC20(seR), 0, user, false, _deadline());
         bytes memory nested = re.lastRevert();
         assertEq(nested.length, 4, "C nested revert selector");
         assertEq(bytes4(nested), IReentrancyLock.IsLocked.selector, "C nested IsLocked");
@@ -197,9 +185,7 @@ abstract contract Adversarial_MorphoBlueStandardExchange_P0_Decimals is
         uint256 shares = _wrapExactIn(user, _u(50));
         vm.prank(owner);
         IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(se, true);
-        vm.prank(user);
-        uint256 assetsOut = seIn.exchangeIn(
-            IERC20(se), shares / 2, IERC20(address(loanToken)), 0, user, false, _deadline()
+        vm.prank(user);(uint256 assetsOut,) = seIn.exchangeIn(IERC20(se), shares / 2, IERC20(address(loanToken)), 0, user, false, _deadline()
         );
         assertGt(assetsOut, 0, "CROPS exchangeOut/redeem in still works");
         vm.prank(user);

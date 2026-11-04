@@ -71,9 +71,7 @@ contract AdvRecordingReentrantShare is MockERC20 {
 contract AdvReentryTarget {
     function reenterExchangeIn(address detf_, IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_, address recipient_)
         external
-    {
-        IStandardExchangeIn(detf_).exchangeIn(
-            tokenIn_, amountIn_, tokenOut_, 0, recipient_, false, block.timestamp + 1 hours
+    {IStandardExchangeIn(detf_).exchangeIn(tokenIn_, amountIn_, tokenOut_, 0, recipient_, false, block.timestamp + 1 hours
         );
     }
 

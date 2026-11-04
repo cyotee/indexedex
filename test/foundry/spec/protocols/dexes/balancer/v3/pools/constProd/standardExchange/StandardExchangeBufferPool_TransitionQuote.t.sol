@@ -40,9 +40,7 @@ contract StandardExchangeBufferPool_TransitionQuote is TestBase_StandardExchange
     function _seedBob(uint256 depositShares) internal returns (uint256 bpt) {
         mintShares(bob, depositShares);
         vm.startPrank(bob);
-        IERC20(address(shares)).approve(bufferPool, type(uint256).max);
-        bpt = IStandardExchangeIn(bufferPool).exchangeIn(
-            IERC20(address(shares)), depositShares, IERC20(bufferPool), 0, bob, false, block.timestamp + 1 hours
+        IERC20(address(shares)).approve(bufferPool, type(uint256).max);(bpt,) = IStandardExchangeIn(bufferPool).exchangeIn(IERC20(address(shares)), depositShares, IERC20(bufferPool), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -56,8 +54,7 @@ contract StandardExchangeBufferPool_TransitionQuote is TestBase_StandardExchange
     function test_depositExactIn_weiExact() public {
         _seedBob(20e18);
         (bytes memory state,) = q.quoteState(address(shares), bob);
-        uint256 amt = 3e18;
-        uint256 expected = IStandardExchangeIn(bufferPool).previewExchangeIn(IERC20(address(shares)), amt, IERC20(bufferPool));
+        uint256 amt = 3e18;(uint256 expected,) = IStandardExchangeIn(bufferPool).previewExchangeIn(IERC20(address(shares)), amt, IERC20(bufferPool));
         (, uint256 amountIn, uint256 amountOut,) =
             q.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amt);
         assertEq(amountIn, amt, "deposit amountIn == input shares");
@@ -68,9 +65,7 @@ contract StandardExchangeBufferPool_TransitionQuote is TestBase_StandardExchange
     function test_redeemExactIn_weiExact() public {
         uint256 bpt = _seedBob(20e18);
         (bytes memory state,) = q.quoteState(address(shares), bob);
-        uint256 redeem = bpt / 3;
-        uint256 expected =
-            IStandardExchangeIn(bufferPool).previewExchangeIn(IERC20(bufferPool), redeem, IERC20(address(shares)));
+        uint256 redeem = bpt / 3;(uint256 expected,) = IStandardExchangeIn(bufferPool).previewExchangeIn(IERC20(bufferPool), redeem, IERC20(address(shares)));
         (, uint256 amountIn, uint256 amountOut,) =
             q.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, redeem);
         assertEq(amountIn, redeem, "redeem amountIn == BPT burned");
@@ -113,12 +108,8 @@ contract StandardExchangeBufferPool_TransitionQuote is TestBase_StandardExchange
         uint256 expected;
         for (uint256 i; i < 2; ++i) {
             // Second step uses 25% of its own current supply, not the original supply.
-            uint256 amount = i == 0 ? step : IERC20(bufferPool).totalSupply() / 4;
-            uint256 quoted = IStandardExchangeIn(bufferPool).previewExchangeIn(
-                IERC20(bufferPool), amount, IERC20(address(shares))
-            );
-            uint256 received = IStandardExchangeIn(bufferPool).exchangeIn(
-                IERC20(bufferPool), amount, IERC20(address(shares)), quoted, alice, false, block.timestamp
+            uint256 amount = i == 0 ? step : IERC20(bufferPool).totalSupply() / 4;(uint256 quoted,) = IStandardExchangeIn(bufferPool).previewExchangeIn(IERC20(bufferPool), amount, IERC20(address(shares))
+            );(uint256 received,) = IStandardExchangeIn(bufferPool).exchangeIn(IERC20(bufferPool), amount, IERC20(address(shares)), quoted, alice, false, block.timestamp
             );
             assertEq(received, quoted, "each native step pays its live quote");
             expected += quoted;

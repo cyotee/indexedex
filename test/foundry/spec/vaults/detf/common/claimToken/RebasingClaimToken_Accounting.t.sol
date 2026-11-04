@@ -52,8 +52,7 @@ contract RebasingClaimToken_Accounting is TestBase_UniswapV4Detf {
 
     function test_sameBlockFundedRewardsUpdateGonsButUnsolicitedBackingDoesNot() public {
         IStakedDETF staking_ = _walletStake();
-        vm.startPrank(detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), 1, IERC20(detf), 1, detfUser, false, block.timestamp);
+        vm.startPrank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), 1, IERC20(detf), 1, detfUser, false, block.timestamp);
         IStakedDETF.StakingState memory before_ = staking_.stakingState();
         uint256 balance_ = staking_.balanceOf(detfUser);
         uint256 gons_ = staking_.gonsOf(detfUser);
@@ -78,8 +77,7 @@ contract RebasingClaimToken_Accounting is TestBase_UniswapV4Detf {
         uint256 ownLp_ = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
         uint256 lpSupply_ = IERC20(reserveHook).totalSupply();
         vm.startPrank(detfUser);
-        pairToken.approve(reserveHook, 50 ether);
-        IStandardExchangeIn(reserveHook).exchangeIn(pairToken, 50 ether, IERC20(detf), 1, detfUser, false, block.timestamp);
+        pairToken.approve(reserveHook, 50 ether);IStandardExchangeIn(reserveHook).exchangeIn(pairToken, 50 ether, IERC20(detf), 1, detfUser, false, block.timestamp);
         vm.stopPrank();
         assertEq(staking_.stakingState().gonsPerUnit, k_);
         assertEq(staking_.balanceOf(detfUser), balance_);
@@ -89,10 +87,10 @@ contract RebasingClaimToken_Accounting is TestBase_UniswapV4Detf {
         vm.startPrank(detfUser);
         vm.expectRevert();
         staking_.transfer(recipient_, balance_ + 1);
-        vm.expectRevert(StakedDETFTarget.ZeroAmount.selector);
-        staking_.exchangeIn(IERC20(address(staking_)), 0, IERC20(detf), 0, detfUser, false, block.timestamp);
+        vm.expectRevert(StakedDETFTarget.ZeroAmount.selector);staking_.exchangeIn(IERC20(address(staking_)), 0, IERC20(detf), 0, detfUser, false, block.timestamp);
         assertEq(staking_.balanceOf(detfUser), balance_);
-        assertEq(staking_.exchangeIn(IERC20(address(staking_)), balance_, IERC20(detf), balance_, detfUser, false, block.timestamp), balance_);
+        (uint256 exchangeAmountOut1,) = staking_.exchangeIn(IERC20(address(staking_)), balance_, IERC20(detf), balance_, detfUser, false, block.timestamp);
+        assertEq(exchangeAmountOut1, balance_);
         vm.stopPrank();
         assertEq(IERC20(detf).balanceOf(detfUser), before_ + balance_);
         assertEq(staking_.gonsOf(detfUser), 0, "full native exit retires that holder's own remainder");
@@ -103,7 +101,8 @@ contract RebasingClaimToken_Accounting is TestBase_UniswapV4Detf {
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), ownLp_);
         vm.startPrank(detfUser);
         IERC20(detf).approve(address(staking_), 1);
-        assertEq(staking_.exchangeIn(IERC20(detf), 1, IERC20(address(staking_)), 1, detfUser, false, block.timestamp), 1);
+        (uint256 exchangeAmountOut2,) = staking_.exchangeIn(IERC20(detf), 1, IERC20(address(staking_)), 1, detfUser, false, block.timestamp);
+        assertEq(exchangeAmountOut2, 1);
         assertEq(staking_.exchangeOut(IERC20(address(staking_)), 1, IERC20(detf), 1, detfUser, false, block.timestamp), 1);
         vm.stopPrank();
         assertEq(staking_.gonsOf(detfUser), 0);

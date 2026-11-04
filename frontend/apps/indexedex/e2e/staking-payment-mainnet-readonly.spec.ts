@@ -7,7 +7,7 @@ import { stakingExchangeRoute } from '../app/insights/lib/claimMint'
 
 const wallet = getAddress(process.env.E2E_MAINNET_WALLET ?? '0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8')
 const rpcUrl = process.env.E2E_MAINNET_RPC_URL ?? 'https://rpc.mainnet.chain.robinhood.com'
-const exchangeAbi = parseAbi(['function exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns(uint256)'])
+const exchangeAbi = parseAbi(['function exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns(uint256 amountOut, uint256 amountRefunded)'])
 
 test('10 DTF acquires wallet-held DETF before a separately reviewed stake', async ({ page }) => {
   test.skip(process.env.E2E_MAINNET_READONLY !== '1', 'Read-only mainnet verification is opt-in')
@@ -48,7 +48,7 @@ test('10 DTF acquires wallet-held DETF before a separately reviewed stake', asyn
   const block = await client.getBlock()
   const staking = await client.readContract({ address: detf, abi: parseAbi(['function rebasingClaimToken() view returns(address)']), functionName: 'rebasingClaimToken', blockNumber: block.number })
   const amount = await client.simulateContract({ account: wallet, address: detf, abi: exchangeAbi, functionName: 'exchangeIn',
-    args: [dtf.address, 10n ** 19n, detf, 1n, wallet, false, block.timestamp + 1200n], blockNumber: block.number }).then((result) => result.result)
+    args: [dtf.address, 10n ** 19n, detf, 1n, wallet, false, block.timestamp + 1200n], blockNumber: block.number }).then((result) => result.result[0])
   // ERC20Repo: keccak256(abi.encode("eip.erc.20")) - 1; balances +4, allowances +5.
   const base = BigInt(keccak256(encodeAbiParameters([{ type: 'string' }], ['eip.erc.20']))) - 1n
   const slot = (owner: Address, at: bigint) => keccak256(encodeAbiParameters([{ type: 'address' }, { type: 'uint256' }], [owner, at]))
@@ -62,5 +62,5 @@ test('10 DTF acquires wallet-held DETF before a separately reviewed stake', asyn
   const route = stakingExchangeRoute({ detf, stakingToken: staking, tokenIn: detf, unstake: false })!
   const result = await client.simulateContract({ account: wallet, address: route.target, abi: exchangeAbi, functionName: 'exchangeIn',
     args: [route.tokenIn, amount, route.tokenOut, amount, wallet, false, block.timestamp + 1200n], stateOverride, blockNumber: block.number })
-  expect(result.result).toBe(amount)
+  expect(result.result[0]).toBe(amount)
 })

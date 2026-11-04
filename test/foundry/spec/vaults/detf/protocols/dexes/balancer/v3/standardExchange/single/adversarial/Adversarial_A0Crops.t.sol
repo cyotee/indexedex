@@ -37,9 +37,7 @@ contract Adversarial_SingleSE_A0Crops is
 
         vm.startPrank(attacker);
         seShare.approve(instance_, 1e18);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, 1e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(seShare, 1e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertFalse(ISingleStandardExchangeDETFInfo(instance_).isReserveLive(), "still inert");
@@ -86,12 +84,9 @@ contract Adversarial_SingleSE_A0Crops is
         uint256 leftover_ = seShare.balanceOf(instance_);
         assertGe(leftover_, donate_, "seed booked after first bond");
 
-        uint256 mintIn_ = _fundSeShares(attacker, 40e18);
-        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(seShare, mintIn_, IERC20(instance_));
+        uint256 mintIn_ = _fundSeShares(attacker, 40e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShare, mintIn_, IERC20(instance_));
         vm.startPrank(attacker);
-        seShare.approve(instance_, mintIn_);
-        uint256 out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, mintIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, mintIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, mintIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(out_, preview_, "first mint not inflated by donation");
@@ -121,18 +116,14 @@ contract Adversarial_SingleSE_A0Crops is
 
         uint256 burnAmt_ = minted_ / 2;
         vm.startPrank(bob);
-        IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 burned_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, bob, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, burnAmt_);(uint256 burned_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(burned_, 0, "burn exit after disable");
 
         uint256 inbound_ = _fundSeShares(bob, 10e18);
         vm.startPrank(bob);
         seShare.approve(instance_, inbound_);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, instance_));
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, inbound_, IERC20(instance_), 0, bob, false, block.timestamp + 1 hours);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, instance_));IStandardExchangeIn(instance_).exchangeIn(seShare, inbound_, IERC20(instance_), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 }

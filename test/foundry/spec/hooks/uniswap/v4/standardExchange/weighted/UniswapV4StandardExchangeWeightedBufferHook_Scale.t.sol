@@ -271,9 +271,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
         uint256 amountIn = 10 ether;
         token0.mint(user, amountIn);
         vm.startPrank(user);
-        token0.approve(se0, type(uint256).max);
-        uint256 seOut = IStandardExchangeIn(se0).exchangeIn(
-            IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
+        token0.approve(se0, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se0).exchangeIn(IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
         );
         assertGt(seOut, 0, "minted SE shares");
         IERC20(se0).transfer(hook, seOut);

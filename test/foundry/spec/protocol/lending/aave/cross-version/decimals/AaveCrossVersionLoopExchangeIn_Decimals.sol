@@ -62,10 +62,7 @@ abstract contract AaveCrossVersionLoopExchangeIn_Decimals is TestBase_AaveCrossV
         _seedBorrowLiquidity();
         uint256 deposit = _uA(100);
         _mint(tokenA, address(this), deposit);
-        tokenA.approve(address(vault), deposit);
-        uint256 previewed = vault.previewExchangeIn(tokenA, deposit, IERC20(address(vault)));
-        uint256 shares =
-            vault.exchangeIn(tokenA, deposit, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        tokenA.approve(address(vault), deposit);(uint256 previewed,) = vault.previewExchangeIn(tokenA, deposit, IERC20(address(vault)));(uint256 shares,) = vault.exchangeIn(tokenA, deposit, IERC20(address(vault)), 0, address(this), false, block.timestamp);
         assertEq(shares, previewed, "preview == execution (shares)");
         assertApproxEqRel(shares, 200_000e8, 0.01e18, "shares ~= deposited value");
         assertGt(

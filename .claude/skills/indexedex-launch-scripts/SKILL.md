@@ -26,7 +26,7 @@ Generic `anvil-node` is not this law.
 
 | Mode | EIP-170 | Fees | Forge | Output |
 |------|---------|------|-------|--------|
-| **Gas / funding quote** | **On.** Never `--disable-code-size-limit` on Anvil **or** `forge script`. | Pin fork-source `baseFee`. `--disable-min-priority-fee`. Restart Anvil so local `baseFee` has not decayed. | EIP-1559 `simulate`. No `--legacy`. No `--gas-price`. Unset `ETH_GAS_PRICE` / `ETH_PRIORITY_GAS_PRICE`. No `--broadcast` by default. | Dry-run **gas limits** × **live** `eth_gasPrice` + `FUND_ETH_BUFFER_BPS` (default 2500 = 25%). Ignore Foundry’s on-screen ETH total. |
+| **Gas / funding quote** | **On.** Never `--disable-code-size-limit` on Anvil **or** `forge script --use solar`. | Pin fork-source `baseFee`. `--disable-min-priority-fee`. Restart Anvil so local `baseFee` has not decayed. | EIP-1559 `simulate`. No `--legacy`. No `--gas-price`. Unset `ETH_GAS_PRICE` / `ETH_PRIORITY_GAS_PRICE`. No `--broadcast` by default. | Dry-run **gas limits** × **live** `eth_gasPrice` + `FUND_ETH_BUFFER_BPS` (default 2500 = 25%). Ignore Foundry’s on-screen ETH total. |
 | **Dev-complete staged deploy** | Chain-specific. 4663 **on**. 46630 **off** only so rehearsal `UniswapV3Factory` can deploy. | Anvil local. Staged `all` on 4663 may use `--legacy --gas-price 2gwei` as a `feeHistory` workaround. | Per-Stage simulate, then broadcast. Never `--skip-simulation`. | **Not** a live funding quote. |
 | **Public** | n/a | Live chain | `--sender $DEPLOYER_ADDRESS`. No `--unlocked`. No Phase 00. | Real fees. |
 
@@ -96,12 +96,12 @@ When EIP-170 may be off: [references/anvil-dev-complete.md](references/anvil-dev
 ## Constraints (do not violate)
 
 - Never `new` facets or DFPkgs. Vault/DETF packages: manager / vault registry. `PkgInit` / `PkgArgs` on the **interface**.
-- After production contract edits, `forge build` before `forge script`. IndexedEx FactoryServices load creation bytecode from `out/` (`ArtifactCreationCode` / `vm.getCode`). Skipping the build can deploy stale bytecode.
+- After production contract edits, `forge build --use solar` before `forge script --use solar`. IndexedEx FactoryServices load creation bytecode from `out/` (`ArtifactCreationCode` / `vm.getCode`). Skipping the build can deploy stale bytecode.
 - `new Morpho` / `new UniswapV3Factory` only in **Phase 01 rehearsal** Stages.
 - Pin Stages (Permit2, WETH, Uni V4) **fail** if the pin has no code. Never deploy those.
 - Skip: all catalog skip keys in JSON are non-zero with `code.length > 0`, unless `FORCE=1`. Skipped Stage still rewrites JSON.
 - Snapshot `FORCE` in `_loadConfig`. Do not re-read process env on every skip check (parallel tests share `FORCE`).
-- Never `--skip-simulation`. Never `via_ir`. DETF **role names** only (`rateAsset`, `pairToken`, `underlyingVault`, `detfToken`, `rebasingClaimToken`).
+- Never `--skip-simulation`. Never `via_ir`. Every `forge script` / `forge build` includes `--use solar`. DETF **role names** only (`rateAsset`, `pairToken`, `underlyingVault`, `detfToken`, `rebasingClaimToken`).
 - Do not treat Foundry’s simulated ETH cost as the deployer fund amount.
 - Do not copy 46630 `--disable-code-size-limit` onto a 4663 gas quote.
 - Do not resurrect a second **deploy** orchestrator (`Script_SimulateLaunch`, `deploy_all.sh` on 46630). Optional `simulate` may compose library `execute()` calls for a quote only.

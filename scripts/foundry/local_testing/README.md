@@ -105,7 +105,7 @@ bash scripts/shell/local_testing_supersim.sh --kill-supersim
 
 Supported environment variables:
 
-- `DEV_ADDRESS` or `SENDER`: unlocked sender passed to `forge script --sender`
+- `DEV_ADDRESS` or `SENDER`: unlocked sender passed to `forge script --use solar --sender`
 - `LOCAL_TESTING_DEPLOYER_ADDRESS`: optional override for the deployer used by scripts
 - `LOCAL_TESTING_OWNER`: optional override for ownership initialization; defaults to deployer
 - `RPC_URL`: defaults to `http://127.0.0.1:8545`
@@ -279,7 +279,7 @@ SENDER=<anvil-account> \
 OWNER=<owner-address> \
 OUT_DIR_OVERRIDE=deployments/local_testing/anvil_single \
 NETWORK_PROFILE=local_testing \
-forge script scripts/foundry/local_testing/anvil_single/Script_05_DeployFoundationPackages.s.sol \
+forge script --use solar scripts/foundry/local_testing/anvil_single/Script_05_DeployFoundationPackages.s.sol \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast --slow --unlocked --sender <anvil-account>
 ```

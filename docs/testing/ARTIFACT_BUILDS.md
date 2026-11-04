@@ -11,7 +11,7 @@ python3 scripts/forge-artifacts.py test contracts/path/EditedTarget.sol \
   --test-root test/foundry/spec/path/RelevantTest.t.sol -- -vv
 ```
 
-`plan` shows the commands without compiling. `test` prepares the selected tests' runtime artifacts with one targeted `forge build`, then uses `--skip` to exclude unrelated compilation roots from `forge test`. A failed build stops execution before tests. The active profile, compiler settings, configured source/test paths, `out/`, and `cache_forge/` are retained. Pass multiple edited files as positional arguments. An abstract target edit selects concrete descendants, refreshing the deployed facet/package artifact as well as the target.
+`plan` shows the commands without compiling. The helper inserts `--use solar` and drops a caller `--use`, so the build cannot fall back to solc. `test` prepares the selected tests' runtime artifacts with one targeted `forge build --use solar`, then uses `--skip` to exclude unrelated compilation roots from `forge test --use solar`. A failed build stops execution before tests. The active profile, compiler settings, configured source/test paths, `out/`, and `cache_forge/` are retained. Pass multiple edited files as positional arguments. An abstract target edit selects concrete descendants, refreshing the deployed facet/package artifact as well as the target.
 
 Repeat `--test-root` to run several files or directories together in one compilation/test command:
 
@@ -38,7 +38,7 @@ python3 scripts/forge-artifacts.py build \
   --consumer 'scripts/foundry/path/Deploy.s.sol'
 ```
 
-The consumer itself is built by the subsequent `forge test` or `forge script`. The helper follows imports from that consumer to find literal `File.sol:ContractName` references and recursively prepares their source artifacts. Existing `.bytecode.linkReferences` add external libraries; cold library artifacts are compiled through their current Solidity imports. Warm worktree seeding of **both** `out/` and `cache_forge/` remains mandatory. `--all-artifacts` is available for a broader runtime artifact refresh.
+The consumer itself is built by the subsequent `forge test --use solar` or `forge script --use solar`. The helper follows imports from that consumer to find literal `File.sol:ContractName` references and recursively prepares their source artifacts. Existing `.bytecode.linkReferences` add external libraries; cold library artifacts are compiled through their current Solidity imports. Warm worktree seeding of **both** `out/` and `cache_forge/` remains mandatory. `--all-artifacts` is available for a broader runtime artifact refresh.
 
 The graph comes from current source files and the active `forge config --json`, including remappings. Foundry's cached imports may still contain removed dependencies, so the helper does not use them. It rejects ambiguous artifact IDs and unresolved selected imports before compiling. Use a full source path in an artifact ID when filenames and contract names collide.
 

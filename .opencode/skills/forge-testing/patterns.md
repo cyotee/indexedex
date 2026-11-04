@@ -2,20 +2,22 @@
 
 Common patterns and best practices for writing Foundry tests.
 
+**Crane / IndexedEx:** Prefer production-first testing (`crane-testing`, consumer AGENTS). Do not add a `mocks/` tree for subjects under test (facets, DFPkgs, vaults). Prefer `TestBase_*`, factories, protocol ports, or forks. Generic mock examples below are **last resort for non-SUT only**.
+
 ## Test File Organization
 
-### Standard Structure
+### Standard Structure (generic Foundry)
 
 ```
 test/
 ├── MyContract.t.sol        # Unit tests for MyContract
 ├── Integration.t.sol       # Integration tests
 ├── Fork.t.sol              # Fork tests against mainnet
-├── invariants/
-│   └── MyContract.invariants.t.sol
-└── mocks/
-    └── MockOracle.sol
+└── invariants/
+    └── MyContract.invariants.t.sol
 ```
+
+In Crane/IndexedEx, infrastructure lives in `contracts/` (`TestBase_*`, `Behavior_*`); specs live under `test/foundry/spec/` and `test/foundry/fork/`.
 
 ### Test Contract Structure
 
@@ -43,7 +45,7 @@ contract MyContractTest is Test {
         bob = makeAddr("bob");
         admin = makeAddr("admin");
 
-        // Deploy contract
+        // Generic example only. Crane/IndexedEx: factories + TestBase, not bare `new` for production SUT.
         vm.prank(admin);
         target = new MyContract();
 
@@ -323,9 +325,15 @@ function test_CrossChainScenario() public {
 }
 ```
 
-## Testing with Mocks
+## Isolation doubles (last resort — not for Crane/IndexedEx SUT)
 
-### Mock Contract
+**Prefer:** real production contracts, `TestBase_*`, protocol ports, forks, and cheatcodes (`deal`, `prank`, `warp`) on real state.
+
+**Do not** mock facets, DFPkgs, diamonds, vaults, or managers under test. See `crane-testing` production-first policy.
+
+Use mocks / `vm.mockCall` only when the dependency is **outside** the SUT and no production path or TestBase exists (e.g. some oracle/VRF harnesses documented by those skills).
+
+### Example mock contract (non-SUT only)
 
 ```solidity
 contract MockOracle is IOracle {
@@ -344,6 +352,7 @@ contract MyContractTest is Test {
     MockOracle oracle;
 
     function setUp() public {
+        // Last-resort isolation of an external feed — not a substitute for protocol TestBases.
         oracle = new MockOracle();
         oracle.setPrice(1000e8);
         target = new MyContract(address(oracle));
@@ -351,17 +360,17 @@ contract MyContractTest is Test {
 }
 ```
 
-### Using vm.mockCall
+### Using vm.mockCall (non-SUT only)
 
 ```solidity
 function test_WithMockedOracle() public {
+    // Prefer deal/prank/warp on real contracts when possible.
     vm.mockCall(
         address(oracle),
         abi.encodeWithSelector(IOracle.latestAnswer.selector),
         abi.encode(int256(2000e8))
     );
 
-    // target will see oracle price as 2000e8
     uint256 result = target.calculateValue(100);
     assertEq(result, 200000);
 }

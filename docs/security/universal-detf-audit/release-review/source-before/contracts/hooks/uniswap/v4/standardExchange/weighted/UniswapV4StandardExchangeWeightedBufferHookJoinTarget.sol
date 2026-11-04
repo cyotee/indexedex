@@ -113,9 +113,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
             address se = l.standardExchanges[i];
             if (se == address(0)) {
                 pairOut[i] = invOut[i];
-            } else {
-                pairOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
+            } else {(pairOut[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut[i], IERC20(l.tokens[i])
                 );
             }
         }
@@ -137,9 +135,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
                 address se = l.standardExchanges[i];
                 if (se == address(0)) {
                     invDeltas[i] = amounts[i];
-                } else {
-                    invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                        IERC20(l.tokens[i]), amounts[i], IERC20(se)
+                } else {(invDeltas[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), amounts[i], IERC20(se)
                     );
                 }
             }
@@ -170,9 +166,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
                 edgeOut[i] = invOut[i];
             } else if (receiveSeShare[i]) {
                 edgeOut[i] = invOut[i];
-            } else {
-                edgeOut[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(se), invOut[i], IERC20(l.tokens[i])
+            } else {(edgeOut[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut[i], IERC20(l.tokens[i])
                 );
             }
         }
@@ -669,9 +663,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
             uint256 feeSe = _feeOracle().usageFeeOfVault(se);
             if (feeSe >= Math.WAD) feeSe = 0;
             // Try: pairIn = invNeeded if rate 1; adjust with preview
-            amountIn = invNeeded;
-            uint256 got =
-                IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
+            amountIn = invNeeded;(uint256 got,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
             if (got < invNeeded && got > 0) {
                 amountIn = (invNeeded * amountIn + got - 1) / got;
             }

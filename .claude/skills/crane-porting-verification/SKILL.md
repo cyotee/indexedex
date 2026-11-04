@@ -24,7 +24,7 @@ Every port must implement the layers that apply. Core ports need **all of 1–5*
 
 | # | Layer | Purpose | Location |
 |---|-------|---------|----------|
-| 1 | **Compile** | `@crane/` imports resolve; no private dep trees required | `forge build` |
+| 1 | **Compile** | `@crane/` imports resolve; no private dep trees required | `forge build --use solar` |
 | 2 | **Hermetic unit / integration** | Deploy ported contracts locally; exercise core flows | `test/foundry/spec/protocols/...` + `TestBase_*` |
 | 3 | **Behavior libraries** | Interface compliance for consumer-facing APIs | `Behavior_I*` next to protocol or under test infra |
 | 4 | **Fork parity** | Same inputs → same outputs vs live deployment | `TestBase_*Fork` + RPC |
@@ -165,19 +165,19 @@ From the **Crane repo root** (`lib/crane` or standalone crane checkout):
 ```bash
 # 1. Clean build after import remaps
 rm -rf cache out
-forge build
+forge build --use solar
 
 # 2. Port suite (path-scoped)
-forge test --match-path 'test/foundry/spec/protocols/<category>/<protocol>/**' -vv
+forge test --use solar --match-path 'test/foundry/spec/protocols/<category>/<protocol>/**' -vv
 
 # 3. Named focus
-forge test --match-contract <ContractName> -vvv
+forge test --use solar --match-contract <ContractName> -vvv
 
 # 4. Fork tests (requires RPC)
-ETH_RPC_URL=... forge test --match-path 'test/foundry/spec/protocols/.../fork/**' -vv
+ETH_RPC_URL=... forge test --use solar --match-path 'test/foundry/spec/protocols/.../fork/**' -vv
 
 # 5. Gas (if snapshots exist)
-forge test --match-path 'test/foundry/spec/protocols/.../gas/**' --gas-report
+forge test --use solar --match-path 'test/foundry/spec/protocols/.../gas/**' --gas-report
 ```
 
 Do not claim the port is done if path-scoped tests were not run (or explicitly skipped with a recorded reason, e.g. missing RPC for fork-only work — hermetic suite must still pass).
@@ -186,7 +186,7 @@ Do not claim the port is done if path-scoped tests were not run (or explicitly s
 
 Copy into the PR / task completion note:
 
-- [ ] `forge build` clean for touched packages
+- [ ] `forge build --use solar` clean for touched packages
 - [ ] `VENDOR.md` present with pin, license, import policy
 - [ ] No new `protocols/**/dependencies/openzeppelin*` or solady clones for this port
 - [ ] All new imports use `@crane/...` (no new remapping aliases)
@@ -196,7 +196,7 @@ Copy into the PR / task completion note:
 - [ ] Fork tests against documented live addresses (or waiver + residual risk listed)
 - [ ] Crane Service / Aware / DFPkg tests if wrappers exist (factory deploy path)
 - [ ] Adversarial smoke if wrappers custody assets
-- [ ] Path-scoped `forge test` output captured (pass)
+- [ ] Path-scoped `forge test --use solar` output captured (pass)
 - [ ] CODEBASE_MAP / protocol docs / skill updated or ticketed
 
 ## Failure triage
@@ -207,7 +207,7 @@ Copy into the PR / task completion note:
 | Silent behavior change | Routed OZ consumer to Crane-native | Retarget to external OZ |
 | Hermetic deploy reverts | Incomplete constructor args / missing init | Match upstream deploy script |
 | Fork mismatch | Wrong address, block, or fee-on-transfer | Pin block; verify address source |
-| Stack too deep in Service | Too many locals | Struct-ize params (`crane-code-style`) |
+| Stack too deep in Service | Solar itself reported it | Compile with `--use solar`. Struct-ize only if Solar reports it (`crane-code-style`). Do not enable `via_ir`. |
 | Tests pass but consumer breaks | Missing Behavior / interface surface | Add interface + Behavior + Service coverage |
 
 ## Key files

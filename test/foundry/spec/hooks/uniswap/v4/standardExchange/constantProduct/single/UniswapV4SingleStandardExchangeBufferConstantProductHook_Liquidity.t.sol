@@ -323,10 +323,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         (uint256 lpPair,,) = single.deposit(a0, a1, user, 0, block.timestamp + 1);
 
         // Mint SE from 40 pair; deposit 40 raw + those SE shares
-        uint256 seShares = _mintSeSharesToUser(40 ether);
-        // Claim of seShares ≈ 40 pair (fee-less ERC-4626 wrapper)
-        uint256 claim = IStandardExchangeIn(se).previewExchangeIn(
-            IERC20(se), seShares, IERC20(address(pairToken))
+        uint256 seShares = _mintSeSharesToUser(40 ether);// Claim of seShares ≈ 40 pair (fee-less ERC-4626 wrapper)
+        (uint256 claim,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seShares, IERC20(address(pairToken))
         );
         assertApproxEqRel(claim, 40 ether, 0.01e18);
 

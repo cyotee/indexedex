@@ -240,9 +240,7 @@ function _expectWrappedFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 shares)
         } else {
             uniswapBalancedTokenA.mint(address(this), amount);
             uniswapBalancedTokenA.approve(se, amount);
-        }
-        IStandardExchangeIn(se).exchangeIn(
-            IERC20(swap ? address(uniswapBalancedTokenB) : asset), amount,
+        }IStandardExchangeIn(se).exchangeIn(IERC20(swap ? address(uniswapBalancedTokenB) : asset), amount,
             IERC20(swap ? asset : se), 0, address(this), false, block.timestamp
         );
         assertEq(expected.standard, standard.getRate(), "SE rate uses projected state and issued supply");
@@ -277,9 +275,7 @@ function _expectWrappedFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 shares)
             block.timestamp
         );
 
-        IERC20(address(uniswapBalancedPair)).approve(address(balancedVault), lpOut);
-        IStandardExchangeIn(address(balancedVault)).exchangeIn(
-            IERC20(address(uniswapBalancedPair)),
+        IERC20(address(uniswapBalancedPair)).approve(address(balancedVault), lpOut);IStandardExchangeIn(address(balancedVault)).exchangeIn(IERC20(address(uniswapBalancedPair)),
             lpOut,
             IERC20(address(balancedVault)),
             0,
@@ -315,9 +311,7 @@ function _expectWrappedFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 shares)
             return 0;
         }
 
-        uint256 reserveShareAmount = wrapper_.previewRedeem(totalShares);
-        uint256 out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
-            IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
+        uint256 reserveShareAmount = wrapper_.previewRedeem(totalShares);(uint256 out,) = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
         );
         uint256 scale = 10 ** (18 + uint256(IERC20Metadata(address(wrapper_)).decimals())
             - IERC20Metadata(address(rateTarget_)).decimals());

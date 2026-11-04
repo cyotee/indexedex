@@ -404,21 +404,21 @@ contract DeployTest is Test {
 
 ```bash
 # Dry run (simulation only)
-forge script script/Deploy.s.sol
+forge script --use solar script/Deploy.s.sol
 
 # Broadcast to network
-forge script script/Deploy.s.sol --rpc-url sepolia --broadcast
+forge script --use solar script/Deploy.s.sol --rpc-url sepolia --broadcast
 
 # With verification
-forge script script/Deploy.s.sol \
+forge script --use solar script/Deploy.s.sol \
     --rpc-url sepolia \
     --broadcast \
     --verify \
     --etherscan-api-key $ETHERSCAN_API_KEY
 
 # Verbose output
-forge script script/Deploy.s.sol -vvvv
+forge script --use solar script/Deploy.s.sol -vvvv
 
 # Resume failed broadcast
-forge script script/Deploy.s.sol --rpc-url sepolia --resume
+forge script --use solar script/Deploy.s.sol --rpc-url sepolia --resume
 ```

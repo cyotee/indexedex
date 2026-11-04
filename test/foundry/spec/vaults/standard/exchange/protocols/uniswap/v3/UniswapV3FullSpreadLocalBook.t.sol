@@ -77,18 +77,14 @@ contract UniswapV3FullSpreadLocalBookTest is TestBase_UniswapV3FullSpreadStandar
 
     /// @notice Exactly the wallet excess succeeds with the same issued shares as an actual pull.
     function test_pretransferCreditsOnlyWalletExcessAboveFullLocalBook() public {
-        uint256 snapshot = vm.snapshotState();
-        uint256 pulledShares = vault.exchangeIn(
-            token0, 7 ether, IERC20(address(vault)), 1, address(this), false, block.timestamp
+        uint256 snapshot = vm.snapshotState();(uint256 pulledShares,) = vault.exchangeIn(token0, 7 ether, IERC20(address(vault)), 1, address(this), false, block.timestamp
         );
         assertTrue(vm.revertToState(snapshot));
 
         uint256 sharesBefore = vault.balanceOf(address(this));
         uint256 walletBefore = token0.balanceOf(address(this));
         token0.transfer(address(vault), 7 ether);
-        _assertCreditBoundary(token0, 7 ether);
-        uint256 pushedShares = vault.exchangeIn(
-            token0, 7 ether, IERC20(address(vault)), pulledShares, address(this), true, block.timestamp
+        _assertCreditBoundary(token0, 7 ether);(uint256 pushedShares,) = vault.exchangeIn(token0, 7 ether, IERC20(address(vault)), pulledShares, address(this), true, block.timestamp
         );
         assertEq(pushedShares, pulledShares);
         assertEq(vault.balanceOf(address(this)) - sharesBefore, pulledShares);
@@ -102,9 +98,7 @@ contract UniswapV3FullSpreadLocalBookTest is TestBase_UniswapV3FullSpreadStandar
     function test_pullStillTransfersRequestedInputWithExistingWalletExcess() public {
         token0.transfer(address(vault), 11 ether);
         uint256 beforeBalance = token0.balanceOf(address(this));
-        uint256 beforeOutput = token1.balanceOf(address(this));
-        uint256 quoted = vault.previewExchangeIn(token0, 7 ether, token1);
-        uint256 output = vault.exchangeIn(token0, 7 ether, token1, quoted, address(this), false, block.timestamp);
+        uint256 beforeOutput = token1.balanceOf(address(this));(uint256 quoted,) = vault.previewExchangeIn(token0, 7 ether, token1);(uint256 output,) = vault.exchangeIn(token0, 7 ether, token1, quoted, address(this), false, block.timestamp);
         assertGt(quoted, 0);
         assertEq(beforeBalance - token0.balanceOf(address(this)), 7 ether);
         assertEq(token1.balanceOf(address(this)) - beforeOutput, output);

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+
 import {StandardExchangeAccountingHandler} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {Test} from "forge-std/Test.sol";
@@ -50,8 +52,7 @@ contract ERC4626StandardExchange_Invariant is TestBase_ERC4626StandardExchange {
     function invariant_APEX_accounting() public view {
         handler.assertAccounting();
         uint256 backing = protocolVault.convertToAssets(protocolVault.balanceOf(se)) + underlying.balanceOf(se);
-        uint256 supply = IERC20(se).totalSupply();
-        uint256 claim = supply == 0 ? 0 : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), supply, IERC20(address(underlying)));
+        uint256 supply = IERC20(se).totalSupply();uint256 claim = supply == 0 ? 0 : ExchangeInAmount.previewOut(IStandardExchangeIn(se), IERC20(se), supply, IERC20(address(underlying)));
         assertLe(claim, backing, "all shares backed by local assets and protocol receipts");
     }
 

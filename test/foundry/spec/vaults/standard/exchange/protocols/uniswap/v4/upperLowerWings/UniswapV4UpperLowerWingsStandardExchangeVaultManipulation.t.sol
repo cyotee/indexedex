@@ -41,23 +41,17 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultManipulationTest is Fixtur
         address attacker = makeAddr("price attacker");
         token0.mint(attacker, DEPOSIT);
         vm.startPrank(attacker);
-        token0.approve(address(wings0), type(uint256).max);
-        uint256 minted = IStandardExchangeIn(address(wings0)).exchangeIn(
-            token0, DEPOSIT, IERC20(address(wings0)), 0, attacker, false, block.timestamp);
+        token0.approve(address(wings0), type(uint256).max);(uint256 minted,) = IStandardExchangeIn(address(wings0)).exchangeIn(token0, DEPOSIT, IERC20(address(wings0)), 0, attacker, false, block.timestamp);
         vm.stopPrank();
         assertEq(minted, FullMath.mulDiv(supply, DEPOSIT, depressed), "SEC-08: price move must not overmint");
         externalLp.swapTo(key, true, 1e24, price);
         uint256 cap = FullMath.mulDiv(minted, wings0.liquidationValue().value, supply + minted);
-        vm.prank(attacker);
-        uint256 payout = IStandardExchangeIn(address(wings0)).exchangeIn(
-            IERC20(address(wings0)), minted, token0, 0, attacker, false, block.timestamp);
+        vm.prank(attacker);(uint256 payout,) = IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), minted, token0, 0, attacker, false, block.timestamp);
         assertLe(payout, cap, "SEC-08: restored redemption exceeds pre-exit share");
         assertEq(token1.balanceOf(attacker), 0);
     }
 
-    function test_jitLiquidityAroundRebalancePaysTheKeeperNothing() public {
-        IStandardExchangeIn(address(wings0)).exchangeIn(
-            token0, DEPOSIT, IERC20(address(wings0)), DEPOSIT, address(this), false, block.timestamp);
+    function test_jitLiquidityAroundRebalancePaysTheKeeperNothing() public {IStandardExchangeIn(address(wings0)).exchangeIn(token0, DEPOSIT, IERC20(address(wings0)), DEPOSIT, address(this), false, block.timestamp);
         uint256 before = wings0.liquidationValue().value;
         externalLp.modify(key, -60, 60, int256(1e16), bytes32(uint256(1)));
         address keeper = makeAddr("jit keeper");
@@ -83,9 +77,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultManipulationTest is Fixtur
         assertEq(IERC20(address(wings0)).balanceOf(address(externalLp)), minted);
     }
 
-    function _seed() private {
-        IStandardExchangeIn(address(wings0)).exchangeIn(
-            token0, DEPOSIT, IERC20(address(wings0)), DEPOSIT, address(this), false, block.timestamp);
+    function _seed() private {IStandardExchangeIn(address(wings0)).exchangeIn(token0, DEPOSIT, IERC20(address(wings0)), DEPOSIT, address(this), false, block.timestamp);
         Rebalance(address(wings0)).rebalance(0, block.timestamp);
         assertEq(IERC20(address(wings0)).totalSupply(), DEPOSIT);
     }
@@ -100,16 +92,12 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultManipulationTest is Fixtur
         address attacker = makeAddr("depth attacker");
         token0.mint(attacker, DEPOSIT);
         vm.startPrank(attacker);
-        token0.approve(address(wings0), type(uint256).max);
-        minted_ = IStandardExchangeIn(address(wings0)).exchangeIn(
-            token0, DEPOSIT, IERC20(address(wings0)), 0, attacker, false, block.timestamp);
+        token0.approve(address(wings0), type(uint256).max);(minted_,) = IStandardExchangeIn(address(wings0)).exchangeIn(token0, DEPOSIT, IERC20(address(wings0)), 0, attacker, false, block.timestamp);
         vm.stopPrank();
         assertEq(minted_, FullMath.mulDiv(supply, DEPOSIT, depressed_), "SEC-08: depressed V must not overmint");
         if (restore_) externalLp.modify(key, -887220, 887220, 1e18, bytes32(0));
         uint256 cap = FullMath.mulDiv(minted_, wings0.liquidationValue().value, supply + minted_);
-        vm.prank(attacker);
-        payout_ = IStandardExchangeIn(address(wings0)).exchangeIn(
-            IERC20(address(wings0)), minted_, token0, 0, attacker, false, block.timestamp);
+        vm.prank(attacker);(payout_,) = IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), minted_, token0, 0, attacker, false, block.timestamp);
         assertLe(payout_, cap, "SEC-08: redemption exceeds pre-exit share of current V");
         assertEq(token1.balanceOf(attacker), 0);
     }

@@ -237,7 +237,7 @@ export function DetfActions({
   })
   const bondQuoteReady = oracleLock != null && !!bondPreview && bondPreview[1] > 0n && !bondPreviewError && !bondPreviewFetching && !findingBondAmount
   const payingReserveLp = tab === 'bond' && addressesMatch(spendToken, reserveLp)
-  const { data: preview } = useReadContract({
+  const { data: previewResult } = useReadContract({
     chainId,
     address: detf,
     abi: insightsViewAbi,
@@ -245,6 +245,7 @@ export function DetfActions({
     args: parsed && spendToken && detf ? [spendToken, parsed, detf] : undefined,
     query: { enabled: tab === 'mint' && !!detf && !!spendToken && parsed != null && parsed > BigInt(0) },
   })
+  const preview = previewResult?.[0]
   const { data: detfDecimalsRaw } = useReadContract({
     chainId,
     address: detf,
@@ -271,7 +272,7 @@ export function DetfActions({
     args: address && detf ? [address, detf] : undefined,
     query: { enabled: tab === 'burn' && !!detf && !!address },
   })
-  const { data: burnPreview } = useReadContract({
+  const { data: burnPreviewResult } = useReadContract({
     chainId,
     address: detf,
     abi: insightsViewAbi,
@@ -287,6 +288,7 @@ export function DetfActions({
         parsedBurn > BigInt(0),
     },
   })
+  const burnPreview = burnPreviewResult?.[0]
   const skipNftLookup = !!nftVaultProp && !isZero(nftVaultProp)
   const { data: bondVault } = useReadContract({
     chainId,
@@ -596,7 +598,7 @@ export function DetfActions({
 
   async function freshMinimum(tokenIn: `0x${string}`, amountIn: bigint, tokenOut: `0x${string}`) {
     if (!publicClient || !detf) throw new Error('The selected DETF is unavailable.')
-    const quote = await publicClient.readContract({
+    const [quote] = await publicClient.readContract({
       address: detf, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [tokenIn, amountIn, tokenOut],
     })
     if (quote <= 0n) throw new Error('No positive quote is available for this amount.')

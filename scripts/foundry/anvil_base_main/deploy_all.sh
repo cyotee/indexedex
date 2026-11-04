@@ -33,7 +33,7 @@
 #    --force         Re-run stages even if their output JSON already exists.
 #
 # REQUIRED ENV:
-#    DEV_ADDRESS       The address used for `forge script --sender` (typically Anvil account(0)).
+#    DEV_ADDRESS       The address used for `forge script --use solar --sender` (typically Anvil account(0)).
 #                     This script will also export OWNER=DEV_ADDRESS for deployment scripts.
 #    DEPLOYER_ADDRESS  Destination address for the final sweep of ETH + token balances.
 #
@@ -193,7 +193,7 @@ sweep_anvil_wallets_to_dev0() {
 
     for sender in "${senders[@]}"; do
         log_info "Sweeping from $sender -> $dev0_address (leaving 0.1 ETH)"
-        DEV0_ADDRESS="$dev0_address" forge script "$SCRIPT_DIR/Script_00_SweepEthToDev0.s.sol" \
+        DEV0_ADDRESS="$dev0_address" forge script --use solar "$SCRIPT_DIR/Script_00_SweepEthToDev0.s.sol" \
             --rpc-url "$RPC_URL" \
             $BROADCAST_FLAG \
             --unlocked \
@@ -247,7 +247,7 @@ sweep_anvil_wallets_to_deployer() {
             continue
         fi
         log_info "Sweeping from $sender -> $deployer_address"
-        DEPLOYER_ADDRESS="$deployer_address" forge script "$SCRIPT_DIR/Script_99_SweepBalancesToDeployer.s.sol" \
+        DEPLOYER_ADDRESS="$deployer_address" forge script --use solar "$SCRIPT_DIR/Script_99_SweepBalancesToDeployer.s.sol" \
             --rpc-url "$RPC_URL" \
             $BROADCAST_FLAG \
             --skip-simulation \
@@ -706,7 +706,7 @@ run_script() {
     local script_name=$1
     local description=$2
 
-    # `forge script --resume` errors on fresh runs when there is no prior run artifact.
+    # `forge script --use solar --resume` errors on fresh runs when there is no prior run artifact.
     # Only pass --resume if we can find an existing broadcast artifact for this script.
     local resume_arg=""
     if [[ -n "$RESUME_FLAG" ]]; then
@@ -722,7 +722,7 @@ run_script() {
     log_header "$description"
     log_info "Running $script_name..."
 
-    if forge script "$SCRIPT_DIR/$script_name" \
+    if forge script --use solar "$SCRIPT_DIR/$script_name" \
         --rpc-url "$RPC_URL" \
         $BROADCAST_FLAG \
         --unlocked \

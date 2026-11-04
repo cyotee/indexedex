@@ -46,10 +46,8 @@ contract UniswapV4DualSEBCPHook_SeMatrix_RebasingAwareERC4626 is UniswapV4DualSE
         dual = IHook(hook);
 
         vm.startPrank(user);
-        IERC20(face).approve(seUT, 300 ether);
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(face), 300 ether, IERC20(seUT), 0, user, false, block.timestamp);
-        IERC20(other).approve(seUT1, 300 ether);
-        IStandardExchangeIn(seUT1).exchangeIn(IERC20(other), 300 ether, IERC20(seUT1), 0, user, false, block.timestamp);
+        IERC20(face).approve(seUT, 300 ether);IStandardExchangeIn(seUT).exchangeIn(IERC20(face), 300 ether, IERC20(seUT), 0, user, false, block.timestamp);
+        IERC20(other).approve(seUT1, 300 ether);IStandardExchangeIn(seUT1).exchangeIn(IERC20(other), 300 ether, IERC20(seUT1), 0, user, false, block.timestamp);
         IERC20(seUT).approve(hook, type(uint256).max);
         IERC20(seUT1).approve(hook, type(uint256).max);
         dual.deposit(100e28, 100e28, user, 0, block.timestamp + 1 hours);

@@ -112,9 +112,7 @@ abstract contract Adversarial_ComposedStable_GE_Decimals is TestBase_ComposedSta
     function _mintDaiToDetf(address user, uint256 daiIn_) internal returns (uint256 detfOut_) {
         deal(address(rateAsset), user, daiIn_, true);
         vm.startPrank(user);
-        rateAsset.approve(deployedDetfVault, daiIn_);
-        detfOut_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(rateAsset, daiIn_, detfToken, 0, user, false, block.timestamp + 1 hours);
+        rateAsset.approve(deployedDetfVault, daiIn_);(detfOut_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(rateAsset, daiIn_, detfToken, 0, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -129,14 +127,11 @@ abstract contract Adversarial_ComposedStable_GE_Decimals is TestBase_ComposedSta
         uint256 raw_ = _mintDaiToDetf(attacker, input_);
         assertGt(raw_, 1);
         _assertNoStrandedRouteInventory(deployedDetfVault);
-        uint256 part_ = raw_ / 2;
-        uint256 quote_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, part_, rateAsset);
+        uint256 part_ = raw_ / 2;(uint256 quote_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, part_, rateAsset);
         assertGt(quote_, 0);
         uint256 before_ = rateAsset.balanceOf(attacker);
         vm.startPrank(attacker);
-        detfToken.approve(deployedDetfVault, part_);
-        uint256 back_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(detfToken, part_, rateAsset, quote_, attacker, false, block.timestamp);
+        detfToken.approve(deployedDetfVault, part_);(uint256 back_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(detfToken, part_, rateAsset, quote_, attacker, false, block.timestamp);
         vm.stopPrank();
         assertEq(back_, quote_);
         assertLe(back_, input_);
@@ -175,8 +170,7 @@ abstract contract Adversarial_ComposedStable_GE_Decimals is TestBase_ComposedSta
 
         // Failed partial path: minOut too high must not strand intermediate inventory
         uint256 failIn_ = _from18(address(rateAsset), 10e18);
-        deal(address(rateAsset), attacker, failIn_, true);
-        uint256 preview_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(rateAsset, failIn_, detfToken);
+        deal(address(rateAsset), attacker, failIn_, true);(uint256 preview_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(rateAsset, failIn_, detfToken);
         uint256 daiBefore_ = rateAsset.balanceOf(deployedDetfVault);
         uint256 vaultShareBefore_ = IERC20(address(daiUsdcVault)).balanceOf(deployedDetfVault);
         uint256 stableBptBefore_ = IERC20(address(stablePool)).balanceOf(deployedDetfVault);
@@ -185,9 +179,7 @@ abstract contract Adversarial_ComposedStable_GE_Decimals is TestBase_ComposedSta
 
         vm.startPrank(attacker);
         rateAsset.approve(deployedDetfVault, failIn_);
-        vm.expectRevert();
-        IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(rateAsset, failIn_, detfToken, preview_ + 1e18, attacker, false, block.timestamp + 1 hours);
+        vm.expectRevert();IStandardExchangeIn(deployedDetfVault).exchangeIn(rateAsset, failIn_, detfToken, preview_ + 1e18, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(rateAsset.balanceOf(deployedDetfVault), daiBefore_, "E2 fail: pairToken unchanged");
@@ -208,13 +200,10 @@ abstract contract Adversarial_ComposedStable_GE_Decimals is TestBase_ComposedSta
         _assertNoStrandedRouteInventory(deployedDetfVault);
 
         uint256 burn_ = aOut_ / 4;
-        assertGt(burn_, 0);
-        uint256 expected_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, burn_, rateAsset);
+        assertGt(burn_, 0);(uint256 expected_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, burn_, rateAsset);
         assertGt(expected_, 0);
         vm.startPrank(attacker);
-        detfToken.approve(deployedDetfVault, burn_);
-        uint256 returned_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(detfToken, burn_, rateAsset, expected_, attacker, false, block.timestamp);
+        detfToken.approve(deployedDetfVault, burn_);(uint256 returned_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(detfToken, burn_, rateAsset, expected_, attacker, false, block.timestamp);
         vm.stopPrank();
         assertEq(returned_, expected_);
         _assertNoStrandedRouteInventory(deployedDetfVault);
@@ -300,14 +289,10 @@ abstract contract Adversarial_ComposedStable_GE_Decimals is TestBase_ComposedSta
         if (nestedIn_ > cap_) nestedIn_ = cap_;
         assertGt(nestedIn_, 0);
         vm.startPrank(attacker);
-        detfToken.approve(outer_, nestedIn_);
-        uint256 out_ = IStandardExchangeIn(outer_)
-            .exchangeIn(detfToken, nestedIn_, IERC20(outer_), 0, attacker, false, block.timestamp);
+        detfToken.approve(outer_, nestedIn_);(uint256 out_,) = IStandardExchangeIn(outer_).exchangeIn(detfToken, nestedIn_, IERC20(outer_), 0, attacker, false, block.timestamp);
         assertGt(out_, 1);
         uint256 burn_ = out_ / 2;
-        IERC20(outer_).approve(outer_, burn_);
-        uint256 back_ = IStandardExchangeIn(outer_)
-            .exchangeIn(IERC20(outer_), burn_, detfToken, 0, attacker, false, block.timestamp);
+        IERC20(outer_).approve(outer_, burn_);(uint256 back_,) = IStandardExchangeIn(outer_).exchangeIn(IERC20(outer_), burn_, detfToken, 0, attacker, false, block.timestamp);
         vm.stopPrank();
         assertGt(back_, 0);
         assertEq(IERC20(outer_).balanceOf(attacker), out_ - burn_);

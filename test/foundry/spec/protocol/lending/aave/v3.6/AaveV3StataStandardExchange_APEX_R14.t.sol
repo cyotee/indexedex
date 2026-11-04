@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -26,9 +27,7 @@ contract AaveV3StataStandardExchange_APEX_R14_Test is TestBase_AaveV3StataStanda
 
     function _wrap(uint256 amount) internal returns (uint256 shares) {
         _fundUnderlying(amount, address(this));
-        IERC20(realBase).approve(realVault, amount);
-        shares = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realVault), 0, address(this), false, _deadline()
+        IERC20(realBase).approve(realVault, amount);(shares,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realVault), 0, address(this), false, _deadline()
         );
     }
 
@@ -42,17 +41,15 @@ contract AaveV3StataStandardExchange_APEX_R14_Test is TestBase_AaveV3StataStanda
         uint256 first = _wrap(_u(10));
         _setSupplyCap(1); // 1 whole token, already exceeded by the pool's existing supply
         assertEq(stataTokenV2.maxDeposit(realVault), 0, "capacity closed");
-        uint256 stataBefore = IERC20(realStata).balanceOf(realVault);
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), _u(5), IERC20(realVault));
+        uint256 stataBefore = IERC20(realStata).balanceOf(realVault);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), _u(5), IERC20(realVault));
         uint256 shares = _wrap(_u(5));
         assertEq(shares, preview, "preview equals execution at capacity 0");
         assertApproxEqRel(shares, first / 2, 0.001e18, "shares for the full 5 at the unchanged price");
         assertEq(IERC20(realStata).balanceOf(realVault), stataBefore, "no Stata minted at capacity 0");
         assertEq(_booked(), _u(5), "input booked as local reserve");
         // Local reserve is backing: the SY rate and receipt-unit quotes did not drop.
-        assertGt(IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), shares, IERC20(realBase)), 0);
-        assertApproxEqRel(
-            IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), shares, IERC20(realBase)), _u(5), 0.001e18,
+        assertGt(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realVault), shares, IERC20(realBase)), 0);
+        assertApproxEqRel(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realVault), shares, IERC20(realBase)), _u(5), 0.001e18,
             "locally backed shares keep their underlying value"
         );
     }
@@ -63,9 +60,7 @@ contract AaveV3StataStandardExchange_APEX_R14_Test is TestBase_AaveV3StataStanda
         _wrap(_u(10));
         _setSupplyCap(1);
         uint256 shares = _wrap(_u(5)); // all booked locally
-        uint256 stataBefore = IERC20(realStata).balanceOf(realVault);
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realVault), shares / 2, IERC20(realBase), 0, address(this), false, _deadline()
+        uint256 stataBefore = IERC20(realStata).balanceOf(realVault);(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realVault), shares / 2, IERC20(realBase), 0, address(this), false, _deadline()
         );
         assertGt(out, 0);
         assertEq(IERC20(realStata).balanceOf(realVault), stataBefore, "paid from local cash, receipts untouched");
@@ -141,8 +136,7 @@ contract AaveV3StataStandardExchange_APEX_R14_Test is TestBase_AaveV3StataStanda
 
         uint256 depositAmt = stataTokenV2.convertToShares(_u(1));
         if (depositAmt == 0) depositAmt = 1;
-        assertEq(
-            IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), depositAmt, IERC20(realVault)),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realStata), depositAmt, IERC20(realVault)),
             IERC4626(realVault).convertToShares(depositAmt),
             "SE issuance preview uses the adapter backing"
         );

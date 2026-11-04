@@ -96,16 +96,20 @@ contract BalancerV3UniswapV4CoordinatorRouter_LedgerAndRescue_Test is TestBase_B
     }
 
     /// @dev T31: hostile tokenIn re-enters queryExactIn mid-pull and observes IsLocked.
+    /// The swap must return. Foundry drops logs from a reverted frame, so an expected outer revert cannot keep SawIsLocked.
     function test_T31_reentrancyDuringPullIsLocked() public {
         HostileReenterERC20 hostile = new HostileReenterERC20("H", "H");
+        PayingStockRouterStub child = new PayingStockRouterStub();
+        usdc.mint(address(child), 1);
         coordinator.registerRouter(
-            address(0xBEEF), IBalancerV3UniswapV4CoordinatorRouter.AdapterKind.StockBalancerV3Router
+            address(child), IBalancerV3UniswapV4CoordinatorRouter.AdapterKind.StockBalancerV3Router
         );
 
+        bytes memory stepData = abi.encode(address(0), address(hostile), address(usdc), uint256(0), false, bytes(""));
         IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
             new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](1);
         steps[0] = IBalancerV3UniswapV4CoordinatorRouter.RouteStep({
-            router: address(0xBEEF), tokenOut: address(usdc), minAmountOut: 0, data: ""
+            router: address(child), tokenOut: address(usdc), minAmountOut: 0, data: stepData
         });
         IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
             IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams({
@@ -124,10 +128,12 @@ contract BalancerV3UniswapV4CoordinatorRouter_LedgerAndRescue_Test is TestBase_B
         vm.prank(aliceUser);
         hostile.approve(address(permit2), type(uint256).max);
         (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) = _sign(params, 99);
-        // Outer call reverts (fake child), rolling back token storage — observe via event logs.
+        uint256 before = usdc.balanceOf(recipient);
         vm.recordLogs();
         vm.prank(aliceUser);
-        try coordinator.swapExactInWithPermit(params, permit, sig) {} catch {}
+        uint256 amountOut = coordinator.swapExactInWithPermit(params, permit, sig);
+        assertEq(amountOut, 1);
+        assertEq(usdc.balanceOf(recipient) - before, 1);
         Vm.Log[] memory logs = vm.getRecordedLogs();
         bytes32 topic = keccak256("SawIsLocked()");
         bool found;
@@ -253,5 +259,23 @@ contract HostileReenterERC20 is SimpleMintableERC20 {
             }
         }
         return true;
+    }
+}
+
+/// @dev Pays its tokenOut balance to the caller. The coordinator measures that balance delta, not a pool quote.
+contract PayingStockRouterStub {
+    function swapSingleTokenExactIn(
+        address,
+        IERC20,
+        IERC20 tokenOut,
+        uint256,
+        uint256,
+        uint256,
+        bool,
+        bytes calldata
+    ) external payable returns (uint256 amountOut) {
+        amountOut = tokenOut.balanceOf(address(this));
+        require(amountOut != 0, "stub unpaid");
+        require(tokenOut.transfer(msg.sender, amountOut), "stub transfer");
     }
 }

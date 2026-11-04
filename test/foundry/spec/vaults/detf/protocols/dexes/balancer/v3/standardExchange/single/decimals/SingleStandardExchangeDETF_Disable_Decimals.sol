@@ -59,9 +59,7 @@ abstract contract SingleStandardExchangeDETF_Disable_Decimals is TestBase_Single
         uint256 seShares_ = _fundSeShares(user, lpAmount);
         require(seShares_ > 0, "need funded SE shares");
         vm.startPrank(user);
-        seShare.approve(openDetf, seShares_);
-        out_ =
-            openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, user, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, seShares_);(out_,) = openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -75,15 +73,12 @@ abstract contract SingleStandardExchangeDETF_Disable_Decimals is TestBase_Single
         assertTrue(disableQuery.isDisabled(openDetf));
 
         uint256 seShares_ = _fundSeShares(bob, 200e18);
-        require(seShares_ > 0, "fund bob");
-
-        // Previews remain callable while disabled.
+        require(seShares_ > 0, "fund bob");// Previews remain callable while disabled.
         openExchangeIn.previewExchangeIn(seShare, seShares_, IERC20(openDetf));
 
         vm.startPrank(bob);
         seShare.approve(openDetf, seShares_);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, openDetf));
-        openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, openDetf));openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -118,8 +113,7 @@ abstract contract SingleStandardExchangeDETF_Disable_Decimals is TestBase_Single
 
         vm.startPrank(bob);
         seShare.approve(openDetf, seShares_);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, openDetf));
-        openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, openDetf));openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

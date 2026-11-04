@@ -66,7 +66,8 @@ abstract contract LiquidStakingSYBehavior is Test, NativeSYExecutionAssertions {
         uint256 shares_ = _depositYield();
         uint256 amount_ = shares_ / 2;
         uint256 quote_ = _sy().previewRedeem(_yield(), amount_);
-        assertEq(quote_, IStandardExchangeIn(_subject()).previewExchangeIn(IERC20(_subject()), amount_, IERC20(_yield())));
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(_subject()).previewExchangeIn(IERC20(_subject()), amount_, IERC20(_yield()));
+        assertEq(quote_, previewAmountOut1);
         uint256 before_ = IERC20(_yield()).balanceOf(HOLDER);
         vm.prank(HOLDER); assertEq(_sy().redeem(HOLDER, amount_, _yield(), quote_, false), quote_);
         assertEq(IERC20(_yield()).balanceOf(HOLDER) - before_, quote_);

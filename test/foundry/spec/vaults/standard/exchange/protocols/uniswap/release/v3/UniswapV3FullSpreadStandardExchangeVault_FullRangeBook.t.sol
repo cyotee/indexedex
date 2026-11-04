@@ -136,9 +136,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
             uint256 charged = vault.exchangeOut(share, quoted, asset, wanted, address(this), false, _deadline());
             assertEq(charged, quoted);
             assertGe(asset.balanceOf(address(this)) - balanceBefore, wanted);
-        } else {
-            uint256 quoted = vault.previewExchangeIn(share, shares / 2, asset);
-            uint256 received = vault.exchangeIn(share, shares / 2, asset, quoted, address(this), false, _deadline());
+        } else {(uint256 quoted,) = vault.previewExchangeIn(share, shares / 2, asset);(uint256 received,) = vault.exchangeIn(share, shares / 2, asset, quoted, address(this), false, _deadline());
             assertEq(received, quoted);
             assertEq(asset.balanceOf(address(this)) - balanceBefore, quoted);
         }
@@ -147,8 +145,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
     function test_accruedFees_blockedDepositMatchesIdlePreview() public {
         _dualJoin(10_000_000 ether, 10_000_000 ether);
         _externalSwapExactIn(pool, true, 1000 ether);
-        IERC20 asset = IERC20(_token0());
-        uint256 quoted = vault.previewExchangeIn(asset, 1 ether, IERC20(address(vault)));
+        IERC20 asset = IERC20(_token0());(uint256 quoted,) = vault.previewExchangeIn(asset, 1 ether, IERC20(address(vault)));
         ERC20PermitMintableStub(address(asset)).mint(address(lockCaller), 1 ether);
         vm.prank(address(lockCaller));
         asset.approve(address(vault), 1 ether);
@@ -162,12 +159,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
         uint256 supply = _dualJoin(10_000_000 ether, 10_000_000 ether);
         _externalSwapExactIn(pool, true, 1000 ether);
         IERC20 asset = IERC20(token1_ ? _token1() : _token0());
-        uint256 burned = supply / 10_000;
-        uint256 quoted = vault.previewExchangeIn(IERC20(address(vault)), burned, asset);
+        uint256 burned = supply / 10_000;(uint256 quoted,) = vault.previewExchangeIn(IERC20(address(vault)), burned, asset);
         IERC20(address(vault)).approve(address(vault), burned);
-        uint256 beforeBalance = asset.balanceOf(address(this));
-        uint256 received = vault.exchangeIn(
-            IERC20(address(vault)), burned, asset, quoted, address(this), false, _deadline()
+        uint256 beforeBalance = asset.balanceOf(address(this));(uint256 received,) = vault.exchangeIn(IERC20(address(vault)), burned, asset, quoted, address(this), false, _deadline()
         );
         assertEq(received, quoted, "withdrawal receives its share of accrued fees");
         assertEq(asset.balanceOf(address(this)) - beforeBalance, received);
@@ -183,12 +177,10 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
         uint256 supply = IERC20(address(vault)).totalSupply();
         IERC20 asset = IERC20(token1_ ? _token1() : _token0());
         address depositor = makeAddr("invariant depositor");
-        ERC20PermitMintableStub(address(asset)).mint(depositor, amount);
-        uint256 quote = vault.previewExchangeIn(asset, amount, IERC20(address(vault)));
+        ERC20PermitMintableStub(address(asset)).mint(depositor, amount);(uint256 quote,) = vault.previewExchangeIn(asset, amount, IERC20(address(vault)));
         assertGt(quote, 0);
         vm.startPrank(depositor);
-        asset.approve(address(vault), amount);
-        uint256 minted = vault.exchangeIn(asset, amount, IERC20(address(vault)), quote, depositor, false, _deadline());
+        asset.approve(address(vault), amount);(uint256 minted,) = vault.exchangeIn(asset, amount, IERC20(address(vault)), quote, depositor, false, _deadline());
         vm.stopPrank();
         assertEq(minted, quote);
         uint256 afterSupply = supply + minted;
@@ -214,10 +206,8 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
         uint256 amount_ = 1 ether;
         ERC20PermitMintableStub(address(asset_)).mint(depositor_, amount_);
         vm.startPrank(depositor_);
-        asset_.approve(address(vault), amount_);
-        uint256 shares_ = vault.exchangeIn(asset_, amount_, IERC20(address(vault)), 1, depositor_, false, _deadline());
-        IERC20(address(vault)).approve(address(vault), shares_);
-        uint256 received_ = vault.exchangeIn(IERC20(address(vault)), shares_, asset_, 1, depositor_, false, _deadline());
+        asset_.approve(address(vault), amount_);(uint256 shares_,) = vault.exchangeIn(asset_, amount_, IERC20(address(vault)), 1, depositor_, false, _deadline());
+        IERC20(address(vault)).approve(address(vault), shares_);(uint256 received_,) = vault.exchangeIn(IERC20(address(vault)), shares_, asset_, 1, depositor_, false, _deadline());
         vm.stopPrank();
         assertLe(received_, amount_, "a deposit and immediate withdrawal cannot consume incumbent value");
         assertEq(asset_.balanceOf(depositor_), received_);
@@ -226,13 +216,10 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
     function testFuzz_zapOut_previewIncludesRemovedLiquidity(bool token1_, uint16 fraction_) public {
         uint256 shares_ = _dualJoin(10_000_000 ether, 10_000_000 ether);
         uint256 burned_ = shares_ * bound(fraction_, 1, 9000) / 10_000;
-        IERC20 asset_ = IERC20(token1_ ? _token1() : _token0());
-        uint256 expected_ = vault.previewExchangeIn(IERC20(address(vault)), burned_, asset_);
+        IERC20 asset_ = IERC20(token1_ ? _token1() : _token0());(uint256 expected_,) = vault.previewExchangeIn(IERC20(address(vault)), burned_, asset_);
         assertGt(expected_, 0);
         uint256 before_ = asset_.balanceOf(address(this));
-        IERC20(address(vault)).approve(address(vault), burned_);
-        uint256 received_ = vault.exchangeIn(
-            IERC20(address(vault)), burned_, asset_, expected_, address(this), false, _deadline()
+        IERC20(address(vault)).approve(address(vault), burned_);(uint256 received_,) = vault.exchangeIn(IERC20(address(vault)), burned_, asset_, expected_, address(this), false, _deadline()
         );
         assertEq(received_, expected_, "withdrawal quote matches execution after pool liquidity removal");
         assertEq(asset_.balanceOf(address(this)) - before_, received_);
@@ -314,10 +301,10 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
         IERC20 input = IERC20(_token0());
         ERC20PermitMintableStub(address(input)).mint(address(this), amount);
         input.approve(address(vault), amount);
-        assertEq(vault.previewExchangeIn(input, amount, IERC20(address(vault))), 0);
+        (uint256 previewAmountOut1,) = vault.previewExchangeIn(input, amount, IERC20(address(vault)));
+        assertEq(previewAmountOut1, 0);
         uint256 balance = input.balanceOf(address(this));
-        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
-        vault.exchangeIn(input, amount, IERC20(address(vault)), 0, address(this), false, _deadline());
+        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));vault.exchangeIn(input, amount, IERC20(address(vault)), 0, address(this), false, _deadline());
         assertEq(input.balanceOf(address(this)), balance, "failed activation keeps payment");
         assertEq(IERC20(address(vault)).totalSupply(), 0);
         assertEq(input.balanceOf(address(vault)), 0);
@@ -325,10 +312,10 @@ contract UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test is TestBase
         assertGt(issued, 0);
         (int24 lower, int24 upper) = _fullRangeTicks();
         assertGt(_liquidityAt(lower, upper), 0, "dual activation creates full-range liquidity");
-        input.approve(address(vault), amount);
-        uint256 quote = vault.previewExchangeIn(input, amount, IERC20(address(vault)));
+        input.approve(address(vault), amount);(uint256 quote,) = vault.previewExchangeIn(input, amount, IERC20(address(vault)));
         assertGt(quote, 0);
-        assertEq(vault.exchangeIn(input, amount, IERC20(address(vault)), quote, address(this), false, _deadline()), quote);
+        (uint256 exchangeAmountOut2,) = vault.exchangeIn(input, amount, IERC20(address(vault)), quote, address(this), false, _deadline());
+        assertEq(exchangeAmountOut2, quote);
     }
 
     function test_FR6_importedNftConvertedToFullRange() public {

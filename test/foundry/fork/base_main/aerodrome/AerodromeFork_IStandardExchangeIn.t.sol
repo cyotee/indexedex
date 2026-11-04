@@ -56,11 +56,8 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        // Execute swap: tokenA -> tokenB
-        uint256 amountOut = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, _deadline()
+        tokenA.approve(address(vault), amountIn);// Execute swap: tokenA -> tokenB
+        (uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, _deadline()
         );
 
         assertTrue(amountOut > 0, "Should receive tokens");
@@ -76,11 +73,8 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        // Execute zap: tokenA -> LP
-        uint256 lpOut = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(pool)), 0, recipient, false, _deadline()
+        tokenA.approve(address(vault), amountIn);// Execute zap: tokenA -> LP
+        (uint256 lpOut,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(pool)), 0, recipient, false, _deadline()
         );
 
         assertTrue(lpOut > 0, "Should receive LP tokens");
@@ -95,11 +89,8 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        // Execute deposit: LP -> vault shares
-        uint256 sharesOut =
-            vault.exchangeIn(lpToken, lpAmount, IERC20(address(vault)), 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);// Execute deposit: LP -> vault shares
+        (uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, IERC20(address(vault)), 0, recipient, false, _deadline());
 
         assertTrue(sharesOut > 0, "Should receive shares");
         assertEq(vault.balanceOf(recipient), sharesOut, "Recipient should receive shares");
@@ -115,20 +106,15 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         ERC20PermitMintableStub tokenA = aeroBalancedTokenA;
         ERC20PermitMintableStub tokenB = aeroBalancedTokenB;
 
-        uint256 amountIn = TEST_AMOUNT;
-
-        // Preview swap
-        uint256 previewSwap = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
-        assertTrue(previewSwap > 0, "Preview swap should be non-zero");
-
-        // Preview zap
-        uint256 previewZap = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(pool)));
+        uint256 amountIn = TEST_AMOUNT;// Preview swap
+        (uint256 previewSwap,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
+        assertTrue(previewSwap > 0, "Preview swap should be non-zero");// Preview zap
+        (uint256 previewZap,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(pool)));
         assertTrue(previewZap > 0, "Preview zap should be non-zero");
 
         // Preview deposit
         IERC20 lpToken = IERC20(address(pool));
-        uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
-        uint256 previewDeposit = vault.previewExchangeIn(lpToken, lpAmount, IERC20(address(vault)));
+        uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;(uint256 previewDeposit,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(address(vault)));
         assertTrue(previewDeposit > 0, "Preview deposit should be non-zero");
     }
 
@@ -141,14 +127,9 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
-
-        // Execute
-        uint256 actual = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, _deadline()
+        tokenA.approve(address(vault), amountIn);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));// Execute
+        (uint256 actual,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, _deadline()
         );
 
         assertEq(actual, preview, "Execution should match preview");
@@ -169,10 +150,7 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         tokenA.mint(address(this), amountIn);
         tokenA.approve(address(vault), amountIn);
 
-        uint256 balanceBefore = tokenA.balanceOf(address(this));
-
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 balanceBefore = tokenA.balanceOf(address(this));vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -197,10 +175,7 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         // Transfer to vault first
         tokenA.transfer(address(vault), amountIn);
 
-        uint256 balanceBefore = tokenA.balanceOf(address(this));
-
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 balanceBefore = tokenA.balanceOf(address(this));vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -227,11 +202,8 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        // Should succeed with future deadline
-        uint256 amountOut = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, block.timestamp + 1 hours
+        tokenA.approve(address(vault), amountIn);// Should succeed with future deadline
+        (uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, block.timestamp + 1 hours
         );
 
         assertTrue(amountOut > 0, "Should succeed with future deadline");
@@ -246,11 +218,8 @@ contract AerodromeFork_IStandardExchangeIn_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        // Should succeed with exact current timestamp
-        uint256 amountOut = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, block.timestamp
+        tokenA.approve(address(vault), amountIn);// Should succeed with exact current timestamp
+        (uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, block.timestamp
         );
 
         assertTrue(amountOut > 0, "Should succeed with exact deadline");

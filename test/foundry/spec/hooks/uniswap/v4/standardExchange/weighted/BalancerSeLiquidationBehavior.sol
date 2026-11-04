@@ -15,8 +15,7 @@ import {UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior} from "./Un
 abstract contract BalancerSeLiquidationBehavior is UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior {
     /// @notice Whole-supply live and projected quotes agree and normalize through the generic provider.
     function test_bptLiquidation_fullSupplyRateAndProjection() public {
-        uint256 supply = IERC20(seUT).totalSupply();
-        uint256 quoted = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), supply, IERC20(face));
+        uint256 supply = IERC20(seUT).totalSupply();(uint256 quoted,) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), supply, IERC20(face));
         assertGt(quoted, 0, "whole-supply liquidation value");
         (bytes memory state,) = Quote(seUT).quoteState(face, address(this));
         Liquidation.PoolQuoteState memory decoded = abi.decode(state, (Liquidation.PoolQuoteState));
@@ -36,11 +35,11 @@ abstract contract BalancerSeLiquidationBehavior is UniswapV4StandardExchangeWeig
         (bytes memory state,) = Quote(seUT).quoteState(face, holder);
         (bytes memory next, uint256 paid, uint256 out,) = Quote(seUT).quoteTransition(state, Quote.Operation.RedeemExactIn, amount);
         assertEq(paid, amount);
-        assertEq(out, IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), amount, IERC20(face)));
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), amount, IERC20(face));
+        assertEq(out, previewAmountOut1);
         uint256 before = IERC20(face).balanceOf(holder);
         vm.startPrank(holder);
-        IERC20(seUT).approve(seUT, amount);
-        uint256 got = IStandardExchangeIn(seUT).exchangeIn(IERC20(seUT), amount, IERC20(face), out, holder, false, block.timestamp);
+        IERC20(seUT).approve(seUT, amount);(uint256 got,) = IStandardExchangeIn(seUT).exchangeIn(IERC20(seUT), amount, IERC20(face), out, holder, false, block.timestamp);
         vm.stopPrank();
         assertEq(got, out, "native batch pays exact preview");
         assertEq(IERC20(face).balanceOf(holder) - before, out, "actual payout");
@@ -53,8 +52,7 @@ abstract contract BalancerSeLiquidationBehavior is UniswapV4StandardExchangeWeig
         address holder = rowBob;
         uint256 supply = IERC20(seUT).totalSupply();
         vm.prank(makeAddr("alice"));
-        IERC20(seUT).transfer(holder, supply * 60 / 100);
-        uint256 want = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), supply * 45 / 100, IERC20(face));
+        IERC20(seUT).transfer(holder, supply * 60 / 100);(uint256 want,) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), supply * 45 / 100, IERC20(face));
         uint256 need = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), want);
         bytes memory projected = _projectWithdrawal(holder, want, need);
         uint256 bptBefore = IERC20(seUT).balanceOf(holder);
@@ -82,14 +80,12 @@ abstract contract BalancerSeLiquidationBehavior is UniswapV4StandardExchangeWeig
     function test_bptLiquidation_batchMinimum_revertsAllState() public {
         uint256 amount = IERC20(seUT).totalSupply() * 45 / 100;
         vm.prank(makeAddr("alice"));
-        IERC20(seUT).transfer(rowBob, amount);
-        uint256 quoted = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), amount, IERC20(face));
+        IERC20(seUT).transfer(rowBob, amount);(uint256 quoted,) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), amount, IERC20(face));
         (bytes memory beforeState,) = Quote(seUT).quoteState(face, rowBob);
         uint256 assetsBefore = IERC20(face).balanceOf(rowBob);
         vm.startPrank(rowBob);
         IERC20(seUT).approve(seUT, amount);
-        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, quoted + 1, quoted));
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(seUT), amount, IERC20(face), quoted + 1, rowBob, false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, quoted + 1, quoted));IStandardExchangeIn(seUT).exchangeIn(IERC20(seUT), amount, IERC20(face), quoted + 1, rowBob, false, block.timestamp);
         vm.stopPrank();
         (bytes memory afterState,) = Quote(seUT).quoteState(face, rowBob);
         assertEq(afterState, beforeState, "batch rollback restores supply, balances and virtual book");

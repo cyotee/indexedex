@@ -1,6 +1,7 @@
 ---
 name: crane-utilities
 description: This skill should be used when the user asks about "set collections", "AddressSet", "Bytes32Set", "math utilities", "ConstProdUtils", "AMM math", "hash functions", "BetterMath", "pagination", "EIP-712", "cryptography", or needs utility libraries for Crane Diamond development.
+license: MIT
 ---
 
 # Crane Utility Libraries

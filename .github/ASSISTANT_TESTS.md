@@ -3,7 +3,7 @@
 Testing conventions for the repository and for assistant-implemented changes.
 
 Core rules
-- Always run `forge build` and `forge test` locally in the workspace before opening a PR.
+- Always run `forge build --use solar` and `forge test --use solar` locally in the workspace before opening a PR. Compiler law: [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../docs/agent/INDEXEDEX_AGENT_LAW.md) § Compiler. Do not compile with solc. Do not enable `via_ir`.
 - Focused tests: when adding a new package or facet, add a focused test asserting critical behaviors (for example: token metadata for deployed DETF instances).
 
 Test scope & location
@@ -14,9 +14,9 @@ Policy checks
 - Add tests asserting repository-level policies when feasible (e.g., test that deployed vault `symbol()=="DETF"` and `decimals()==9`).
 
 CI
-- CI must run `forge build` and hermetic `forge test` and fail the PR if those fail.
+- CI must run `forge build --use solar` and hermetic `forge test --use solar` and fail the PR if those fail. The workflow installs Foundry nightly until stable Forge accepts `--use solar`.
 - Workflow: `.github/workflows/foundry-ci.yml` (see `docs/ci.md` Profile law).
-  - Hermetic only: `forge test` under **default** (`test/foundry/spec`) — no secrets, empty RPC env.
+  - Hermetic only: `forge test --use solar` under **default** (`test/foundry/spec`) — no secrets, empty RPC env.
   - Fork suites (`FOUNDRY_PROFILE=fork` / `test/foundry/fork/**`) are **not** run on Actions.
   - CI excludes `**/fork/**` and `*Fork*` under `spec` so misplaced fork smokes never hit Alchemy.
   - Run fork suites **locally only** with `ALCHEMY_KEY` when needed — not in CI, to protect RPC rate limits.

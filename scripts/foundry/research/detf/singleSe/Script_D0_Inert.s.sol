@@ -53,9 +53,7 @@ contract Script_D0_Inert is Script {
         }
         if (seBal > 0) {
             vm.startPrank(user);
-            fixture.seShare().approve(fixture.detf(), seBal);
-            try fixture.detfExchangeIn().exchangeIn(
-                fixture.seShare(),
+            fixture.seShare().approve(fixture.detf(), seBal);try fixture.detfExchangeIn().exchangeIn(fixture.seShare(),
                 seBal,
                 IERC20(fixture.detf()),
                 0,

@@ -72,10 +72,8 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         uint256 amountIn = _testAmt(aToB ? tokenA : tokenB);
 
         // Get expected from pool directly
-        uint256 expectedFromPool = pool.getAmountOut(amountIn, address(tokenIn));
-
-        // Get preview from vault
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        uint256 expectedFromPool = pool.getAmountOut(amountIn, address(tokenIn));// Get preview from vault
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
 
         assertEq(preview, expectedFromPool, "Preview should match pool.getAmountOut()");
     }
@@ -121,14 +119,9 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
 
         // Mint and approve
         tokenInStub.mint(address(this), amountIn);
-        tokenInStub.approve(address(vault), amountIn);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
-
-        // Execute
-        uint256 amountOut = vault.exchangeIn(
-            tokenIn,
+        tokenInStub.approve(address(vault), amountIn);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);// Execute
+        (uint256 amountOut,) = vault.exchangeIn(tokenIn,
             amountIn,
             tokenOut,
             0, // minAmountOut
@@ -177,10 +170,8 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         tokenInStub.approve(address(vault), amountIn);
 
         uint256 senderBalanceBefore = tokenIn.balanceOf(address(this));
-        uint256 recipientBalanceBefore = tokenOut.balanceOf(recipient);
-
-        // Execute
-        uint256 amountOut = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
+        uint256 recipientBalanceBefore = tokenOut.balanceOf(recipient);// Execute
+        (uint256 amountOut,) = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
 
         // Verify balance changes
         assertEq(
@@ -207,13 +198,8 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
-
-        // Should succeed with exact minAmountOut
-        uint256 amountOut = vault.exchangeIn(
-            IERC20(address(tokenA)),
+        tokenA.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));// Should succeed with exact minAmountOut
+        (uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             preview, // exact minimum
@@ -233,14 +219,10 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
+        tokenA.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
 
         // Should revert with minAmountOut too high
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        vm.expectRevert();vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             preview + 1, // too high
@@ -265,11 +247,8 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         tokenA.mint(address(this), amountIn);
         tokenA.transfer(address(vault), amountIn);
 
-        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));
-
-        // Execute with pretransferred=true
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));// Execute with pretransferred=true
+        vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -301,9 +280,7 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         // Seed residual dust + pull credit for an honest swap that full-set syncs (books residual).
         tokenA.mint(address(this), reserved + amountIn);
         tokenA.transfer(address(vault), reserved); // residual to be booked
-        tokenA.approve(address(vault), amountIn);
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        tokenA.approve(address(vault), amountIn);vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -319,9 +296,7 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, reserved, uint256(0)
             )
-        );
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        );vault.exchangeIn(IERC20(address(tokenA)),
             reserved,
             IERC20(address(tokenB)),
             0,
@@ -344,10 +319,7 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         _setHeldExcessTokens(address(vault), tokenInIsToken0 ? reserved : 0, tokenInIsToken0 ? 0 : reserved);
 
         tokenA.mint(address(this), reserved + amountIn);
-        tokenA.transfer(address(vault), reserved + amountIn);
-
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        tokenA.transfer(address(vault), reserved + amountIn);vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -369,11 +341,8 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
         tokenA.mint(address(this), amountIn);
         tokenA.approve(address(vault), amountIn);
 
-        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));
-
-        // Execute with pretransferred=false
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));// Execute with pretransferred=false
+        vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -454,12 +423,8 @@ abstract contract AerodromeStandardExchangeIn_Swap_Decimals is TestBase_Aerodrom
 
         if (amountIn == 0) return;
         tokenInStub.mint(address(this), amountIn);
-        tokenInStub.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut);
-        if (preview == 0) return;
-        uint256 amountOut =
-            vault.exchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut, 0, recipient, false, _deadline());
+        tokenInStub.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut);
+        if (preview == 0) return;(uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(amountOut, preview, "Fuzz: execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), amountOut, "Fuzz: recipient balance correct");

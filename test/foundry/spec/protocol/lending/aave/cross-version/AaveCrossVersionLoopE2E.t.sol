@@ -110,9 +110,7 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         // Deposit through the deployed diamond's IStandardExchangeIn selector.
         uint256 deposit = 100e18;
         _mint(tokenA, address(this), deposit);
-        tokenA.approve(vault, deposit);
-        uint256 shares = IStandardExchangeIn(vault).exchangeIn(
-            tokenA, deposit, IERC20(vault), 0, address(this), false, block.timestamp
+        tokenA.approve(vault, deposit);(uint256 shares,) = IStandardExchangeIn(vault).exchangeIn(tokenA, deposit, IERC20(vault), 0, address(this), false, block.timestamp
         );
 
         // Shares minted on the diamond's ERC20; leveraged cross-version position built on the vault.
@@ -146,9 +144,7 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         _seedBorrowLiquidity();
         uint256 payment_ = 20 ether;
         _mint(tokenA, address(this), payment_);
-        tokenA.approve(vault, payment_);
-        IStandardExchangeIn(vault).exchangeIn(
-            tokenA, payment_, IERC20(vault), 0, address(this), false, block.timestamp
+        tokenA.approve(vault, payment_);IStandardExchangeIn(vault).exchangeIn(tokenA, payment_, IERC20(vault), 0, address(this), false, block.timestamp
         );
         return IStandardizedYield(vault);
     }
@@ -183,7 +179,8 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         _mint(tokenA, address(this), payment_);
         tokenA.approve(vault, payment_);
         uint256 quote_ = sy_.previewDeposit(address(tokenA), payment_);
-        assertEq(quote_, IStandardExchangeIn(vault).previewExchangeIn(tokenA, payment_, IERC20(vault)));
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, payment_, IERC20(vault));
+        assertEq(quote_, previewAmountOut1);
         uint256 before_ = sy_.balanceOf(address(this));
         assertEq(sy_.deposit(address(this), address(tokenA), payment_, quote_), quote_);
         assertEq(sy_.balanceOf(address(this)), before_ + quote_);
@@ -277,10 +274,8 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         uint256 shares_ = IERC20(vault).balanceOf(address(this)) / 100;
         IERC20(vault).transfer(vault, shares_);
         uint256 supply_ = IERC20(vault).totalSupply();
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, payment_, 0));
-        IStandardExchangeIn(vault).exchangeIn(tokenA, payment_, IERC20(vault), 0, address(this), true, block.timestamp);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, shares_, 0));
-        IStandardExchangeIn(vault).exchangeIn(IERC20(vault), shares_, tokenA, 0, address(this), true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, payment_, 0));IStandardExchangeIn(vault).exchangeIn(tokenA, payment_, IERC20(vault), 0, address(this), true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, shares_, 0));IStandardExchangeIn(vault).exchangeIn(IERC20(vault), shares_, tokenA, 0, address(this), true, block.timestamp);
         assertEq(tokenA.balanceOf(vault), payment_);
         assertEq(IERC20(vault).balanceOf(vault), shares_);
         assertEq(IERC20(vault).totalSupply(), supply_);
@@ -289,7 +284,8 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
     function _assertSyExit(IStandardizedYield sy_, uint256 shares_, bool internal_) private {
         uint256 output_ = sy_.previewRedeem(address(tokenA), shares_);
         assertGt(output_, 0);
-        assertEq(output_, IStandardExchangeIn(vault).previewExchangeIn(IERC20(vault), shares_, tokenA));
+        (uint256 previewAmountOut2,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(vault), shares_, tokenA);
+        assertEq(output_, previewAmountOut2);
         uint256 v3Debt_ = AaveV36Service.debtOf(v36Pool, address(tokenB), vault);
         uint256 v4Debt_ = AaveV4Service.debtOf(v4Spoke, v4ReserveIdA, vault);
         uint256 wallet_ = tokenA.balanceOf(address(this));

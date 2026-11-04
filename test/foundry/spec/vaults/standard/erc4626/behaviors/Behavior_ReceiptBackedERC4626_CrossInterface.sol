@@ -307,8 +307,7 @@ abstract contract Behavior_ReceiptBackedERC4626_CrossInterface is Test {
         }
         _assertAllReservesSynced();
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
-        uint256 newCredit = amount / 10;
-        uint256 expectedMint = IStandardExchangeIn(_se()).previewExchangeIn(_receipt(), newCredit, IERC20(_se()));
+        uint256 newCredit = amount / 10;(uint256 expectedMint,) = IStandardExchangeIn(_se()).previewExchangeIn(_receipt(), newCredit, IERC20(_se()));
         uint256 beforeShares = IERC20(_se()).balanceOf(_actor());
         vm.prank(_actor());
         _receipt().approve(address(caller), newCredit);

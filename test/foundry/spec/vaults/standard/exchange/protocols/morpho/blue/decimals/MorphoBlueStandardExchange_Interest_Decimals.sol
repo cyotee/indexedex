@@ -30,9 +30,7 @@ abstract contract MorphoBlueStandardExchange_Interest_Decimals is
         uint256 assetsIn = _u(1_000);
         uint256 shares = _wrapExactIn(user, assetsIn);
         _borrowFromMarket(2_000 ether, _u(500));
-        vm.warp(block.timestamp + 365 days);
-
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
+        vm.warp(block.timestamp + 365 days);(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
         uint256 expected = morpho.expectedSupplyAssets(marketParams, se) + _idleOf(se);
         assertGt(preview, assetsIn, "I2 preview assetsOut > assetsIn");
 
@@ -41,12 +39,8 @@ abstract contract MorphoBlueStandardExchange_Interest_Decimals is
         vm.startPrank(BORROWER);
         loanToken.approve(address(morpho), type(uint256).max);
         morpho.repay(marketParams, 0, borrowShares, BORROWER, "");
-        vm.stopPrank();
-
-        preview = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
-        vm.prank(user);
-        uint256 assetsOut = seIn.exchangeIn(
-            IERC20(se), shares, IERC20(address(loanToken)), 0, user, false, _deadline()
+        vm.stopPrank();(preview,) = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
+        vm.prank(user);(uint256 assetsOut,) = seIn.exchangeIn(IERC20(se), shares, IERC20(address(loanToken)), 0, user, false, _deadline()
         );
         assertEq(assetsOut, preview, "I2 preview == exec");
         assertGt(assetsOut, assetsIn, "I2 assetsOut > assetsIn");

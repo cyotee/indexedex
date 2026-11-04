@@ -15,8 +15,8 @@ import {
 contract SlipstreamStandardExchange_Routes_Test is TestBase_SlipstreamStandardExchange {
     address internal alice = makeAddr("slipRoutesAlice");
 
-    function _previewIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_) internal view returns (uint256) {
-        return vault.previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+    function _previewIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_) internal view returns (uint256) {(uint256 quotedAmountOut,) = vault.previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+        return quotedAmountOut;
     }
 
     function _zapIn(address who_, IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
@@ -25,8 +25,7 @@ contract SlipstreamStandardExchange_Routes_Test is TestBase_SlipstreamStandardEx
     {
         vm.startPrank(who_);
         tokenIn_.approve(address(vault), amountIn_);
-        uint256 preview_ = _previewIn(tokenIn_, amountIn_, tokenOut_);
-        out_ = vault.exchangeIn(tokenIn_, amountIn_, tokenOut_, 0, who_, false, _deadline());
+        uint256 preview_ = _previewIn(tokenIn_, amountIn_, tokenOut_);(out_,) = vault.exchangeIn(tokenIn_, amountIn_, tokenOut_, 0, who_, false, _deadline());
         vm.stopPrank();
         assertEq(out_, preview_, "previewExchangeIn == exchangeIn");
     }

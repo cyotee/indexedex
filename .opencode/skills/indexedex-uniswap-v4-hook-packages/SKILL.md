@@ -110,7 +110,6 @@ test/foundry/spec/hooks/uniswap/v4/factory/
 ## Constraints (do not violate)
 
 - **Held-reserve valuation (APEX D60, locked 2026-09-22).** Reserve-holding SE buffer hooks value a leg as its raw balance or `held x rate` from a configured `IRateProvider`; never from the SE's own quotes. A buffered leg (`token != se`) must carry a provider (`RateProviderRequired`); identity legs need none. Liquidity uses raw balances, swaps the rated book. Expose `rateProviders()` and `rateProvider(address)`. Fixtures: `contracts/test/libs/RateProviderFixtureLib.sol`. Law: `docs/agent/INDEXEDEX_AGENT_LAW.md` § held-reserve valuation.
-- **Held-reserve valuation (APEX D60, locked 2026-09-22).** Reserve-holding SE buffer hooks value a leg as its raw balance or `held x rate` from a configured `IRateProvider`; never from the SE's own quotes. A buffered leg (`token != se`) must carry a provider (`RateProviderRequired`); identity legs need none. Liquidity uses raw balances, swaps the rated book. Expose `rateProviders()` and `rateProvider(address)`. Fixtures: `contracts/test/libs/RateProviderFixtureLib.sol`. Law: `docs/agent/INDEXEDEX_AGENT_LAW.md` § held-reserve valuation.
 - **CREATE2** instances via hook factory (callback needs factory as `msg.sender`). Facets stay CREATE3.
 - Salt: `finalSalt = keccak256(abi.encode(packageSalt, mineNonce))` — **no** `address(pkg)`.
 - Instances **immutable** after postDeploy. No human `diamondCut`; `deployPoolOne`/`deployPoolTwo` then `finalize` cut internally; off-chain premine only.

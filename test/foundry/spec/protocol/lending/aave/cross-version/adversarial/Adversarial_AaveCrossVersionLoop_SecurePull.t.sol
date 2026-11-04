@@ -112,9 +112,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
     function _honestDeposit(address to_, uint256 amount_) internal returns (uint256 shares_) {
         _mint(tokenA, to_, amount_);
         vm.startPrank(to_);
-        tokenA.approve(vault, amount_);
-        shares_ = IStandardExchangeIn(vault).exchangeIn(
-            tokenA, amount_, IERC20(vault), 0, to_, false, _deadline()
+        tokenA.approve(vault, amount_);(shares_,) = IStandardExchangeIn(vault).exchangeIn(tokenA, amount_, IERC20(vault), 0, to_, false, _deadline()
         );
         vm.stopPrank();
         assertGt(shares_, 0, "honest mint");
@@ -141,9 +139,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, SEED_IN, uint256(0)
             )
-        );
-        IStandardExchangeIn(vault).exchangeIn(
-            tokenA, SEED_IN, IERC20(vault), 0, attacker, true, _deadline()
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, SEED_IN, IERC20(vault), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I1 In: no free vaultShare mint");
@@ -202,9 +198,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(vault).exchangeIn(
-            tokenA, claimed_, IERC20(vault), 0, attacker, true, _deadline()
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, claimed_, IERC20(vault), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I2 In: no mint");
@@ -262,9 +256,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0)
             )
-        );
-        IStandardExchangeIn(vault).exchangeIn(
-            tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline()
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline()
         );
 
         vm.prank(attacker);
@@ -272,9 +264,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0)
             )
-        );
-        IStandardExchangeIn(vault).exchangeIn(
-            tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline()
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(vault).balanceOf(attacker), attackerBefore, "I3 In: no second free credit");

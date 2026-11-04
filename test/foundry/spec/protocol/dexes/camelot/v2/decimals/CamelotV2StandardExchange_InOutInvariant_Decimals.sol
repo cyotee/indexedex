@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
@@ -63,8 +64,7 @@ abstract contract CamelotV2StandardExchange_InOutInvariant_Decimals is TestBase_
         if (minAmt == 0) minAmt = 1;
         uint256 maxAmt = reserveIn / 20;
         if (maxAmt < minAmt) return;
-        amountIn = bound(amountIn, minAmt, maxAmt);
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        amountIn = bound(amountIn, minAmt, maxAmt);(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         {
             uint256 minY = _uB(1) / 1_000;
             if (minY == 0) minY = 1;
@@ -97,10 +97,8 @@ abstract contract CamelotV2StandardExchange_InOutInvariant_Decimals is TestBase_
         tokenA.mint(user, amountIn);
 
         vm.startPrank(user);
-        tokenA.approve(address(vault), amountIn);
-        try IStandardExchangeIn(address(vault)).exchangeIn(
-            tokenIn, amountIn, tokenOut, 0, user, false, block.timestamp + 1 hours
-        ) returns (uint256 out) {
+        tokenA.approve(address(vault), amountIn);try IStandardExchangeIn(address(vault)).exchangeIn(tokenIn, amountIn, tokenOut, 0, user, false, block.timestamp + 1 hours
+        ) returns (uint256 out, uint256) {
             assertTrue(out > 0, "swap out");
         } catch {
             // Fee / min path may reject - OK for property suite
@@ -111,8 +109,7 @@ abstract contract CamelotV2StandardExchange_InOutInvariant_Decimals is TestBase_
 
     /// @notice P-BOUND: zero preview is zero.
     function test_zeroPreview() public view {
-        assertEq(
-            vault.previewExchangeIn(IERC20(address(tokenA)), 0, IERC20(address(tokenB))), 0, "zero preview"
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(vault)), IERC20(address(tokenA)), 0, IERC20(address(tokenB))), 0, "zero preview"
         );
     }
 }

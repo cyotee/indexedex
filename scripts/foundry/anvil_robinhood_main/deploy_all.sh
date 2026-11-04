@@ -105,9 +105,9 @@ Commands:
                      Rehearsal defaults to the configured mainnet Alchemy alias.
   token-staking      Phase 06 Stage 08 TokenStaking DFPkg, then Phase 08 Stage 01
                      DTF instance (7-day rewardsDuration). Does not notifyRewardAmount.
-                     Same as forge script: simulates unless --broadcast.
+                     Same as forge script --use solar: simulates unless --broadcast.
   token-staking-fund Phase 08 Stage 02: notifyRewardAmount(sender DTF balance).
-                     Same as forge script: simulates unless --broadcast.
+                     Same as forge script --use solar: simulates unless --broadcast.
   simulate      Script_SimulateArchitecture (library execute 02–06 in one
                 Foundry script). Default is no broadcast. EIP-1559 from the
                 fork source (no --legacy / --gas-price). Prints a deployer
@@ -154,7 +154,7 @@ Gas estimate (EIP-1559, no forced gas price, no broadcast):
 
   bash scripts/shell/anvil_robinhood_main.sh simulate --restart-anvil
   # or:
-  forge script scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol \\
+  forge script --use solar scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol \\
     --rpc-url http://127.0.0.1:8545 --sender \$SENDER --unlocked
 EOF
 }
@@ -513,7 +513,7 @@ run_forge_cmd() {
 
 forge_script_base() {
   local script_path="$1"
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL" --code-size-limit 98304 --non-interactive)
+  local cmd=(forge script --use solar "$script_path" --rpc-url "$RPC_URL" --code-size-limit 98304 --non-interactive)
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi
@@ -582,7 +582,7 @@ run_lifecycle_rehearsal() {
   export REHEARSAL_RPC_URL="$RPC_URL" REHEARSAL_DEPLOYMENTS_DIR="$OUT_DIR_OVERRIDE"
   # Reuse the maintained fork root and its warm cache without generating an
   # import-only source wrapper in the deployment evidence directory.
-  FOUNDRY_PROFILE=fork FOUNDRY_TEST="$REPO_ROOT/test/foundry/fork" run_forge_cmd forge test \
+  FOUNDRY_PROFILE=fork FOUNDRY_TEST="$REPO_ROOT/test/foundry/fork" run_forge_cmd forge test --use solar \
     --match-contract '^RobinhoodReleaseRehearsalTest$' --threads "${REHEARSAL_TEST_THREADS:-1}" \
     --offline --etherscan-api-key '' -vv
 }
@@ -643,7 +643,7 @@ rh_fee_accrual_stage() {
   basename="$(basename "$script")"
   record="$FOUNDRY_BROADCAST/$basename/4663/run-latest.json"
   export SENDER="$DEPLOYER_ADDRESS" OWNER="$DEPLOYER_ADDRESS" PRIVATE_KEY=0
-  local args=(forge script "$script" --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --unlocked --legacy --gas-price 2000000000)
+  local args=(forge script --use solar "$script" --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --unlocked --legacy --gas-price 2000000000)
   # Use local artifacts for traces; RPC simulation and broadcast remain enabled.
   args+=(--offline)
   if [[ "$mode" == broadcast ]] && rh_fee_accrual_check stage-complete "$pp-$ss" >/dev/null 2>&1; then
@@ -715,7 +715,7 @@ rh_run_fee_accrual() {
     rh_fee_accrual_copy_core || return $?
     # Current package libraries use CREATE3 + manager registry; never run core creation.
     build_rehearsal_artifacts || return $?
-    forge build contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol \
+    forge build --use solar contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol \
       contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol \
       contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeFacet.sol \
       contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldFacet.sol \
@@ -905,7 +905,7 @@ if [[ "$KILL_ANVIL" -eq 1 ]]; then
   exit 0
 fi
 
-# simulate / token-staking match forge script: no broadcast unless --broadcast.
+# simulate / token-staking match forge script --use solar: no broadcast unless --broadcast.
 if [[ "$COMMAND" == "simulate" || "$COMMAND" == "stagesimulate" || "$COMMAND" == "token-staking" || "$COMMAND" == "token-staking-fund" ]] && [[ "$SIMULATE_BROADCAST_OVERRIDE" -eq 0 ]]; then
   BROADCAST_FLAG=""
 fi

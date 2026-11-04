@@ -22,10 +22,8 @@ abstract contract UniswapV4Detf_Orbital_Extras_Decimals is TestBase_UniswapV4Det
     }
     function test_T8_1_liveMint_onePair() public {
         _firstBond(_u0(100));
-        uint256 mintIn = _u0(10);
-        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(pair0)), mintIn, IERC20(address(detfInfo)));
-        vm.startPrank(detfUser);
-        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 mintIn = _u0(10);(uint256 userPred,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(pair0)), mintIn, IERC20(address(detfInfo)));
+        vm.startPrank(detfUser);(uint256 out,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(out, userPred);
     }

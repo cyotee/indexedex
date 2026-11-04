@@ -28,7 +28,7 @@ contract ERC4626StandardExchangeInTarget is
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         _requireNonZero(amountIn);
         IERC4626 vault = protocolVault();
@@ -36,36 +36,36 @@ contract ERC4626StandardExchangeInTarget is
 
         // Identity share→share: DETF custom mint tables probe `previewExchangeIn(se, 1, se)`.
         if (address(tokenIn) == address(this) && address(tokenOut) == address(this)) {
-            return amountIn;
+            return (amountIn, 0);
         }
 
         // Mint SE
         if (address(tokenOut) == address(this)) {
             if (address(tokenIn) == address(vault)) {
-                return _convertVaultDeltaToShares(amountIn, _receiptBacking());
+                return (_convertVaultDeltaToShares(amountIn, _receiptBacking()), 0);
             }
             if (address(tokenIn) == underlying) {
                 uint256 receiptEquiv = vault.convertToShares(amountIn);
-                return _convertVaultDeltaToShares(receiptEquiv, _receiptBacking());
+                return (_convertVaultDeltaToShares(receiptEquiv, _receiptBacking()), 0);
             }
         }
 
         // Underlying ↔ protocol vault pass-through
         if (address(tokenIn) == underlying && address(tokenOut) == address(vault)) {
-            return vault.previewDeposit(amountIn);
+            return (vault.previewDeposit(amountIn), 0);
         }
         if (address(tokenIn) == address(vault) && address(tokenOut) == underlying) {
-            return vault.previewRedeem(amountIn);
+            return (vault.previewRedeem(amountIn), 0);
         }
 
         // Unwrap exact-in: SE → underlying (no exit fee)
         if (address(tokenIn) == address(this) && address(tokenOut) == underlying) {
-            return _previewUnderlyingOutForSeIn(amountIn);
+            return (_previewUnderlyingOutForSeIn(amountIn), 0);
         }
 
         // SE → protocol vault exact-in
         if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
-            return _previewRedeemShares(amountIn);
+            return (_previewRedeemShares(amountIn), 0);
         }
 
         revert UnsupportedRoute();
@@ -79,7 +79,7 @@ contract ERC4626StandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
         IERC4626 vault = protocolVault();
@@ -92,7 +92,7 @@ contract ERC4626StandardExchangeInTarget is
             amountOut = vault.deposit(actualIn, recipient);
             if (amountOut < minAmountOut) revert Slippage();
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // Wrap exact-in: underlying → SE (dilution fee). Mint on full credited input;
@@ -106,7 +106,7 @@ contract ERC4626StandardExchangeInTarget is
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // protocolVault → SE (dilution fee) — durable U credit (no free-mint on booked reserve)
@@ -121,7 +121,7 @@ contract ERC4626StandardExchangeInTarget is
             _mintWithUsageFee(recipient, amountOut);
             // Pull overshoot already refunded in _securePull; reserve retained.
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // protocolVault → underlying — redeem only actualIn; remaining vault tokens are reserve
@@ -131,7 +131,7 @@ contract ERC4626StandardExchangeInTarget is
             if (amountOut < minAmountOut) revert Slippage();
             // Do not refund vault-token reserve
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // Unwrap exact-in: SE → underlying (no exit fee) — burn SE shares (self-burn path).
@@ -144,7 +144,7 @@ contract ERC4626StandardExchangeInTarget is
             _burnSeShares(msg.sender, amountIn, pretransferred);
             _payUnderlyingLocalFirst(vault, amountOut, recipient);
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // SE → protocolVault exact-in — burn SE shares (self-burn path; same pretransfer law).
@@ -157,7 +157,7 @@ contract ERC4626StandardExchangeInTarget is
             _burnSeShares(msg.sender, amountIn, pretransferred);
             IERC20(address(vault)).safeTransfer(recipient, amountOut);
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         revert UnsupportedRoute();

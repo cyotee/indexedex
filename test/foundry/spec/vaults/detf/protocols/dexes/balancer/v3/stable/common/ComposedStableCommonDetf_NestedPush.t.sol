@@ -44,10 +44,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
     function _mintDetf(address user, uint256 daiIn_) internal returns (uint256 detfOut_) {
         dai.mint(user, daiIn_ * 2);
         vm.startPrank(user);
-        dai.approve(deployedDetfVault, daiIn_);
-        detfOut_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(
-                IERC20(address(dai)), daiIn_, IERC20(address(detfToken)), 0, user, false, block.timestamp + 1 hours
+        dai.approve(deployedDetfVault, daiIn_);(detfOut_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(IERC20(address(dai)), daiIn_, IERC20(address(detfToken)), 0, user, false, block.timestamp + 1 hours
             );
         vm.stopPrank();
     }
@@ -58,10 +55,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
         uint256 amountIn_ = 10e18;
         // Fund rate asset / path token used by integrated mint.
         dai.mint(address(this), amountIn_ * 2);
-        dai.approve(deployedDetfVault, amountIn_);
-        uint256 out_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(
-                IERC20(address(dai)),
+        dai.approve(deployedDetfVault, amountIn_);(uint256 out_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(IERC20(address(dai)),
                 amountIn_,
                 IERC20(address(detfToken)),
                 0,
@@ -88,10 +82,8 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
         uint256 U = Bh >= Rh ? Bh - Rh : 0;
         assertTrue(U > 0, "need surplus");
         uint256 claimOver_ = U + 1;
-        vm.expectRevert(); // TransferDeltaInsufficient or host InsufficientDeposit
-        IStandardExchangeIn(address(daiUsdcVault))
-            .exchangeIn(
-                IERC20(address(dai)),
+        vm.expectRevert();// TransferDeltaInsufficient or host InsufficientDeposit
+        IStandardExchangeIn(address(daiUsdcVault)).exchangeIn(IERC20(address(dai)),
                 claimOver_,
                 IERC20(address(daiUsdcVault)),
                 0,
@@ -109,10 +101,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
         uint256 Bh = IERC20(address(dai)).balanceOf(address(daiUsdcVault));
         uint256 U = Bh >= Rh ? Bh - Rh : 0;
         if (U >= 1) {
-            vm.expectRevert();
-            IStandardExchangeIn(address(daiUsdcVault))
-                .exchangeIn(
-                    IERC20(address(dai)),
+            vm.expectRevert();IStandardExchangeIn(address(daiUsdcVault)).exchangeIn(IERC20(address(dai)),
                     U + 1,
                     IERC20(address(daiUsdcVault)),
                     0,
@@ -121,10 +110,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
                     block.timestamp + 1 hours
                 );
         } else {
-            vm.expectRevert();
-            IStandardExchangeIn(address(daiUsdcVault))
-                .exchangeIn(
-                    IERC20(address(dai)),
+            vm.expectRevert();IStandardExchangeIn(address(daiUsdcVault)).exchangeIn(IERC20(address(dai)),
                     1,
                     IERC20(address(daiUsdcVault)),
                     0,
@@ -154,8 +140,8 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
     /// native output dust. Compare that payment independently of the DETF max-input refund.
     function _quotedUnderlyingPayment(uint256 wanted_) internal view returns (uint256) {
         IERC20 shares_ = IERC20(address(daiUsdcVault));
-        uint256 input_ = IStandardExchangeOut(address(daiUsdcVault)).previewExchangeOut(shares_, dai, wanted_);
-        return IStandardExchangeIn(address(daiUsdcVault)).previewExchangeIn(shares_, input_, dai);
+        uint256 input_ = IStandardExchangeOut(address(daiUsdcVault)).previewExchangeOut(shares_, dai, wanted_);(uint256 quotedAmountOut,) = IStandardExchangeIn(address(daiUsdcVault)).previewExchangeIn(shares_, input_, dai);
+        return quotedAmountOut;
     }
 
     function test_T_NEST_5_outerExactOut_refundToEntryMsgSender() public {
@@ -192,10 +178,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
 
     function test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount() public {
         _ensureLive();
-        vm.expectRevert();
-        IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(
-                IERC20(address(dai)), 0, IERC20(address(detfToken)), 0, address(this), false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(deployedDetfVault).exchangeIn(IERC20(address(dai)), 0, IERC20(address(detfToken)), 0, address(this), false, block.timestamp + 1 hours
             );
     }
 
@@ -234,10 +217,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
         if (B0 > R0) {
             uint256 U = B0 - R0;
             uint256 claim_ = U < amountIn_ ? U : amountIn_;
-            if (claim_ > 0) {
-                uint256 out_ = IStandardExchangeIn(deployedDetfVault)
-                    .exchangeIn(
-                        IERC20(address(dai)),
+            if (claim_ > 0) {(uint256 out_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(IERC20(address(dai)),
                         claim_,
                         IERC20(address(detfToken)),
                         0,
@@ -264,10 +244,7 @@ contract ComposedStableCommonDetf_NestedPush_Test is ComposedStableCommonDetf_In
             uint256 R = openBook.reserveOfToken(t);
             uint256 B = IERC20(t).balanceOf(deployedDetfVault);
             if (R == B) {
-                vm.expectRevert();
-                IStandardExchangeIn(deployedDetfVault)
-                    .exchangeIn(
-                        IERC20(t), 1, IERC20(address(detfToken)), 0, address(this), true, block.timestamp + 1 hours
+                vm.expectRevert();IStandardExchangeIn(deployedDetfVault).exchangeIn(IERC20(t), 1, IERC20(address(detfToken)), 0, address(this), true, block.timestamp + 1 hours
                     );
                 return;
             }

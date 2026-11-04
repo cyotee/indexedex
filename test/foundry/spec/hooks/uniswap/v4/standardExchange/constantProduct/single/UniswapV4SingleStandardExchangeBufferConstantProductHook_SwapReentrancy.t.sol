@@ -113,15 +113,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SwapReentrancy
             assertEq(rawToken.balanceOf(user) - c.rawBefore, c.amountOut, "exact raw received");
         }
         assertEq(rawToken.balanceOf(address(pm)), 0, "PoolManager raw settled");
-        assertEq(pairToken.balanceOf(address(pm)), 0, "PoolManager pair settled");
-
-        // A subsequent direct call verifies the completed V4 callback released the lock.
-        uint256 preview =
-            IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), 1 ether, IERC20(address(pairToken)));
-        vm.prank(user);
-        uint256 received = IStandardExchangeIn(hook)
-            .exchangeIn(
-                IERC20(address(rawToken)), 1 ether, IERC20(address(pairToken)), preview, user, false, block.timestamp
+        assertEq(pairToken.balanceOf(address(pm)), 0, "PoolManager pair settled");// A subsequent direct call verifies the completed V4 callback released the lock.
+        (uint256 preview,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), 1 ether, IERC20(address(pairToken)));
+        vm.prank(user);(uint256 received,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)), 1 ether, IERC20(address(pairToken)), preview, user, false, block.timestamp
             );
         assertEq(received, preview, "shared lock released after swap");
     }

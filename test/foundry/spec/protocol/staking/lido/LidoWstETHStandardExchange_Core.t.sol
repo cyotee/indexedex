@@ -28,13 +28,8 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
     function test_P1_wethToSe_previewEqualsExecution() public {
         uint256 amount = 10 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(seVault)
-        );
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault)
+        );(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             preview,
@@ -50,13 +45,8 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
     function test_P1_wstToSe_previewEqualsExecution() public {
         uint256 amount = 5 ether;
         _mintWstViaSt(address(this), amount);
-        hermeticWstEth.approve(seVault, amount);
-
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWstEth)), amount, IERC20(seVault)
-        );
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWstEth)),
+        hermeticWstEth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWstEth)), amount, IERC20(seVault)
+        );(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWstEth)),
             amount,
             IERC20(seVault),
             preview,
@@ -122,9 +112,7 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
         assertGt(sharesIn, 0);
 
         // Exact-in preview SE → WETH likewise quotes full NAV extractable value.
-        uint256 seBal = IERC20(seVault).balanceOf(address(this));
-        uint256 wethOut = seIn.previewExchangeIn(
-            IERC20(seVault), seBal, IERC20(address(hermeticWeth))
+        uint256 seBal = IERC20(seVault).balanceOf(address(this));(uint256 wethOut,) = seIn.previewExchangeIn(IERC20(seVault), seBal, IERC20(address(hermeticWeth))
         );
         assertGt(wethOut, available); // can exceed sleeve in the quote
 
@@ -224,12 +212,8 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
     function test_stEthWrapUnwrap_route() public {
         uint256 amount = 2 ether;
         hermeticStEth.mint(address(this), amount);
-        hermeticStEth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticStEth)), amount, IERC20(address(hermeticWstEth))
-        );
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticStEth)),
+        hermeticStEth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticStEth)), amount, IERC20(address(hermeticWstEth))
+        );(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticStEth)),
             amount,
             IERC20(address(hermeticWstEth)),
             preview,
@@ -249,13 +233,9 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
         _seedVaultInventory(20 ether, 0);
         uint256 shares = 3 ether; // approx; burn exact share amount
         // Use a known share amount from balance
-        shares = IERC20(seVault).balanceOf(address(this)) / 4;
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(seVault), shares, IERC20(address(hermeticWeth))
+        shares = IERC20(seVault).balanceOf(address(this)) / 4;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeth))
         );
-        uint256 balBefore = hermeticWeth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(seVault),
+        uint256 balBefore = hermeticWeth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(seVault),
             shares,
             IERC20(address(hermeticWeth)),
             preview,
@@ -292,14 +272,9 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
 
     function test_P1_seToWst_exactInAndOut() public {
         _seedVaultInventory(2 ether, 20 ether);
-        uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;
-
-        uint256 previewWst = seIn.previewExchangeIn(
-            IERC20(seVault), shares, IERC20(address(hermeticWstEth))
+        uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;(uint256 previewWst,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWstEth))
         );
-        uint256 wstBefore = hermeticWstEth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(seVault),
+        uint256 wstBefore = hermeticWstEth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(seVault),
             shares,
             IERC20(address(hermeticWstEth)),
             previewWst,
@@ -332,12 +307,8 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
     function test_P1_wethToWst_stakeRoute() public {
         uint256 amount = 2 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticWstEth))
-        );
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticWstEth))
+        );(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticWstEth)),
             preview,
@@ -354,13 +325,9 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
         _seedVaultInventory(10 ether, 0);
         uint256 amount = 2 ether;
         _mintWstViaSt(address(this), amount);
-        hermeticWstEth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWstEth)), amount, IERC20(address(hermeticWeth))
+        hermeticWstEth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWstEth)), amount, IERC20(address(hermeticWeth))
         );
-        uint256 wethBefore = hermeticWeth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWstEth)),
+        uint256 wethBefore = hermeticWeth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWstEth)),
             amount,
             IERC20(address(hermeticWeth)),
             preview,
@@ -380,12 +347,8 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
         // stETH → WETH
         uint256 amount = 1 ether;
         hermeticStEth.mint(address(this), amount);
-        hermeticStEth.approve(seVault, amount);
-        uint256 previewWeth = seIn.previewExchangeIn(
-            IERC20(address(hermeticStEth)), amount, IERC20(address(hermeticWeth))
-        );
-        uint256 outWeth = seIn.exchangeIn(
-            IERC20(address(hermeticStEth)),
+        hermeticStEth.approve(seVault, amount);(uint256 previewWeth,) = seIn.previewExchangeIn(IERC20(address(hermeticStEth)), amount, IERC20(address(hermeticWeth))
+        );(uint256 outWeth,) = seIn.exchangeIn(IERC20(address(hermeticStEth)),
             amount,
             IERC20(address(hermeticWeth)),
             previewWeth,
@@ -396,13 +359,9 @@ contract LidoWstETHStandardExchange_Core_Test is TestBase_LidoWstETHStandardExch
         assertEq(outWeth, previewWeth);
 
         // WETH → stETH (stake)
-        hermeticWeth.approve(seVault, outWeth);
-        uint256 previewSt = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), outWeth, IERC20(address(hermeticStEth))
+        hermeticWeth.approve(seVault, outWeth);(uint256 previewSt,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), outWeth, IERC20(address(hermeticStEth))
         );
-        uint256 stBefore = hermeticStEth.balanceOf(address(this));
-        uint256 outSt = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        uint256 stBefore = hermeticStEth.balanceOf(address(this));(uint256 outSt,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             outWeth,
             IERC20(address(hermeticStEth)),
             previewSt,

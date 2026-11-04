@@ -37,9 +37,7 @@ abstract contract Adversarial_SlipstreamSE_E6IJ_Decimals is TestBase_SlipstreamS
         pairToken0.mint(attacker, amountIn);
 
         vm.startPrank(attacker);
-        pairToken0.approve(address(vault), amountIn);
-        uint256 sharesOut = vault.exchangeIn(
-            IERC20(address(pairToken0)),
+        pairToken0.approve(address(vault), amountIn);(uint256 sharesOut,) = vault.exchangeIn(IERC20(address(pairToken0)),
             amountIn,
             IERC20(address(vault)),
             0,
@@ -103,9 +101,7 @@ abstract contract Adversarial_SlipstreamSE_E6IJ_Decimals is TestBase_SlipstreamS
         assertEq(pairToken0.allowance(attacker, address(vault)), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(
-            IERC20(address(pairToken0)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(IERC20(address(pairToken0)),
             claimed,
             IERC20(address(vault)),
             0,

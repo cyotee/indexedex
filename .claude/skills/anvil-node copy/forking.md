@@ -278,7 +278,7 @@ cast send $GOVERNOR "execute(uint256)" $PROPOSAL_ID
 anvil --fork-url $RPC --fork-block-number 18000000
 
 # Deploy flash loan receiver
-RECEIVER=$(forge create FlashLoanReceiver --rpc-url http://localhost:8545 --private-key $PK --json | jq -r '.deployedTo')
+RECEIVER=$(forge create --use solar FlashLoanReceiver --rpc-url http://localhost:8545 --private-key $PK --json | jq -r '.deployedTo')
 
 # Execute flash loan
 cast send $AAVE_POOL "flashLoan(address,address[],uint256[],uint256[],address,bytes,uint16)" \
@@ -331,7 +331,7 @@ anvil --fork-url $RPC --fork-block-number $(cast block latest --field number --r
     sleep 5
 
 - name: Run Fork Tests
-  run: forge test --rpc-url http://localhost:8545
+  run: forge test --use solar --rpc-url http://localhost:8545
 
 - name: Stop Anvil
   run: pkill anvil

@@ -59,10 +59,7 @@ contract RocketPoolRETHStandardExchange_BurnPay_Test is TestBase_RocketPoolRETHS
         _enableBurn(30 ether);
 
         // exact-in
-        uint256 sharesIn = IERC20(seVault).balanceOf(address(this)) / 10;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticWeth)));
-        uint256 out = seIn.exchangeIn(
-            IERC20(seVault),
+        uint256 sharesIn = IERC20(seVault).balanceOf(address(this)) / 10;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticWeth)));(uint256 out,) = seIn.exchangeIn(IERC20(seVault),
             sharesIn,
             IERC20(address(hermeticWeth)),
             preview,
@@ -95,13 +92,9 @@ contract RocketPoolRETHStandardExchange_BurnPay_Test is TestBase_RocketPoolRETHS
         _enableBurn(10 ether);
         uint256 amount = 2 ether;
         _mintReth(address(this), amount);
-        hermeticReth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticReth)), amount, IERC20(address(hermeticWeth))
+        hermeticReth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticReth)), amount, IERC20(address(hermeticWeth))
         );
-        uint256 balBefore = hermeticWeth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticReth)),
+        uint256 balBefore = hermeticWeth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticReth)),
             amount,
             IERC20(address(hermeticWeth)),
             preview,
@@ -116,11 +109,8 @@ contract RocketPoolRETHStandardExchange_BurnPay_Test is TestBase_RocketPoolRETHS
     function test_BP5_minOut_enforced_whenBurnUsed() public {
         _seedVaultInventory(0, 20 ether);
         _enableBurn(10 ether);
-        uint256 sharesIn = IERC20(seVault).balanceOf(address(this)) / 5;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticWeth)));
-        vm.expectRevert(abi.encodeWithSelector(IRocketPoolRETHStandardVault.Slippage.selector));
-        seIn.exchangeIn(
-            IERC20(seVault),
+        uint256 sharesIn = IERC20(seVault).balanceOf(address(this)) / 5;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticWeth)));
+        vm.expectRevert(abi.encodeWithSelector(IRocketPoolRETHStandardVault.Slippage.selector));seIn.exchangeIn(IERC20(seVault),
             sharesIn,
             IERC20(address(hermeticWeth)),
             preview + 1,

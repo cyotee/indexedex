@@ -27,9 +27,7 @@ contract Adversarial_Nested_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
         uint256 nestedIn_ = _fundNestedDetfShares(nested_, attacker, 20e18);
         nestedIn_ = _capNestedInput(outer_, nested_, nestedIn_);
         vm.startPrank(attacker);
-        IERC20(nested_).approve(outer_, nestedIn_);
-        uint256 outerOut_ = IStandardExchangeIn(outer_)
-            .exchangeIn(IERC20(nested_), nestedIn_, IERC20(outer_), 0, attacker, false, block.timestamp + 1 hours);
+        IERC20(nested_).approve(outer_, nestedIn_);(uint256 outerOut_,) = IStandardExchangeIn(outer_).exchangeIn(IERC20(nested_), nestedIn_, IERC20(outer_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(outerOut_ > 0, "outer minted");
 
@@ -37,17 +35,13 @@ contract Adversarial_Nested_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
         uint256 burnAmt_ = outerOut_ / 2;
         if (burnAmt_ == 0) burnAmt_ = outerOut_;
         vm.startPrank(attacker);
-        IERC20(outer_).approve(outer_, burnAmt_);
-        IStandardExchangeIn(outer_)
-            .exchangeIn(IERC20(outer_), burnAmt_, IERC20(nested_), 0, attacker, false, block.timestamp + 1 hours);
+        IERC20(outer_).approve(outer_, burnAmt_);IStandardExchangeIn(outer_).exchangeIn(IERC20(outer_), burnAmt_, IERC20(nested_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         // Third user still mints on inner
         uint256 seShares_ = _fundSeSharesLeg(0, victim, 15e18);
         vm.startPrank(victim);
-        seShares[0].approve(nested_, seShares_);
-        uint256 direct_ = IStandardExchangeIn(nested_)
-            .exchangeIn(seShares[0], seShares_, IERC20(nested_), 0, victim, false, block.timestamp + 1 hours);
+        seShares[0].approve(nested_, seShares_);(uint256 direct_,) = IStandardExchangeIn(nested_).exchangeIn(seShares[0], seShares_, IERC20(nested_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(direct_ > 0, "G1: nested still mints for third user");
         assertTrue(ISingleStandardExchangeDETFInfo(nested_).isReserveLive(), "nested still live");

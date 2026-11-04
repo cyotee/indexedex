@@ -149,8 +149,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RatedReserve_Test is
 
         // The same raw leg accepts fully funded atomic credit in native token units.
         token0.mint(address(this), 1 ether);
-        token0.approve(address(caller), 1 ether);
-        uint256 quote = IStandardExchangeIn(address(o)).previewExchangeIn(token0, 1 ether, token2);
+        token0.approve(address(caller), 1 ether);(uint256 quote,) = IStandardExchangeIn(address(o)).previewExchangeIn(token0, 1 ether, token2);
         caller.consumePretransfer(token0, address(this), address(o), 1 ether, data);
         assertEq(token2.balanceOf(address(caller)), quote, "funded output matches preview");
     }

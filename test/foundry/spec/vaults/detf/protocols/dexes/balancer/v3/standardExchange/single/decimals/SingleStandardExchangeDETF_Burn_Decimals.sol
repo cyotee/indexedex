@@ -40,9 +40,7 @@ abstract contract SingleStandardExchangeDETF_Burn_Decimals is TestBase_SingleSta
 
         uint256 mintShares_ = _fundSeShares(user, mintLp);
         vm.startPrank(user);
-        seShare.approve(openDetf, mintShares_);
-        openExchangeIn.exchangeIn(
-            seShare, mintShares_, IERC20(openDetf), 0, user, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, mintShares_);openExchangeIn.exchangeIn(seShare, mintShares_, IERC20(openDetf), 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         detfBal_ = IERC20(openDetf).balanceOf(user);
@@ -54,13 +52,10 @@ abstract contract SingleStandardExchangeDETF_Burn_Decimals is TestBase_SingleSta
         assertTrue(openInfo.isBurningAllowed(), "burn allowed");
 
         uint256 burnAmt_ = detfBal_ / 2;
-        uint256 seBefore_ = seShare.balanceOf(alice);
-        uint256 preview_ = openExchangeIn.previewExchangeIn(IERC20(openDetf), burnAmt_, seShare);
+        uint256 seBefore_ = seShare.balanceOf(alice);(uint256 preview_,) = openExchangeIn.previewExchangeIn(IERC20(openDetf), burnAmt_, seShare);
 
         vm.startPrank(alice);
-        IERC20(openDetf).approve(openDetf, burnAmt_);
-        uint256 out_ = openExchangeIn.exchangeIn(
-            IERC20(openDetf), burnAmt_, seShare, 0, alice, false, block.timestamp + 1 hours
+        IERC20(openDetf).approve(openDetf, burnAmt_);(uint256 out_,) = openExchangeIn.exchangeIn(IERC20(openDetf), burnAmt_, seShare, 0, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -75,9 +70,7 @@ abstract contract SingleStandardExchangeDETF_Burn_Decimals is TestBase_SingleSta
         uint256 supplyBefore_ = IERC20(openDetf).totalSupply();
         uint256 burnAmt_ = detfBal_ / 2;
         vm.startPrank(alice);
-        IERC20(openDetf).approve(openDetf, burnAmt_);
-        openExchangeIn.exchangeIn(
-            IERC20(openDetf), burnAmt_, seShare, 0, alice, false, block.timestamp + 1 hours
+        IERC20(openDetf).approve(openDetf, burnAmt_);openExchangeIn.exchangeIn(IERC20(openDetf), burnAmt_, seShare, 0, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertLt(IERC20(openDetf).totalSupply(), supplyBefore_, "D12 supply down");

@@ -17,6 +17,23 @@ import subprocess
 import sys
 
 
+def without_compiler_override(args):
+    """Drop a caller --use so the Solar flag this helper inserts is the only one."""
+    kept = []
+    skip_value = False
+    for arg in args:
+        if skip_value:
+            skip_value = False
+            continue
+        if arg == "--use":
+            skip_value = True
+            continue
+        if arg.startswith("--use="):
+            continue
+        kept.append(arg)
+    return kept
+
+
 TOKEN = re.compile(r'''("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|//[^\n]*|/\*[\s\S]*?\*/''')
 IMPORT = re.compile(r'''\bimport\s+(?:[^;]*?\bfrom\s+)?["']([^"']+)["'][^;]*;''')
 ARTIFACT = re.compile(r'''["']([^"'\s]+\.sol:[A-Za-z_$][\w$]*)["']''')
@@ -262,7 +279,7 @@ class SourceGraph:
                 "impact": [self.impact(path) for path in sorted(changed)],
                 "roots": sorted(roots), "runtime_artifacts": sorted(artifact_ids),
                 "compile_source_count": len(compile_closure),
-                "command": (["forge", "build", *sorted(roots)] if roots else [])}
+                "command": (["forge", "build", "--use", "solar", *sorted(roots)] if roots else [])}
 
     def audit(self, sources):
         creation = []
@@ -370,7 +387,7 @@ def test_plan(graph, changed, selected, consumers=(), all_artifacts=False,
     result.update({"test_roots": test_roots, "test_files": sorted(test_consumers),
                    "extra_test_imports": extra_test_imports,
                    "test_skip_patterns": skip_patterns,
-                   "test_command": ["forge", "test", *test_args]})
+                   "test_command": ["forge", "test", "--use", "solar", *without_compiler_override(test_args)]})
     return result
 
 

@@ -153,7 +153,7 @@ run_forge_with_retries() {
 
 forge_script_base() {
   local script_path="$1"
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
+  local cmd=(forge script --use solar "$script_path" --rpc-url "$RPC_URL")
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi

@@ -26,7 +26,7 @@ export const protocolDetfAbi = [
       { name: 'pretransferred', type: 'bool' },
       { name: 'deadline', type: 'uint256' },
     ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
+    outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 'amountRefunded', type: 'uint256' }],
   },
   {
     type: 'function',
@@ -37,7 +37,7 @@ export const protocolDetfAbi = [
       { name: 'amountIn', type: 'uint256' },
       { name: 'tokenOut', type: 'address' },
     ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
+    outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 'amountRefunded', type: 'uint256' }],
   },
   {
     type: 'function',

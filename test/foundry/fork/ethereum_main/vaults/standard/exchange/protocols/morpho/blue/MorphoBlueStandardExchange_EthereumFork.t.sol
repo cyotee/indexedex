@@ -59,9 +59,7 @@ contract MorphoBlueStandardExchange_EthereumFork is TestBase_MorphoBlueStandardE
         deal(liveParams.loanToken, user, amt * 2);
         vm.startPrank(user);
         IERC20(liveParams.loanToken).approve(se, type(uint256).max);
-        uint256 before = liveMorpho.expectedSupplyAssets(liveParams, se);
-        seIn.exchangeIn(
-            IERC20(liveParams.loanToken), amt, IERC20(se), 0, user, false, _deadline()
+        uint256 before = liveMorpho.expectedSupplyAssets(liveParams, se);seIn.exchangeIn(IERC20(liveParams.loanToken), amt, IERC20(se), 0, user, false, _deadline()
         );
         vm.stopPrank();
         assertGt(liveMorpho.expectedSupplyAssets(liveParams, se), before, "FK2 supply up");
@@ -72,11 +70,8 @@ contract MorphoBlueStandardExchange_EthereumFork is TestBase_MorphoBlueStandardE
         uint256 amt = 10 ** IERC20Metadata(liveParams.loanToken).decimals();
         deal(liveParams.loanToken, user, amt * 2);
         vm.startPrank(user);
-        IERC20(liveParams.loanToken).approve(se, type(uint256).max);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(liveParams.loanToken), amt, IERC20(se), 0, user, false, _deadline()
-        );
-        uint256 out = seIn.exchangeIn(IERC20(se), shares, IERC20(liveParams.loanToken), 0, user, false, _deadline());
+        IERC20(liveParams.loanToken).approve(se, type(uint256).max);(uint256 shares,) = seIn.exchangeIn(IERC20(liveParams.loanToken), amt, IERC20(se), 0, user, false, _deadline()
+        );(uint256 out,) = seIn.exchangeIn(IERC20(se), shares, IERC20(liveParams.loanToken), 0, user, false, _deadline());
         vm.stopPrank();
         assertGt(out, 0, "FK3 unwrap");
     }

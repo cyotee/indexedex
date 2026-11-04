@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"sessionDir": "/Users/cyotee/Projects/indexedex/.omo/ulw-research/20261023-171500",
+	"startedAt": "2026-10-24T00:15:00.000Z",
+	"finishedAt": null,
+	"elapsedMinutes": null,
+	"lane": "no-format",
+	"interview": null,
+	"deliverables": [
+		{
+			"format": "post",
+			"status": "pending",
+			"promised": true,
+			"updatedAt": "2026-10-23T19:25:37.352Z"
+		}
+	],
+	"renders": [],
+	"gates": {
+		"static": "not_run",
+		"layout": "not_run",
+		"visual": "not_run",
+		"proofread": "not_run"
+	},
+	"residualDefects": [],
+	"repair": null,
+	"sources": null
+}

@@ -50,7 +50,7 @@ anvil
 
 **EIP-170 stays on.** Do not pass `--disable-code-size-limit` to Anvil.
 
-Do not pass `--unlocked` to Anvil itself. Localhost `forge script` adds `--unlocked` for Dev 0.
+Do not pass `--unlocked` to Anvil itself. Localhost `forge script --use solar` adds `--unlocked` for Dev 0.
 
 Before start, `fetch_eip1559_fees` on the **fork URL** (not Anvil):
 
@@ -76,7 +76,7 @@ Command: `simulate` / `stagesimulate`. Default **no** `--broadcast` unless `--br
 `forge_script_base` for simulate:
 
 ```text
-forge script Script_SimulateArchitecture.s.sol
+forge script --use solar Script_SimulateArchitecture.s.sol
   --rpc-url http://127.0.0.1:8545
   --sender $SENDER
   --unlocked                          # localhost only
@@ -86,7 +86,7 @@ forge script Script_SimulateArchitecture.s.sol
 Never `--legacy`. Never `--gas-price`.
 Unset `ETH_GAS_PRICE` and `ETH_PRIORITY_GAS_PRICE` in the simulate process so a pinned max-fee does not leak in.
 
-Do **not** pass `--disable-code-size-limit` to `forge script` on this path.
+Do **not** pass `--disable-code-size-limit` to `forge script --use solar` on this path.
 
 The Solidity script wraps the txs to quote in **one** `startBroadcast` / `stopBroadcast` window so one dry-run JSON exists:
 

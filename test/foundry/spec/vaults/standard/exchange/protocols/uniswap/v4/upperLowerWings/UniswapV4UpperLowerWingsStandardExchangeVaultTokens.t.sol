@@ -47,8 +47,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTokensTest is Fixture {
         hostile.mint(address(this), 1e18);
         hostile.approve(address(hostileVault), type(uint256).max);
     }
-    function _hostileDeposit() private {
-        IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostile)), 1e12, IERC20(address(hostileVault)), 0, address(this), false, block.timestamp);
+    function _hostileDeposit() private {IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostile)), 1e12, IERC20(address(hostileVault)), 0, address(this), false, block.timestamp);
     }
     function test_feeOnTransferInboundRollsBackWholeOperation() public {
         hostile.configure(false, address(0), true);
@@ -60,20 +59,18 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTokensTest is Fixture {
     function test_feeOnTransferOutboundCannotUnderpayQuotedTarget() public {
         _hostileDeposit();
         hostile.configure(false, address(0), true);
-        vm.expectRevert();
-        IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
+        vm.expectRevert();IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
         assertEq(IERC20(address(hostileVault)).totalSupply(), 1e12);
     }
     function test_pausedAndBlacklistedDeliveryRollsBackThenCanResume() public {
         _hostileDeposit();
         hostile.configure(true, address(0), false);
-        vm.expectRevert();
-        IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
+        vm.expectRevert();IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
         hostile.configure(false, address(this), false);
-        vm.expectRevert();
-        IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
+        vm.expectRevert();IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
         hostile.configure(false, address(0), false);
-        assertGt(IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp), 0);
+        (uint256 exchangeAmountOut1,) = IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
+        assertGt(exchangeAmountOut1, 0);
     }
     function test_underlyingCallbackCannotReenterMoneyOrObserveEconomicRate() public {
         hostile.arm(address(hostileVault), abi.encodeCall(IStandardExchangeIn.exchangeIn,
@@ -86,8 +83,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTokensTest is Fixture {
     function test_negativeRebaseCannotSilentlySpendOtherBacking() public {
         _hostileDeposit();
         hostile.shrink(address(hostileVault), 1);
-        vm.expectRevert();
-        IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
+        vm.expectRevert();IStandardExchangeIn(address(hostileVault)).exchangeIn(IERC20(address(hostileVault)), 1000, IERC20(address(hostile)), 0, address(this), false, block.timestamp);
         assertEq(IERC20(address(hostileVault)).totalSupply(), 1e12);
     }
 }

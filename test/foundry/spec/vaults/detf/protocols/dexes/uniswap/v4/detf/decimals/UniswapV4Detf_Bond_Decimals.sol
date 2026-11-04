@@ -24,8 +24,7 @@ abstract contract UniswapV4Detf_Bond_Decimals is TestBase_UniswapV4Detf_Decimals
 
     function test_preLive_mint_reverts() public {
         vm.startPrank(detfUser);
-        vm.expectRevert();
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _uPair(1), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.expectRevert();IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _uPair(1), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 }

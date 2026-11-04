@@ -86,9 +86,7 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
     function _bookDaiResidual(uint256 residual_) internal {
         dai.mint(address(adapter), residual_);
         vm.startPrank(alice);
-        dai.approve(address(adapter), DUST_JOIN);
-        uint256 out_ = adapter.exchangeIn(
-            dai, DUST_JOIN, bpt, 0, alice, false, block.timestamp + 1 hours
+        dai.approve(address(adapter), DUST_JOIN);(uint256 out_,) = adapter.exchangeIn(dai, DUST_JOIN, bpt, 0, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(out_, 0, "book residual: honest join ok");
@@ -128,15 +126,13 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
         assertEq(dai.allowance(attacker, address(adapter)), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        adapter.exchangeIn(dai, claimed_, bpt, 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);adapter.exchangeIn(dai, claimed_, bpt, 0, attacker, true, block.timestamp + 1 hours);
 
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
-        adapter.exchangeIn(dai, claimed_, bpt, 0, address(caller), true, block.timestamp + 1 hours);
+        );adapter.exchangeIn(dai, claimed_, bpt, 0, address(caller), true, block.timestamp + 1 hours);
 
         assertEq(bpt.balanceOf(attacker), attBptBefore_, "I1: no free BPT");
         assertEq(dai.balanceOf(address(adapter)), invBefore_, "I1: inventory unchanged (no in-call transfer)");
@@ -208,8 +204,7 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
     function test_M_allowance_not_max_after_exchangeIn() public {
         uint256 amountIn_ = 20e18;
         vm.startPrank(alice);
-        dai.approve(address(adapter), amountIn_);
-        uint256 out_ = adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
+        dai.approve(address(adapter), amountIn_);(uint256 out_,) = adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "honest join");
 

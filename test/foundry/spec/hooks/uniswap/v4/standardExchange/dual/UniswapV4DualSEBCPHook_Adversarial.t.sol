@@ -54,8 +54,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         _mintAndDonate(c0, address(this), donated_);
         assertEq(IERC20(c0).balanceOf(hook), donated_, "donation parked");
 
-        uint256 amountIn_ = 5 ether;
-        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
+        uint256 amountIn_ = 5 ether;(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
         assertGt(preview_, 0);
 
         if (c0 == address(tokenA)) tokenA.mint(user, amountIn_);
@@ -66,9 +65,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         uint256 claim1Before_ = dual.claimSupplyCurrency1();
 
         vm.startPrank(user);
-        IERC20(c0).approve(hook, amountIn_);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
+        IERC20(c0).approve(hook, amountIn_);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
         );
         vm.stopPrank();
 
@@ -168,13 +165,9 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
 
         uint256 amountIn_ = 4 ether;
         if (c0 == address(tokenA)) tokenA.mint(user, amountIn_);
-        else tokenB.mint(user, amountIn_);
-
-        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
+        else tokenB.mint(user, amountIn_);(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
         vm.startPrank(user);
-        IERC20(c0).approve(hook, amountIn_);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
+        IERC20(c0).approve(hook, amountIn_);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
         );
         vm.stopPrank();
         assertEq(out_, preview_, "E1: preview == exec");
@@ -186,8 +179,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         _depositBoth(50 ether, 50 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
-        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
-        IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), 0, IERC20(c1));
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), 0, IERC20(c1));
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         dual.deposit(0, 0, user, 0, block.timestamp + 1);
@@ -237,9 +229,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
 
         vm.startPrank(user);
         IERC20(c0).approve(hook, amountIn_);
-        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), amountIn_, IERC20(c1), type(uint256).max, user, false, block.timestamp + 1
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));IStandardExchangeIn(hook).exchangeIn(IERC20(c0), amountIn_, IERC20(c1), type(uint256).max, user, false, block.timestamp + 1
         );
         vm.stopPrank();
 
@@ -290,17 +280,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
         // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
         );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
         );
 
         assertEq(IERC20(c1).balanceOf(attacker), c1AttBefore_, "I1: no free c1 extract");
@@ -332,17 +318,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
         // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c1), claimed_, IERC20(c0), 0, attacker, true, block.timestamp + 1
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(c1), claimed_, IERC20(c0), 0, attacker, true, block.timestamp + 1
         );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c1), claimed_, IERC20(c0), 0, attacker, true, block.timestamp + 1
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(c1), claimed_, IERC20(c0), 0, attacker, true, block.timestamp + 1
         );
 
         assertEq(IERC20(c0).balanceOf(attacker), c0AttBefore_, "I1: no free c0 extract");
@@ -408,9 +390,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         else tokenB.mint(user, honestIn_);
 
         vm.startPrank(user);
-        IERC20(c0).approve(hook, honestIn_);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), honestIn_, IERC20(c1), 0, user, false, block.timestamp + 1
+        IERC20(c0).approve(hook, honestIn_);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(c0), honestIn_, IERC20(c1), 0, user, false, block.timestamp + 1
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest c0->c1 ok");
@@ -425,17 +405,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
         // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
         );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
         );
 
         assertEq(IERC20(c0).balanceOf(hook), c0HookBefore_, "I3 face unmoved");

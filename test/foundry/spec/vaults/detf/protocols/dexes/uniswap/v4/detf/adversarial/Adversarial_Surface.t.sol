@@ -152,9 +152,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
         assertGt(info_.mintThreshold(), info_.burnThreshold());
         info_.syntheticPrice(); info_.pendingExpansionDetf(); info_.acceptedBondTokens();
         info_.isMintingAllowed(); info_.isMintingAllowed(payment_);
-        info_.isBurningAllowed(); info_.isBurningAllowed(payment_);
-        IStandardExchangeIn(proxy_).previewExchangeIn(payment_, 1 ether, IERC20(proxy_));
-        IStandardExchangeIn(proxy_).previewExchangeIn(IERC20(proxy_), 1e9, payment_);
+        info_.isBurningAllowed(); info_.isBurningAllowed(payment_);IStandardExchangeIn(proxy_).previewExchangeIn(payment_, 1 ether, IERC20(proxy_));IStandardExchangeIn(proxy_).previewExchangeIn(IERC20(proxy_), 1e9, payment_);
         info_.previewBond(payment_, 1 ether, 30 days);
         assertGt(IDETFStakingPreview(proxy_).previewStakingGonsPerUnit(payment_, 1 ether), 0);
         assertTrue(IDETFStandardizedYield(proxy_).rawSY() != address(0));
@@ -164,9 +162,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
         assertGt(minted_, 0, "standard input executes through actual proxy");
         address buyer_ = _surfaceBuyer();
         vm.startPrank(buyer_);
-        IERC20(proxy_).approve(proxy_, minted_ / 2);
-        uint256 out_ = IStandardExchangeIn(proxy_).exchangeIn(
-            IERC20(proxy_), minted_ / 2, payment_, 1, buyer_, false, block.timestamp + 1 hours
+        IERC20(proxy_).approve(proxy_, minted_ / 2);(uint256 out_,) = IStandardExchangeIn(proxy_).exchangeIn(IERC20(proxy_), minted_ / 2, payment_, 1, buyer_, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(out_, 0, "standard output executes through actual proxy");
@@ -177,8 +173,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
     function _assertUnauthorizedCallbacks(IUniswapV4Detf info_, IERC20 payment_) private {
         address attacker_ = _surfaceAttacker();
         vm.prank(attacker_);
-        vm.expectRevert(UniswapV4DetfRepo.ZeroAmount.selector);
-        IStandardExchangeIn(address(info_)).exchangeIn(payment_, 0, IERC20(address(info_)), 0, attacker_, false, block.timestamp + 1 hours);
+        vm.expectRevert(UniswapV4DetfRepo.ZeroAmount.selector);IStandardExchangeIn(address(info_)).exchangeIn(payment_, 0, IERC20(address(info_)), 0, attacker_, false, block.timestamp + 1 hours);
         vm.prank(attacker_);
         vm.expectRevert(UniswapV4DetfRepo.ZeroAmount.selector);
         info_.bond(payment_, 0, 30 days, attacker_, false, block.timestamp + 1 hours);

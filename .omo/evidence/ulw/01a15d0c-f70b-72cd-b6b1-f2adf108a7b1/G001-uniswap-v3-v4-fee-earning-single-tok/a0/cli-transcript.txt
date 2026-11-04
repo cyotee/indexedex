@@ -1,0 +1,5 @@
+Verification is document evidence, not a contract run. No vault code was changed.
+C001 artifact: .omo/ulw-research/20261023-171500/SYNTHESIS.md quote-function table.
+C002 artifact: sources-ledger.md S22 and S23, Visor and Gamma postmortems read by the lead.
+C003 artifact: SYNTHESIS.md Recommendation section. Rate reads accounted target storage, not slot0.
+Recommendation excludes Wings spot liquidation, Visor/Gamma spot share mint, Bunni v2, and deprecated Arrakis V1/V2.

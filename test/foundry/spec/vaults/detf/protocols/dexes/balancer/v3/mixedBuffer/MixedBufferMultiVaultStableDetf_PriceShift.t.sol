@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
@@ -106,13 +107,11 @@ contract MixedBufferMultiVaultStableDetf_PriceShift_Test is TestBase_MixedBuffer
         bytes32 stakingBefore_ = keccak256(abi.encode(staking_.stakingState()));
         uint256 supply_ = raw_.totalSupply();
         uint256 balance_ = raw_.balanceOf(bob);
-        uint256 buffer_ = _fixtureBufferToken().balanceOf(bob);
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(IERC20(address(_fixtureBufferToken())), _fixtureAmount(10e18), raw_);
+        uint256 buffer_ = _fixtureBufferToken().balanceOf(bob);(uint256 quote_,) = detfExchangeIn.previewExchangeIn(IERC20(address(_fixtureBufferToken())), _fixtureAmount(10e18), raw_);
         assertGt(quote_, 0);
         vm.startPrank(bob);
         _fixtureBufferToken().approve(detf, _fixtureAmount(10e18));
-        assertEq(detfExchangeIn.exchangeIn(
-            IERC20(address(_fixtureBufferToken())), _fixtureAmount(10e18), raw_, quote_, bob, false, block.timestamp + 1 hours
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(detfExchangeIn)), IERC20(address(_fixtureBufferToken())), _fixtureAmount(10e18), raw_, quote_, bob, false, block.timestamp + 1 hours
         ), quote_);
         vm.stopPrank();
         assertEq(raw_.balanceOf(bob), balance_ + quote_);

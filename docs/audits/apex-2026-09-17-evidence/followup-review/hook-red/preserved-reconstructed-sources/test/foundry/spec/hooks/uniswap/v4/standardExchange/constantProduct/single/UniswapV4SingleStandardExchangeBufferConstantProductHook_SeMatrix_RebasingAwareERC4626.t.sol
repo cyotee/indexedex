@@ -37,8 +37,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_Rebas
         _deployRowHook(args);
 
         vm.startPrank(user);
-        IERC20(face).approve(seUT, 300 ether);
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(face), 300 ether, IERC20(seUT), 0, user, false, block.timestamp);
+        IERC20(face).approve(seUT, 300 ether);IStandardExchangeIn(seUT).exchangeIn(IERC20(face), 300 ether, IERC20(seUT), 0, user, false, block.timestamp);
         IERC20(seUT).approve(hook, type(uint256).max);
         IERC20(raw).approve(hook, type(uint256).max);
         (uint256 a0, uint256 a1) = single.currency0() == seUT

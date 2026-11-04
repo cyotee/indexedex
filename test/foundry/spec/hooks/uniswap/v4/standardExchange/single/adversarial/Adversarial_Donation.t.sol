@@ -28,10 +28,8 @@ contract Adversarial_Donation_Test is AdvBase {
         // Mint SE to this contract via wrap on SE directly
         pairToken.mint(address(this), 100 ether);
         pairToken.approve(se, type(uint256).max);
-        uint256 seGot = IERC20(se).balanceOf(address(this));
-        // Fund SE balance: exchange
-        IStandardExchangeIn_Local(se).exchangeIn(
-            IERC20(address(pairToken)), 50 ether, IERC20(se), 0, address(this), false, block.timestamp
+        uint256 seGot = IERC20(se).balanceOf(address(this));// Fund SE balance: exchange
+        IStandardExchangeIn_Local(se).exchangeIn(IERC20(address(pairToken)), 50 ether, IERC20(se), 0, address(this), false, block.timestamp
         );
         uint256 seAmt = IERC20(se).balanceOf(address(this)) - seGot;
         IERC20(se).transfer(hook, seAmt);
@@ -81,7 +79,7 @@ contract Adversarial_Donation_Test is AdvBase {
 }
 
 interface IStandardExchangeIn_Local {
-    function exchangeIn(
+function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -89,5 +87,5 @@ interface IStandardExchangeIn_Local {
         address to,
         bool pretransferred,
         uint256 deadline
-    ) external returns (uint256);
+    ) external returns (uint256 amountOut, uint256 amountRefunded);
 }

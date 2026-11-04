@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
@@ -184,9 +185,7 @@ contract ComposedStableFundedStakingTest is
         (uint256 principal_, uint256 rewards_) = nft_.claimBond(id_, BUYER);
         assertEq(principal_, p_ / 2);
         IStakedDETF staking_ = _staking();
-        vm.prank(BUYER);
-        staking_.exchangeIn(
-            IERC20(address(staking_)), principal_ + rewards_, IERC20(composedDetf), 0, BUYER, false, block.timestamp
+        vm.prank(BUYER);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), principal_ + rewards_, IERC20(composedDetf), 0, BUYER, false, block.timestamp
         );
         assertEq(IERC20(composedDetf).balanceOf(BUYER), principal_ + rewards_);
         assertEq(_lp(), lp_);
@@ -196,12 +195,10 @@ contract ComposedStableFundedStakingTest is
         _bootstrapComposed(BUYER);
         uint256 supply_ = IERC20(composedDetf).totalSupply();
         uint256 backing_ = _staking().stakingState().accountedBacking;
-        IERC20 input_ = IERC20(address(composedStable));
-        uint256 quote_ = composedIn.previewExchangeIn(input_, 1e18, IERC20(composedDetf));
+        IERC20 input_ = IERC20(address(composedStable));(uint256 quote_,) = composedIn.previewExchangeIn(input_, 1e18, IERC20(composedDetf));
         vm.startPrank(owner);
         input_.approve(composedDetf, 1e18);
-        assertEq(
-            composedIn.exchangeIn(input_, 1e18, IERC20(composedDetf), quote_, owner, false, block.timestamp), quote_
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(composedIn)), input_, 1e18, IERC20(composedDetf), quote_, owner, false, block.timestamp), quote_
         );
         vm.stopPrank();
         assertGt(quote_, 0);
@@ -217,19 +214,16 @@ contract ComposedStableFundedStakingTest is
         IStakedDETF staking_ = _staking();
         vm.prank(BUYER);
         nft_.claimBond(id_, BUYER);
-        vm.prank(BUYER);
-        staking_.exchangeIn(IERC20(address(staking_)), p_, IERC20(composedDetf), p_, BUYER, false, block.timestamp);
+        vm.prank(BUYER);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), p_, IERC20(composedDetf), p_, BUYER, false, block.timestamp);
     }
 
     function test_composedGatedBptBurnSwapsWithoutBurning() public {
         uint256 amount_ = _claimRaw() / 1_000;
         IERC20 out_ = IERC20(address(composedStable));
-        uint256 supply_ = IERC20(composedDetf).totalSupply();
-        uint256 quote_ = composedIn.previewExchangeIn(IERC20(composedDetf), amount_, out_);
+        uint256 supply_ = IERC20(composedDetf).totalSupply();(uint256 quote_,) = composedIn.previewExchangeIn(IERC20(composedDetf), amount_, out_);
         vm.startPrank(BUYER);
         IERC20(composedDetf).approve(composedDetf, amount_);
-        assertEq(
-            composedIn.exchangeIn(IERC20(composedDetf), amount_, out_, quote_, BUYER, false, block.timestamp), quote_
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(composedIn)), IERC20(composedDetf), amount_, out_, quote_, BUYER, false, block.timestamp), quote_
         );
         vm.stopPrank();
         assertGt(quote_, 0);
@@ -276,9 +270,7 @@ contract ComposedStableFundedStakingTest is
         vm.warp(nft_.positionOf(id_).startTimestamp + DEFAULT_MIN_LOCK / 2);
         vm.prank(BUYER);
         uint256 vested_ = nft_.claimPrincipal(id_, BUYER);
-        vm.prank(BUYER);
-        staking_.exchangeIn(
-            IERC20(address(staking_)), vested_, IERC20(composedDetf), vested_, BUYER, false, block.timestamp
+        vm.prank(BUYER);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), vested_, IERC20(composedDetf), vested_, BUYER, false, block.timestamp
         );
         vm.warp(block.timestamp + 25 hours);
         _assertFundedDonation(composedDetf, nft_, staking_, IERC20(composedDetf), vested_ / 100, BUYER, id_);

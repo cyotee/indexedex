@@ -55,8 +55,7 @@ contract AaveCrossVersionLoop_APEX_Recurrence is AaveCrossVersionLoop_APEX_D43_T
 
     /// @notice Capacity exactly equal to initial principal stops before either recursive borrow.
     function test_RECURRENCE_DX01_exactInitialCapacity_noRecursivePosition() public {
-        _setSupplyCapA(100);
-        uint256 quoted = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
+        _setSupplyCapA(100);(uint256 quoted,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
         assertEq(_deposit(100 ether), quoted, "shares for principal only");
         assertEq(AaveV36Service.suppliedOf(v36Pool, address(tokenA), vault), 100 ether, "initial supply only");
         assertEq(tokenA.balanceOf(vault), 0, "no idle borrowed principal");
@@ -68,8 +67,7 @@ contract AaveCrossVersionLoop_APEX_Recurrence is AaveCrossVersionLoop_APEX_D43_T
         _mint(tokenA, address(this), 1 ether);
         tokenA.approve(address(v36Pool), 1 ether);
         v36Pool.supply(address(tokenA), 1 ether, address(this), 0);
-        _setSupplyCapA(1);
-        uint256 quoted = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
+        _setSupplyCapA(1);(uint256 quoted,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
         assertEq(_deposit(100 ether), quoted, "shares for all retained principal");
         assertEq(tokenA.balanceOf(vault), 100 ether, "whole principal local");
         assertEq(AaveV36Service.suppliedOf(v36Pool, address(tokenA), vault), 0, "no initial investment");
@@ -78,8 +76,7 @@ contract AaveCrossVersionLoop_APEX_Recurrence is AaveCrossVersionLoop_APEX_D43_T
 
     /// @notice The locked 100/150 case checks both collateral/debt legs and principal-only share issuance.
     function test_RECURRENCE_DX01_laterCapacity_exactNumericPosition() public {
-        _setSupplyCapA(150);
-        uint256 quoted = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
+        _setSupplyCapA(150);(uint256 quoted,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
         vm.expectCall(address(v36Pool), abi.encodeCall(IPool.supply, (address(tokenA), 100 ether, vault, 0)), 1);
         vm.expectCall(address(v36Pool), abi.encodeCall(IPool.supply, (address(tokenA), 39.69 ether, vault, 0)), 1);
         vm.expectCall(address(v36Pool), abi.encodeCall(IPool.supply, (address(tokenA), 10.31 ether, vault, 0)), 1);
@@ -107,8 +104,7 @@ contract AaveCrossVersionLoop_APEX_Recurrence is AaveCrossVersionLoop_APEX_D43_T
         _mint(tokenA, address(this), 100 ether);
         tokenA.approve(vault, 100 ether);
         uint256 poolBalance = tokenA.balanceOf(address(v36Pool.getReserveAToken(address(tokenA))));
-        vm.expectRevert(ISpoke.ReserveFrozen.selector);
-        IStandardExchangeIn(vault).exchangeIn(tokenA, 100 ether, IERC20(vault), 0, address(this), false, block.timestamp);
+        vm.expectRevert(ISpoke.ReserveFrozen.selector);IStandardExchangeIn(vault).exchangeIn(tokenA, 100 ether, IERC20(vault), 0, address(this), false, block.timestamp);
         assertEq(tokenA.balanceOf(address(this)), 100 ether, "caller transfer rolled back");
         assertEq(tokenA.allowance(address(this), vault), 100 ether, "caller allowance rolled back");
         assertEq(tokenA.balanceOf(vault), 0, "no local transfer survives");
@@ -126,8 +122,7 @@ contract AaveCrossVersionLoop_APEX_Recurrence is AaveCrossVersionLoop_APEX_D43_T
         v36Pool.supply(address(tokenA), 1 ether, address(this), 0);
         _setSupplyCapA(1);
         _deposit(80 ether);
-        _setSupplyCapA(101);
-        uint256 quote = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 50 ether, IERC20(vault));
+        _setSupplyCapA(101);(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 50 ether, IERC20(vault));
         assertEq(_deposit(50 ether), quote, "only caller's principal is credited");
         assertEq(AaveV36Service.suppliedOf(v36Pool, address(tokenA), vault), 100 ether, "old principal loop consumes remaining capacity");
         assertEq(AaveV4Service.debtOf(v4Spoke, v4ReserveIdA, vault), 20 ether, "old loop leverages only within headroom");
@@ -150,8 +145,7 @@ contract AaveCrossVersionLoop_APEX_Recurrence is AaveCrossVersionLoop_APEX_D43_T
         uint256 index = v36Pool.getReserveNormalizedIncome(address(tokenA));
         assertGt(index, 1e27, "real interest generated a non-unit supply index");
         _setSupplyCapA(200);
-        _assertSupplyCapacityBoundary();
-        uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
+        _assertSupplyCapacityBoundary();(uint256 preview,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 100 ether, IERC20(vault));
         uint256 minted = _deposit(100 ether);
         assertEq(minted, preview, "capacity does not change principal share quote");
         DataTypes.ReserveDataLegacy memory reserve = v36Pool.getReserveData(address(tokenA));

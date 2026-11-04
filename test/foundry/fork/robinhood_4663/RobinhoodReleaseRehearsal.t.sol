@@ -162,9 +162,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         assertEq(IERC20(input).balanceOf(address(h)), 10, "retained reserve dust");
         assertGt(h.previewSwapExactIn(input, output, 10), 0, "dust could otherwise buy output");
         uint256 beforeBalance = IERC20(output).balanceOf(address(this));
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));
-        IStandardExchangeIn(address(h)).exchangeIn(
-            IERC20(input), 10, IERC20(output), 0, address(this), true, block.timestamp + 1
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));IStandardExchangeIn(address(h)).exchangeIn(IERC20(input), 10, IERC20(output), 0, address(this), true, block.timestamp + 1
         );
         uint256 required = h.previewSwapExactOut(input, output, 1);
         assertLe(required, 10, "retained balance covers exact-out quote");
@@ -252,9 +250,9 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
             if (args.standardExchanges[i] == address(0)) continue;
             uint256 dust = IERC20(args.tokens[i]).balanceOf(address(h));
             if (dust > BalancerRepo.MAX_DUST_WEI) {
-                assertEq(IStandardExchangeIn(args.standardExchanges[i]).previewExchangeIn(
-                    IERC20(args.tokens[i]), dust - BalancerRepo.MAX_DUST_WEI, IERC20(args.standardExchanges[i])
-                ), 0, "no bufferable excess above retained dust");
+                (uint256 previewAmountOut1,) = IStandardExchangeIn(args.standardExchanges[i]).previewExchangeIn(IERC20(args.tokens[i]), dust - BalancerRepo.MAX_DUST_WEI, IERC20(args.standardExchanges[i])
+                );
+                assertEq(previewAmountOut1, 0, "no bufferable excess above retained dust");
             }
             assertEq(IERC20(args.tokens[i]).allowance(address(h), args.standardExchanges[i]), 0, "pair allowance cleared");
             assertEq(IERC20(args.standardExchanges[i]).allowance(address(h), args.standardExchanges[i]), 0, "share allowance cleared");
@@ -455,9 +453,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         if (backend == 0) {
             // V2 vault shares include a virtual-share precision offset. Set the
             // bootstrap denomination from the SE quote so stable legs start balanced.
-            for (uint256 i; i < pairs.length; ++i) {
-                uint256 shares = IStandardExchangeIn(exchanges[i]).previewExchangeIn(
-                    IERC20(pairs[i]), 1 ether, IERC20(exchanges[i])
+            for (uint256 i; i < pairs.length; ++i) {(uint256 shares,) = IStandardExchangeIn(exchanges[i]).previewExchangeIn(IERC20(pairs[i]), 1 ether, IERC20(exchanges[i])
                 );
                 args.creationPairPerDetfWad[i] = 1e36 / shares;
                 assertGt(args.creationPairPerDetfWad[i], 0, "nonzero bootstrap denomination");
@@ -620,7 +616,8 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         assertGt(amount_, 0, "funded DETF for staking round trip");
         uint256 userBefore_ = IERC20(detf).balanceOf(detfUser);
         uint256 receiptBefore_ = staking_.balanceOf(detfUser);
-        assertEq(staking_.previewExchangeIn(IERC20(detf), amount_, IERC20(address(staking_))), amount_);
+        (uint256 previewAmountOut2,) = staking_.previewExchangeIn(IERC20(detf), amount_, IERC20(address(staking_)));
+        assertEq(previewAmountOut2, amount_);
         vm.startPrank(detfUser);
         IERC20(detf).approve(address(staking_), amount_);
         uint256 staked_ = staking_.exchangeIn{gas: TX_GAS}(
@@ -693,8 +690,7 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
     function _fundReserveInventoryGrowth() internal {
         // Quad charges LP fees on geometric inventory growth. Supply real SE
         // shares before the next join so its fee-mint precondition is explicit.
-        uint256 amount_ = 20 ether;
-        uint256 quote_ = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), amount_, IERC20(se));
+        uint256 amount_ = 20 ether;(uint256 quote_,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), amount_, IERC20(se));
         assertGt(quote_, 0, "funded growth has payable SE quote");
         uint256 before_ = IERC20(se).balanceOf(reserveHook);
         vm.startPrank(detfUser);

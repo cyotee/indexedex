@@ -1,0 +1,5 @@
+Expected: a fee-earning vault with a view one-token rate that does not read same-pool spot.
+Observed: inspected LP vaults that quote one number read slot0. Two-amount vaults still split positions with slot0.
+Diff: no production LP vault in the read set meets both constraints.
+Replacement: getRate reads accounted target / supply. Fees enter only when target tokens move.
+Excluded by primary postmortem: Visor 2021 currentTick mint; Gamma 2024 single-sided ratio exception.

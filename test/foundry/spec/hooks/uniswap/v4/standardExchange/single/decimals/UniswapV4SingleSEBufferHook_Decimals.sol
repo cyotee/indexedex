@@ -122,9 +122,7 @@ abstract contract UniswapV4SingleSEBufferHook_Decimals is TestBase {
     function test_A2_seDonation_doesNotCreditFreeUnwrap() public {
         pairToken.mint(address(this), _uPair(100));
         pairToken.approve(se, type(uint256).max);
-        uint256 seGot = IERC20(se).balanceOf(address(this));
-        IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)), _uPair(50), IERC20(se), 0, address(this), false, block.timestamp
+        uint256 seGot = IERC20(se).balanceOf(address(this));IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)), _uPair(50), IERC20(se), 0, address(this), false, block.timestamp
         );
         uint256 seAmt = IERC20(se).balanceOf(address(this)) - seGot;
         IERC20(se).transfer(hook, seAmt);
@@ -179,9 +177,7 @@ abstract contract UniswapV4SingleSEBufferHook_Decimals is TestBase {
         hostilePair.mint(user, 1_000_000 ether);
         vm.startPrank(user);
         hostilePair.approve(hostileSe, type(uint256).max);
-        hostilePair.approve(address(hostileRouter), type(uint256).max);
-        IStandardExchangeIn(hostileSe).exchangeIn(
-            IERC20(address(hostilePair)),
+        hostilePair.approve(address(hostileRouter), type(uint256).max);IStandardExchangeIn(hostileSe).exchangeIn(IERC20(address(hostilePair)),
             200 ether,
             IERC20(hostileSe),
             0,

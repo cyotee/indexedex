@@ -44,7 +44,7 @@ Full documentation: https://docs.battlechain.com/llms-full.txt
 ### Requirements
 - Use battlechain-lib for deploy/agreement scripts
 - Never deploy directly to mainnet first
-- Use --skip-simulation for forge script on BattleChain
+- Use --skip-simulation for forge script --use solar on BattleChain
 ```
 
 ## File Placement by Tool

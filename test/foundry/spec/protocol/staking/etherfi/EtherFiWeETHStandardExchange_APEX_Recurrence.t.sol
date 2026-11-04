@@ -17,8 +17,7 @@ contract EtherFiWeETHStandardExchange_APEX_Recurrence is TestBase_EtherFiWeETHSt
     }
 
     function _deposit(uint256 assets, bool exactOut) internal returns (uint256 minted, uint256 used) {
-        IERC20 input = IERC20(address(hermeticWeth));
-        minted = seIn.previewExchangeIn(input, assets, IERC20(seVault));
+        IERC20 input = IERC20(address(hermeticWeth));(minted,) = seIn.previewExchangeIn(input, assets, IERC20(seVault));
         used = exactOut ? seOut.previewExchangeOut(input, IERC20(seVault), minted) : assets;
         _dealWeth(address(this), used);
         hermeticWeth.approve(seVault, used);
@@ -26,7 +25,8 @@ contract EtherFiWeETHStandardExchange_APEX_Recurrence is TestBase_EtherFiWeETHSt
         if (exactOut) {
             assertEq(seOut.exchangeOut(input, used, IERC20(seVault), minted, address(this), false, block.timestamp), used);
         } else {
-            assertEq(seIn.exchangeIn(input, used, IERC20(seVault), minted, address(this), false, block.timestamp), minted);
+            (uint256 exchangeAmountOut1,) = seIn.exchangeIn(input, used, IERC20(seVault), minted, address(this), false, block.timestamp);
+            assertEq(exchangeAmountOut1, minted);
         }
         assertEq(IERC20(seVault).balanceOf(address(this)) - beforeShares, minted, "preview and issuance");
     }
@@ -35,14 +35,14 @@ contract EtherFiWeETHStandardExchange_APEX_Recurrence is TestBase_EtherFiWeETHSt
         _policy(0.2e18);
         (uint256 first,) = _deposit(400 ether, false);
         assertEq(etherFiSe.liquidReserveEth(), 80 ether);
-        assertEq(etherFiSe.lockedReserveEth(), 320 ether);
-        uint256 entitlement = seIn.previewExchangeIn(IERC20(seVault), first, IERC20(address(hermeticWeth)));
+        assertEq(etherFiSe.lockedReserveEth(), 320 ether);(uint256 entitlement,) = seIn.previewExchangeIn(IERC20(seVault), first, IERC20(address(hermeticWeth)));
         (, uint256 used) = _deposit(50 ether, exactOut);
         uint256 total = 400 ether + used;
         assertEq(etherFiSe.totalReserveEth(), total, "fee-free value preserved");
         assertEq(etherFiSe.liquidReserveEth(), total / 5, "exact 20 percent sleeve");
         assertEq(etherFiSe.lockedReserveEth(), total - total / 5, "remainder invested");
-        assertEq(seIn.previewExchangeIn(IERC20(seVault), first, IERC20(address(hermeticWeth))), entitlement, "old-holder entitlement unchanged");
+        (uint256 previewAmountOut2,) = seIn.previewExchangeIn(IERC20(seVault), first, IERC20(address(hermeticWeth)));
+        assertEq(previewAmountOut2, entitlement, "old-holder entitlement unchanged");
     }
 
     /// @notice Locked 80/320 state plus a funded caller preserves exact sleeve allocation.

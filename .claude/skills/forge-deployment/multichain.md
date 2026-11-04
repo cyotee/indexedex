@@ -203,7 +203,7 @@ CHAINS=("mainnet" "arbitrum" "base" "optimism")
 
 for chain in "${CHAINS[@]}"; do
     echo "Deploying to $chain..."
-    forge script script/Deploy.s.sol \
+    forge script --use solar script/Deploy.s.sol \
         --rpc-url $chain \
         --broadcast \
         --verify &
@@ -303,13 +303,13 @@ contract MultiChainDeploy is Script {
 
 ```bash
 # Deploy to all chains
-forge script script/MultiChainDeploy.s.sol --broadcast
+forge script --use solar script/MultiChainDeploy.s.sol --broadcast
 
 # Deploy to specific chains (modify script or use env vars)
-CHAINS="mainnet,arbitrum" forge script script/MultiChainDeploy.s.sol --broadcast
+CHAINS="mainnet,arbitrum" forge script --use solar script/MultiChainDeploy.s.sol --broadcast
 
 # Verify all deployments
-forge script script/MultiChainDeploy.s.sol \
+forge script --use solar script/MultiChainDeploy.s.sol \
     --broadcast \
     --verify
 ```

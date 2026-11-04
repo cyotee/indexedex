@@ -258,7 +258,7 @@ contract ForkTest is Test {
 anvil --fork-url $MAINNET_RPC
 
 # Terminal 2: Run tests
-forge test --rpc-url http://localhost:8545
+forge test --use solar --rpc-url http://localhost:8545
 ```
 
 ## Common Use Cases
@@ -280,10 +280,10 @@ anvil --fork-url $MAINNET_RPC --dump-state ./state.json
 anvil --fork-url $MAINNET_RPC &
 
 # Deploy contracts
-forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
+forge script --use solar script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
 
 # Run integration tests
-forge test --rpc-url http://localhost:8545
+forge test --use solar --rpc-url http://localhost:8545
 
 # Stop Anvil
 pkill anvil

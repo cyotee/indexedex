@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "revision": 9,
+  "ledgerResetRevision": 1,
+  "brief": "Uniswap V3/V4 fee-earning single-token vault survey. Session /Users/cyotee/Projects/indexedex/.omo/ulw-research/20261023-171500. Axes: arrakis-family, manager-vaults, single-sided, v4-native, rate-oracles, pricing-math, incidents, skeptic. Deliver a cited comparison and one recommended pattern whose getRate does not read same-pool spot.\n",
+  "evidenceLayoutVersion": 2,
+  "createdAt": "2026-10-23T19:26:29.901Z",
+  "updatedAt": "2026-10-23T19:38:57.176Z",
+  "briefPath": ".omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/brief.md",
+  "goalsPath": ".omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/goals.json",
+  "ledgerPath": ".omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-uniswap-v3-v4-fee-earning-single-tok",
+      "title": "Uniswap V3/V4 fee-earning single-token vault survey. Session /Users/c...",
+      "objective": "Uniswap V3/V4 fee-earning single-token vault survey. Session /Users/cyotee/Projects/indexedex/.omo/ulw-research/20261023-171500. Axes: arrakis-family, manager-vaults, single-sided, v4-native, rate-oracles, pricing-math, incidents, skeptic. Deliver a cited comparison and one recommended pattern whose getRate does not read same-pool spot.",
+      "status": "complete",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "Cited comparison covers deposit token, fee exposure, quote function, and rate-provider fit for each surveyed vault family",
+          "userModel": "happy",
+          "expectedEvidence": "Session synthesis names the quote function and a primary URL for every protocol that enters the recommendation set",
+          "essential": true,
+          "capturedEvidence": "SYNTHESIS.md names the quote function and a primary URL for Wings, Arrakis V2, Charm, Gamma V4, Steer, ICHI, and Panoptic. Only the accounted-target pattern enters the recommendation set.",
+          "status": "pass",
+          "capturedAt": "2026-10-23T19:37:17.734Z",
+          "artifacts": [
+            ".omo/ulw-research/20261023-171500/SYNTHESIS.md",
+            ".omo/ulw-research/20261023-171500/sources-ledger.md",
+            ".omo/evidence/ulw/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/G001-uniswap-v3-v4-fee-earning-single-tok/a0/cli-transcript.txt",
+            ".omo/evidence/ulw/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/G001-uniswap-v3-v4-fee-earning-single-tok/a0/data-diff.txt"
+          ]
+        },
+        {
+          "id": "C002",
+          "scenario": "At least one exploited or shut-down design is checked against a primary postmortem and excluded if the failure is the spot-quote bug",
+          "userModel": "edge",
+          "expectedEvidence": "A primary postmortem URL is in sources-ledger.md and the recommendation excludes that design",
+          "essential": true,
+          "capturedEvidence": "sources-ledger.md S22 and S23 are the Visor 25 Nov 2021 and Gamma 23 Jan 2024 postmortems, both read by the lead. SYNTHESIS excludes those spot-quote designs and Bunni v2.",
+          "status": "pass",
+          "capturedAt": "2026-10-23T19:37:17.737Z",
+          "artifacts": [
+            ".omo/ulw-research/20261023-171500/SYNTHESIS.md",
+            ".omo/ulw-research/20261023-171500/sources-ledger.md",
+            ".omo/evidence/ulw/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/G001-uniswap-v3-v4-fee-earning-single-tok/a0/cli-transcript.txt",
+            ".omo/evidence/ulw/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/G001-uniswap-v3-v4-fee-earning-single-tok/a0/data-diff.txt"
+          ]
+        },
+        {
+          "id": "C003",
+          "scenario": "The recommended pattern still earns swap fees and can implement view getRate() without a same-pool spot liquidation",
+          "userModel": "regression",
+          "expectedEvidence": "SYNTHESIS.md states the pattern, the fee source, and the storage or oracle the rate reads",
+          "essential": false,
+          "capturedEvidence": "SYNTHESIS Recommendation states getRate = accounted target * 1e18 / supply. Fee source is in-range swap fees credited only when target tokens move. The rate reads the accounted-target counter, not slot0.",
+          "status": "pass",
+          "capturedAt": "2026-10-23T19:37:17.739Z",
+          "artifacts": [
+            ".omo/ulw-research/20261023-171500/SYNTHESIS.md",
+            ".omo/ulw-research/20261023-171500/sources-ledger.md",
+            ".omo/evidence/ulw/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/G001-uniswap-v3-v4-fee-earning-single-tok/a0/cli-transcript.txt",
+            ".omo/evidence/ulw/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/G001-uniswap-v3-v4-fee-earning-single-tok/a0/data-diff.txt"
+          ]
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-10-23T19:26:29.901Z",
+      "updatedAt": "2026-10-23T19:38:57.176Z",
+      "completedAt": "2026-10-23T19:38:57.176Z",
+      "evidence": "Cited comparison delivered. Recommended getRate reads accounted target storage. Visor and Gamma spot-quote designs excluded by primary postmortems. Gate review APPROVE."
+    }
+  ],
+  "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/ledger.jsonl as the audit trail.",
+  "aggregateCompletion": {
+    "status": "complete",
+    "completedAt": "2026-10-23T19:38:57.176Z",
+    "evidence": "Cited comparison delivered. Recommended getRate reads accounted target storage. Visor and Gamma spot-quote designs excluded by primary postmortems. Gate review APPROVE.",
+    "codexGoal": {
+      "goal": {
+        "objective": "Complete the durable ulw-loop plan in .omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/01a15d0c-f70b-72cd-b6b1-f2adf108a7b1/ledger.jsonl as the audit trail.",
+        "status": "complete"
+      }
+    }
+  }
+}

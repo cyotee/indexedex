@@ -48,12 +48,9 @@ contract MultiVaultWeightedDetf_PriceShift_Test is TestBase_MultiVaultWeightedDe
         internal
         returns (uint256 out_)
     {
-        uint256 seShares_ = _fundSeShares0(user, lpAmount);
-        uint256 preview_ = detfExchangeIn.previewExchangeIn(seShare0, seShares_, IERC20(detf));
+        uint256 seShares_ = _fundSeShares0(user, lpAmount);(uint256 preview_,) = detfExchangeIn.previewExchangeIn(seShare0, seShares_, IERC20(detf));
         vm.startPrank(user);
-        seShare0.approve(detf, seShares_);
-        out_ = detfExchangeIn.exchangeIn(
-            seShare0, seShares_, IERC20(detf), 0, user, false, block.timestamp + 1 hours
+        seShare0.approve(detf, seShares_);(out_,) = detfExchangeIn.exchangeIn(seShare0, seShares_, IERC20(detf), 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(preview_, out_, "mint preview==exec (default thresholds)");
@@ -62,12 +59,9 @@ contract MultiVaultWeightedDetf_PriceShift_Test is TestBase_MultiVaultWeightedDe
     function _burnDetfToVaultShare(address user, uint256 burnAmt)
         internal
         returns (uint256 out_)
-    {
-        uint256 preview_ = detfExchangeIn.previewExchangeIn(IERC20(detf), burnAmt, seShare0);
+    {(uint256 preview_,) = detfExchangeIn.previewExchangeIn(IERC20(detf), burnAmt, seShare0);
         vm.startPrank(user);
-        IERC20(detf).approve(detf, burnAmt);
-        out_ = detfExchangeIn.exchangeIn(
-            IERC20(detf), burnAmt, seShare0, 0, user, false, block.timestamp + 1 hours
+        IERC20(detf).approve(detf, burnAmt);(out_,) = detfExchangeIn.exchangeIn(IERC20(detf), burnAmt, seShare0, 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         // Multi-leg proportional exit uses Balancer vault math; closed-form muldiv preview can

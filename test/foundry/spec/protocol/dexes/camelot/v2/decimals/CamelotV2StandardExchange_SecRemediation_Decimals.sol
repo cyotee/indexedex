@@ -87,8 +87,7 @@ abstract contract CamelotV2StandardExchange_SecRemediation_Decimals is TestBase_
         tokenA.mint(address(vault), inventory_);
         tokenA.mint(attacker, syncPull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), syncPull_);
-        vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault), syncPull_);vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         uint256 bookedR_ = vault.reserveOfToken(address(tokenA));
@@ -125,10 +124,8 @@ abstract contract CamelotV2StandardExchange_SecRemediation_Decimals is TestBase_
         uint256 attackerSharesBefore_ = vault.balanceOf(attacker);
 
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), zapIn_);
-        try vault.exchangeIn(
-            IERC20(address(tokenA)), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
-        ) returns (uint256 shares_) {
+        tokenA.approve(address(vault), zapIn_);try vault.exchangeIn(IERC20(address(tokenA)), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
+        ) returns (uint256 shares_, uint256) {
             if (shares_ > 0) {
                 vault.redeem(shares_, attacker, attacker);
             }
@@ -172,10 +169,8 @@ abstract contract CamelotV2StandardExchange_SecRemediation_Decimals is TestBase_
         uint256 zapIn_ = _uA(50);
         tokenC_.mint(attacker, zapIn_);
         vm.startPrank(attacker);
-        tokenC_.approve(address(emptyVault_), zapIn_);
-        try emptyVault_.exchangeIn(
-            IERC20(address(tokenC_)), zapIn_, IERC20(address(emptyVault_)), 0, attacker, false, _deadline()
-        ) returns (uint256 shares_) {
+        tokenC_.approve(address(emptyVault_), zapIn_);try emptyVault_.exchangeIn(IERC20(address(tokenC_)), zapIn_, IERC20(address(emptyVault_)), 0, attacker, false, _deadline()
+        ) returns (uint256 shares_, uint256) {
             if (shares_ > 0) {
                 emptyVault_.redeem(shares_, attacker, attacker);
             }
@@ -198,8 +193,7 @@ abstract contract CamelotV2StandardExchange_SecRemediation_Decimals is TestBase_
         uint256 vaultLpBefore_ = lp_.balanceOf(address(vault));
 
         vm.prank(attacker);
-        vm.expectRevert();
-        vault.exchangeIn(lp_, gap_, IERC20(address(vault)), 0, attacker, false, _deadline());
+        vm.expectRevert();vault.exchangeIn(lp_, gap_, IERC20(address(vault)), 0, attacker, false, _deadline());
 
         assertEq(vault.totalSupply(), supplyBefore_, "I1 lpDeposit: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1 lpDeposit: attacker shares unchanged");

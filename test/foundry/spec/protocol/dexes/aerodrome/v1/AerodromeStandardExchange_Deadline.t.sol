@@ -59,9 +59,7 @@ contract AerodromeStandardExchange_Deadline_Test is TestBase_AerodromeStandardEx
         tokenA.approve(address(vault_), amount_);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, expired_, block.timestamp)
-        );
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, expired_
+        );IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, expired_
         );
         vm.stopPrank();
 
@@ -107,9 +105,7 @@ contract AerodromeStandardExchange_Deadline_Test is TestBase_AerodromeStandardEx
         IERC20(pool_).approve(address(vault_), lpAmount_);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, expired_, block.timestamp)
-        );
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(pool_), lpAmount_, IERC20(address(vault_)), 0, attacker, false, expired_
+        );IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(pool_), lpAmount_, IERC20(address(vault_)), 0, attacker, false, expired_
         );
         vm.stopPrank();
 
@@ -122,9 +118,7 @@ contract AerodromeStandardExchange_Deadline_Test is TestBase_AerodromeStandardEx
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _tokens();
         vm.prank(attacker);
-        vm.expectRevert();
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), 0, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        vm.expectRevert();IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), 0, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
     }
 
@@ -136,9 +130,7 @@ contract AerodromeStandardExchange_Deadline_Test is TestBase_AerodromeStandardEx
 
         deal(address(tokenA), attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), amount_);
-        uint256 out_ = IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, block.timestamp
+        tokenA.approve(address(vault_), amount_);(uint256 out_,) = IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, block.timestamp
         );
         vm.stopPrank();
         assertGt(out_, 0, "exact-timestamp deadline should succeed");
@@ -158,9 +150,7 @@ contract AerodromeStandardExchange_Deadline_Test is TestBase_AerodromeStandardEx
         tokenA.approve(address(vault_), amount_);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, deadline_, block.timestamp)
-        );
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, deadline_
+        );IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, deadline_
         );
         vm.stopPrank();
     }

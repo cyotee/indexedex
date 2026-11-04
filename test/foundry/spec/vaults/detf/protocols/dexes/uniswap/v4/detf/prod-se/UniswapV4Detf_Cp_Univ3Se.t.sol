@@ -25,13 +25,10 @@ contract UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf_Cp_Univ3Se {
         _assertFundedMatureClaim(detf, id_, detfUser);
         IERC20 claim = IERC20(detfInfo.rebasingClaimToken());
         for (uint256 i; i < 2; ++i) {
-            uint256 amount = IERC20(detf).balanceOf(detfUser) / 10;
-            uint256 quoted = IStandardExchangeIn(address(claim)).previewExchangeIn(IERC20(detf), amount, claim);
+            uint256 amount = IERC20(detf).balanceOf(detfUser) / 10;(uint256 quoted,) = IStandardExchangeIn(address(claim)).previewExchangeIn(IERC20(detf), amount, claim);
             assertGt(quoted, 0);
             vm.startPrank(detfUser);
-            IERC20(detf).approve(address(claim), amount);
-            uint256 minted = IStandardExchangeIn(address(claim)).exchangeIn(
-                IERC20(detf), amount, claim, quoted, detfUser, false, block.timestamp + 1 hours
+            IERC20(detf).approve(address(claim), amount);(uint256 minted,) = IStandardExchangeIn(address(claim)).exchangeIn(IERC20(detf), amount, claim, quoted, detfUser, false, block.timestamp + 1 hours
             );
             vm.stopPrank();
             assertEq(minted, quoted, "funded SE claim preview matches rebasing balance");
@@ -49,9 +46,9 @@ contract UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf_Cp_Univ3Se {
     function test_H_CP_GV3_mint() public {
         _firstBond(100 ether);
         uint256 mintIn = 10 ether;
-        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
+        (uint256 userPred,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
         vm.startPrank(detfUser);
-        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        (uint256 out,) = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out, 0, "out");
         assertEq(out, userPred, "previewMint==exec");
@@ -62,21 +59,21 @@ contract UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf_Cp_Univ3Se {
     function test_H_CP_GV3_burn() public {
         _firstBond(100 ether);
         vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        (uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted, 0, "minted");
 
         uint256 burnIn = minted / 2;
         _assertR19();
         _assertSeAllowancesZero();
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
+        (uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
         uint256 pairBefore = IERC20(mintToken).balanceOf(detfUser);
         uint256 supplyBefore = IERC20(detf).totalSupply();
         bool primaryBurn = detfInfo.isBurningAllowed(IERC20(mintToken));
 
         vm.startPrank(detfUser);
         IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        (uint256 amountOut,) = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(amountOut, preview, "previewBurn==exec");

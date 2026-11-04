@@ -127,9 +127,7 @@ contract UniswapV4Detf_Weighted_Policy is
             if (input_ > reserveBudget_) input_ = reserveBudget_;
             assertGt(input_, 0, "funded DETF available for public reserve swap");
             vm.startPrank(detfUser);
-            IERC20(d).approve(info_.hook(), input_);
-            IStandardExchangeIn(info_.hook()).exchangeIn(
-                IERC20(d), input_, pairB_, 0, detfUser, false, _deadline()
+            IERC20(d).approve(info_.hook(), input_);IStandardExchangeIn(info_.hook()).exchangeIn(IERC20(d), input_, pairB_, 0, detfUser, false, _deadline()
             );
             vm.stopPrank();
         }

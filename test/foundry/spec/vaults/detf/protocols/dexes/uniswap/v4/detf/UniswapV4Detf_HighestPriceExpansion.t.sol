@@ -226,9 +226,7 @@ contract UniswapV4Detf_HighestPriceExpansionTest is TestBase_UniswapV4Detf_Weigh
     function test_stakingSyDepositSettlesHighestBeforeNewPrincipal() public {
         _launch(1_000e18, 1e18, 1.05e18);
         (address[] memory pairs_,) = _prices();
-        vm.startPrank(detfUser);
-        uint256 raw_ = IStandardExchangeIn(detf)
-            .exchangeIn(IERC20(pairs_[1]), 1 ether, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 raw_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(pairs_[1]), 1 ether, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours);
         IStandardizedYield sy_ = IStandardizedYield(IDETFStandardizedYield(detf).stakingSY());
         IERC20(detf).approve(address(sy_), raw_);
         uint256 amount_ = raw_ / 2;

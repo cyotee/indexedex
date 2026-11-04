@@ -57,16 +57,13 @@ contract UniswapV3FullSpreadStandardExchangeVault_Decimals is TestBase_UniswapV3
         uint256 unit = side ? f.unitB : f.unitA;
         _externalSwapExactIn(f.pool, !side, 10 * unit);
         uint256 beforeShares = f.vault.totalSupply();
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, unit, 0));
-        f.vault.exchangeIn(input, unit, IERC20(address(f.vault)), 0, address(this), true, block.timestamp);
-        assertEq(f.vault.totalSupply(), beforeShares);
-        uint256 quote = f.vault.previewExchangeIn(input, unit, IERC20(address(f.vault)));
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, unit, 0));f.vault.exchangeIn(input, unit, IERC20(address(f.vault)), 0, address(this), true, block.timestamp);
+        assertEq(f.vault.totalSupply(), beforeShares);(uint256 quote,) = f.vault.previewExchangeIn(input, unit, IERC20(address(f.vault)));
         ERC20PermitMintableStub(address(input)).mint(address(this), unit);
         bytes memory route = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (input, unit, IERC20(address(f.vault)), quote, address(this), true, block.timestamp));
 
-        input.transfer(address(f.vault), unit);
-        uint256 minted = f.vault.exchangeIn(input, unit, IERC20(address(f.vault)), quote, address(this), true, block.timestamp);
+        input.transfer(address(f.vault), unit);(uint256 minted,) = f.vault.exchangeIn(input, unit, IERC20(address(f.vault)), quote, address(this), true, block.timestamp);
         assertEq(minted, quote); assertEq(f.vault.totalSupply(), beforeShares + minted);
         uint256 outQuote = IStandardizedYield(address(f.vault)).previewRedeem(address(output), minted);
         uint256 beforeOut = output.balanceOf(address(this));

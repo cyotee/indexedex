@@ -35,8 +35,7 @@ contract MorphoBlueStandardExchange_Fees is TestBase_MorphoBlueStandardExchange 
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, feePct);
 
-        address feeTo_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), 100 ether, IERC20(se));
+        address feeTo_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), 100 ether, IERC20(se));
         uint256 shares = _wrapExactIn(user, 100 ether);
         assertEq(shares, preview, "F2 user shares == sharesForDeposit");
         assertEq(IERC20(se).balanceOf(user), shares, "F2 user full shares");

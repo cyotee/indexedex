@@ -98,11 +98,9 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         info_.isBurningAllowed();
 
         // Mutating surface via proxy (mint)
-        uint256 shares_ = _fundSeSharesLeg(0, bob, 25e18);
-        uint256 preview_ = ex_.previewExchangeIn(seShares[0], shares_, IERC20(instance_));
+        uint256 shares_ = _fundSeSharesLeg(0, bob, 25e18);(uint256 preview_,) = ex_.previewExchangeIn(seShares[0], shares_, IERC20(instance_));
         vm.startPrank(bob);
-        seShares[0].approve(instance_, shares_);
-        uint256 out_ = ex_.exchangeIn(seShares[0], shares_, IERC20(instance_), 0, bob, false, block.timestamp + 1 hours);
+        seShares[0].approve(instance_, shares_);(uint256 out_,) = ex_.exchangeIn(seShares[0], shares_, IERC20(instance_), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(out_, preview_, "proxy mint preview==exec");
         assertTrue(out_ > 0, "proxy mint ok");

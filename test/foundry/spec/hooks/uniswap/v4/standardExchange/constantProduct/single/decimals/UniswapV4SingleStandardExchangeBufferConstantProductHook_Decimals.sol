@@ -264,16 +264,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
 
     function test_SE1_exchangeIn_rawToPair_and_pairToRaw() public {
         _seedSwapBook();
-        uint256 amountInRaw = _uRaw(3);
-
-        uint256 predPair = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amountInRaw, IERC20(address(pairToken))
+        uint256 amountInRaw = _uRaw(3);(uint256 predPair,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountInRaw, IERC20(address(pairToken))
         );
         assertGt(predPair, 0);
         uint256 bPair = pairToken.balanceOf(user);
-        vm.prank(user);
-        uint256 outPair = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 outPair,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             amountInRaw,
             IERC20(address(pairToken)),
             0,
@@ -284,15 +279,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         assertEq(outPair, predPair);
         assertEq(pairToken.balanceOf(user) - bPair, outPair);
 
-        uint256 amountInPair = _uPair(3);
-        uint256 predRaw = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(pairToken)), amountInPair, IERC20(address(rawToken))
+        uint256 amountInPair = _uPair(3);(uint256 predRaw,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(pairToken)), amountInPair, IERC20(address(rawToken))
         );
         assertGt(predRaw, 0);
         uint256 bRaw = rawToken.balanceOf(user);
-        vm.prank(user);
-        uint256 outRaw = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(pairToken)),
+        vm.prank(user);(uint256 outRaw,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(pairToken)),
             amountInPair,
             IERC20(address(rawToken)),
             0,
@@ -384,9 +375,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         uint256 pairAmt = _uPair(50);
         pairToken.mint(user, pairAmt);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-        uint256 seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(se, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             pairAmt,
             IERC20(se),
             0,
@@ -408,14 +397,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         uint256 rawHookAfterDonate_ = rawToken.balanceOf(hook);
         assertGe(rawHookAfterDonate_, donated_, "donation parked");
 
-        uint256 amountIn_ = _uRaw(3);
-        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
+        uint256 amountIn_ = _uRaw(3);(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
         );
         uint256 pairBefore_ = pairToken.balanceOf(user);
-        vm.prank(user);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             amountIn_,
             IERC20(address(pairToken)),
             0,

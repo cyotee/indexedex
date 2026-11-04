@@ -74,9 +74,7 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         vm.prank(attacker);
         asset.transfer(address(vault), 25e18);
         vm.prank(attacker);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(asset)), 25e18, IERC20(address(vault)), 0, attacker, true, block.timestamp
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), 25e18, IERC20(address(vault)), 0, attacker, true, block.timestamp
         );
         assertEq(IERC20(address(vault)).totalSupply(), beforeShares);
         assertEq(IERC20(address(vault)).balanceOf(attacker), 0);
@@ -128,9 +126,7 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         // the share-input redeem reverts TransferDeltaInsufficient(claimed, delivered), NOT the EOA gate.
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1e18), uint256(0)));
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(vault)), 1e18, IERC20(address(asset)), 0, address(caller), true, block.timestamp
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1e18), uint256(0)));IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), 1e18, IERC20(address(asset)), 0, address(caller), true, block.timestamp
         );
     }
 
@@ -220,9 +216,7 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
                 vm.prank(alice);
                 wrapped.withdraw(1e18, bob, alice);
             } else if (route == 2) {
-                vm.prank(address(caller));
-                IStandardExchangeIn(address(wrapped)).exchangeIn(
-                    IERC20(address(wrapped)), 1e28, IERC20(address(taxed)), 0, bob, true, block.timestamp);
+                vm.prank(address(caller));IStandardExchangeIn(address(wrapped)).exchangeIn(IERC20(address(wrapped)), 1e28, IERC20(address(taxed)), 0, bob, true, block.timestamp);
             } else if (route == 3) {
                 vm.prank(address(caller));
                 IStandardExchangeOut(address(wrapped)).exchangeOut(

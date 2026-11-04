@@ -192,7 +192,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         _ownerSeedBook();
         uint256 lp = IERC20(hook).balanceOf(owner);
         vm.prank(owner);
-        single.withdraw(lp, owner, 0, 0, block.timestamp + 1 hours);
+        single.withdraw(lp, owner, 0, 0, vm.getBlockTimestamp() + 1 hours);
         assertEq(IERC20(hook).totalSupply(), 1000, "MIN remains");
 
         CpOwnerDuringLockHarness harness = new CpOwnerDuringLockHarness(pm);
@@ -209,7 +209,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
                 50 ether,
                 address(harness),
                 uint256(0),
-                block.timestamp + 1 hours
+                vm.getBlockTimestamp() + 1 hours
             )
         );
         uint256 lpOut = abi.decode(ret, (uint256));
@@ -228,7 +228,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         IMultiStepOwnable ownable_ = IMultiStepOwnable(hook);
         vm.prank(owner);
         ownable_.initiateOwnershipTransfer(newOwner_);
-        vm.warp(block.timestamp + ownable_.getOwnershipTransferBuffer() + 1);
+        vm.warp(vm.getBlockTimestamp() + ownable_.getOwnershipTransferBuffer() + 1);
         vm.prank(owner);
         ownable_.confirmOwnershipTransfer(newOwner_);
         vm.prank(newOwner_);

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+
 import {StandardExchangeAccountingHandler} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -52,8 +54,7 @@ contract AaveV3StataStandardExchange_Invariant is AaveV3StataStandardExchange_Re
     function invariant_APEX_accounting() public view {
         handler.assertAccounting();
         uint256 backing = stataTokenV2.convertToAssets(IERC20(realStata).balanceOf(realVault)) + IERC20(realBase).balanceOf(realVault);
-        uint256 supply = IERC20(realVault).totalSupply();
-        uint256 claim = supply == 0 ? 0 : IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), supply, IERC20(realBase));
+        uint256 supply = IERC20(realVault).totalSupply();uint256 claim = supply == 0 ? 0 : ExchangeInAmount.previewOut(IStandardExchangeIn(realVault), IERC20(realVault), supply, IERC20(realBase));
         assertLe(claim, backing, "all Stata shares backed by protocol receipts and local principal");
     }
 

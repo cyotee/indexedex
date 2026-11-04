@@ -28,8 +28,7 @@ contract UniswapV4Detf_Weighted is TestBase_UniswapV4Detf_Weighted {
 
     function test_T8_2_firstBond_thenMintPair0() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        uint256 out_ = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), 8 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 out_,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), 8 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "mint pair0");
         _assertNoJoinableDust();

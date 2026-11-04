@@ -14,12 +14,12 @@ IndexedEx uses **exactly two** Foundry product profiles:
 **Rules for agents and humans:**
 
 1. Do **not** add new `[profile.*]` entries for package isolation.
-2. Focus a suite with `forge test --match-path '…/**'` or `--match-contract`, not a custom profile.
+2. Focus a suite with `forge test --use solar --match-path '…/**'` or `--match-contract`, not a custom profile.
 3. Hermetic tests **must** live under `test/foundry/spec/**`.
 4. Fork tests **must** live under `test/foundry/fork/**`.
-5. **`via_ir = false` always.** Fix stack-too-deep with structs / helper frames (see Crane code-style skill). Never re-enable IR.
-6. Contract size output: `forge build --sizes` when needed (`sizes = false` on both profiles for quiet logs).
-7. **After production contract edits, build artifacts before testing.** IndexedEx FactoryServices read creation bytecode from `out/` through `ArtifactCreationCode`; `forge test` alone can deploy stale artifacts. Use `scripts/forge-artifacts.py` for focused local work. CI runs `forge build`, explicitly refreshes runtime dependencies with `python3 scripts/forge-artifacts.py build --all-artifacts`, then runs hermetic tests. Same artifact preparation applies to `forge script`. See [artifact builds](testing/ARTIFACT_BUILDS.md), root `CLAUDE.md` item 10, and agent law § FactoryService creation bytecode.
+5. **Compiler is Solar.** Every compiling `forge` command includes `--use solar`. **`via_ir = false` always.** Solar is not solc via-IR. Do not fall back to solc. If Solar itself reports stack-too-deep, fix it with structs / helper frames (`crane-code-style`). Full text: agent law § Compiler.
+6. Contract size output: `forge build --use solar --sizes` when needed (`sizes = false` on both profiles for quiet logs).
+7. **After production contract edits, build artifacts before testing.** IndexedEx FactoryServices read creation bytecode from `out/` through `ArtifactCreationCode`; `forge test --use solar` alone can deploy stale artifacts. Use `scripts/forge-artifacts.py` for focused local work (it injects `--use solar`). CI runs `forge build --use solar`, explicitly refreshes runtime dependencies with `python3 scripts/forge-artifacts.py build --all-artifacts`, then runs hermetic tests. Same artifact preparation applies to `forge script --use solar`. See [artifact builds](testing/ARTIFACT_BUILDS.md), root `CLAUDE.md` item 10, and agent law § FactoryService creation bytecode.
 
 ## What runs on GitHub
 
@@ -27,7 +27,7 @@ IndexedEx uses **exactly two** Foundry product profiles:
 |----------|------|------|--------|
 | **Foundry CI — hermetic** | `.github/workflows/foundry-ci.yml` | push `main`, PRs, manual | none |
 
-- **Hermetic only:** `forge build` + `forge test` under the **default** profile (`test/foundry/spec`).
+- **Hermetic only:** `forge build --use solar` + `forge test --use solar` under the **default** profile (`test/foundry/spec`). Foundry is installed from nightly until stable Forge accepts `--use solar`.
 - **Fork profile is never run on Actions** (`FOUNDRY_PROFILE=fork` / `test/foundry/fork/**`). Run those **locally** with your own RPC key when needed.
 - CI also **excludes** misplaced `**/fork/**` and `*Fork*` contracts under `spec` that call `createSelectFork`, and forces empty `ALCHEMY_KEY` / `*_RPC_URL` so Actions cannot hit Alchemy rate limits.
 - **Vercel is independent of this workflow.** Frontend deploys from the Git integration on push; they are **not** gated on Foundry CI success.
@@ -36,19 +36,19 @@ IndexedEx uses **exactly two** Foundry product profiles:
 
 ```bash
 # After production contract edits: always build first (FactoryService reads out/)
-forge build
+forge build --use solar
 
 # Hermetic (default suite under test/foundry/spec) — same as CI
-forge test -vv
+forge test --use solar -vv
 
-# Focus a package without a custom profile (still after a current forge build)
-forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/**' -vv
-forge test --match-path 'test/foundry/spec/routers/**' -vv
+# Focus a package without a custom profile (still after a current forge build --use solar)
+forge test --use solar --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/**' -vv
+forge test --use solar --match-path 'test/foundry/spec/routers/**' -vv
 
 # Fork suite (local only; test/foundry/fork) — needs ALCHEMY_KEY in env or .env
 export ALCHEMY_KEY=your_raw_key
-FOUNDRY_PROFILE=fork forge test -vv
-FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/**' -vv
+FOUNDRY_PROFILE=fork forge test --use solar -vv
+FOUNDRY_PROFILE=fork forge test --use solar --match-path 'test/foundry/fork/base_main/**' -vv
 ```
 
 Foundry loads a root `.env` if present (do not commit it). Example vars:
@@ -85,4 +85,4 @@ git submodule update --init --recursive
 1. Put hermetic tests under `test/foundry/spec/…` or fork tests under `test/foundry/fork/…`.
 2. Run under **default** or **`FOUNDRY_PROFILE=fork`** only.
 3. CI only runs hermetic (`default`). Do not re-add a fork job to Actions without an explicit decision.
-4. Never set `via_ir = true`.
+4. Never set `via_ir = true`. Compile with `forge … --use solar`.

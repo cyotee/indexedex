@@ -81,11 +81,11 @@ Options:
   --restart-anvil   Restart the local Anvil instance before running stages
   --kill-anvil      Kill the local Anvil instance and exit
   -v|-vv|-vvv|-vvvv|-vvvvv
-                    Pass Foundry verbosity through to forge script
+                    Pass Foundry verbosity through to forge script --use solar
   --help, -h        Show this help
 
 Environment:
-  DEV_ADDRESS or SENDER   Broadcast sender for forge script --unlocked --sender
+  DEV_ADDRESS or SENDER   Broadcast sender for forge script --use solar --unlocked --sender
   LOCAL_TESTING_DEPLOYER_ADDRESS
                         Optional local deployer override; defaults to SENDER
   LOCAL_TESTING_OWNER     Optional local owner override; defaults to DEPLOYER_ADDRESS
@@ -193,7 +193,7 @@ run_stage() {
 
   log_info "Running $label"
 
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
+  local cmd=(forge script --use solar "$script_path" --rpc-url "$RPC_URL")
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi

@@ -14,9 +14,7 @@ contract MixedBufferMultiVaultStableDetf_Liveness_Test is TestBase_MixedBufferMu
         _fundBuffer(alice, _fixtureAmount(100e18));
         vm.startPrank(alice);
         IERC20(address(_fixtureBufferToken())).approve(detf, _fixtureAmount(100e18));
-        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);
-        detfExchangeIn.exchangeIn(
-            IERC20(address(_fixtureBufferToken())),
+        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);detfExchangeIn.exchangeIn(IERC20(address(_fixtureBufferToken())),
             _fixtureAmount(100e18),
             IERC20(detf),
             0,
@@ -31,17 +29,14 @@ contract MixedBufferMultiVaultStableDetf_Liveness_Test is TestBase_MixedBufferMu
         uint256 shares_ = _fundVaultShares(0, alice, 100e18);
         vm.startPrank(alice);
         seShares[0].approve(detf, shares_);
-        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);
-        detfExchangeIn.exchangeIn(seShares[0], shares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);detfExchangeIn.exchangeIn(seShares[0], shares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
     function test_preLive_burn_requiresFundedInput() public {
         // Secure pull rejects an unfunded caller before entering the reserve route.
         vm.startPrank(alice);
-        vm.expectRevert(bytes4(keccak256("TransferFromFailed()")));
-        detfExchangeIn.exchangeIn(
-            IERC20(detf), 1e9, IERC20(address(_fixtureBufferToken())), 0, alice, false, block.timestamp + 1 hours
+        vm.expectRevert(bytes4(keccak256("TransferFromFailed()")));detfExchangeIn.exchangeIn(IERC20(detf), 1e9, IERC20(address(_fixtureBufferToken())), 0, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }

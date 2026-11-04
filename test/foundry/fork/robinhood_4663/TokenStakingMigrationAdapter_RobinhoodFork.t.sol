@@ -221,9 +221,7 @@ contract TokenStakingMigrationAdapter_RobinhoodFork is Test {
         _unwrap(alice_);
         _unwrap(bob_);
         uint256 claim_ = IERC20(CLAIM).balanceOf(alice_);
-        vm.prank(alice_);
-        uint256 detfOut_ =
-            IStakedDETF(CLAIM).exchangeIn(IERC20(CLAIM), claim_, DETF, claim_, alice_, false, block.timestamp);
+        vm.prank(alice_);(uint256 detfOut_,) = IStakedDETF(CLAIM).exchangeIn(IERC20(CLAIM), claim_, DETF, claim_, alice_, false, block.timestamp);
         assertEq(DETF.balanceOf(alice_), detfOut_);
         assertEq(detfOut_, claim_);
     }

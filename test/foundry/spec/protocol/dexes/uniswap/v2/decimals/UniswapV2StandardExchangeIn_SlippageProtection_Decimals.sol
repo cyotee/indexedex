@@ -26,12 +26,8 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 amountIn = _uToken(token0, 1);
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview, recipient, false, _deadline());
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -44,13 +40,9 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 amountIn = _uToken(token0, 1);
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
-
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(token0), amountIn, IERC20(token1), preview + 1, makeAddr("recipient"), false, _deadline()
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview + 1, makeAddr("recipient"), false, _deadline()
         );
     }
 
@@ -63,12 +55,8 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 amountIn = _uToken(token0, 1);
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview, recipient, false, _deadline());
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -81,12 +69,9 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 amountIn = _uToken(token0, 1);
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     function test_Route3ZapOut_slippage_exactMinimum() public {
@@ -98,12 +83,8 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -116,12 +97,9 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
 
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
-
-        vm.expectRevert();
-        vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     function test_Route5VaultWithdrawal_slippage_exactMinimum() public {
@@ -133,13 +111,8 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, lpToken);
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(vaultToken, shares, lpToken, preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, lpToken);
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(vaultToken, shares, lpToken, preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -152,13 +125,9 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, lpToken);
 
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, lpToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, shares, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, shares, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     function test_Route7ZapOutWithdrawal_slippage_exactMinimum() public {
@@ -171,13 +140,8 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(vaultToken, shares, IERC20(token0), preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(vaultToken, shares, IERC20(token0), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -191,12 +155,8 @@ abstract contract UniswapV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
 
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
-
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, shares, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, shares, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
     }
 }

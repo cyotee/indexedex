@@ -63,8 +63,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / lpFraction;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP for seeding");
-        lpToken.approve(address(vault), lpAmount);
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
         require(vault.balanceOf(address(this)) > 0, "Seed produced zero shares");
     }
 
@@ -78,8 +77,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 tokenIn = IERC20(pair.token0());
         IERC20 tokenOut = IERC20(pair.token1());
 
-        uint256 amountIn = 1e18;
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        uint256 amountIn = 1e18;(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         assertGt(Y, 0, "Route1 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, tokenOut, Y);
@@ -141,9 +139,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         uint256 reserveIn = pair.token0() == address(tokenIn) ? r0 : r1;
         uint256 reserveOut = pair.token0() == address(tokenIn) ? r1 : r0;
 
-        amountIn = bound(amountIn, 1e12, reserveIn / 10);
-
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        amountIn = bound(amountIn, 1e12, reserveIn / 10);(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         if (Y == 0 || Y >= reserveOut) return;
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, tokenOut, Y);
@@ -162,8 +158,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 tokenIn = IERC20(pair.token0());
         IERC20 lpToken = IERC20(address(pair));
 
-        uint256 amountIn = 2e18;
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
+        uint256 amountIn = 2e18;(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
         assertGt(Y, 0, "Route2 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, lpToken, Y);
@@ -184,9 +179,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         require(lpTarget > MIN_TEST_AMOUNT, "LP target too small");
 
         uint256 Xrequired = vault.previewExchangeOut(tokenIn, lpToken, lpTarget);
-        assertGt(Xrequired, 0, "Route2 Out preview must be non-zero");
-
-        uint256 Yprime = vault.previewExchangeIn(tokenIn, Xrequired, lpToken);
+        assertGt(Xrequired, 0, "Route2 Out preview must be non-zero");(uint256 Yprime,) = vault.previewExchangeIn(tokenIn, Xrequired, lpToken);
         assertGe(Yprime, lpTarget, "Route2: forward(reverse(Y)) >= Y");
     }
 
@@ -243,9 +236,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         //   (amountIn/2 heuristic creates large rounding error for sub-1e14 inputs).
         // Upper bound reserveIn/100: with larger fractions of the reserve the ZapIn saleAmt
         //   optimal-split math introduces multi-wei rounding that binary-search can't recover.
-        amountIn = bound(amountIn, 1e16, reserveIn / 100);
-
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
+        amountIn = bound(amountIn, 1e16, reserveIn / 100);(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
         if (Y == 0) return;
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, lpToken, Y);
@@ -271,9 +262,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 tokenOut = IERC20(pair.token0());
 
         uint256 lpAmountIn = lpToken.balanceOf(address(this)) / 200;
-        require(lpAmountIn > MIN_TEST_AMOUNT);
-
-        uint256 Y = vault.previewExchangeIn(lpToken, lpAmountIn, tokenOut);
+        require(lpAmountIn > MIN_TEST_AMOUNT);(uint256 Y,) = vault.previewExchangeIn(lpToken, lpAmountIn, tokenOut);
         assertGt(Y, 0, "Route3 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(lpToken, tokenOut, Y);
@@ -290,8 +279,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 lpToken = IERC20(address(pair));
         IERC20 tokenOut = IERC20(pair.token0());
 
-        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;
-        uint256 Y = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
+        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;(uint256 Y,) = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
         uint256 desiredOut = Y * 9 / 10;
         require(desiredOut > MIN_TEST_AMOUNT);
 
@@ -313,8 +301,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 lpToken = IERC20(address(pair));
         IERC20 tokenOut = IERC20(pair.token0());
 
-        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;
-        uint256 Y = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
+        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;(uint256 Y,) = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
         uint256 desiredOut = Y * 9 / 10;
         require(desiredOut > MIN_TEST_AMOUNT);
 
@@ -355,8 +342,8 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
 
         // Forward preview with Xrequired should produce >= sharesTarget.
         // Note: previewExchangeIn uses reserveAfter which is slightly different.
-        // The actual execution guarantees >= sharesTarget; preview should be close.
-        uint256 Yprime = vault.previewExchangeIn(lpToken, Xrequired, vaultToken);
+        // The actual execution guarantees >= sharesTarget;preview should be close.
+        (uint256 Yprime,) = vault.previewExchangeIn(lpToken, Xrequired, vaultToken);
         // Allow previewExchangeIn to be slightly below sharesTarget due to accounting difference.
         // The real guarantee is execution (test_route4_exchangeOut_matchesPreview).
         assertGt(Yprime, 0, "Route4: forward(reverse(Y)) must be non-zero");
@@ -412,9 +399,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 vaultToken = IERC20(address(vault));
 
         uint256 sharesIn = vault.balanceOf(address(this)) / 2;
-        require(sharesIn > 0, "No shares available");
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, lpToken);
+        require(sharesIn > 0, "No shares available");(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, lpToken);
         assertGt(Y, 0, "Route5 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, lpToken, Y);
@@ -497,9 +482,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         // Find amountIn that produces ~totalShares/10 new shares.
         // Approximate: LP from ZapIn ≈ amountIn / 2 (rough LP-per-token), then
         // shares = LP * S / (R + LP) ≈ LP * S / R.  Use a small amount like 0.1e18.
-        uint256 amountIn = 0.1e18;
-
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+        uint256 amountIn = 0.1e18;(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
         if (Y == 0) return;
 
         // Only test invariant when Y is small relative to supply (avoids extreme amplification).
@@ -527,9 +510,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         require(sharesTarget > 0, "No shares for route6 reverse test");
 
         uint256 Xrequired = vault.previewExchangeOut(tokenIn, vaultToken, sharesTarget);
-        assertGt(Xrequired, 0, "Route6: previewExchangeOut zero");
-
-        uint256 Yprime = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
+        assertGt(Xrequired, 0, "Route6: previewExchangeOut zero");(uint256 Yprime,) = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
         assertGe(Yprime, sharesTarget, "Route6: forward(reverse(Y)) >= Y");
     }
 
@@ -585,9 +566,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         sharesTarget = bound(sharesTarget, 1, totalShares / 2);
 
         uint256 Xrequired = vault.previewExchangeOut(tokenIn, vaultToken, sharesTarget);
-        if (Xrequired == 0) return;
-
-        uint256 Yprime = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
+        if (Xrequired == 0) return;(uint256 Yprime,) = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
         assertGe(Yprime, sharesTarget, "Fuzz Route6: forward(reverse(Y)) >= Y");
     }
 
@@ -602,9 +581,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 tokenOut = IERC20(pair.token0());
 
         uint256 sharesIn = vault.balanceOf(address(this)) / 2;
-        require(sharesIn > 0, "No shares for route7 test");
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
+        require(sharesIn > 0, "No shares for route7 test");(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
         assertGt(Y, 0, "Route7 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, tokenOut, Y);
@@ -620,8 +597,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         IERC20 vaultToken = IERC20(address(vault));
         IERC20 tokenOut = IERC20(pair.token0());
 
-        uint256 sharesIn = vault.balanceOf(address(this)) / 2;
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
+        uint256 sharesIn = vault.balanceOf(address(this)) / 2;(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
         uint256 desiredOut = Y / 2;
         require(desiredOut > 0, "desiredOut zero");
 
@@ -641,8 +617,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
     function test_route7_exchangeOut_revertsWhenMaxInsufficient() public {
         IStandardExchangeProxy vault = _seedVault(PoolConfig.Balanced, 100);
         IERC20 vaultToken = IERC20(address(vault));
-        IERC20 tokenOut = IERC20(_getPool(PoolConfig.Balanced).token0());
-        uint256 desiredOut = vault.previewExchangeIn(vaultToken, vault.balanceOf(address(this)) / 4, tokenOut);
+        IERC20 tokenOut = IERC20(_getPool(PoolConfig.Balanced).token0());(uint256 desiredOut,) = vault.previewExchangeIn(vaultToken, vault.balanceOf(address(this)) / 4, tokenOut);
         uint256 required = vault.previewExchangeOut(vaultToken, tokenOut, desiredOut);
         assertGt(required, 1);
         uint256 sharesBefore = vault.balanceOf(address(this));
@@ -678,9 +653,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
 
         uint256 available = vault.balanceOf(address(this));
         if (available < 4) return; // not enough shares to work with
-        sharesIn = bound(sharesIn, 1, available / 4);
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
+        sharesIn = bound(sharesIn, 1, available / 4);(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
         if (Y == 0) return;
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, tokenOut, Y);

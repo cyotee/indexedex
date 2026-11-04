@@ -25,8 +25,8 @@ import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/
 /// @dev External router fixture. The payer approves this router, never the vault.
 contract FullSpreadTransferRouter {
     function deposit(IERC20 token, address vault, uint256 amount, address recipient) external returns (uint256) {
-        token.transferFrom(msg.sender, vault, amount);
-        return IStandardExchangeIn(vault).exchangeIn(token, amount, IERC20(vault), 0, recipient, true, block.timestamp);
+        token.transferFrom(msg.sender, vault, amount);(uint256 quotedAmountOut,) = IStandardExchangeIn(vault).exchangeIn(token, amount, IERC20(vault), 0, recipient, true, block.timestamp);
+        return quotedAmountOut;
     }
 }
 
@@ -247,8 +247,7 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
     function test_L3_spotSkew_noUnfundedMint() public { _falseDeposit(false); }
     function test_I_reserveOfTokenWrittenAfterRebalanceAndSwap() public {
         _bootstrap(); _trade(true,10 ether); _rebalance(); _bookMatchesBalances();
-        _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);
-        subject.exchangeIn(asset0,1 ether,asset1,0,address(this),false,block.timestamp);
+        _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);subject.exchangeIn(asset0,1 ether,asset1,0,address(this),false,block.timestamp);
         _bookMatchesBalances(); _reject(_depositCall(asset0,1 ether,FALSE_DEPOSITOR),_deliveryError(1 ether,0));
     }
     function test_F5_rebalancePaysCallerNothing() public {
@@ -309,7 +308,8 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
             abi.encodeWithSignature("rebalanceLiquidReserve()")];
         for(uint256 i;i<calls_.length;++i){
             token.setCallback(address(subject),calls_[i]); token.setCallbackPropagates(false);
-            assertGt(subject.exchangeIn(asset1,10 ether,IERC20(address(subject)),0,address(this),false,block.timestamp),0);
+            (uint256 exchangeAmountOut1,) = subject.exchangeIn(asset1,10 ether,IERC20(address(subject)),0,address(this),false,block.timestamp);
+            assertGt(exchangeAmountOut1,0);
             assertEq(token.callbackError(),abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
             assertEq(subject.balanceOf(FALSE_DEPOSITOR),0); assertEq(asset0.balanceOf(FALSE_DEPOSITOR),0);
             token.setCallbackPropagates(true);
@@ -324,8 +324,7 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
         uint256 used=subject.exchangeOut(IERC20(address(subject)),10 ether,asset1,1 ether,address(this),false,block.timestamp);
         assertGt(used,0); assertGt(IStandardizedYield(address(subject)).redeem(address(this),1 ether,address(asset1),0,false),0);
         _fund(asset0,address(this),1 ether); asset0.approve(address(subject),1 ether);
-        vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)",address(subject)));
-        subject.exchangeIn(asset0,1 ether,IERC20(address(subject)),0,address(this),false,block.timestamp);
+        vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)",address(subject)));subject.exchangeIn(asset0,1 ether,IERC20(address(subject)),0,address(this),false,block.timestamp);
     }
     struct RefundCase {
         IERC20 input;
@@ -463,9 +462,9 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
     function test_J2_allTargetSelectorsInstalledOnProxy() public view { test_everyTargetSelectorIsInstalledOnRegistryProxy(); }
     function test_J3_proxyFundedMoneyPathsAndRemovedPrepare() public {
         test_proxyRemovedPreparationSurface(); _bootstrap();
-        _fund(asset0,address(this),10 ether); asset0.approve(address(subject),10 ether);
-        uint256 quote=subject.previewExchangeIn(asset0,10 ether,IERC20(address(subject)));
-        assertEq(subject.exchangeIn(asset0,10 ether,IERC20(address(subject)),quote,address(this),false,block.timestamp),quote);
+        _fund(asset0,address(this),10 ether); asset0.approve(address(subject),10 ether);(uint256 quote,) = subject.previewExchangeIn(asset0,10 ether,IERC20(address(subject)));
+        (uint256 exchangeAmountOut2,) = subject.exchangeIn(asset0,10 ether,IERC20(address(subject)),quote,address(this),false,block.timestamp);
+        assertEq(exchangeAmountOut2,quote);
         uint256 used=subject.previewExchangeOut(IERC20(address(subject)),asset1,1 ether);
         assertEq(subject.exchangeOut(IERC20(address(subject)),used,asset1,1 ether,address(this),false,block.timestamp),used);
         _bookMatchesBalances();

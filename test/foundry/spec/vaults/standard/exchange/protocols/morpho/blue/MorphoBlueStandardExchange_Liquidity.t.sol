@@ -65,8 +65,7 @@ contract MorphoBlueStandardExchange_Liquidity is TestBase_MorphoBlueStandardExch
     }
 
     function test_U4_deposit_stillSucceedsWhileUtilized() public {
-        _utilize();
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), 50 ether, IERC20(se));
+        _utilize();(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), 50 ether, IERC20(se));
         uint256 out = _wrapExactIn(user, 50 ether);
         assertEq(out, preview, "U4 wrap while utilized");
     }

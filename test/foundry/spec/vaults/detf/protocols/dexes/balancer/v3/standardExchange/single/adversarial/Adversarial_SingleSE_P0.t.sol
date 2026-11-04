@@ -31,9 +31,7 @@ contract Adversarial_SingleSE_P0_Test is
     function test_E5_zeroAmount_reverts() public {
         address instance_ = _openLiveOpenThreshold();
         vm.prank(attacker);
-        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);IStandardExchangeIn(instance_).exchangeIn(seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
     }
 
     function test_E5_expiredDeadline_reverts() public {
@@ -43,23 +41,17 @@ contract Adversarial_SingleSE_P0_Test is
         seShare.approve(instance_, shares_);
         vm.expectRevert(
             abi.encodeWithSelector(SingleStandardExchangeDETFRepo.DeadlineExpired.selector, block.timestamp - 1)
-        );
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp - 1);
+        );IStandardExchangeIn(instance_).exchangeIn(seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp - 1);
         vm.stopPrank();
         assertEq(seShare.balanceOf(instance_), 0, "H3 residual shares");
     }
 
     function test_H3_minOutTooHigh_leavesNoInventory() public {
         address instance_ = _openLiveOpenThreshold();
-        uint256 shares_ = _fundSeShares(attacker, 30e18);
-        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(seShare, shares_, IERC20(instance_));
+        uint256 shares_ = _fundSeShares(attacker, 30e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShare, shares_, IERC20(instance_));
         vm.startPrank(attacker);
         seShare.approve(instance_, shares_);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_)
-            .exchangeIn(
-                seShare, shares_, IERC20(instance_), preview_ + 1e18, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(seShare, shares_, IERC20(instance_), preview_ + 1e18, attacker, false, block.timestamp + 1 hours
             );
         vm.stopPrank();
         _assertNoFreeInventory(instance_);
@@ -71,9 +63,7 @@ contract Adversarial_SingleSE_P0_Test is
         uint256 shares_ = _fundSeShares(attacker, 50e18);
         vm.startPrank(attacker);
         seShare.approve(instance_, shares_);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(seShare.balanceOf(instance_), 0, "H3 residual");
     }
@@ -89,12 +79,9 @@ contract Adversarial_SingleSE_P0_Test is
         assertEq(seShare.balanceOf(instance_), donated_, "shares idle");
         assertEq(IERC20(instance_).balanceOf(attacker), attBefore_, "A1: no free DETF");
 
-        uint256 victimIn_ = _fundSeShares(victim, 20e18);
-        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(seShare, victimIn_, IERC20(instance_));
+        uint256 victimIn_ = _fundSeShares(victim, 20e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShare, victimIn_, IERC20(instance_));
         vm.startPrank(victim);
-        seShare.approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, victimIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(out_, preview_, "victim mint not inflated by idle donation");
     }
@@ -243,10 +230,7 @@ contract Adversarial_SingleSE_P0_Test is
 
         uint256 amountIn_ = 50e18;
         vm.startPrank(attacker);
-        hostileShare.approve(instance_, amountIn_);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(
-                IERC20(address(hostileShare)),
+        hostileShare.approve(instance_, amountIn_);IStandardExchangeIn(instance_).exchangeIn(IERC20(address(hostileShare)),
                 amountIn_,
                 IERC20(instance_),
                 0,
@@ -273,10 +257,7 @@ contract Adversarial_SingleSE_P0_Test is
         hostileShare.arm(address(reentryTarget), reentry);
 
         vm.startPrank(attacker);
-        hostileShare.approve(instance_, 50e18);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(
-                IERC20(address(hostileShare)), 50e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        hostileShare.approve(instance_, 50e18);IStandardExchangeIn(instance_).exchangeIn(IERC20(address(hostileShare)), 50e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
             );
         vm.stopPrank();
 
@@ -292,18 +273,14 @@ contract Adversarial_SingleSE_P0_Test is
         address instance_ = _openLiveOpenThreshold();
         uint256 sharesIn_ = _fundSeShares(attacker, 40e18);
         vm.startPrank(attacker);
-        seShare.approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, sharesIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(detfOut_ > 0, "minted");
 
         uint256 burnAmt_ = detfOut_ / 2;
         if (burnAmt_ == 0) burnAmt_ = detfOut_;
         vm.startPrank(attacker);
-        IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, attacker, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, burnAmt_);(uint256 sharesBack_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(sharesBack_, 0, "partial redemption executes");
         assertLe(sharesBack_, sharesIn_, "E1: partial out <= in");
@@ -334,17 +311,13 @@ contract Adversarial_SingleSE_P0_Test is
 
         uint256 sharesIn_ = _fundSeShares(attacker, 50e18);
         vm.startPrank(attacker);
-        seShare.approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, sharesIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertGt(detfOut_, 0, "attacker funded DETF");
         {
             vm.startPrank(attacker);
-            IERC20(instance_).approve(instance_, detfOut_);
-            IStandardExchangeIn(instance_)
-                .exchangeIn(IERC20(instance_), detfOut_, seShare, 0, attacker, false, block.timestamp + 1 hours);
+            IERC20(instance_).approve(instance_, detfOut_);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), detfOut_, seShare, 0, attacker, false, block.timestamp + 1 hours);
             vm.stopPrank();
         }
 

@@ -16,8 +16,8 @@ abstract contract SlipstreamStandardExchange_Routes_Decimals is TestBase_Slipstr
         alice = makeAddr("slipRoutesAlice");
     }
 
-    function _previewIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_) internal view returns (uint256) {
-        return vault.previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+    function _previewIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_) internal view returns (uint256) {(uint256 quotedAmountOut,) = vault.previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+        return quotedAmountOut;
     }
 
     /// @dev Mixed-decimal CL exact-out preview can undershoot exec by up to ~0.1%.
@@ -34,8 +34,7 @@ abstract contract SlipstreamStandardExchange_Routes_Decimals is TestBase_Slipstr
     {
         vm.startPrank(who_);
         tokenIn_.approve(address(vault), amountIn_);
-        uint256 preview_ = _previewIn(tokenIn_, amountIn_, tokenOut_);
-        out_ = vault.exchangeIn(tokenIn_, amountIn_, tokenOut_, 0, who_, false, _deadline());
+        uint256 preview_ = _previewIn(tokenIn_, amountIn_, tokenOut_);(out_,) = vault.exchangeIn(tokenIn_, amountIn_, tokenOut_, 0, who_, false, _deadline());
         vm.stopPrank();
         assertEq(out_, preview_, "previewExchangeIn == exchangeIn");
     }

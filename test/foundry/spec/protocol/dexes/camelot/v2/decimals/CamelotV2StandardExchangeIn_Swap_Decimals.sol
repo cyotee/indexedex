@@ -73,8 +73,7 @@ abstract contract CamelotV2StandardExchangeIn_Swap_Decimals is TestBase_CamelotV
         IERC20 tokenOut = aToB ? IERC20(address(tokenB)) : IERC20(address(tokenA));
         uint256 amountIn = _amountIn(aToB);
 
-        uint256 expectedFromPool = pair.getAmountOut(amountIn, address(tokenIn));
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        uint256 expectedFromPool = pair.getAmountOut(amountIn, address(tokenIn));(uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
 
         assertEq(preview, expectedFromPool, "Preview should match pair.getAmountOut()");
         assertTrue(preview > 0, "Preview non-zero");
@@ -102,10 +101,7 @@ abstract contract CamelotV2StandardExchangeIn_Swap_Decimals is TestBase_CamelotV
 
         address recipient = makeAddr("swapRecipient");
         tokenInStub.mint(address(this), amountIn);
-        tokenInStub.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
-        uint256 amountOut = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
+        tokenInStub.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);(uint256 amountOut,) = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(amountOut, preview, "Execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), preview, "Recipient should receive preview amount");
@@ -136,9 +132,7 @@ abstract contract CamelotV2StandardExchangeIn_Swap_Decimals is TestBase_CamelotV
         tokenInStub.approve(address(vault), amountIn);
 
         uint256 senderBefore = tokenIn.balanceOf(address(this));
-        uint256 recipientBefore = tokenOut.balanceOf(recipient);
-
-        uint256 amountOut = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
+        uint256 recipientBefore = tokenOut.balanceOf(recipient);(uint256 amountOut,) = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(tokenIn.balanceOf(address(this)), senderBefore - amountIn, "Sender tokenIn decreased");
         assertEq(tokenOut.balanceOf(recipient), recipientBefore + amountOut, "Recipient tokenOut increased");
@@ -157,15 +151,12 @@ abstract contract CamelotV2StandardExchangeIn_Swap_Decimals is TestBase_CamelotV
         uint256 amountIn = _uA(1);
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        tokenA.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         uint256 minTooHigh = preview + 1;
         uint256 sharesBefore = IERC20(address(vault)).balanceOf(address(vault));
         uint256 balBefore = tokenA.balanceOf(address(this));
 
-        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, minTooHigh, preview));
-        vault.exchangeIn(tokenIn, amountIn, tokenOut, minTooHigh, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, minTooHigh, preview));vault.exchangeIn(tokenIn, amountIn, tokenOut, minTooHigh, makeAddr("recipient"), false, _deadline());
 
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), sharesBefore, "H3 residual vault shares");
         assertEq(tokenA.balanceOf(address(this)), balBefore, "input not consumed on failed swap");

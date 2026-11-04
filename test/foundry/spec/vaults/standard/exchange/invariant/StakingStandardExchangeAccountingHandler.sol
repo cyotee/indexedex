@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
@@ -68,14 +69,13 @@ abstract contract StakingStandardExchangeAccountingHandler is StandardExchangeAc
         ++stakingCounts[StakingAction.WethDeposit].attempted;
         _fundWeth(actor_, amount_);
         Checkpoint memory before_ = Checkpoint(weth.balanceOf(actor_), share.balanceOf(actor_),
-            seIn.previewExchangeIn(weth, amount_, share));
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), weth, amount_, share));
         vm.prank(actor_);
         weth.approve(address(seIn), amount_);
         ++stakingCounts[StakingAction.ReenterIn].attempted;
         weth.arm(address(seIn), abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (weth, amount_, share, 0, attacker, true, block.timestamp + 1 hours)));
-        vm.prank(actor_);
-        uint256 minted = seIn.exchangeIn(weth, amount_, share, before_.quote, actor_, false, block.timestamp + 1 hours);
+        vm.prank(actor_);(uint256 minted,) = seIn.exchangeIn(weth, amount_, share, before_.quote, actor_, false, block.timestamp + 1 hours);
         _assertNestedLocked(StakingAction.ReenterIn);
         assertGt(minted, 0, "funded WETH deposit succeeds");
         assertEq(minted, before_.quote, "WETH quote and mint");
@@ -86,8 +86,7 @@ abstract contract StakingStandardExchangeAccountingHandler is StandardExchangeAc
     }
 
     function _wethExit(address actor_) internal {
-        ++stakingCounts[StakingAction.WethExit].attempted;
-        uint256 amount = seIn.previewExchangeIn(share, share.balanceOf(actor_) / 20, weth);
+        ++stakingCounts[StakingAction.WethExit].attempted;(uint256 amount,) = seIn.previewExchangeIn(share, share.balanceOf(actor_) / 20, weth);
         uint256 liquid = IStakingAccountingVault(address(seIn)).liquidReserveEth();
         if (amount > liquid / 2) amount = liquid / 2;
         assertGt(amount, 0, "funded sleeve supports nonzero partial exit");
@@ -149,8 +148,7 @@ abstract contract StakingStandardExchangeAccountingHandler is StandardExchangeAc
         Parity memory p;
         p.token = useWeth_ ? IERC20(address(weth)) : base;
         p.payer = actors[0];
-        p.exactOut = exactOut_;
-        p.desired = seIn.previewExchangeIn(p.token, 1 ether, share);
+        p.exactOut = exactOut_;p.desired = ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), p.token, 1 ether, share);
         p.needed = exactOut_ ? IStandardExchangeOut(address(seIn)).previewExchangeOut(p.token, share, p.desired) : 1 ether;
         p.maximum = overpay_ ? p.needed + p.needed / 2 + 1 : p.needed;
         uint256 snapshot = vm.snapshotState();
@@ -174,10 +172,9 @@ abstract contract StakingStandardExchangeAccountingHandler is StandardExchangeAc
             return abi.decode(integrator.consumePretransfer(p.token, p.payer, address(seIn), p.maximum, _parityData(p)), (uint256));
         }
         vm.startPrank(p.payer);
-        p.token.approve(address(seIn), p.maximum);
-        uint256 result = p.exactOut
+        p.token.approve(address(seIn), p.maximum);uint256 result = p.exactOut
             ? IStandardExchangeOut(address(seIn)).exchangeOut(p.token, p.maximum, share, p.desired, p.payer, false, block.timestamp + 1 hours)
-            : seIn.exchangeIn(p.token, p.needed, share, p.desired, p.payer, false, block.timestamp + 1 hours);
+            : ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(seIn)), p.token, p.needed, share, p.desired, p.payer, false, block.timestamp + 1 hours);
         vm.stopPrank();
         return result;
     }

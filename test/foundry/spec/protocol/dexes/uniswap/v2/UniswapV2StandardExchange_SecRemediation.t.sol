@@ -157,8 +157,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         IERC20 lp = IERC20(address(_pair()));
         uint256 seed = lp.balanceOf(address(this)) / 10;
         assertGt(seed, 0, "LP seed available");
-        lp.approve(address(r.target), seed);
-        r.target.exchangeIn(lp, seed, IERC20(address(r.target)), 1, address(this), false, block.timestamp + 1 hours);
+        lp.approve(address(r.target), seed);r.target.exchangeIn(lp, seed, IERC20(address(r.target)), 1, address(this), false, block.timestamp + 1 hours);
         IERC20 a = IERC20(address(uniswapBalancedTokenA));
         IERC20 b = IERC20(address(uniswapBalancedTokenB));
         IERC20 share = IERC20(address(r.target));
@@ -297,8 +296,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         tokenA.mint(address(vault_), inventory_);
         tokenA.mint(attacker, syncPull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), syncPull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault_), syncPull_);vault_.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         uint256 bookedR_ = tokenA.balanceOf(address(vault_));
@@ -331,8 +329,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         uint256 syncPull_ = TEST_AMOUNT / 10;
         tokenA.mint(address(vault_), inventory_);
         tokenA.mint(address(this), syncPull_);
-        tokenA.approve(address(vault_), syncPull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
+        tokenA.approve(address(vault_), syncPull_);vault_.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
 
         uint256 bookedR_ = tokenA.balanceOf(address(vault_));
         assertGt(bookedR_, 0, "E6 seed: booked inventory");
@@ -422,9 +419,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         uniswapBalancedTokenA.mint(attacker, zapIn_);
         vm.startPrank(attacker);
         uniswapBalancedTokenA.approve(address(vault_), zapIn_);
-        vm.expectRevert(bytes(""));
-        vault_.exchangeIn(
-            IERC20(address(uniswapBalancedTokenA)), zapIn_, IERC20(address(vault_)), 0, attacker, false, _deadline()
+        vm.expectRevert(bytes(""));vault_.exchangeIn(IERC20(address(uniswapBalancedTokenA)), zapIn_, IERC20(address(vault_)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -451,12 +446,8 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         assertEq(vault_.totalSupply(), 0, "A0 first mint");
 
         vm.startPrank(attacker);
-        lp_.approve(address(vault_), attackerLp_);
-        uint256 shares_ = vault_.exchangeIn(lp_, attackerLp_, IERC20(address(vault_)), 0, attacker, false, _deadline());
-        assertGt(shares_, 0, "A0 first mint minted");
-
-        uint256 lpOut_ =
-            vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline());
+        lp_.approve(address(vault_), attackerLp_);(uint256 shares_,) = vault_.exchangeIn(lp_, attackerLp_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        assertGt(shares_, 0, "A0 first mint minted");(uint256 lpOut_,) = vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline());
         vm.stopPrank();
 
         assertLe(lpOut_, attackerLp_, "A0: redeem <= deposit");
@@ -482,8 +473,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         uint256 lpHeld_ = lp_.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert(abi.encodeWithSignature("AllowanceExpired(uint256)", 0));
-        vault_.exchangeIn(lp_, gap_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        vm.expectRevert(abi.encodeWithSignature("AllowanceExpired(uint256)", 0));vault_.exchangeIn(lp_, gap_, IERC20(address(vault_)), 0, attacker, false, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free vaultShare mint");
         assertEq(vault_.balanceOf(attacker), attackerShares_, "I1: attacker shares unchanged");
@@ -515,8 +505,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
 
         uint256 seed_ = TEST_AMOUNT / 50;
         require(lp_.balanceOf(address(this)) >= seed_, "I1 LP seed");
-        lp_.approve(address(vault_), seed_);
-        vault_.exchangeIn(lp_, seed_, IERC20(address(vault_)), 0, address(this), false, _deadline());
+        lp_.approve(address(vault_), seed_);vault_.exchangeIn(lp_, seed_, IERC20(address(vault_)), 0, address(this), false, _deadline());
 
         uint256 booked_ = lp_.balanceOf(address(vault_));
         assertGt(booked_, 0, "I1 booked LP");
@@ -525,15 +514,13 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
 
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
+        );vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");
         assertEq(lp_.balanceOf(address(vault_)), booked_, "I1: booked LP unmoved");
@@ -578,9 +565,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         uint256 lpAmount_ = lp_.balanceOf(address(this)) / 100;
         require(lpAmount_ > MIN_TEST_AMOUNT, "CROPS LP");
 
-        lp_.approve(vaultAddr, lpAmount_);
-        uint256 shares_ =
-            vault_.exchangeIn(lp_, lpAmount_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        lp_.approve(vaultAddr, lpAmount_);(uint256 shares_,) = vault_.exchangeIn(lp_, lpAmount_, IERC20(address(vault_)), 0, attacker, false, _deadline());
         assertGt(shares_, 0, "CROPS seed shares");
 
         vm.prank(owner);
@@ -589,13 +574,10 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
 
         uint256 inboundLp_ = lp_.balanceOf(address(this)) / 200;
         lp_.approve(vaultAddr, inboundLp_);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, vaultAddr));
-        vault_.exchangeIn(lp_, inboundLp_, IERC20(address(vault_)), 0, address(this), false, _deadline());
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, vaultAddr));vault_.exchangeIn(lp_, inboundLp_, IERC20(address(vault_)), 0, address(this), false, _deadline());
 
         uint256 attackerLpBefore_ = lp_.balanceOf(attacker);
-        vm.prank(attacker);
-        uint256 lpOut_ =
-            vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline());
+        vm.prank(attacker);(uint256 lpOut_,) = vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline());
 
         assertGt(lpOut_, 0, "CROPS: vaultShare exit paid LP");
         assertEq(lp_.balanceOf(attacker), attackerLpBefore_ + lpOut_, "CROPS: recipient LP");
@@ -614,11 +596,9 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         IStandardExchangeProxy vault_ = _vault();
         IERC20 lp_ = IERC20(address(_pair()));
         uint256 lpAmount_ = lp_.balanceOf(address(this)) / 100;
-        lp_.approve(address(vault_), lpAmount_);
-        uint256 shares_ = vault_.exchangeIn(lp_, lpAmount_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        lp_.approve(address(vault_), lpAmount_);(uint256 shares_,) = vault_.exchangeIn(lp_, lpAmount_, IERC20(address(vault_)), 0, attacker, false, _deadline());
         uint256 before_ = lp_.balanceOf(attacker);
-        vm.prank(attacker);
-        uint256 out_ = vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline());
+        vm.prank(attacker);(uint256 out_,) = vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline());
         assertEq(lp_.balanceOf(attacker), before_ + out_, "funded exit still pays LP");
         assertGt(out_, 0, "funded exit is nonzero");
     }
@@ -639,8 +619,7 @@ contract UniswapV2StandardExchange_SecRemediation_Test is TestBase_UniswapV2Stan
         assertEq(probe.expose(token), 3 ether, "surplus is balance minus book");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        _vault().exchangeIn(IERC20(address(_pair())), 1, IERC20(address(_vault())), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);_vault().exchangeIn(IERC20(address(_pair())), 1, IERC20(address(_vault())), 0, attacker, true, _deadline());
     }
 }
 

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -125,11 +126,11 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         IUniswapV4Detf subject_ = _activateFallbackInstance();
         uint256 acquired_ = _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
         _fundExpansionPremium(subject_);
-        vm.warp(block.timestamp + 25 hours);
+        vm.warp(vm.getBlockTimestamp() + 25 hours);
         assertGt(subject_.pendingExpansionDetf(), 0, "real reserve yield funds due epochs");
         _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
         _fundExpansionPremium(subject_);
-        vm.warp(block.timestamp + 25 hours);
+        vm.warp(vm.getBlockTimestamp() + 25 hours);
         assertGt(subject_.pendingExpansionDetf(), 0, "later epochs have funded expansion");
         _assertFallbackExchange(subject_, IERC20(address(subject_)), acquired_ / 2, IERC20(_leadPayment()));
     }
@@ -153,8 +154,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         _fundExpansionPremium(subject);
         vm.warp(boundary - 1);
         vm.startPrank(early);
-        IERC20(address(subject)).approve(address(staking), principal);
-        staking.exchangeIn(IERC20(address(subject)), principal, IERC20(address(staking)), principal, early, false, block.timestamp);
+        IERC20(address(subject)).approve(address(staking), principal);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking)), IERC20(address(subject)), principal, IERC20(address(staking)), principal, early, false, block.timestamp);
         vm.stopPrank();
         assertEq(staking.balanceOf(early), principal, "no time weighting before first boundary");
         assertEq(subject.pendingExpansionDetf(), 0, "incomplete interval is not funded");
@@ -163,16 +163,14 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         uint256 backing = IERC20(address(subject)).balanceOf(address(staking));
         assertGt(pending, 0, "real reserve yield funds eligible expansion");
         vm.startPrank(late);
-        IERC20(address(subject)).approve(address(staking), principal);
-        staking.exchangeIn(IERC20(address(subject)), principal, IERC20(address(staking)), principal, late, false, block.timestamp);
+        IERC20(address(subject)).approve(address(staking), principal);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking)), IERC20(address(subject)), principal, IERC20(address(staking)), principal, late, false, block.timestamp);
         vm.stopPrank();
         assertGt(staking.balanceOf(early), principal, "pre-boundary stake participates");
         assertEq(staking.balanceOf(late), principal, "boundary-processing deposit enters after distribution");
         assertEq(IERC20(address(subject)).balanceOf(address(staking)), backing + pending + principal);
         assertEq(subject.pendingExpansionDetf(), 0, "boundary consumed exactly once");
         uint256 earlyClaim = staking.balanceOf(early);
-        vm.prank(early);
-        staking.exchangeIn(IERC20(address(staking)), earlyClaim, IERC20(address(subject)), earlyClaim, early, false, block.timestamp);
+        vm.prank(early);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking)), IERC20(address(staking)), earlyClaim, IERC20(address(subject)), earlyClaim, early, false, block.timestamp);
         assertEq(staking.balanceOf(early), 0);
         assertEq(IERC20(address(subject)).balanceOf(early), earlyClaim, "funded reward and principal unstake one-for-one");
         assertEq(staking.balanceOf(late), principal, "another holder's full exit cannot consume late principal");
@@ -257,24 +255,21 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         IERC20 detf_ = IERC20(address(subject_));
         IStandardExchangeIn exchange_ = IStandardExchangeIn(address(subject_));
         address staking_ = subject_.rebasingClaimToken();
-        FallbackSnapshot memory before_ = FallbackSnapshot({
-            supply: detf_.totalSupply(), funding: detf_.balanceOf(staking_),
+        FallbackSnapshot memory before_ = FallbackSnapshot({supply: detf_.totalSupply(), funding: detf_.balanceOf(staking_),
             protocolLp: IERC20(subject_.hook()).balanceOf(subject_.bondNftVault()),
             inputBalance: in_.balanceOf(_buyer()), outputBalance: out_.balanceOf(_buyer()),
-            quoted: exchange_.previewExchangeIn(in_, amount_, out_), pending: subject_.pendingExpansionDetf()
+            quoted: ExchangeInAmount.previewOut(IStandardExchangeIn(address(exchange_)), in_, amount_, out_), pending: subject_.pendingExpansionDetf()
         });
         assertGt(before_.quoted, 0, "closed gate has executable swap quote");
         assertEq(before_.quoted, IUniswapV4SeBufferHook(subject_.hook()).previewSwapExactIn(address(in_), address(out_), amount_));
         vm.startPrank(_buyer());
         in_.approve(address(subject_), amount_);
-        vm.expectRevert();
-        exchange_.exchangeIn(in_, amount_, out_, before_.quoted + 1, _buyer(), false, block.timestamp);
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(exchange_)), in_, amount_, out_, before_.quoted + 1, _buyer(), false, block.timestamp);
         vm.stopPrank();
         assertEq(detf_.totalSupply(), before_.supply, "failed minimum rolls back expansion");
         assertEq(subject_.pendingExpansionDetf(), before_.pending, "failed minimum leaves epochs due");
         assertEq(in_.balanceOf(_buyer()), before_.inputBalance, "failed minimum restores payment");
-        vm.prank(_buyer());
-        paid_ = exchange_.exchangeIn(in_, amount_, out_, before_.quoted, _buyer(), false, block.timestamp);
+        vm.prank(_buyer());(paid_,) = exchange_.exchangeIn(in_, amount_, out_, before_.quoted, _buyer(), false, block.timestamp);
         assertEq(paid_, before_.quoted);
         assertEq(in_.balanceOf(_buyer()), before_.inputBalance - amount_);
         assertEq(out_.balanceOf(_buyer()), before_.outputBalance + paid_);
@@ -303,9 +298,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         SimpleYieldERC4626(protocol_).simulateYield(100 ether);
         // Weighted/Curve measure fee growth in native SE inventory, not the SE exchange rate.
         // Fund additional SE shares through the real deposit route; no LP is fabricated.
-        IERC20(_leadPayment()).approve(se_, 10 ether);
-        uint256 seeded_ = IStandardExchangeIn(se_).exchangeIn(
-            IERC20(_leadPayment()), 10 ether, IERC20(se_), 0, _buyer(), false, block.timestamp
+        IERC20(_leadPayment()).approve(se_, 10 ether);(uint256 seeded_,) = IStandardExchangeIn(se_).exchangeIn(IERC20(_leadPayment()), 10 ether, IERC20(se_), 0, _buyer(), false, block.timestamp
         );
         IERC20(se_).transfer(hook_, seeded_);
         vm.stopPrank();
@@ -331,8 +324,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
     function test_seShareFallbackComposesActualRedemptionAndSwap() public {
         IUniswapV4Detf subject_ = _activateFallbackInstance();
         (IERC20 se_, uint256 shares_) = _fundFallbackShares(subject_);
-        assertFalse(subject_.isMintingAllowed(se_), "exercise reserve fallback");
-        uint256 preview_ = IStandardExchangeIn(address(subject_)).previewExchangeIn(se_, shares_, IERC20(address(subject_)));
+        assertFalse(subject_.isMintingAllowed(se_), "exercise reserve fallback");(uint256 preview_,) = IStandardExchangeIn(address(subject_)).previewExchangeIn(se_, shares_, IERC20(address(subject_)));
         assertEq(preview_, _actualPostExchangeSwapQuote(subject_, address(se_), se_, shares_), "composed quote equals actual post-redemption reserve state");
         assertGt(preview_, 0);
         _assertShareSwapSettlement(subject_, se_, shares_, preview_);
@@ -342,8 +334,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         IUniswapV4Detf subject = _activateFallbackInstance();
         (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
         address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(_leadPayment());
-        assertFalse(subject.isMintingAllowed(input));
-        uint256 preview = IStandardExchangeIn(address(subject)).previewExchangeIn(input, shares, IERC20(address(subject)));
+        assertFalse(subject.isMintingAllowed(input));(uint256 preview,) = IStandardExchangeIn(address(subject)).previewExchangeIn(input, shares, IERC20(address(subject)));
         assertGt(preview, 0, "configured protocol-share route has an executable quote");
         assertEq(preview, _actualPostExchangeSwapQuote(subject, se, input, shares));
         _assertShareSwapSettlement(subject, input, shares, preview);
@@ -446,9 +437,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         vm.prank(_admin(oracle_));
         IVaultFeeOracleManager(oracle_).setUsageFeeOfVault(address(se_), 0.07e18);
         vm.startPrank(_buyer());
-        IERC20(pair_).approve(address(se_), 10 ether);
-        shares_ = IStandardExchangeIn(address(se_)).exchangeIn(
-            IERC20(pair_), 10 ether, se_, 0, _buyer(), false, block.timestamp
+        IERC20(pair_).approve(address(se_), 10 ether);(shares_,) = IStandardExchangeIn(address(se_)).exchangeIn(IERC20(pair_), 10 ether, se_, 0, _buyer(), false, block.timestamp
         );
         vm.stopPrank();
     }
@@ -459,8 +448,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         uint256 checkpoint_ = vm.snapshotState();
         address pair_ = _leadPayment();
         vm.startPrank(_buyer());
-        input_.approve(se_, shares_);
-        uint256 pairOut_ = IStandardExchangeIn(se_).exchangeIn(input_, shares_, IERC20(pair_), 0, _buyer(), false, block.timestamp);
+        input_.approve(se_, shares_);(uint256 pairOut_,) = IStandardExchangeIn(se_).exchangeIn(input_, shares_, IERC20(pair_), 0, _buyer(), false, block.timestamp);
         vm.stopPrank();
         expected_ = IUniswapV4SeBufferHook(subject_.hook()).previewSwapExactIn(pair_, address(subject_), pairOut_);
         assertTrue(vm.revertToStateAndDelete(checkpoint_));
@@ -474,10 +462,8 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         before_.funding = IERC20(address(subject_)).balanceOf(subject_.rebasingClaimToken());
         vm.startPrank(buyer_);
         se_.approve(address(subject_), shares_);
-        vm.expectRevert();
-        IStandardExchangeIn(address(subject_)).exchangeIn(se_, shares_, IERC20(address(subject_)), preview_ + 1, buyer_, false, block.timestamp);
-        assertEq(se_.balanceOf(buyer_), shares_, "minimum failure restores entire share payment");
-        uint256 paid_ = IStandardExchangeIn(address(subject_)).exchangeIn(se_, shares_, IERC20(address(subject_)), preview_, buyer_, false, block.timestamp);
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(subject_)))), se_, shares_, IERC20(address(subject_)), preview_ + 1, buyer_, false, block.timestamp);
+        assertEq(se_.balanceOf(buyer_), shares_, "minimum failure restores entire share payment");(uint256 paid_,) = IStandardExchangeIn(address(subject_)).exchangeIn(se_, shares_, IERC20(address(subject_)), preview_, buyer_, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, preview_, "exact preview and execution");
         assertEq(IERC20(address(subject_)).balanceOf(buyer_), paid_, "only acquired DETF paid");
@@ -517,12 +503,10 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         IERC20 detf_ = IERC20(address(_subject()));
         address buyer_ = _buyer();
         uint256 supply_ = detf_.totalSupply();
-        uint256 before_ = detf_.balanceOf(buyer_);
-        uint256 quote_ = IStandardExchangeIn(hook_).previewExchangeIn(lead_, 1 ether, detf_);
+        uint256 before_ = detf_.balanceOf(buyer_);(uint256 quote_,) = IStandardExchangeIn(hook_).previewExchangeIn(lead_, 1 ether, detf_);
         assertGt(quote_, 0);
         vm.startPrank(buyer_);
-        lead_.approve(hook_, 1 ether);
-        uint256 paid_ = IStandardExchangeIn(hook_).exchangeIn(lead_, 1 ether, detf_, quote_, buyer_, false, block.timestamp);
+        lead_.approve(hook_, 1 ether);(uint256 paid_,) = IStandardExchangeIn(hook_).exchangeIn(lead_, 1 ether, detf_, quote_, buyer_, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, quote_);
         assertEq(detf_.balanceOf(buyer_) - before_, quote_);
@@ -784,8 +768,7 @@ contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBeh
         vm.stopPrank();
         vm.deal(address(this), 200 ether);
         liquid.deposit{value: 200 ether}();
-        liquid.approve(se, 200 ether);
-        IStandardExchangeIn(se).exchangeIn(IERC20(address(liquid)), 200 ether, IERC20(se), 1, address(this), false, block.timestamp);
+        liquid.approve(se, 200 ether);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(liquid)), 200 ether, IERC20(se), 1, address(this), false, block.timestamp);
         staked.mint(detfUser, 100 ether);
         vm.startPrank(detfUser);
         staked.approve(address(wrapped), 100 ether);
@@ -819,8 +802,7 @@ contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBeh
 
     function test_lidoBufferUsesApprovedPaymentsForFallbackAndFundedBond() public {
         HermeticWstETH wrapped = _installLidoBuffer();
-        vm.prank(detfUser);
-        uint256 shares = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(se), 1, detfUser, false, block.timestamp);
+        vm.prank(detfUser);(uint256 shares,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(se), 1, detfUser, false, block.timestamp);
         _assertLidoFallback(IERC20(se), shares / 2);
         _assertLidoFallback(IERC20(address(wrapped)), 1 ether + 17);
         (, uint256 principal,,) = detfInfo.previewBond(IERC20(address(wrapped)), 2 ether + 29, DEFAULT_MAX_LOCK);
@@ -832,13 +814,13 @@ contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBeh
         assertGe(IERC20(detf).balanceOf(staking), IERC20(staking).totalSupply(), "actual DETF funds staking liabilities");
     }
 
-    function _assertLidoFallback(IERC20 input, uint256 amount) private {
-        uint256 quote = detfExchangeIn.previewExchangeIn(input, amount, IERC20(detf));
+    function _assertLidoFallback(IERC20 input, uint256 amount) private {(uint256 quote,) = detfExchangeIn.previewExchangeIn(input, amount, IERC20(detf));
         assertGt(quote, 0);
         uint256 supply = IERC20(detf).totalSupply();
         uint256 beforeBalance = IERC20(detf).balanceOf(detfUser);
         vm.prank(detfUser);
-        assertEq(detfExchangeIn.exchangeIn(input, amount, IERC20(detf), quote, detfUser, false, block.timestamp), quote);
+        (uint256 exchangeAmountOut1,) = detfExchangeIn.exchangeIn(input, amount, IERC20(detf), quote, detfUser, false, block.timestamp);
+        assertEq(exchangeAmountOut1, quote);
         assertEq(IERC20(detf).balanceOf(detfUser) - beforeBalance, quote);
         assertEq(IERC20(detf).totalSupply(), supply, "fallback trades existing DETF");
         assertEq(input.allowance(detf, se), 0, "nested payment allowance cleared");

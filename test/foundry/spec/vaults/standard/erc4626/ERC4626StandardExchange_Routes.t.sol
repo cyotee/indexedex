@@ -83,13 +83,10 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
     /* ---------------------------------------------------------------------- */
 
     function test_SE1_wrapExactIn_previewEqualsExecution_zeroFee() public {
-        uint256 amountIn = 100 ether;
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(underlying)), amountIn, IERC20(se));
+        uint256 amountIn = 100 ether;(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(underlying)), amountIn, IERC20(se));
         assertGt(preview, 0);
 
-        vm.prank(user);
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(underlying)),
+        vm.prank(user);(uint256 out,) = seIn.exchangeIn(IERC20(address(underlying)),
             amountIn,
             IERC20(se),
             preview,
@@ -108,14 +105,11 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 0.01e18); // 1%
 
-        uint256 amountIn = 100 ether;
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(underlying)), amountIn, IERC20(se));
+        uint256 amountIn = 100 ether;(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(underlying)), amountIn, IERC20(se));
         uint256 feeBalBefore = IERC20(se).balanceOf(feeTo);
         uint256 supplyBefore = IERC20(se).totalSupply();
 
-        vm.prank(user);
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(underlying)),
+        vm.prank(user);(uint256 out,) = seIn.exchangeIn(IERC20(address(underlying)),
             amountIn,
             IERC20(se),
             preview,
@@ -268,8 +262,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         uint256 supply = IERC20(se).totalSupply();
         uint256 uBefore = underlying.balanceOf(user);
         vm.prank(user);
-        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, user, seBal, seBal + 1));
-        seIn.exchangeIn(IERC20(se), seBal + 1, IERC20(address(underlying)), 0, user, false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, user, seBal, seBal + 1));seIn.exchangeIn(IERC20(se), seBal + 1, IERC20(address(underlying)), 0, user, false, block.timestamp);
         assertEq(IERC20(se).balanceOf(user), seBal, "shares untouched");
         assertEq(IERC20(se).totalSupply(), supply, "supply untouched");
         assertEq(underlying.balanceOf(user), uBefore, "no payout");
@@ -282,15 +275,10 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
     function test_SE2_unwrapExactIn_previewEqualsExecution() public {
         _seedLiquidity(100 ether);
         uint256 seInAmt = IERC20(se).balanceOf(user) / 2;
-        assertGt(seInAmt, 0);
-
-        uint256 preview =
-            seIn.previewExchangeIn(IERC20(se), seInAmt, IERC20(address(underlying)));
+        assertGt(seInAmt, 0);(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), seInAmt, IERC20(address(underlying)));
         uint256 uBefore = underlying.balanceOf(user);
 
-        vm.prank(user);
-        uint256 out = seIn.exchangeIn(
-            IERC20(se),
+        vm.prank(user);(uint256 out,) = seIn.exchangeIn(IERC20(se),
             seInAmt,
             IERC20(address(underlying)),
             preview,
@@ -311,9 +299,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         uint256 feeBefore = IERC20(se).balanceOf(feeTo);
         uint256 seInAmt = IERC20(se).balanceOf(user) / 4;
 
-        vm.prank(user);
-        seIn.exchangeIn(
-            IERC20(se),
+        vm.prank(user);seIn.exchangeIn(IERC20(se),
             seInAmt,
             IERC20(address(underlying)),
             0,
@@ -329,8 +315,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
     /* ---------------------------------------------------------------------- */
 
     function test_Z1_zeroAmountIn_reverts() public {
-        vm.expectRevert();
-        seIn.previewExchangeIn(IERC20(address(underlying)), 0, IERC20(se));
+        vm.expectRevert();seIn.previewExchangeIn(IERC20(address(underlying)), 0, IERC20(se));
 
         vm.expectRevert();
         seOut.previewExchangeOut(IERC20(address(underlying)), IERC20(se), 0);
@@ -352,18 +337,12 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
             seOut.exchangeOut(
                 IERC20(address(underlying)), uIn, IERC20(se), need, user, false, block.timestamp
             );
-        }
-
-        uint256 beforeOut =
-            seIn.previewExchangeIn(IERC20(se), seAmt, IERC20(address(underlying)));
+        }(uint256 beforeOut,) = seIn.previewExchangeIn(IERC20(se), seAmt, IERC20(address(underlying)));
 
         // Real yield path: transfer extra underlying into protocol vault via simulateYield
         underlying.mint(address(this), 50 ether);
         underlying.approve(address(protocolVault), 50 ether);
-        protocolVault.simulateYield(50 ether);
-
-        uint256 afterOut =
-            seIn.previewExchangeIn(IERC20(se), seAmt, IERC20(address(underlying)));
+        protocolVault.simulateYield(50 ether);(uint256 afterOut,) = seIn.previewExchangeIn(IERC20(se), seAmt, IERC20(address(underlying)));
         assertGt(afterOut, beforeOut, "strict increase after real yield");
     }
 
@@ -380,9 +359,8 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         uint256 reserveBefore = IERC20(address(protocolVault)).balanceOf(se);
 
         vm.prank(user);
-        vm.expectRevert(); // InsufficientDeposit
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)),
+        vm.expectRevert();// InsufficientDeposit
+        seIn.exchangeIn(IERC20(address(protocolVault)),
             1 ether,
             IERC20(se),
             0,
@@ -430,10 +408,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
 
         uint256 amountIn = 7 ether;
         uint256 reserveBefore = IERC20(address(protocolVault)).balanceOf(se);
-        uint256 userVaultBefore = IERC20(address(protocolVault)).balanceOf(user);
-
-        uint256 minted = seIn.exchangeIn(
-            IERC20(address(protocolVault)),
+        uint256 userVaultBefore = IERC20(address(protocolVault)).balanceOf(user);(uint256 minted,) = seIn.exchangeIn(IERC20(address(protocolVault)),
             amountIn,
             IERC20(se),
             0,
@@ -466,9 +441,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         giftU.mint(user, 1_000 ether);
 
         vm.startPrank(user);
-        giftU.approve(giftSe, type(uint256).max);
-        IStandardExchangeIn(giftSe).exchangeIn(
-            IERC20(address(giftU)), 50 ether, IERC20(giftSe), 0, user, false, block.timestamp
+        giftU.approve(giftSe, type(uint256).max);IStandardExchangeIn(giftSe).exchangeIn(IERC20(address(giftU)), 50 ether, IERC20(giftSe), 0, user, false, block.timestamp
         );
 
         uint256 seDesired = 5 ether;
@@ -504,16 +477,12 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         dustU.mint(user, 1_000 ether);
         vm.startPrank(user);
         dustU.approve(dustSe, type(uint256).max);
-        dustVault.setLeaveDust(0);
-        IStandardExchangeIn(dustSe).exchangeIn(
-            IERC20(address(dustU)), 50 ether, IERC20(dustSe), 0, user, false, block.timestamp
+        dustVault.setLeaveDust(0);IStandardExchangeIn(dustSe).exchangeIn(IERC20(address(dustU)), 50 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
 
         dustVault.setLeaveDust(5);
         uint256 feeBefore = dustU.balanceOf(feeTo);
-        uint256 seBefore = dustU.balanceOf(dustSe);
-        IStandardExchangeIn(dustSe).exchangeIn(
-            IERC20(address(dustU)), 10 ether, IERC20(dustSe), 0, user, false, block.timestamp
+        uint256 seBefore = dustU.balanceOf(dustSe);IStandardExchangeIn(dustSe).exchangeIn(IERC20(address(dustU)), 10 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
         vm.stopPrank();
         assertEq(dustU.balanceOf(feeTo), feeBefore, "dust not paid to feeTo");
@@ -529,13 +498,9 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         dustU.mint(user, 1_000 ether);
         vm.startPrank(user);
         dustU.approve(dustSe, type(uint256).max);
-        dustVault.setLeaveDust(0);
-        IStandardExchangeIn(dustSe).exchangeIn(
-            IERC20(address(dustU)), 20 ether, IERC20(dustSe), 0, user, false, block.timestamp
+        dustVault.setLeaveDust(0);IStandardExchangeIn(dustSe).exchangeIn(IERC20(address(dustU)), 20 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
-        dustVault.setLeaveDust(3);
-        IStandardExchangeIn(dustSe).exchangeIn(
-            IERC20(address(dustU)), 5 ether, IERC20(dustSe), 0, user, false, block.timestamp
+        dustVault.setLeaveDust(3);IStandardExchangeIn(dustSe).exchangeIn(IERC20(address(dustU)), 5 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
         vm.stopPrank();
     }
@@ -546,9 +511,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         address shortSe = _deployERC4626SE(address(shortVault));
 
         vm.startPrank(user);
-        underlying.approve(shortSe, type(uint256).max);
-        uint256 seAmt = IStandardExchangeIn(shortSe).exchangeIn(
-            IERC20(address(underlying)), 100 ether, IERC20(shortSe), 0, user, false, block.timestamp
+        underlying.approve(shortSe, type(uint256).max);(uint256 seAmt,) = IStandardExchangeIn(shortSe).exchangeIn(IERC20(address(underlying)), 100 ether, IERC20(shortSe), 0, user, false, block.timestamp
         );
 
         shortVault.setShortByOne(true);
@@ -570,9 +533,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
     /* ---------------------------------------------------------------------- */
 
     function _seedLiquidity(uint256 underlyingIn) internal {
-        vm.prank(user);
-        seIn.exchangeIn(
-            IERC20(address(underlying)),
+        vm.prank(user);seIn.exchangeIn(IERC20(address(underlying)),
             underlyingIn,
             IERC20(se),
             0,

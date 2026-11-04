@@ -97,12 +97,10 @@ contract Handler_ComposedDetf is DetfStatefulActions {
         host.fundDai(actor, amount);
         uint256 beforeAssets = dai.balanceOf(actor);
         IERC20 shares = IERC20(address(seIn));
-        uint256 beforeShares = shares.balanceOf(actor);
-        uint256 quote = seIn.previewExchangeIn(dai, amount, shares);
+        uint256 beforeShares = shares.balanceOf(actor);(uint256 quote,) = seIn.previewExchangeIn(dai, amount, shares);
         assertGt(quote, 0, "funded mint quote");
         vm.startPrank(actor);
-        dai.approve(address(seIn), amount);
-        minted = seIn.exchangeIn(dai, amount, shares, quote, actor, false, block.timestamp + 1 hours);
+        dai.approve(address(seIn), amount);(minted,) = seIn.exchangeIn(dai, amount, shares, quote, actor, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(beforeAssets - dai.balanceOf(actor), amount, "exact funded input consumed");
         assertEq(shares.balanceOf(actor) - beforeShares, minted, "actual DETF delivered");
@@ -116,12 +114,10 @@ contract Handler_ComposedDetf is DetfStatefulActions {
         assertGt(amount, 0, "partial redemption is nonzero");
         IERC20 shares = IERC20(address(seIn));
         uint256 beforeShares = shares.balanceOf(actor);
-        uint256 beforeAssets = dai.balanceOf(actor);
-        uint256 quote = seIn.previewExchangeIn(shares, amount, dai);
+        uint256 beforeAssets = dai.balanceOf(actor);(uint256 quote,) = seIn.previewExchangeIn(shares, amount, dai);
         assertGt(quote, 0, "funded redemption quote");
         vm.startPrank(actor);
-        shares.approve(address(seIn), amount);
-        uint256 paid = seIn.exchangeIn(shares, amount, dai, 1, actor, false, block.timestamp + 1 hours);
+        shares.approve(address(seIn), amount);(uint256 paid,) = seIn.exchangeIn(shares, amount, dai, 1, actor, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(beforeShares - shares.balanceOf(actor), amount, "only declared shares consumed");
         assertEq(dai.balanceOf(actor) - beforeAssets, paid, "actual redemption paid");
@@ -164,8 +160,7 @@ contract Handler_ComposedDetf is DetfStatefulActions {
             ? abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, available)
             : abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(caller);
-        vm.expectRevert(expected);
-        seIn.exchangeIn(dai, claimed, IERC20(address(seIn)), 0, caller, true, block.timestamp + 1 hours);
+        vm.expectRevert(expected);seIn.exchangeIn(dai, claimed, IERC20(address(seIn)), 0, caller, true, block.timestamp + 1 hours);
         assertEq(_state(caller), beforeState, "rejected call preserves balances, book, supply and approvals");
         ++counts.expectedRevert;
         if (contractCaller) ++ghost_contractReject;

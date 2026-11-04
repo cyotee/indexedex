@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
@@ -143,8 +144,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         uint256 excess = pairToken.balanceOf(hook) - Repo.MAX_DUST_WEI;
         assertGt(excess, 0, "nonzero sweep excess");
         vm.prank(hook);
-        assertEq(
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), excess, IERC20(se)),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(pairToken)), excess, IERC20(se)),
             0,
             "bound SE quotes the sweep excess to zero"
         );
@@ -158,8 +158,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         _donatePair(Repo.MAX_DUST_WEI + excess);
         assertEq(pairToken.balanceOf(hook) - Repo.MAX_DUST_WEI, excess, "exact overflowing sweep excess");
         vm.expectRevert(_overflowPanic());
-        vm.prank(hook);
-        IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), excess, IERC20(se));
+        vm.prank(hook);ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(pairToken)), excess, IERC20(se));
     }
 
     function _donatePair(uint256 amount) private {

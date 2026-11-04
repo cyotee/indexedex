@@ -66,14 +66,10 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         // Approve vault to spend LP
-        lpToken.approve(address(vault), lpAmount);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, tokenOut);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute
-        uint256 tokenOutAmount = vault.exchangeIn(lpToken, lpAmount, tokenOut, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, tokenOut);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute
+        (uint256 tokenOutAmount,) = vault.exchangeIn(lpToken, lpAmount, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(tokenOutAmount, preview, "Execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), preview, "Recipient should receive preview token amount");
@@ -110,9 +106,7 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
 
         uint256 senderLPBefore = lpToken.balanceOf(address(this));
         uint256 recipientTokenBefore = tokenOut.balanceOf(recipient);
-        uint256 lpTotalSupplyBefore = lpToken.totalSupply();
-
-        uint256 tokenOutAmount = vault.exchangeIn(lpToken, lpAmount, tokenOut, 0, recipient, false, _deadline());
+        uint256 lpTotalSupplyBefore = lpToken.totalSupply();(uint256 tokenOutAmount,) = vault.exchangeIn(lpToken, lpAmount, tokenOut, 0, recipient, false, _deadline());
 
         // Sender LP decreased
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore - lpAmount, "Sender LP balance should decrease");
@@ -139,13 +133,8 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, IERC20(address(tokenA)));
-
-        // Should succeed with exact minAmountOut
-        uint256 tokenOut =
-            vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(address(tokenA)));// Should succeed with exact minAmountOut
+        (uint256 tokenOut,) = vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), preview, recipient, false, _deadline());
 
         assertEq(tokenOut, preview, "Should succeed with exact minimum");
     }
@@ -159,13 +148,10 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, IERC20(address(tokenA)));
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(address(tokenA)));
 
         // Should revert with minAmountOut too high
-        vm.expectRevert();
-        vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), preview + 1, recipient, false, _deadline());
+        vm.expectRevert();vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), preview + 1, recipient, false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -184,10 +170,8 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
         // Transfer LP to vault first
         lpToken.transfer(address(vault), lpAmount);
 
-        uint256 senderLPBefore = lpToken.balanceOf(address(this));
-
-        // Execute with pretransferred=true
-        uint256 tokenOut = vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), 0, recipient, true, _deadline());
+        uint256 senderLPBefore = lpToken.balanceOf(address(this));// Execute with pretransferred=true
+        (uint256 tokenOut,) = vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), 0, recipient, true, _deadline());
 
         // Sender balance should not change
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore, "No additional transfer from sender");
@@ -210,9 +194,7 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
 
         lpToken.approve(address(vault), lpAmount);
 
-        (uint256 reserve0Before, uint256 reserve1Before,) = pool.getReserves();
-
-        vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), 0, recipient, false, _deadline());
+        (uint256 reserve0Before, uint256 reserve1Before,) = pool.getReserves();vault.exchangeIn(lpToken, lpAmount, IERC20(address(tokenA)), 0, recipient, false, _deadline());
 
         (uint256 reserve0After, uint256 reserve1After,) = pool.getReserves();
 
@@ -268,10 +250,7 @@ contract AerodromeFork_ZapOut_Test is TestBase_AerodromeFork {
         if (lpAmount < MIN_TEST_AMOUNT) lpAmount = MIN_TEST_AMOUNT;
 
         address recipient = makeAddr("recipient");
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, tokenOut);
-        uint256 tokenOutAmount = vault.exchangeIn(lpToken, lpAmount, tokenOut, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, tokenOut);(uint256 tokenOutAmount,) = vault.exchangeIn(lpToken, lpAmount, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(tokenOutAmount, preview, "Fuzz: execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), tokenOutAmount, "Fuzz: recipient balance correct");

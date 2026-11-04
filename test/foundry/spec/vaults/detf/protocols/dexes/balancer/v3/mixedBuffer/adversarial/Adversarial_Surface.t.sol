@@ -147,8 +147,7 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         assertTrue(info_.rawSY() != address(0) && info_.stakingSY() != address(0));
         assertEq(info_.previewStakingGonsPerUnit(buffer_, 1e18), staking_.stakingState().gonsPerUnit);
         assertEq(info_.synchronizeRewards(), 0); assertEq(info_.pendingExpansionDetf(), 0);
-        vm.prank(attacker); vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);
-        ex_.exchangeIn(buffer_, 0, IERC20(instance_), 0, attacker, false, block.timestamp);
+        vm.prank(attacker); vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);ex_.exchangeIn(buffer_, 0, IERC20(instance_), 0, attacker, false, block.timestamp);
         vm.prank(attacker); vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);
         bonding_.bond(buffer_, 0, DEFAULT_MIN_LOCK, attacker, false, block.timestamp);
         uint256 raw_ = _mintDetfFromBuffer(instance_, bob, 50e18);
@@ -158,7 +157,8 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         assertEq(IStandardExchangeOut(instance_).exchangeOut(IERC20(instance_), raw_, IERC20(address(staking_)), raw_, bob, false, block.timestamp), raw_);
         assertEq(staking_.balanceOf(bob), raw_);
         staking_.approve(instance_, raw_);
-        assertEq(ex_.exchangeIn(IERC20(address(staking_)), raw_, IERC20(instance_), raw_, bob, false, block.timestamp), raw_);
+        (uint256 exchangeAmountOut1,) = ex_.exchangeIn(IERC20(address(staking_)), raw_, IERC20(instance_), raw_, bob, false, block.timestamp);
+        assertEq(exchangeAmountOut1, raw_);
         vm.stopPrank();
         assertEq(IERC20(instance_).balanceOf(bob), raw_);
         _fundBuffer(bob, 10e18);

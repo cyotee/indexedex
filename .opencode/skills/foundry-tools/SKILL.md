@@ -1,9 +1,13 @@
 ---
 name: foundry-tools
-description: "Foundry Forge tests, fuzzing, signing, deployment and source verification; Cast, Anvil and SuperSim tooling. Crane test/deploy rules take priority."
+description: "Foundry Forge tests, fuzzing, signing, deployment and source verification; Cast, Anvil and SuperSim tooling. Compiling forge commands use --use solar. Crane test/deploy rules take priority."
 ---
 
 # foundry-tools
+
+## Compiler
+
+Every compiling `forge` command in this repo includes `--use solar` (`build`, `test`, `script`, `coverage`, `snapshot`, `inspect`, `bind`, `geiger`, `create`). Do not pass `--use solc:` or enable `via_ir`. `forge fmt`, `forge config`, `cast`, and `anvil` do not take the flag. Full rule: [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../../../docs/agent/INDEXEDEX_AGENT_LAW.md) § Compiler. Topic examples below that omit the flag are wrong for this repo; add it.
 
 Use this router when the task needs this domain. Read only the relevant topic below; each linked file retains its own references and procedures.
 

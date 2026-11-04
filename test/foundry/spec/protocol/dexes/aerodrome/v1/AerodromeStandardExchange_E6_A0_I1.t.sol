@@ -40,8 +40,7 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         tokenA.mint(address(vault_), residual_);
         tokenA.mint(attacker, pull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), pull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault_), pull_);vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         // After honest money-route sync, live pairToken is booked (U = 0). Public
@@ -88,8 +87,7 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         uint256 pull_ = TEST_AMOUNT / 16;
         tokenA.mint(address(vault_), residual_);
         tokenA.mint(address(this), pull_);
-        tokenA.approve(address(vault_), pull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
+        tokenA.approve(address(vault_), pull_);vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
 
         uint256 bookedR_ = tokenA.balanceOf(address(vault_));
         assertGt(bookedR_, 0, "E6 seed: booked inventory");
@@ -150,9 +148,7 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         tokenA.mint(attacker, zapIn_);
         vm.startPrank(attacker);
         tokenA.approve(address(vault_), zapIn_);
-        vm.expectRevert();
-        vault_.exchangeIn(
-            IERC20(address(tokenA)), zapIn_, IERC20(address(vault_)), 0, attacker, false, _deadline()
+        vm.expectRevert();vault_.exchangeIn(IERC20(address(tokenA)), zapIn_, IERC20(address(vault_)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -181,13 +177,8 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         assertEq(vault_.totalSupply(), 0, "A0 first mint");
 
         vm.startPrank(attacker);
-        lp_.approve(address(vault_), attackerLp_);
-        uint256 shares_ =
-            vault_.exchangeIn(lp_, attackerLp_, IERC20(address(vault_)), 0, attacker, false, _deadline());
-        assertGt(shares_, 0, "A0 first mint minted");
-
-        uint256 lpOut_ = vault_.exchangeIn(
-            IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline()
+        lp_.approve(address(vault_), attackerLp_);(uint256 shares_,) = vault_.exchangeIn(lp_, attackerLp_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        assertGt(shares_, 0, "A0 first mint minted");(uint256 lpOut_,) = vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -215,8 +206,7 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         uint256 lpHeld_ = lp_.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert();
-        vault_.exchangeIn(lp_, gap_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        vm.expectRevert();vault_.exchangeIn(lp_, gap_, IERC20(address(vault_)), 0, attacker, false, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free vaultShare mint");
         assertEq(vault_.balanceOf(attacker), attackerShares_, "I1: attacker shares unchanged");
@@ -231,8 +221,7 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
 
         uint256 seed_ = TEST_AMOUNT / 50;
         require(lp_.balanceOf(address(this)) >= seed_, "I1 LP seed");
-        lp_.approve(address(vault_), seed_);
-        vault_.exchangeIn(lp_, seed_, IERC20(address(vault_)), 0, address(this), false, _deadline());
+        lp_.approve(address(vault_), seed_);vault_.exchangeIn(lp_, seed_, IERC20(address(vault_)), 0, address(this), false, _deadline());
 
         uint256 booked_ = lp_.balanceOf(address(vault_));
         assertGt(booked_, 0, "I1 booked LP");
@@ -241,15 +230,13 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
 
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
+        );vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");
         assertEq(lp_.balanceOf(address(vault_)), booked_, "I1: booked LP unmoved");

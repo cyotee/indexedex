@@ -1,0 +1,53 @@
+{
+  "classification": "coordinator re-execution of filed standalone models; not an EVM or production test",
+  "grok_domain_l_headline": {
+    "profit": "320226133435299/10170234955199",
+    "match": true,
+    "float": 31.486601326904463,
+    "note": "Exact match of the filed snippet. Domain N excess and other grid rows were not in that snippet and were not re-executed."
+  },
+  "minimax_idle_closed": {
+    "literal_49": 5162744.89786187,
+    "literal_50": 5053409.393024629,
+    "literal_51": 4943655.362700939,
+    "literal_1": 10143708.375864716,
+    "opposing_end": 0,
+    "control_no_manipulation": -143477.29383389672,
+    "control_no_deposit": -452033.47052894946,
+    "post_pe": 3930748.715170614,
+    "post_marginal": 3370122.0449264375,
+    "note": "Float match to the filed witness. Vault inventory is idle, not active Wings liquidity. Loan is repaid by buying opposing through the same pool."
+  },
+  "kimi_reexecuted": {
+    "w1_fee0_dT": 18055.887014668653,
+    "w1_fee0_dO": 0,
+    "w1_fee0_incumbent": [
+      0.208019801980198,
+      0.18996391496552936
+    ],
+    "w3_default_dT": 1127.4673128375991,
+    "w3_default_dO": -1955.0789855324927,
+    "w3_default_conv": -827.6116726948935,
+    "w3_o_heavy_q49_dT": -9833.897861928503,
+    "w3_o_heavy_q49_dO": 19461.677479874834,
+    "w3_o_heavy_q49_conv": 9627.779617946331,
+    "w6_fee0_conv": 115.12403585574317,
+    "w6_fee0_dO": 636.8563685636857,
+    "w6_fee_0_1pct_conv": -470.48235958965597,
+    "note": "W4/W5 and the TWAP replica are described in prose and are not in the filed executable model. The +9627.8 figure is convention value of residual opposing, not closed target profit."
+  },
+  "coordinator_model_fee_3000_deposit_200_swap_half": {
+    "executed_average_by_vault_fraction": {
+      "1/100": "-0.593432868053955858",
+      "1/10": "-0.369028912538523708",
+      "1/2": "1.864219124176049681",
+      "9/10": "3.903260746637353436",
+      "99/100": "4.274379513378682819",
+      "1": "4.313684168578358357"
+    },
+    "spot_at_full_ownership": "13.806210641635458117",
+    "ideal_price_one_at_full_ownership": "-1.138885969136707947",
+    "proportional_at_full_ownership": "-0.449999322971962518",
+    "note": "Immediate deposit, entry swap, mint, slice exit. No prior dump and no restore. Other balance and ledger error are 0. Not a manipulation sandwich."
+  }
+}

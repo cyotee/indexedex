@@ -70,9 +70,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Liquidity is Test
         // User mints SE shares for leg 0 off-hook, then LPs with SE shares.
         token0.mint(user, 100 ether);
         vm.startPrank(user);
-        token0.approve(se0, type(uint256).max);
-        uint256 seShares = IStandardExchangeIn(se0).exchangeIn(
-            IERC20(address(token0)), 50 ether, IERC20(se0), 0, user, false, block.timestamp + 1
+        token0.approve(se0, type(uint256).max);(uint256 seShares,) = IStandardExchangeIn(se0).exchangeIn(IERC20(address(token0)), 50 ether, IERC20(se0), 0, user, false, block.timestamp + 1
         );
         assertGt(seShares, 0);
         IERC20(se0).approve(hook, type(uint256).max);

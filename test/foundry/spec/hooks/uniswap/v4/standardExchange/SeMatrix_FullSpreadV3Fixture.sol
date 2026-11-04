@@ -203,9 +203,7 @@ contract SeMatrix_FullSpreadV3Fixture is SeMatrixFixture {
         (uint256 dep0,) = _lr().deployedReserve();
         uint256 amount = 2 * (_lr().localReserve(address(token0)) + dep0) + 1 ether;
         token1.mint(address(this), amount);
-        token1.approve(seVault, amount);
-        IStandardExchangeIn(seVault).exchangeIn(
-            IERC20(address(token1)), amount, IERC20(seVault), 0, address(this), false, block.timestamp
+        token1.approve(seVault, amount);IStandardExchangeIn(seVault).exchangeIn(IERC20(address(token1)), amount, IERC20(seVault), 0, address(this), false, block.timestamp
         );
         _setSleeve(FAMILY_SLEEVE_WAD);
     }

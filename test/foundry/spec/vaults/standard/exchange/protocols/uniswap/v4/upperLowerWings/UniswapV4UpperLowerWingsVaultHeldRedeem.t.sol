@@ -17,8 +17,7 @@ contract UniswapV4UpperLowerWingsVaultHeldRedeem_Test is TestBase_UniswapV4Upper
         token0.mint(address(this), 1e24);
         token1.mint(address(this), 1e24);
         token0.approve(address(wings0), type(uint256).max);
-        IStandardExchangeIn exchange = IStandardExchangeIn(address(wings0));
-        uint256 issued = exchange.exchangeIn(token0, 1e18, IERC20(address(wings0)), 1e18, address(this), false, block.timestamp);
+        IStandardExchangeIn exchange = IStandardExchangeIn(address(wings0));(uint256 issued,) = exchange.exchangeIn(token0, 1e18, IERC20(address(wings0)), 1e18, address(this), false, block.timestamp);
         assertEq(issued, 1e18);
         recipient = makeAddr("wingsSyRecipient");
     }

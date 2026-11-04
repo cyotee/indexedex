@@ -37,12 +37,8 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
 
         uint256 amountIn = 1e18;
         deal(token0, address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview, recipient, false, _deadline());
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -55,13 +51,9 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
 
         uint256 amountIn = 1e18;
         deal(token0, address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
-
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(token0), amountIn, IERC20(token1), preview + 1, makeAddr("recipient"), false, _deadline()
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview + 1, makeAddr("recipient"), false, _deadline()
         );
     }
 
@@ -78,12 +70,8 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
 
         uint256 amountIn = 1e18;
         deal(token0, address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview, recipient, false, _deadline());
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -96,12 +84,9 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
 
         uint256 amountIn = 1e18;
         deal(token0, address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -117,12 +102,8 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -135,12 +116,9 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
 
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, IERC20(token0));
-
-        vm.expectRevert();
-        vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(lpToken, lpAmount, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -163,14 +141,9 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
         // First deposit to get vault shares
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
-
-        // Now withdraw with slippage check
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, lpToken);
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(vaultToken, shares, lpToken, preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());// Now withdraw with slippage check
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, lpToken);
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(vaultToken, shares, lpToken, preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -184,14 +157,10 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
         // First deposit to get vault shares
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());// Now try to withdraw with impossible minAmountOut
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, lpToken);
 
-        // Now try to withdraw with impossible minAmountOut
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, lpToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, shares, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, shares, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -215,14 +184,9 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
         // First deposit LP to get vault shares
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
-
-        // Now ZapOut withdraw vault→token with slippage check
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(vaultToken, shares, IERC20(token0), preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());// Now ZapOut withdraw vault→token with slippage check
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(vaultToken, shares, IERC20(token0), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -237,13 +201,9 @@ contract UniswapV2StandardExchangeIn_SlippageProtection_Test is TestBase_Uniswap
         // First deposit LP to get vault shares
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());// Now try ZapOut with impossible minAmountOut
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
 
-        // Now try ZapOut with impossible minAmountOut
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
-
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, shares, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, shares, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
     }
 }

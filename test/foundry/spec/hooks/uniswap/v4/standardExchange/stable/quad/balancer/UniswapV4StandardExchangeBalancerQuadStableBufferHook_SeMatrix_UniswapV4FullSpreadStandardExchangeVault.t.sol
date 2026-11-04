@@ -1,0 +1,311 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.24;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+import {SeMatrixFixture} from "../../../SeMatrixFixture.sol";
+import {SeMatrix_FullSpreadV4Fixture} from "../../../SeMatrix_FullSpreadV4Fixture.sol";
+import {IFullSpreadV4MatrixMoney, FullSpreadV4MatrixChecks} from "../../../dual/UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol";
+import {FullSpreadV4MatrixNamedPairToken} from "../../../weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_N3.t.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior.sol";
+import {TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
+import {IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage as IPackage} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib as PairPoolLib} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib.sol";
+
+/// @notice Two-leg Balancer row; all assertions also accept the separate five-leg row's runtime length.
+contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault is
+    UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior
+{
+    address internal sharedPkg;
+    SeMatrix_FullSpreadV4Fixture internal fullSpread;
+    FullSpreadV4MatrixNamedPairToken internal pairRecord;
+    address[] internal rowProviders;
+    address[] internal rawTokens;
+    uint256 internal rowCount;
+    bool internal identityAccepted;
+    bytes internal identityRevert;
+    uint256 internal beforeLegs;
+
+    function _newFixture() internal override returns (SeMatrixFixture) {
+        fullSpread = new SeMatrix_FullSpreadV4Fixture(_ctx(), sharedPkg);
+        sharedPkg = fullSpread.pkg();
+        return fullSpread;
+    }
+
+    function setUp() public virtual override {
+        TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.setUp();
+        _initializeBalancer(2);
+    }
+
+    function _initializeBalancer(uint256 count_) internal {
+        rowCount = count_;
+        fx = _newFixture();
+        face = fx.faceToken();
+        seUT = fx.se();
+        faceDec = 18;
+        rejectBytes = abi.encodeWithSelector(IStandardExchangeErrors.AmountOutNotMet.selector);
+        pm = fullSpread.poolManager();
+        swapRouter = new WrapperExactOutRouter(pm);
+        rowCaller = new AtomicPretransferCaller();
+        rowEoa = makeAddr("rowEoa");
+        rowBob = makeAddr("rowBob");
+        beforeLegs = vm.snapshotState();
+        _configureBalancer(true);
+    }
+
+    function _configureBalancer(bool faceAtZero_) internal {
+        delete legTokens;
+        delete rawTokens;
+        legTokens.push(face);
+        if (rowCount == 5) {
+            pairRecord = new FullSpreadV4MatrixNamedPairToken();
+            pairRecord.initialize(address(this), face, faceAtZero_);
+            assertLt(uint160(pairRecord.p0()), uint160(pairRecord.p1()), "PairToken faces sorted");
+            assertTrue(pairRecord.p0() != face && pairRecord.p1() != face, "PairToken faces disjoint");
+            assertTrue(pairRecord.p0() != fullSpread.otherToken() && pairRecord.p1() != fullSpread.otherToken(), "other face disjoint");
+            assertTrue(keccak256(abi.encode(pairRecord.backingKey())) != keccak256(abi.encode(fullSpread.key())), "backing keys disjoint");
+            legTokens.push(pairRecord.share());
+        }
+        uint256 rawCount_ = rowCount == 5 ? 3 : 1;
+        for (uint256 i; i < rawCount_; ++i) {
+            address raw_ = FullSpreadV4MatrixChecks.raw(face, faceAtZero_, keccak256(abi.encode("balancer raw", i)));
+            rawTokens.push(raw_);
+            legTokens.push(raw_);
+        }
+        for (uint256 i; i < rawCount_; ++i) {
+            for (uint256 j = i + 1; j < rawCount_; ++j) {
+                if (rawTokens[j] < rawTokens[i]) (rawTokens[i], rawTokens[j]) = (rawTokens[j], rawTokens[i]);
+            }
+        }
+        other = rawTokens[0];
+        _bindBalancer(fullSpread.currency0Provider());
+    }
+
+    function _bindBalancer(address provider_) internal {
+        for (uint256 i; i < rowCount; ++i) {
+            for (uint256 j = i + 1; j < rowCount; ++j) {
+                if (legTokens[j] < legTokens[i]) (legTokens[i], legTokens[j]) = (legTokens[j], legTokens[i]);
+            }
+        }
+        delete legSes;
+        delete legDecs;
+        delete rowProviders;
+        delete fxs;
+        for (uint256 i; i < rowCount; ++i) {
+            bool isFace_ = legTokens[i] == face;
+            bool isPair_ = rowCount == 5 && legTokens[i] == pairRecord.share();
+            legSes.push(isFace_ ? seUT : (isPair_ ? pairRecord.share() : address(0)));
+            rowProviders.push(isFace_ ? provider_ : (isPair_ ? pairRecord.provider() : address(0)));
+            legDecs.push(18);
+            fxs.push(isFace_ ? fx : SeMatrixFixture(address(0)));
+            if (isFace_) faceIdx = i;
+            if (legTokens[i] == other) otherIdx = i;
+        }
+        // Deliberately do not call the TestBase's fixed-four `_pkgArgs` constructor.
+        IPackage.PkgArgs memory args_;
+        args_.poolManager = address(pm);
+        args_.feeOracle = address(indexedexManager);
+        args_.tokens = legTokens;
+        args_.standardExchanges = legSes;
+        args_.rateProviders = rowProviders;
+        args_.tokenDecimals = new uint8[](rowCount);
+        args_.seDecimals = new uint8[](rowCount);
+        args_.baseAmp = DEFAULT_BASE_AMP;
+        for (uint256 i; i < rowCount; ++i) {
+            args_.tokenDecimals[i] = 18;
+            args_.seDecimals[i] = legSes[i] == address(0) ? 0 : 18;
+        }
+        identityAccepted = rowCount == 2;
+        if (rowCount == 5) {
+            try hookPkg.processArgs(abi.encode(args_)) returns (bytes memory) {
+                identityAccepted = true;
+            } catch (bytes memory reason_) {
+                identityRevert = reason_;
+                FullSpreadV4MatrixChecks.record(address(hookPkg), abi.encode(args_), reason_);
+                // Separate face/first-raw control only. The rejected identity proof remains red.
+                for (uint256 i; i < rowCount; ++i) {
+                    if (legTokens[i] == pairRecord.share()) {
+                        args_.standardExchanges[i] = address(0);
+                        args_.rateProviders[i] = address(0);
+                        args_.seDecimals[i] = 0;
+                    }
+                }
+            }
+        }
+        _deployHookWithArgs(args_);
+        _setUsageFee(0);
+        _setDexFee(0);
+        fullSpread.fund(user, 1_000_000 ether);
+        fullSpread.fundOther(user, 1_000_000 ether);
+        for (uint256 i; i < rawTokens.length; ++i) {
+            SimpleMintableERC20(rawTokens[i]).mint(user, 1_000_000 ether);
+            SimpleMintableERC20(rawTokens[i]).mint(address(this), 1_000_000 ether);
+        }
+        if (rowCount == 5) IERC20(pairRecord.share()).transfer(user, 100_000 ether);
+        vm.startPrank(user);
+        for (uint256 i; i < rowCount; ++i) {
+            IERC20(legTokens[i]).approve(hook, type(uint256).max);
+            IERC20(legTokens[i]).approve(address(swapRouter), type(uint256).max);
+        }
+        vm.stopPrank();
+    }
+
+    /// @dev No `_seed`, `_joinBoth`, `_joinAll`, or `_amounts`: they assume four legs.
+    function _seedBalancer() internal returns (uint256 shares_) {
+        uint256[] memory amounts_ = new uint256[](rowCount);
+        for (uint256 i; i < rowCount; ++i) amounts_[i] = 100 ether;
+        uint256 supply_ = rowCount == 5 ? IERC20(pairRecord.share()).totalSupply() : 0;
+        vm.prank(user);
+        (shares_,) = quad.joinProportional(amounts_, user, 0, block.timestamp);
+        assertGt(shares_, 0, "runtime-length seed succeeded");
+        if (rowCount == 5) assertEq(IERC20(pairRecord.share()).totalSupply(), supply_, "PairToken seed transfer only");
+    }
+
+    function _balancerDirections(address counter_) internal {
+        PoolKey memory key_ = PairPoolLib.pairKey(face, counter_, 1, IHooks(hook));
+        bool faceAtZero_ = face < counter_;
+        assertEq(Currency.unwrap(faceAtZero_ ? key_.currency0 : key_.currency1), face, "face product index before swap");
+        assertTrue(keccak256(abi.encode(key_)) != keccak256(abi.encode(fullSpread.key())), "disjoint product/backing");
+        if (rowCount == 5) {
+            address pair_ = pairRecord.share();
+            vm.expectCall(pair_, abi.encodeWithSelector(IFullSpreadV4MatrixMoney.exchangeIn.selector), uint64(0));
+            vm.expectCall(pair_, abi.encodeWithSelector(IStandardExchangeOut.exchangeOut.selector), uint64(0));
+            vm.expectCall(pair_, abi.encodeWithSignature(
+                "exchangeBundleInForSingleOut(uint256[],address,uint256,address,bool,uint256)"
+            ), uint64(0));
+            vm.expectCall(pair_, abi.encodeWithSignature(
+                "exchangeBundleOut(address,uint256,uint256[],address,bool,uint256)"
+            ), uint64(0));
+        }
+        uint256 supply_ = rowCount == 5 ? IERC20(pairRecord.share()).totalSupply() : 0;
+        uint256 input_ = IERC20(face).balanceOf(user);
+        uint256 out_ = IERC20(counter_).balanceOf(user);
+        _swapExactIn(face, counter_, 1 ether);
+        assertEq(input_ - IERC20(face).balanceOf(user), 1 ether, "face input settled");
+        assertGt(IERC20(counter_).balanceOf(user), out_, "face exact-input paid");
+        input_ = IERC20(counter_).balanceOf(user);
+        out_ = IERC20(face).balanceOf(user);
+        _swapExactIn(counter_, face, 1 ether);
+        assertEq(input_ - IERC20(counter_).balanceOf(user), 1 ether, "counter input settled");
+        assertGt(IERC20(face).balanceOf(user), out_, "reverse exact-input paid");
+        if (rowCount == 5) assertEq(IERC20(pairRecord.share()).totalSupply(), supply_, "PairToken supply unchanged");
+    }
+
+    function test_row_rateTarget_currency1() public virtual {
+        legTokens[faceIdx] = fullSpread.otherToken();
+        face = fullSpread.otherToken();
+        _bindBalancer(fullSpread.currency1Provider());
+        assertEq(quad.rateProvider(faceIdx), fullSpread.currency1Provider());
+        _seedBalancer();
+        _balancerDirections(other);
+    }
+    function test_row_index0() public {
+        assertLt(uint160(face), uint160(other));
+        if (rowCount == 5 && !pairRecord.sideMatched()) {
+            emit log("PairToken product-index-0 case UNVERIFIED after 32 vault candidates; raw case continues");
+            _seedBalancer();
+            _balancerDirections(other);
+            return;
+        }
+        if (rowCount == 5) assertLt(uint160(face), uint160(pairRecord.share()));
+        _seedBalancer();
+        _balancerDirections(other);
+        if (rowCount == 5 && identityAccepted) _balancerDirections(pairRecord.share());
+    }
+    function test_row_index1() public {
+        assertTrue(vm.revertToState(beforeLegs));
+        _configureBalancer(false);
+        assertGt(uint160(face), uint160(other));
+        if (rowCount == 5 && !pairRecord.sideMatched()) {
+            emit log("PairToken product-index-1 case UNVERIFIED after 32 vault candidates; raw case continues");
+            _seedBalancer();
+            _balancerDirections(other);
+            return;
+        }
+        if (rowCount == 5) assertGt(uint160(face), uint160(pairRecord.share()));
+        _seedBalancer();
+        _balancerDirections(other);
+        if (rowCount == 5 && identityAccepted) _balancerDirections(pairRecord.share());
+    }
+
+    // Every inherited public test uses the runtime-length mixed record instead of fixed-four helpers.
+    function test_row_bind_deploysThroughPackage() public override {
+        assertEq(quad.numTokens(), rowCount);
+        assertEq(quad.standardExchange(faceIdx), seUT);
+        assertTrue(quad.isBuffered(faceIdx));
+        assertEq(quad.standardExchange(otherIdx), address(0));
+        assertFalse(quad.isBuffered(otherIdx));
+        _assertAllDoorsLive();
+        _seedBalancer();
+    }
+    function test_row_bufferFirst_restingFace_notPaidToJoiner() public override {
+        uint256 joiner_ = IERC20(face).balanceOf(user);
+        fullSpread.fund(hook, 500 ether);
+        _seedBalancer();
+        assertLe(IERC20(face).balanceOf(user), joiner_, "resting face is not paid to the joiner");
+        assertLt(IERC20(face).balanceOf(hook), 500 ether, "donation is not returned as a joiner refund");
+    }
+    // FullSpread refunds to its caller, not to a sleeve or directly to the swapper.
+    function test_row_partialConsumption_bookedNotRefunded() public override {
+        FullSpreadV4MatrixChecks.refunds(fullSpread, hook, face);
+    }
+    function test_row_hookSwap_exactIn_eoaPretransferRejected() public override {
+        _seedBalancer();
+        uint256 in_ = IERC20(other).balanceOf(hook);
+        uint256 out_ = IERC20(face).balanceOf(rowEoa);
+        vm.prank(rowEoa);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IFullSpreadV4MatrixMoney(hook).exchangeIn(other, 1 ether, face, 0, rowEoa, true, block.timestamp);
+        assertEq(IERC20(other).balanceOf(hook), in_);
+        assertEq(IERC20(face).balanceOf(rowEoa), out_);
+    }
+    // Exact-out hooks must revert and pay neither token; zero direct preview is tested separately.
+    function test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed() public override {
+        _seedBalancer();
+        FullSpreadV4MatrixChecks.hookOut(hook, other, face, true);
+    }
+    function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public override {
+        _seedBalancer();
+        FullSpreadV4MatrixChecks.hookOut(hook, other, face, false);
+    }
+    function test_row_poolManagerSwap_bothDirections_noFaceResidual() public override {
+        _seedBalancer();
+        _balancerDirections(other);
+        if (rowCount == 5 && identityAccepted) _balancerDirections(pairRecord.share());
+        uint256 f_ = IERC20(face).balanceOf(user);
+        uint256 o_ = IERC20(other).balanceOf(user);
+        PoolKey memory key_ = PairPoolLib.pairKey(other, face, 1, IHooks(hook));
+        bool z_ = other < face;
+        SwapParams memory p_ = SwapParams(z_, int256(1 ether), z_ ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1);
+        vm.prank(user);
+        vm.expectRevert();
+        swapRouter.swapExactOut(key_, p_, 10 ether, "");
+        assertEq(IERC20(face).balanceOf(user), f_);
+        assertEq(IERC20(other).balanceOf(user), o_);
+    }
+    // Public AmountOutNotMet replaces the inherited operative-dependency mock.
+    function test_row_seFailure_rollsBack() public override { FullSpreadV4MatrixChecks.rollback(fullSpread, face); }
+    function test_row_previewMatchesExecution() public override { FullSpreadV4MatrixChecks.preview(fullSpread, face); }
+    function test_row_ammCallerFundSeparation() public override {
+        _seedBalancer();
+        uint256 shares_ = IERC20(seUT).balanceOf(hook);
+        fullSpread.fundOther(rowBob, 10 ether);
+        vm.startPrank(rowBob);
+        IERC20(fullSpread.otherToken()).approve(seUT, 10 ether);
+        IFullSpreadV4MatrixMoney(seUT).exchangeIn(fullSpread.otherToken(), 10 ether, seUT, 0, rowBob, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(IERC20(seUT).balanceOf(hook), shares_, "other caller cannot take hook shares");
+        assertEq(IERC20(face).balanceOf(rowBob), 0);
+    }
+    function test_row_exactOutAbsent() public { FullSpreadV4MatrixChecks.absentOut(seUT, face); }
+}

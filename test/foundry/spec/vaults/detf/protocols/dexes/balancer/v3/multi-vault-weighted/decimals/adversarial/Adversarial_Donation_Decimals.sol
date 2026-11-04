@@ -28,13 +28,9 @@ abstract contract Adversarial_Donation_Decimals_DexBalV3Mul is TestBase_MultiVau
         assertEq(IERC20(instance_).balanceOf(victim), victimDetfBefore_, "victim DETF unchanged");
 
         // Victim can still mint via proper path without receiving attacker's donation as profit
-        uint256 victimIn_ = _fundSeSharesLeg(0, victim, 40e18);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], victimIn_, IERC20(instance_));
+        uint256 victimIn_ = _fundSeSharesLeg(0, victim, 40e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], victimIn_, IERC20(instance_));
         vm.startPrank(victim);
-        seShares[0].approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
+        seShares[0].approve(instance_, victimIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         // Preview is computed from pool state; donated idle shares are NOT joined into reserve -
@@ -59,9 +55,7 @@ abstract contract Adversarial_Donation_Decimals_DexBalV3Mul is TestBase_MultiVau
 
         // Cannot burn 0 for free value
         vm.prank(attacker);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), 0, seShares[0], 0, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), 0, seShares[0], 0, attacker, false, block.timestamp + 1 hours
         );
 
         // Attacker still holds remaining DETF and can burn only what they hold (not diamond's free DETF)
@@ -70,9 +64,7 @@ abstract contract Adversarial_Donation_Decimals_DexBalV3Mul is TestBase_MultiVau
             uint256 burnAmt_ = hold_ > hold_ / 2 ? hold_ / 2 : hold_;
             if (burnAmt_ == 0) burnAmt_ = hold_;
             vm.startPrank(attacker);
-            IERC20(instance_).approve(instance_, burnAmt_);
-            IStandardExchangeIn(instance_).exchangeIn(
-                IERC20(instance_), burnAmt_, seShares[0], 0, attacker, false, block.timestamp + 1 hours
+            IERC20(instance_).approve(instance_, burnAmt_);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShares[0], 0, attacker, false, block.timestamp + 1 hours
             );
             vm.stopPrank();
             // Free DETF on diamond still there (not spent by burn of attacker holdings)

@@ -42,10 +42,7 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
         IERC20 tokenIn = IERC20(token0);
         
         deal(token0, address(this), tokenAmount);
-        tokenIn.approve(address(vault), tokenAmount);
-        
-        shares = vault.exchangeIn(
-            tokenIn, tokenAmount, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        tokenIn.approve(address(vault), tokenAmount);(shares,) = vault.exchangeIn(tokenIn, tokenAmount, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
         );
     }
 
@@ -85,15 +82,10 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
         address recipient = makeAddr("recipient");
 
         // Approve vault to burn shares
-        vault.approve(address(vault), sharesToWithdraw);
-
-        // Get preview - shares to token
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
+        vault.approve(address(vault), sharesToWithdraw);// Get preview - shares to token
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute
+        (uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
 
         assertEq(tokenOutAmount, preview, "Execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), preview, "Recipient should receive preview token amount");
@@ -129,10 +121,7 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
 
         uint256 senderSharesBefore = vault.balanceOf(address(this));
         uint256 recipientTokenBefore = tokenOut.balanceOf(recipient);
-        uint256 totalSupplyBefore = vault.totalSupply();
-
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
+        uint256 totalSupplyBefore = vault.totalSupply();(uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
 
         // Sender shares decreased
         assertEq(vault.balanceOf(address(this)), senderSharesBefore - sharesToWithdraw, "Sender shares should decrease");
@@ -160,9 +149,7 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
     //     IERC20 tokenOut = IERC20(pool.token0());
     //     address recipient = makeAddr("recipient");
 
-    //     vault.approve(address(vault), shares);
-
-    //     // Withdraw all shares to token
+    //     vault.approve(address(vault), shares);//     // Withdraw all shares to token
     //     uint256 tokenOutAmount =
     //         vault.exchangeIn(vaultToken, shares, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
 
@@ -184,13 +171,8 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
     //     uint256 sharesToWithdraw = shares / 2;
     //     address recipient = makeAddr("recipient");
 
-    //     vault.approve(address(vault), sharesToWithdraw);
-
-    //     uint256 preview = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(pool.token0()));
-
-    //     // Should succeed with exact minAmountOut
-    //     uint256 tokenOut = vault.exchangeIn(
-    //         IERC20(address(vault)), sharesToWithdraw, IERC20(pool.token0()), preview, recipient, false, block.timestamp + 1 hours
+    //     vault.approve(address(vault), sharesToWithdraw);//     uint256 preview = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(pool.token0()));//     // Should succeed with exact minAmountOut
+    //     uint256 tokenOut = vault.exchangeIn(//         IERC20(address(vault)), sharesToWithdraw, IERC20(pool.token0()), preview, recipient, false, block.timestamp + 1 hours
     //     );
 
     //     assertEq(tokenOut, preview, "Should succeed with exact minimum");
@@ -205,14 +187,10 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
     //     uint256 sharesToWithdraw = shares / 2;
     //     address recipient = makeAddr("recipient");
 
-    //     vault.approve(address(vault), sharesToWithdraw);
-
-    //     uint256 preview = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(pool.token0()));
+    //     vault.approve(address(vault), sharesToWithdraw);//     uint256 preview = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(pool.token0()));
 
     //     // Should revert with minAmountOut too high
-    //     vm.expectRevert();
-    //     vault.exchangeIn(
-    //         IERC20(address(vault)),
+    //     vm.expectRevert();//     vault.exchangeIn(//         IERC20(address(vault)),
     //         sharesToWithdraw,
     //         IERC20(pool.token0()),
     //         preview + 1,
@@ -241,13 +219,11 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
 
     //     // Deposit via Route 3 (ZapIn)
     //     vm.startPrank(user);
-    //     tokenIn.approve(address(vault), amountIn);
-    //     uint256 shares =
+    //     tokenIn.approve(address(vault), amountIn);//     uint256 shares =
     //         vault.exchangeIn(tokenIn, amountIn, IERC20(address(vault)), 0, user, false, block.timestamp + 1 hours);
 
     //     // Withdraw via Route 7 (ZapOut)
-    //     vault.approve(address(vault), shares);
-    //     uint256 tokenOut =
+    //     vault.approve(address(vault), shares);//     uint256 tokenOut =
     //         vault.exchangeIn(IERC20(address(vault)), shares, tokenIn, 0, user, false, block.timestamp + 1 hours);
     //     vm.stopPrank();
 
@@ -296,11 +272,7 @@ contract SlipstreamFork_ZapOutWithdraw_Test is TestBase_SlipstreamFork {
         if (sharesToWithdraw > shares) sharesToWithdraw = shares;
 
         address recipient = makeAddr("recipient");
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);(uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, block.timestamp + 1 hours);
 
         assertEq(tokenOutAmount, preview, "Fuzz: execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), tokenOutAmount, "Fuzz: recipient balance correct");

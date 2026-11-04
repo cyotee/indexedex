@@ -151,7 +151,7 @@ function test_O3_wrongDomain_reverts() public {
 ## Run
 
 ```bash
-forge test --match-path 'test/foundry/spec/<feature>/adversarial/**' -vv
+forge test --use solar --match-path 'test/foundry/spec/<feature>/adversarial/**' -vv
 # rg "function test_A0_|function test_L1_|function test_M1_|function test_N1_|function test_O1_" test/...
 ```
 

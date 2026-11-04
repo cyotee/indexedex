@@ -128,9 +128,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         uint256 amount = 1 ether;
         vm.deal(address(this), amount);
         IWETH(payable(MAINNET_WETH)).deposit{value: amount}();
-        IERC20(MAINNET_WETH).approve(seVault, amount);
-        uint256 out = seIn.exchangeIn(
-            IERC20(MAINNET_WETH),
+        IERC20(MAINNET_WETH).approve(seVault, amount);(uint256 out,) = seIn.exchangeIn(IERC20(MAINNET_WETH),
             amount,
             IERC20(seVault),
             0,
@@ -152,9 +150,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
             vm.deal(address(this), amount);
             IWETH(payable(MAINNET_WETH)).deposit{value: amount}();
             IERC20(MAINNET_WETH).approve(seVault, amount);
-            vm.expectRevert();
-            seIn.exchangeIn(
-                IERC20(MAINNET_WETH),
+            vm.expectRevert();seIn.exchangeIn(IERC20(MAINNET_WETH),
                 amount,
                 IERC20(MAINNET_RETH),
                 0,
@@ -167,10 +163,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         uint256 amount = maxDep > 0.5 ether ? 0.5 ether : maxDep;
         vm.deal(address(this), amount);
         IWETH(payable(MAINNET_WETH)).deposit{value: amount}();
-        IERC20(MAINNET_WETH).approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(IERC20(MAINNET_WETH), amount, IERC20(MAINNET_RETH));
-        uint256 out = seIn.exchangeIn(
-            IERC20(MAINNET_WETH),
+        IERC20(MAINNET_WETH).approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(MAINNET_WETH), amount, IERC20(MAINNET_RETH));(uint256 out,) = seIn.exchangeIn(IERC20(MAINNET_WETH),
             amount,
             IERC20(MAINNET_RETH),
             preview > 0 ? preview * 99 / 100 : 0, // fee headroom
@@ -186,19 +179,14 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         uint256 amount = 1 ether;
         vm.deal(address(this), amount * 3);
         IWETH(payable(MAINNET_WETH)).deposit{value: amount * 3}();
-        IERC20(MAINNET_WETH).approve(seVault, amount * 3);
-        seIn.exchangeIn(
-            IERC20(MAINNET_WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(MAINNET_WETH).approve(seVault, amount * 3);seIn.exchangeIn(IERC20(MAINNET_WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         // Donate sleeve
         IERC20(MAINNET_WETH).transfer(seVault, amount);
         uint256 seBal = IERC20(seVault).balanceOf(address(this));
         if (seBal == 0) return;
-        uint256 shares = seBal / 2;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(MAINNET_WETH));
-        if (preview == 0 || se.liquidReserveEth() < preview) return;
-        seIn.exchangeIn(
-            IERC20(seVault), shares, IERC20(MAINNET_WETH), preview, address(this), false, block.timestamp + 1 hours
+        uint256 shares = seBal / 2;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(MAINNET_WETH));
+        if (preview == 0 || se.liquidReserveEth() < preview) return;seIn.exchangeIn(IERC20(seVault), shares, IERC20(MAINNET_WETH), preview, address(this), false, block.timestamp + 1 hours
         );
     }
 
@@ -207,9 +195,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         uint256 amount = 2 ether;
         vm.deal(address(this), amount);
         IWETH(payable(MAINNET_WETH)).deposit{value: amount}();
-        IERC20(MAINNET_WETH).approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(MAINNET_WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(MAINNET_WETH).approve(seVault, amount);seIn.exchangeIn(IERC20(MAINNET_WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         seRebalance.rebalance(); // must not revert
     }
@@ -224,9 +210,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         // On fork we can deal ERC20 balances
         uint256 rethSeed = 2 ether;
         deal(MAINNET_RETH, address(this), rethSeed);
-        IERC20(MAINNET_RETH).approve(seVault, rethSeed);
-        seIn.exchangeIn(
-            IERC20(MAINNET_RETH), rethSeed, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(MAINNET_RETH).approve(seVault, rethSeed);seIn.exchangeIn(IERC20(MAINNET_RETH), rethSeed, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         assertEq(se.liquidReserveEth(), 0);
 
@@ -269,7 +253,8 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         (, uint256 input, uint256 output,) =
             quote.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amount);
         assertEq(input, amount, "Rocket: exact-in consumes the whole input");
-        assertEq(output, seIn.previewExchangeIn(IERC20(MAINNET_WETH), amount, IERC20(seVault)), "Rocket: transition quote equals previewExchangeIn on mainnet");
+        (uint256 previewAmountOut1,) = seIn.previewExchangeIn(IERC20(MAINNET_WETH), amount, IERC20(seVault));
+        assertEq(output, previewAmountOut1, "Rocket: transition quote equals previewExchangeIn on mainnet");
     }
 }
 
@@ -285,10 +270,8 @@ contract RocketPoolStandardExchangeProjectionFork is RocketPoolRETHStandardExcha
         vm.deal(address(this), 10_100 ether);
         IWETH(payable(MAINNET_WETH)).deposit{value: 10_000 ether}();
         IRocketDepositPool(depositPool).deposit{value: 100 ether}();
-        IERC20(MAINNET_WETH).approve(seVault, 40 ether);
-        seIn.exchangeIn(IERC20(MAINNET_WETH), 40 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
-        IERC20(MAINNET_RETH).approve(seVault, 10 ether);
-        seIn.exchangeIn(IERC20(MAINNET_RETH), 10 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        IERC20(MAINNET_WETH).approve(seVault, 40 ether);seIn.exchangeIn(IERC20(MAINNET_WETH), 40 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        IERC20(MAINNET_RETH).approve(seVault, 10 ether);seIn.exchangeIn(IERC20(MAINNET_RETH), 10 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
         assertGt(IRETH(MAINNET_RETH).getEthValue(1e18), 1e18, "actual fractional rate");
     }
 
@@ -361,7 +344,8 @@ contract RocketPoolStandardExchangeProjectionFork is RocketPoolRETHStandardExcha
             state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, payment
         );
         IERC20(MAINNET_WETH).approve(seVault, payment);
-        assertEq(seIn.exchangeIn(IERC20(MAINNET_WETH), payment, IERC20(seVault), shares, address(this), false, block.timestamp), shares);
+        (uint256 exchangeAmountOut2,) = seIn.exchangeIn(IERC20(MAINNET_WETH), payment, IERC20(seVault), shares, address(this), false, block.timestamp);
+        assertEq(exchangeAmountOut2, shares);
         (bytes memory actual,) = quote.quoteState(MAINNET_WETH, address(this));
         _assertProjectedState(actual, projected);
         assertGt(IRocketDepositPool(depositPool).getExcessBalance(), 1 ether, "actual post-queue pool collateral");

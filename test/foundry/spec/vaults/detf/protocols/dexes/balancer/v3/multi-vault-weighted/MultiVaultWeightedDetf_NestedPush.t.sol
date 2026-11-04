@@ -51,9 +51,7 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         uint256 seShares_ = _fundSeShares0(bob, 100e18);
         IERC20 share0_ = _share0();
         vm.startPrank(bob);
-        share0_.approve(openDetf, seShares_);
-        uint256 out_ = openExchangeIn.exchangeIn(
-            share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        share0_.approve(openDetf, seShares_);(uint256 out_,) = openExchangeIn.exchangeIn(share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(out_ > 0, "T-NEST-1 mint");
@@ -70,9 +68,7 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         _bootstrap(alice, 1_000e18);
         // DETF-local short: true without enough unbooked surplus reverts TransferDeltaInsufficient.
         IERC20 share0_ = _share0();
-        vm.expectRevert();
-        openExchangeIn.exchangeIn(
-            share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.expectRevert();openExchangeIn.exchangeIn(share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
         );
     }
 
@@ -82,17 +78,13 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         uint256 seShares_ = _fundSeShares0(bob, 50e18);
         IERC20 share0_ = _share0();
         vm.startPrank(bob);
-        share0_.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        share0_.approve(openDetf, seShares_);openExchangeIn.exchangeIn(share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         // Booked DETF hold-set + true without push → I1 (covers nested-host I1 product law on entry).
         assertEq(openBook.reserveOfToken(address(share0_)), share0_.balanceOf(openDetf), "booked");
         vm.expectRevert();
-        vm.prank(bob);
-        openExchangeIn.exchangeIn(
-            share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.prank(bob);openExchangeIn.exchangeIn(share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
         );
     }
 
@@ -104,9 +96,7 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         IERC20 share0_ = _share0();
         assertEq(share0_.allowance(openDetf, _leg0()), 0, "pre");
         vm.startPrank(bob);
-        share0_.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        share0_.approve(openDetf, seShares_);openExchangeIn.exchangeIn(share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(share0_.allowance(openDetf, _leg0()), 0, "T-NEST-4 post");
@@ -124,9 +114,7 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         uint256 seShares_ = _fundSeShares0(bob, 60e18);
         IERC20 share0_ = _share0();
         vm.startPrank(bob);
-        share0_.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        share0_.approve(openDetf, seShares_);openExchangeIn.exchangeIn(share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(
@@ -146,9 +134,7 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
     function test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount() public {
         _bootstrap(alice, 500e18);
         IERC20 share0_ = _share0();
-        vm.expectRevert();
-        openExchangeIn.exchangeIn(
-            share0_, 0, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        vm.expectRevert();openExchangeIn.exchangeIn(share0_, 0, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
     }
 
@@ -190,16 +176,12 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         uint256 seShares_ = _fundSeShares0(bob, 60e18);
         IERC20 share0_ = _share0();
         vm.startPrank(bob);
-        share0_.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        share0_.approve(openDetf, seShares_);openExchangeIn.exchangeIn(share0_, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(openBook.reserveOfToken(address(share0_)), share0_.balanceOf(openDetf), "booked");
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(bob);
-        openExchangeIn.exchangeIn(
-            share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.prank(bob);openExchangeIn.exchangeIn(share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
         );
         AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         vm.expectRevert(

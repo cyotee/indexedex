@@ -243,14 +243,10 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
     function test_exchangeIn_detf_to_claim_after_live() public {
         _firstBond(80 ether);
         uint256 mintIn_ = 10 ether;
-        vm.startPrank(detfUser);
-        uint256 userDetf_ = IStandardExchangeIn(detf).exchangeIn(
-            IERC20(launchToken), mintIn_, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        vm.startPrank(detfUser);(uint256 userDetf_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(launchToken), mintIn_, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
         );
         address stakingToken_ = detfInfo.rebasingClaimToken();
-        IERC20(detf).approve(stakingToken_, userDetf_);
-        uint256 claimOut_ = IStandardExchangeIn(stakingToken_).exchangeIn(
-            IERC20(detf),
+        IERC20(detf).approve(stakingToken_, userDetf_);(uint256 claimOut_,) = IStandardExchangeIn(stakingToken_).exchangeIn(IERC20(detf),
             userDetf_,
             IERC20(detfInfo.rebasingClaimToken()),
             0,
@@ -273,9 +269,7 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         vm.expectRevert(abi.encodeWithSelector(ITokenStaking.AmountExceedsReserve.selector, 11 ether, 10 ether));
         vm.prank(owner);
         staking.migrateToClaimVault(11 ether, 0, block.timestamp);
-        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Staking));
-
-        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(launchToken), 4 ether, IERC20(detf));
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Staking));(uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(launchToken), 4 ether, IERC20(detf));
         uint256 supply_ = IERC20(detf).totalSupply();
         IStakedDETF receipt_ = IStakedDETF(detfInfo.rebasingClaimToken());
         bytes32 before_ = keccak256(abi.encode(receipt_.stakingState()));

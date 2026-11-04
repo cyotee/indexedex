@@ -38,9 +38,7 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
 
         vm.startPrank(attacker);
         seShares[0].approve(instance_, donated_);
-        vm.expectRevert(MultiVaultWeightedDetfRepo.ReservePoolNotInitialized.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert(MultiVaultWeightedDetfRepo.ReservePoolNotInitialized.selector);IStandardExchangeIn(instance_).exchangeIn(seShares[0], donated_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "pre-live mint blocked");
@@ -50,14 +48,10 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
         _assertLive(instance_);
         assertEq(seShares[0].balanceOf(instance_), donated_, "init+bond does not join donation");
 
-        uint256 attackerIn_ = _fundSeSharesLeg(0, attacker, 40e18);
-        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(
-            seShares[0], attackerIn_, IERC20(instance_)
+        uint256 attackerIn_ = _fundSeSharesLeg(0, attacker, 40e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], attackerIn_, IERC20(instance_)
         );
         vm.startPrank(attacker);
-        seShares[0].approve(instance_, attackerIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], attackerIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        seShares[0].approve(instance_, attackerIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], attackerIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(out_, preview_, "first mint == preview; idle donation not joined");
@@ -66,16 +60,12 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
 
         // After honest money-route sync, booked residual cannot fund a free pretransfer mint.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
         );
         vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0))
-        );
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours
+        );IStandardExchangeIn(instance_).exchangeIn(seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours
         );
         assertEq(IERC20(instance_).balanceOf(attacker), out_, "booked donation not minted");
     }
@@ -116,14 +106,10 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
         assertEq(seShares[0].balanceOf(instance_), donated_, "donation idle through go-live");
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "attacker still empty after others go live");
 
-        uint256 attackerIn_ = _fundSeSharesLeg(0, attacker, 40e18);
-        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(
-            seShares[0], attackerIn_, IERC20(instance_)
+        uint256 attackerIn_ = _fundSeSharesLeg(0, attacker, 40e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], attackerIn_, IERC20(instance_)
         );
         vm.startPrank(attacker);
-        seShares[0].approve(instance_, attackerIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], attackerIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        seShares[0].approve(instance_, attackerIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], attackerIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(out_, preview_, "first mint matches preview");
@@ -131,16 +117,12 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
         assertEq(seShares[0].balanceOf(instance_), donated_, "victim donation still idle");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
         );
         vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0))
-        );
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours
+        );IStandardExchangeIn(instance_).exchangeIn(seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours
         );
         assertEq(IERC20(instance_).balanceOf(attacker), out_, "booked donation not drained");
         assertEq(seShares[0].balanceOf(instance_), donated_, "donated inventory not drained");

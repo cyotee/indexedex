@@ -124,9 +124,7 @@ contract UniswapV4Detf_Quad_Adversarial_Reentrancy is TestBase_UniswapV4Detf_Qua
         );
         hostilePair.arm(hostileDetf, reentry);
 
-        vm.startPrank(detfUser);
-        uint256 out_ = IStandardExchangeIn(address(hostileInfo)).exchangeIn(
-            IERC20(address(hostilePair)),
+        vm.startPrank(detfUser);(uint256 out_,) = IStandardExchangeIn(address(hostileInfo)).exchangeIn(IERC20(address(hostilePair)),
             50 ether,
             IERC20(address(hostileInfo)),
             0,

@@ -23,9 +23,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Base_Test is T
     function test_FK1_depositSwapWithdrawSmoke() public {
         _seedLiveLiquidity();
         uint256 lp = IERC20(hook).balanceOf(user);
-        vm.prank(user);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             2 ether,
             IERC20(address(pairToken)),
             0,

@@ -151,12 +151,8 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
 
     function test_seExchangeIn_previewEqualsExec() public {
         _firstMintEqual(1_000);
-        uint256 amountIn = _u1(3);
-        uint256 preview =
-            IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(token1)), amountIn, IERC20(address(token2)));
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        uint256 amountIn = _u1(3);(uint256 preview,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(token1)), amountIn, IERC20(address(token2)));
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             amountIn,
             IERC20(address(token2)),
             0,
@@ -232,9 +228,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
         t18a.approve(hook, type(uint256).max);
         t18b.approve(hook, type(uint256).max);
         t18c.approve(hook, type(uint256).max);
-        vm.stopPrank();
-
-        uint256 onePairShares = IStandardExchangeIn(se6).previewExchangeIn(IERC20(address(t6)), 1e6, IERC20(se6));
+        vm.stopPrank();(uint256 onePairShares,) = IStandardExchangeIn(se6).previewExchangeIn(IERC20(address(t6)), 1e6, IERC20(se6));
         assertEq(onePairShares, 1e6, "SE first mint uses native pair units");
         assertEq(quad.ratedScale(i6), 10 ** uint256(36 - 6), "ratedScale 6dec");
         assertEq(onePairShares * quad.invScale(i6) / 1e18, 1 ether, "one pair token of inventory normalizes to WAD");
@@ -278,9 +272,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
 
         token0.mint(user, _u0(200));
         vm.startPrank(user);
-        token0.approve(se0, type(uint256).max);
-        uint256 seShares = IStandardExchangeIn(se0).exchangeIn(
-            IERC20(address(token0)), _u0(100), IERC20(se0), 0, user, false, block.timestamp + 1
+        token0.approve(se0, type(uint256).max);(uint256 seShares,) = IStandardExchangeIn(se0).exchangeIn(IERC20(address(token0)), _u0(100), IERC20(se0), 0, user, false, block.timestamp + 1
         );
         IERC20(se0).transfer(hook, seShares);
         vm.stopPrank();

@@ -88,8 +88,7 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
     /* --------------------------------- helpers -------------------------------- */
 
     function _wrap(address who, uint256 amount) internal returns (uint256 shares) {
-        vm.prank(who);
-        shares = seIn.exchangeIn(IERC20(address(underlying)), amount, IERC20(se), 0, who, false, block.timestamp);
+        vm.prank(who);(shares,) = seIn.exchangeIn(IERC20(address(underlying)), amount, IERC20(se), 0, who, false, block.timestamp);
     }
 
     function _bookedUnderlying() internal view returns (uint256) {
@@ -104,8 +103,8 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
         return IERC20(address(protocolVault)).balanceOf(se);
     }
 
-    function _underlyingEntitlement(uint256 seShares) internal view returns (uint256) {
-        return seIn.previewExchangeIn(IERC20(se), seShares, IERC20(address(underlying)));
+    function _underlyingEntitlement(uint256 seShares) internal view returns (uint256) {(uint256 quotedAmountOut,) = seIn.previewExchangeIn(IERC20(se), seShares, IERC20(address(underlying)));
+        return quotedAmountOut;
     }
 
     /* ------------------------------------ R8.1 ------------------------------------ */
@@ -128,9 +127,7 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
         assertEq(_bookedUnderlying(), 0, "donation is not yet booked reserve");
 
         // Attacker wraps its own 10 while the donation rests.
-        uint256 attackerBalBefore = underlying.balanceOf(attacker);
-        uint256 quoteOfOwnInput =
-            seIn.previewExchangeIn(IERC20(address(underlying)), 10 ether, IERC20(se));
+        uint256 attackerBalBefore = underlying.balanceOf(attacker);(uint256 quoteOfOwnInput,) = seIn.previewExchangeIn(IERC20(address(underlying)), 10 ether, IERC20(se));
         uint256 attackerShares = _wrap(attacker, 10 ether);
 
         // The attacker gets ONLY the quote of its own input; no donation captured, no refund.
@@ -185,8 +182,7 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
         underlying.transfer(se, 20 ether); // resting credit present, still EOA is rejected
 
         vm.prank(eoa);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
-        seIn.exchangeIn(IERC20(address(underlying)), 10 ether, IERC20(se), 0, eoa, true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));seIn.exchangeIn(IERC20(address(underlying)), 10 ether, IERC20(se), 0, eoa, true, block.timestamp);
     }
 
     /// @dev R8.2: InTarget pass-through (underlying -> protocolVault) rejects an EOA pretransfer claim.
@@ -196,9 +192,7 @@ contract ERC4626StandardExchange_APEX_004B_IdleUnderlying is TestBase_ERC4626Sta
         underlying.transfer(se, 20 ether);
 
         vm.prank(eoa);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
-        seIn.exchangeIn(
-            IERC20(address(underlying)), 10 ether, IERC20(address(protocolVault)), 0, eoa, true, block.timestamp
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));seIn.exchangeIn(IERC20(address(underlying)), 10 ether, IERC20(address(protocolVault)), 0, eoa, true, block.timestamp
         );
     }
 

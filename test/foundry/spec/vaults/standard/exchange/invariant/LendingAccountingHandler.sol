@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20} from "@crane/contracts/external/openzeppelin-contracts/token/ERC20/ERC20.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
@@ -137,8 +138,7 @@ abstract contract LendingAccountingHandler is StandardExchangeAccountingHandler 
         host.setFee(1e16);
         FeeCheckpoint memory before_;
         before_.assets = base.balanceOf(actor_);
-        before_.shares = share.balanceOf(actor_);
-        before_.quote = seIn.previewExchangeIn(base, amount, share);
+        before_.shares = share.balanceOf(actor_);before_.quote = ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), base, amount, share);
         before_.supply = share.totalSupply();
         before_.feeBefore = share.balanceOf(host.feeTo());
         before_.fee = before_.quote / 100;
@@ -146,8 +146,7 @@ abstract contract LendingAccountingHandler is StandardExchangeAccountingHandler 
         vm.prank(actor_);
         base.approve(address(seIn), amount);
         _arm(false);
-        vm.prank(actor_);
-        uint256 issued = seIn.exchangeIn(base, amount, share, before_.quote, actor_, false, block.timestamp + 1 hours);
+        vm.prank(actor_);(uint256 issued,) = seIn.exchangeIn(base, amount, share, before_.quote, actor_, false, block.timestamp + 1 hours);
         _assertReentry(LendingAction.ReenterIn);
         assertEq(issued, before_.quote, "funded fee mint honors quote");
         assertEq(before_.assets - base.balanceOf(actor_), amount, "fee route debits only principal");
@@ -171,13 +170,12 @@ abstract contract LendingAccountingHandler is StandardExchangeAccountingHandler 
         ++lendingCounts[LendingAction.ReenterOut].attempted;
         uint256 amount = share.balanceOf(actor_) / 20;
         Checkpoint memory before_ =
-            Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), seIn.previewExchangeIn(share, amount, base));
+            Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), share, amount, base));
         assertGt(before_.quote, 0, "callback withdrawal pays nonzero assets");
         vm.prank(actor_);
         share.approve(address(seIn), amount);
         _arm(true);
-        vm.prank(actor_);
-        uint256 paid = seIn.exchangeIn(share, amount, base, before_.quote, actor_, false, block.timestamp + 1 hours);
+        vm.prank(actor_);(uint256 paid,) = seIn.exchangeIn(share, amount, base, before_.quote, actor_, false, block.timestamp + 1 hours);
         _assertReentry(LendingAction.ReenterOut);
         assertEq(paid, before_.quote, "withdrawal honors quote after protocol yield");
         assertEq(base.balanceOf(actor_) - before_.assets, paid, "withdrawal pays once");

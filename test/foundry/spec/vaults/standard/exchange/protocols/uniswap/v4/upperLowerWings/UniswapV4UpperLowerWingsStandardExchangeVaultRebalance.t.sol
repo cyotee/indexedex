@@ -94,8 +94,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultRebalanceTest is UniswapV4
         assertGt(local0, 1e12 / 5, "raised oracle percentage replenishes target cover");
         assertEq(token0.balanceOf(address(wings0)), local0);
     }
-    function _deposit(IUniswapV4UpperLowerWingsStandardExchangeVault vault_) private {
-        IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(vault_.targetToken()), 1e12, IERC20(address(vault_)), 1e12, address(this), false, block.timestamp);
+    function _deposit(IUniswapV4UpperLowerWingsStandardExchangeVault vault_) private {IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(vault_.targetToken()), 1e12, IERC20(address(vault_)), 1e12, address(this), false, block.timestamp);
     }
 }
 // end::UniswapV4UpperLowerWingsStandardExchangeVaultRebalanceTest[]

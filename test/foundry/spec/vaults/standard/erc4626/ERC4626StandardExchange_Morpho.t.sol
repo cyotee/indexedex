@@ -37,8 +37,7 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
             morphoVault.setFeeRecipient(i == 0 ? FEE_RECIPIENT : se);
             morphoVault.setFee(0.1e18);
             vm.stopPrank();
-            vm.prank(user);
-            seIn.exchangeIn(IERC20(address(loanToken)), 2_000 ether, IERC20(se), 0, user, false, block.timestamp);
+            vm.prank(user);seIn.exchangeIn(IERC20(address(loanToken)), 2_000 ether, IERC20(se), 0, user, false, block.timestamp);
             _accrueMorphoInterest();
             // Quote all future steps before executing any of them. The first
             // operation realizes actual performance-fee shares, including when
@@ -63,13 +62,9 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
     }
 
     function test_Morpho_wrapUnwrap_previewEqualsExecution() public {
-        uint256 amountIn = 100 ether;
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(loanToken)), amountIn, IERC20(se)
+        uint256 amountIn = 100 ether;(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), amountIn, IERC20(se)
         );
-        vm.prank(user);
-        uint256 seOutAmt = seIn.exchangeIn(
-            IERC20(address(loanToken)),
+        vm.prank(user);(uint256 seOutAmt,) = seIn.exchangeIn(IERC20(address(loanToken)),
             amountIn,
             IERC20(se),
             preview,
@@ -77,13 +72,8 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
             false,
             block.timestamp
         );
-        assertEq(seOutAmt, preview);
-
-        uint256 unwrapPreview =
-            seIn.previewExchangeIn(IERC20(se), seOutAmt / 2, IERC20(address(loanToken)));
-        vm.prank(user);
-        uint256 uOut = seIn.exchangeIn(
-            IERC20(se),
+        assertEq(seOutAmt, preview);(uint256 unwrapPreview,) = seIn.previewExchangeIn(IERC20(se), seOutAmt / 2, IERC20(address(loanToken)));
+        vm.prank(user);(uint256 uOut,) = seIn.exchangeIn(IERC20(se),
             seOutAmt / 2,
             IERC20(address(loanToken)),
             unwrapPreview,
@@ -97,9 +87,7 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
     /// @notice I1 booked: wrap books morphoVault reserve; free pretransfer cannot mint.
     function test_I1_pretransferred_noTransfer_bookedReserve_reverts() public {
         uint256 wrapIn_ = 100 ether;
-        vm.prank(user);
-        seIn.exchangeIn(
-            IERC20(address(loanToken)), wrapIn_, IERC20(se), 0, user, false, block.timestamp
+        vm.prank(user);seIn.exchangeIn(IERC20(address(loanToken)), wrapIn_, IERC20(se), 0, user, false, block.timestamp
         );
 
         uint256 claimed_ = 1 ether;
@@ -108,9 +96,7 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
         assertGe(invBefore_, claimed_, "booked protocolVault inventory");
 
         vm.prank(user);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(morphoVault)), claimed_, IERC20(se), 0, user, true, block.timestamp
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(morphoVault)), claimed_, IERC20(se), 0, user, true, block.timestamp
         );
 
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1: no free SE mint");
@@ -119,9 +105,7 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
 
     function test_Morpho_interestStrictIncrease_unwrap() public {
         uint256 amountIn = 200 ether;
-        vm.prank(user);
-        uint256 seAmt = seIn.exchangeIn(
-            IERC20(address(loanToken)),
+        vm.prank(user);(uint256 seAmt,) = seIn.exchangeIn(IERC20(address(loanToken)),
             amountIn,
             IERC20(se),
             0,
@@ -129,14 +113,9 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
             false,
             block.timestamp
         );
-        uint256 half = seAmt / 2;
-        uint256 beforeOut =
-            seIn.previewExchangeIn(IERC20(se), half, IERC20(address(loanToken)));
+        uint256 half = seAmt / 2;(uint256 beforeOut,) = seIn.previewExchangeIn(IERC20(se), half, IERC20(address(loanToken)));
 
-        _accrueMorphoInterest();
-
-        uint256 afterOut =
-            seIn.previewExchangeIn(IERC20(se), half, IERC20(address(loanToken)));
+        _accrueMorphoInterest();(uint256 afterOut,) = seIn.previewExchangeIn(IERC20(se), half, IERC20(address(loanToken)));
         assertGt(afterOut, beforeOut, "Morpho interest increases unwrap claim");
     }
 }

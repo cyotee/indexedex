@@ -249,9 +249,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
     {
         pairToken.mint(user, pairAmt);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(se, type(uint256).max);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             pairAmt,
             IERC20(se),
             0,

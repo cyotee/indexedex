@@ -123,9 +123,7 @@ abstract contract Adversarial_Reentrancy_Decimals_DexUniV4Det is TestBase_Uniswa
         assertTrue(controlOk, "funded callback succeeds outside the lock");
         hostilePair.arm(hostileDetf, reentry);
 
-        vm.startPrank(detfUser);
-        uint256 out_ = IStandardExchangeIn(hostileDetf).exchangeIn(
-            IERC20(address(hostilePair)),
+        vm.startPrank(detfUser);(uint256 out_,) = IStandardExchangeIn(hostileDetf).exchangeIn(IERC20(address(hostilePair)),
             _uPair(50),
             IERC20(hostileDetf),
             0,

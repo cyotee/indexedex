@@ -24,8 +24,7 @@ contract UniswapV4Detf_Bond is TestBase_UniswapV4Detf {
 
     function test_preLive_mint_reverts() public {
         vm.startPrank(detfUser);
-        vm.expectRevert();
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 1 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.expectRevert();IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 1 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 }

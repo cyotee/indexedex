@@ -160,10 +160,7 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         nativeSt.approve(vault, type(uint256).max);
         nativeWst.approve(vault, type(uint256).max);
         _dealWeth(address(this), 3 ether);
-        hermeticWeth.approve(vault, 3 ether);
-        IStandardExchangeIn(vault)
-            .exchangeIn(
-                IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(vault, 3 ether);IStandardExchangeIn(vault).exchangeIn(IERC20(address(hermeticWeth)),
                 3 ether,
                 IERC20(vault),
                 3 ether * 1000,
@@ -206,12 +203,11 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         );
     }
 
-    function _in(IERC20 input, uint256 amount, IERC20 output, uint256 minimum) internal returns (uint256) {
-        return IStandardExchangeIn(vault).exchangeIn(input, amount, output, minimum, recipient, false, block.timestamp);
+    function _in(IERC20 input, uint256 amount, IERC20 output, uint256 minimum) internal returns (uint256) {(uint256 quotedAmountOut,) = IStandardExchangeIn(vault).exchangeIn(input, amount, output, minimum, recipient, false, block.timestamp);
+        return quotedAmountOut;
     }
 
-    function test_APEX_nativeStEth_exactInMint_creditsWrappedDelivery() public {
-        uint256 quote = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeSt)), 11, IERC20(vault));
+    function test_APEX_nativeStEth_exactInMint_creditsWrappedDelivery() public {(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeSt)), 11, IERC20(vault));
         assertEq(quote, 9000, "11 nominal delivers10, wraps6, credits9");
         assertEq(_in(IERC20(address(nativeSt)), 11, IERC20(vault), quote), quote);
         assertEq(nativeWst.balanceOf(vault), 6);
@@ -228,9 +224,7 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         assertEq(nativeWst.balanceOf(vault), 8);
     }
 
-    function test_APEX_nativeStEth_exactInWrap_matchesRecipient() public {
-        uint256 quote =
-            IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeSt)), 11, IERC20(address(nativeWst)));
+    function test_APEX_nativeStEth_exactInWrap_matchesRecipient() public {(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeSt)), 11, IERC20(address(nativeWst)));
         assertEq(quote, 6);
         assertEq(_in(IERC20(address(nativeSt)), 11, IERC20(address(nativeWst)), quote), 6);
         assertEq(nativeWst.balanceOf(recipient), 6);
@@ -243,9 +237,7 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         assertEq(hermeticWeth.balanceOf(vault) + nativeWst.getStETHByWstETH(nativeWst.balanceOf(vault)), 3 ether);
     }
 
-    function test_APEX_nativeStEth_exactInUnwrap_checksActualRecipient() public {
-        uint256 quote =
-            IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeWst)), 7, IERC20(address(nativeSt)));
+    function test_APEX_nativeStEth_exactInUnwrap_checksActualRecipient() public {(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeWst)), 7, IERC20(address(nativeSt)));
         assertEq(quote, 9, "unwrap transfers6 shares, final transfer delivers9");
         assertEq(_in(IERC20(address(nativeWst)), 7, IERC20(address(nativeSt)), quote), 9);
         assertEq(nativeSt.balanceOf(recipient), 9);
@@ -316,14 +308,11 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         );
     }
 
-    function _seedWrapped() internal {
-        IStandardExchangeIn(vault)
-            .exchangeIn(IERC20(address(nativeWst)), 20, IERC20(vault), 30000, address(this), false, block.timestamp);
+    function _seedWrapped() internal {IStandardExchangeIn(vault).exchangeIn(IERC20(address(nativeWst)), 20, IERC20(vault), 30000, address(this), false, block.timestamp);
     }
 
     function test_APEX_nativeStEth_exactInRedeem_usesFundedWrappedAmount() public {
-        _seedWrapped();
-        uint256 quote = IStandardExchangeIn(vault).previewExchangeIn(IERC20(vault), 10000, IERC20(address(nativeSt)));
+        _seedWrapped();(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(vault), 10000, IERC20(address(nativeSt)));
         assertEq(quote, 9);
         assertEq(_in(IERC20(vault), 10000, IERC20(address(nativeSt)), quote), 9);
         assertEq(nativeSt.balanceOf(recipient), 9);
@@ -343,9 +332,7 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
 
     function test_APEX_nativeStEth_wethStakeQuotes_matchActualNativeDelivery() public {
         _dealWeth(address(this), 100);
-        hermeticWeth.approve(vault, 100);
-        uint256 quote =
-            IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeSt)));
+        hermeticWeth.approve(vault, 100);(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeSt)));
         assertEq(quote, 9);
         assertEq(_in(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeSt)), quote), quote);
         assertEq(nativeSt.balanceOf(recipient), quote);
@@ -373,9 +360,7 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         uint256 received =
             nativeSt.getPooledEthByShares(beforeShares + nativeSt.getSharesByPooledEth(amount))
                 - nativeSt.balanceOf(vault);
-        uint256 expectedWrapped = nativeSt.getSharesByPooledEth(received);
-        uint256 quote =
-            IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeSt)), amount, IERC20(address(nativeWst)));
+        uint256 expectedWrapped = nativeSt.getSharesByPooledEth(received);(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(nativeSt)), amount, IERC20(address(nativeWst)));
         assertEq(quote, expectedWrapped);
         uint256 delivered = _in(IERC20(address(nativeSt)), amount, IERC20(address(nativeWst)), quote);
         assertEq(delivered, expectedWrapped);
@@ -470,10 +455,10 @@ contract LidoWstETHStandardExchange_NativeRounding is TestBase_LidoWstETHStandar
         ExternalSharesNativeStETH port = new ExternalSharesNativeStETH();
         _resetNativePort(port);
         port.setExternalEtherFailure(true);
-        vm.expectRevert(abi.encodeWithSelector(ExternalSharesNativeStETH.NativeRateFailure.selector, 7));
-        IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticWeth)), 12, IERC20(address(nativeSt)));
+        vm.expectRevert(abi.encodeWithSelector(ExternalSharesNativeStETH.NativeRateFailure.selector, 7));IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticWeth)), 12, IERC20(address(nativeSt)));
         port.setExternalEtherFailure(false);
-        assertEq(IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticWeth)), 12, IERC20(address(nativeSt))), 12);
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticWeth)), 12, IERC20(address(nativeSt)));
+        assertEq(previewAmountOut1, 12);
     }
 
 }

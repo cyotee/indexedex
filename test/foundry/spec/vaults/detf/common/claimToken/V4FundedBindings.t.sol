@@ -113,9 +113,7 @@ abstract contract V4FundedBindingBehavior is Test {
         assertEq(claimed_, p_.principal / 2);
         uint256 lp_ = IERC20(_subject().hook()).balanceOf(address(_positions()));
         IStakedDETF staking_ = _stake();
-        vm.startPrank(_buyer());
-        uint256 raw_ = staking_.exchangeIn(
-            IERC20(address(staking_)), claimed_, IERC20(address(_subject())),
+        vm.startPrank(_buyer());(uint256 raw_,) = staking_.exchangeIn(IERC20(address(staking_)), claimed_, IERC20(address(_subject())),
             claimed_, _buyer(), false, block.timestamp
         );
         vm.stopPrank();

@@ -397,9 +397,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test is
             abi.encodeWithSelector(
                 Proxy.NoTargetFor.selector, IStandardExchangeIn.exchangeIn.selector
             )
-        );
-        IStandardExchangeIn(h).exchangeIn(
-            IERC20(address(token0)), 1, IERC20(address(token1)), 0, user, false, block.timestamp + 1
+        );IStandardExchangeIn(h).exchangeIn(IERC20(address(token0)), 1, IERC20(address(token1)), 0, user, false, block.timestamp + 1
         );
     }
 

@@ -68,9 +68,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
         // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             claimed_,
             IERC20(address(pairToken)),
             0,
@@ -82,9 +80,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             claimed_,
             IERC20(address(pairToken)),
             0,
@@ -117,9 +113,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
         // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(pairToken)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(pairToken)),
             claimed_,
             IERC20(address(rawToken)),
             0,
@@ -131,9 +125,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(pairToken)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(pairToken)),
             claimed_,
             IERC20(address(rawToken)),
             0,
@@ -161,9 +153,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 honestIn_ = 1 ether;
         rawToken.mint(user, honestIn_);
         vm.startPrank(user);
-        rawToken.approve(hook, honestIn_);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        rawToken.approve(hook, honestIn_);IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             honestIn_,
             IERC20(address(pairToken)),
             0,
@@ -230,9 +220,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         rawToken.transfer(hook, residualSeed_);
 
         uint256 honestIn_ = 3 ether;
-        vm.prank(user);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             honestIn_,
             IERC20(address(pairToken)),
             0,
@@ -250,9 +238,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
         // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             residualSeed_,
             IERC20(address(pairToken)),
             0,
@@ -264,9 +250,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             residualSeed_,
             IERC20(address(pairToken)),
             0,
@@ -287,9 +271,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 claimBefore = single.seClaimSupply();
         pairToken.mint(user, 50 ether);
         vm.startPrank(user);
-        pairToken.approve(se, type(uint256).max);
-        uint256 seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(pairToken)),
+        pairToken.approve(se, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
             50 ether,
             IERC20(se),
             0,
@@ -312,14 +294,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 rawHookAfterDonate_ = rawToken.balanceOf(hook);
         assertGe(rawHookAfterDonate_, donated_, "donation parked");
 
-        uint256 amountIn_ = 3 ether;
-        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
+        uint256 amountIn_ = 3 ether;(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
         );
         uint256 pairBefore_ = pairToken.balanceOf(user);
-        vm.prank(user);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             amountIn_,
             IERC20(address(pairToken)),
             0,
@@ -403,13 +381,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
     /// @notice E1: successful raw→pair exchange preview equals exec; donation residual idle.
     function test_E1_exchangeIn_previewEqualsExec() public {
         _seedLiveLiquidity();
-        uint256 amountIn_ = 4 ether;
-        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
+        uint256 amountIn_ = 4 ether;(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
         );
-        vm.prank(user);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             amountIn_,
             IERC20(address(pairToken)),
             0,
@@ -427,9 +401,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         single.deposit(0, 0, user, 0, block.timestamp + 1);
         vm.prank(user);
-        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             0,
             IERC20(address(pairToken)),
             0,

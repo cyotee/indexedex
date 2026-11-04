@@ -14,19 +14,19 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeQueryTarget is MixedBuf
             || (address(in_) == staking_ && address(out_) == address(this));
     }
 
-    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256) {
-        if (_directStakingRoute(in_, out_)) return amount_;
+    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256 amountOut, uint256 amountRefunded) {
+        if (_directStakingRoute(in_, out_)) return (amount_, 0);
         if (address(in_) == address(out_)) revert Repo.InvalidRoute(address(in_), address(out_));
         _requireReserveLive();
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
         if (address(in_) == address(this) || address(in_) == staking_) {
-            return _previewBurnToken(out_, amount_);
+            return (_previewBurnToken(out_, amount_), 0);
         }
         if (address(out_) == address(this) || address(out_) == staking_) {
             uint256 index_ = _paymentIndex(in_);
-            return _previewPrimaryMint()
+            return (_previewPrimaryMint()
                 ? _splitMintedDetf(_quoteOrdinaryDetf(in_, amount_)).userDetf
-                : _quoteSwap(index_, Repo._layoutStruct().detfIndex, amount_);
+                : _quoteSwap(index_, Repo._layoutStruct().detfIndex, amount_), 0);
         }
         revert Repo.InvalidRoute(address(in_), address(out_));
     }

@@ -1,6 +1,6 @@
 ---
 name: crane-adversarial-testing
-description: This skill should be used when the user asks to "write adversarial tests", "abuse tests", "attack catalog", "donation attack test", "reentrancy test vault", "security tests for diamond", "adversarial suite", "threat model tests", "IsLocked reentrancy", or needs guidance implementing production-first adversarial / abuse Foundry tests for Crane diamonds, vaults, ERC-4626-like products, or similar modular architectures.
+description: "Crane production-first adversarial tests for diamonds and vaults: donation, reentrancy and the abuse catalog."
 license: MIT
 ---
 
@@ -40,7 +40,7 @@ Write **abuse-oriented Foundry tests** that drive **real production entry points
 4. Adversarial plan markdown (status, checklist, pass criteria)
 5. TestBase_*_Adversarial harness (extends feature TestBase)
 6. One suite file per category (or tight grouping)
-7. forge test match-path adversarial/** then full feature path
+7. forge test --use solar match-path adversarial/** then full feature path
 8. Checklist + deferred NatSpec for unimplemented IDs
 ```
 
@@ -343,8 +343,8 @@ Under closed thresholds (deadband), assert mint and burn are **not** simultaneou
 ## Run & evidence
 
 ```bash
-forge test --match-path 'test/foundry/spec/<feature>/adversarial/**' -vv
-forge test --match-path 'test/foundry/spec/<feature>/**'   # happy + adversarial
+forge test --use solar --match-path 'test/foundry/spec/<feature>/adversarial/**' -vv
+forge test --use solar --match-path 'test/foundry/spec/<feature>/**'   # happy + adversarial
 ```
 
 Capture logs for verification goals. Update plan status to **IMPLEMENTED (P0/P1)** only when both paths exit 0 and deferred IDs are documented.
@@ -362,7 +362,7 @@ A feature is **adversarially tested** only when **all** of the following hold:
 7. If any router/helper forwards user calldata or holds open allowances: applicable **M** P0 green.
 8. If multi-step issue/bond has external hooks between quote and settle: **N1** green.
 9. If permit/signature paths exist: **O1–O2** green.
-10. `forge test --match-path '.../adversarial/**'` and full feature path exit 0.
+10. `forge test --use solar --match-path '.../adversarial/**'` and full feature path exit 0.
 11. No known unbounded profitable exploit left greenwashed.
 
 Happy-path coverage alone is **never** sufficient for trust-flag, surface, or empty-vault classes.

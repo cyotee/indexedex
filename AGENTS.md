@@ -16,6 +16,9 @@ relative references; lexical `..` resolution from the alias can point at the wro
 The topic map in `scripts/codex-skill-catalog.json` also provides canonical paths.
 OmO Native uses user-level `docs-to-skills` and `skill-authoring`; `.omo/settings.json`
 excludes their duplicate project registrations without removing the shared Codex links.
+For LSP setup, see [.omo/README.md](.omo/README.md). TypeScript is project-local;
+Foundry Solidity is registered in the user's OmO LSP configuration. Use Native
+LSP tools for both languages.
 Run `python3 scripts/sync-codex-skills.py` after adding installed repo skills,
 or use `--check` to verify the links without changing files.
 

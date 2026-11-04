@@ -177,8 +177,8 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         if (se == address(0)) return budget; // These reference cases use 18-decimal raw legs.
         uint256 rate = IRateProvider(activeArgs.rateProviders[index]).getRate();
         uint256 sharesWad = Math.mulDiv(budget, 1e18, rate);
-        uint256 shares = Math.mulDiv(sharesWad, 10 ** IERC20Metadata(se).decimals(), 1e18);
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(activeArgs.tokens[index]));
+        uint256 shares = Math.mulDiv(sharesWad, 10 ** IERC20Metadata(se).decimals(), 1e18);(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(activeArgs.tokens[index]));
+        return quotedAmountOut;
     }
 
     function test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value() public {
@@ -244,8 +244,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
     function _fundShares(address se, uint256 wanted) internal {
         address pair = quad.token(activeCount() - 1);
         vm.startPrank(user);
-        IERC20(pair).approve(se, type(uint256).max);
-        IStandardExchangeIn(se).exchangeIn(IERC20(pair), wanted * 2 + 1 ether, IERC20(se), wanted, user, false, block.timestamp);
+        IERC20(pair).approve(se, type(uint256).max);IStandardExchangeIn(se).exchangeIn(IERC20(pair), wanted * 2 + 1 ether, IERC20(se), wanted, user, false, block.timestamp);
         IERC20(se).approve(hook, type(uint256).max);
         vm.stopPrank();
     }
@@ -394,8 +393,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
             abi.encodeCall(IStandardExchangeIn.exchangeIn, (input, 1 ether, output, quote, user, true, block.timestamp))
         ), (uint256)), quote);
         assertEq(output.balanceOf(user) - beforeOut, quote);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));
-        IStandardExchangeIn(hook).exchangeIn(input, 1 ether, output, 0, address(this), true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));IStandardExchangeIn(hook).exchangeIn(input, 1 ether, output, 0, address(this), true, block.timestamp);
     }
 
     function test_count_retained_buffered_dust_is_not_new_funding() public {
@@ -406,8 +404,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         _swapExactIn(address(output), address(input), 1 ether);
         assertEq(input.balanceOf(hook), 10);
         assertGt(quad.previewSwapExactIn(address(input), address(output), 10), 0);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));
-        IStandardExchangeIn(hook).exchangeIn(input, 10, output, 0, address(this), true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));IStandardExchangeIn(hook).exchangeIn(input, 10, output, 0, address(this), true, block.timestamp);
         uint256 required = quad.previewSwapExactOut(address(input), address(output), 1);
         assertLe(required, 10, "retained balance could otherwise cover exact-out input");
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, required, 0));
@@ -437,8 +434,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         uint256 beforeOut = IERC20(output).balanceOf(user);
         _swapExactIn(input, output, 1 ether);
         assertEq(IERC20(output).balanceOf(user) - beforeOut, expected, "donation-priced payout matches reference");
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));
-        IStandardExchangeIn(hook).exchangeIn(IERC20(input), 1 ether, IERC20(output), 0, address(this), true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));IStandardExchangeIn(hook).exchangeIn(IERC20(input), 1 ether, IERC20(output), 0, address(this), true, block.timestamp);
     }
 
     function test_count_fee_on_transfer_bootstrap_reverts_atomically() public {
@@ -525,9 +521,8 @@ abstract contract BalancerStableTokenCountBase is TestBase {
     function _setAccruedNetRate(IPkg.PkgArgs memory a, uint256 index, address vault, RateProviderMock provider) private {
         _accrueYield(vault, a.tokens[index], SimpleYieldERC4626(vault).totalAssets() / 10);
         uint256 inventory = quad.nativeReserve(index);
-        address se = a.standardExchanges[index];
-        // Compose SE -> vault shares -> assets, including the SE's pending yield-fee dilution.
-        uint256 vaultShares = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), inventory, IERC20(vault));
+        address se = a.standardExchanges[index];// Compose SE -> vault shares -> assets, including the SE's pending yield-fee dilution.
+        (uint256 vaultShares,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), inventory, IERC20(vault));
         uint256 expectedClaim = SimpleYieldERC4626(vault).previewRedeem(vaultShares);
         uint256 netRate = expectedClaim * 1 ether / inventory;
         assertGt(netRate, 1 ether, "net accrued rate");

@@ -20,9 +20,7 @@ contract Adversarial_Economic_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         uint256 shareBalBefore_ = seShares[0].balanceOf(attacker);
 
         vm.startPrank(attacker);
-        seShares[0].approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        seShares[0].approve(instance_, sharesIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(detfOut_ > 0, "minted detf");
@@ -34,9 +32,7 @@ contract Adversarial_Economic_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         uint256 sharesMid_ = seShares[0].balanceOf(attacker);
 
         vm.startPrank(attacker);
-        IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), burnAmt_, seShares[0], 0, attacker, false, block.timestamp + 1 hours
+        IERC20(instance_).approve(instance_, burnAmt_);(uint256 sharesBack_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShares[0], 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 

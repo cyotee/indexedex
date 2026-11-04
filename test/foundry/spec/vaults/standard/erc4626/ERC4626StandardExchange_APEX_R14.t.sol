@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -41,8 +42,7 @@ contract ERC4626StandardExchange_APEX_R14_Test is TestBase_ERC4626StandardExchan
     }
 
     function _wrap(address who, uint256 amount) internal returns (uint256 shares) {
-        vm.prank(who);
-        shares = seIn.exchangeIn(IERC20(address(underlying)), amount, IERC20(se), 0, who, false, block.timestamp);
+        vm.prank(who);(shares,) = seIn.exchangeIn(IERC20(address(underlying)), amount, IERC20(se), 0, who, false, block.timestamp);
     }
 
     function _booked() internal view returns (uint256) {
@@ -52,8 +52,7 @@ contract ERC4626StandardExchange_APEX_R14_Test is TestBase_ERC4626StandardExchan
     /// @dev D22: capped underlying deposits `min(actualIn, capacity)`, books the remainder, mints on
     ///      the full input and matches the uncapped preview; zero capacity books everything.
     function test_APEX_R14_cappedUnderlying_booksRemainder_mintsOnFullInput() public {
-        protocolVault.setDepositCap(60 ether);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(underlying)), 100 ether, IERC20(se));
+        protocolVault.setDepositCap(60 ether);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(underlying)), 100 ether, IERC20(se));
         uint256 shares = _wrap(alice, 100 ether);
         assertEq(shares, preview, "preview equals execution under the cap");
         assertEq(protocolVault.totalAssets(), 60 ether, "deposited exactly the capacity");
@@ -75,17 +74,14 @@ contract ERC4626StandardExchange_APEX_R14_Test is TestBase_ERC4626StandardExchan
         _wrap(alice, 80 ether);
         assertEq(_booked(), 80 ether);
         protocolVault.setPaused(false);
-        protocolVault.setDepositCap(100 ether);
-        uint256 aliceValueBefore = seIn.previewExchangeIn(IERC20(se), 80 ether, IERC20(address(underlying)));
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(underlying)), 50 ether, IERC20(se));
+        protocolVault.setDepositCap(100 ether);(uint256 aliceValueBefore,) = seIn.previewExchangeIn(IERC20(se), 80 ether, IERC20(address(underlying)));(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(underlying)), 50 ether, IERC20(se));
         uint256 bobShares = _wrap(bob, 50 ether);
         assertEq(bobShares, preview, "preview equals execution across the sweep");
         assertEq(protocolVault.totalAssets(), 100 ether, "80 swept + 20 of the caller invested");
         assertEq(_booked(), 30 ether, "only the caller's uninvested 30 is booked");
         assertApproxEqRel(bobShares, 50 ether, 0.002e18, "shares for the caller's 50 only (usage-fee dilution only)");
         // Only the configured usage fee (dilution mint to feeTo) moves the first holder's entitlement.
-        assertApproxEqRel(
-            seIn.previewExchangeIn(IERC20(se), 80 ether, IERC20(address(underlying))),
+        assertApproxEqRel(ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), IERC20(se), 80 ether, IERC20(address(underlying))),
             aliceValueBefore,
             0.001e18,
             "the sweep creates no entitlement change for the first holder beyond the usage fee"
@@ -96,19 +92,17 @@ contract ERC4626StandardExchange_APEX_R14_Test is TestBase_ERC4626StandardExchan
     ///      it cannot dilute the locally backed holder.
     function test_APEX_R14_receiptDepositAfterLocalBooking_noDilution() public {
         protocolVault.setDepositCap(50 ether);
-        _wrap(alice, 100 ether); // 50 deposited, 50 booked, 100 shares
-        uint256 aliceClaimBefore = seIn.previewExchangeIn(IERC20(se), 100 ether, IERC20(address(underlying)));
+        _wrap(alice, 100 ether);// 50 deposited, 50 booked, 100 shares
+        (uint256 aliceClaimBefore,) = seIn.previewExchangeIn(IERC20(se), 100 ether, IERC20(address(underlying)));
         assertApproxEqRel(aliceClaimBefore, 100 ether, 0.002e18, "alice is backed by 50 receipts + 50 local (usage-fee dilution only)");
         // Bob mints receipts directly (allowed by the raised cap) and deposits them through the SE.
         protocolVault.setDepositCap(0);
         vm.startPrank(bob);
-        uint256 receipts = protocolVault.deposit(100 ether, bob);
-        uint256 bobShares = seIn.exchangeIn(IERC20(address(protocolVault)), receipts, IERC20(se), 0, bob, false, block.timestamp);
+        uint256 receipts = protocolVault.deposit(100 ether, bob);(uint256 bobShares,) = seIn.exchangeIn(IERC20(address(protocolVault)), receipts, IERC20(se), 0, bob, false, block.timestamp);
         vm.stopPrank();
         assertApproxEqRel(bobShares, 100 ether, 0.002e18, "receipt deposit priced on local-plus-receipt backing");
         // Only the configured usage fee (dilution mint to feeTo) moves alice's entitlement.
-        assertApproxEqRel(
-            seIn.previewExchangeIn(IERC20(se), 100 ether, IERC20(address(underlying))),
+        assertApproxEqRel(ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), IERC20(se), 100 ether, IERC20(address(underlying))),
             aliceClaimBefore,
             0.001e18,
             "alice's entitlement is unchanged by bob's receipt deposit beyond the usage fee"
@@ -121,10 +115,8 @@ contract ERC4626StandardExchange_APEX_R14_Test is TestBase_ERC4626StandardExchan
         protocolVault.setDepositCap(50 ether);
         _wrap(alice, 100 ether); // 50 receipts, 50 local
         // Exact-in: 20 shares → 20 underlying, all from local cash.
-        uint256 receiptsBefore = IERC20(address(protocolVault)).balanceOf(se);
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), 20 ether, IERC20(address(underlying)));
-        vm.prank(alice);
-        uint256 out = seIn.exchangeIn(IERC20(se), 20 ether, IERC20(address(underlying)), 0, alice, false, block.timestamp);
+        uint256 receiptsBefore = IERC20(address(protocolVault)).balanceOf(se);(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), 20 ether, IERC20(address(underlying)));
+        vm.prank(alice);(uint256 out,) = seIn.exchangeIn(IERC20(se), 20 ether, IERC20(address(underlying)), 0, alice, false, block.timestamp);
         assertEq(out, preview, "preview equals execution");
         assertApproxEqRel(out, 20 ether, 0.002e18, "entitlement on the full backing (usage-fee dilution only)");
         assertEq(IERC20(address(protocolVault)).balanceOf(se), receiptsBefore, "receipts untouched: paid from local");
@@ -183,13 +175,10 @@ contract ERC4626StandardExchange_APEX_R14_Test is TestBase_ERC4626StandardExchan
     /// @dev RC-02 exact-in: the returned amount is the recipient delta, including a vault shortfall.
     function test_RC02_exactIn_localFirst_nonUnitRate_returnMatchesRecipient() public {
         _seedNonUnitMixed();
-        uint256 shares = IERC20(se).balanceOf(alice);
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(underlying)));
+        uint256 shares = IERC20(se).balanceOf(alice);(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(underlying)));
         assertGt(preview, _booked(), "exit crosses local cash or prices the non-unit receipt");
         uint256 before = underlying.balanceOf(alice);
-        vm.prank(alice);
-        uint256 got = seIn.exchangeIn(
-            IERC20(se), shares, IERC20(address(underlying)), 0, alice, false, block.timestamp
+        vm.prank(alice);(uint256 got,) = seIn.exchangeIn(IERC20(se), shares, IERC20(address(underlying)), 0, alice, false, block.timestamp
         );
         assertEq(got, preview, "exact-in return matches preview");
         assertEq(underlying.balanceOf(alice) - before, got, "exact-in recipient delta matches the return");

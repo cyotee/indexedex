@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {PullRewardsTransferStrategy, ITransferStrategyBase} from
     "@crane/contracts/protocols/lending/aave/v3.6/rewards/transfer-strategies/PullRewardsTransferStrategy.sol";
@@ -47,12 +48,8 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
 
     function _exitPart(address asset, uint256 depositAmount, uint256 fraction, bool prepaid) internal {
         _fundUnderlying(depositAmount, address(this));
-        IERC20(realBase).approve(realVault, depositAmount);
-        uint256 shares = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), depositAmount, IERC20(realVault), 1, address(this), false, _deadline()
-        );
-        uint256 desired = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(realVault), Math.mulDiv(shares, fraction, 100), IERC20(asset)
+        IERC20(realBase).approve(realVault, depositAmount);(uint256 shares,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), depositAmount, IERC20(realVault), 1, address(this), false, _deadline()
+        );(uint256 desired,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), Math.mulDiv(shares, fraction, 100), IERC20(asset)
         );
         assertGt(desired, 0, "funded desired output");
         _assertExactOut(asset, desired, prepaid);
@@ -61,14 +58,8 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
     function test_Real_Route_BaseToSE_PreviewMatches() public {
         uint256 amount = _u(10);
         _fundUnderlying(amount, address(this));
-        IERC20(realBase).approve(realVault, amount);
-
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(realBase), amount, IERC20(realVault)
-        );
-
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realVault), 0, address(this), false, block.timestamp + 100
+        IERC20(realBase).approve(realVault, amount);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realVault)
+        );(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realVault), 0, address(this), false, block.timestamp + 100
         );
 
         assertEq(out, preview, "real: previewExchangeIn must equal execution BaseToSE");
@@ -83,14 +74,8 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         IERC20(aToken).approve(realStata, amount);
         uint256 stataShares = stataTokenV2.depositATokens(amount, address(this));
 
-        IERC20(realStata).approve(realVault, stataShares);
-
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(realStata), stataShares, IERC20(realVault)
-        );
-
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), stataShares, IERC20(realVault), 0, address(this), false, block.timestamp + 100
+        IERC20(realStata).approve(realVault, stataShares);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), stataShares, IERC20(realVault)
+        );(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), stataShares, IERC20(realVault), 0, address(this), false, block.timestamp + 100
         );
 
         assertEq(out, preview, "real: preview must match for stata->SE");
@@ -109,13 +94,8 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         uint8 d = _underlyingDecimals();
         amount = bound(amount, 1 * (10 ** uint256(d)) / 1000, 500 * (10 ** uint256(d)));
         _fundUnderlying(amount, address(this));
-        IERC20(realBase).approve(realVault, amount);
-
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(realBase), amount, IERC20(realVault)
-        );
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realVault), 0, address(this), false, block.timestamp + 100
+        IERC20(realBase).approve(realVault, amount);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realVault)
+        );(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realVault), 0, address(this), false, block.timestamp + 100
         );
         assertEq(out, preview);
         assertEq(IERC20(realVault).balanceOf(address(this)), out);
@@ -142,14 +122,9 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
     function test_Real_Route_BaseToStata() public {
         uint256 amount = _u(10);
         _fundUnderlying(amount, address(this));
-        IERC20(realBase).approve(realVault, amount);
-
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(realBase), amount, IERC20(realStata)
+        IERC20(realBase).approve(realVault, amount);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realStata)
         );
-        uint256 before = IERC20(realStata).balanceOf(address(this));
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realStata), 0, address(this), false, block.timestamp + 100
+        uint256 before = IERC20(realStata).balanceOf(address(this));(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realStata), 0, address(this), false, block.timestamp + 100
         );
         assertEq(out, preview, "real: previewExchangeIn BaseToStata");
         assertEq(IERC20(realStata).balanceOf(address(this)) - before, out);
@@ -160,13 +135,9 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
     function test_Real_Route_BaseToStata_Pretransferred() public {
         uint256 amount = _u(8);
         _fundUnderlying(amount, address(this));
-        IERC20(realBase).transfer(realVault, amount);
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(realBase), amount, IERC20(realStata)
+        IERC20(realBase).transfer(realVault, amount);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realStata)
         );
-        uint256 before = IERC20(realStata).balanceOf(address(this));
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realStata), 0, address(this), true, block.timestamp + 100
+        uint256 before = IERC20(realStata).balanceOf(address(this));(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realStata), 0, address(this), true, block.timestamp + 100
         );
         assertEq(out, preview, "real: pretransferred BaseToStata");
         assertEq(IERC20(realStata).balanceOf(address(this)) - before, out);
@@ -178,30 +149,21 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         uint256 honest = _u(1);
         _fundUnderlying(residual + honest, address(this));
         IERC20(realBase).transfer(realVault, residual);
-        IERC20(realBase).approve(realVault, honest);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), honest, IERC20(realStata), 0, address(this), false, block.timestamp + 100
+        IERC20(realBase).approve(realVault, honest);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realBase), honest, IERC20(realStata), 0, address(this), false, block.timestamp + 100
         );
 
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual, uint256(0))
-        );
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), residual, IERC20(realStata), 0, address(this), true, block.timestamp + 100
+        );ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realBase), residual, IERC20(realStata), 0, address(this), true, block.timestamp + 100
         );
     }
 
     function test_Real_Route_ATokenToStata() public {
         uint256 amount = _u(6);
         _fundAToken(amount, address(this));
-        IERC20(aToken).approve(realVault, amount);
-
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(aToken), amount, IERC20(realStata)
+        IERC20(aToken).approve(realVault, amount);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(aToken), amount, IERC20(realStata)
         );
-        uint256 before = IERC20(realStata).balanceOf(address(this));
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(aToken), amount, IERC20(realStata), 0, address(this), false, block.timestamp + 100
+        uint256 before = IERC20(realStata).balanceOf(address(this));(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(aToken), amount, IERC20(realStata), 0, address(this), false, block.timestamp + 100
         );
         assertEq(out, preview, "real: aToken->stata");
         assertEq(IERC20(realStata).balanceOf(address(this)) - before, out);
@@ -211,13 +173,8 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
     function test_Real_Route_ATokenToSE() public {
         uint256 amount = _u(6);
         _fundAToken(amount, address(this));
-        IERC20(aToken).approve(realVault, amount);
-
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(
-            IERC20(aToken), amount, IERC20(realVault)
-        );
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(aToken), amount, IERC20(realVault), 0, address(this), false, block.timestamp + 100
+        IERC20(aToken).approve(realVault, amount);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(aToken), amount, IERC20(realVault)
+        );(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(aToken), amount, IERC20(realVault), 0, address(this), false, block.timestamp + 100
         );
         assertEq(out, preview, "real: aToken->SE");
         assertEq(IERC20(realVault).balanceOf(address(this)), out);
@@ -248,11 +205,8 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         uint256 feeBefore = IERC20(realVault).balanceOf(collector);
         uint256 userBefore = IERC20(realVault).balanceOf(recipient);
         uint256 supplyBefore = IERC20(realVault).totalSupply();
-        uint256 receiptBefore = IERC20(realStata).balanceOf(realVault);
-        uint256 preview = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realVault));
-        uint256 acquired = stataTokenV2.previewDeposit(amount);
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realVault), preview, recipient, false, _deadline()
+        uint256 receiptBefore = IERC20(realStata).balanceOf(realVault);(uint256 preview,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realVault));
+        uint256 acquired = stataTokenV2.previewDeposit(amount);(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realVault), preview, recipient, false, _deadline()
         );
         uint256 feeShares = Math.mulDiv(out, fee, 1e18);
         assertEq(out, preview, "fee quote/execution");
@@ -308,12 +262,9 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
     /// @notice Preserve the former mocked receipt-pretransfer fuzz case with actual Stata custody.
     function testFuzz_Real_StataToSE_Pretransferred(uint256 amount) public {
         amount = bound(amount, _u(1), _u(100));
-        uint256 receipt = _acquireStata(address(this), amount);
-        uint256 expected = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), receipt, IERC20(realVault));
+        uint256 receipt = _acquireStata(address(this), amount);(uint256 expected,) = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), receipt, IERC20(realVault));
         uint256 stataBefore = IERC20(realStata).balanceOf(realVault);
-        IERC20(realStata).transfer(realVault, receipt);
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), receipt, IERC20(realVault), expected, address(this), true, _deadline()
+        IERC20(realStata).transfer(realVault, receipt);(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), receipt, IERC20(realVault), expected, address(this), true, _deadline()
         );
         assertEq(out, expected, "prepaid receipt quote/execution");
         assertEq(IERC20(realStata).balanceOf(realVault), stataBefore + receipt, "actual prepaid custody");
@@ -328,9 +279,7 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         uint256 expected = stataTokenV2.previewDeposit(amount);
         uint256 beforeReceipt = IERC20(realStata).balanceOf(address(this));
         uint256 supplyBefore = IERC20(realVault).totalSupply();
-        assertEq(IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realStata)), expected);
-        uint256 out = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), amount, IERC20(realStata), expected, address(this), false, _deadline()
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(realVault))), IERC20(realBase), amount, IERC20(realStata)), expected);(uint256 out,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), amount, IERC20(realStata), expected, address(this), false, _deadline()
         );
         assertEq(out, expected);
         assertEq(IERC20(realStata).balanceOf(address(this)) - beforeReceipt, out);

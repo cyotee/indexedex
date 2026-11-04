@@ -36,9 +36,7 @@ contract LidoWstETHStandardExchange_Fees_Test is TestBase_LidoWstETHStandardExch
 
         uint256 amount = 10 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 userShares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 userShares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -69,9 +67,7 @@ contract LidoWstETHStandardExchange_Fees_Test is TestBase_LidoWstETHStandardExch
 
         uint256 amount = 5 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,

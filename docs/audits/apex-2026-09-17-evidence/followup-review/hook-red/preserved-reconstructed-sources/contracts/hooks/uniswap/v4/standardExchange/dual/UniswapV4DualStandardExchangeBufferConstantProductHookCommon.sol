@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+
 import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib}
     from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -209,8 +211,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     /// @dev Raw shares a leg gains from buffering `amount` pair tokens (the SE's own preview, D73).
     function _previewRawShares(address se, address pairToken, uint256 amount) internal view returns (uint256) {
         if (amount == 0) return 0;
-        if (se == pairToken) return amount;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amount, IERC20(se));
+        if (se == pairToken) return amount;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amount, IERC20(se));
+        return quotedAmountOut;
     }
 
     /// @dev D60: SE shares held x the leg's provider rate (pair units); never an SE self-quote.
@@ -356,27 +358,19 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     function _buffer(address se, address pairToken, uint256 amount) internal returns (uint256 seOut) {
         _requireNonZero(amount);
-        if (se == pairToken) return amount;
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(
-            IERC20(pairToken), amount, IERC20(se)
+        if (se == pairToken) return amount;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amount, IERC20(se)
         );
-        IERC20(pairToken).forceApprove(se, amount);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(pairToken), amount, IERC20(se), minOut, address(this), false, block.timestamp
+        IERC20(pairToken).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(pairToken), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
     }
 
 
     function _unwrap(address se, address pairToken, uint256 seIn) internal returns (uint256 tokenOut) {
         _requireNonZero(seIn);
-        if (se == pairToken) return seIn;
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(
-            IERC20(se), seIn, IERC20(pairToken)
+        if (se == pairToken) return seIn;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(pairToken)
         );
         // Uni V4 SE pulls shares with transferFrom when pretransferred=false.
-        IERC20(se).forceApprove(se, seIn);
-        tokenOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seIn, IERC20(pairToken), minOut, address(this), false, block.timestamp
+        IERC20(se).forceApprove(se, seIn);(tokenOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(pairToken), minOut, address(this), false, block.timestamp
         );
     }
 
@@ -435,9 +429,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         address se = _seFor(token);
         if (se == token) return;
         uint256 bal = IERC20(token).balanceOf(address(this));
-        if (bal == 0) return;
-        uint256 preview = IStandardExchangeIn(se).previewExchangeIn(
-            IERC20(token), bal, IERC20(se)
+        if (bal == 0) return;(uint256 preview,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), bal, IERC20(se)
         );
         if (preview > 0) _buffer(se, token, bal);
         // Unconvertible remainder stays as D12 resting credit (D36).
@@ -1130,19 +1122,13 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         address se1 = _seFor(l.currency1);
         uint256 seOut0 = (IERC20(se0).balanceOf(address(this)) * lpAmount) / supplyAdj;
         uint256 seOut1 = (IERC20(se1).balanceOf(address(this)) * lpAmount) / supplyAdj;
-        if (seOut0 > 0) {
-            amount0 = se0 == l.currency0
+        if (seOut0 > 0) {amount0 = se0 == l.currency0
                 ? seOut0
-                : IStandardExchangeIn(se0).previewExchangeIn(
-                    IERC20(se0), seOut0, IERC20(l.currency0)
-                );
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(se0), IERC20(se0), seOut0, IERC20(l.currency0));
         }
-        if (seOut1 > 0) {
-            amount1 = se1 == l.currency1
+        if (seOut1 > 0) {amount1 = se1 == l.currency1
                 ? seOut1
-                : IStandardExchangeIn(se1).previewExchangeIn(
-                    IERC20(se1), seOut1, IERC20(l.currency1)
-                );
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(se1), IERC20(se1), seOut1, IERC20(l.currency1));
         }
     }
 
@@ -1209,15 +1195,13 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         address se1 = _seFor(l.currency1);
         uint256 seOut0 = (IERC20(se0).balanceOf(address(this)) * lpAmount) / supplyAdj;
         uint256 seOut1 = (IERC20(se1).balanceOf(address(this)) * lpAmount) / supplyAdj;
-        if (seOut0 > 0) {
-            amount0 = receiveSeShare0 || se0 == l.currency0
+        if (seOut0 > 0) {amount0 = receiveSeShare0 || se0 == l.currency0
                 ? seOut0
-                : IStandardExchangeIn(se0).previewExchangeIn(IERC20(se0), seOut0, IERC20(l.currency0));
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(se0), IERC20(se0), seOut0, IERC20(l.currency0));
         }
-        if (seOut1 > 0) {
-            amount1 = receiveSeShare1 || se1 == l.currency1
+        if (seOut1 > 0) {amount1 = receiveSeShare1 || se1 == l.currency1
                 ? seOut1
-                : IStandardExchangeIn(se1).previewExchangeIn(IERC20(se1), seOut1, IERC20(l.currency1));
+                : ExchangeInAmount.previewOut(IStandardExchangeIn(se1), IERC20(se1), seOut1, IERC20(l.currency1));
         }
     }
 

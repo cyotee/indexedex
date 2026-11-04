@@ -1,15 +1,6 @@
 ---
 name: defi-incident-patterns
-description: >-
-  Maps real DeFiHackLabs incident patterns to Crane/IndexedEx adversarial catalog
-  IDs and secure-development checklists. Use when the user asks about "DeFiHackLabs",
-  "historical DeFi hacks", "incident-driven security", "what hacks teach us",
-  "secure vault checklist", "oracle manipulation patterns", "skim attack",
-  "first deposit inflation", "arbitrary call allowance drain", "TOCTOU issuance",
-  "surplus refund", "balance minus floor", "permissionless reclaim", "structural resize",
-  or wants to improve adversarial tests from past exploits. Do not use as a guide
-  to run profitable mainnet exploits; for writing hermetic abuse tests prefer
-  crane-adversarial-testing and indexedex-adversarial-testing.
+description: "Map DeFiHackLabs incidents to Crane/IndexedEx threat models, secure-development checks and hermetic abuse tests."
 license: MIT
 ---
 
@@ -22,7 +13,7 @@ Turn **historical DeFi loss themes** (SunWeb3Sec DeFiHackLabs corpus) into catal
 | This skill does | This skill does **not** |
 |-----------------|-------------------------|
 | Map root causes → Crane catalog **A–K + A0 + L/M/N/O** | Make profitable fork PoCs the definition of done |
-| Cite curated paths under `lib/DeFiHackLabs` for study | Compile or run HackLabs into IndexedEx `forge test` |
+| Cite curated paths under `lib/DeFiHackLabs` for study | Compile or run HackLabs into IndexedEx `forge test --use solar` |
 | Drive secure-dev checklists while writing facets/vaults/routers | Instruct offensive use against live/unowned systems |
 | Point agents to hermetic adversarial templates | Replace `crane-adversarial-testing` method law |
 

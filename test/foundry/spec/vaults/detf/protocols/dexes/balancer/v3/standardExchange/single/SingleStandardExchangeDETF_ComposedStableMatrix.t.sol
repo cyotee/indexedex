@@ -117,14 +117,10 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
         uint256 mintIn_ = _reserveTokenBudget(info_.reservePool(), detfToken);
         assertGt(mintIn_, 0);
         assertLe(mintIn_, detfToken.balanceOf(address(this)));
-        detfToken.approve(outer_, mintIn_);
-        uint256 minted_ = IStandardExchangeIn(outer_)
-            .exchangeIn(detfToken, mintIn_, IERC20(outer_), 0, address(this), false, block.timestamp);
+        detfToken.approve(outer_, mintIn_);(uint256 minted_,) = IStandardExchangeIn(outer_).exchangeIn(detfToken, mintIn_, IERC20(outer_), 0, address(this), false, block.timestamp);
         assertGt(minted_, 1);
         uint256 burned_ = minted_ / 2;
-        IERC20(outer_).approve(outer_, burned_);
-        uint256 returned_ = IStandardExchangeIn(outer_)
-            .exchangeIn(IERC20(outer_), burned_, detfToken, 0, address(this), false, block.timestamp);
+        IERC20(outer_).approve(outer_, burned_);(uint256 returned_,) = IStandardExchangeIn(outer_).exchangeIn(IERC20(outer_), burned_, detfToken, 0, address(this), false, block.timestamp);
         assertGt(returned_, 0);
         assertEq(IERC20(outer_).balanceOf(address(this)), minted_ - burned_);
         assertEq(detfToken.balanceOf(outer_), 0);

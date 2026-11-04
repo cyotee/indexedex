@@ -27,9 +27,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se, V4FundedDona
     function test_T10_9_liveMint_weth() public {
         _firstBond(80 ether);
         uint256 mintIn = 20 ether;
-        vm.startPrank(detfUser);
-        uint256 userDetf = detfExchangeIn.exchangeIn(
-            IERC20(launchToken),
+        vm.startPrank(detfUser);(uint256 userDetf,) = detfExchangeIn.exchangeIn(IERC20(launchToken),
             mintIn,
             IERC20(detf),
             0,
@@ -44,9 +42,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se, V4FundedDona
 
     function test_T10_10_afterMint_diamondHasNoJoinableBalances() public {
         _firstBond(60 ether);
-        vm.startPrank(detfUser);
-        detfExchangeIn.exchangeIn(
-            IERC20(launchToken),
+        vm.startPrank(detfUser);detfExchangeIn.exchangeIn(IERC20(launchToken),
             15 ether,
             IERC20(detf),
             0,
@@ -76,10 +72,8 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se, V4FundedDona
     function test_H_CP_P2_mint() public {
         address mintToken = _mintToken();
         _firstBond(100 ether);
-        uint256 mintIn = 10 ether;
-        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
-        vm.startPrank(detfUser);
-        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 mintIn = 10 ether;(uint256 userPred,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
+        vm.startPrank(detfUser);(uint256 out,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out, 0, "out");
         assertEq(out, userPred, "previewMint==exec");
@@ -90,22 +84,19 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se, V4FundedDona
     function test_H_CP_P2_burn() public {
         address mintToken = _mintToken();
         _firstBond(100 ether);
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted, 0, "minted");
 
         uint256 burnIn = minted / 2;
         _assertR19();
-        _assertSeAllowancesZero();
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
+        _assertSeAllowancesZero();(uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
         uint256 pairBefore = IERC20(mintToken).balanceOf(detfUser);
         uint256 supplyBefore = IERC20(detf).totalSupply();
         bool primary_ = detfInfo.isBurningAllowed(IERC20(mintToken));
 
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        IERC20(detf).approve(detf, burnIn);(uint256 amountOut,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(amountOut, preview, "previewBurn==exec");
@@ -121,8 +112,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se, V4FundedDona
     function test_H_CP_P2_close() public {
         address mintToken = _mintToken();
         (uint256 tokenId,) = _firstBond(100 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);

@@ -395,9 +395,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
         assertEq(IDiamondLoupe(h).facetAddress(IStandardExchangeIn.exchangeIn.selector), address(0));
         vm.expectRevert(
             abi.encodeWithSelector(Proxy.NoTargetFor.selector, IStandardExchangeIn.exchangeIn.selector)
-        );
-        IStandardExchangeIn(h).exchangeIn(
-            IERC20(address(1)), 1, IERC20(address(2)), 0, address(this), false, block.timestamp + 1
+        );IStandardExchangeIn(h).exchangeIn(IERC20(address(1)), 1, IERC20(address(2)), 0, address(this), false, block.timestamp + 1
         );
     }
 

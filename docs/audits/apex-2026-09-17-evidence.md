@@ -71,6 +71,8 @@ Historical Uniswap V3/V4 Standard Exchange under `contracts/protocols/dexes/unis
 - `UniswapV3FullSpreadStandardExchangeVault`
 - `UniswapV4FullSpreadStandardExchangeVault`
 
+2026-11-04 `forge test --use solar` replaced the stale V4 FullSpread matrix rows only. Suites passed: single 11, constant-product 14, dual 15, orbital 16, weighted 14, weighted N3 14, curve 15, balancer 14, balancer 5-leg 15. PairToken identity bind is rejected without `asset()` and is recorded as FS-HOOK-04. FS-A26 stays open. Historical F6 is not this run.
+
 `reserveOfToken` (`0x46f910ac`) is held ERC-20 custody on the diamond, not free-plus-deployed. ERC-4626 and Stata IERC4626 accounting uses the shared `ReceiptBackedERC4626` adapter (local cash plus receipts). D19 Ext splits (Slipstream preview, curve-quad and weighted join-query) keep the mapped facet name and move whole external selectors only. Proxy function-selector sets are unchanged except those authorized facet-address remaps (`selector-size-compare.json`: 569 artifacts, 0 oversize, 4 diffs).
 
 Hook × SE combinations that cannot accept the hook face token are `INCOMPATIBLE` (`hook-se-matrix.json`). Six ERC-4626 gold TestBase rows are `COMPATIBLE` (buffer-first plus R14 under-consumption in `hook-se-matrix-erc4626-under.log`). Compatible evidence is those gold TestBase files, not a cartesian D20 row.

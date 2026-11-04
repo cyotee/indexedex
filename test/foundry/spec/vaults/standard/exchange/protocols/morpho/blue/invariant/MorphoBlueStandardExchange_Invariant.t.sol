@@ -265,9 +265,7 @@ contract MorphoBlueStandardExchange_Invariant is TestBase_MorphoBlueStandardExch
         loanToken.setBalance(attacker, 10 ether);
         vm.prank(attacker);
         loanToken.transfer(se, 10 ether);
-        assertEq(IERC20(se).totalSupply(), supplyBefore, "N4 donate does not mint");
-
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), 5 ether, IERC20(se));
+        assertEq(IERC20(se).totalSupply(), supplyBefore, "N4 donate does not mint");(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), 5 ether, IERC20(se));
         uint256 shares = _wrapExactIn(user, 5 ether);
         assertEq(shares, preview, "N4 wrap vs live NAV including donation");
         assertLt(shares, 5 ether + 10 ether, "N4 wrap does not mint donation as extra shares");

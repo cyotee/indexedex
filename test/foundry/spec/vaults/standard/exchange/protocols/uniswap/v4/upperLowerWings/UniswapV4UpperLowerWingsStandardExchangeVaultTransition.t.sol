@@ -18,8 +18,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTransitionTest is Fixture 
     using StateLibrary for IPoolManager;
     function testFuzz_projectedPartialCoreExitAfterMarketMove(int24 tickSeed_, uint16 fractionSeed_, bool target0_) public {
         Vault vault = target0_ ? wings0 : wings1;
-        IERC20 target = IERC20(vault.targetToken());
-        IStandardExchangeIn(address(vault)).exchangeIn(target, 1e12, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        IERC20 target = IERC20(vault.targetToken());IStandardExchangeIn(address(vault)).exchangeIn(target, 1e12, IERC20(address(vault)), 0, address(this), false, block.timestamp);
         Rebalance(address(vault)).rebalance(0, block.timestamp);
         (uint160 current,,,) = pool.getSlot0(key.toId());
         uint160 destination = TickMath.getSqrtPriceAtTick(int24(bound(tickSeed_, -12000, 12000)));
@@ -32,8 +31,9 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTransitionTest is Fixture 
         (bytes memory state,) = quote.quoteState(address(target), address(this));
         uint256 payout; uint256 projectedAssets;
         (state,,payout,projectedAssets) = quote.quoteTransition(state, Transition.Operation.RedeemExactIn, shares_);
-        assertEq(IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(vault_)), shares_, target,
-            payout, address(this), false, block.timestamp), payout);
+        (uint256 exchangeAmountOut1,) = IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(vault_)), shares_, target,
+            payout, address(this), false, block.timestamp);
+        assertEq(exchangeAmountOut1, payout);
         (,uint256 actualAssets) = quote.quoteState(address(target), address(this));
         assertEq(actualAssets, projectedAssets);
         Projection.State memory projected = abi.decode(state, (Projection.State));
@@ -59,9 +59,12 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTransitionTest is Fixture 
         uint256 payout;
         uint256 projectedAssets;
         (state,,payout,projectedAssets) = quote.quoteTransition(state, Transition.Operation.RedeemExactIn, first / 100);
-        assertEq(exchange.exchangeIn(target, first, IERC20(address(vault)), 0, address(this), false, block.timestamp), issued);
-        assertEq(exchange.exchangeIn(target, first / 2, IERC20(address(vault)), 0, address(this), false, block.timestamp), more);
-        assertEq(exchange.exchangeIn(IERC20(address(vault)), first / 100, target, 0, address(this), false, block.timestamp), payout);
+        (uint256 exchangeAmountOut2,) = exchange.exchangeIn(target, first, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        assertEq(exchangeAmountOut2, issued);
+        (uint256 exchangeAmountOut3,) = exchange.exchangeIn(target, first / 2, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        assertEq(exchangeAmountOut3, more);
+        (uint256 exchangeAmountOut4,) = exchange.exchangeIn(IERC20(address(vault)), first / 100, target, 0, address(this), false, block.timestamp);
+        assertEq(exchangeAmountOut4, payout);
         (bytes memory actual,uint256 actualAssets) = quote.quoteState(address(target), address(this));
         assertEq(actualAssets, projectedAssets);
         assertEq(quote.quoteTotalSupply(state), quote.quoteTotalSupply(actual));
@@ -72,8 +75,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTransitionTest is Fixture 
             uint256 snapshot = vm.snapshotState();
             Vault vault = i == 0 ? wings0 : wings1;
             IERC20 target = IERC20(vault.targetToken());
-            IStandardExchangeIn exchange = IStandardExchangeIn(address(vault));
-            exchange.exchangeIn(target, 1e12, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+            IStandardExchangeIn exchange = IStandardExchangeIn(address(vault));exchange.exchangeIn(target, 1e12, IERC20(address(vault)), 0, address(this), false, block.timestamp);
             Rebalance(address(vault)).rebalance(0, block.timestamp);
             Transition quote = Transition(address(vault));
             (bytes memory state,) = quote.quoteState(address(target), address(this));
@@ -81,12 +83,12 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultTransitionTest is Fixture 
             uint256 holderAssets;
             (state,,payout,holderAssets) = quote.quoteTransition(state, Transition.Operation.RedeemExactIn, 1e12);
             assertEq(holderAssets, 0); assertEq(quote.quoteTotalSupply(state), 0);
-            assertEq(exchange.exchangeIn(IERC20(address(vault)), 1e12, target, payout, address(this), false, block.timestamp), payout);
+            (uint256 exchangeAmountOut5,) = exchange.exchangeIn(IERC20(address(vault)), 1e12, target, payout, address(this), false, block.timestamp);
+            assertEq(exchangeAmountOut5, payout);
             assertTrue(vm.revertToState(snapshot));
         }
     }
-    function test_receiveSharesDoesNotChangeBackingOrSupply() public {
-        IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
+    function test_receiveSharesDoesNotChangeBackingOrSupply() public {IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
         Transition quote = Transition(address(wings0));
         (bytes memory state,) = quote.quoteState(address(token0), makeAddr("buffer"));
         uint256 supply = quote.quoteTotalSupply(state);

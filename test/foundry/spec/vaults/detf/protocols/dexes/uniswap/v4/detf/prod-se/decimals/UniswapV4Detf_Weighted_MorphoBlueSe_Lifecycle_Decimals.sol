@@ -24,31 +24,25 @@ abstract contract UniswapV4Detf_Weighted_MorphoBlueSe_Lifecycle_Decimals is Test
     }
     function test_H_WE_MB_mint() public {
         _firstBond(_bondIn());
-        uint256 mintIn = _mintIn();
-        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)));
-        vm.startPrank(detfUser);
-        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 mintIn = _mintIn();(uint256 userPred,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)));
+        vm.startPrank(detfUser);(uint256 out,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out, 0, "out");
         assertEq(out, userPred, "previewMint==exec");
     }
     function test_H_WE_MB_burn() public {
         _firstBond(_bondIn());
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
-        uint256 burnIn = minted / 2;
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
+        uint256 burnIn = minted / 2;(uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours);
+        IERC20(detf).approve(detf, burnIn);(uint256 amountOut,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertApproxEqAbs(amountOut, preview, 1, "previewBurn==exec");
     }
     function test_H_WE_MB_close() public {
         (uint256 tokenId,) = _firstBond(_bondIn());
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertFundedMatureClaim(detf, tokenId, detfUser);
     }

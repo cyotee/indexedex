@@ -104,10 +104,8 @@ contract LidoStandardExchangeProjectionFork is TestBase_LidoWstETHStandardExchan
         hermeticStEth.approve(address(hermeticWstEth), stAmount);
         IWstETH(address(hermeticWstEth)).wrap(stAmount);
         hermeticWeth.deposit{value: 500 ether}();
-        hermeticWeth.approve(seVault, 200 ether);
-        seIn.exchangeIn(IERC20(address(hermeticWeth)), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
-        hermeticWstEth.approve(seVault, 200 ether);
-        seIn.exchangeIn(IERC20(address(hermeticWstEth)), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        hermeticWeth.approve(seVault, 200 ether);seIn.exchangeIn(IERC20(address(hermeticWeth)), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        hermeticWstEth.approve(seVault, 200 ether);seIn.exchangeIn(IERC20(address(hermeticWstEth)), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
         assertGt(IWstETH(address(hermeticWstEth)).stEthPerToken(), 1e18, "live non-unit receipt ratio");
     }
 

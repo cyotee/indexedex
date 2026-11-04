@@ -41,8 +41,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         require(lp_.balanceOf(address(this)) >= lpAmount_, "need LP inventory");
         lp_.transfer(to_, lpAmount_);
         vm.startPrank(to_);
-        lp_.approve(address(vault_), lpAmount_);
-        shares_ = vault_.exchangeIn(lp_, lpAmount_, IERC20(address(vault_)), 0, to_, false, _deadline());
+        lp_.approve(address(vault_), lpAmount_);(shares_,) = vault_.exchangeIn(lp_, lpAmount_, IERC20(address(vault_)), 0, to_, false, _deadline());
         vm.stopPrank();
         assertGt(shares_, 0, "minted SE shares");
     }
@@ -62,9 +61,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
         vm.prank(attacker);
-        vm.expectRevert();
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), 0, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        vm.expectRevert();IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), 0, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
     }
 
@@ -79,9 +76,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         tokenA.approve(address(vault_), amount_);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, expired_, block.timestamp)
-        );
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, expired_
+        );IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, expired_
         );
         vm.stopPrank();
         assertEq(IERC20(address(vault_)).balanceOf(address(vault_)), 0, "H3 residual vault shares");
@@ -91,13 +86,10 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
         uint256 amount_ = TEST_AMOUNT / 2;
-        deal(address(tokenA), attacker, amount_);
-        uint256 preview_ = vault_.previewExchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)));
+        deal(address(tokenA), attacker, amount_);(uint256 preview_,) = vault_.previewExchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)));
         vm.startPrank(attacker);
         tokenA.approve(address(vault_), amount_);
-        vm.expectRevert();
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)),
+        vm.expectRevert();IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)),
             amount_,
             IERC20(address(tokenB)),
             preview_ + type(uint128).max,
@@ -125,14 +117,10 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 amount_ = TEST_AMOUNT / 4;
         deal(address(tokenA), attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), amount_);
-        uint256 outB_ = IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault_), amount_);(uint256 outB_,) = IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         assertTrue(outB_ > 0, "got tokenB");
-        tokenB.approve(address(vault_), outB_);
-        uint256 backA_ = IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenB)), outB_, IERC20(address(tokenA)), 0, attacker, false, _deadline()
+        tokenB.approve(address(vault_), outB_);(uint256 backA_,) = IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenB)), outB_, IERC20(address(tokenA)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         // Round-trip loses fees/slippage - out <= in
@@ -195,9 +183,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 amount_ = TEST_AMOUNT / 8;
         deal(address(tokenA), attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), amount_);
-        uint256 out_ = vault_.exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault_), amount_);(uint256 out_,) = vault_.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertGt(out_, 0, "attacker swap");
@@ -217,8 +203,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
             abi.encodeWithSelector(
                 IStandardExchangeErrors.InvalidRoute.selector, address(tokenA), address(junk_)
             )
-        );
-        vault_.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(junk_)), 0, attacker, false, _deadline());
+        );vault_.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(junk_)), 0, attacker, false, _deadline());
         vm.stopPrank();
     }
 
@@ -311,8 +296,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         tokenA.mint(address(vault_), residual_);
         tokenA.mint(attacker, pull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), pull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault_), pull_);vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         uint256 supplyBefore_ = vault_.totalSupply();
@@ -320,8 +304,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 invBefore_ = tokenA.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault_.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault_.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free share mint");
         assertEq(vault_.balanceOf(attacker), attackerSharesBefore_, "I1: attacker shares unchanged");
@@ -339,14 +322,12 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         tokenA.mint(address(vault_), inventory_);
         tokenA.mint(attacker, pull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), pull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault_), pull_);vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
         assertGe(tokenA.balanceOf(address(vault_)), claimed_, "claimed <= booked inventory");
 
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(attacker);
-        vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vm.prank(attacker);vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
     }
 
     /// @notice EOA prepaid is rejected; a contract may consume unbooked push credit atomically.
@@ -359,9 +340,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         vm.prank(attacker);
         tokenA.transfer(address(vault_), claimed_);
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(attacker);
-        vault_.exchangeIn(
-            IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
+        vm.prank(attacker);vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
 
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
@@ -404,9 +383,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
 
         tokenA.mint(attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), amount_);
-        uint256 out_ = vault_.exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault_), amount_);(uint256 out_,) = vault_.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest first pull");
@@ -417,8 +394,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         // Second call: pretransferred=true, claim against residual, no new transfer.
         uint256 claim_ = residualSeed_;
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault_.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault_.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         assertEq(tokenA.balanceOf(address(vault_)), residual_, "I3 second call must not move inventory");
     }
@@ -430,9 +406,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 amountIn_ = TEST_AMOUNT / 8;
         tokenA.mint(attacker, amountIn_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), amountIn_);
-        uint256 out_ = vault_.exchangeIn(
-            IERC20(address(tokenA)), amountIn_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault_), amountIn_);(uint256 out_,) = vault_.exchangeIn(IERC20(address(tokenA)), amountIn_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest !pretransferred swap");
@@ -509,17 +483,12 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         address exchangeOutFacet_ =
             IDiamondLoupe(address(vault_)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
         assertTrue(exchangeInFacet_ != address(0) && exchangeInFacet_ != address(vault_), "proxy cut in");
-        assertTrue(exchangeOutFacet_ != address(0) && exchangeOutFacet_ != address(vault_), "proxy cut out");
-
-        uint256 previewIn_ =
-            IStandardExchangeIn(address(vault_)).previewExchangeIn(IERC20(address(tokenA)), 1 ether, IERC20(address(tokenB)));
+        assertTrue(exchangeOutFacet_ != address(0) && exchangeOutFacet_ != address(vault_), "proxy cut out");(uint256 previewIn_,) = IStandardExchangeIn(address(vault_)).previewExchangeIn(IERC20(address(tokenA)), 1 ether, IERC20(address(tokenB)));
         assertGt(previewIn_, 0, "J3 previewExchangeIn live on proxy");
 
         // Money path smoke: product revert (not missing selector) for free-credit I1 path.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(address(vault_)).exchangeIn(
-            IERC20(address(tokenA)), 1 ether, IERC20(address(tokenB)), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(tokenA)), 1 ether, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
     }
 
@@ -538,8 +507,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         tokenA.mint(address(vault_), residual_);
         tokenA.mint(attacker, pull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault_), pull_);
-        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault_), pull_);vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         // After honest money-route sync, live pairToken is booked (U = 0). Public
@@ -603,9 +571,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         tokenA.mint(attacker, zapIn_);
         vm.startPrank(attacker);
         tokenA.approve(address(vault_), zapIn_);
-        vm.expectRevert();
-        vault_.exchangeIn(
-            IERC20(address(tokenA)), zapIn_, IERC20(address(vault_)), 0, attacker, false, _deadline()
+        vm.expectRevert();vault_.exchangeIn(IERC20(address(tokenA)), zapIn_, IERC20(address(vault_)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -634,13 +600,8 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         assertEq(vault_.totalSupply(), 0, "A0 first mint");
 
         vm.startPrank(attacker);
-        lp_.approve(address(vault_), attackerLp_);
-        uint256 shares_ =
-            vault_.exchangeIn(lp_, attackerLp_, IERC20(address(vault_)), 0, attacker, false, _deadline());
-        assertGt(shares_, 0, "A0 first mint minted");
-
-        uint256 lpOut_ = vault_.exchangeIn(
-            IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline()
+        lp_.approve(address(vault_), attackerLp_);(uint256 shares_,) = vault_.exchangeIn(lp_, attackerLp_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        assertGt(shares_, 0, "A0 first mint minted");(uint256 lpOut_,) = vault_.exchangeIn(IERC20(address(vault_)), shares_, lp_, 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -668,8 +629,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 lpHeld_ = lp_.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert();
-        vault_.exchangeIn(lp_, gap_, IERC20(address(vault_)), 0, attacker, false, _deadline());
+        vm.expectRevert();vault_.exchangeIn(lp_, gap_, IERC20(address(vault_)), 0, attacker, false, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free vaultShare mint");
         assertEq(vault_.balanceOf(attacker), attackerShares_, "I1: attacker shares unchanged");
@@ -684,8 +644,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
 
         uint256 seed_ = TEST_AMOUNT / 50;
         require(lp_.balanceOf(address(this)) >= seed_, "I1 LP seed");
-        lp_.approve(address(vault_), seed_);
-        vault_.exchangeIn(lp_, seed_, IERC20(address(vault_)), 0, address(this), false, _deadline());
+        lp_.approve(address(vault_), seed_);vault_.exchangeIn(lp_, seed_, IERC20(address(vault_)), 0, address(this), false, _deadline());
 
         uint256 booked_ = lp_.balanceOf(address(vault_));
         assertGt(booked_, 0, "I1 booked LP");
@@ -694,8 +653,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");
         assertEq(lp_.balanceOf(address(vault_)), booked_, "I1: booked LP unmoved");

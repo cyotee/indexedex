@@ -1516,7 +1516,7 @@ is
     ) {
         newVault = uniswapV2StandardStrategyVault(abUniV2Pool);
         abUniV2Pool.approve(address(newVault), type(uint256).max);
-        vaultAmt = newVault.exchangeIn(
+        (vaultAmt,) = newVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(abUniV2Pool)),
             // uint256 amountIn,
@@ -1539,7 +1539,7 @@ is
     ) {
         newVault = uniswapV2StandardStrategyVault(acUniV2Pool);
         acUniV2Pool.approve(address(newVault), type(uint256).max);
-        vaultAmt = newVault.exchangeIn(
+        (vaultAmt,) = newVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(acUniV2Pool)),
             // uint256 amountIn,
@@ -1562,7 +1562,7 @@ is
     ) {
         newVault = uniswapV2StandardStrategyVault(bcUniV2Pool);
         bcUniV2Pool.approve(address(newVault), type(uint256).max);
-        vaultAmt = newVault.exchangeIn(
+        (vaultAmt,) = newVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(bcUniV2Pool)),
             // uint256 amountIn,
@@ -1585,7 +1585,7 @@ is
     ) {
         newVault = uniswapV2StandardStrategyVault(aWethUniV2Pool);
         aWethUniV2Pool.approve(address(newVault), type(uint256).max);
-        vaultAmt = newVault.exchangeIn(
+        (vaultAmt,) = newVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(aWethUniV2Pool)),
             // uint256 amountIn,
@@ -1608,7 +1608,7 @@ is
     ) {
         newVault = uniswapV2StandardStrategyVault(bWethUniV2Pool);
         bWethUniV2Pool.approve(address(newVault), type(uint256).max);
-        vaultAmt = newVault.exchangeIn(
+        (vaultAmt,) = newVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(bWethUniV2Pool)),
             // uint256 amountIn,
@@ -1631,7 +1631,7 @@ is
     ) {
         newVault = uniswapV2StandardStrategyVault(cWethUniV2Pool);
         cWethUniV2Pool.approve(address(newVault), type(uint256).max);
-        vaultAmt = newVault.exchangeIn(
+        (vaultAmt,) = newVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(cWethUniV2Pool)),
             // uint256 amountIn,
@@ -2506,7 +2506,7 @@ is
 
         ttB.mint(deployer(), tokenBInitAmount);
         ttB.approve(address(abUniV2PoolStrategyVault), type(uint256).max);
-        uint256 abAmount = abUniV2PoolStrategyVault.exchangeIn(
+        (uint256 abAmount,) = abUniV2PoolStrategyVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(ttB)),
             // uint256 amountIn,
@@ -2530,7 +2530,7 @@ is
 
         ttC.mint(deployer(), tokenCInitAmount / 10);
         ttC.approve(address(acUniV2PoolStrategyVault), type(uint256).max);
-        uint256 acAmount = acUniV2PoolStrategyVault.exchangeIn(
+        (uint256 acAmount,) = acUniV2PoolStrategyVault.exchangeIn(
             // IERC20 tokenIn,
             IERC20(address(ttC)),
             // uint256 amountIn,

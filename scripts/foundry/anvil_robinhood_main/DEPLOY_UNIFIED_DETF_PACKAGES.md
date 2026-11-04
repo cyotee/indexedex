@@ -37,7 +37,7 @@ Do **not** run `simulate` after a completed staged deploy on the same Anvil (CRE
 
 Do **not** pass `--force` across the whole catalog from 06-01. `--force` is process-wide. Hook packages (06-03 / 06-04 / 06-06) and rebasing (06-02) use the same CREATE3 salts as the live 4663 packages. Forcing them collides.
 
-Do **not** use `--disable-code-size-limit` on 4663 Anvil or `forge script`. Never `--skip-simulation`. `via_ir` is forbidden.
+Do **not** use `--disable-code-size-limit` on 4663 Anvil or `forge script --use solar`. Never `--skip-simulation`. `via_ir` is forbidden.
 
 ---
 
@@ -72,7 +72,7 @@ cast chain-id --rpc-url "$RPC_URL"
 # expect 4663
 ```
 
-First `forge script` compile in a cold or near-cold tree often takes **20–40+ minutes** with little output. Wait for process exit. Do not kill `forge` / `solc`.
+First `forge script --use solar` compile in a cold or near-cold tree often takes **20–40+ minutes** with little output. Wait for process exit. Do not kill `forge` / `solc`.
 
 ---
 
@@ -103,9 +103,9 @@ Phase 05 Stage 03 was deleted. Both V4 FullSpread families are gone. Do not rest
 Same rule as 05-03.
 
 ```bash
-FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol \
+FORCE=1 forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol \
+FORCE=1 forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
 ```
 
@@ -114,9 +114,9 @@ FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_Morp
 Must FORCE. Existing `bondNftVaultPkg` skip would keep the common NFT.
 
 ```bash
-FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol \
+FORCE=1 forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-FORCE=1 forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol \
+FORCE=1 forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
 ```
 
@@ -127,9 +127,9 @@ JSON `bondNftVaultPkg` must now be `UniswapV4DetfBondNFTVaultDFPkg`, not `DETFNF
 Do **not** FORCE. New skip file, so it deploys. Needs 06-01 and 06-02 already live.
 
 ```bash
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol \
+forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol \
+forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
 ```
 
@@ -138,7 +138,7 @@ forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4Det
 No txs. Always rewrites.
 
 ```bash
-forge script scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol \
+forge script --use solar scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol \
   --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
 ```
 
@@ -174,7 +174,7 @@ DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
 
 That catalog path from 06-07 is safe: it deploys `uniV4DetfPkg` then Phase 09. It does **not** replace Bond NFT.
 
-To replace Bond NFT on Anvil, run the same FORCE `forge script` for 06-01 as public (RPC `http://127.0.0.1:8545`), then the catalog from 06-07.
+To replace Bond NFT on Anvil, run the same FORCE `forge script --use solar` for 06-01 as public (RPC `http://127.0.0.1:8545`), then the catalog from 06-07.
 
 ---
 

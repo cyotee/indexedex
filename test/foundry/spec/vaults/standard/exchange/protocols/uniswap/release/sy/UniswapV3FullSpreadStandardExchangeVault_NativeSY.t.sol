@@ -96,9 +96,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_Unisw
 
     /// @notice SY previews share the public SE quote without any host quote or ERC-20 metadata call.
     function test_nativeSYPreviewUsesInternalQuote() public {
-        _activate();
-        uint256 depositQuote = se.previewExchangeIn(token0, 1e18, IERC20(address(se)));
-        uint256 redeemQuote = se.previewExchangeIn(IERC20(address(se)), 1e18, token1);
+        _activate();(uint256 depositQuote,) = se.previewExchangeIn(token0, 1e18, IERC20(address(se)));(uint256 redeemQuote,) = se.previewExchangeIn(IERC20(address(se)), 1e18, token1);
         vm.expectCall(address(se), abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(0));
         vm.expectCall(address(se), abi.encodeWithSelector(IERC20.totalSupply.selector), uint64(0));
         vm.expectCall(address(se), abi.encodeWithSelector(IERC20.balanceOf.selector), uint64(0));

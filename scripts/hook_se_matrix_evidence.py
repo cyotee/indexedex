@@ -2,7 +2,7 @@
 """Generate docs/audits/apex-2026-09-17-evidence/hook-se-matrix.json from a forge -vv matrix log (M12).
 
 Usage:
-  forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/**/*_SeMatrix_*.t.sol' -vv > <log>
+  forge test --use solar --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/**/*_SeMatrix_*.t.sol' -vv > <log>
   python3 scripts/hook_se_matrix_evidence.py <log> docs/audits/apex-2026-09-17-evidence/hook-se-matrix.json \
       docs/audits/apex-2026-09-17-evidence/hook-se-matrix-findings.json \
       docs/audits/apex-2026-09-17-evidence/hook-se-matrix-finding-descriptions.json

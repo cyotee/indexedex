@@ -51,11 +51,9 @@ abstract contract V4FundedUnstakeBehavior is Test {
 
     function _d15Unstake(IUniswapV4Detf subject_, address holder_, uint256 amount_, uint256 expansion_) private {
         IStakedDETF staking_ = IStakedDETF(subject_.rebasingClaimToken());
-        UnstakeSnapshot memory before_ = _d15Snapshot(subject_, holder_);
-        uint256 quote_ = staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(address(subject_)));
+        UnstakeSnapshot memory before_ = _d15Snapshot(subject_, holder_);(uint256 quote_,) = staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(address(subject_)));
         assertEq(quote_, amount_, "exact held-DETF entitlement");
-        vm.prank(holder_);
-        uint256 paid_ = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(address(subject_)), amount_, holder_, false, block.timestamp);
+        vm.prank(holder_);(uint256 paid_,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(address(subject_)), amount_, holder_, false, block.timestamp);
         assertEq(paid_, amount_);
         UnstakeSnapshot memory after_ = _d15Snapshot(subject_, holder_);
         assertEq(after_.rawBalance, before_.rawBalance + amount_, "actual held DETF paid");

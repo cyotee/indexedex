@@ -1,0 +1,1489 @@
+{
+  "classification": "standalone source-matched single-interval numerical model; NOT EVM/production validation",
+  "assumptions": "Standalone integer research model, not a production-vault or EVM test.\n\nToken0 is opposing, token1 is target; both have 18 decimals. All initial\nliquidity is full-range at sqrt price 1. The vault initially owns one core.\nIts entry swap is executed, incumbents' earned fees are collected, entrant\ninventory funds the core and an inactive upper wing, then shares are minted.\nThe entrant immediately removes its slice and actually sells that opposing.\n\nSingle-active-interval arithmetic follows the repository's V4 TickMath,\nSqrtPriceMath, SwapMath and V3 LiquidityAmounts. There are no hooks, protocol\nfees, other initialized ticks, forced fee compounding or converted-wing\nmaintenance. The upper wing is funded after entry above the current price;\nthe subsequent token0 sales move down, so that wing never becomes active.\nAll unmatched dust remains credited idle, or is explicitly refunded in the\nstrictly proportional control. Pool custody is tracked separately from LP\nclaims, including fee-growth and funding/removal rounding residual.\n\nRun with: python3 <this file>. Uses only the Python standard library and\nprints JSON; it never writes a file, imports project code or runs Forge.\n",
+  "selected_full_ledgers": [
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "actual_initial_vault_fraction": "1",
+      "deposit_target_atoms": 200000000000000000000,
+      "swap_fraction": "1/2",
+      "net_target_atoms": 4313684168578358357,
+      "net_target_whole": "4.313684168578358357",
+      "final_actor_other_atoms": 0,
+      "minted_share_atoms": 66599866399465597919,
+      "core_added": 50075112669003505279,
+      "upper_added": 49690400545676484087,
+      "upper_lower_tick": 13860,
+      "old_equity_price": "50000000000000000000/24962443665498247371",
+      "old_equity_mark_atoms": "2498748122183274910167768319145384743784/8320814555166082457",
+      "credited_mark_atoms": "4992488733099649474075037556334501752629/24962443665498247371",
+      "incumbent_target_claim_atoms": 95686315831421641553,
+      "incumbent_other_claim_atoms": 99999999999999999908,
+      "ambient_target_claim_atoms": 0,
+      "ambient_other_claim_atoms": 0,
+      "pool_target_residual_atoms": 4,
+      "pool_other_residual_atoms": 6,
+      "target_conservation_error_atoms": 0,
+      "other_conservation_error_atoms": 0,
+      "events": [
+        {
+          "action": "initial",
+          "pool_sqrt_q96": 79228162514264337593543950336,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 99999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 200000000000000000000,
+          "detail": "Actor has target only, no LP, opposing, shares or debt."
+        },
+        {
+          "action": "entry_swap",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "target_in=100000000000000000000; opposing_out=49924887330996494742; fee=300000000000000000"
+        },
+        {
+          "action": "incumbent_fee_checkpoint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199699999999999999915,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 299999999999999999,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "old_target_fees=299999999999999999"
+        },
+        {
+          "action": "add_and_mint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 150075112669003505279,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 299699999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "core_added=50075112669003505279; upper_added=49690400545676484087; shares=66599866399465597919"
+        },
+        {
+          "action": "withdraw_slice",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 90081172279670508151,
+          "pool_other_atoms": 60024057738572574109,
+          "pool_target_atoms": 179892101042502004702,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 180072173215717723,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "slice_other=39975942261427425805; slice_target=119927826784282277489"
+        },
+        {
+          "action": "exit_swap",
+          "pool_sqrt_q96": 83999619478608142839127989046,
+          "active_liquidity": 90081172279670508151,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 95506243658205923834,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 180072173215717723,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 204313684168578358357,
+          "detail": "opposing_in=39975942261427425805; target_out=84385857384296080868; fee=119927826784282278"
+        },
+        {
+          "action": "final",
+          "pool_sqrt_q96": 83999619478608142839127989046,
+          "active_liquidity": 90081172279670508151,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 95506243658205923834,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 180072173215717723,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 204313684168578358357,
+          "detail": "No actor opposing, LP, vault shares, debt or unresolved exposure."
+        }
+      ]
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "actual_initial_vault_fraction": "1",
+      "deposit_target_atoms": 200000000000000000000,
+      "swap_fraction": "1/2",
+      "net_target_atoms": 13806210641635458117,
+      "net_target_whole": "13.806210641635458117",
+      "final_actor_other_atoms": 0,
+      "minted_share_atoms": 74831348511383537732,
+      "core_added": 50075112669003505279,
+      "upper_added": 49690400545676484087,
+      "upper_lower_tick": 13860,
+      "old_equity_price": "1564571138414856335394000171346442297098788902717984012025/392318858461667547739736838950479151006397215279002157056",
+      "old_equity_mark_atoms": "78404923863564259329771778467114311223646112882177358809613855448096119924161/196159429230833773869868419475239575503198607639501078528",
+      "credited_mark_atoms": "29335730913214344756512432756283467657552308750842969880402983924839501772861/98079714615416886934934209737619787751599303819750539264",
+      "incumbent_target_claim_atoms": 86193789358364541793,
+      "incumbent_other_claim_atoms": 99999999999999999909,
+      "ambient_target_claim_atoms": 0,
+      "ambient_other_claim_atoms": 0,
+      "pool_target_residual_atoms": 4,
+      "pool_other_residual_atoms": 5,
+      "target_conservation_error_atoms": 0,
+      "other_conservation_error_atoms": 0,
+      "events": [
+        {
+          "action": "initial",
+          "pool_sqrt_q96": 79228162514264337593543950336,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 99999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 200000000000000000000,
+          "detail": "Actor has target only, no LP, opposing, shares or debt."
+        },
+        {
+          "action": "entry_swap",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "target_in=100000000000000000000; opposing_out=49924887330996494742; fee=300000000000000000"
+        },
+        {
+          "action": "incumbent_fee_checkpoint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199699999999999999915,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 299999999999999999,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "old_target_fees=299999999999999999"
+        },
+        {
+          "action": "add_and_mint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 150075112669003505279,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 299699999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "core_added=50075112669003505279; upper_added=49690400545676484087; shares=74831348511383537732"
+        },
+        {
+          "action": "withdraw_slice",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 85839933139468911722,
+          "pool_other_atoms": 57197980139979785300,
+          "pool_target_atoms": 171422346479519416637,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 171593940419939357,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "slice_other=42802019860020214614; slice_target=128406059580060643920"
+        },
+        {
+          "action": "exit_swap",
+          "pool_sqrt_q96": 79396386147381923621782833282,
+          "active_liquidity": 85839933139468911722,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 86022195417944602440,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 171593940419939357,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 213806210641635458117,
+          "detail": "opposing_in=42802019860020214614; target_out=85400151061574814197; fee=128406059580060644"
+        },
+        {
+          "action": "final",
+          "pool_sqrt_q96": 79396386147381923621782833282,
+          "active_liquidity": 85839933139468911722,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 86022195417944602440,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 171593940419939357,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 213806210641635458117,
+          "detail": "No actor opposing, LP, vault shares, debt or unresolved exposure."
+        }
+      ]
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "actual_initial_vault_fraction": "1",
+      "deposit_target_atoms": 200000000000000000000,
+      "swap_fraction": "1/2",
+      "net_target_atoms": 5534210681947098083,
+      "net_target_whole": "5.534210681947098083",
+      "final_actor_other_atoms": 0,
+      "minted_share_atoms": 67588096054371704106,
+      "core_added": 50075112669003505279,
+      "upper_added": 49690400545676484087,
+      "upper_lower_tick": 13860,
+      "old_equity_price": "50000000000000000000/24962443665498247371",
+      "old_equity_mark_atoms": "7073243280987404586259175498116628811287/24962443665498247371",
+      "credited_mark_atoms": "1593556820971053222376738720143218310702/8320814555166082457",
+      "incumbent_target_claim_atoms": 94465789318052901826,
+      "incumbent_other_claim_atoms": 99999999999999999909,
+      "ambient_target_claim_atoms": 0,
+      "ambient_other_claim_atoms": 0,
+      "pool_target_residual_atoms": 5,
+      "pool_other_residual_atoms": 5,
+      "target_conservation_error_atoms": 0,
+      "other_conservation_error_atoms": 0,
+      "events": [
+        {
+          "action": "initial",
+          "pool_sqrt_q96": 79228162514264337593543950336,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 99999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 200000000000000000000,
+          "detail": "Actor has target only, no LP, opposing, shares or debt."
+        },
+        {
+          "action": "entry_swap",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "target_in=100000000000000000000; opposing_out=49924887330996494742; fee=300000000000000000"
+        },
+        {
+          "action": "incumbent_fee_checkpoint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199699999999999999915,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 299999999999999999,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "old_target_fees=299999999999999999"
+        },
+        {
+          "action": "add_and_mint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 150075112669003505279,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 299699999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "core_added=50075112669003505279; upper_added=49690400545676484087; shares=67588096054371704106"
+        },
+        {
+          "action": "withdraw_slice",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 89549983681605675098,
+          "pool_other_atoms": 59670109246635479813,
+          "pool_target_atoms": 178831317412166533096,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 179010327739906440,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "slice_other=40329890753364520101; slice_target=120989672260093560378"
+        },
+        {
+          "action": "exit_swap",
+          "pool_sqrt_q96": 83418979453432085747302641643,
+          "active_liquidity": 89549983681605675098,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 94286778990312995391,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 179010327739906440,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 205534210681947098083,
+          "detail": "opposing_in=40329890753364520101; target_out=84544538421853537705; fee=120989672260093561"
+        },
+        {
+          "action": "final",
+          "pool_sqrt_q96": 83418979453432085747302641643,
+          "active_liquidity": 89549983681605675098,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 94286778990312995391,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 179010327739906440,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 205534210681947098083,
+          "detail": "No actor opposing, LP, vault shares, debt or unresolved exposure."
+        }
+      ]
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "actual_initial_vault_fraction": "1",
+      "deposit_target_atoms": 200000000000000000000,
+      "swap_fraction": "1/2",
+      "net_target_atoms": -1138885969136707947,
+      "net_target_whole": "-1.138885969136707947",
+      "final_actor_other_atoms": 0,
+      "minted_share_atoms": 62406362247064179627,
+      "core_added": 50075112669003505279,
+      "upper_added": 49690400545676484087,
+      "upper_lower_tick": 13860,
+      "old_equity_price": "1",
+      "old_equity_mark_atoms": "200299999999999999825",
+      "credited_mark_atoms": "124999943580869551685",
+      "incumbent_target_claim_atoms": 101138885969136707857,
+      "incumbent_other_claim_atoms": 99999999999999999910,
+      "ambient_target_claim_atoms": 0,
+      "ambient_other_claim_atoms": 0,
+      "pool_target_residual_atoms": 4,
+      "pool_other_residual_atoms": 4,
+      "target_conservation_error_atoms": 0,
+      "other_conservation_error_atoms": 0,
+      "events": [
+        {
+          "action": "initial",
+          "pool_sqrt_q96": 79228162514264337593543950336,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 99999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 200000000000000000000,
+          "detail": "Actor has target only, no LP, opposing, shares or debt."
+        },
+        {
+          "action": "entry_swap",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "target_in=100000000000000000000; opposing_out=49924887330996494742; fee=300000000000000000"
+        },
+        {
+          "action": "incumbent_fee_checkpoint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199699999999999999915,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 299999999999999999,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "old_target_fees=299999999999999999"
+        },
+        {
+          "action": "add_and_mint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 150075112669003505279,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 299699999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "core_added=50075112669003505279; upper_added=49690400545676484087; shares=62406362247064179627"
+        },
+        {
+          "action": "withdraw_slice",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 92407163483348333918,
+          "pool_other_atoms": 61573942434516724276,
+          "pool_target_atoms": 184537105476246622757,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 184721827303550173,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "slice_other=38426057565483275638; slice_target=115278172696449826984"
+        },
+        {
+          "action": "exit_swap",
+          "pool_sqrt_q96": 86556199991596752016599250338,
+          "active_liquidity": 92407163483348333918,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 100954164141833157688,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 184721827303550173,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 198861114030863292053,
+          "detail": "opposing_in=38426057565483275638; target_out=83582941334413465069; fee=115278172696449827"
+        },
+        {
+          "action": "final",
+          "pool_sqrt_q96": 86556199991596752016599250338,
+          "active_liquidity": 92407163483348333918,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 100954164141833157688,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 184721827303550173,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 198861114030863292053,
+          "detail": "No actor opposing, LP, vault shares, debt or unresolved exposure."
+        }
+      ]
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "actual_initial_vault_fraction": "1",
+      "deposit_target_atoms": 200000000000000000000,
+      "swap_fraction": "1/2",
+      "net_target_atoms": -449999322971962518,
+      "net_target_whole": "-0.449999322971962518",
+      "final_actor_other_atoms": 0,
+      "minted_share_atoms": 50000000000000000021,
+      "core_added": 50000000000000000021,
+      "upper_added": 0,
+      "upper_lower_tick": 13860,
+      "old_equity_price": "1564571138414856335394000171346442297098788902717984012025/392318858461667547739736838950479151006397215279002157056",
+      "old_equity_mark_atoms": "78404923863564259329771778467114311223646112882177358809613855448096119924161/196159429230833773869868419475239575503198607639501078528",
+      "credited_mark_atoms": "3920246193178212968135092324490565007107512991918268476177261142930530531209940964410018518407381/19615942923083377386986841947523957550319860763950107852800000000000000000000",
+      "incumbent_target_claim_atoms": 100449999322971962428,
+      "incumbent_other_claim_atoms": 99999999999999999910,
+      "ambient_target_claim_atoms": 0,
+      "ambient_other_claim_atoms": 0,
+      "pool_target_residual_atoms": 4,
+      "pool_other_residual_atoms": 4,
+      "target_conservation_error_atoms": 0,
+      "other_conservation_error_atoms": 0,
+      "events": [
+        {
+          "action": "initial",
+          "pool_sqrt_q96": 79228162514264337593543950336,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 99999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 200000000000000000000,
+          "detail": "Actor has target only, no LP, opposing, shares or debt."
+        },
+        {
+          "action": "entry_swap",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199999999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 0,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "target_in=100000000000000000000; opposing_out=49924887330996494742; fee=300000000000000000"
+        },
+        {
+          "action": "incumbent_fee_checkpoint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505172,
+          "pool_target_atoms": 199699999999999999915,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 299999999999999999,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 0,
+          "detail": "old_target_fees=299999999999999999"
+        },
+        {
+          "action": "add_and_mint",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 150000000000000000021,
+          "pool_other_atoms": 75112669003505257768,
+          "pool_target_atoms": 299549999999999999914,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 449999999999999999,
+          "actor_other_atoms": 24887330996494742146,
+          "actor_target_atoms": 1,
+          "detail": "core_added=50000000000000000021; upper_added=0; shares=50000000000000000021"
+        },
+        {
+          "action": "withdraw_slice",
+          "pool_sqrt_q96": 158218640540985882174307268820,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 50075112669003505173,
+          "pool_target_atoms": 199699999999999999916,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 24887330996494742146,
+          "actor_target_atoms": 1,
+          "detail": "slice_other=25037556334501752595; slice_target=99999999999999999997"
+        },
+        {
+          "action": "exit_swap",
+          "pool_sqrt_q96": 105584678372362951115192835788,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 75112669003505257768,
+          "pool_target_atoms": 133266599933266599910,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 24887330996494742146,
+          "actor_target_atoms": 166433400066733400004,
+          "detail": "opposing_in=25037556334501752595; target_out=66433400066733400006; fee=75112669003505258"
+        },
+        {
+          "action": "liquidate_owned_refund",
+          "pool_sqrt_q96": 79347004221638860294661189564,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 100149999322971962432,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 199550000677028037482,
+          "detail": "opposing_in=24887330996494742146; target_out=33116600610294637478"
+        },
+        {
+          "action": "final",
+          "pool_sqrt_q96": 79347004221638860294661189564,
+          "active_liquidity": 100000000000000000000,
+          "pool_other_atoms": 99999999999999999914,
+          "pool_target_atoms": 100149999322971962432,
+          "vault_idle_other_atoms": 0,
+          "vault_idle_target_atoms": 300000000000000000,
+          "actor_other_atoms": 0,
+          "actor_target_atoms": 199550000677028037482,
+          "detail": "No actor opposing, LP, vault shares, debt or unresolved exposure."
+        }
+      ]
+    }
+  ],
+  "fee_depth_matrix": [
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1/100",
+      "net_target_atoms": 2438652049711426,
+      "net_target_whole": "0.002438652049711426"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1/10",
+      "net_target_atoms": 197491853461044726,
+      "net_target_whole": "0.197491853461044726"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 2339181286549707599,
+      "net_target_whole": "2.339181286549707599"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 4310459516270654282,
+      "net_target_whole": "4.310459516270654282"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 4668048903206165156,
+      "net_target_whole": "4.668048903206165156"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1",
+      "net_target_atoms": 4705882352941176466,
+      "net_target_whole": "4.705882352941176466"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -96932963210162256,
+      "net_target_whole": "-0.096932963210162256"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1/10",
+      "net_target_atoms": 103032759737159662,
+      "net_target_whole": "0.103032759737159662"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 2260033121925697422,
+      "net_target_whole": "2.260033121925697422"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 4242631326617630871,
+      "net_target_whole": "4.242631326617630871"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 4602479806439507912,
+      "net_target_whole": "4.602479806439507912"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1",
+      "net_target_atoms": 4640558895046301261,
+      "net_target_whole": "4.640558895046301261"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -593432868053955858,
+      "net_target_whole": "-0.593432868053955858"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -369028912538523708,
+      "net_target_whole": "-0.369028912538523708"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 1864219124176049681,
+      "net_target_whole": "1.864219124176049681"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 3903260746637353436,
+      "net_target_whole": "3.903260746637353436"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 4274379513378682819,
+      "net_target_whole": "4.274379513378682819"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1",
+      "net_target_atoms": 4313684168578358357,
+      "net_target_whole": "4.313684168578358357"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -1980465087332929209,
+      "net_target_whole": "-1.980465087332929209"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -1688729167500216006,
+      "net_target_whole": "-1.688729167500216006"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 755295915818986294,
+      "net_target_whole": "0.755295915818986294"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 2950986751508660533,
+      "net_target_whole": "2.950986751508660533"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 3353437610677212079,
+      "net_target_whole": "3.353437610677212079"
+    },
+    {
+      "rule": "executed_average_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1",
+      "net_target_atoms": 3396150387089481565,
+      "net_target_whole": "3.396150387089481565"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1/100",
+      "net_target_atoms": 4907726582948949,
+      "net_target_whole": "0.004907726582948949"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1/10",
+      "net_target_atoms": 419197155976892307,
+      "net_target_whole": "0.419197155976892307"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 6011730205278592375,
+      "net_target_whole": "6.011730205278592375"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 12720689979445705772,
+      "net_target_whole": "12.720689979445705772"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 14132296007595015065,
+      "net_target_whole": "14.132296007595015065"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 0,
+      "vault_fraction": "1",
+      "net_target_atoms": 14285714285714285724,
+      "net_target_whole": "14.285714285714285724"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -94707834864380946,
+      "net_target_whole": "-0.094707834864380946"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1/10",
+      "net_target_atoms": 322248228600302450,
+      "net_target_whole": "0.32224822860030245"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 5921955542573237916,
+      "net_target_whole": "5.921955542573237916"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 12638558265863663576,
+      "net_target_whole": "12.638558265863663576"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 14052203329547599708,
+      "net_target_whole": "14.052203329547599708"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 500,
+      "vault_fraction": "1",
+      "net_target_atoms": 14205855598437888694,
+      "net_target_whole": "14.205855598437888694"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -592237531028193060,
+      "net_target_whole": "-0.59223753102819306"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -162059027977381393,
+      "net_target_whole": "-0.162059027977381393"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 5473150830313902346,
+      "net_target_whole": "5.473150830313902346"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 12227630171160306615,
+      "net_target_whole": "12.227630171160306615"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 13651396551809247546,
+      "net_target_whole": "13.651396551809247546"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 3000,
+      "vault_fraction": "1",
+      "net_target_atoms": 13806210641635458117,
+      "net_target_whole": "13.806210641635458117"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -1980464594624769514,
+      "net_target_whole": "-1.980464594624769514"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -1514234871858914900,
+      "net_target_whole": "-1.5142348718589149"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 4217132310404634385,
+      "net_target_whole": "4.217132310404634385"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 11074671026736276772,
+      "net_target_whole": "11.074671026736276772"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 12526120993958859844,
+      "net_target_whole": "12.526120993958859844"
+    },
+    {
+      "rule": "post_swap_spot_actual_composition",
+      "fee_pips": 10000,
+      "vault_fraction": "1",
+      "net_target_atoms": 12684115898727524000,
+      "net_target_whole": "12.684115898727524"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1/100",
+      "net_target_atoms": 2444763658160168,
+      "net_target_whole": "0.002444763658160168"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1/10",
+      "net_target_atoms": 202533491611570529,
+      "net_target_whole": "0.202533491611570529"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 2648740966358693223,
+      "net_target_whole": "2.648740966358693223"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 5339536455265749544,
+      "net_target_whole": "5.339536455265749544"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 5891716207486714271,
+      "net_target_whole": "5.891716207486714271"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1",
+      "net_target_atoms": 5951628094265342875,
+      "net_target_whole": "5.951628094265342875"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -96927739195421527,
+      "net_target_whole": "-0.096927739195421527"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1/10",
+      "net_target_atoms": 107985555722296115,
+      "net_target_whole": "0.107985555722296115"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 2567961615468528245,
+      "net_target_whole": "2.567961615468528245"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 5267980304318956379,
+      "net_target_whole": "5.267980304318956379"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 5821975523859103264,
+      "net_target_whole": "5.821975523859103264"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1",
+      "net_target_atoms": 5882085064290858333,
+      "net_target_whole": "5.882085064290858333"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -593430826082247965,
+      "net_target_whole": "-0.593430826082247965"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -364505211155708452,
+      "net_target_whole": "-0.364505211155708452"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 2164065428825677489,
+      "net_target_whole": "2.164065428825677489"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 4910068034040322986,
+      "net_target_whole": "4.910068034040322986"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 5473115593106608820,
+      "net_target_whole": "5.47311559310660882"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1",
+      "net_target_atoms": 5534210681947098083,
+      "net_target_whole": "5.534210681947098083"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -1980465087308416977,
+      "net_target_whole": "-1.980465087308416977"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -1685277416870267717,
+      "net_target_whole": "-1.685277416870267717"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": 1033163879167521308,
+      "net_target_whole": "1.033163879167521308"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": 3906751810838330528,
+      "net_target_whole": "3.906751810838330528"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": 4494924572045036509,
+      "net_target_whole": "4.494924572045036509"
+    },
+    {
+      "rule": "executed_average_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1",
+      "net_target_atoms": 4558755114165468411,
+      "net_target_whole": "4.558755114165468411"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -6036564436649,
+      "net_target_whole": "-0.000006036564436649"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -4507753335737477,
+      "net_target_whole": "-0.004507753335737477"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -208333333333333341,
+      "net_target_whole": "-0.208333333333333341"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -593764253600052135,
+      "net_target_whole": "-0.593764253600052135"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -688693154312013577,
+      "net_target_whole": "-0.688693154312013577"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 0,
+      "vault_fraction": "1",
+      "net_target_atoms": -699300699300699310,
+      "net_target_whole": "-0.69930069930069931"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -99370623756718037,
+      "net_target_whole": "-0.099370623756718037"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -98934792050295965,
+      "net_target_whole": "-0.098934792050295965"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -289161987860458826,
+      "net_target_whole": "-0.289161987860458826"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -668040803883225323,
+      "net_target_whole": "-0.668040803883225323"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -762043450684038325,
+      "net_target_whole": "-0.762043450684038325"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 500,
+      "vault_fraction": "1",
+      "net_target_atoms": -772557600704689788,
+      "net_target_whole": "-0.772557600704689788"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -595650007630147025,
+      "net_target_whole": "-0.595650007630147025"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -570666697690099437,
+      "net_target_whole": "-0.570666697690099437"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -693204499751964391,
+      "net_target_whole": "-0.693204499751964391"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -1039445183903234757,
+      "net_target_whole": "-1.039445183903234757"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -1128836641252629762,
+      "net_target_whole": "-1.128836641252629762"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 3000,
+      "vault_fraction": "1",
+      "net_target_atoms": -1138885969136707947,
+      "net_target_whole": "-1.138885969136707947"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -1980415576315170857,
+      "net_target_whole": "-1.980415576315170857"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -1887934219483325078,
+      "net_target_whole": "-1.887934219483325078"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -1823614014073574756,
+      "net_target_whole": "-1.823614014073574756"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -2079549727245099522,
+      "net_target_whole": "-2.079549727245099522"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -2156206694173171226,
+      "net_target_whole": "-2.156206694173171226"
+    },
+    {
+      "rule": "ideal_historical_one_reference_ranges",
+      "fee_pips": 10000,
+      "vault_fraction": "1",
+      "net_target_atoms": -2164973458997059336,
+      "net_target_whole": "-2.164973458997059336"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 0,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -4,
+      "net_target_whole": "-4E-18"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 0,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -4,
+      "net_target_whole": "-4E-18"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 0,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -4,
+      "net_target_whole": "-4E-18"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -4,
+      "net_target_whole": "-4E-18"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 0,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -3,
+      "net_target_whole": "-3E-18"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 0,
+      "vault_fraction": "1",
+      "net_target_atoms": -4,
+      "net_target_whole": "-4E-18"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 500,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -99480687805125086,
+      "net_target_whole": "-0.099480687805125086"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 500,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -95435947689882093,
+      "net_target_whole": "-0.095435947689882093"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 500,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -83327773147067933,
+      "net_target_whole": "-0.083327773147067933"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -76315093506979080,
+      "net_target_whole": "-0.07631509350697908"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 500,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -75125561853094479,
+      "net_target_whole": "-0.075125561853094479"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 500,
+      "vault_fraction": "1",
+      "net_target_atoms": -74999996873437115,
+      "net_target_whole": "-0.074999996873437115"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -596156180907720976,
+      "net_target_whole": "-0.596156180907720976"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -572057263187614277,
+      "net_target_whole": "-0.572057263187614277"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -499798998600204615,
+      "net_target_whole": "-0.499798998600204615"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -457869060097441792,
+      "net_target_whole": "-0.457869060097441792"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -450750812379797843,
+      "net_target_whole": "-0.450750812379797843"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 3000,
+      "vault_fraction": "1",
+      "net_target_atoms": -449999322971962518,
+      "net_target_whole": "-0.449999322971962518"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 10000,
+      "vault_fraction": "1/100",
+      "net_target_atoms": -1980391185986149751,
+      "net_target_whole": "-1.980391185986149751"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 10000,
+      "vault_fraction": "1/10",
+      "net_target_atoms": -1901631132685494673,
+      "net_target_whole": "-1.901631132685494673"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 10000,
+      "vault_fraction": "1/2",
+      "net_target_atoms": -1664407234656555154,
+      "net_target_whole": "-1.664407234656555154"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/111111111111111111111",
+      "net_target_atoms": -1526010977158371815,
+      "net_target_whole": "-1.526010977158371815"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 10000,
+      "vault_fraction": "100000000000000000000/101010101010101010101",
+      "net_target_atoms": -1502461809095979855,
+      "net_target_whole": "-1.502461809095979855"
+    },
+    {
+      "rule": "proportional_vector_refund_control",
+      "fee_pips": 10000,
+      "vault_fraction": "1",
+      "net_target_atoms": -1499974748750063133,
+      "net_target_whole": "-1.499974748750063133"
+    }
+  ],
+  "size_split_matrix": [
+    {
+      "deposit_target_whole": 2,
+      "swap_fraction": "49/100",
+      "fee_pips": 3000,
+      "net_target_whole": "-0.006103146962093846"
+    },
+    {
+      "deposit_target_whole": 2,
+      "swap_fraction": "1/2",
+      "fee_pips": 3000,
+      "net_target_whole": "-0.00590786105366074"
+    },
+    {
+      "deposit_target_whole": 2,
+      "swap_fraction": "51/100",
+      "fee_pips": 3000,
+      "net_target_whole": "-0.005715718771934621"
+    },
+    {
+      "deposit_target_whole": 20,
+      "swap_fraction": "49/100",
+      "fee_pips": 3000,
+      "net_target_whole": "-0.036631035686165795"
+    },
+    {
+      "deposit_target_whole": 20,
+      "swap_fraction": "1/2",
+      "fee_pips": 3000,
+      "net_target_whole": "-0.021566952951736862"
+    },
+    {
+      "deposit_target_whole": 20,
+      "swap_fraction": "51/100",
+      "fee_pips": 3000,
+      "net_target_whole": "-0.006482633744228055"
+    },
+    {
+      "deposit_target_whole": 200,
+      "swap_fraction": "49/100",
+      "fee_pips": 3000,
+      "net_target_whole": "3.972299298126164823"
+    },
+    {
+      "deposit_target_whole": 200,
+      "swap_fraction": "1/2",
+      "fee_pips": 3000,
+      "net_target_whole": "4.313684168578358357"
+    },
+    {
+      "deposit_target_whole": 200,
+      "swap_fraction": "51/100",
+      "fee_pips": 3000,
+      "net_target_whole": "4.653799034585402994"
+    },
+    {
+      "deposit_target_whole": 2000,
+      "swap_fraction": "49/100",
+      "fee_pips": 3000,
+      "net_target_whole": "23.679936508328695899"
+    },
+    {
+      "deposit_target_whole": 2000,
+      "swap_fraction": "1/2",
+      "fee_pips": 3000,
+      "net_target_whole": "24.208058833744850539"
+    },
+    {
+      "deposit_target_whole": 2000,
+      "swap_fraction": "51/100",
+      "fee_pips": 3000,
+      "net_target_whole": "24.726114791536613016"
+    }
+  ]
+}

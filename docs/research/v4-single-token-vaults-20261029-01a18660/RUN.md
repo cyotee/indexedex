@@ -1,0 +1,26 @@
+# Council run
+
+- Owner/session: `01a18660-756f-7c57-b112-de7a5348283c`.
+- Date: 2026-10-29.
+- Question and authorization: explicit user request; see brief.md.
+- Profile: full research council, invoking-agent coordination.
+- Coordinator exposed model: `gpt-6.1-sol`; provider/reasoning not independently attested.
+- Role availability: Native task schema exposes `council-member` and explicit model selection. Direct root-to-member depth only; effective configured depth is not exposed before admission. Launch metadata/errors will supply actual admission evidence.
+- Protocol: Native skill takes precedence over historical OpenCode-specific transport instructions in docs/agent/RESEARCH_COUNCIL.md; preserve independent originals and a single advisory round.
+- Tools: coordinator has public web search/fetch; members must disclose actual search capability and evidence gaps.
+- Output: new council-owned Markdown artifacts only; no code edits or project execution.
+- Phase: completed; all four originals and all four advisories settled, final report published.
+- Attempts: initial assignment 1 for each member.
+- Native task handles: Astra `st_01a18665`; Grok `st_01a18666`; MiniMax `st_01a18667`; Kimi `st_01a18668`. All admitted as running. Child-status subscription: `mon_CK98KNQAZKKN3D76`.
+- Monitor-exposed model names: `gpt-6-astra`, `grok-4.7`, `MiniMax-M3`, `k3.1-pro`. Requested full provider routes are below; provider internals and MiniMax adaptive setting were not exposed in this monitor.
+- Requested routes: Astra `chatgpt-subscription/gpt-6-astra:high`; Grok `xai/grok-4.7:xhigh`; MiniMax `minimax/MiniMax-M3` with configured adaptive setting; Kimi `kimi-coding/k3.1-pro:high`.
+- Initial participation: four substantive originals received. Astra and Grok wrote their assigned response files; MiniMax also wrote its assigned file. Grok and MiniMax disclosed using a file-write tool after apply_patch was unavailable, contrary to the brief's no-workaround instruction; the existing originals are preserved rather than rewritten. Kimi returned its complete original inline because apply_patch was inactive; the coordinator archived that final response verbatim through apply_patch.
+- Kimi task metadata independently exposed: process mode; parent/root `01a18660-756f-7c57-b112-de7a5348283c`; child `01a18665-eb11-7234-9e58-073ac0f389d4`; resolved `kimi-coding/k3.1-pro:high`, reasoning high. Other route labels above come from task requests/admission and monitor; provider internal execution not attested.
+- Frozen draft: `coordinator/draft.md`, revision `v4-vault-comparison-r1`. All four original tasks resumed via task_send, run epoch 1. Each receives the same draft and all three peer originals; no peer feedback may be read.
+- Advisory deliverables: own `members/<name>/feedback.md` via apply_patch only, or complete inline feedback archived by coordinator if the tool is inactive.
+- Advisory outcomes: Astra SUPPORT WITH CORRECTIONS; Grok SUPPORT WITH CORRECTIONS; MiniMax SUPPORT WITH CORRECTIONS; Kimi SUPPORT. Coordinator resolutions are in `coordinator/resolution.md`; final revisions were not sent for another round.
+- Published final: `REPORT.md`. Four originals, frozen draft, four feedback artifacts, resolution and source-notes preserved.
+- Final Native snapshots: all completed, process mode, explicit resolved routes match requested routes. Astra child `01a18665-e8be-787f-accc-675875115506`; Grok child `01a18665-e8fe-76e2-b79c-df80e37c6e3f`; MiniMax child `01a18665-e958-7624-ad13-91a933565948`; Kimi child `01a18665-eb11-7234-9e58-073ac0f389d4`. All report parent/root `01a18660-756f-7c57-b112-de7a5348283c`.
+- Resolved reasoning: Astra high; Grok xhigh; Kimi high. MiniMax reasoning/adaptive setting not exposed; model route `minimax/MiniMax-M3`.
+- Tool-delivery gaps: Kimi original archived from complete inline final by coordinator. Grok/MiniMax/Kimi feedback archived from complete inline outputs; Grok feedback required recovering the prior substantive assistant message from Native task transcript. No opinion was regenerated.
+- Verification: important contract functions and source records checked; final report has seven profiles and 37 source locators with no pending placeholders. No tests/builds executed because this is documentation research, not code implementation. No commits or product code/configuration edits.

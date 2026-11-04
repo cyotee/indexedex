@@ -292,9 +292,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         uint256 mintIn = 1 ether;
         _dealWeth(victim, mintIn);
         vm.startPrank(victim);
-        hermeticWeth.approve(seVault, mintIn);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, mintIn);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             mintIn,
             IERC20(seVault),
             1,
@@ -437,9 +435,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
 
         uint256 amount = 7 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -464,8 +460,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
 
     /// @dev E5: zero amount reverts
     function test_E5_zeroAmount_reverts() public {
-        vm.expectRevert(ILidoWstETHStandardVault.ZeroAmount.selector);
-        seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 0, IERC20(seVault));
+        vm.expectRevert(ILidoWstETHStandardVault.ZeroAmount.selector);seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 0, IERC20(seVault));
     }
 
     /// @dev I5 / inflation: first-minter 1-wei deposit + large WETH donation cannot force zero-share mint
@@ -481,9 +476,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.prank(attacker);
         hermeticWeth.deposit{value: 1}();
         vm.startPrank(attacker);
-        hermeticWeth.approve(emptyVault, 1);
-        uint256 attackerShares = emptyIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(emptyVault, 1);(uint256 attackerShares,) = emptyIn.exchangeIn(IERC20(address(hermeticWeth)),
             1,
             IERC20(emptyVault),
             0,
@@ -504,9 +497,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         uint256 victimIn = 10 ether;
         _dealWeth(victim, victimIn);
         vm.startPrank(victim);
-        hermeticWeth.approve(emptyVault, victimIn);
-        uint256 victimShares = emptyIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(emptyVault, victimIn);(uint256 victimShares,) = emptyIn.exchangeIn(IERC20(address(hermeticWeth)),
             victimIn,
             IERC20(emptyVault),
             1, // must mint at least 1 share - fails without inflation defense
@@ -573,10 +564,8 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         hostile.arm(vault, reentry);
 
         vm.startPrank(attacker);
-        hostile.approve(vault, amount);
-        // Outer call must succeed (nested fails IsLocked inside transferFrom)
-        uint256 shares = vin.exchangeIn(
-            IERC20(address(hostile)),
+        hostile.approve(vault, amount);// Outer call must succeed (nested fails IsLocked inside transferFrom)
+        (uint256 shares,) = vin.exchangeIn(IERC20(address(hostile)),
             amount,
             IERC20(vault),
             0,
@@ -610,9 +599,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.prank(attacker);
         hostile.deposit{value: seed}();
         vm.startPrank(attacker);
-        hostile.approve(vault, seed);
-        uint256 shares = vin.exchangeIn(
-            IERC20(address(hostile)), seed, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
+        hostile.approve(vault, seed);(uint256 shares,) = vin.exchangeIn(IERC20(address(hostile)), seed, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -683,14 +670,11 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         st.mint(address(this), wstAmt);
         st.approve(address(wst), wstAmt);
         wst.wrap(wstAmt);
-        wst.approve(vault, wstAmt);
-        vin.exchangeIn(IERC20(address(wst)), wstAmt, IERC20(vault), 0, address(this), false, block.timestamp + 1 hours);
+        wst.approve(vault, wstAmt);vin.exchangeIn(IERC20(address(wst)), wstAmt, IERC20(vault), 0, address(this), false, block.timestamp + 1 hours);
         // tiny liquid
         vm.deal(address(this), 0.05 ether);
         hostile.deposit{value: 0.05 ether}();
-        hostile.approve(vault, 0.05 ether);
-        vin.exchangeIn(
-            IERC20(address(hostile)), 0.05 ether, IERC20(vault), 0, address(this), false, block.timestamp + 1 hours
+        hostile.approve(vault, 0.05 ether);vin.exchangeIn(IERC20(address(hostile)), 0.05 ether, IERC20(vault), 0, address(this), false, block.timestamp + 1 hours
         );
 
         vreb.rebalance();
@@ -725,9 +709,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -740,9 +722,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -773,9 +753,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I2: no in-call allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -788,9 +766,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, shortPush)
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
@@ -811,9 +787,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         uint256 victimIn = 2 ether;
         _dealWeth(victim, victimIn);
         vm.startPrank(victim);
-        hermeticWeth.approve(seVault, victimIn);
-        uint256 minted = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, victimIn);(uint256 minted,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             victimIn,
             IERC20(seVault),
             0,
@@ -832,9 +806,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I3: no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
@@ -847,9 +819,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim, uint256(0))
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
@@ -926,10 +896,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertTrue(ethFacet_ != address(0) && ethFacet_ != seVault, "J3 proxy cut exchangeInEth");
         assertTrue(rebFacet_ != address(0) && rebFacet_ != seVault, "J3 proxy cut rebalance");
 
-        _seedVaultInventory(3 ether, 3 ether);
-
-        uint256 previewIn_ =
-            IStandardExchangeIn(seVault).previewExchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault));
+        _seedVaultInventory(3 ether, 3 ether);(uint256 previewIn_,) = IStandardExchangeIn(seVault).previewExchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault));
         assertGt(previewIn_, 0, "J3 previewExchangeIn live on proxy");
 
         uint256 previewOut_ =
@@ -937,9 +904,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(seVault).exchangeIn(
-            IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(seVault).exchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
         );
 
         vm.expectRevert(ILidoWstETHStandardVault.ZeroAmount.selector);
@@ -960,9 +925,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.prank(attacker);
         hermeticWeth.transfer(seVault, 1 ether);
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             1 ether,
             IERC20(seVault),
             0,
@@ -1078,8 +1041,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         _seedVaultInventory(5 ether, 5 ether);
         hermeticStEth.setStakingPaused(true);
         uint256 liquidBefore = lidoSe.liquidReserveEth();
-        uint256 lockedBefore = lidoSe.lockedReserveEth();
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 100 ether, IERC20(seVault));
+        uint256 lockedBefore = lidoSe.lockedReserveEth();(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 100 ether, IERC20(seVault));
         vm.deal(address(this), 100 ether);
         uint256 shares = LidoWstETHStandardExchangeInTarget(payable(seVault)).exchangeInEth{value: 100 ether}(
             IERC20(seVault), 0, address(this), block.timestamp + 1 hours
@@ -1118,9 +1080,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         hermeticStEth.setStakingPaused(true);
         uint256 amount = 2 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -1138,9 +1098,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         uint256 amount = 1 ether;
         _dealWeth(address(this), amount);
         hermeticWeth.approve(seVault, amount);
-        vm.expectRevert(bytes("STAKING_PAUSED"));
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        vm.expectRevert(bytes("STAKING_PAUSED"));seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticStEth)),
             0,

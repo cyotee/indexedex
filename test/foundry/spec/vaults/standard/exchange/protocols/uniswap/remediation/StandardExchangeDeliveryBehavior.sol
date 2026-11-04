@@ -143,8 +143,7 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
     function test_pullAndPushedDepositsAfterPriceMovement() public {
         _bootstrap(); _trade(true, 100 ether);
         _fund(asset0, address(this), 40 ether);
-        asset0.approve(address(subject), 20 ether);
-        uint256 pulled = subject.exchangeIn(asset0, 20 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        asset0.approve(address(subject), 20 ether);(uint256 pulled,) = subject.exchangeIn(asset0, 20 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
         assertGt(pulled, 0);
         bytes memory data = _depositCall(asset0, 20 ether, address(this));
 
@@ -373,8 +372,7 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         _fund(asset1, address(this), 100 ether);
         asset1.approve(address(subject), 100 ether);
         uint256 supply = subject.totalSupply();
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 100 ether, 99 ether));
-        subject.exchangeIn(asset1, 100 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 100 ether, 99 ether));subject.exchangeIn(asset1, 100 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
         assertEq(subject.totalSupply(), supply);
         assertEq(asset1.balanceOf(address(this)), 100 ether);
     }
@@ -389,7 +387,8 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         token.setCallback(address(subject), reentry);
         _fund(asset1, address(this), 10 ether);
         asset1.approve(address(subject), 10 ether);
-        assertGt(subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
+        (uint256 exchangeAmountOut1,) = subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        assertGt(exchangeAmountOut1, 0);
         assertEq(token.callbackError(), abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
     }

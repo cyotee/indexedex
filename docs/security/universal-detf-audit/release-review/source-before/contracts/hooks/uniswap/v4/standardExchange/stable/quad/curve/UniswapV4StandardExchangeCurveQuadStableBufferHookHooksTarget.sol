@@ -263,17 +263,14 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         address se = l.standardExchanges[i];
         if (se == address(0)) {
             return Math.scaleTo(pairAmount, l.ratedScales[i]);
-        }
-        // Buffer preview → shares → pair units (rate or claim) → rated WAD
-        uint256 shares =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
+        }// Buffer preview → shares → pair units (rate or claim) → rated WAD
+        (uint256 shares,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
         address rp = l.rateProviders[i];
         uint256 pairUnits;
         if (rp != address(0)) {
             pairUnits = (shares * _getRateFailClosed(rp)) / Math.RATE_PRECISION;
-        } else {
-            pairUnits = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
+        } else {(pairUnits,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
         }
         return Math.scaleTo(pairUnits, l.ratedScales[i]);
     }
@@ -327,10 +324,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         try IStandardExchangeOut(se).previewExchangeOut(IERC20(l.tokens[i]), IERC20(se), sharesNeeded)
         returns (uint256 pairNeed) {
             return pairNeed;
-        } catch {
-            // linear gross-up via 1-unit preview
-            uint256 got = IStandardExchangeIn(se).previewExchangeIn(
-                IERC20(l.tokens[i]), sharesNeeded, IERC20(se)
+        } catch {// linear gross-up via 1-unit preview
+            (uint256 got,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), sharesNeeded, IERC20(se)
             );
             if (got == 0) revert ZeroAmount();
             return (sharesNeeded * sharesNeeded + got - 1) / got;

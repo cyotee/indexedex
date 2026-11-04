@@ -57,8 +57,7 @@ abstract contract MorphoBlueStandardExchange_RateProvider_Decimals is
         _wrapExactIn(user, _u(100));
         uint256 rate = rp.getRate();
         assertGt(rate, 0, "RP1 rate > 0");
-        uint256 sample = _quoteShares();
-        uint256 quote = seIn.previewExchangeIn(IERC20(se), sample, IERC20(address(loanToken)));
+        uint256 sample = _quoteShares();(uint256 quote,) = seIn.previewExchangeIn(IERC20(se), sample, IERC20(address(loanToken)));
         assertApproxEqAbs(rate, _rateFromPreview(sample, quote), 1, "RP1 getRate vs scaled preview");
     }
 
@@ -78,8 +77,7 @@ abstract contract MorphoBlueStandardExchange_RateProvider_Decimals is
     function test_RP3_providerSourceUnmodified_quotesThisVaultNav() public {
         _wrapExactIn(user, _u(50));
         uint256 rate = rp.getRate();
-        uint256 sample = _quoteShares();
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), sample, IERC20(address(loanToken)));
+        uint256 sample = _quoteShares();(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), sample, IERC20(address(loanToken)));
         assertGt(rate, 0);
         assertApproxEqAbs(rate, _rateFromPreview(sample, preview), 1, "RP3 vault preview/NAV");
     }

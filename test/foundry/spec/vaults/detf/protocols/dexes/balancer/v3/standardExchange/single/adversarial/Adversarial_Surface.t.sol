@@ -114,16 +114,12 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
         ISingleStandardExchangeDETFInfo(instance_).isMintingAllowed();
         ISingleStandardExchangeDETFInfo(instance_).isBurningAllowed();
         ISingleStandardExchangeDETFInfo(instance_).lastExpansionTimestamp();
-        ISingleStandardExchangeDETFInfo(instance_).expansionClosureRatePerSecond();
-
-        // preview on proxy (no state)
+        ISingleStandardExchangeDETFInfo(instance_).expansionClosureRatePerSecond();// preview on proxy (no state)
         IStandardExchangeIn(instance_).previewExchangeIn(seShare, 1e18, IERC20(instance_));
 
         // Money path: ZeroAmount proves selector is live on proxy (exact product error).
         vm.prank(attacker);
-        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);IStandardExchangeIn(instance_).exchangeIn(seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
 
         vm.prank(attacker);
         vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);

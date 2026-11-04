@@ -343,9 +343,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
 
     function test_R6_eoaPretransfer_rejected() public {
         vm.prank(user);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             1 ether,
             IERC20(address(token1)),
             0,
@@ -368,13 +366,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
     }
 
     function test_R6_previewAgreesAfterCorrection() public {
-        uint256 amountIn = 3 ether;
-        uint256 preview = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(token0)), amountIn, IERC20(address(token1))
+        uint256 amountIn = 3 ether;(uint256 preview,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(token0)), amountIn, IERC20(address(token1))
         );
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             amountIn,
             IERC20(address(token1)),
             preview,

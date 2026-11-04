@@ -113,12 +113,12 @@ Commands:
 
 Options:
   --dry-run           Simulate without broadcasting
-  --resume            Pass --resume through to forge script
+  --resume            Pass --resume through to forge script --use solar
   --force             Remove stage output manifests before rerunning the selected stage(s)
   --restart-supersim  Restart the local SuperSim process before running stages
   --kill-supersim     Kill the local SuperSim process and exit
   -v|-vv|-vvv|-vvvv|-vvvvv
-                      Pass Foundry verbosity through to forge script
+                      Pass Foundry verbosity through to forge script --use solar
   --help, -h          Show this help
 
 Environment:
@@ -306,7 +306,7 @@ prepare_broadcast_identity() {
 sweep_eth_to_deployer_address() {
   local rpc_url="$1"
   local script_path="$2"
-  local forge_args=(forge script "$script_path")
+  local forge_args=(forge script --use solar "$script_path")
   local senders=(
     "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
     "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
@@ -339,7 +339,7 @@ run_forge_script() {
   local rpc_url="$2"
   shift 2
 
-  local forge_args=(forge script "$script_target")
+  local forge_args=(forge script --use solar "$script_target")
   local gas_estimate_multiplier="$SUPERSIM_ETHEREUM_GAS_ESTIMATE_MULTIPLIER"
 
   if [[ "$rpc_url" == "$SUPERSIM_BASE_RPC_URL" ]]; then

@@ -15,8 +15,7 @@ abstract contract MultiVaultWeightedDetf_Liveness_Decimals is TestBase_MultiVaul
         uint256 seShares_ = _fundSeShares0(alice, 100e18);
         vm.startPrank(alice);
         seShare0.approve(detf, seShares_);
-        vm.expectRevert();
-        detfExchangeIn.exchangeIn(seShare0, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert();detfExchangeIn.exchangeIn(seShare0, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

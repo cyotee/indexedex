@@ -330,13 +330,13 @@ function invariant_callSummary() public view {
 
 ```bash
 # Run all invariant tests
-forge test --match-contract Invariant
+forge test --use solar --match-contract Invariant
 
 # Run with more depth
-forge test --match-contract Invariant -vvv
+forge test --use solar --match-contract Invariant -vvv
 
 # Specific configuration
-forge test --match-contract Invariant \
+forge test --use solar --match-contract Invariant \
     --invariant-runs 500 \
     --invariant-depth 50
 ```

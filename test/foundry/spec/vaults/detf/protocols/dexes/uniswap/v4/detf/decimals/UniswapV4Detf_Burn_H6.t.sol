@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -116,18 +117,14 @@ contract UniswapV4Detf_Burn_H6 is UniswapV4Detf_Burn_Decimals {
         uint256 amount_ = _prepareSmallBurn();
         IStakedDETF staking_ = IStakedDETF(detfInfo.rebasingClaimToken());
         vm.startPrank(detfUser);
-        IERC20(detf).approve(address(staking_), amount_);
-        staking_.exchangeIn(IERC20(detf), amount_, IERC20(address(staking_)), amount_, detfUser, false, block.timestamp);
+        IERC20(detf).approve(address(staking_), amount_);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(detf), amount_, IERC20(address(staking_)), amount_, detfUser, false, block.timestamp);
         staking_.approve(detf, amount_);
         vm.stopPrank();
         bytes32 before_ = _burnCustodySnapshot();
         uint256 gons_ = staking_.gonsOf(detfUser);
         bytes32 state_ = keccak256(abi.encode(staking_.stakingState()));
         vm.expectRevert(UniswapV4DetfRepo.ZeroAmount.selector);
-        vm.prank(detfUser);
-        IStandardExchangeIn(detf)
-            .exchangeIn(
-                IERC20(address(staking_)), amount_, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp
+        vm.prank(detfUser);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(detf))), IERC20(address(staking_)), amount_, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp
             );
         assertEq(staking_.gonsOf(detfUser), gons_);
         assertEq(keccak256(abi.encode(staking_.stakingState())), state_);
@@ -137,15 +134,13 @@ contract UniswapV4Detf_Burn_H6 is UniswapV4Detf_Burn_Decimals {
     function _prepareSmallBurn() private returns (uint256 amount_) {
         (smallBondId,) = _firstBond(_uPair(100));
         IStandardExchangeIn exchange_ = IStandardExchangeIn(detf);
-        vm.prank(detfUser);
-        exchange_.exchangeIn(IERC20(address(pairToken)), _uPair(20), IERC20(detf), 1, detfUser, false, block.timestamp);
+        vm.prank(detfUser);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(exchange_)), IERC20(address(pairToken)), _uPair(20), IERC20(detf), 1, detfUser, false, block.timestamp);
         assertTrue(detfInfo.isBurningAllowed(IERC20(address(pairToken))), "primary burn selected");
         uint256 supply_ = IERC20(detf).totalSupply();
         uint256 lp_ = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
         amount_ = (supply_ + lp_ - 1) / lp_;
         assertGt(amount_ * lp_ / supply_, 0, "existing LP guard passes");
-        assertEq(
-            exchange_.previewExchangeIn(IERC20(detf), amount_, IERC20(address(pairToken))),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(exchange_)), IERC20(detf), amount_, IERC20(address(pairToken))),
             0,
             "final asset rounds to zero"
         );
@@ -163,9 +158,7 @@ contract UniswapV4Detf_Burn_H6 is UniswapV4Detf_Burn_Decimals {
         vm.prank(detfUser);
         pairToken.approve(detf, type(uint256).max);
         (smallBondId,) = _firstBond(_uPair(100));
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(detf)
-            .exchangeIn(IERC20(address(pairToken)), _uPair(20), IERC20(detf), 1, detfUser, false, block.timestamp);
+        vm.startPrank(detfUser);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(detf))), IERC20(address(pairToken)), _uPair(20), IERC20(detf), 1, detfUser, false, block.timestamp);
         IERC20(detf).approve(detf, type(uint256).max);
         vm.stopPrank();
         assertFalse(detfInfo.isBurningAllowed(IERC20(address(pairToken))), "reserve swap selected");
@@ -183,13 +176,12 @@ contract UniswapV4Detf_Burn_H6 is UniswapV4Detf_Burn_Decimals {
         assertEq(_preview(high_ - 1), 0);
     }
 
-    function _preview(uint256 amount_) private view returns (uint256) {
-        return IStandardExchangeIn(detf).previewExchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)));
+    function _preview(uint256 amount_) private view returns (uint256) {(uint256 quotedAmountOut,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)));
+        return quotedAmountOut;
     }
 
-    function _burn(uint256 amount_, uint256 minimum_) private returns (uint256) {
-        return IStandardExchangeIn(detf)
-            .exchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)), minimum_, detfUser, false, block.timestamp);
+    function _burn(uint256 amount_, uint256 minimum_) private returns (uint256) {(uint256 quotedAmountOut,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)), minimum_, detfUser, false, block.timestamp);
+        return quotedAmountOut;
     }
 
     function _assertPaidBurn(uint256 amount_) private {

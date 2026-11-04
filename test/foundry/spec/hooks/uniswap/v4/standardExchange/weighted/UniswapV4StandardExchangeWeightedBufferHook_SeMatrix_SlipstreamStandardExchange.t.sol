@@ -41,10 +41,9 @@ contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_SlipstreamStandard
         SeMatrix_SlipstreamFixture f = new SeMatrix_SlipstreamFixture(_matrixCtx(), address(0));
         address se = f.se();
         address face = f.faceToken();
-        assertGt(IStandardExchangeIn(se).previewExchangeIn(IERC20(face), 1e18, IERC20(se)), 0, "face->share zap route exists");
-        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
-        IStandardExchangeIn(se).previewExchangeIn(IERC20(se), 1e18, IERC20(face));
-        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
-        IStandardExchangeIn(se).exchangeIn(IERC20(se), 1e18, IERC20(face), 0, address(this), false, block.timestamp + 1 hours);
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(face), 1e18, IERC20(se));
+        assertGt(previewAmountOut1, 0, "face->share zap route exists");
+        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);IStandardExchangeIn(se).previewExchangeIn(IERC20(se), 1e18, IERC20(face));
+        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);IStandardExchangeIn(se).exchangeIn(IERC20(se), 1e18, IERC20(face), 0, address(this), false, block.timestamp + 1 hours);
     }
 }

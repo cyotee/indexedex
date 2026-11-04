@@ -27,9 +27,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         uint256 attackerSeBefore_ = IERC20(se).balanceOf(attacker);
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)), claimed_, IERC20(se), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)), claimed_, IERC20(se), 0, attacker, true, _deadline()
         );
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1: no free SE mint");
         assertEq(IERC20(se).balanceOf(attacker), attackerSeBefore_, "I1: attacker SE unchanged");
@@ -42,8 +40,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         assertEq(underlying.balanceOf(se), 0, "wrap deposits leftover cash");
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(IERC20(address(underlying)), claimed_, IERC20(se), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(underlying)), claimed_, IERC20(se), 0, attacker, true, _deadline());
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1 wrap: no free mint");
         assertEq(underlying.balanceOf(se), 0, "I1 wrap: no underlying pulled");
     }
@@ -79,9 +76,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         assertEq(U_, short_, "unbooked surplus == short transfer");
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)), claimed_, IERC20(se), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)), claimed_, IERC20(se), 0, attacker, true, _deadline()
         );
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I2: no short-credit mint");
     }
@@ -92,9 +87,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         vm.startPrank(user);
         protocolVault.deposit(residualSeed_ + pull_, user);
         protocolVault.transfer(se, residualSeed_);
-        protocolVault.approve(se, pull_);
-        uint256 minted_ = seIn.exchangeIn(
-            IERC20(address(protocolVault)), pull_, IERC20(se), 0, user, false, _deadline()
+        protocolVault.approve(se, pull_);(uint256 minted_,) = seIn.exchangeIn(IERC20(address(protocolVault)), pull_, IERC20(se), 0, user, false, _deadline()
         );
         vm.stopPrank();
         assertGt(minted_, 0, "honest first pull");
@@ -103,9 +96,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         uint256 claim_ = residualSeed_;
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)), claim_, IERC20(se), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)), claim_, IERC20(se), 0, attacker, true, _deadline()
         );
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I3: no second free mint");
         assertEq(IERC20(address(protocolVault)).balanceOf(se), residual_, "I3: inventory unmoved");

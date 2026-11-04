@@ -96,9 +96,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
     function _bookDaiResidual(uint256 residual_) internal {
         dai.mint(address(adapter), residual_);
         vm.startPrank(alice);
-        dai.approve(address(adapter), DUST_JOIN);
-        uint256 out_ = adapter.exchangeIn(
-            dai, DUST_JOIN, bpt, 0, alice, false, block.timestamp + 1 hours
+        dai.approve(address(adapter), DUST_JOIN);(uint256 out_,) = adapter.exchangeIn(dai, DUST_JOIN, bpt, 0, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(out_, 0, "book residual: honest join ok");
@@ -138,15 +136,13 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         assertEq(dai.allowance(attacker, address(adapter)), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        adapter.exchangeIn(dai, claimed_, bpt, 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);adapter.exchangeIn(dai, claimed_, bpt, 0, attacker, true, block.timestamp + 1 hours);
 
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
-        adapter.exchangeIn(dai, claimed_, bpt, 0, address(caller), true, block.timestamp + 1 hours);
+        );adapter.exchangeIn(dai, claimed_, bpt, 0, address(caller), true, block.timestamp + 1 hours);
 
         assertEq(bpt.balanceOf(attacker), attBptBefore_, "I1: no free BPT");
         assertEq(dai.balanceOf(address(adapter)), invBefore_, "I1: inventory unchanged (no in-call transfer)");
@@ -217,12 +213,10 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         vault.pausePool(address(daiUsdc8020WeightedPool));
         vm.startPrank(alice);
         dai.approve(address(adapter), amountIn_);
-        vm.expectRevert(abi.encodeWithSelector(IVaultErrors.PoolPaused.selector, address(daiUsdc8020WeightedPool)));
-        adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(abi.encodeWithSelector(IVaultErrors.PoolPaused.selector, address(daiUsdc8020WeightedPool)));adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         vault.unpausePool(address(daiUsdc8020WeightedPool));
-        vm.startPrank(alice);
-        uint256 out_ = adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
+        vm.startPrank(alice);(uint256 out_,) = adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "unpaused join issues real BPT");
         assertEq(bpt.balanceOf(alice) > 0, true);
@@ -233,8 +227,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
     /* ---------------------------------------------------------------------- */
 
     /// @notice Whole BPT supply remains quotable, including locked initialization BPT.
-    function test_liquidation_fullSupplyQuote() public view {
-        uint256 quoted = adapter.previewExchangeIn(bpt, bpt.totalSupply(), dai);
+    function test_liquidation_fullSupplyQuote() public view {(uint256 quoted,) = adapter.previewExchangeIn(bpt, bpt.totalSupply(), dai);
         assertGt(quoted, 0, "full supply has a liquidation quote");
     }
 
@@ -250,8 +243,10 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
     function test_liquidation_nearTotalReserve_bothFaces() public view {
         uint256 reserve = bpt.balanceOf(lp);
         assertLt(reserve, bpt.totalSupply(), "initialization liquidity stays locked");
-        assertGt(adapter.previewExchangeIn(bpt, reserve, dai), 0);
-        assertGt(adapter.previewExchangeIn(bpt, reserve, usdc), 0);
+        (uint256 previewAmountOut1,) = adapter.previewExchangeIn(bpt, reserve, dai);
+        assertGt(previewAmountOut1, 0);
+        (uint256 previewAmountOut2,) = adapter.previewExchangeIn(bpt, reserve, usdc);
+        assertGt(previewAmountOut2, 0);
     }
 
     function test_liquidation_supplyBelowOneShare_bothFaces() public {
@@ -261,8 +256,10 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         router.removeLiquidityProportional(address(bpt), bpt.totalSupply() - remainingSupply, new uint256[](2), false, "");
         vm.stopPrank();
         assertEq(bpt.totalSupply(), remainingSupply);
-        assertGt(adapter.previewExchangeIn(bpt, remainingSupply, dai), 0);
-        assertGt(adapter.previewExchangeIn(bpt, remainingSupply, usdc), 0);
+        (uint256 previewAmountOut3,) = adapter.previewExchangeIn(bpt, remainingSupply, dai);
+        assertGt(previewAmountOut3, 0);
+        (uint256 previewAmountOut4,) = adapter.previewExchangeIn(bpt, remainingSupply, usdc);
+        assertGt(previewAmountOut4, 0);
     }
 
     function test_liquidation_mixedDecimals_6_18() public { _assertMixedDecimals(6, 18); }
@@ -272,7 +269,8 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         IERC20[] memory faces = _deployDecimalLiquidationPool(firstDecimals, secondDecimals);
         uint256 original = vm.snapshotState();
         for (uint256 i; i < faces.length; ++i) {
-            assertGt(adapter.previewExchangeIn(bpt, bpt.totalSupply(), faces[i]), 0);
+            (uint256 previewAmountOut5,) = adapter.previewExchangeIn(bpt, bpt.totalSupply(), faces[i]);
+            assertGt(previewAmountOut5, 0);
             _assertLargeLiquidation(faces[i]);
             assertTrue(vm.revertToState(original));
         }
@@ -317,13 +315,11 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
     function _assertLargeLiquidation(IERC20 output) internal {
         uint256 amount = bpt.totalSupply() * 45 / 100;
         vm.prank(lp);
-        bpt.transfer(alice, amount + 1e18);
-        uint256 quote = adapter.previewExchangeIn(bpt, amount, output);
+        bpt.transfer(alice, amount + 1e18);(uint256 quote,) = adapter.previewExchangeIn(bpt, amount, output);
         uint256 snap = vm.snapshotState();
         uint256 before = output.balanceOf(alice);
         vm.startPrank(alice);
-        bpt.approve(address(adapter), type(uint256).max);
-        uint256 received = adapter.exchangeIn(bpt, amount, output, quote, alice, false, block.timestamp);
+        bpt.approve(address(adapter), type(uint256).max);(uint256 received,) = adapter.exchangeIn(bpt, amount, output, quote, alice, false, block.timestamp);
         vm.stopPrank();
         assertEq(received, quote);
         assertEq(output.balanceOf(alice) - before, quote);
@@ -346,16 +342,14 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         uint256 supply = bpt.totalSupply();
         uint256 amount = supply * 99 / 100;
         vm.prank(lp);
-        bpt.transfer(alice, amount);
-        uint256 quote = adapter.previewExchangeIn(bpt, amount, dai);
+        bpt.transfer(alice, amount);(uint256 quote,) = adapter.previewExchangeIn(bpt, amount, dai);
         assertGt(quote, 0);
         uint256 ratio = ((supply - amount) * 1e18 + supply - 1) / supply;
         uint256 bptBefore = bpt.balanceOf(alice);
         uint256 assetsBefore = dai.balanceOf(alice);
         vm.startPrank(alice);
         bpt.approve(address(adapter), amount);
-        vm.expectRevert(abi.encodeWithSelector(BasePoolMath.InvariantRatioBelowMin.selector, ratio, 7e17));
-        adapter.exchangeIn(bpt, amount, dai, quote, alice, false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(BasePoolMath.InvariantRatioBelowMin.selector, ratio, 7e17));adapter.exchangeIn(bpt, amount, dai, quote, alice, false, block.timestamp);
         vm.stopPrank();
         assertEq(bpt.balanceOf(alice), bptBefore);
         assertEq(dai.balanceOf(alice), assetsBefore);
@@ -366,8 +360,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
     function test_M_allowance_not_max_after_exchangeIn() public {
         uint256 amountIn_ = 20e18;
         vm.startPrank(alice);
-        dai.approve(address(adapter), amountIn_);
-        uint256 out_ = adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
+        dai.approve(address(adapter), amountIn_);(uint256 out_,) = adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "honest join");
 
@@ -424,8 +417,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         dai.mint(alice, amountIn_);
         vm.startPrank(alice);
         dai.approve(address(adapter), amountIn_);
-        vm.expectPartialRevert(bytes4(0x3e8960dc));
-        adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
+        vm.expectPartialRevert(bytes4(0x3e8960dc));adapter.exchangeIn(dai, amountIn_, bpt, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -440,8 +432,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         uint256 amountIn_ = 20e18;
         vm.startPrank(alice);
         dai.approve(address(adapter2_), amountIn_);
-        vm.expectRevert(IVaultErrors.DoesNotSupportUnbalancedLiquidity.selector);
-        adapter2_.exchangeIn(dai, amountIn_, IERC20(pool2_), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(IVaultErrors.DoesNotSupportUnbalancedLiquidity.selector);adapter2_.exchangeIn(dai, amountIn_, IERC20(pool2_), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -507,8 +498,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         );
         probe.arm(address(locked_), payload_, false);
         vm.startPrank(alice);
-        probe.approve(address(locked_), amountIn_);
-        uint256 out_ = locked_.exchangeIn(IERC20(address(probe)), amountIn_, IERC20(pool_), 0, alice, false, block.timestamp + 1 hours);
+        probe.approve(address(locked_), amountIn_);(uint256 out_,) = locked_.exchangeIn(IERC20(address(probe)), amountIn_, IERC20(pool_), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "outer join completes");
         assertGt(probe.attempts(), 0, "callback stages ran");
@@ -545,8 +535,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         probe.approve(address(locked_), amountIn_);
         uint256 before_ = probe.balanceOf(alice);
         // SafeERC20 wraps the token revert. The swallowed test records the nested IsLocked payload.
-        vm.expectRevert(SafeTransferLib.TransferFromFailed.selector);
-        locked_.exchangeIn(IERC20(address(probe)), amountIn_, IERC20(pool_), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(SafeTransferLib.TransferFromFailed.selector);locked_.exchangeIn(IERC20(address(probe)), amountIn_, IERC20(pool_), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(probe.balanceOf(alice), before_, "propagated lock restores the caller");
         assertEq(probe.allowance(address(locked_), address(router)), 0, "approvals roll back");
@@ -559,8 +548,7 @@ contract Adversarial_BalancerV3SinglePoolSE_Test is TestBase_BalancerV3_8020Weig
         vm.startPrank(alice);
         dai.approve(address(adapter), huge_);
         uint256 before_ = dai.balanceOf(alice);
-        vm.expectRevert(abi.encodeWithSelector(BalancerV3SinglePoolStandardExchange.Permit2AmountOverflow.selector, huge_));
-        adapter.exchangeIn(dai, huge_, bpt, 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(abi.encodeWithSelector(BalancerV3SinglePoolStandardExchange.Permit2AmountOverflow.selector, huge_));adapter.exchangeIn(dai, huge_, bpt, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(dai.balanceOf(alice), before_, "overflow leaves balances unchanged");
         assertEq(dai.allowance(address(adapter), address(router)), 0, "overflow leaves no router allowance");

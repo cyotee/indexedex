@@ -84,8 +84,7 @@ abstract contract UniswapV4Detf_IoTablesOpenBase is TestBase_UniswapV4Detf {
     /// @notice T7.14: After mint, diamond and claim `balanceOf(hook LP)==0`. Bond NFT is the R12a package.
     function test_T7_14_commonNftUnused_claimHoldsNoHookLp() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         address nft_ = detfInfo.bondNftVault();
         address claim_ = detfInfo.rebasingClaimToken();
@@ -99,8 +98,7 @@ abstract contract UniswapV4Detf_IoTablesOpenBase is TestBase_UniswapV4Detf {
     /// @notice T7.19: After mint, diamond has no joinable balances (also Stage 11 Open).
     function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");

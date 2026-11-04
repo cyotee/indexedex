@@ -70,7 +70,7 @@ The redesign solves three problems at once:
 |     frontend/app/addresses/<env>/<chain>/<bucket>.tokenlist.json |
 |                                                               |
 |   Invoked automatically by scripts/shell/local_testing.sh     |
-|   after the last forge script.                                |
+|   after the last forge script --use solar.                                |
 +---------------------------------------------------------------+
                               |
                               v

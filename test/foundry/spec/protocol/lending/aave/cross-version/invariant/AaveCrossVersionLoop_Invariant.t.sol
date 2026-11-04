@@ -132,11 +132,19 @@ contract AaveCrossVersionLoop_Invariant is TestBase_AaveCrossVersionLoopV3Market
     function _artifactRuntimeHash(string memory artifactId, address linked) internal view returns (bytes32) {
         string memory json = vm.readFile(_artifactPath(artifactId));
         bytes memory runtime = vm.parseBytes(vm.parseJsonString(json, ".deployedBytecode.object"));
-        // solc leaves the library's own address as 20 zero bytes after PUSH20. Deployment fills it.
-        if (runtime.length >= 21 && runtime[0] == 0x73) {
-            for (uint256 i; i < 20; ++i) {
-                runtime[1 + i] = bytes20(linked)[i];
+        // Solar records the library address as an immutable. solc left it after a leading PUSH20.
+        // Deployment fills that slot; the artifact leaves it zero.
+        try vm.parseJsonUint(json, ".deployedBytecode.immutableReferences.library_deploy_address[0].start") returns (
+            uint256 start
+        ) {
+            uint256 length =
+                vm.parseJsonUint(json, ".deployedBytecode.immutableReferences.library_deploy_address[0].length");
+            if (length == 20 && start + 20 <= runtime.length) {
+                for (uint256 i; i < 20; ++i) runtime[start + i] = bytes20(linked)[i];
             }
+        } catch {}
+        if (runtime.length >= 21 && runtime[0] == 0x73) {
+            for (uint256 i; i < 20; ++i) runtime[1 + i] = bytes20(linked)[i];
         }
         return keccak256(runtime);
     }
@@ -317,7 +325,7 @@ contract AaveCrossVersionLoop_Invariant is TestBase_AaveCrossVersionLoopV3Market
         ++accrualAttempts;
         uint256 beforeDebt = _debts();
         assertGt(beforeDebt, 0, "funded loop holds live debt");
-        vm.warp(block.timestamp + 1 hours + 1);
+        vm.warp(vm.getBlockTimestamp() + 1 hours + 1);
         assertGt(_debts(), beforeDebt, "real debt indices accrue with time");
         ++accruedCalls;
         ++maintenanceAttempts;
@@ -328,7 +336,7 @@ contract AaveCrossVersionLoop_Invariant is TestBase_AaveCrossVersionLoopV3Market
         ++rebalanceRejectAttempts;
         vm.expectRevert(
             abi.encodeWithSelector(
-                AaveCrossVersionLoopRebalanceTarget.RebalanceTooSoon.selector, block.timestamp + 1 hours
+                AaveCrossVersionLoopRebalanceTarget.RebalanceTooSoon.selector, vm.getBlockTimestamp() + 1 hours
             )
         );
         AaveCrossVersionLoopRebalanceTarget(vault).rebalance();

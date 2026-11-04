@@ -100,6 +100,42 @@ Universal. Applies to every SE, DETF, hook, router, and DFPkg that takes an IERC
 
 Agents must not invent FoT economics, a token allowlist, or a “this family supports FoT” exception.
 
+## Compiler (LOCKED — project law, all forge usage)
+
+Universal. Applies to every agent, script, skill, and CI job in this repo. **Do not re-ask. Do not compile with solc.**
+
+Foundry's Solar compiler is the only compiler for this repo. Select it with `--use solar` on every `forge` subcommand that compiles:
+
+| Subcommand | Required form |
+|------------|----------------|
+| build, test, script, coverage, snapshot, inspect, bind, geiger, create | `forge <subcommand> --use solar …` |
+| fmt, config, remappings, selectors | no `--use solar` |
+| `forge lsp` | already Solar; do not pass a solc binary |
+| cast, anvil | not compilers |
+
+```bash
+foundryup --install nightly
+forge build --use solar
+forge test --use solar
+FOUNDRY_PROFILE=fork forge test --use solar
+forge script --use solar <script> --rpc-url <url>
+```
+
+| Rule | Meaning |
+|------|---------|
+| **No solc fallback** | Do not omit `--use solar`. Do not pass `--use solc:…`, a solc path, or `FOUNDRY_SOLC` pointing at solc. A stack-too-deep error from solc is not a reason to stay on solc. |
+| **Foundry version** | The binary must accept `--use solar`. Homebrew Forge 1.9.0 (2026-11-02, `6056c584`) rejects it: `solc "solar" does not exist`. Install with `foundryup --install nightly` at or after nightly 2026-11-03 (Forge 1.9.1, Solar 0.3.0). CI uses that nightly until a stable release accepts the flag. |
+| **`via_ir` stays false** | Solar is not solc's Yul via-IR pipeline. Do not set `via_ir` / `viaIR` true in `foundry.toml`. Do not pass `--via-ir`. |
+| **Do not retarget `solc =`** | Keep `solc = "0.8.35"`. Do not set `solc = "solar"`. As of the 2026-11-03 nightly there is no `foundry.toml` key that selects Solar; the flag is the switch. |
+| **Stack too deep** | Compile with Solar. Do not split a function only because solc would report stack too deep. If Solar itself reports stack too deep, group locals into structs or helper frames (`crane-code-style`). Do not enable `via_ir` to get past it. |
+| **Bytecode** | Solar bytecode is not solc bytecode. Source verification against a solc standard-json input will not match. Do not switch a broadcast back to solc to satisfy a verifier. |
+| **Upstream limit** | [Solar's README](https://github.com/paradigmxyz/solar) says codegen is not feature-complete and not for production. This law still covers every forge compilation, including `forge script` broadcasts. Report a Solar miscompile; do not quietly revert the compiler. |
+| **Patience** | A faster compiler is not permission to kill a compile or delete `out/` / `cache_forge/`. Existing patience and worktree-seed rules still apply. |
+
+`scripts/forge-artifacts.py` injects `--use solar` into the `forge build` and `forge test` commands it runs. Callers still pass the flag on any direct `forge` invocation.
+
+Sources: [Solar in Forge](https://www.paradigm.xyz/writing/solar-100-faster-solidity), [Solar README](https://github.com/paradigmxyz/solar).
+
 ## DETF families — common expectations (mandatory for agents)
 
 Apply these to **any** DETF work under `contracts/vaults/detf/**`. The owner-approved [`DETF_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) **D32–D66 / §24** and [`funded staking implementation and test plan`](../../contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting earlier decisions, family PRDs, NatSpec and shared programs under `docs/detf/`. D60 excludes further Balancer-hosted DETF functionality from this release; compilation maintenance remains allowed. D66 deferred unfinished Slipstream work; the Slipstream Standard Exchange is deprecated entirely under APEX D57 (owner ruling 2026-09-21, `docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md`): it is not wired into any launch or registry path, its hook-matrix rows are DEPRECATED, and its sources stay compiling only until a separate deletion request. Unrelated Balancer SE and shared V4 work remain in scope. The following describes that target design; it is not evidence that implementation or deployment is complete.

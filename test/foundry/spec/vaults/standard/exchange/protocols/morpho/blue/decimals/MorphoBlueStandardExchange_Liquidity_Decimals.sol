@@ -74,8 +74,7 @@ abstract contract MorphoBlueStandardExchange_Liquidity_Decimals is
     }
 
     function test_U4_deposit_stillSucceedsWhileUtilized() public {
-        _utilize();
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), _u(50), IERC20(se));
+        _utilize();(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), _u(50), IERC20(se));
         uint256 out = _wrapExactIn(user, _u(50));
         assertEq(out, preview, "U4 wrap while utilized");
     }

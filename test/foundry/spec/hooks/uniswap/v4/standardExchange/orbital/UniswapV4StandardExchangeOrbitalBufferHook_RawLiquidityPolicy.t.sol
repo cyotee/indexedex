@@ -103,7 +103,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RawLiquidityPolicyTest is
     function _faceContribution(uint8 i, uint256 face) internal view returns (uint256) {
         address se = i == 0 ? se0 : address(0);
         address token = i == 0 ? address(token0) : i == 1 ? address(token1) : address(token2);
-        if (se == address(0)) return face;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(token), face, IERC20(se));
+        if (se == address(0)) return face;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), face, IERC20(se));
+        return quotedAmountOut;
     }
 }

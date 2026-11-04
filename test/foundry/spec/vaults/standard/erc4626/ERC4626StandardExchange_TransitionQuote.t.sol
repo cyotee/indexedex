@@ -24,15 +24,13 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         assertTrue(IERC165(se_).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId));
         assertTrue(ClaimLib.supportsTransitionQuote(se_, address(asset_), address(this)));
         asset_.mint(address(this), 100 ether);
-        asset_.approve(se_, 100 ether);
-        uint256 quoted_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(address(asset_)), 100 ether, IERC20(se_));
-        uint256 minted_ = IStandardExchangeIn(se_).exchangeIn(
-            IERC20(address(asset_)), 100 ether, IERC20(se_), quoted_, address(this), false, block.timestamp
+        asset_.approve(se_, 100 ether);(uint256 quoted_,) = IStandardExchangeIn(se_).previewExchangeIn(IERC20(address(asset_)), 100 ether, IERC20(se_));(uint256 minted_,) = IStandardExchangeIn(se_).exchangeIn(IERC20(address(asset_)), 100 ether, IERC20(se_), quoted_, address(this), false, block.timestamp
         );
         assertEq(minted_, quoted_, "ordinary ERC4626 routes retain compatibility");
         assertTrue(ClaimLib.supportsTransitionQuote(se_, address(asset_), address(this)));
         // D60: claim-in is hook-scoped (shares x provider rate); the SE side only counts shares minted.
-        assertGt(IStandardExchangeIn(se_).previewExchangeIn(IERC20(address(asset_)), 1 ether, IERC20(se_)), 0);
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(se_).previewExchangeIn(IERC20(address(asset_)), 1 ether, IERC20(se_));
+        assertGt(previewAmountOut1, 0);
         asset_.mint(address(this), 100 ether);
         _assertQuoteSequence(se_, IERC20(address(asset_)), address(this), 1 ether);
     }
@@ -42,8 +40,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         SimpleYieldERC4626 vault_ = new SimpleYieldERC4626(asset_);
         address se_ = _deployERC4626SE(address(vault_));
         asset_.mint(address(this), 10_000 ether);
-        asset_.approve(se_, 1_000 ether);
-        IStandardExchangeIn(se_).exchangeIn(IERC20(address(asset_)), 1_000 ether, IERC20(se_), 1, address(this), false, block.timestamp);
+        asset_.approve(se_, 1_000 ether);IStandardExchangeIn(se_).exchangeIn(IERC20(address(asset_)), 1_000 ether, IERC20(se_), 1, address(this), false, block.timestamp);
         asset_.approve(address(vault_), 200 ether);
         uint256 payment_ = vault_.deposit(100 ether, address(this));
         vault_.simulateYield(100 ether);
@@ -52,13 +49,10 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
 
     function test_prepaidProtocolReceiptMintUsesPrepaymentBacking() public {
         (address se, SimpleYieldERC4626 vault, IERC20 asset) = _fundPrepaidReceiptCase();
-        uint256 payment = 10 ether;
-        uint256 quoted = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(vault)), payment, IERC20(se));
+        uint256 payment = 10 ether;(uint256 quoted,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(vault)), payment, IERC20(se));
         uint256 backing = vault.balanceOf(se);
         uint256 balance = IERC20(se).balanceOf(address(this));
-        vault.transfer(se, payment);
-        uint256 minted = IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(vault)), payment, IERC20(se), quoted, address(this), true, block.timestamp
+        vault.transfer(se, payment);(uint256 minted,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), payment, IERC20(se), quoted, address(this), true, block.timestamp
         );
         assertEq(minted, quoted, "prepaid protocol shares quote against prepayment backing");
         assertEq(IERC20(se).balanceOf(address(this)) - balance, quoted);
@@ -90,8 +84,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         se = _deployERC4626SE(address(vault));
         asset = IERC20(address(token));
         token.mint(address(this), 1_000 ether);
-        token.approve(se, 100 ether);
-        IStandardExchangeIn(se).exchangeIn(asset, 100 ether, IERC20(se), 1, address(this), false, block.timestamp);
+        token.approve(se, 100 ether);IStandardExchangeIn(se).exchangeIn(asset, 100 ether, IERC20(se), 1, address(this), false, block.timestamp);
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 7e16);
         token.approve(address(vault), 100 ether);
@@ -104,8 +97,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         address se = _deployERC4626SE(address(vault));
         address holder = address(indexedexManager.feeTo());
         asset.mint(address(this), 10_000 ether);
-        asset.approve(se, 1_000 ether);
-        IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 1_000 ether, IERC20(se), 1, holder, false, block.timestamp);
+        asset.approve(se, 1_000 ether);IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 1_000 ether, IERC20(se), 1, holder, false, block.timestamp);
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 7e16);
         asset.approve(address(vault), 200 ether);
@@ -126,8 +118,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se_, feeOn_ ? 2e15 : 0);
         asset_.mint(holder_, 10_000 * unit_);
         vm.startPrank(holder_);
-        asset_.approve(se_, type(uint256).max);
-        IStandardExchangeIn(se_).exchangeIn(IERC20(address(asset_)), 1000 * unit_ + 13, IERC20(se_), 1, holder_, false, block.timestamp);
+        asset_.approve(se_, type(uint256).max);IStandardExchangeIn(se_).exchangeIn(IERC20(address(asset_)), 1000 * unit_ + 13, IERC20(se_), 1, holder_, false, block.timestamp);
         vm.stopPrank();
         uint256 accrued_ = bound(yield_, 1, 100 * unit_);
         asset_.mint(address(this), accrued_);
@@ -157,8 +148,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(inner, 7e16);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(outer, 11e16);
         vm.stopPrank();
-        IERC20(address(receipt)).approve(outer, type(uint256).max);
-        IStandardExchangeIn(outer).exchangeIn(IERC20(address(receipt)), 1_000 * unit, IERC20(outer), 1, address(this), false, block.timestamp);
+        IERC20(address(receipt)).approve(outer, type(uint256).max);IStandardExchangeIn(outer).exchangeIn(IERC20(address(receipt)), 1_000 * unit, IERC20(outer), 1, address(this), false, block.timestamp);
         address fee = address(indexedexManager.feeTo());
         uint256 beforeFee = IERC20(inner).balanceOf(fee);
         _assertQuoteSequence(outer, IERC20(address(receipt)), address(this), unit);
@@ -172,8 +162,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         asset.mint(address(this), 3_000 ether);
         asset.approve(address(vault), type(uint256).max);
         vault.deposit(2_000 ether, address(this));
-        IERC20(address(vault)).approve(se, type(uint256).max);
-        IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), 1_000 ether, IERC20(se), 1, address(this), false, block.timestamp);
+        IERC20(address(vault)).approve(se, type(uint256).max);IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), 1_000 ether, IERC20(se), 1, address(this), false, block.timestamp);
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 7e16);
         _assertQuoteSequence(se, IERC20(address(vault)), address(this), 1 ether);
@@ -236,8 +225,7 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         vm.startPrank(holder);
         asset.approve(address(vault), type(uint256).max);
         vault.deposit(9_000 * unit, holder);
-        vault.approve(se, type(uint256).max);
-        IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), 1_000 * unit + 13, IERC20(se), 1, holder, false, block.timestamp);
+        vault.approve(se, type(uint256).max);IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), 1_000 * unit + 13, IERC20(se), 1, holder, false, block.timestamp);
         vm.stopPrank();
         uint256 accrued = bound(yield_, 1, 100 * unit);
         asset.mint(address(this), accrued);

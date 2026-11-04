@@ -23,9 +23,7 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
         if (to_ == address(0)) to_ = msg.sender;
         _updateExpansionMintOnRewards();
         if (address(in_) == address(staking_)) {
-            _pullToken(in_, amount_, prepaid_);
-            IStakedDETF(address(staking_)).exchangeIn(
-                staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_
+            _pullToken(in_, amount_, prepaid_);IStakedDETF(address(staking_)).exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_
             );
             if (address(out_) == address(this)) {
                 received_ = amount_;
@@ -34,9 +32,7 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
         } else if (address(out_) == address(staking_)) {
             uint256 principal_ = address(in_) == address(this)
                 ? _pullToken(in_, amount_, prepaid_) : _acquireDetf(in_, amount_, prepaid_);
-            IERC20(address(this)).forceApprove(address(staking_), principal_);
-            received_ = IStakedDETF(address(staking_)).exchangeIn(
-                IERC20(address(this)), principal_, staking_, minimum_, to_, false, deadline_
+            IERC20(address(this)).forceApprove(address(staking_), principal_);received_ = IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), principal_, staking_, minimum_, to_, false, deadline_
             );
             IERC20(address(this)).forceApprove(address(staking_), 0);
         } else if (address(in_) == address(this)) {

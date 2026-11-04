@@ -45,6 +45,9 @@ jobs:
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          # stable 1.9.0 rejects `--use solar`. Nightly 2026-11-03 (1.9.1) ships Solar 0.3.
+          version: nightly
 
       - name: Show forge version
         run: forge --version
@@ -56,12 +59,12 @@ jobs:
             out
             cache_forge
             ~/.svm
-          key: forge-hermetic-${{ runner.os }}-${{ hashFiles('foundry.toml', 'remappings.txt', 'lib/crane/**/*.sol') }}
+          key: forge-hermetic-solar-${{ runner.os }}-${{ hashFiles('foundry.toml', 'remappings.txt', 'lib/crane/**/*.sol') }}
           restore-keys: |
-            forge-hermetic-${{ runner.os }}-
+            forge-hermetic-solar-${{ runner.os }}-
 
       - name: Forge build (default profile)
-        run: forge build
+        run: forge build --use solar
 
       - name: Build runtime deployment artifacts
         # Artifact-loaded implementations may be absent from Solidity import graphs.
@@ -73,10 +76,10 @@ jobs:
         #   --no-match-path  → any **/fork/** directory
         #   --no-match-contract → *Fork* / *ForkSmoke* contract names
         # (forge allows only one of each flag). True fork suite remains local:
-        #   FOUNDRY_PROFILE=fork forge test
+        #   FOUNDRY_PROFILE=fork forge test --use solar
         # Empty fork-URL overrides can be interpreted as filesystem RPC paths.
         # Remove them for execution so this gate starts from an empty EVM.
         run: >
-          env -u FOUNDRY_ETH_RPC_URL -u ETH_RPC_URL forge test -vv
+          env -u FOUNDRY_ETH_RPC_URL -u ETH_RPC_URL forge test --use solar -vv
           --no-match-path '**/fork/**'
           --no-match-contract 'Fork'

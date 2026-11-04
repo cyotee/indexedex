@@ -98,12 +98,10 @@ contract Handler_MixedBufferDetf is DetfStatefulActions {
         host.fundBuffer(actor, amount);
         uint256 beforeAssets = buffer.balanceOf(actor);
         IERC20 shares = IERC20(address(seIn));
-        uint256 beforeShares = shares.balanceOf(actor);
-        uint256 quote = seIn.previewExchangeIn(buffer, amount, shares);
+        uint256 beforeShares = shares.balanceOf(actor);(uint256 quote,) = seIn.previewExchangeIn(buffer, amount, shares);
         assertGt(quote, 0, "funded mint quote");
         vm.startPrank(actor);
-        buffer.approve(address(seIn), amount);
-        minted = seIn.exchangeIn(buffer, amount, shares, quote, actor, false, block.timestamp + 1 hours);
+        buffer.approve(address(seIn), amount);(minted,) = seIn.exchangeIn(buffer, amount, shares, quote, actor, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(beforeAssets - buffer.balanceOf(actor), amount, "exact funded input consumed");
         assertEq(shares.balanceOf(actor) - beforeShares, minted, "actual DETF delivered");
@@ -117,12 +115,10 @@ contract Handler_MixedBufferDetf is DetfStatefulActions {
         assertGt(amount, 0, "partial redemption is nonzero");
         IERC20 shares = IERC20(address(seIn));
         uint256 beforeShares = shares.balanceOf(actor);
-        uint256 beforeAssets = buffer.balanceOf(actor);
-        uint256 quote = seIn.previewExchangeIn(shares, amount, buffer);
+        uint256 beforeAssets = buffer.balanceOf(actor);(uint256 quote,) = seIn.previewExchangeIn(shares, amount, buffer);
         assertGt(quote, 0, "funded redemption quote");
         vm.startPrank(actor);
-        shares.approve(address(seIn), amount);
-        uint256 paid = seIn.exchangeIn(shares, amount, buffer, 1, actor, false, block.timestamp + 1 hours);
+        shares.approve(address(seIn), amount);(uint256 paid,) = seIn.exchangeIn(shares, amount, buffer, 1, actor, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(beforeShares - shares.balanceOf(actor), amount, "only declared shares consumed");
         assertEq(buffer.balanceOf(actor) - beforeAssets, paid, "actual redemption paid");
@@ -165,8 +161,7 @@ contract Handler_MixedBufferDetf is DetfStatefulActions {
             ? abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, available)
             : abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(caller);
-        vm.expectRevert(expected);
-        seIn.exchangeIn(buffer, claimed, IERC20(address(seIn)), 0, caller, true, block.timestamp + 1 hours);
+        vm.expectRevert(expected);seIn.exchangeIn(buffer, claimed, IERC20(address(seIn)), 0, caller, true, block.timestamp + 1 hours);
         assertEq(_state(caller), beforeState, "rejected call preserves balances, book, supply and approvals");
         ++counts.expectedRevert;
         if (contractCaller) ++ghost_contractReject;

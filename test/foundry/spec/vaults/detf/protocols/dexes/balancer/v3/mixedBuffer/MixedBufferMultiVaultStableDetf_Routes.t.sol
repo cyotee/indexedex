@@ -27,9 +27,7 @@ contract MixedBufferMultiVaultStableDetf_Routes_Test is TestBase_MixedBufferMult
         uint256 s0_ = _fundVaultShares(0, bob, 50e18);
         vm.startPrank(bob);
         seShares[0].approve(detf, s0_);
-        vm.expectRevert();
-        detfExchangeIn.exchangeIn(
-            seShares[0], s0_, seShares[1], 0, bob, false, block.timestamp + 1 hours
+        vm.expectRevert();detfExchangeIn.exchangeIn(seShares[0], s0_, seShares[1], 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -44,9 +42,7 @@ contract MixedBufferMultiVaultStableDetf_Routes_Test is TestBase_MixedBufferMult
         _mintToken(legTokenB[0], bob, _fixtureAmount(10e18));
         vm.startPrank(bob);
         IERC20(legTokenB[0]).approve(detf, _fixtureAmount(10e18));
-        vm.expectRevert();
-        detfExchangeIn.exchangeIn(
-            IERC20(legTokenB[0]), _fixtureAmount(10e18), IERC20(detf), 0, bob, false, block.timestamp + 1 hours
+        vm.expectRevert();detfExchangeIn.exchangeIn(IERC20(legTokenB[0]), _fixtureAmount(10e18), IERC20(detf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }

@@ -65,8 +65,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
         assertEq(rocketPoolSe.liquidReserveEth(), 0);
 
         uint256 seBal = IERC20(seVault).balanceOf(address(this));
-        assertGt(seBal, 0);
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), seBal / 4, IERC20(address(hermeticWeth)));
+        assertGt(seBal, 0);(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), seBal / 4, IERC20(address(hermeticWeth)));
         assertGt(preview, 0);
 
         uint256 requested = 1 ether;
@@ -75,11 +74,8 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
     }
 
     function test_Q3_preview_capacity0_stillNonZero() public {
-        hermeticPool.setMaxDepositAmount(0);
-        uint256 previewSe = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 5 ether, IERC20(seVault));
-        assertGt(previewSe, 0);
-        uint256 previewReth = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), 5 ether, IERC20(address(hermeticReth))
+        hermeticPool.setMaxDepositAmount(0);(uint256 previewSe,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 5 ether, IERC20(seVault));
+        assertGt(previewSe, 0);(uint256 previewReth,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 5 ether, IERC20(address(hermeticReth))
         );
         assertGt(previewReth, 0);
     }
@@ -91,11 +87,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
     function test_B1_wethToSe_exactIn_softStake_liquidNearTarget() public {
         uint256 amount = 100 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             preview,
@@ -116,8 +108,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
 
     function test_B2_wethToSe_exactOut_softStake() public {
         _seedVaultInventory(0, 1 ether);
-        uint256 ethWanted = 80 ether;
-        uint256 sharesOut = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), ethWanted, IERC20(seVault));
+        uint256 ethWanted = 80 ether;(uint256 sharesOut,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), ethWanted, IERC20(seVault));
         if (sharesOut == 0) sharesOut = ethWanted;
 
         uint256 previewIn = seOut.previewExchangeOut(IERC20(address(hermeticWeth)), IERC20(seVault), sharesOut);
@@ -151,10 +142,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
         _dealWeth(address(this), amount);
         hermeticWeth.approve(seVault, amount);
 
-        uint256 rethBefore = hermeticReth.balanceOf(seVault);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        uint256 rethBefore = hermeticReth.balanceOf(seVault);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             preview,
@@ -217,8 +205,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
 
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(0), seVault)
-        );
-        seIn.previewExchangeIn(IERC20(address(0)), 1 ether, IERC20(seVault));
+        );seIn.previewExchangeIn(IERC20(address(0)), 1 ether, IERC20(seVault));
     }
 
     /* ---------------------------------------------------------------------- */
@@ -228,10 +215,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
     function test_R1_wethToSe_inAndOut_previewEqExec() public {
         uint256 amount = 10 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             preview,
@@ -261,10 +245,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
     function test_R2_rethToSe_previewEqExec() public {
         uint256 amount = 5 ether;
         _mintReth(address(this), amount);
-        hermeticReth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticReth)), amount, IERC20(seVault));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticReth)),
+        hermeticReth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticReth)), amount, IERC20(seVault));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticReth)),
             amount,
             IERC20(seVault),
             preview,
@@ -281,11 +262,8 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
         _fundSleeve(15 ether);
 
         uint256 seBal = IERC20(seVault).balanceOf(address(this));
-        uint256 sharesIn = seBal / 4;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticWeth)));
-        uint256 balBefore = hermeticWeth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(seVault),
+        uint256 sharesIn = seBal / 4;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticWeth)));
+        uint256 balBefore = hermeticWeth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(seVault),
             sharesIn,
             IERC20(address(hermeticWeth)),
             preview,
@@ -312,11 +290,8 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
     function test_R4_seToReth_previewEqExec() public {
         _seedVaultInventory(0, 20 ether);
         uint256 seBal = IERC20(seVault).balanceOf(address(this));
-        uint256 sharesIn = seBal / 4;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticReth)));
-        uint256 balBefore = hermeticReth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(seVault),
+        uint256 sharesIn = seBal / 4;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), sharesIn, IERC20(address(hermeticReth)));
+        uint256 balBefore = hermeticReth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(seVault),
             sharesIn,
             IERC20(address(hermeticReth)),
             preview,
@@ -331,13 +306,9 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
     function test_R5_wethToReth_hard_previewEqExec() public {
         uint256 amount = 5 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticReth))
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticReth))
         );
-        uint256 balBefore = hermeticReth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        uint256 balBefore = hermeticReth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticReth)),
             preview,
@@ -353,13 +324,9 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
         _fundSleeve(20 ether);
         uint256 amount = 3 ether;
         _mintReth(address(this), amount);
-        hermeticReth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticReth)), amount, IERC20(address(hermeticWeth))
+        hermeticReth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticReth)), amount, IERC20(address(hermeticWeth))
         );
-        uint256 balBefore = hermeticWeth.balanceOf(address(this));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticReth)),
+        uint256 balBefore = hermeticWeth.balanceOf(address(this));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticReth)),
             amount,
             IERC20(address(hermeticWeth)),
             preview,

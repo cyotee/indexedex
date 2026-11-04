@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -92,12 +93,13 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
         // hook's used-input rounding rather than retrying exactly at one share.
         uint256 topUp_ = retained_;
         for (uint256 i_; i_ < 64; ++i_) {
-            if (IStandardExchangeIn(se_).previewExchangeIn(pair_, retained_ + topUp_, IERC20(se_)) >= 1024) break;
+            if (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se_))), pair_, retained_ + topUp_, IERC20(se_)) >= 1024) break;
             topUp_ *= 2;
         }
         assertGt(topUp_, retained_, "fixture has real capital for retry");
         assertLe(topUp_, pair_.balanceOf(detfUser), "real holder funds the full top-up");
-        assertGe(IStandardExchangeIn(se_).previewExchangeIn(pair_, retained_ + topUp_, IERC20(se_)), 1024,
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(se_).previewExchangeIn(pair_, retained_ + topUp_, IERC20(se_));
+        assertGe(previewAmountOut1, 1024,
             "accumulated input now buys SE shares");
         uint256 lpBefore_ = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
         uint256 seSupplyBefore_ = IERC20(se_).totalSupply();
@@ -124,7 +126,8 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
             if (balance_ <= 10) continue;
             assertFalse(IERC165(candidateSe_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId),
                 "exercise explicit unsupported inverse");
-            assertEq(IStandardExchangeIn(candidateSe_).previewExchangeIn(IERC20(tokens_[i_]), balance_, IERC20(candidateSe_)), 0,
+            (uint256 previewAmountOut2,) = IStandardExchangeIn(candidateSe_).previewExchangeIn(IERC20(tokens_[i_]), balance_, IERC20(candidateSe_));
+            assertEq(previewAmountOut2, 0,
                 "entire residual independently previews zero shares");
             _assertPairResidualBooked(tokens_[i_], candidateSe_);
             return (IERC20(tokens_[i_]), candidateSe_, balance_);

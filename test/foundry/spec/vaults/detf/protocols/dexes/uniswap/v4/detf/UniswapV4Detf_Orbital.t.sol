@@ -48,8 +48,7 @@ contract UniswapV4Detf_Orbital is TestBase_UniswapV4Detf_Orbital {
 
     function test_T8_1_liveMint_onePair() public {
         _firstBond(100 ether);
-        vm.startPrank(detfUser);
-        uint256 out_ = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 out_,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pair0)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "minted");
         detfInfo.sweepDust();

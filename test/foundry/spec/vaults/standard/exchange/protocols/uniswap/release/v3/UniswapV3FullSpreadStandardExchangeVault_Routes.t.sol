@@ -56,15 +56,13 @@ contract UniswapV3FullSpreadStandardExchangeVault_Routes_Test is TestBase_Uniswa
         uint256 amountIn = 10 ether;
         ERC20PermitMintableStub(token0).mint(alice, amountIn);
         vm.startPrank(alice);
-        IERC20(token0).approve(address(vault), amountIn);
-        uint256 out01 = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), 0, alice, false, block.timestamp + 1);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 out01,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
         assertGt(out01, 0, "t0->t1");
 
         ERC20PermitMintableStub(token1).mint(alice, amountIn);
         vm.startPrank(alice);
-        IERC20(token1).approve(address(vault), amountIn);
-        uint256 out10 = vault.exchangeIn(IERC20(token1), amountIn, IERC20(token0), 0, alice, false, block.timestamp + 1);
+        IERC20(token1).approve(address(vault), amountIn);(uint256 out10,) = vault.exchangeIn(IERC20(token1), amountIn, IERC20(token0), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
         assertGt(out10, 0, "t1->t0");
     }
@@ -115,9 +113,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_Routes_Test is TestBase_Uniswa
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
         uint256 first =
-            _activateWithFundedToken0(amountIn, 100 ether);
-        uint256 second =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+            _activateWithFundedToken0(amountIn, 100 ether);(uint256 second,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
 
         assertGt(first, 0);
@@ -155,15 +151,12 @@ contract UniswapV3FullSpreadStandardExchangeVault_Routes_Test is TestBase_Uniswa
         IERC20(token0).approve(address(vault), type(uint256).max);
         IERC20(address(foreign)).approve(address(vault), type(uint256).max);
 
-        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
-        vault.exchangeIn(IERC20(address(foreign)), 1 ether, IERC20(token0), 0, alice, false, block.timestamp + 1);
+        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);vault.exchangeIn(IERC20(address(foreign)), 1 ether, IERC20(token0), 0, alice, false, block.timestamp + 1);
 
         // share -> share
         ERC20PermitMintableStub(token0).mint(alice, 10 ether);
         _activateWithFundedToken0(10 ether, 10 ether);
-        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
-        vault.exchangeIn(
-            IERC20(address(vault)), 1, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
+        vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);vault.exchangeIn(IERC20(address(vault)), 1, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
         );
         vm.stopPrank();
     }
@@ -176,8 +169,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_Routes_Test is TestBase_Uniswa
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
         // Cache token1 before expectRevert so the staticcall is not the "next call".
-        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_DeadlineExceeded()")));
-        vault.exchangeIn(IERC20(token0), 1 ether, IERC20(token1), 0, alice, false, 1);
+        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_DeadlineExceeded()")));vault.exchangeIn(IERC20(token0), 1 ether, IERC20(token1), 0, alice, false, 1);
         vm.stopPrank();
     }
 
@@ -190,9 +182,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_Routes_Test is TestBase_Uniswa
         _activateWithFundedToken0(amountIn, 100 ether);
         uint256 supplyBefore = vault.totalSupply();
         ERC20PermitMintableStub(token0).mint(alice, amountIn);
-        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
-        vault.exchangeIn(
-            IERC20(token0), 100 ether, IERC20(address(vault)), type(uint256).max, alice, false, block.timestamp + 1
+        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));vault.exchangeIn(IERC20(token0), 100 ether, IERC20(address(vault)), type(uint256).max, alice, false, block.timestamp + 1
         );
         vm.stopPrank();
         assertEq(IERC20(address(vault)).totalSupply(), supplyBefore, "no partial share mint");

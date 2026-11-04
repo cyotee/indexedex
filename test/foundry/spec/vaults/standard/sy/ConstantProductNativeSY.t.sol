@@ -50,9 +50,7 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions, 
         nativePairB.transfer(address(this), 200 ether);
         nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
         vm.stopPrank();
-        nativePairA.approve(address(nativeSY), 10 ether);
-        IStandardExchangeIn(address(nativeSY)).exchangeIn(
-            nativePairA, 10 ether, nativePairB, 0, address(this), false, block.timestamp
+        nativePairA.approve(address(nativeSY), 10 ether);IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 0, address(this), false, block.timestamp
         );
     }
 
@@ -106,21 +104,21 @@ abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions, 
     function _assertDirectPairMinimum(IERC20 token_) private {
         IStandardExchangeIn exchange_ = IStandardExchangeIn(address(nativeSY));
         IERC20 shares_ = IERC20(address(nativeSY));
-        assertEq(exchange_.previewExchangeIn(token_, 1, shares_), 0, "one unit cannot mint a share");
+        (uint256 previewAmountOut1,) = exchange_.previewExchangeIn(token_, 1, shares_);
+        assertEq(previewAmountOut1, 0, "one unit cannot mint a share");
         uint256 payerBefore_ = token_.balanceOf(nativeUser);
         uint256 vaultBefore_ = token_.balanceOf(address(nativeSY));
         uint256 supplyBefore_ = shares_.totalSupply();
         vm.startPrank(nativeUser);
         token_.approve(address(nativeSY), 5 ether);
-        vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));
-        exchange_.exchangeIn(token_, 1, shares_, 0, nativeUser, false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSignature("MinAmountNotMet(uint256,uint256)", 1, 0));exchange_.exchangeIn(token_, 1, shares_, 0, nativeUser, false, block.timestamp);
         assertEq(token_.balanceOf(nativeUser), payerBefore_);
         assertEq(token_.balanceOf(address(nativeSY)), vaultBefore_);
-        assertEq(shares_.totalSupply(), supplyBefore_);
-        uint256 quoted_ = exchange_.previewExchangeIn(token_, 5 ether, shares_);
+        assertEq(shares_.totalSupply(), supplyBefore_);(uint256 quoted_,) = exchange_.previewExchangeIn(token_, 5 ether, shares_);
         assertGt(quoted_, 0, "representable positive control");
         uint256 beforeShares_ = shares_.balanceOf(nativeUser);
-        assertEq(exchange_.exchangeIn(token_, 5 ether, shares_, quoted_, nativeUser, false, block.timestamp), quoted_);
+        (uint256 exchangeAmountOut2,) = exchange_.exchangeIn(token_, 5 ether, shares_, quoted_, nativeUser, false, block.timestamp);
+        assertEq(exchangeAmountOut2, quoted_);
         assertEq(shares_.balanceOf(nativeUser) - beforeShares_, quoted_);
         assertEq(payerBefore_ - token_.balanceOf(nativeUser), 5 ether);
         vm.stopPrank();
@@ -193,10 +191,8 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         nativePairA.transfer(address(this), 300 ether);
         nativePairB.transfer(address(this), 300 ether);
         nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
-        nativePairA.approve(address(nativeSY), 10 ether);
-        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 1, nativeUser, false, block.timestamp);
-        nativePairB.approve(address(nativeSY), 7 ether);
-        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairB, 7 ether, nativePairA, 1, nativeUser, false, block.timestamp);
+        nativePairA.approve(address(nativeSY), 10 ether);IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 1, nativeUser, false, block.timestamp);
+        nativePairB.approve(address(nativeSY), 7 ether);IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairB, 7 ether, nativePairA, 1, nativeUser, false, block.timestamp);
         vm.stopPrank();
         assertGt(IPool(nativeSY.yieldToken()).index0() + IPool(nativeSY.yieldToken()).index1(), 0, "real pool fees accrued");
     }
@@ -247,9 +243,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         _aeroProjectionFeesAndInventory();
         _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 11 ether + 13, nativeUser);
         _assertExternalDepositQuote(address(nativeSY), nativePairB, nativePairA, 7 ether + 17, nativeUser);
-        nativePairA.approve(address(nativeSY), 10 ether);
-        uint256 lp = IStandardExchangeIn(address(nativeSY)).exchangeIn(
-            nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
+        nativePairA.approve(address(nativeSY), 10 ether);(uint256 lp,) = IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
         );
         _assertExternalDepositQuote(address(nativeSY), IERC20(nativeSY.yieldToken()), nativePairB, lp, nativeUser);
     }
@@ -258,9 +252,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         _aeroProjectionFeesAndInventory();
         _assertExternalExchangeQuote(address(nativeSY), nativePairA, nativePairB, 3 ether + 11);
         _assertExternalExchangeQuote(address(nativeSY), nativePairB, nativePairA, 2 ether + 13);
-        nativePairA.approve(address(nativeSY), 10 ether);
-        uint256 lp = IStandardExchangeIn(address(nativeSY)).exchangeIn(
-            nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
+        nativePairA.approve(address(nativeSY), 10 ether);(uint256 lp,) = IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
         );
         _assertExternalExchangeQuote(address(nativeSY), IERC20(nativeSY.yieldToken()), nativePairB, lp);
     }
@@ -279,9 +271,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
     function test_aeroProjectionDonationRemainsBackingBeforeLpPayment() public {
         _aeroProjectionFeesAndInventory();
         nativePairA.approve(address(nativeSY), 10 ether);
-        IERC20 lp = IERC20(nativeSY.yieldToken());
-        uint256 acquired = IStandardExchangeIn(address(nativeSY)).exchangeIn(
-            nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
+        IERC20 lp = IERC20(nativeSY.yieldToken());(uint256 acquired,) = IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
         );
         uint256 donated = acquired / 3;
         lp.transfer(address(nativeSY), donated);
@@ -291,9 +281,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
     function test_aeroProjectionExternalLpBurnIncludesPoolHeldLpAndUnsyncedTokens() public {
         _aeroProjectionFeesAndInventory();
         nativePairA.approve(address(nativeSY), 10 ether);
-        IERC20 lp = IERC20(nativeSY.yieldToken());
-        uint256 acquired = IStandardExchangeIn(address(nativeSY)).exchangeIn(
-            nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
+        IERC20 lp = IERC20(nativeSY.yieldToken());(uint256 acquired,) = IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
         );
         uint256 poolHeld = acquired / 5;
         lp.transfer(address(lp), poolHeld);
@@ -322,8 +310,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         lp_ = IERC20(nativeSY.yieldToken());
         vm.startPrank(nativeUser);
         nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 4, address(lp_), 0, false);
-        nativePairA.approve(address(nativeSY), 10 ether);
-        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 0, nativeUser, false, block.timestamp);
+        nativePairA.approve(address(nativeSY), 10 ether);IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 0, nativeUser, false, block.timestamp);
         vm.stopPrank();
         assertGt(IPool(address(lp_)).index0() + IPool(address(lp_)).index1(), 0);
     }
@@ -395,8 +382,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         uint256 held_ = lp_.balanceOf(address(nativeSY));
         uint256 shares_ = nativeSY.balanceOf(nativeUser);
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(nativeUser);
-        IStandardExchangeIn(address(nativeSY)).exchangeIn(lp_, 1, IERC20(address(nativeSY)), 0, nativeUser, true, block.timestamp);
+        vm.prank(nativeUser);IStandardExchangeIn(address(nativeSY)).exchangeIn(lp_, 1, IERC20(address(nativeSY)), 0, nativeUser, true, block.timestamp);
         assertEq(lp_.balanceOf(address(nativeSY)), held_);
         assertEq(nativeSY.balanceOf(nativeUser), shares_);
     }
@@ -453,8 +439,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         vm.prank(nativeUser);
         if (exactOutput_) {
             IStandardExchangeOut(address(nativeSY)).exchangeOut(payment_, 1, IERC20(address(nativeSY)), 1, nativeUser, true, block.timestamp);
-        } else {
-            IStandardExchangeIn(address(nativeSY)).exchangeIn(payment_, 1, IERC20(address(nativeSY)), 0, nativeUser, true, block.timestamp);
+        } else {IStandardExchangeIn(address(nativeSY)).exchangeIn(payment_, 1, IERC20(address(nativeSY)), 0, nativeUser, true, block.timestamp);
         }
         assertEq(lp_.balanceOf(address(nativeSY)), held_);
         assertEq(nativeSY.balanceOf(nativeUser), shares_);
@@ -487,8 +472,10 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         IStandardExchangeIn forward_ = IStandardExchangeIn(address(nativeSY));
         uint256 required_ = exchange_.previewExchangeOut(input_, output_, target_);
         assertGt(required_, 0);
-        assertGe(forward_.previewExchangeIn(input_, required_, output_), target_, "quoted input funds the exact output");
-        assertLt(forward_.previewExchangeIn(input_, required_ - 1, output_), target_, "one unit less is insufficient");
+        (uint256 previewAmountOut3,) = forward_.previewExchangeIn(input_, required_, output_);
+        assertGe(previewAmountOut3, target_, "quoted input funds the exact output");
+        (uint256 previewAmountOut4,) = forward_.previewExchangeIn(input_, required_ - 1, output_);
+        assertLt(previewAmountOut4, target_, "one unit less is insufficient");
         uint256 inputBefore_ = input_.balanceOf(nativeUser); uint256 outputBefore_ = output_.balanceOf(nativeUser);
         assertGe(inputBefore_, required_);
         vm.startPrank(nativeUser); input_.approve(address(nativeSY), required_);
@@ -504,7 +491,8 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         IStandardExchangeIn exchange_ = IStandardExchangeIn(address(nativeSY));
         vm.startPrank(nativeUser);
         nativePairA.approve(address(nativeSY), 10 ether);
-        assertGt(exchange_.exchangeIn(nativePairA, 10 ether, nativePairB, 0, nativeUser, false, block.timestamp), 0);
+        (uint256 exchangeAmountOut5,) = exchange_.exchangeIn(nativePairA, 10 ether, nativePairB, 0, nativeUser, false, block.timestamp);
+        assertGt(exchangeAmountOut5, 0);
         vm.stopPrank();
         IPool pool_ = IPool(nativeSY.yieldToken());
         assertGt(pool_.index0() + pool_.index1(), 0, "actual pool swap accrued fees before deposit");
@@ -613,9 +601,7 @@ contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantPr
         nativePairA.transfer(beneficiary_, 100 ether);
         nativeSY.transfer(beneficiary_, shares_);
         // A separate pool swap earns fees without resetting the SE checkpoint.
-        nativePairA.approve(address(nativeSY), 10 ether);
-        IStandardExchangeIn(address(nativeSY)).exchangeIn(
-            nativePairA, 10 ether, nativePairB, 0, nativeUser, false, block.timestamp
+        nativePairA.approve(address(nativeSY), 10 ether);IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 0, nativeUser, false, block.timestamp
         );
         vm.stopPrank();
         IStandardExchangeTransitionQuote quote_ = IStandardExchangeTransitionQuote(address(nativeSY));
@@ -714,11 +700,11 @@ contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantPr
         address lp_ = nativeSY.yieldToken();
         vm.startPrank(nativeUser);
         uint256 payment_ = nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 10, lp_, 0, false);
-        IStandardExchangeIn exchange_ = IStandardExchangeIn(address(nativeSY));
-        uint256 preview_ = exchange_.previewExchangeIn(IERC20(lp_), payment_, nativePairA);
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(address(nativeSY));(uint256 preview_,) = exchange_.previewExchangeIn(IERC20(lp_), payment_, nativePairA);
         IERC20(lp_).approve(address(nativeSY), payment_);
         uint256 before_ = nativePairA.balanceOf(nativeUser);
-        assertEq(exchange_.exchangeIn(IERC20(lp_), payment_, nativePairA, preview_, nativeUser, false, block.timestamp), preview_);
+        (uint256 exchangeAmountOut6,) = exchange_.exchangeIn(IERC20(lp_), payment_, nativePairA, preview_, nativeUser, false, block.timestamp);
+        assertEq(exchangeAmountOut6, preview_);
         assertEq(nativePairA.balanceOf(nativeUser) - before_, preview_);
         vm.stopPrank();
     }

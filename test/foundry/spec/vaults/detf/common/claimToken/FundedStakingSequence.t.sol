@@ -23,8 +23,7 @@ contract FundedStakingSequenceTest is TestBase_UniswapV4Detf {
         (uint256 id_,) = _firstBond(1_000 ether);
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK);
         vm.startPrank(detfUser);
-        (uint256 principal_, uint256 reward_) = bonds_.claimBond(id_, detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), principal_ + reward_, IERC20(detf), 0, detfUser, false, block.timestamp);
+        (uint256 principal_, uint256 reward_) = bonds_.claimBond(id_, detfUser);staking_.exchangeIn(IERC20(address(staking_)), principal_ + reward_, IERC20(detf), 0, detfUser, false, block.timestamp);
         uint256 each_ = IERC20(detf).balanceOf(detfUser) / 3;
         IERC20(detf).transfer(actors_[1], each_);
         IERC20(detf).transfer(actors_[2], each_);
@@ -89,8 +88,7 @@ contract FundedStakingSequenceTest is TestBase_UniswapV4Detf {
         uint256 amount_ = seed_ % 3 == 0 ? balance_ : 1 + seed_ % balance_;
         uint256 raw_ = IERC20(detf).balanceOf(actor_);
         uint256 lp_ = IERC20(reserveHook).balanceOf(address(bonds_));
-        vm.prank(actor_);
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf), amount_, actor_, false, block.timestamp);
+        vm.prank(actor_);staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf), amount_, actor_, false, block.timestamp);
         assertEq(staking_.balanceOf(actor_), balance_ - amount_);
         assertEq(IERC20(detf).balanceOf(actor_), raw_ + amount_);
         assertEq(IERC20(reserveHook).balanceOf(address(bonds_)), lp_);
@@ -135,11 +133,11 @@ contract FundedStakingSequenceTest is TestBase_UniswapV4Detf {
         (uint256 a_,) = _firstBond(17 ether);
         (uint256 b_,) = _firstBond(23 ether);
         Math.BondPosition memory bBefore_ = bonds_.positionOf(b_);
-        vm.warp(block.timestamp + DEFAULT_MIN_LOCK / 2);
+        vm.warp(vm.getBlockTimestamp() + DEFAULT_MIN_LOCK / 2);
         vm.prank(detfUser);
         bonds_.claimBond(a_, detfUser);
         assertEq(bonds_.positionOf(b_).stakingGons, bBefore_.stakingGons);
-        vm.warp(block.timestamp + DEFAULT_MIN_LOCK / 2);
+        vm.warp(vm.getBlockTimestamp() + DEFAULT_MIN_LOCK / 2);
         vm.prank(detfUser);
         bonds_.claimBond(a_, detfUser);
         assertEq(bonds_.ownerOf(a_), address(0));

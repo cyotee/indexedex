@@ -44,13 +44,10 @@ abstract contract SingleStandardExchangeDETF_Mint_Decimals is TestBase_SingleSta
         assertFalse(openInfo.isMintingAllowed(), "primary mint closed; standard route uses reserve swap");
 
         uint256 seShares_ = _fundSeShares(bob, 200e18);
-        uint256 bobBefore_ = IERC20(openDetf).balanceOf(bob);
-        uint256 preview_ = openExchangeIn.previewExchangeIn(seShare, seShares_, IERC20(openDetf));
+        uint256 bobBefore_ = IERC20(openDetf).balanceOf(bob);(uint256 preview_,) = openExchangeIn.previewExchangeIn(seShare, seShares_, IERC20(openDetf));
 
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        uint256 out_ =
-            openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, seShares_);(uint256 out_,) = openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted detf");
@@ -68,9 +65,7 @@ abstract contract SingleStandardExchangeDETF_Mint_Decimals is TestBase_SingleSta
 
         uint256 seShares_ = _fundSeShares(bob, 200e18);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        uint256 out_ =
-            openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, seShares_);(uint256 out_,) = openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted");
@@ -85,8 +80,7 @@ abstract contract SingleStandardExchangeDETF_Mint_Decimals is TestBase_SingleSta
         uint256 seShares_ = _fundSeShares(alice, 100e18);
         vm.startPrank(alice);
         seShare.approve(openDetf, seShares_);
-        vm.expectRevert();
-        openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert();openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 }

@@ -88,9 +88,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Scale is TestBase
         t18a.approve(hook, type(uint256).max);
         t18b.approve(hook, type(uint256).max);
         t18c.approve(hook, type(uint256).max);
-        vm.stopPrank();
-
-        uint256 onePairShares = IStandardExchangeIn(se6).previewExchangeIn(IERC20(address(t6)), 1e6, IERC20(se6));
+        vm.stopPrank();(uint256 onePairShares,) = IStandardExchangeIn(se6).previewExchangeIn(IERC20(address(t6)), 1e6, IERC20(se6));
         assertEq(onePairShares, 1e6, "SE first mint uses native pair units");
         assertEq(quad.ratedScale(i6), 10 ** uint256(36 - 6), "ratedScale 6dec");
         assertEq(onePairShares * quad.invScale(i6) / 1e18, 1 ether, "one pair token of inventory normalizes to WAD");

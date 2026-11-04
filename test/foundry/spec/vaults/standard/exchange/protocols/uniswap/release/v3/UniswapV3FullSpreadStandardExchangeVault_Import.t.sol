@@ -94,8 +94,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         bytes memory callData = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp));
         vm.startPrank(actor);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp);
         vm.stopPrank();
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
@@ -154,9 +153,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         address token0 = pool.token0();
         ERC20PermitMintableStub(token0).mint(alice, 10 ether);
         vm.startPrank(alice);
-        IERC20(token0).approve(address(vault), 10 ether);
-        uint256 more =
-            vault.exchangeIn(IERC20(token0), 10 ether, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        IERC20(token0).approve(address(vault), 10 ether);(uint256 more,) = vault.exchangeIn(IERC20(token0), 10 ether, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
         assertGt(more, 0);
     }

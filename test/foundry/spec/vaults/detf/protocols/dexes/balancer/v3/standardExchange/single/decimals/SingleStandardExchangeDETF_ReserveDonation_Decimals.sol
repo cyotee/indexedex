@@ -286,8 +286,7 @@ abstract contract SingleStandardExchangeDETF_ReserveDonation_Decimals is
         uint256 burnAmt_ = userDetf_;
         uint256 sharesBefore_ = seShare.balanceOf(alice);
         vm.startPrank(alice);
-        IERC20(detf).approve(detf, burnAmt_);
-        uint256 pairOut_ = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), burnAmt_, seShare, 1, alice, false, _dl());
+        IERC20(detf).approve(detf, burnAmt_);(uint256 pairOut_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), burnAmt_, seShare, 1, alice, false, _dl());
         vm.stopPrank();
         assertGt(pairOut_, 0, "N13 burn");
         assertEq(seShare.balanceOf(alice), sharesBefore_ + pairOut_, "funded payout credited");
@@ -396,8 +395,7 @@ abstract contract SingleStandardExchangeDETF_ReserveDonation_Decimals is
     function _fundDonationDetf(address user_) internal returns (uint256 amount_) {
         uint256 shares_ = _fundSeShares(user_, 20e18);
         vm.startPrank(user_);
-        seShare.approve(detf, shares_);
-        amount_ = IStandardExchangeIn(detf).exchangeIn(seShare, shares_, IERC20(detf), 0, user_, false, _dl());
+        seShare.approve(detf, shares_);(amount_,) = IStandardExchangeIn(detf).exchangeIn(seShare, shares_, IERC20(detf), 0, user_, false, _dl());
         vm.stopPrank();
         assertGt(amount_, 0, "donor bought funded DETF");
     }

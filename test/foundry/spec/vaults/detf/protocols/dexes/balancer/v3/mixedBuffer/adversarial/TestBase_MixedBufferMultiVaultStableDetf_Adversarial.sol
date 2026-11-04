@@ -100,12 +100,10 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf_Adversarial is TestBa
 
     function _executeHostileMint(address instance_, address user_, uint256 amount_) internal returns (uint256 paid_) {
         hostileBuffer.mint(user_, amount_);
-        IStandardExchangeIn exchange_ = IStandardExchangeIn(instance_);
-        uint256 quote_ = exchange_.previewExchangeIn(IERC20(address(hostileBuffer)), amount_, IERC20(instance_));
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(instance_);(uint256 quote_,) = exchange_.previewExchangeIn(IERC20(address(hostileBuffer)), amount_, IERC20(instance_));
         uint256 rawBefore_ = IERC20(instance_).balanceOf(user_);
         uint256 inputBefore_ = hostileBuffer.balanceOf(user_);
-        vm.startPrank(user_); hostileBuffer.approve(instance_, amount_);
-        paid_ = exchange_.exchangeIn(IERC20(address(hostileBuffer)), amount_, IERC20(instance_), quote_, user_, false, block.timestamp);
+        vm.startPrank(user_); hostileBuffer.approve(instance_, amount_);(paid_,) = exchange_.exchangeIn(IERC20(address(hostileBuffer)), amount_, IERC20(instance_), quote_, user_, false, block.timestamp);
         vm.stopPrank();
         assertGt(paid_, 0); assertEq(paid_, quote_);
         assertEq(IERC20(instance_).balanceOf(user_), rawBefore_ + paid_);

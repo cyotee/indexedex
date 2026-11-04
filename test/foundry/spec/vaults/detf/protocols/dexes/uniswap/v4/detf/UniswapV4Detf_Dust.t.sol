@@ -13,8 +13,7 @@ import {TestBase_UniswapV4Detf} from
 contract UniswapV4Detf_Dust is TestBase_UniswapV4Detf {
     function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");

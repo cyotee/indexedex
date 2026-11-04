@@ -1,0 +1,24 @@
+# Run record
+
+- Owner: 01a17791-24d6-72f1-8577-499bc1f0819a.
+- Date: 2026-10-26.
+- State: Astra and Grok originals completed and source-read; MiniMax and Kimi originals pending. Coordinator exact rational, prior integer, Astra and Grok arithmetic re-executions complete. No synthesis/advisory started before all originals settle.
+- Coordinator: invoking agent; PI_MODEL exposes gpt-6.1-sol; not a fifth vote.
+- Authorization: explicit fresh council request in current user message.
+- Mode: full native research council, fresh contexts; no production implementation.
+- Root: docs/research/v4-swaps-independent-redo-20261026-01a17791.
+- Native role council-member is exposed by task schema and user config; max_depth 2 source-checked. Direct children need depth 1; effective global override metadata unavailable until task admission.
+- Model/account selection uses native-council routes, not historical OpenCode aliases. Actual runtime identities recorded from task admission, not model signatures.
+- Tools required: read/search, reasoning, patch or complete inline response. No member project execution or delegation.
+- MiniMax forceAdaptiveThinking=true source-checked in models override; effective provider payload unavailable.
+- Existing handoff/report read by coordinator only as claims, not proof. Prior artifacts remain untouched.
+- Requested originals (attempt 1 each): Astra st_01a17799, Grok st_01a1779a, MiniMax st_01a1779b, Kimi st_01a1779c. All admitted running, isolated=false.
+- Completion subscription: mon_E70BT85QMR20Z6YA; Native task delivery also wakes the owner.
+- The initial 5-minute subscription expired, not the tasks. Persistent replacement: mon_HGR538AZD259JG1A.
+- Astra settled completed after 18m 55s; response at members/astra/response.md. Native task record exposes chatgpt-subscription/gpt-6-astra:high, reasoning high. Its substantive original is present (unlike the prior run).
+- Coordinator freshly executed Astra section 5.7: profit 360/247 target at 50% entry, positive exact fractions at 49% and 51%, and total target/opposing exactly 210/290. This witness has three fixed rational ranges, zero fees and dormant wings; production Wings lifecycle reachability remains unproved.
+- Coordinator raw results archive: research/results.json. Missing Python/JSON language servers disclosed; no environment installation.
+- Grok settled completed after 23m 37s, Native route xai/grok-4.7, requested xhigh. Patch unavailable to member; COMPLETE 729-line delivery recovered from the public completion-result artifact, with final code fence and main present, and preserved verbatim at coordinator/received-originals/grok.md. Extracted source at coordinator/received-models/grok.py.
+- Coordinator executed Grok main(): all eight expected numbers matched, including literal-skew +1087 target and opposing net 0, and quote-JIT +295. These are single-interval arithmetic, not production results.
+- Grok substantive dissent flagged for advisory: it says remaining vault liquidity must be removed before all completion/slice swaps. This is not established as necessary by its finite search, and does not follow from the post-swap proportional position-vector allocation identity. No closed profitable vector-rule self-fill witness was provided. Preserve the distinction between ownership non-dilution and adverse AMM trading.
+- Publication: pending. Reviewed draft identity: none yet.

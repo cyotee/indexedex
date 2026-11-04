@@ -48,14 +48,11 @@ contract UniswapV3FullSpreadStandardExchangeVault_Previews_Test is TestBase_Unis
     function test_P_IN_01_exactIn_token0_to_token1() public {
         address token0 = pool.token0();
         address token1 = pool.token1();
-        uint256 amountIn = 5 ether;
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
+        uint256 amountIn = 5 ether;(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
 
         ERC20PermitMintableStub(token0).mint(alice, amountIn);
         vm.startPrank(alice);
-        IERC20(token0).approve(address(vault), amountIn);
-        uint256 executed =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), 0, alice, false, block.timestamp + 1);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 executed,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
 
         assertEq(preview, executed, "P-IN-01");
@@ -64,14 +61,11 @@ contract UniswapV3FullSpreadStandardExchangeVault_Previews_Test is TestBase_Unis
     function test_P_IN_02_exactIn_token1_to_token0() public {
         address token0 = pool.token0();
         address token1 = pool.token1();
-        uint256 amountIn = 5 ether;
-        uint256 preview = vault.previewExchangeIn(IERC20(token1), amountIn, IERC20(token0));
+        uint256 amountIn = 5 ether;(uint256 preview,) = vault.previewExchangeIn(IERC20(token1), amountIn, IERC20(token0));
 
         ERC20PermitMintableStub(token1).mint(alice, amountIn);
         vm.startPrank(alice);
-        IERC20(token1).approve(address(vault), amountIn);
-        uint256 executed =
-            vault.exchangeIn(IERC20(token1), amountIn, IERC20(token0), 0, alice, false, block.timestamp + 1);
+        IERC20(token1).approve(address(vault), amountIn);(uint256 executed,) = vault.exchangeIn(IERC20(token1), amountIn, IERC20(token0), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
 
         assertEq(preview, executed, "P-IN-02");
@@ -80,13 +74,13 @@ contract UniswapV3FullSpreadStandardExchangeVault_Previews_Test is TestBase_Unis
     function test_P_IN_03_singleToken0ActivationRejected() public {
         address token = pool.token0();
         uint256 amount = 50 ether;
-        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
+        (uint256 previewAmountOut1,) = vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault)));
+        assertEq(previewAmountOut1, 0, "one token cannot activate");
         ERC20PermitMintableStub(token).mint(alice, amount);
         vm.startPrank(alice);
         IERC20(token).approve(address(vault), amount);
         uint256 balanceBefore = IERC20(token).balanceOf(alice);
-        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
-        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
         assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
         assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
@@ -95,13 +89,13 @@ contract UniswapV3FullSpreadStandardExchangeVault_Previews_Test is TestBase_Unis
     function test_P_IN_04_singleToken1ActivationRejected() public {
         address token = pool.token1();
         uint256 amount = 50 ether;
-        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
+        (uint256 previewAmountOut2,) = vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault)));
+        assertEq(previewAmountOut2, 0, "one token cannot activate");
         ERC20PermitMintableStub(token).mint(alice, amount);
         vm.startPrank(alice);
         IERC20(token).approve(address(vault), amount);
         uint256 balanceBefore = IERC20(token).balanceOf(alice);
-        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
-        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
         assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
         assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
@@ -121,12 +115,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_Previews_Test is TestBase_Unis
         _externalSwapExactIn(pool, true, 20_000 ether);
         _externalSwapExactIn(pool, false, 20_000 ether);
 
-        uint256 amountIn = 10 ether;
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(address(vault)));
+        uint256 amountIn = 10 ether;(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(address(vault)));
 
-        vm.startPrank(alice);
-        uint256 executed =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        vm.startPrank(alice);(uint256 executed,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
 
         // Subsequent fee-first: fee growth / compound path can differ by multi-step Uni V3 wei.
@@ -227,8 +218,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_Previews_Test is TestBase_Unis
     function test_P_PRE_01_pretransferred_exactIn() public {
         address token0 = pool.token0();
         address token1 = pool.token1();
-        uint256 amountIn = 3 ether;
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
+        uint256 amountIn = 3 ether;(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
 
         ERC20PermitMintableStub(token0).mint(alice, amountIn);
         vm.startPrank(alice);

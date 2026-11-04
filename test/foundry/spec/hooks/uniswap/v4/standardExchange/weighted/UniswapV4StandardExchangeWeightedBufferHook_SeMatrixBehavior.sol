@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 
@@ -154,8 +155,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         assertEq(weighted.standardExchange(otherIdx), address(0), "raw leg has no SE");
         assertEq(weighted.token(faceIdx), face, "face token on the leg");
         _assertAllDoorsLive();
-        assertGt(
-            IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), _f(1), IERC20(seUT)), 0, "SE quotes the face"
+        assertGt(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(face), _f(1), IERC20(seUT)), 0, "SE quotes the face"
         );
         assertGt(_seed(), 0, "first mint through the package-deployed hook");
         assertGt(_hookSeShares(), 0, "hook holds SE shares after buffering");
@@ -239,8 +239,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         uint256 hookInBefore = tin.balanceOf(hook);
         uint256 outBefore = tout.balanceOf(rowEoa);
         vm.prank(rowEoa);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(tin, amountIn, tout, 0, rowEoa, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(hook))), tin, amountIn, tout, 0, rowEoa, true, block.timestamp + 1 hours);
         assertEq(tin.balanceOf(hook), hookInBefore, "no state change on reject");
         assertEq(tout.balanceOf(rowEoa), outBefore, "no output on reject");
     }
@@ -410,8 +409,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         uint256 amt = 10 * (10 ** uint256(IERC20Metadata_decimals(ot)));
         fx.fundOther(rowBob, amt);
         vm.startPrank(rowBob);
-        IERC20(ot).approve(seUT, amt);
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
+        IERC20(ot).approve(seUT, amt);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGe(IBasicVault(seUT).reserveOfToken(face), reservedFace, "reserved face leftover not consumed by an other-token caller (its own dust may add)");
     }

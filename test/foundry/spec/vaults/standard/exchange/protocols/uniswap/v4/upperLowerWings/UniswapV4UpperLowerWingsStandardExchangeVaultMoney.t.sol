@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {TestBase_UniswapV4UpperLowerWingsStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/test/bases/TestBase_UniswapV4UpperLowerWingsStandardExchangeVault.sol";
 import {IUniswapV4UpperLowerWingsStandardExchangeVault} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/interfaces/IUniswapV4UpperLowerWingsStandardExchangeVault.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
@@ -46,15 +47,11 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
         uint256 supplyAfter = IERC20(address(wings0)).totalSupply();
         vm.expectRevert(abi.encodeWithSelector(
             ISecurePullErrors.TransferDeltaInsufficient.selector, credit + 1, credit
-        ));
-        IStandardExchangeIn(address(wings0)).exchangeIn(
-            token0, credit + 1, IERC20(address(wings0)), 0, address(this), true, block.timestamp
+        ));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(wings0)))), token0, credit + 1, IERC20(address(wings0)), 0, address(this), true, block.timestamp
         );
         assertEq(token0.balanceOf(address(wings0)), balanceAfter, "rejected credit moves no tokens");
         assertEq(IBasicVault(address(wings0)).reserveOfToken(address(token0)), bookAfter, "rejected credit books nothing");
-        assertEq(IERC20(address(wings0)).totalSupply(), supplyAfter, "rejected credit mints nothing");
-        uint256 preview = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, 1e12, IERC20(address(wings0)));
-        uint256 minted = IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), preview, address(this), false, block.timestamp);
+        assertEq(IERC20(address(wings0)).totalSupply(), supplyAfter, "rejected credit mints nothing");(uint256 preview,) = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, 1e12, IERC20(address(wings0)));(uint256 minted,) = IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), preview, address(this), false, block.timestamp);
         assertEq(minted, preview, "later deposit credits only the funded input");
     }
 
@@ -64,8 +61,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
     function _bootstrap(IUniswapV4UpperLowerWingsStandardExchangeVault vault_) internal {
         IERC20 target = IERC20(vault_.targetToken());
         IStandardExchangeIn exchange = IStandardExchangeIn(address(vault_));
-        assertEq(exchange.previewExchangeIn(target, 1e12, IERC20(address(vault_))), 1e12);
-        uint256 shares = exchange.exchangeIn(target, 1e12, IERC20(address(vault_)), 1e12, address(this), false, block.timestamp);
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(exchange)), target, 1e12, IERC20(address(vault_))), 1e12);(uint256 shares,) = exchange.exchangeIn(target, 1e12, IERC20(address(vault_)), 1e12, address(this), false, block.timestamp);
         assertEq(shares, 1e12);
         assertEq(IERC20(address(vault_)).totalSupply(), 1e12);
         (,, uint128 core,) = vault_.position(0); assertEq(core, 0, "bootstrap core empty");
@@ -79,11 +75,9 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
     function test_firstDepositorReceivesDonationsAndTerminalRelease() public {
         token0.transfer(address(wings0), 1000);
         uint256 shares = _deposit(wings0, 1e12, false);
-        assertEq(shares, 1e12);
-        uint256 quote = IStandardExchangeIn(address(wings0)).previewExchangeIn(IERC20(address(wings0)), shares, token0);
+        assertEq(shares, 1e12);(uint256 quote,) = IStandardExchangeIn(address(wings0)).previewExchangeIn(IERC20(address(wings0)), shares, token0);
         assertGt(quote, 1e12, "donation benefits first depositor");
-        uint256 beforeBalance = token0.balanceOf(address(this));
-        uint256 assets = IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), shares, token0, quote, address(this), false, block.timestamp);
+        uint256 beforeBalance = token0.balanceOf(address(this));(uint256 assets,) = IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), shares, token0, quote, address(this), false, block.timestamp);
         assertEq(assets, quote); assertEq(token0.balanceOf(address(this)), beforeBalance + quote);
         assertEq(IERC20(address(wings0)).totalSupply(), 0);
         for (uint8 i; i < 3; ++i) { (,, uint128 liquidity,) = wings0.position(i); assertEq(liquidity, 0); }
@@ -92,13 +86,10 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
         IUniswapV4UpperLowerWingsStandardExchangeVault vault = target0_ ? wings0 : wings1;
         IERC20 target = IERC20(vault.targetToken());
         _deposit(vault, 1e12, false);
-        uint256 amount = bound(amountSeed_, 100, 1e15);
-        uint256 quote = IStandardExchangeIn(address(vault)).previewExchangeIn(target, amount, IERC20(address(vault)));
+        uint256 amount = bound(amountSeed_, 100, 1e15);(uint256 quote,) = IStandardExchangeIn(address(vault)).previewExchangeIn(target, amount, IERC20(address(vault)));
         assertEq(_deposit(vault, amount, false), quote);
         uint256 supply = IERC20(address(vault)).totalSupply();
-        uint256 shares = supply / 4;
-        uint256 redemption = IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(vault)), shares, target);
-        uint256 paid = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, target, redemption, address(this), false, block.timestamp);
+        uint256 shares = supply / 4;(uint256 redemption,) = IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(vault)), shares, target);(uint256 paid,) = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, target, redemption, address(this), false, block.timestamp);
         assertEq(paid, redemption);
         (uint256 local0, uint256 local1) = vault.localReserves();
         assertGe(target0_ ? local0 : local1, 1);
@@ -117,13 +108,12 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
         vm.prank(owner); indexedexManager.setDefaultLiquidReservePercentage(0);
         assertEq(_deposit(wings0, 1, false), 1);
         (uint256 local0,) = wings0.localReserves(); assertEq(local0, 1);
-        assertEq(IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), 1, token0, 1, address(this), false, block.timestamp), 1);
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(wings0)))), IERC20(address(wings0)), 1, token0, 1, address(this), false, block.timestamp), 1);
         assertEq(IERC20(address(wings0)).totalSupply(), 0);
     }
     function test_pendingDepositExcludedFromConvertedWingHarvest() public {
         _deposit(wings0, 1e12, false);
-        trader.swapTo(key, false, 1e20, TickMath.getSqrtPriceAtTick(120));
-        uint256 quote = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, 1e10, IERC20(address(wings0)));
+        trader.swapTo(key, false, 1e20, TickMath.getSqrtPriceAtTick(120));(uint256 quote,) = IStandardExchangeIn(address(wings0)).previewExchangeIn(token0, 1e10, IERC20(address(wings0)));
         assertEq(_deposit(wings0, 1e10, false), quote);
         (,, uint128 core,) = wings0.position(0); assertGt(core, 0);
         (uint256 local0, uint256 local1) = wings0.localReserves();
@@ -165,8 +155,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
         uint256 shares = _deposit(wings0, 1000000, false);
         token1.mint(address(trader), 1e30);
         trader.swapTo(key, false, 1e30, TickMath.getSqrtPriceAtTick(887221));
-        assertEq(wings0.liquidationValue().value, 1, "local floor survives full wing conversion");
-        uint256 paid = IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), shares, token0, 1, address(this), false, block.timestamp);
+        assertEq(wings0.liquidationValue().value, 1, "local floor survives full wing conversion");(uint256 paid,) = IStandardExchangeIn(address(wings0)).exchangeIn(IERC20(address(wings0)), shares, token0, 1, address(this), false, block.timestamp);
         assertEq(paid, 1); assertEq(IERC20(address(wings0)).totalSupply(), 0);
         uint256 residual = token1.balanceOf(address(wings0)); assertGt(residual, 0);
         uint256 newShares = _deposit(wings0, 1000000, false);
@@ -193,12 +182,11 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest is TestBase_Unis
     }
     function test_opposingRouteRejectedWithoutCustodyChange() public {
         uint256 beforeBalance = token1.balanceOf(address(this));
-        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(token1), address(wings0)));
-        IStandardExchangeIn(address(wings0)).exchangeIn(token1, 1000, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(token1), address(wings0)));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(wings0)))), token1, 1000, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
         assertEq(token1.balanceOf(address(this)), beforeBalance);
     }
-    function _deposit(IUniswapV4UpperLowerWingsStandardExchangeVault vault_, uint256 assets_, bool pushed_) internal returns (uint256) {
-        return IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(vault_) == address(wings0) ? address(token0) : address(token1)), assets_, IERC20(address(vault_)), 0, address(this), pushed_, block.timestamp);
+    function _deposit(IUniswapV4UpperLowerWingsStandardExchangeVault vault_, uint256 assets_, bool pushed_) internal returns (uint256) {(uint256 quotedAmountOut,) = IStandardExchangeIn(address(vault_)).exchangeIn(IERC20(address(vault_) == address(wings0) ? address(token0) : address(token1)), assets_, IERC20(address(vault_)), 0, address(this), pushed_, block.timestamp);
+        return quotedAmountOut;
     }
 }
 // end::UniswapV4UpperLowerWingsStandardExchangeVaultMoneyTest[]

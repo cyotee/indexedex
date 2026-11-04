@@ -122,8 +122,7 @@ abstract contract V4FundedDonationAssertions is Test {
         IStakedDETF receipt_ = IStakedDETF(info_.rebasingClaimToken());
         amount_ = receipt_.balanceOf(holder_);
         uint256 rawBefore_ = IERC20(address(info_)).balanceOf(holder_);
-        vm.prank(holder_);
-        uint256 out_ = receipt_.exchangeIn(IERC20(address(receipt_)), amount_, IERC20(address(info_)), amount_, holder_, false, block.timestamp);
+        vm.prank(holder_);(uint256 out_,) = receipt_.exchangeIn(IERC20(address(receipt_)), amount_, IERC20(address(info_)), amount_, holder_, false, block.timestamp);
         assertEq(out_, amount_, "exact held-DETF unstake");
         assertEq(IERC20(address(info_)).balanceOf(holder_) - rawBefore_, amount_, "funded raw payout");
     }
@@ -345,8 +344,7 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         address se_ = IUniswapV4SeBufferHook(detfInfo.hook()).standardExchangeOf(address(payment_));
         _fundOpenPair(dnDonor, 20 ether);
         vm.startPrank(dnDonor);
-        payment_.approve(se_, 20 ether);
-        uint256 shares_ = IStandardExchangeIn(se_).exchangeIn(payment_, 20 ether, IERC20(se_), 1, dnDonor, false, _deadline());
+        payment_.approve(se_, 20 ether);(uint256 shares_,) = IStandardExchangeIn(se_).exchangeIn(payment_, 20 ether, IERC20(se_), 1, dnDonor, false, _deadline());
         vm.stopPrank();
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 quote_ = _nftDonate().previewDonate(IERC20(se_), shares_);
@@ -519,12 +517,10 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         uint256 amount_ = raw_ / 3;
         IERC20 payment_ = _openPairToken();
         bool primary_ = detfInfo.isBurningAllowed(payment_);
-        uint256 supply_ = IERC20(detf).totalSupply();
-        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(detf), amount_, payment_);
+        uint256 supply_ = IERC20(detf).totalSupply();(uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(detf), amount_, payment_);
         uint256 before_ = payment_.balanceOf(detfUser);
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, amount_);
-        uint256 actual_ = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), amount_, payment_, quote_, detfUser, false, _deadline());
+        IERC20(detf).approve(detf, amount_);(uint256 actual_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), amount_, payment_, quote_, detfUser, false, _deadline());
         vm.stopPrank();
         assertGt(actual_, 0, "exit after donated capital");
         assertEq(actual_, quote_, "post-donation burn preview equals execution");
@@ -590,8 +586,7 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         nftDonate_.donate(tok_, 4 ether, 0, false, deadline_);
         vm.stopPrank();
         vm.startPrank(detfUser);
-        vm.expectRevert(disabledErr_);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(tok_, 1 ether, IERC20(address(detfInfo)), 0, detfUser, false, deadline_);
+        vm.expectRevert(disabledErr_);IStandardExchangeIn(address(detfInfo)).exchangeIn(tok_, 1 ether, IERC20(address(detfInfo)), 0, detfUser, false, deadline_);
         vm.stopPrank();
         _fundOpenPair(bonder_, 1 ether);
         vm.startPrank(bonder_);
@@ -608,8 +603,7 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         _donationUnstake(detfInfo, carol_);
         IERC20 token_ = _openPairToken();
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, aliceDetf_ / 4);
-        uint256 paid_ = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), aliceDetf_ / 4, token_, 1, detfUser, false, _deadline());
+        IERC20(detf).approve(detf, aliceDetf_ / 4);(uint256 paid_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), aliceDetf_ / 4, token_, 1, detfUser, false, _deadline());
         vm.stopPrank();
         assertGt(paid_, 0, "reserve exit while disabled");
     }
@@ -633,16 +627,14 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         vm.startPrank(detfUser);
         vm.expectRevert(error_);
         detfInfo.donate(token_, 1 ether, false);
-        vm.expectRevert(error_);
-        IStandardExchangeIn(detf).exchangeIn(token_, 1 ether, IERC20(detf), 0, detfUser, false, deadline_);
+        vm.expectRevert(error_);IStandardExchangeIn(detf).exchangeIn(token_, 1 ether, IERC20(detf), 0, detfUser, false, deadline_);
         vm.expectRevert(error_);
         detfInfo.bond(token_, 1 ether, DEFAULT_MIN_LOCK, detfUser, false, deadline_);
         vm.stopPrank();
         _claimFundedDonationPosition(detfInfo, bobId_, bob_);
         assertGt(_donationUnstake(detfInfo, carol_), 0, "disabled instance retains funded unstaking");
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, raw_ / 4);
-        uint256 out_ = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), raw_ / 4, token_, 1, detfUser, false, deadline_);
+        IERC20(detf).approve(detf, raw_ / 4);(uint256 out_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), raw_ / 4, token_, 1, detfUser, false, deadline_);
         vm.stopPrank();
         assertGt(out_, 0, "disabled instance retains reserve exit");
     }
@@ -727,11 +719,9 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
 
     function _buyDonationRaw(uint256 amount_) internal returns (uint256 out_) {
         IERC20 token_ = _openPairToken();
-        _fundOpenPair(detfUser, amount_);
-        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(token_, amount_, IERC20(detf));
+        _fundOpenPair(detfUser, amount_);(uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(token_, amount_, IERC20(detf));
         vm.startPrank(detfUser);
-        token_.approve(detf, amount_);
-        out_ = IStandardExchangeIn(detf).exchangeIn(token_, amount_, IERC20(detf), quote_, detfUser, false, _deadline());
+        token_.approve(detf, amount_);(out_,) = IStandardExchangeIn(detf).exchangeIn(token_, amount_, IERC20(detf), quote_, detfUser, false, _deadline());
         vm.stopPrank();
         assertEq(out_, quote_, "actual standard acquisition for self-leg or burn");
         assertGt(out_, 0, "actual acquired DETF");

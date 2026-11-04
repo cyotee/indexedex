@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -123,10 +124,7 @@ contract RebasingAwareERC4626_ReleaseFuzz is TestBase_RebasingAwareERC4626 {
             vm.expectRevert(
                 abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, expected + 1, expected)
             );
-            vm.prank(alice);
-            IStandardExchangeIn(address(vault))
-                .exchangeIn(
-                    IERC20(address(asset)), amount, IERC20(address(vault)), expected + 1, bob, false, block.timestamp
+            vm.prank(alice);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(vault)))), IERC20(address(asset)), amount, IERC20(address(vault)), expected + 1, bob, false, block.timestamp
                 );
         }
         assertEq(vault.totalAssets(), backing);
@@ -213,8 +211,7 @@ contract RebasingAwareERC4626_ReleaseFuzz is TestBase_RebasingAwareERC4626 {
         assertEq(vault.previewRedeem(0), 0);
         assertEq(IStandardizedYield(address(vault)).previewDeposit(address(asset), 0), 0);
         assertEq(IStandardizedYield(address(vault)).previewRedeem(address(asset), 0), 0);
-        assertEq(
-            IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(vault))), 0
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(address(vault)))), IERC20(address(asset)), 0, IERC20(address(vault))), 0
         );
         assertEq(
             IStandardExchangeOut(address(vault)).previewExchangeOut(IERC20(address(vault)), IERC20(address(asset)), 0),
@@ -238,8 +235,8 @@ contract RebasingAwareERC4626_ReleaseFuzz is TestBase_RebasingAwareERC4626 {
         IERC20 s = IERC20(address(vault));
         if (route == 0) return vault.deposit(amount, alice);
         if (route == 1) return vault.mint(amount, alice);
-        if (route == 2) {
-            return IStandardExchangeIn(address(vault)).exchangeIn(a, amount, s, 0, alice, false, block.timestamp);
+        if (route == 2) {(uint256 quotedAmountOut,) = IStandardExchangeIn(address(vault)).exchangeIn(a, amount, s, 0, alice, false, block.timestamp);
+            return quotedAmountOut;
         }
         if (route == 3) {
             return IStandardExchangeOut(address(vault))
@@ -248,8 +245,8 @@ contract RebasingAwareERC4626_ReleaseFuzz is TestBase_RebasingAwareERC4626 {
         if (route == 4) return IStandardizedYield(address(vault)).deposit(alice, address(asset), amount, 0);
         if (route == 5) return vault.redeem(amount, alice, alice);
         if (route == 6) return vault.withdraw(amount, alice, alice);
-        if (route == 7) {
-            return IStandardExchangeIn(address(vault)).exchangeIn(s, amount, a, 0, alice, false, block.timestamp);
+        if (route == 7) {(uint256 quotedAmountOut,) = IStandardExchangeIn(address(vault)).exchangeIn(s, amount, a, 0, alice, false, block.timestamp);
+            return quotedAmountOut;
         }
         if (route == 8) {
             return IStandardExchangeOut(address(vault))

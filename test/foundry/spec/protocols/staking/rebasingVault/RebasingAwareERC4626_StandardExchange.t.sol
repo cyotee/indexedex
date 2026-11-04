@@ -28,9 +28,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         uint256 assets = 40e18;
         uint256 V = _virtualShares(DEFAULT_OFFSET);
         uint256 expected = RebasingAwareOracle.sharesForDeposit(assets, 0, 0, V);
-        vm.prank(alice);
-        uint256 out = _se().exchangeIn(
-            IERC20(address(asset)), assets, IERC20(address(vault)), expected, alice, false, block.timestamp
+        vm.prank(alice);(uint256 out,) = _se().exchangeIn(IERC20(address(asset)), assets, IERC20(address(vault)), expected, alice, false, block.timestamp
         );
         assertEq(out, expected);
         assertEq(IERC20(address(vault)).balanceOf(alice), expected);
@@ -43,9 +41,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         uint256 S = IERC20(address(vault)).totalSupply();
         uint256 V = _virtualShares(DEFAULT_OFFSET);
         uint256 expected = RebasingAwareOracle.assetsForRedeem(shares / 2, A, S, V);
-        vm.prank(alice);
-        uint256 out = _se().exchangeIn(
-            IERC20(address(vault)),
+        vm.prank(alice);(uint256 out,) = _se().exchangeIn(IERC20(address(vault)),
             shares / 2,
             IERC20(address(asset)),
             expected,
@@ -99,9 +95,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         vm.prank(alice);
         asset.transfer(address(vault), 10e18);
         vm.prank(alice);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        _se().exchangeIn(
-            IERC20(address(asset)), 10e18, IERC20(address(vault)), 0, alice, true, block.timestamp
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);_se().exchangeIn(IERC20(address(asset)), 10e18, IERC20(address(vault)), 0, alice, true, block.timestamp
         );
         vm.prank(alice);
         vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
@@ -118,14 +112,10 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         IERC20(address(vault)).transfer(address(vault), shares / 2);
         uint256 P = IERC20(address(vault)).balanceOf(address(vault));
         vm.prank(alice);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        _se().exchangeIn(
-            IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);_se().exchangeIn(IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
         );
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
-        vm.prank(address(caller));
-        _se().exchangeIn(
-            IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
+        vm.prank(address(caller));_se().exchangeIn(IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
         );
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), P - burnAmt);
         assertEq(IERC20(address(vault)).balanceOf(address(caller)), 0);
@@ -137,9 +127,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
             abi.encodeWithSelector(
                 IStandardExchangeErrors.InvalidRoute.selector, address(asset), address(asset)
             )
-        );
-        _se().exchangeIn(
-            IERC20(address(asset)), 1e18, IERC20(address(asset)), 0, alice, false, block.timestamp
+        );_se().exchangeIn(IERC20(address(asset)), 1e18, IERC20(address(asset)), 0, alice, false, block.timestamp
         );
     }
 
@@ -149,21 +137,18 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         vm.prank(alice);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, block.timestamp - 1, block.timestamp)
-        );
-        _se().exchangeIn(
-            IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, alice, false, block.timestamp - 1
+        );_se().exchangeIn(IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, alice, false, block.timestamp - 1
         );
     }
 
     function test_previewZeroInvalidRouteReturnsZero() public {
-        assertEq(_se().previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(0))), 0);
+        (uint256 previewAmountOut1,) = _se().previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(0)));
+        assertEq(previewAmountOut1, 0);
     }
 
     function test_sameSnapshotSeMatchesErc4626() public {
         uint256 snap = vm.snapshotState();
-        vm.prank(alice);
-        uint256 seShares = _se().exchangeIn(
-            IERC20(address(asset)), 11e18, IERC20(address(vault)), 0, alice, false, block.timestamp
+        vm.prank(alice);(uint256 seShares,) = _se().exchangeIn(IERC20(address(asset)), 11e18, IERC20(address(vault)), 0, alice, false, block.timestamp
         );
         vm.revertToState(snap);
         vm.prank(alice);
@@ -172,18 +157,12 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
     }
 
     function test_F08_deadlineEqualSucceeds_minAtEquality() public {
-        uint256 assets = 3e18;
-        uint256 preview =
-            _se().previewExchangeIn(IERC20(address(asset)), assets, IERC20(address(vault)));
-        vm.prank(alice);
-        uint256 out = _se().exchangeIn(
-            IERC20(address(asset)), assets, IERC20(address(vault)), preview, alice, false, block.timestamp
+        uint256 assets = 3e18;(uint256 preview,) = _se().previewExchangeIn(IERC20(address(asset)), assets, IERC20(address(vault)));
+        vm.prank(alice);(uint256 out,) = _se().exchangeIn(IERC20(address(asset)), assets, IERC20(address(vault)), preview, alice, false, block.timestamp
         );
         assertEq(out, preview);
         vm.prank(alice);
-        vm.expectPartialRevert(bytes4(keccak256("MinAmountNotMet(uint256,uint256)")));
-        _se().exchangeIn(
-            IERC20(address(asset)),
+        vm.expectPartialRevert(bytes4(keccak256("MinAmountNotMet(uint256,uint256)")));_se().exchangeIn(IERC20(address(asset)),
             1e18,
             IERC20(address(vault)),
             preview + 1,
@@ -260,9 +239,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares);
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        _se().exchangeIn(
-            IERC20(address(vault)), 1e11, IERC20(address(asset)), 0, attacker, true, block.timestamp
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);_se().exchangeIn(IERC20(address(vault)), 1e11, IERC20(address(asset)), 0, attacker, true, block.timestamp
         );
     }
 
@@ -296,21 +273,20 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, resting + 1, resting)
-        );
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(vault)), resting + 1, IERC20(address(asset)), 0, address(caller), true, block.timestamp
+        );IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), resting + 1, IERC20(address(asset)), 0, address(caller), true, block.timestamp
         );
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), resting, "resting shares untouched");
     }
 
     function test_previewPositiveInvalidRouteReverts() public {
-        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(asset), address(asset)));
-        _se().previewExchangeIn(IERC20(address(asset)), 1e18, IERC20(address(asset)));
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(asset), address(asset)));_se().previewExchangeIn(IERC20(address(asset)), 1e18, IERC20(address(asset)));
     }
 
     function test_zeroPreviewAllSeOverloads() public view {
-        assertEq(_se().previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(vault))), 0);
+        (uint256 previewAmountOut2,) = _se().previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(vault)));
+        assertEq(previewAmountOut2, 0);
         assertEq(_seOut().previewExchangeOut(IERC20(address(asset)), IERC20(address(vault)), 0), 0);
-        assertEq(_se().previewExchangeIn(IERC20(address(vault)), 0, IERC20(address(asset))), 0);
+        (uint256 previewAmountOut3,) = _se().previewExchangeIn(IERC20(address(vault)), 0, IERC20(address(asset)));
+        assertEq(previewAmountOut3, 0);
     }
 }

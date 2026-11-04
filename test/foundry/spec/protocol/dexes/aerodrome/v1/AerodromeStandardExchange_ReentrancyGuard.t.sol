@@ -58,10 +58,8 @@ contract AerodromeStandardExchange_ReentrancyGuard_Test is TestBase_AerodromeSta
         AeroLockChecker checker = new AeroLockChecker(address(vault));
 
         // Give tokens to the checker
-        deal(address(tokenA), address(checker), TEST_AMOUNT);
-
-        // Calculate expected output for a small swap
-        uint256 previewOut = vault.previewExchangeIn(IERC20(address(tokenA)), TEST_AMOUNT / 2, IERC20(address(tokenB)));
+        deal(address(tokenA), address(checker), TEST_AMOUNT);// Calculate expected output for a small swap
+        (uint256 previewOut,) = vault.previewExchangeIn(IERC20(address(tokenA)), TEST_AMOUNT / 2, IERC20(address(tokenB)));
 
         checker.callExchangeOut(
             IERC20(address(tokenA)),
@@ -98,9 +96,7 @@ contract AeroLockChecker {
         bool pretransferred,
         uint256 deadline
     ) external {
-        tokenIn.approve(vaultAddr, amountIn);
-        IStandardExchangeIn(vaultAddr)
-            .exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        tokenIn.approve(vaultAddr, amountIn);IStandardExchangeIn(vaultAddr).exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
         callCompleted = true;
     }
 

@@ -509,12 +509,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             Repo._layout().reserves[token] += amount;
             return 0;
         }
-        if (se == token) return amount;
-        uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
+        if (se == token) return amount;(uint256 m,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
         uint256 minOut = m > 0 ? m - 1 : 0;
-        IERC20(token).forceApprove(se, amount);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
+        IERC20(token).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
         IERC20(token).forceApprove(se, 0);
     }
@@ -531,12 +528,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     function _unwrapSeShares(address token, uint256 seIn) internal returns (uint256 pairOut) {
         if (seIn == 0) return 0;
         address se = _seOf(token);
-        if (se == token) return seIn;
-        uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
+        if (se == token) return seIn;(uint256 m,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
         uint256 minOut = m > 0 ? m - 1 : 0;
-        IERC20(se).forceApprove(se, seIn);
-        pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
+        IERC20(se).forceApprove(se, seIn);(pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
         );
         IERC20(se).forceApprove(se, 0);
     }

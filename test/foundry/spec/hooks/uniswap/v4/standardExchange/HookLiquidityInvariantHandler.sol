@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.24;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -239,10 +240,9 @@ contract HookLiquidityInvariantHandler is Test {
     function _trade(address actor, uint256 amount, uint256 action) internal {
         TradeState memory v;
         v.exactOut = action % 2 == 1;
-        v.prepaid = action >= 2;
-        v.quote = v.exactOut
+        v.prepaid = action >= 2;v.quote = v.exactOut
             ? IStandardExchangeOut(hook).previewExchangeOut(input, output, amount)
-            : IStandardExchangeIn(hook).previewExchangeIn(input, amount, output);
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(hook))), input, amount, output);
         v.budget = v.exactOut ? v.quote * 2 : amount;
         SimpleMintableERC20(address(input)).mint(actor, v.budget);
         vm.prank(actor);
@@ -291,9 +291,7 @@ contract HookLiquidityInvariantHandler is Test {
     function _donateAndTransfer(address actor, uint256 recipientSeed, uint256 amount) internal {
         SimpleMintableERC20(address(input)).mint(actor, amount);
         vm.startPrank(actor);
-        input.approve(inputSE, amount);
-        uint256 shares = IStandardExchangeIn(inputSE)
-            .exchangeIn(input, amount, IERC20(inputSE), 1, actor, false, block.timestamp + 1 hours);
+        input.approve(inputSE, amount);(uint256 shares,) = IStandardExchangeIn(inputSE).exchangeIn(input, amount, IERC20(inputSE), 1, actor, false, block.timestamp + 1 hours);
         uint256 supplyBefore = IERC20(hook).totalSupply();
         uint256 bookBefore = IERC20(inputSE).balanceOf(hook);
         IERC20(inputSE).transfer(hook, shares);
@@ -357,8 +355,7 @@ contract HookLiquidityInvariantHandler is Test {
         input.transfer(hook, amount);
         input.approve(address(caller), amount);
         vm.stopPrank();
-        bytes32 beforeState = _snapshot();
-        uint256 quote = IStandardExchangeIn(hook).previewExchangeIn(input, amount, output);
+        bytes32 beforeState = _snapshot();(uint256 quote,) = IStandardExchangeIn(hook).previewExchangeIn(input, amount, output);
         bytes memory expected =
             abi.encodeWithSelector(bytes4(keccak256(bytes(mode == 0 ? "Slippage()" : "InsufficientTokenOut()"))));
         (bool ok, bytes memory reason) = address(caller)

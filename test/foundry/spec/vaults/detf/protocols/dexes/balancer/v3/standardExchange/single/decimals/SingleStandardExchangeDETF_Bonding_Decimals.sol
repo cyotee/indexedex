@@ -76,14 +76,11 @@ abstract contract SingleStandardExchangeDETF_Bonding_Decimals is
     function test_mint_belowThreshold_executesReserveSwap() public {
         _bootstrapViaFirstBond(alice, 1_000e18);
         assertFalse(detfInfo.isMintingAllowed(), "primary mint remains closed");
-        uint256 seShares_ = _fundSeShares(bob, 100e18);
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(seShare, seShares_, IERC20(detf));
+        uint256 seShares_ = _fundSeShares(bob, 100e18);(uint256 quote_,) = detfExchangeIn.previewExchangeIn(seShare, seShares_, IERC20(detf));
         assertGt(quote_, 0, "funded swap output");
         uint256 supply_ = IERC20(detf).totalSupply();
         vm.startPrank(bob);
-        seShare.approve(detf, seShares_);
-        uint256 out_ =
-            detfExchangeIn.exchangeIn(seShare, seShares_, IERC20(detf), quote_, bob, false, block.timestamp + 1 hours);
+        seShare.approve(detf, seShares_);(uint256 out_,) = detfExchangeIn.exchangeIn(seShare, seShares_, IERC20(detf), quote_, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(out_, quote_);
         assertEq(IERC20(detf).balanceOf(bob), quote_);

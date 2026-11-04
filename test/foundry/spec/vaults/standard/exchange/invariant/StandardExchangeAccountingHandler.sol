@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -76,8 +77,8 @@ abstract contract StandardExchangeAccountingHandler is Test {
 
     function _additionalActions(address, uint256) internal virtual {}
 
-    function _restingQuote(uint256 amount_) internal view virtual returns (uint256) {
-        return seIn.previewExchangeIn(base, amount_, share);
+    function _restingQuote(uint256 amount_) internal view virtual returns (uint256) {(uint256 quotedAmountOut,) = seIn.previewExchangeIn(base, amount_, share);
+        return quotedAmountOut;
     }
 
     function _fund(address actor_, uint256 amount_) internal virtual;
@@ -87,7 +88,7 @@ abstract contract StandardExchangeAccountingHandler is Test {
         ++counts[action].attempted;
         _fund(actor_, amount_);
         Checkpoint memory before_ = Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_),
-            seIn.previewExchangeIn(base, amount_, share));
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), base, amount_, share));
         assertGt(before_.quote, 0, "deposit quote nonzero");
         uint256 minted;
         if (prepaid_) {
@@ -97,8 +98,7 @@ abstract contract StandardExchangeAccountingHandler is Test {
             minted = abi.decode(integrator.consumePretransfer(base, actor_, address(seIn), amount_, data), (uint256));
         } else {
             vm.startPrank(actor_);
-            base.approve(address(seIn), amount_);
-            minted = seIn.exchangeIn(base, amount_, share, before_.quote, actor_, false, block.timestamp + 1 hours);
+            base.approve(address(seIn), amount_);(minted,) = seIn.exchangeIn(base, amount_, share, before_.quote, actor_, false, block.timestamp + 1 hours);
             vm.stopPrank();
         }
         assertEq(before_.assets - base.balanceOf(actor_), amount_, "only declared principal debited");
@@ -112,8 +112,7 @@ abstract contract StandardExchangeAccountingHandler is Test {
 
 
     function _mintExactOut(address actor_, uint256 amount_) internal {
-        ++counts[Action.ExactOutMint].attempted;
-        uint256 desired = seIn.previewExchangeIn(base, amount_, share);
+        ++counts[Action.ExactOutMint].attempted;(uint256 desired,) = seIn.previewExchangeIn(base, amount_, share);
         assertGt(desired, 0, "exact-out mint nonzero");
         IStandardExchangeOut seOut = IStandardExchangeOut(address(seIn));
         uint256 needed = seOut.previewExchangeOut(base, share, desired);
@@ -212,8 +211,7 @@ abstract contract StandardExchangeAccountingHandler is Test {
 
     function _withdraw(address actor_) internal {
         ++counts[Action.ExactOut].attempted;
-        Checkpoint memory before_ = Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), 0);
-        uint256 amountOut = seIn.previewExchangeIn(share, before_.shares / 4, base);
+        Checkpoint memory before_ = Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), 0);(uint256 amountOut,) = seIn.previewExchangeIn(share, before_.shares / 4, base);
         assertGt(amountOut, 0, "withdrawal output nonzero");
         IStandardExchangeOut seOut = IStandardExchangeOut(address(seIn));
         before_.quote = seOut.previewExchangeOut(share, base, amountOut);
@@ -258,8 +256,7 @@ abstract contract StandardExchangeAccountingHandler is Test {
         bytes32 before_ = _state();
         vm.prank(attacker);
         if (supportsPrepay) vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        else vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1e15), uint256(0)));
-        seIn.exchangeIn(base, 1e15, share, 0, attacker, true, block.timestamp + 1 hours);
+        else vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1e15), uint256(0)));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(seIn)), base, 1e15, share, 0, attacker, true, block.timestamp + 1 hours);
         assertEq(_state(), before_, "rejected EOA preserves balances and supply");
         ++ghost_eoaReject;
         ++counts[Action.EoaReject].expectedRevert;

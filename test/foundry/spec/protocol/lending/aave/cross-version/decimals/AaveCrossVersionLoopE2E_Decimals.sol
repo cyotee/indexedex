@@ -97,9 +97,7 @@ abstract contract AaveCrossVersionLoopE2E_Decimals is TestBase_AaveCrossVersionL
 
         uint256 deposit = _uA(100);
         _mint(tokenA, address(this), deposit);
-        tokenA.approve(vault, deposit);
-        uint256 shares = IStandardExchangeIn(vault).exchangeIn(
-            tokenA, deposit, IERC20(vault), 0, address(this), false, block.timestamp
+        tokenA.approve(vault, deposit);(uint256 shares,) = IStandardExchangeIn(vault).exchangeIn(tokenA, deposit, IERC20(vault), 0, address(this), false, block.timestamp
         );
 
         assertGt(shares, 0, "shares minted");

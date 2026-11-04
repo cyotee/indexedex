@@ -88,8 +88,7 @@ contract AaveCrossVersionLoop_APEX_D43_Test is TestBase_AaveCrossVersionLoopV3Ma
 
     function _deposit(uint256 amount) internal returns (uint256 shares) {
         _mint(tokenA, address(this), amount);
-        tokenA.approve(vault, amount);
-        shares = IStandardExchangeIn(vault).exchangeIn(tokenA, amount, IERC20(vault), 0, address(this), false, block.timestamp);
+        tokenA.approve(vault, amount);(shares,) = IStandardExchangeIn(vault).exchangeIn(tokenA, amount, IERC20(vault), 0, address(this), false, block.timestamp);
     }
 
     /// @dev R14.7: 100 principal with 150 of headroom supplies 100, then the recursive legs are
@@ -115,8 +114,8 @@ contract AaveCrossVersionLoop_APEX_D43_Test is TestBase_AaveCrossVersionLoopV3Ma
         _initVault();
         _seedBorrowLiquidity();
         uint256 first = _deposit(100e18); // open cap: full loop
-        _setSupplyCapA(1); // below current supply → capacity 0
-        uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 20e18, IERC20(vault));
+        _setSupplyCapA(1);// below current supply → capacity 0
+        (uint256 preview,) = IStandardExchangeIn(vault).previewExchangeIn(tokenA, 20e18, IERC20(vault));
         uint256 suppliedBefore = AaveV36Service.suppliedOf(v36Pool, address(tokenA), vault);
         uint256 second = _deposit(20e18);
         assertEq(second, preview, "preview equals execution");

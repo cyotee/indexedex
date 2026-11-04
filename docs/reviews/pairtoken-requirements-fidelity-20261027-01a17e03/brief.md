@@ -1,0 +1,20 @@
+# PairToken requirements fidelity council
+
+## Admission
+User explicitly requested a council judgment on whether /Users/cyotee/Projects/indexedex/docs/research/pairtoken-behavioral-requirements-20261027-01a17d57/handoff/REQUIREMENTS.md accurately describes https://sourcify.dev/server/v2/contract/4663/0x56C8c249d4c021e93635b120aC68A9a36eb01753?fields=sources so it can support clean-room development of an independent Pair Token. Full council: Astra, Grok, MiniMax, Kimi. Invoking-agent coordinator: gpt-6.1-sol; not an independent vote. This is a static source/specification review, not implementation.
+
+## Targets and evidence
+- Read the entire requirements document at /Users/cyotee/Projects/indexedex/docs/research/pairtoken-behavioral-requirements-20261027-01a17d57/handoff/REQUIREMENTS.md; identity pairtoken-requirements-final-r2.
+- Read freshly retrieved source at /Users/cyotee/Projects/indexedex/docs/reviews/pairtoken-requirements-fidelity-20261027-01a17e03/evidence/sources/src/pair/PairToken.sol and relevant included dependency sources under /Users/cyotee/Projects/indexedex/docs/reviews/pairtoken-requirements-fidelity-20261027-01a17e03/evidence/sources/. SOURCE.md records retrieval and exact-match identity 55980642. Decoded files are coordinator-supplied public-source evidence from October 27, 2026; distinguish this from your own network retrieval.
+- The sources endpoint includes interfaces and imported math but not deployed factory, fee manager, hook or PoolManager implementation/settings. Do not infer their internals or live behavior.
+- Optional separate PRD/implementation plan/audit: not supplied. Do not import IndexedEx product preferences into a source-fidelity verdict. Do not read previous council originals, feedback, reports or analyst notes, including the earlier run that produced these requirements. This is a fresh assessment of the published final.
+
+## Common question
+Does the requirements document accurately and sufficiently describe the source for a separate implementation team to plan and implement behavioral equivalence without consulting the target code? Assess both (1) fidelity/no incorrect statements and (2) completeness/unambiguous standalone handoff. Distinguish technical behavioral readiness, source exposure/process segregation, and legal clearance; do not certify legal clean-room status or start legal research. The target's SPDX is BUSL-1.1; a prose spec alone is not proof of legal clearance.
+
+## Required examination
+Check public ABI/getters/events/errors, initialization/ERC20 edge semantics, exact integer arithmetic/rounding/casts, basket and previews, genesis/dead shares/minShares, paired and zap deposits, redemption/retention/single-output redemption, compounding/protocol fee and notify failures, native reservations/refunds/token transfer semantics, donation/dust, callback ABI/opcodes/deltas/dependency reads, caps/tick checks, requirement examples and acceptance vectors. For any defect: severity, exact requirement ID and line, exact source symbol and line, observable impact, smallest correction direction. Avoid inventing guarantees or silently fixing source quirks. Treat missing acceptance tests separately from false specification. Include a coverage table (examined/partial/not examined) and a clear Yes / Yes with corrections / Not yet verdict. Static evidence is not runtime proof.
+
+## Independence and boundaries
+Read only the named targets and relevant included source dependencies/rules. No peer-original or old council artifact reading during initial work. No delegation. No project tests/builds, Git, installs, runtime calls, wallets, deployments or code/config/requirements edits. You may write ONLY your assigned response path using apply_patch; if unavailable return the full response inline and say no file was written. Keep returned final concise with substantive findings and path. Do not spend the assignment on historical deliberations or unrelated product redesign. Stop after your one independent response; the coordinator will later request one advisory review of one pinned draft.
+

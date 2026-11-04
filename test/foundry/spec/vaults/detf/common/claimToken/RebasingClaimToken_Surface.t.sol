@@ -120,7 +120,8 @@ contract RebasingClaimToken_Surface_Test is TestBase_UniswapV4Detf {
         assertEq(staking_.allowance(detfUser, recipient_), 0);
         uint256[] memory noRewards_ = new uint256[](0);
         assertEq(abi.encode(staking_.previewDistributions(noRewards_)), abi.encode(staking_.stakingState()));
-        assertEq(staking_.previewExchangeIn(raw_, 7, receipt_), 7);
+        (uint256 previewAmountOut1,) = staking_.previewExchangeIn(raw_, 7, receipt_);
+        assertEq(previewAmountOut1, 7);
         assertEq(staking_.previewExchangeOut(receipt_, raw_, 7), 7);
         vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.Unauthorized.selector, address(this)));
         staking_.fundRewards(1);
@@ -136,7 +137,8 @@ contract RebasingClaimToken_Surface_Test is TestBase_UniswapV4Detf {
         (uint256 p_, uint256 r_) = bonds_.claimBond(id_, detfUser);
         uint256 amount_ = p_ + r_;
         uint256 before_ = raw_.balanceOf(detfUser);
-        assertEq(staking_.exchangeIn(receipt_, amount_, raw_, amount_, detfUser, false, block.timestamp), amount_);
+        (uint256 exchangeAmountOut2,) = staking_.exchangeIn(receipt_, amount_, raw_, amount_, detfUser, false, block.timestamp);
+        assertEq(exchangeAmountOut2, amount_);
         assertEq(raw_.balanceOf(detfUser), before_ + amount_);
         raw_.approve(address(staking_), amount_);
         assertEq(staking_.exchangeOut(raw_, amount_, receipt_, amount_, detfUser, false, block.timestamp), amount_);

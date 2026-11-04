@@ -73,7 +73,7 @@ export const insightsViewAbi = [
       { name: 'amountIn', type: 'uint256' },
       { name: 'tokenOut', type: 'address' },
     ],
-    outputs: [{ type: 'uint256' }],
+    outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 'amountRefunded', type: 'uint256' }],
   },
   {
     type: 'function',
@@ -88,7 +88,7 @@ export const insightsViewAbi = [
       { name: 'pretransferred', type: 'bool' },
       { name: 'deadline', type: 'uint256' },
     ],
-    outputs: [{ type: 'uint256' }],
+    outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 'amountRefunded', type: 'uint256' }],
   },
 
 ] as const

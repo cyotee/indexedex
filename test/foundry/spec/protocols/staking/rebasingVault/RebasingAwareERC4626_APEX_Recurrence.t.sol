@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -58,10 +59,9 @@ contract RebasingAwareERC4626_APEX_Recurrence is TestBase_RebasingAwareERC4626 {
         (uint256 supply, uint256 credit) = _callbackFixture();
         uint256 burn = credit / 2;
         uint256 expected = callbackVault.previewRedeem(burn);
-        uint256 callerBefore = callbackVault.balanceOf(address(this));
-        uint256 paid = sy
+        uint256 callerBefore = callbackVault.balanceOf(address(this));uint256 paid = sy
             ? IStandardizedYield(address(callbackVault)).redeem(bob, burn, address(callbackAsset), 0, true)
-            : IStandardExchangeIn(address(callbackVault)).exchangeIn(IERC20(address(callbackVault)), burn, IERC20(address(callbackAsset)), 0, bob, true, block.timestamp);
+            : ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(callbackVault)))), IERC20(address(callbackVault)), burn, IERC20(address(callbackAsset)), 0, bob, true, block.timestamp);
         assertEq(callbackCount, 1, "payout callback executed");
         assertEq(paid, expected, "preview payout");
         assertEq(callbackVault.totalSupply(), supply - burn, "requested burn only");
@@ -79,12 +79,10 @@ contract RebasingAwareERC4626_APEX_Recurrence is TestBase_RebasingAwareERC4626 {
         vm.prank(alice);
         uint256 shares = vault.deposit(10 ether, alice);
         vm.prank(alice);
-        vault.transfer(address(vault), shares);
-        IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, IERC20(address(asset)), 0, bob, true, block.timestamp);
+        vault.transfer(address(vault), shares);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(vault)))), IERC20(address(vault)), shares, IERC20(address(asset)), 0, bob, true, block.timestamp);
         uint256 recipientBefore = asset.balanceOf(bob);
         assertEq(vault.balanceOf(address(vault)), 0, "first call consumed all credit");
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, shares, 0));
-        IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, IERC20(address(asset)), 0, bob, true, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, shares, 0));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(address(vault)))), IERC20(address(vault)), shares, IERC20(address(asset)), 0, bob, true, block.timestamp);
         assertEq(asset.balanceOf(bob), recipientBefore, "retry pays nothing");
         assertEq(vault.totalSupply(), 0, "retry creates no supply");
     }

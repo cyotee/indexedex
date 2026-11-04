@@ -202,7 +202,7 @@ Saves 234 lines, reduces risk, improves maintainability.
 ## 5. TESTING EVALUATION
 
 **Current Test Suite:**
-- 45 unit tests (forge test)
+- 45 unit tests (forge test --use solar)
 - 12 integration tests
 - Coverage: 78%
 

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -122,9 +123,8 @@ abstract contract UniswapV4SingleSEBufferHook_SeMatrixBehavior is TestBase_Unisw
         vm.startPrank(user);
         IERC20(face).approve(seUT, type(uint256).max);
         IERC20(face).approve(hook, type(uint256).max);
-        IERC20(face).approve(address(swapRouter), type(uint256).max);
-        // Seed SE shares for the unwrap routes (same as the gold setUp, on the fixture SE).
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(face), _f(200), IERC20(seUT), 0, user, false, block.timestamp);
+        IERC20(face).approve(address(swapRouter), type(uint256).max);// Seed SE shares for the unwrap routes (same as the gold setUp, on the fixture SE).
+        ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(face), _f(200), IERC20(seUT), 0, user, false, block.timestamp);
         IERC20(seUT).approve(address(swapRouter), type(uint256).max);
         vm.stopPrank();
     }
@@ -208,8 +208,7 @@ abstract contract UniswapV4SingleSEBufferHook_SeMatrixBehavior is TestBase_Unisw
         assertEq(vt[1], c1, "vault token 1");
         assertTrue(_registry().isVault(hook), "registered through the package path");
         assertTrue(PairPoolLib.isPoolLive(pm, poolKey), "product pool initialized");
-        assertGt(
-            IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), _f(1), IERC20(seUT)), 0, "SE quotes the face"
+        assertGt(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(face), _f(1), IERC20(seUT)), 0, "SE quotes the face"
         );
         assertGt(_wrapExactIn(_f(1)), 0, "first wrap through the package-deployed hook");
         _assertHookFlat();
@@ -304,8 +303,7 @@ abstract contract UniswapV4SingleSEBufferHook_SeMatrixBehavior is TestBase_Unisw
         uint256 deadline = block.timestamp + 1 hours;
 
         vm.prank(rowEoa);
-        vm.expectRevert(abi.encodeWithSelector(Proxy.NoTargetFor.selector, IStandardExchangeIn.exchangeIn.selector));
-        IStandardExchangeIn(hook).exchangeIn(IERC20(face), amt, IERC20(seUT), 0, rowEoa, true, deadline);
+        vm.expectRevert(abi.encodeWithSelector(Proxy.NoTargetFor.selector, IStandardExchangeIn.exchangeIn.selector));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(hook))), IERC20(face), amt, IERC20(seUT), 0, rowEoa, true, deadline);
         assertEq(_faceOf(hook), hookFace, "no state change on reject");
         assertEq(_seOf(rowEoa), eoaSe, "no output on reject");
 
@@ -456,15 +454,13 @@ abstract contract UniswapV4SingleSEBufferHook_SeMatrixBehavior is TestBase_Unisw
 
     function test_row_previewMatchesExecution() public virtual {
         uint256 x = _f(3);
-        assertEq(
-            buffer.previewWrap(x),
-            IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), x, IERC20(seUT)),
+        assertEq(buffer.previewWrap(x),
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(face), x, IERC20(seUT)),
             "wrap preview is the SE quote"
         );
         uint256 seOut = _wrapExactIn(x);
-        assertEq(
-            buffer.previewUnwrap(seOut),
-            IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), seOut, IERC20(face)),
+        assertEq(buffer.previewUnwrap(seOut),
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(seUT), seOut, IERC20(face)),
             "unwrap preview is the SE quote"
         );
         _unwrapExactIn(seOut);
@@ -495,8 +491,7 @@ abstract contract UniswapV4SingleSEBufferHook_SeMatrixBehavior is TestBase_Unisw
         uint256 amt = 10 * (10 ** uint256(IERC20Metadata_decimals(ot)));
         fx.fundOther(rowBob, amt);
         vm.startPrank(rowBob);
-        IERC20(ot).approve(seUT, amt);
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
+        IERC20(ot).approve(seUT, amt);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(
             IBasicVault(seUT).reserveOfToken(face), reservedFace, "reserved face leftover unchanged by an other-token caller"

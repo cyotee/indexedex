@@ -155,9 +155,7 @@ contract UniswapV4DualSEBCPHook_B6M3_Test is TestBase_UniswapV4DualSEBCPHook {
         _depositBoth(200 ether, 200 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
-        uint256 amountIn = 5 ether;
-
-        uint256 pred = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn, IERC20(c1));
+        uint256 amountIn = 5 ether;(uint256 pred,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn, IERC20(c1));
         assertGt(pred, 0);
 
         // fund caller
@@ -166,9 +164,7 @@ contract UniswapV4DualSEBCPHook_B6M3_Test is TestBase_UniswapV4DualSEBCPHook {
 
         uint256 balBefore = IERC20(c1).balanceOf(user);
         vm.startPrank(user);
-        IERC20(c0).approve(hook, amountIn);
-        uint256 got = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), amountIn, IERC20(c1), 0, user, false, block.timestamp + 1
+        IERC20(c0).approve(hook, amountIn);(uint256 got,) = IStandardExchangeIn(hook).exchangeIn(IERC20(c0), amountIn, IERC20(c1), 0, user, false, block.timestamp + 1
         );
         vm.stopPrank();
 
@@ -203,8 +199,7 @@ contract UniswapV4DualSEBCPHook_B6M3_Test is TestBase_UniswapV4DualSEBCPHook {
 
     function test_M3_unsupportedRoute_reverts() public {
         _depositBoth(50 ether, 50 ether);
-        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));
-        IStandardExchangeIn(hook).previewExchangeIn(IERC20(seA), 1 ether, IERC20(address(tokenA)));
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));IStandardExchangeIn(hook).previewExchangeIn(IERC20(seA), 1 ether, IERC20(address(tokenA)));
     }
 
     function _seForCurrency(address currency) internal view returns (address) {

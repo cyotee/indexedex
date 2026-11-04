@@ -11,7 +11,7 @@ description: Smart contract testing with Foundry — unit tests, fuzz testing, f
 
 **You test getters and trivial functions.** Testing that `name()` returns the name is worthless. Test edge cases, failure modes, and economic invariants — the things that lose money when they break.
 
-**You don't fuzz.** `forge test` finds the bugs you thought of. Fuzzing finds the ones you didn't. If your contract does math, fuzz it. If it handles user input, fuzz it. If it moves value, definitely fuzz it.
+**You don't fuzz.** `forge test --use solar` finds the bugs you thought of. Fuzzing finds the ones you didn't. If your contract does math, fuzz it. If it handles user input, fuzz it. If it moves value, definitely fuzz it.
 
 **You don't fork-test.** If your contract calls Uniswap, Aave, or any external protocol (verified addresses: `addresses/SKILL.md`), test against their real deployed contracts on a fork. Mocking them hides integration bugs that only appear with real state.
 
@@ -179,10 +179,10 @@ function testFuzz_Division(uint256 a, uint256 b) public {
 
 ```bash
 # Default: 256 runs
-forge test
+forge test --use solar
 
 # More thorough: 10,000 runs
-forge test --fuzz-runs 10000
+forge test --use solar --fuzz-runs 10000
 
 # Set in foundry.toml for CI
 # [fuzz]
@@ -250,10 +250,10 @@ contract SwapTest is Test {
 
 ```bash
 # Fork from RPC URL
-forge test --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+forge test --use solar --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
 
 # Fork at specific block (reproducible)
-forge test --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY --fork-block-number 19000000
+forge test --use solar --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY --fork-block-number 19000000
 
 # Set in foundry.toml to avoid CLI flags
 # [rpc_endpoints]
@@ -343,10 +343,10 @@ contract VaultHandler is Test {
 
 ```bash
 # Default depth (15 calls per sequence, 256 sequences)
-forge test
+forge test --use solar
 
 # Deeper exploration
-forge test --fuzz-runs 1000
+forge test --use solar --fuzz-runs 1000
 
 # Configure in foundry.toml
 # [invariant]
@@ -376,6 +376,6 @@ forge test --fuzz-runs 1000
 - [ ] Fork tests for every external protocol integration
 - [ ] Invariant tests for stateful protocols (vaults, AMMs, lending)
 - [ ] Events verified with `expectEmit`
-- [ ] Gas snapshots taken with `forge snapshot` to catch regressions
+- [ ] Gas snapshots taken with `forge snapshot --use solar` to catch regressions
 - [ ] Static analysis with `slither .` — no high/medium findings unaddressed
-- [ ] All tests pass: `forge test -vvv`
+- [ ] All tests pass: `forge test --use solar -vvv`

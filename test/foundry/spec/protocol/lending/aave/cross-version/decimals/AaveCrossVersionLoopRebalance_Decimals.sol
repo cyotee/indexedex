@@ -65,8 +65,7 @@ abstract contract AaveCrossVersionLoopRebalance_Decimals is TestBase_AaveCrossVe
 
         uint256 deposit = _uA(100);
         _mint(tokenA, address(this), deposit);
-        tokenA.approve(address(vault), deposit);
-        vault.exchangeIn(tokenA, deposit, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        tokenA.approve(address(vault), deposit);vault.exchangeIn(tokenA, deposit, IERC20(address(vault)), 0, address(this), false, block.timestamp);
     }
 
     function _spikeV4ABorrow() internal {

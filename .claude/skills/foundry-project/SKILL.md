@@ -5,6 +5,8 @@ description: Set up and configure Foundry projects. Use when initializing new pr
 
 # Foundry Project Setup
 
+Compiler is Solar: `forge build --use solar`, `forge test --use solar`, `forge script --use solar`. Do not set `via_ir = true`. Do not pass `--use solc:`. Do not set `solc = "solar"`. Agent law § Compiler overrides the generic profiles below.
+
 Initialize, configure, and manage Foundry projects.
 
 ## When to Use
@@ -37,7 +39,7 @@ forge init --force
 # Clone and build
 git clone https://github.com/some/project
 cd project
-forge build
+forge build --use solar
 ```
 
 ## Project Structure
@@ -195,16 +197,16 @@ remappings = [
 
 ```bash
 # Build all contracts
-forge build
+forge build --use solar
 
 # Build with sizes
-forge build --sizes
+forge build --use solar --sizes
 
 # Clean and rebuild
-forge clean && forge build
+forge clean && forge build --use solar
 
 # Build specific contract
-forge build --contracts src/MyContract.sol
+forge build --use solar --contracts src/MyContract.sol
 ```
 
 ## Profile Management
@@ -227,17 +229,17 @@ optimizer = false
 [profile.production]
 optimizer = true
 optimizer_runs = 10000
-via_ir = true
+via_ir = false
 ```
 
 ### Using Profiles
 
 ```bash
 # Use CI profile
-FOUNDRY_PROFILE=ci forge test
+FOUNDRY_PROFILE=ci forge test --use solar
 
 # Use production profile for deployment
-FOUNDRY_PROFILE=production forge script script/Deploy.s.sol --broadcast
+FOUNDRY_PROFILE=production forge script --use solar script/Deploy.s.sol --broadcast
 ```
 
 ## Environment Variables
@@ -256,10 +258,10 @@ PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
 ```bash
 # Load before commands
-source .env && forge script script/Deploy.s.sol
+source .env && forge script --use solar script/Deploy.s.sol
 
 # Or use dotenv in scripts
-export $(cat .env | xargs) && forge test
+export $(cat .env | xargs) && forge test --use solar
 ```
 
 ### In Scripts
@@ -282,19 +284,19 @@ contract DeployScript is Script {
 ### Run Tests
 
 ```bash
-forge test                    # All tests
-forge test -vvv               # With traces
-forge test --match-test test_Deposit  # Specific test
-forge test --watch            # Watch mode
-forge test --gas-report       # Gas report
+forge test --use solar                    # All tests
+forge test --use solar -vvv               # With traces
+forge test --use solar --match-test test_Deposit  # Specific test
+forge test --use solar --watch            # Watch mode
+forge test --use solar --gas-report       # Gas report
 ```
 
 ### Run Scripts
 
 ```bash
-forge script script/Deploy.s.sol              # Dry run
-forge script script/Deploy.s.sol --broadcast  # Execute
-forge script script/Deploy.s.sol --verify     # Verify contracts
+forge script --use solar script/Deploy.s.sol              # Dry run
+forge script --use solar script/Deploy.s.sol --broadcast  # Execute
+forge script --use solar script/Deploy.s.sol --verify     # Verify contracts
 ```
 
 ### Generate Documentation
@@ -310,8 +312,8 @@ forge doc --out docs          # Output to docs/
 ```bash
 forge fmt                     # Format code
 forge fmt --check             # Check formatting
-forge snapshot                # Gas snapshot
-forge snapshot --diff         # Compare with previous
+forge snapshot --use solar                # Gas snapshot
+forge snapshot --use solar --diff         # Compare with previous
 ```
 
 ## .gitignore

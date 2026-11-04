@@ -70,8 +70,7 @@ contract AaveCrossVersionLoopRebalance_Test is TestBase_AaveCrossVersionLoopV3Ma
         vm.stopPrank();
 
         _mint(tokenA, address(this), 100e18);
-        tokenA.approve(address(vault), 100e18);
-        vault.exchangeIn(tokenA, 100e18, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        tokenA.approve(address(vault), 100e18);vault.exchangeIn(tokenA, 100e18, IERC20(address(vault)), 0, address(this), false, block.timestamp);
     }
 
     /// @dev Spike V4 tokenA borrow utilization so V4 borrow rate >> V3 supply rate → negative carry.

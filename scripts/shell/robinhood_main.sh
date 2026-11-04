@@ -66,9 +66,9 @@ Commands:
   all             Phases 01–06 architecture catalog, then Phase 09 frontend export
   token-staking        Phase 06 Stage 08 TokenStaking DFPkg, then Phase 08 Stage 01
                        DTF instance (7-day rewardsDuration). Does not notifyRewardAmount.
-                       Same as forge script: simulates unless --broadcast.
+                       Same as forge script --use solar: simulates unless --broadcast.
   token-staking-fund   Phase 08 Stage 02: notifyRewardAmount(sender DTF balance).
-                       Same as forge script: simulates unless --broadcast.
+                       Same as forge script --use solar: simulates unless --broadcast.
   fee-accrual-preflight Read-only validation of the prepared fee-accrual deployment.
   fee-accrual-reconcile Verify the reviewed script update and recover a confirmed migration batch (no broadcast).
   fee-accrual-launch   Packages, composition, first bond and full staking migration.
@@ -164,7 +164,7 @@ run_forge_with_retries() {
 
 forge_script_base() {
   local script_path="$1"
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
+  local cmd=(forge script --use solar "$script_path" --rpc-url "$RPC_URL")
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi
@@ -310,7 +310,7 @@ run_fee_accrual() {
     fee_accrual_stage 01 04 read || return $?
     rh_fee_accrual_copy_core || return $?
     build_rehearsal_artifacts || return $?
-    run_forge_cmd forge build contracts/protocols/staking/rebasingVault/*.sol || return $?
+    run_forge_cmd forge build --use solar contracts/protocols/staking/rebasingVault/*.sol || return $?
     local pp ss
     while read -r pp ss; do
       fee_accrual_stage "$pp" "$ss" broadcast || return $?
@@ -430,7 +430,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# token-staking matches forge script: simulate unless --broadcast.
+# token-staking matches forge script --use solar: simulate unless --broadcast.
 if [[ "$COMMAND" == "token-staking" || "$COMMAND" == "token-staking-fund" ]] && [[ "$BROADCAST_EXPLICIT" -eq 0 ]]; then
   BROADCAST_FLAG=""
 fi

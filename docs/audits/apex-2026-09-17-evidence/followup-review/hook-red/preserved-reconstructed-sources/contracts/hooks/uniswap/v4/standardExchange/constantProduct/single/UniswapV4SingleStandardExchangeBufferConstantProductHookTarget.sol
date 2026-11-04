@@ -279,14 +279,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
         if (amount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return amount;
-        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.pairToken), amount, IERC20(l.standardExchange)
+        if (l.pairToken == l.standardExchange) return amount;(uint256 minOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
         if (minOut == 0) return 0;
-        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
-        seOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
-            IERC20(l.pairToken),
+        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);(seOut,) = IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.pairToken),
             amount,
             IERC20(l.standardExchange),
             minOut,
@@ -313,14 +309,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
         if (seIn > cap) seIn = cap;
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return seIn;
-        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
+        if (l.pairToken == l.standardExchange) return seIn;(uint256 minOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
         );
         // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
-        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
-        pairOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
-            IERC20(l.standardExchange),
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);(pairOut,) = IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.standardExchange),
             seIn,
             IERC20(l.pairToken),
             minOut,
@@ -393,9 +385,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
         for (uint256 i; i < 3; ++i) {
             uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) return;
-            uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-                IERC20(l.pairToken), excess, IERC20(l.standardExchange)
+            uint256 excess = bal - Repo.MAX_DUST_WEI;(uint256 preview,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), excess, IERC20(l.standardExchange)
             );
             if (preview == 0) return;
             _bufferPair(excess);
@@ -683,10 +673,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
-        return _quoteExactIn(zfo, amountIn);
+        return (_quoteExactIn(zfo, amountIn), 0);
     }
 
     function exchangeIn(
@@ -697,7 +687,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         _requireDeadline(deadline);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         // Quote on pre-pull book so inventory does not reprice the trade mid-path.
@@ -1481,10 +1471,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
     function _previewUnwrapSe(uint256 seAmount) internal view returns (uint256) {
         if (seAmount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return seAmount;
-        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.standardExchange), seAmount, IERC20(l.pairToken)
+        if (l.pairToken == l.standardExchange) return seAmount;(uint256 quotedAmountOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.standardExchange), seAmount, IERC20(l.pairToken)
         );
+        return quotedAmountOut;
     }
 
     /// @dev D60: rated valuation of `seBal` shares (pair units).

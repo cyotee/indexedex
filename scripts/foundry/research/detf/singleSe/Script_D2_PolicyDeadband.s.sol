@@ -51,9 +51,7 @@ contract Script_D2_PolicyDeadband is Script {
             // Mint should fail when !isMintingAllowed.
             uint256 seBal = fixture.fundSeShares(user, 50e18);
             vm.startPrank(user);
-            fixture.seShare().approve(fixture.detf(), seBal);
-            try fixture.detfExchangeIn().exchangeIn(
-                fixture.seShare(),
+            fixture.seShare().approve(fixture.detf(), seBal);try fixture.detfExchangeIn().exchangeIn(fixture.seShare(),
                 seBal,
                 IERC20(fixture.detf()),
                 0,

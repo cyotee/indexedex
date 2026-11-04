@@ -1,6 +1,6 @@
 ---
 name: foundry-script-ops
-description: "Prepare and simulate multi-step Forge scripts using IndexedEx artifact, deployment and transaction-authorization rules."
+description: "Prepare and simulate multi-step Forge scripts using IndexedEx artifact, deployment and transaction-authorization rules. forge script uses --use solar."
 ---
 
 ## IndexedEx integration (2026-10-19)
@@ -57,10 +57,10 @@ production deployment flows; this small example does not replace them.
 
 ```bash
 # dry run (no broadcast)
-forge script script/AgentOp.s.sol:AgentOp --rpc-url "$ETH_RPC_URL" -vvvv
+forge script --use solar script/AgentOp.s.sol:AgentOp --rpc-url "$ETH_RPC_URL" -vvvv
 
 # broadcast after user confirmation
-forge script script/AgentOp.s.sol:AgentOp \
+forge script --use solar script/AgentOp.s.sol:AgentOp \
   --rpc-url "$ETH_RPC_URL" \
   --broadcast \
   -vvvv
@@ -79,4 +79,4 @@ forge script script/AgentOp.s.sol:AgentOp \
 |------|------|
 | Single view | `cast call` |
 | Single tx | `cast send` |
-| Multi-step sequence | `forge script --broadcast` |
+| Multi-step sequence | `forge script --use solar --broadcast` |

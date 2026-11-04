@@ -31,9 +31,7 @@ abstract contract Adversarial_ComposedStable_SecRemediation_Decimals is TestBase
         uint256 amount_ = _payment();
         hostile.mint(bob, amount_ * 2);
         vm.startPrank(bob);
-        hostile.approve(deployedDetfVault, amount_ * 2);
-        uint256 control_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(hostile, amount_, detfToken, 0, bob, false, block.timestamp);
+        hostile.approve(deployedDetfVault, amount_ * 2);(uint256 control_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(hostile, amount_, detfToken, 0, bob, false, block.timestamp);
         vm.stopPrank();
         assertGt(control_, 0, "same route succeeds without callback");
         bytes memory call_ = nestedBond_
@@ -52,9 +50,7 @@ abstract contract Adversarial_ComposedStable_SecRemediation_Decimals is TestBase
                 .bond(hostile, amount_, 30 days, bob, block.timestamp);
             assertGt(principal_, 0);
             assertEq(IDetfBondNFT(address(bondNFTVault)).ownerOf(id_), bob);
-        } else {
-            uint256 paid_ = IStandardExchangeIn(deployedDetfVault)
-                .exchangeIn(hostile, amount_, detfToken, 0, bob, false, block.timestamp);
+        } else {(uint256 paid_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(hostile, amount_, detfToken, 0, bob, false, block.timestamp);
             assertGt(paid_, 0);
             assertEq(detfToken.balanceOf(bob), control_ + paid_);
         }
@@ -123,8 +119,7 @@ abstract contract Adversarial_ComposedStable_SecRemediation_Decimals is TestBase
         vm.startPrank(bob);
         hostile.transfer(deployedDetfVault, amount_);
         hostile.approve(deployedDetfVault, amount_);
-        vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(hostile, amount_, detfToken, 0, bob, false, block.timestamp);
+        vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));IStandardExchangeIn(deployedDetfVault).exchangeIn(hostile, amount_, detfToken, 0, bob, false, block.timestamp);
         vm.stopPrank();
         assertEq(hostile.balanceOf(deployedDetfVault), amount_);
         assertEq(detfToken.balanceOf(bob), 0);

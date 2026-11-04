@@ -159,11 +159,9 @@ contract StandardExchangeStages is TestBase_VaultComponents {
 
     function _assertDeposit(address vault, IERC20 asset, uint256 amount) private {
         assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(vault));
-        asset.approve(vault, amount);
-        uint256 quoted = IStandardExchangeIn(vault).previewExchangeIn(asset, amount, IERC20(vault));
+        asset.approve(vault, amount);(uint256 quoted,) = IStandardExchangeIn(vault).previewExchangeIn(asset, amount, IERC20(vault));
         assertGt(quoted, 0);
-        uint256 heldBefore = IERC20(vault).balanceOf(address(this));
-        uint256 received = IStandardExchangeIn(vault).exchangeIn(asset, amount, IERC20(vault), quoted, address(this), false, block.timestamp);
+        uint256 heldBefore = IERC20(vault).balanceOf(address(this));(uint256 received,) = IStandardExchangeIn(vault).exchangeIn(asset, amount, IERC20(vault), quoted, address(this), false, block.timestamp);
         assertEq(received, quoted);
         assertEq(IERC20(vault).balanceOf(address(this)) - heldBefore, received);
     }

@@ -23,17 +23,18 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
     function _disabledExit(bool packageWide) private {
         _bootstrap(); _disable(true, packageWide);
         _fund(asset0, address(this), 1 ether); asset0.approve(address(subject), 1 ether);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(subject)));
-        subject.exchangeIn(asset0, 1 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(subject)));subject.exchangeIn(asset0, 1 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
         uint256 shares = subject.totalSupply() / 20;
         subject.approve(address(subject), shares);
-        assertGt(subject.exchangeIn(IERC20(address(subject)), shares, asset1, 0, address(this), false, block.timestamp), 0);
+        (uint256 exchangeAmountOut1,) = subject.exchangeIn(IERC20(address(subject)), shares, asset1, 0, address(this), false, block.timestamp);
+        assertGt(exchangeAmountOut1, 0);
         bytes memory data = abi.encodeCall(IStandardExchangeOut.exchangeOut,
             (IERC20(address(subject)), shares, asset1, 1 ether, address(this), true, block.timestamp));
          subject.transfer(address(subject), shares);
         assertGt(_execute(data), 0);
         _disable(false, packageWide);
-        assertGt(subject.exchangeIn(asset0, 1 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
+        (uint256 exchangeAmountOut2,) = subject.exchangeIn(asset0, 1 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        assertGt(exchangeAmountOut2, 0);
     }
     function test_nativeSYCallerRedemptionNeedsNoAllowance() public {
         _bootstrap();
@@ -62,8 +63,7 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         vm.startPrank(FALSE_DEPOSITOR);
         // R2.4: false depositor holds no shares/allowance -> ERC20InsufficientAllowance 0xfb8f41b2
         // (dynamic args; selector pinned). Bare expectRevert() masked the real revert.
-        vm.expectPartialRevert(bytes4(0xfb8f41b2));
-        subject.exchangeIn(IERC20(address(subject)), 1 ether, asset1, 0, FALSE_DEPOSITOR, false, block.timestamp);
+        vm.expectPartialRevert(bytes4(0xfb8f41b2));subject.exchangeIn(IERC20(address(subject)), 1 ether, asset1, 0, FALSE_DEPOSITOR, false, block.timestamp);
         vm.stopPrank();
         assertEq(subject.totalSupply(), supply);
         assertEq(subject.balanceOf(address(subject)), 2 ether);
@@ -194,7 +194,8 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         token.setCallback(address(subject), abi.encodeCall(IStandardizedYield.redeem,
             (FALSE_DEPOSITOR, 1 ether, address(asset0), 0, false)));
         _fund(asset1, address(this), 10 ether); asset1.approve(address(subject), 10 ether);
-        assertGt(subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
+        (uint256 exchangeAmountOut3,) = subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        assertGt(exchangeAmountOut3, 0);
         assertEq(token.callbackError(), abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
         assertEq(subject.balanceOf(address(token)), 2 ether); assertEq(asset0.balanceOf(FALSE_DEPOSITOR), 0);
     }
@@ -203,7 +204,8 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         DeliveryTestToken token = DeliveryTestToken(address(asset1));
         token.setCallback(address(subject), _depositCall(asset1, 1 ether, FALSE_DEPOSITOR));
         _fund(asset1, address(this), 10 ether); asset1.approve(address(subject), 10 ether);
-        assertGt(subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
+        (uint256 exchangeAmountOut4,) = subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        assertGt(exchangeAmountOut4, 0);
         assertEq(token.callbackError(), abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
     }
@@ -215,8 +217,7 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         uint256 received=IStandardizedYield(address(subject)).redeem(FALSE_DEPOSITOR,1 ether,address(asset1),0,true);
         assertEq(asset1.balanceOf(FALSE_DEPOSITOR),received);assertEq(subject.balanceOf(address(subject)),2 ether);
         // R2.4: false depositor holds no shares/allowance -> ERC20InsufficientAllowance 0xfb8f41b2.
-        vm.prank(FALSE_DEPOSITOR);vm.expectPartialRevert(bytes4(0xfb8f41b2));
-        subject.exchangeIn(IERC20(address(subject)),1 ether,asset1,0,FALSE_DEPOSITOR,false,block.timestamp);
+        vm.prank(FALSE_DEPOSITOR);vm.expectPartialRevert(bytes4(0xfb8f41b2));subject.exchangeIn(IERC20(address(subject)),1 ether,asset1,0,FALSE_DEPOSITOR,false,block.timestamp);
         assertEq(subject.balanceOf(address(subject)),2 ether);
     }
 }

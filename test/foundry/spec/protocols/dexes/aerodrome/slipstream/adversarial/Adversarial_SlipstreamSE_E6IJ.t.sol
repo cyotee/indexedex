@@ -50,9 +50,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         pairToken0.mint(attacker, AMOUNT_IN);
 
         vm.startPrank(attacker);
-        pairToken0.approve(address(vault), AMOUNT_IN);
-        uint256 sharesOut = vault.exchangeIn(
-            IERC20(address(pairToken0)),
+        pairToken0.approve(address(vault), AMOUNT_IN);(uint256 sharesOut,) = vault.exchangeIn(IERC20(address(pairToken0)),
             AMOUNT_IN,
             IERC20(address(vault)),
             0,
@@ -78,9 +76,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         pairToken0.mint(address(vault), BOOKED);
         pairToken0.mint(attacker, AMOUNT_IN);
         vm.startPrank(attacker);
-        pairToken0.approve(address(vault), AMOUNT_IN);
-        vault.exchangeIn(
-            IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(pairToken1)), 0, attacker, false, _deadline()
+        pairToken0.approve(address(vault), AMOUNT_IN);vault.exchangeIn(IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(pairToken1)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -133,9 +129,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
         pairToken0.mint(attacker, AMOUNT_IN);
         vm.startPrank(attacker);
-        pairToken0.approve(address(vault), AMOUNT_IN);
-        vault.exchangeIn(
-            IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(vault)), 0, attacker, false, _deadline()
+        pairToken0.approve(address(vault), AMOUNT_IN);vault.exchangeIn(IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(vault)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -144,9 +138,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         uint256 attSharesBefore = IERC20(address(vault)).balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(
-            IERC20(address(pairToken0)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(IERC20(address(pairToken0)),
             claimed,
             IERC20(address(vault)),
             0,
@@ -159,9 +151,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
-        );
-        vault.exchangeIn(
-            IERC20(address(pairToken0)),
+        );vault.exchangeIn(IERC20(address(pairToken0)),
             claimed,
             IERC20(address(vault)),
             0,
@@ -182,9 +172,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
 
         pairToken0.mint(attacker, AMOUNT_IN);
         vm.startPrank(attacker);
-        pairToken0.approve(address(vault), AMOUNT_IN);
-        vault.exchangeIn(
-            IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(pairToken1)), 0, attacker, false, _deadline()
+        pairToken0.approve(address(vault), AMOUNT_IN);vault.exchangeIn(IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(pairToken1)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         uint256 invBefore = pairToken0.balanceOf(address(vault));
@@ -285,10 +273,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         address exchangeOutFacet_ =
             IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
         assertTrue(exchangeInFacet_ != address(0) && exchangeInFacet_ != address(vault), "proxy cut in");
-        assertTrue(exchangeOutFacet_ != address(0) && exchangeOutFacet_ != address(vault), "proxy cut out");
-
-        uint256 previewIn_ = IStandardExchangeIn(address(vault)).previewExchangeIn(
-            IERC20(address(pairToken0)), 1 ether, IERC20(address(pairToken1))
+        assertTrue(exchangeOutFacet_ != address(0) && exchangeOutFacet_ != address(vault), "proxy cut out");(uint256 previewIn_,) = IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(pairToken0)), 1 ether, IERC20(address(pairToken1))
         );
         assertGt(previewIn_, 0, "J3 previewExchangeIn live on proxy");
 
@@ -298,9 +283,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(pairToken0)), 1 ether, IERC20(address(pairToken1)), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(pairToken0)), 1 ether, IERC20(address(pairToken1)), 0, attacker, true, _deadline()
         );
     }
 
@@ -343,8 +326,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         pairToken0.mint(attacker, 1e18);
         vm.startPrank(attacker);
         pairToken0.transfer(address(vault), 1e18);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(IERC20(address(pairToken0)), 1e18, IERC20(address(pairToken1)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(IERC20(address(pairToken0)), 1e18, IERC20(address(pairToken1)), 0, attacker, true, _deadline());
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeOut(IERC20(address(pairToken0)), 1e18, IERC20(address(pairToken1)), 1e15, attacker, true, _deadline());
         vm.stopPrank();

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
@@ -60,9 +61,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAsserti
         assertEq(sy_.totalSupply(), supply_, "BPT supply is the Vault ledger");
         uint256 shares_ = supply_ * 45 / 100;
         IStandardExchange se_ = IStandardExchange(pool_);
-        for (uint256 i_; i_ < tokens_.length; ++i_) {
-            cases_[i_].depositQuote = se_.previewExchangeIn(IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_));
-            cases_[i_].redeemQuote = se_.previewExchangeIn(IERC20(pool_), shares_, IERC20(tokens_[i_]));
+        for (uint256 i_; i_ < tokens_.length; ++i_) {(cases_[i_].depositQuote,) = se_.previewExchangeIn(IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_));(cases_[i_].redeemQuote,) = se_.previewExchangeIn(IERC20(pool_), shares_, IERC20(tokens_[i_]));
             assertGt(cases_[i_].depositQuote, 0);
             assertGt(cases_[i_].redeemQuote, 0);
         }
@@ -72,8 +71,8 @@ abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAsserti
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             assertEq(sy_.previewDeposit(tokens_[i_], cases_[i_].amount), cases_[i_].depositQuote);
             assertEq(sy_.previewRedeem(tokens_[i_], shares_), cases_[i_].redeemQuote);
-            assertEq(se_.previewExchangeIn(IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_)), cases_[i_].depositQuote);
-            assertEq(se_.previewExchangeIn(IERC20(pool_), shares_, IERC20(tokens_[i_])), cases_[i_].redeemQuote);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(tokens_[i_]), cases_[i_].amount, IERC20(pool_)), cases_[i_].depositQuote);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(pool_), shares_, IERC20(tokens_[i_])), cases_[i_].redeemQuote);
         }
     }
 
@@ -86,15 +85,13 @@ abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAsserti
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             assertEq(sy_.previewDeposit(tokens_[i_], 0), 0);
             assertEq(sy_.previewRedeem(tokens_[i_], 0), 0);
-            assertEq(se_.previewExchangeIn(IERC20(tokens_[i_]), 0, IERC20(pool_)), 0);
-            assertEq(se_.previewExchangeIn(IERC20(pool_), 0, IERC20(tokens_[i_])), 0);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(tokens_[i_]), 0, IERC20(pool_)), 0);
+            assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(pool_), 0, IERC20(tokens_[i_])), 0);
         }
         assertEq(sy_.previewDeposit(address(0), 1), 0);
         assertEq(sy_.previewRedeem(address(0), 1), 0);
-        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(0), pool_));
-        se_.previewExchangeIn(IERC20(address(0)), 0, IERC20(pool_));
-        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", pool_, address(0)));
-        se_.previewExchangeIn(IERC20(pool_), 0, IERC20(address(0)));
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(0), pool_));ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(address(0)), 0, IERC20(pool_));
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", pool_, address(0)));ExchangeInAmount.previewOut(IStandardExchangeIn(address(se_)), IERC20(pool_), 0, IERC20(address(0)));
     }
 
     function test_poolSYFullSupplyLiquidation_everyAsset() public {
@@ -105,8 +102,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAsserti
         for (uint256 i_; i_ < outputs_.length; ++i_) {
             uint256 quote_ = sy_.previewRedeem(outputs_[i_], supply_);
             assertGt(quote_, 0, "whole native BPT supply remains quotable");
-            assertEq(quote_, IStandardExchange(address(sy_)).previewExchangeIn(
-                IERC20(address(sy_)), supply_, IERC20(outputs_[i_])
+            assertEq(quote_, ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchange(address(sy_)))), IERC20(address(sy_)), supply_, IERC20(outputs_[i_])
             ), "SY and SE whole-supply valuation");
         }
     }
@@ -187,8 +183,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAsserti
             assertEq(sy_.previewRedeem(address(tokens_[i_]), 1), 0, "unsupported buffer redemption quote");
             vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidSYToken(address)", address(tokens_[i_]))); sy_.deposit(actor_, address(tokens_[i_]), 1, 0);
             vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidSYToken(address)", address(tokens_[i_]))); sy_.redeem(actor_, 1, address(tokens_[i_]), 0, false);
-            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(tokens_[i_]), address(sy_)));
-            IStandardExchange(address(sy_)).exchangeIn(tokens_[i_], 1, IERC20(address(sy_)), 0, actor_, false, block.timestamp);
+            vm.prank(actor_); vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(tokens_[i_]), address(sy_)));ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchange(address(sy_)))), tokens_[i_], 1, IERC20(address(sy_)), 0, actor_, false, block.timestamp);
             assertEq(tokens_[i_].balanceOf(actor_), before_);
         }
     }
@@ -300,8 +295,7 @@ abstract contract BalancerPoolNativeSYBehavior is Test, NativeSYExecutionAsserti
         vm.startPrank(actor_); vm.expectRevert(); sy_.deposit(actor_, token_, amount_, q_ + 1); vm.stopPrank();
         assertEq(IERC20(token_).balanceOf(actor_), before_); assertEq(sy_.totalSupply(), supply_);
         vm.prank(actor_); IERC20(token_).transfer(address(sy_), amount_);
-        vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnsupportedPoolPretransfer.selector);
-        IStandardExchange(address(sy_)).exchangeIn(IERC20(token_), amount_, IERC20(address(sy_)), 0, address(this), true, block.timestamp);
+        vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnsupportedPoolPretransfer.selector);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchange(address(sy_)))), IERC20(token_), amount_, IERC20(address(sy_)), 0, address(this), true, block.timestamp);
         BalancerV3PoolStandardExchangeTarget.LiquidityRequest memory p_ = BalancerV3PoolStandardExchangeTarget.LiquidityRequest(IERC20(token_), IERC20(address(sy_)), amount_, 0, address(this), false);
         vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnauthorizedPoolLiquidity.selector);
         BalancerV3PoolStandardExchangeTarget(address(sy_)).executePoolLiquidity(p_);

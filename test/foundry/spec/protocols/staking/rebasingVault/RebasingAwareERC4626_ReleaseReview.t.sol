@@ -106,9 +106,7 @@ contract RebasingAwareERC4626_ReleaseReview is TestBase_RebasingAwareERC4626 {
     function test_API07_receiverValidationPrecedesDeadlineAndPretransfer() public {
         vm.warp(10);
         vm.prank(alice);
-        vm.expectRevert(abi.encodeWithSelector(IRebasingAwareERC4626.InvalidReceiver.selector, address(0)));
-        IStandardExchangeIn(address(vault))
-            .exchangeIn(IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, address(0), true, 1);
+        vm.expectRevert(abi.encodeWithSelector(IRebasingAwareERC4626.InvalidReceiver.selector, address(0)));IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, address(0), true, 1);
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(IRebasingAwareERC4626.InvalidReceiver.selector, address(vault)));
         IStandardExchangeOut(address(vault))
@@ -312,9 +310,7 @@ contract RebasingAwareERC4626_ReleaseReview is TestBase_RebasingAwareERC4626 {
             vault.deposit(1e18, recipient);
         } else if (route == 1) {
             vault.mint(1e28, recipient);
-        } else if (route == 2) {
-            IStandardExchangeIn(address(vault))
-                .exchangeIn(IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, recipient, false, block.timestamp);
+        } else if (route == 2) {IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, recipient, false, block.timestamp);
         } else if (route == 3) {
             IStandardExchangeOut(address(vault))
                 .exchangeOut(

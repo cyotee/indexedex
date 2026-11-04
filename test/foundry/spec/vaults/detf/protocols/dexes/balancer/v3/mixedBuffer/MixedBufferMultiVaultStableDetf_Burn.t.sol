@@ -31,9 +31,7 @@ contract MixedBufferMultiVaultStableDetf_Burn_Test is TestBase_MixedBufferMultiV
     function test_burn_to_vaultShare() public virtual {
         uint256 minted_ = _mintDetfFromBuffer(detf, bob, _fixtureAmount(100e18));
         vm.startPrank(bob);
-        IERC20(detf).approve(detf, minted_);
-        uint256 out_ = detfExchangeIn.exchangeIn(
-            IERC20(detf), minted_ / 2, seShares[0], 0, bob, false, block.timestamp + 1 hours
+        IERC20(detf).approve(detf, minted_);(uint256 out_,) = detfExchangeIn.exchangeIn(IERC20(detf), minted_ / 2, seShares[0], 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(out_ > 0, "share out");

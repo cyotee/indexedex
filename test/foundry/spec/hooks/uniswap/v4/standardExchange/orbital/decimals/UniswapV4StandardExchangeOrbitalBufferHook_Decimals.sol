@@ -217,15 +217,11 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
 
     function test_exchangeIn_previewEqualsExec() public {
         _seedThreeLegHuman(500);
-        uint256 amountIn = _u0(5);
-        uint256 preview = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(token0)), amountIn, IERC20(address(token1))
+        uint256 amountIn = _u0(5);(uint256 preview,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(token0)), amountIn, IERC20(address(token1))
         );
         assertGt(preview, 0);
         uint256 balBefore = token1.balanceOf(user);
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             amountIn,
             IERC20(address(token1)),
             preview,

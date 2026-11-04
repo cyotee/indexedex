@@ -97,10 +97,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
         assertTrue(lpBalance > 0, "Should have LP tokens after providing liquidity");
 
-        IERC20(address(pool)).approve(address(vault), lpBalance);
-
-        uint256 sharesReceived = vault.exchangeIn(
-            IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(pool)).approve(address(vault), lpBalance);(uint256 sharesReceived,) = vault.exchangeIn(IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
         );
 
         assertTrue(sharesReceived > 0, "Should receive shares");
@@ -112,9 +109,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
         _generateFees();
 
         // Trigger compound via another deposit
-        aeroBalancedTokenA.approve(address(vault), _uA(1) / 10);
-        vault.exchangeIn(
-            IERC20(address(aeroBalancedTokenA)),
+        aeroBalancedTokenA.approve(address(vault), _uA(1) / 10);vault.exchangeIn(IERC20(address(aeroBalancedTokenA)),
             _uA(1) / 10,
             IERC20(address(vault)),
             0,
@@ -135,9 +130,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // Initial deposit
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
-        IERC20(address(pool)).approve(address(vault), lpBalance);
-        uint256 initialShares = vault.exchangeIn(
-            IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(pool)).approve(address(vault), lpBalance);(uint256 initialShares,) = vault.exchangeIn(IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
         );
 
         // Get vault LP balance before fees
@@ -147,9 +140,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
         _generateFees();
 
         // Another deposit should trigger compound
-        aeroBalancedTokenA.approve(address(vault), _uA(1));
-        vault.exchangeIn(
-            IERC20(address(aeroBalancedTokenA)),
+        aeroBalancedTokenA.approve(address(vault), _uA(1));vault.exchangeIn(IERC20(address(aeroBalancedTokenA)),
             _uA(1),
             IERC20(address(vault)),
             0,
@@ -177,9 +168,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // Initial deposit
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
-        IERC20(address(pool)).approve(address(vault), lpBalance);
-        vault.exchangeIn(
-            IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(pool)).approve(address(vault), lpBalance);vault.exchangeIn(IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
         );
 
         // Get vault LP balance before
@@ -189,9 +178,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
         _generateFees();
 
         // Trigger compound via deposit
-        aeroBalancedTokenA.approve(address(vault), _uA(1));
-        vault.exchangeIn(
-            IERC20(address(aeroBalancedTokenA)),
+        aeroBalancedTokenA.approve(address(vault), _uA(1));vault.exchangeIn(IERC20(address(aeroBalancedTokenA)),
             _uA(1),
             IERC20(address(vault)),
             0,
@@ -218,9 +205,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // Initial deposit
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
-        IERC20(address(pool)).approve(address(vault), lpBalance);
-        vault.exchangeIn(
-            IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(pool)).approve(address(vault), lpBalance);vault.exchangeIn(IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
         );
 
         // Generate fees
@@ -231,10 +216,9 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // We expect the event to be emitted (but can't predict exact amounts)
         vm.expectEmit(false, false, false, false, address(vault));
-        emit IFeeCompounding.FeesClaimed(0, 0); // We don't check exact values
+        emit IFeeCompounding.FeesClaimed(0, 0);// We don't check exact values
 
-        vault.exchangeIn(
-            IERC20(address(aeroBalancedTokenA)),
+        vault.exchangeIn(IERC20(address(aeroBalancedTokenA)),
             _uA(1),
             IERC20(address(vault)),
             0,
@@ -255,9 +239,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // Initial deposit
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
-        IERC20(address(pool)).approve(address(vault), lpBalance);
-        uint256 shares = vault.exchangeIn(
-            IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(pool)).approve(address(vault), lpBalance);(uint256 shares,) = vault.exchangeIn(IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
         );
 
         assertTrue(shares > 0, "Should have shares after deposit");
@@ -269,9 +251,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
         uint256 userLPBefore = IERC20(address(pool)).balanceOf(address(this));
 
         // Withdraw half of shares
-        IERC20(address(vault)).approve(address(vault), shares / 2);
-        uint256 lpReceived = vault.exchangeIn(
-            IERC20(address(vault)), shares / 2, IERC20(address(pool)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(vault)).approve(address(vault), shares / 2);(uint256 lpReceived,) = vault.exchangeIn(IERC20(address(vault)), shares / 2, IERC20(address(pool)), 0, address(this), false, block.timestamp + 1
         );
 
         // User should receive LP tokens from withdrawal
@@ -295,21 +275,13 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // Initial deposit
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
-        IERC20(address(pool)).approve(address(vault), lpBalance);
-        vault.exchangeIn(
-            IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
-        );
-
-        // Get preview before fees
-        uint256 previewBefore =
-            vault.previewExchangeIn(IERC20(address(aeroBalancedTokenA)), _uA(1), IERC20(address(vault)));
+        IERC20(address(pool)).approve(address(vault), lpBalance);vault.exchangeIn(IERC20(address(pool)), lpBalance, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        );// Get preview before fees
+        (uint256 previewBefore,) = vault.previewExchangeIn(IERC20(address(aeroBalancedTokenA)), _uA(1), IERC20(address(vault)));
 
         // Generate fees
-        _generateFees();
-
-        // Get preview after fees generated
-        uint256 previewAfter =
-            vault.previewExchangeIn(IERC20(address(aeroBalancedTokenA)), _uA(1), IERC20(address(vault)));
+        _generateFees();// Get preview after fees generated
+        (uint256 previewAfter,) = vault.previewExchangeIn(IERC20(address(aeroBalancedTokenA)), _uA(1), IERC20(address(vault)));
 
         // Preview should change to reflect pending compound value
         // (shares should be worth more due to pending fees)
@@ -331,9 +303,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
 
         // Initial deposit
         uint256 lpBalance = IERC20(address(pool)).balanceOf(address(this));
-        IERC20(address(pool)).approve(address(vault), lpBalance / 2);
-        vault.exchangeIn(
-            IERC20(address(pool)), lpBalance / 2, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
+        IERC20(address(pool)).approve(address(vault), lpBalance / 2);vault.exchangeIn(IERC20(address(pool)), lpBalance / 2, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1
         );
 
         // Do a small swap to generate minimal fees
@@ -350,9 +320,7 @@ abstract contract AerodromeStandardExchange_FeeCompound_Decimals is TestBase_Aer
         aerodromeRouter.swapExactTokensForTokens(_uA(1) / 100, 0, routes, address(this), block.timestamp + 1);
 
         // The compound should still work without reverting
-        aeroBalancedTokenA.approve(address(vault), _uA(1));
-        vault.exchangeIn(
-            IERC20(address(aeroBalancedTokenA)),
+        aeroBalancedTokenA.approve(address(vault), _uA(1));vault.exchangeIn(IERC20(address(aeroBalancedTokenA)),
             _uA(1),
             IERC20(address(vault)),
             0,

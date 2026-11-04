@@ -112,11 +112,8 @@ library RichnessLib {
 
     function _exchangeIn(address detf, address pair, uint256 amount, address bonder) private {
         _ensurePair(pair, amount, bonder);
-        IERC20(pair).approve(detf, amount);
-        uint256 preview = IStandardExchangeIn(detf).previewExchangeIn(IERC20(pair), amount, IERC20(detf));
-        require(preview > 0, "D47: preview pair->detf is 0");
-        IStandardExchangeIn(detf).exchangeIn(
-            IERC20(pair), amount, IERC20(detf), FixtureEconomics.SWAP_MIN_OUT, bonder, false, block.timestamp + 1 days
+        IERC20(pair).approve(detf, amount);(uint256 preview,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(pair), amount, IERC20(detf));
+        require(preview > 0, "D47: preview pair->detf is 0");IStandardExchangeIn(detf).exchangeIn(IERC20(pair), amount, IERC20(detf), FixtureEconomics.SWAP_MIN_OUT, bonder, false, block.timestamp + 1 days
         );
     }
 }

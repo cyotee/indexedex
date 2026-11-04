@@ -17,9 +17,7 @@ contract Adversarial_Guards_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
     function test_E5_zeroAmount_reverts() public {
         address instance_ = _openLiveN1();
         vm.startPrank(attacker);
-        vm.expectRevert(MultiVaultWeightedDetfRepo.ZeroAmount.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert(MultiVaultWeightedDetfRepo.ZeroAmount.selector);IStandardExchangeIn(instance_).exchangeIn(seShares[0], 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -31,9 +29,7 @@ contract Adversarial_Guards_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
         seShares[0].approve(instance_, shares_);
         vm.expectRevert(
             abi.encodeWithSelector(MultiVaultWeightedDetfRepo.DeadlineExpired.selector, block.timestamp - 1)
-        );
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], shares_, IERC20(instance_), 0, attacker, false, block.timestamp - 1
+        );IStandardExchangeIn(instance_).exchangeIn(seShares[0], shares_, IERC20(instance_), 0, attacker, false, block.timestamp - 1
         );
         vm.stopPrank();
         // H3: failed mint leaves no free inventory on DETF
@@ -48,9 +44,7 @@ contract Adversarial_Guards_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
         dai.approve(instance_, 1e18);
         vm.expectRevert(
             abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(dai), instance_)
-        );
-        IStandardExchangeIn(instance_).exchangeIn(
-            dai, 1e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        );IStandardExchangeIn(instance_).exchangeIn(dai, 1e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -60,9 +54,7 @@ contract Adversarial_Guards_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
         uint256 shares_ = _fundSeSharesLeg(0, attacker, 50e18);
         vm.startPrank(attacker);
         seShares[0].approve(instance_, shares_);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(seShares[0], shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(seShares[0].balanceOf(instance_), 0, "H3 residual");
@@ -70,14 +62,10 @@ contract Adversarial_Guards_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
 
     function test_H3_minOutTooHigh_leavesNoInventory() public {
         address instance_ = _openLiveN1();
-        uint256 shares_ = _fundSeSharesLeg(0, attacker, 30e18);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], shares_, IERC20(instance_));
+        uint256 shares_ = _fundSeSharesLeg(0, attacker, 30e18);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], shares_, IERC20(instance_));
         vm.startPrank(attacker);
         seShares[0].approve(instance_, shares_);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0],
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(seShares[0],
             shares_,
             IERC20(instance_),
             preview_ + 1e18, // impossible minOut

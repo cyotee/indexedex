@@ -51,9 +51,7 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
 
         // Host booked R for share after prior activity; mint path nested-funds SE with push+true.
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        uint256 out_ = openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, seShares_);(uint256 out_,) = openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -95,9 +93,8 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         assertTrue(U > 0, "T-NEST-2: need unbooked rateAsset surplus");
         uint256 claimOver_ = U + 1;
 
-        vm.expectRevert(); // TransferDeltaInsufficient or host InsufficientDeposit
-        seVault.exchangeIn(
-            IERC20(address(dai)),
+        vm.expectRevert();// TransferDeltaInsufficient or host InsufficientDeposit
+        seVault.exchangeIn(IERC20(address(dai)),
             claimOver_,
             seShare,
             0,
@@ -116,9 +113,7 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         // Drive a nested mint so SE end-syncs R == B for involved tokens.
         uint256 seShares_ = _fundSeShares(bob, 100e18);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, seShares_);openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -132,13 +127,11 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         uint256 U = Bh >= Rh ? Bh - Rh : 0;
         if (U >= 1) {
             // Reduce free surplus by not available easily — claim U+1 to force short.
-            vm.expectRevert();
-            seVault.exchangeIn(tokenIn_, U + 1, seShare, 0, bob, true, block.timestamp + 1 hours);
+            vm.expectRevert();seVault.exchangeIn(tokenIn_, U + 1, seShare, 0, bob, true, block.timestamp + 1 hours);
         } else {
             vm.expectRevert(
                 abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
-            );
-            seVault.exchangeIn(tokenIn_, 1, seShare, 0, bob, true, block.timestamp + 1 hours);
+            );seVault.exchangeIn(tokenIn_, 1, seShare, 0, bob, true, block.timestamp + 1 hours);
         }
     }
 
@@ -153,9 +146,7 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         // Static + runtime: production fund path must leave zero DETF→SE allowance.
         assertEq(seShare.allowance(openDetf, address(seVault)), 0, "pre");
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, seShares_);openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(seShare.allowance(openDetf, address(seVault)), 0, "T-NEST-4: no fund-path approve");
@@ -165,11 +156,9 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         uint256 amt_ = 50e18;
         dai.mint(bob, amt_);
         vm.startPrank(bob);
-        IERC20(address(dai)).approve(openDetf, amt_);
-        // May revert UnsupportedRoute if dai not allowlisted on this SE surface — then share path above is DoD.
-        try openExchangeIn.exchangeIn(
-            IERC20(address(dai)), amt_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
-        ) returns (uint256) {
+        IERC20(address(dai)).approve(openDetf, amt_);// May revert UnsupportedRoute if dai not allowlisted on this SE surface — then share path above is DoD.
+        try openExchangeIn.exchangeIn(IERC20(address(dai)), amt_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        ) returns (uint256, uint256) {
             assertEq(
                 IERC20(address(dai)).allowance(openDetf, address(seVault)),
                 0,
@@ -202,9 +191,7 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         _bootstrapOpen(alice, 1_000e18);
         uint256 seShares_ = _fundSeShares(bob, 120e18);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, seShares_);openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -228,9 +215,8 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         _bootstrapOpen(alice, 1_000e18);
         vm.startPrank(bob);
         // Outer entry rejects zero before nested host would be called.
-        vm.expectRevert(); // ZeroAmount
-        openExchangeIn.exchangeIn(
-            seShare, 0, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        vm.expectRevert();// ZeroAmount
+        openExchangeIn.exchangeIn(seShare, 0, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -293,9 +279,7 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         // After bootstrap + mint, seShare on DETF should be ~0 and R synced.
         uint256 seShares_ = _fundSeShares(bob, 60e18);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, seShares_);openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -306,9 +290,7 @@ contract SingleStandardExchangeDETF_NestedPush_Test is TestBase_SingleStandardEx
         assertEq(U, 0, "T-LOCAL-I1: no unbooked surplus");
 
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(bob);
-        openExchangeIn.exchangeIn(
-            seShare, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.prank(bob);openExchangeIn.exchangeIn(seShare, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
         );
         AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         vm.expectRevert(

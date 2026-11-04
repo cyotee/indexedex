@@ -1,0 +1,27 @@
+# V4 vault adaptation recommendation council
+
+- Owner/root: `01a18660-756f-7c57-b112-de7a5348283c`.
+- Date: 2026-10-29.
+- Authorization: user's explicit request for council judgment on the best adaptation base.
+- Scope: research and recommendation only; no implementation.
+- Prior completed research: `../v4-single-token-vaults-20261029-01a18660/REPORT.md`.
+- Mode: invoking-agent coordinator, full four-member roster.
+- Routes requested: Astra `chatgpt-subscription/gpt-6-astra:high`; Grok `xai/grok-4.7:xhigh`; MiniMax `minimax/MiniMax-M3`; Kimi `kimi-coding/k3.1-pro:high`.
+- Known original handles to resume: Astra `st_01a18665`; Grok `st_01a18666`; MiniMax `st_01a18667`; Kimi `st_01a18668`.
+- Tools: coordinator public web and read-only fetch available. Context7 resolve returned monthly quota exceeded; official primary sources used instead.
+- New run artifacts only. Earlier originals/reviews/report remain unchanged.
+- Phase: completed; all four originals and all four advisories settled, final report published.
+- Admission: four task_send delivery notifications confirmed same-task revival at run epoch 2. Initial transport was slow; no resend, substitute session or model fallback was used.
+- Completion subscription: `mon_8F84RY354M1W7QTR`, children status; initially no sessions matched while revival was pending.
+- Actual final Native snapshots: all completed, process mode, resolved routes match the requested four exact routes. Astra high, Grok xhigh, Kimi high; MiniMax adaptive setting not exposed. Parent/root and child IDs remain those recorded in the previous run and in REPORT.md.
+- Received originals: MiniMax, Grok and Kimi returned complete inline responses because apply_patch was inactive. Coordinator archived each verbatim through apply_patch at its assigned `members/<name>/response.md`; no original was rewritten to resolve technical errors.
+- One midpoint reconciliation: Astra status running, host running, lease held, resolved `chatgpt-subscription/gpt-6-astra:high`, child `01a18665-e8be-787f-accc-675875115506`. Completion channel remains active; no duplicate launch.
+- Coordinator source verification is recorded in `coordinator/source-notes.md`, including corrections required for categorical PositionManager/transient-state claims and the distinction between reference rate and executable payout.
+- Astra original saved by its author at `members/astra/response.md`; coordinator read the complete 293-line original. All four substantive originals are now available. No silent missing-member synthesis.
+- Frozen draft: `coordinator/draft.md`, revision `v4-adaptation-r1`. All four same-task advisory continuations admitted at run epoch 3; no extra initial assignments or second advisory round.
+- Advisory assignments admit the complete draft, three peer originals and narrow primary-source checks. Only own `feedback.md` may be written with apply_patch; inactive tool means complete inline response archived by coordinator.
+- Interim artifact reconciliation found all four originals and no feedback yet; completion was determined from later Native settlement, not file appearance. All final artifacts are recorded below.
+- Final advisory results: Astra SUPPORT WITH CORRECTIONS; Grok SUPPORT WITH CORRECTIONS; MiniMax SUPPORT WITH CORRECTIONS; Kimi SUPPORT. All four feedback artifacts are present; complete inline outputs from Grok/Kimi/MiniMax were archived verbatim by coordinator via apply_patch.
+- Final publication: `REPORT.md`, with Weir strategy/local implementation/lpTOKEN reference distinction, exact same-manager settlement boundary, ownership/idle/fee requirements, normalized executable one-share Rate Provider and separate amount-specific execution, alternative rate-policy attribution, open owner decisions, 13 public source entries and local locators.
+- `coordinator/resolution.md` records every material correction, rejected overstatement and withdrawn proposal. Frozen `coordinator/draft.md` remains unchanged. No second advisory round or silent route substitution.
+- Verification scope: public/local source and document checks only; no runtime transaction, new test/build, economic safety proof or composed-route gas measurement. No code/config/PRD change, Git commit, deployment, wallet operation or external message.

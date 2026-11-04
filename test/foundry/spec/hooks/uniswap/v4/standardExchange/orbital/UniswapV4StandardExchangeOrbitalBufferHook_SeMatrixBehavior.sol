@@ -227,9 +227,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         assertTrue(orbital.isBuffered(1), "leg 1 is buffered");
         assertTrue(orbital.isBuffered(2), "leg 2 is buffered");
         _assertThreeProductDoorsLive();
-        assertGt(IStandardExchangeIn(seUT0).previewExchangeIn(IERC20(face0), _f0(1), IERC20(seUT0)), 0, "SE0 quotes face0");
-        assertGt(IStandardExchangeIn(seUT1).previewExchangeIn(IERC20(face1), _f1(1), IERC20(seUT1)), 0, "SE1 quotes face1");
-        assertGt(IStandardExchangeIn(seUT2).previewExchangeIn(IERC20(face2), _f2(1), IERC20(seUT2)), 0, "SE2 quotes face2");
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(seUT0).previewExchangeIn(IERC20(face0), _f0(1), IERC20(seUT0));
+        assertGt(previewAmountOut1, 0, "SE0 quotes face0");
+        (uint256 previewAmountOut2,) = IStandardExchangeIn(seUT1).previewExchangeIn(IERC20(face1), _f1(1), IERC20(seUT1));
+        assertGt(previewAmountOut2, 0, "SE1 quotes face1");
+        (uint256 previewAmountOut3,) = IStandardExchangeIn(seUT2).previewExchangeIn(IERC20(face2), _f2(1), IERC20(seUT2));
+        assertGt(previewAmountOut3, 0, "SE2 quotes face2");
         assertGt(_seed(), 0, "first mint through the package-deployed hook");
         assertGt(_hookSeShares(0), 0, "hook holds SE0 shares after buffering");
         assertGt(_hookSeShares(1), 0, "hook holds SE1 shares after buffering");
@@ -296,8 +299,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         uint256 userFace = IERC20(face0).balanceOf(user);
         uint256 userShares = IERC20(hook).balanceOf(user);
         uint256 hookFace = _hookFace(face0);
-        uint256 inventoryBefore = _hookSeShares(0);
-        uint256 expectedInventory = IStandardExchangeIn(seUT0).previewExchangeIn(IERC20(face0), 1, IERC20(seUT0));
+        uint256 inventoryBefore = _hookSeShares(0);(uint256 expectedInventory,) = IStandardExchangeIn(seUT0).previewExchangeIn(IERC20(face0), 1, IERC20(seUT0));
         assertGt(expectedShares, 0, "positive one-unit fixture");
         assertEq(orbital.previewDepositSingle(face0, 1), expectedShares, "one-unit preview preserves positive shares");
         vm.prank(user);
@@ -348,8 +350,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         uint256 hookInBefore = tin.balanceOf(hook);
         uint256 outBefore = tout.balanceOf(rowEoa);
         vm.prank(rowEoa);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(tin, amountIn, tout, 0, rowEoa, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(tin, amountIn, tout, 0, rowEoa, true, block.timestamp + 1 hours);
         assertEq(tin.balanceOf(hook), hookInBefore, "no state change on reject");
         assertEq(tout.balanceOf(rowEoa), outBefore, "no output on reject");
     }
@@ -589,8 +590,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         uint256 amt = 10 * (10 ** uint256(IERC20Metadata_decimals(ot)));
         fx0.fundOther(rowBob, amt);
         vm.startPrank(rowBob);
-        IERC20(ot).approve(seUT0, amt);
-        IStandardExchangeIn(seUT0).exchangeIn(IERC20(ot), amt, IERC20(seUT0), 0, rowBob, false, block.timestamp + 1 hours);
+        IERC20(ot).approve(seUT0, amt);IStandardExchangeIn(seUT0).exchangeIn(IERC20(ot), amt, IERC20(seUT0), 0, rowBob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGe(IBasicVault(seUT0).reserveOfToken(face0), reservedFace, "reserved face leftover not consumed by an other-token caller (its own dust may add)");
     }

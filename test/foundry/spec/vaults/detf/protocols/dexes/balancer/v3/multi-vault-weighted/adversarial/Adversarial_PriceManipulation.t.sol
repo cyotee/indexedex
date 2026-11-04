@@ -39,18 +39,14 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
         _swapUnderlying(address(dai), address(usdc), 50_000e18, attacker);
 
         vm.startPrank(attacker);
-        seShares[0].approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
+        seShares[0].approve(instance_, sharesIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(detfOut_ > 0, "minted after skew");
 
         _swapUnderlying(address(usdc), address(dai), 50_000e18, attacker);
 
         vm.startPrank(attacker);
-        IERC20(instance_).approve(instance_, detfOut_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), detfOut_, seShares[0], 0, attacker, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, detfOut_);(uint256 sharesBack_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), detfOut_, seShares[0], 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         // Hard safety: victim token balance unchanged (no rebalance theft of balances)
@@ -98,14 +94,11 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
         assertEq(info_.isMintingAllowed(), synth_ > info_.mintThreshold(), "primary mint coupling");
         assertEq(info_.isBurningAllowed(), synth_ < info_.burnThreshold(), "primary burn coupling");
         assertFalse(info_.isMintingAllowed(), "primary mint closed");
-        uint256 shares_ = _fundSeSharesLeg(0, attacker, 20e18);
-        uint256 quote_ = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], shares_, IERC20(instance_));
+        uint256 shares_ = _fundSeSharesLeg(0, attacker, 20e18);(uint256 quote_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], shares_, IERC20(instance_));
         assertGt(quote_, 0, "funded fallback quote");
         uint256 supply_ = IERC20(instance_).totalSupply();
         vm.startPrank(attacker);
-        seShares[0].approve(instance_, shares_);
-        uint256 received_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShares[0], shares_, IERC20(instance_), quote_, attacker, false, block.timestamp + 1 hours);
+        seShares[0].approve(instance_, shares_);(uint256 received_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], shares_, IERC20(instance_), quote_, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(received_, quote_, "reserve swap matches preview");
         assertEq(IERC20(instance_).balanceOf(attacker), received_, "existing DETF delivered");

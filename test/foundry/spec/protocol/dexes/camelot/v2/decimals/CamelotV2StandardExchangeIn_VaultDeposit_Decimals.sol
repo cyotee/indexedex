@@ -73,12 +73,8 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 lpAmount = _lpAmount();
         address recipient = makeAddr("depositRecipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        assertTrue(preview > 0, "Preview should be non-zero");(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         assertTrue(sharesOut > 0, "Execution non-zero");
         assertEq(sharesOut, preview, "Route4 exec must match pre-deposit preview");
@@ -92,9 +88,7 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 lpAmount = _lpAmount();
         address recipient = makeAddr("r4PreviewRecipient");
 
-        lpToken.approve(address(vault), lpAmount);
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
         assertEq(sharesOut, preview, "R4: preview == execute against pre-deposit reserve");
         assertEq(vault.balanceOf(recipient), sharesOut, "R4 recipient shares");
     }
@@ -110,9 +104,7 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         require(lpAmount > MIN_TEST_AMOUNT, "large LP");
         address recipient = makeAddr("r4LargeRecipient");
 
-        lpToken.approve(address(vault), lpAmount);
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
         assertGt(preview, 0, "R4 large preview");
         assertEq(sharesOut, preview, "R4 large: exec == pre-deposit preview");
         assertEq(vault.balanceOf(recipient), sharesOut, "R4 large recipient");
@@ -132,9 +124,7 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
 
         uint256 senderLPBefore = lpToken.balanceOf(address(this));
         uint256 recipientSharesBefore = vault.balanceOf(recipient);
-        uint256 vaultLPBefore = lpToken.balanceOf(address(vault));
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        uint256 vaultLPBefore = lpToken.balanceOf(address(vault));(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore - lpAmount, "Sender LP decreased");
         assertEq(vault.balanceOf(recipient), recipientSharesBefore + sharesOut, "Recipient shares increased");
@@ -152,15 +142,12 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 lpAmount = _lpAmount();
 
         address depositor1 = makeAddr("depositor1");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares1 = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, depositor1, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares1,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, depositor1, false, _deadline());
         assertTrue(shares1 > 0, "First deposit receives shares");
 
         uint256 lpAmount2 = _lpAmount();
         address depositor2 = makeAddr("depositor2");
-        lpToken.approve(address(vault), lpAmount2);
-        uint256 preview2 = vault.previewExchangeIn(lpToken, lpAmount2, vaultToken);
-        uint256 shares2 = vault.exchangeIn(lpToken, lpAmount2, vaultToken, 0, depositor2, false, _deadline());
+        lpToken.approve(address(vault), lpAmount2);(uint256 preview2,) = vault.previewExchangeIn(lpToken, lpAmount2, vaultToken);(uint256 shares2,) = vault.exchangeIn(lpToken, lpAmount2, vaultToken, 0, depositor2, false, _deadline());
 
         assertTrue(shares2 > 0, "Second deposit receives shares");
         assertEq(shares2, preview2, "Second deposit preview == execute");
@@ -178,9 +165,7 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         address recipient = makeAddr("preDepositRecipient");
 
         lpToken.transfer(address(vault), lpAmount);
-        uint256 senderLPBefore = lpToken.balanceOf(address(this));
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
+        uint256 senderLPBefore = lpToken.balanceOf(address(this));(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
 
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore, "No additional transfer from sender");
         assertTrue(sharesOut > 0, "Received shares");
@@ -204,14 +189,12 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         lpToken.transfer(address(vault), donation);
         lpToken.approve(address(vault), lpAmount);
 
-        uint256 vaultLpBefore = lpToken.balanceOf(address(vault));
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        uint256 vaultLpBefore = lpToken.balanceOf(address(vault));(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
         assertGt(sharesOut, 0, "Honest pull still mints");
         assertEq(lpToken.balanceOf(address(vault)), vaultLpBefore + lpAmount, "Donation plus pull stay");
 
         vm.startPrank(recipient);
-        vaultToken.approve(address(vault), sharesOut);
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        vaultToken.approve(address(vault), sharesOut);(uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
         vm.stopPrank();
         assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
         assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
@@ -229,14 +212,11 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         require(donation > 0, "Donation too small");
         address recipient = makeAddr("recipient");
 
-        lpToken.transfer(address(vault), lpAmount + donation);
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
+        lpToken.transfer(address(vault), lpAmount + donation);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
         assertGt(sharesOut, 0, "Honest pretransfer still mints");
 
         vm.startPrank(recipient);
-        vaultToken.approve(address(vault), sharesOut);
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        vaultToken.approve(address(vault), sharesOut);(uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
         vm.stopPrank();
         assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
         assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
@@ -255,12 +235,8 @@ abstract contract CamelotV2StandardExchangeIn_VaultDeposit_Decimals is TestBase_
         address recipient = makeAddr("zapDepositRecipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
-        assertTrue(preview > 0, "Route6 preview non-zero");
-
-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
+        tokenA.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+        assertTrue(preview > 0, "Route6 preview non-zero");(uint256 sharesOut,) = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
 
         assertTrue(sharesOut > 0, "Route6 shares non-zero");
         assertEq(sharesOut, preview, "Route6 preview == execute");

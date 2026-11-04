@@ -105,8 +105,7 @@ contract SingleSEFundedStakingTest is TestBase_SingleStandardExchangeDETF, Funde
         assertEq(_staking().balanceOf(BONDER), principal_ + rewards_);
         assertEq(IERC20(detfInfo.reservePool()).balanceOf(address(nft_)), lp_);
         IStakedDETF staking_ = _staking();
-        vm.prank(BONDER);
-        staking_.exchangeIn(IERC20(address(staking_)), principal_ + rewards_, IERC20(detf), 0, BONDER, false, block.timestamp);
+        vm.prank(BONDER);staking_.exchangeIn(IERC20(address(staking_)), principal_ + rewards_, IERC20(detf), 0, BONDER, false, block.timestamp);
         assertEq(IERC20(detf).balanceOf(BONDER), principal_ + rewards_);
     }
 
@@ -121,13 +120,11 @@ contract SingleSEFundedStakingTest is TestBase_SingleStandardExchangeDETF, Funde
     function test_gatedMintSwapsWithoutIssuanceOrSeigniorage() public {
         _wideDeadband();
         assertFalse(detfInfo.isMintingAllowed());
-        uint256 shares_ = _fundSeShares(TRADER, 10 ether);
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(seShare, shares_, IERC20(detf));
+        uint256 shares_ = _fundSeShares(TRADER, 10 ether);(uint256 quote_,) = detfExchangeIn.previewExchangeIn(seShare, shares_, IERC20(detf));
         uint256 supply_ = IERC20(detf).totalSupply();
         uint256 backing_ = _staking().stakingState().accountedBacking;
         vm.startPrank(TRADER);
-        seShare.approve(detf, shares_);
-        uint256 paid_ = detfExchangeIn.exchangeIn(seShare, shares_, IERC20(detf), quote_, TRADER, false, block.timestamp);
+        seShare.approve(detf, shares_);(uint256 paid_,) = detfExchangeIn.exchangeIn(seShare, shares_, IERC20(detf), quote_, TRADER, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, quote_);
         assertGt(paid_, 0);
@@ -139,12 +136,9 @@ contract SingleSEFundedStakingTest is TestBase_SingleStandardExchangeDETF, Funde
         _wideDeadband();
         uint256 shares_ = _fundSeShares(TRADER, 10 ether);
         vm.startPrank(TRADER);
-        seShare.approve(detf, shares_);
-        uint256 bought_ = detfExchangeIn.exchangeIn(seShare, shares_, IERC20(detf), 0, TRADER, false, block.timestamp);
+        seShare.approve(detf, shares_);(uint256 bought_,) = detfExchangeIn.exchangeIn(seShare, shares_, IERC20(detf), 0, TRADER, false, block.timestamp);
         uint256 supply_ = IERC20(detf).totalSupply();
-        IERC20(detf).approve(detf, bought_);
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(IERC20(detf), bought_, seShare);
-        uint256 paid_ = detfExchangeIn.exchangeIn(IERC20(detf), bought_, seShare, quote_, TRADER, false, block.timestamp);
+        IERC20(detf).approve(detf, bought_);(uint256 quote_,) = detfExchangeIn.previewExchangeIn(IERC20(detf), bought_, seShare);(uint256 paid_,) = detfExchangeIn.exchangeIn(IERC20(detf), bought_, seShare, quote_, TRADER, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, quote_);
         assertGt(paid_, 0);
@@ -182,7 +176,7 @@ contract SingleSEFundedStakingTest is TestBase_SingleStandardExchangeDETF, Funde
         IDetfBondNFT nft_ = _nft(); IStakedDETF staking_ = _staking();
         vm.warp(nft_.positionOf(id_).startTimestamp + DEFAULT_MIN_LOCK / 2);
         vm.prank(BONDER); uint256 vested_ = nft_.claimPrincipal(id_, BONDER);
-        vm.prank(BONDER); staking_.exchangeIn(IERC20(address(staking_)), vested_, IERC20(detf), vested_, BONDER, false, block.timestamp);
+        vm.prank(BONDER);staking_.exchangeIn(IERC20(address(staking_)), vested_, IERC20(detf), vested_, BONDER, false, block.timestamp);
         vm.warp(block.timestamp + 25 hours);
         _assertFundedDonation(detf, nft_, staking_, IERC20(detf), vested_ / 100, BONDER, id_);
     }

@@ -73,9 +73,7 @@ contract DetfReentryTarget_BalV3StaSin {
         uint256 amountIn_,
         IERC20 tokenOut_,
         address recipient_
-    ) external {
-        IStandardExchangeIn(detf_).exchangeIn(
-            tokenIn_, amountIn_, tokenOut_, 0, recipient_, false, block.timestamp + 1 hours
+    ) external {IStandardExchangeIn(detf_).exchangeIn(tokenIn_, amountIn_, tokenOut_, 0, recipient_, false, block.timestamp + 1 hours
         );
     }
 
@@ -158,9 +156,7 @@ abstract contract SingleStandardExchangeDETF_Reentrancy_Decimals is TestBase_Sin
 
         // Control: unarmed mint succeeds.
         vm.startPrank(bob);
-        hostileShare.approve(outerDetf, amountIn_);
-        uint256 okOut_ = outerEx.exchangeIn(
-            IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
+        hostileShare.approve(outerDetf, amountIn_);(uint256 okOut_,) = outerEx.exchangeIn(IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(okOut_ > 0, "control mint works");
@@ -175,10 +171,9 @@ abstract contract SingleStandardExchangeDETF_Reentrancy_Decimals is TestBase_Sin
         uint256 balBefore_ = IERC20(outerDetf).balanceOf(bob);
         vm.startPrank(bob);
         hostileShare.approve(outerDetf, amountIn_);
-        // Outer mint may succeed after failed nested reentry (transfer completes); that is fine -
+        // Outer mint may succeed after failed nested reentry (transfer completes);that is fine -
         // the attack (nested mint under lock) must have been blocked with IsLocked.
-        outerEx.exchangeIn(
-            IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
+        outerEx.exchangeIn(IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -202,9 +197,7 @@ abstract contract SingleStandardExchangeDETF_Reentrancy_Decimals is TestBase_Sin
         hostileShare.arm(address(reentryTarget), reentry);
 
         vm.startPrank(bob);
-        hostileShare.approve(outerDetf, amountIn_);
-        outerEx.exchangeIn(
-            IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
+        hostileShare.approve(outerDetf, amountIn_);outerEx.exchangeIn(IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 

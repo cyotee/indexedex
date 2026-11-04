@@ -383,13 +383,13 @@ contract HostileStandardExchange {
         return true;
     }
 
-    function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external pure returns (uint256) {
-        return amountIn;
+function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external pure returns (uint256 amountOut, uint256 amountRefunded) {
+        return (amountIn, 0);
     }
 
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256, address recipient, bool, uint256)
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256, address recipient, bool, uint256)
         external
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         if (failExchangeIn) revert("HostileSE: exchangeIn");
         tokenIn.transferFrom(msg.sender, address(this), amountIn);

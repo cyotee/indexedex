@@ -1,0 +1,42 @@
+# Run record
+
+- Run: v4-pair-spec-fidelity-20261027-01a17d57
+- Owner: 01a17d57-ab12-74e2-b0aa-283ffbf92a1e
+- Authorization: explicit user request to council-audit the supplied report against Sourcify source.
+- Profile: review; full council; invoking-agent coordination.
+- Coordinator identity: invoking session; actual model not exposed by task metadata.
+- Native runtime: path exposes 5.1.48.
+- Ancestry: invoking root; no parent/depth environment exposed. Direct members need depth 1; configured council-member max_depth 2; no override changed.
+- Role: council-member exists in user Native config, no role model pin. Tools inherited; text retrieval supplied by coordinator.
+- MiniMax: forceAdaptiveThinking true observed in model override; credential type/billing unverified and not inspected.
+- Requested routes: Astra chatgpt-subscription/gpt-6-astra:high; Grok xai/grok-4.7:xhigh; MiniMax minimax/MiniMax-M3; Kimi kimi-coding/k3.1-pro:high.
+- Member attempts: initial 1 each.
+- Phase: complete; all eight requested turns settled; final, resolution and completion-evidence ledger published. Publication and preservation checks passed.
+- Kimi initial: completed; Native notification exposes council-member(kimi-coding/k3.1-pro), handle st_01a17d6b. Substantive response preserved at members/kimi/response.md.
+- Kimi evidence hash labels use the earlier original/HTTP-body hashes rather than archive hashes. Correct identity is evidence/manifest.md; no peer original changed.
+- MiniMax initial: completed; Native notification exposes council-member(minimax/MiniMax-M3), handle st_01a17d6a. Substantive response preserved at members/minimax/response.md.
+- MiniMax F-20 reviewed: manifest was corrected while initials ran; archived JSON minus one final newline exactly restores the fetched response and its original digest. No JSON re-serialization occurred. Claim that the fetched byte image is unrecoverable is refuted by coordinator integrity check.
+- MiniMax F-11 reviewed: interface warning is present at evidence/sources.md:840-842. Warning alone does not demonstrate unbacked liabilities or a source security property; exclude the asserted exploit conclusion from confirmed findings.
+- MiniMax reported unavailable apply_patch and use of write/edit for its assigned artifact; record as workflow deviation, not a defect in the reviewed specification.
+- Astra initial: completed; Native notification exposes council-member(chatgpt-subscription/gpt-6-astra), handle st_01a17d68. Substantive response preserved at members/astra/response.md. Findings support non-equivalence and qualify clone deployment as source-comment evidence only.
+- Grok initial: completed; Native notification exposes council-member(xai/grok-4.7), handle st_01a17d69. Substantive response preserved at members/grok/response.md.
+- Draft identity: pair-spec-fidelity-r1; coordinator/draft.md; immutable after advisory requests.
+- Advisory assignment: task_send continued all four original handles at run epoch 1; each owns members/<member>/feedback.md only. One pass, no fresh replacement or provider substitution.
+- Initial independent result: four reject source-equivalence; alternative-design completeness is not unanimously characterized.
+- Frozen draft SHA-256: 31c5cab73e3a62883c07a53f590255350a146617c67f5da8a348866562c99874 (coordinator independently reproduced Grok's reported digest).
+- Kimi advisory: SUPPORT, no changes requested.
+- Astra advisory: SUPPORT with two non-blocking precision corrections (zero-swap exits and operation-scoped native reservation terminology); coordinator rechecked both against source.
+- Grok advisory: support-with-reservations; preserve explicit uint128 callback result casts and acknowledge Grok's unusable apply_patch fallback as well; cast rechecked in source, no exploit/reachability assertion adopted.
+- Archive concern withdrawn in Grok feedback; Astra corrected its own presentation-newline attribution to archive-origin newline.
+- MiniMax advisory: support with requested changes; all R-C1 through R-C11 disposed in coordinator/resolution.md. Original archive-loss, demonstrated-liability, callback-sufficiency and general-FoT-safety statements expressly superseded by member feedback and coordinator resolution.
+- Final: REMEDIATION_PRD.md, identity pair-spec-fidelity-final-r2. Reviewed draft remains unchanged; final revisions are coordinator-owned.
+- Council result: full; four substantive independent originals, four substantive advisory responses, zero missing participants, zero provider substitutions, one advisory round.
+- Final source-rendering check: 28/28 source bodies identical between sources.md and JSON, no missing or extra paths.
+- Owning session for every handle: 01a17d57-ab12-74e2-b0aa-283ffbf92a1e.
+- Astra handle: st_01a17d68; Grok: st_01a17d69; MiniMax: st_01a17d6a; Kimi: st_01a17d6b.
+- Task admission: all four requested explicit routes admitted; actual provider identities and reasoning will be recorded from terminal Native metadata.
+- Completion subscription: mon_1C8XD8WVV2TB5VHV reached its default watcher deadline; replaced by persistent mon_1SD289XH76QJAS3J. All four children were running in that subscription's initial snapshot.
+- Validation limitation: JSON LSP unavailable because biome is not installed; no install attempted. JSON was parsed successfully before archival.
+- Source and specification identity: evidence/manifest.md.
+- No input/production edits authorized or made.
+

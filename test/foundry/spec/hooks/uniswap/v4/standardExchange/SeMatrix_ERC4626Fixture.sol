@@ -35,8 +35,7 @@ contract SeMatrix_ERC4626Fixture is SeMatrixFixture {
     function _seedSe() internal {
         uint256 one = 10 ** uint256(underlying.decimals());
         underlying.mint(address(this), one);
-        underlying.approve(seVault, one);
-        IStandardExchangeIn(seVault).exchangeIn(IERC20(address(underlying)), one, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours);
+        underlying.approve(seVault, one);IStandardExchangeIn(seVault).exchangeIn(IERC20(address(underlying)), one, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours);
     }
 
     function familyName() external pure override returns (string memory) {
@@ -100,8 +99,7 @@ contract SeMatrix_SimpleYieldERC4626ControlFixture is SeMatrixFixture {
         seVault = pkg.deployVault(IERC4626(address(protocolVault)));
         uint256 one = 10 ** uint256(underlying.decimals());
         underlying.mint(address(this), one);
-        underlying.approve(seVault, one);
-        IStandardExchangeIn(seVault).exchangeIn(IERC20(address(underlying)), one, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours);
+        underlying.approve(seVault, one);IStandardExchangeIn(seVault).exchangeIn(IERC20(address(underlying)), one, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours);
     }
 
     function familyName() external pure override returns (string memory) {

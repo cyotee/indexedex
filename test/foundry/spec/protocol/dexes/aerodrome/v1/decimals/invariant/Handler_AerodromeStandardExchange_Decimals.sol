@@ -66,9 +66,7 @@ contract Handler_AerodromeStandardExchange_Decimals is Test {
         uint256 amount = bound(amountSeed, lo, hi);
         tin.mint(actor, amount);
         vm.startPrank(actor);
-        tin.approve(address(vault), amount);
-        try IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tin)), amount, tout, 0, actor, false, _deadline()
+        tin.approve(address(vault), amount);try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tin)), amount, tout, 0, actor, false, _deadline()
         ) {
             unchecked {
                 ++ghost_swapCount;
@@ -88,9 +86,7 @@ contract Handler_AerodromeStandardExchange_Decimals is Test {
         uint256 lpFloor = 1e3;
         if (lpBal < lpFloor) {
             vm.startPrank(actor);
-            tokenA.approve(address(vault), amount);
-            try IStandardExchangeIn(address(vault)).exchangeIn(
-                IERC20(address(tokenA)), amount, IERC20(address(vault)), 0, actor, false, _deadline()
+            tokenA.approve(address(vault), amount);try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tokenA)), amount, IERC20(address(vault)), 0, actor, false, _deadline()
             ) {
                 unchecked {
                     ++ghost_depositCount;
@@ -116,9 +112,7 @@ contract Handler_AerodromeStandardExchange_Decimals is Test {
         uint256 bal = IERC20(address(vault)).balanceOf(actor);
         if (bal < 1e3) return;
         uint256 shares = bound(shareSeed, 1e3, bal);
-        vm.startPrank(actor);
-        try IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(vault)), shares, IERC20(address(tokenA)), 0, actor, false, _deadline()
+        vm.startPrank(actor);try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, IERC20(address(tokenA)), 0, actor, false, _deadline()
         ) {
             unchecked {
                 ++ghost_withdrawCount;

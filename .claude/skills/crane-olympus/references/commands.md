@@ -28,10 +28,10 @@
 # From Crane repo root
 export FOUNDRY_PROFILE=olympus_v3_port
 
-forge build
-forge test
-forge test --match-path 'test/foundry/spec/protocols/tokens/stable/olympus/v3/Kernel.t.sol' -vv
-forge test --match-test testCorrectness_InitializeKernel -vv
+forge build --use solar
+forge test --use solar
+forge test --use solar --match-path 'test/foundry/spec/protocols/tokens/stable/olympus/v3/Kernel.t.sol' -vv
+forge test --use solar --match-test testCorrectness_InitializeKernel -vv
 ```
 
 Expect on the order of **~740** hermetic tests green for the in-tree suite (count drifts with suite growth).

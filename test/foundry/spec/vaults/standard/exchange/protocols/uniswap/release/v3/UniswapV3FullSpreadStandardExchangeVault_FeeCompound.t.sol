@@ -66,9 +66,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_FeeCompound_Test is TestBase_U
         assertEq(IBasicVault(address(vault)).reserveOfToken(token1), book1, "outside trade leaves token1 book unchanged");
         assertEq(IERC20(address(vault)).totalSupply(), supply, "outside trade mints no shares");
         vm.startPrank(attacker);
-        IERC20(token0).approve(address(vault), type(uint256).max);
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)));
-        uint256 minted = vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), preview, attacker, false, block.timestamp + 1);
+        IERC20(token0).approve(address(vault), type(uint256).max);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)));(uint256 minted,) = vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), preview, attacker, false, block.timestamp + 1);
         vm.stopPrank();
         assertEq(minted, preview, "later deposit credits only the funded input");
         assertEq(IERC20(address(vault)).balanceOf(attacker), minted, "caller receives only the funded credit");
@@ -95,9 +93,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_FeeCompound_Test is TestBase_U
         assertEq(supplyBefore, incumbentShares + 1e15);
 
         vm.startPrank(attacker);
-        IERC20(token0).approve(address(vault), type(uint256).max);
-        uint256 attackerShares =
-            vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
+        IERC20(token0).approve(address(vault), type(uint256).max);(uint256 attackerShares,) = vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
         vm.stopPrank();
 
         assertLt(attackerShares, incumbentShares / 10, "attacker not fee-diluting");

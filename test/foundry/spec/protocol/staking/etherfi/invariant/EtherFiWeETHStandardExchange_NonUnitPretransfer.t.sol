@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {HermeticWeETH} from "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -25,9 +26,7 @@ contract EtherFiWeETHStandardExchange_NonUnitPretransfer is TestBase_EtherFiWeET
         vm.stopPrank();
         integrator = new AtomicPretransferCaller();
         _fund(IERC20(address(wrapped)), 2 ether);
-        wrapped.approve(vault, 2 ether);
-        uint256 issued = IStandardExchangeIn(vault)
-            .exchangeIn(IERC20(address(wrapped)), 2 ether, IERC20(vault), 1, address(this), false, block.timestamp);
+        wrapped.approve(vault, 2 ether);(uint256 issued,) = IStandardExchangeIn(vault).exchangeIn(IERC20(address(wrapped)), 2 ether, IERC20(vault), 1, address(this), false, block.timestamp);
         assertEq(issued, 3 ether * 1000, "initial receipt value with package virtual offset");
     }
 
@@ -158,9 +157,8 @@ contract EtherFiWeETHStandardExchange_NonUnitPretransfer is TestBase_EtherFiWeET
     function _exactIn(IERC20 token_, uint256 amount_, uint256 minimum_, bool prepaid_) internal returns (uint256) {
         _fund(token_, amount_);
         if (!prepaid_) {
-            token_.approve(vault, amount_);
-            return IStandardExchangeIn(vault)
-                .exchangeIn(token_, amount_, IERC20(vault), minimum_, address(this), false, block.timestamp);
+            token_.approve(vault, amount_);(uint256 quotedAmountOut,) = IStandardExchangeIn(vault).exchangeIn(token_, amount_, IERC20(vault), minimum_, address(this), false, block.timestamp);
+            return quotedAmountOut;
         }
         token_.approve(address(integrator), amount_);
         bytes memory data = abi.encodeCall(
@@ -173,8 +171,7 @@ contract EtherFiWeETHStandardExchange_NonUnitPretransfer is TestBase_EtherFiWeET
     function _assertExactIn(IERC20 token_, uint256 amount_, uint256 credited_) internal {
         uint256 expected = Math.mulDiv(
             credited_, IERC20(vault).totalSupply() + 1000, wrapped.getEETHByWeETH(wrapped.balanceOf(vault)) + 1
-        );
-        uint256 quote = IStandardExchangeIn(vault).previewExchangeIn(token_, amount_, IERC20(vault));
+        );(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(token_, amount_, IERC20(vault));
         uint256 snapshot = vm.snapshotState();
         assertEq(_exactIn(token_, amount_, expected, false), expected, "funded pull credits native wrapped value");
         assertTrue(vm.revertToState(snapshot));
@@ -197,15 +194,11 @@ contract EtherFiWeETHStandardExchange_NonUnitPretransfer is TestBase_EtherFiWeET
         uint256 expected = Math.mulDiv(
             credited, IERC20(vault).totalSupply() + 1000, wrapped.getEETHByWeETH(wrapped.balanceOf(vault)) + 1
         );
-        assertEq(
-            IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticEEth)), nominal, IERC20(vault)),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(vault))), IERC20(address(hermeticEEth)), nominal, IERC20(vault)),
             expected
         );
         uint256 snapshot = vm.snapshotState();
-        assertEq(
-            IStandardExchangeIn(vault)
-                .exchangeIn(
-                    IERC20(address(hermeticEEth)),
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(vault))), IERC20(address(hermeticEEth)),
                     nominal,
                     IERC20(vault),
                     expected,

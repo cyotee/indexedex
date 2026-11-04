@@ -69,12 +69,12 @@ contract MixedBufferMultiVaultStableDetf_Pricing_Test is TestBase_MixedBufferMul
         IStakedDETF staking_ = IStakedDETF(IMixedBufferMultiVaultStableDetfInfo(instance_).rebasingClaimToken());
         uint256 supply_ = IERC20(instance_).totalSupply();
         bytes32 state_ = keccak256(abi.encode(staking_.stakingState()));
-        uint256 input_ = in_.balanceOf(bob); uint256 output_ = out_.balanceOf(bob);
-        uint256 quote_ = ex_.previewExchangeIn(in_, amount_, out_); assertGt(quote_, 0);
+        uint256 input_ = in_.balanceOf(bob); uint256 output_ = out_.balanceOf(bob);(uint256 quote_,) = ex_.previewExchangeIn(in_, amount_, out_); assertGt(quote_, 0);
         vm.startPrank(bob); in_.approve(instance_, amount_);
-        vm.expectRevert(); ex_.exchangeIn(in_, amount_, out_, quote_ + 1, bob, false, block.timestamp);
+        vm.expectRevert();ex_.exchangeIn(in_, amount_, out_, quote_ + 1, bob, false, block.timestamp);
         assertEq(in_.balanceOf(bob), input_); assertEq(out_.balanceOf(bob), output_);
-        assertEq(ex_.exchangeIn(in_, amount_, out_, quote_, bob, false, block.timestamp), quote_);
+        (uint256 exchangeAmountOut1,) = ex_.exchangeIn(in_, amount_, out_, quote_, bob, false, block.timestamp);
+        assertEq(exchangeAmountOut1, quote_);
         vm.stopPrank();
         assertEq(in_.balanceOf(bob), input_ - amount_); assertEq(out_.balanceOf(bob), output_ + quote_);
         assertEq(IERC20(instance_).totalSupply(), supply_);

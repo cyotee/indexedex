@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {DetfExactOutCreditAssertions} from "contracts/test/bases/DetfExactOutCreditAssertions.sol";
 import {FundedThresholdAssertions} from "contracts/test/bases/FundedThresholdAssertions.sol";
 import {FundedPrimaryRouteAssertions} from "contracts/test/bases/FundedPrimaryRouteAssertions.sol";
@@ -122,9 +124,7 @@ contract MixedBufferFundedStakingTest is
         (uint256 principal_, uint256 rewards_) = nft_.claimBond(id_, BUYER);
         assertEq(principal_, p_.principal / 2);
         IStakedDETF staking_ = _staking();
-        vm.prank(BUYER);
-        staking_.exchangeIn(
-            IERC20(address(staking_)), principal_ + rewards_, IERC20(detf), 0, BUYER, false, block.timestamp
+        vm.prank(BUYER);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), principal_ + rewards_, IERC20(detf), 0, BUYER, false, block.timestamp
         );
         assertEq(IERC20(detf).balanceOf(BUYER), principal_ + rewards_);
         assertEq(IERC20(detfInfo.reservePool()).balanceOf(address(_nft())), lp_);
@@ -146,12 +146,10 @@ contract MixedBufferFundedStakingTest is
         if (buffer_) _fundBuffer(TRADER, amount_);
         else amount_ = _fundVaultShares(0, TRADER, amount_);
         uint256 supply_ = IERC20(detf).totalSupply();
-        uint256 backing_ = _staking().stakingState().accountedBacking;
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(input_, amount_, IERC20(detf));
+        uint256 backing_ = _staking().stakingState().accountedBacking;(uint256 quote_,) = detfExchangeIn.previewExchangeIn(input_, amount_, IERC20(detf));
         vm.startPrank(TRADER);
         input_.approve(detf, amount_);
-        assertEq(
-            detfExchangeIn.exchangeIn(input_, amount_, IERC20(detf), quote_, TRADER, false, block.timestamp), quote_
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(detfExchangeIn)), input_, amount_, IERC20(detf), quote_, TRADER, false, block.timestamp), quote_
         );
         vm.stopPrank();
         assertGt(quote_, 0);
@@ -175,15 +173,13 @@ contract MixedBufferFundedStakingTest is
         vm.prank(BUYER);
         nft_.claimBond(id_, BUYER);
         IStakedDETF staking_ = _staking();
-        vm.prank(BUYER);
-        staking_.exchangeIn(IERC20(address(staking_)), p_, IERC20(detf), p_, BUYER, false, block.timestamp);
+        vm.prank(BUYER);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), p_, IERC20(detf), p_, BUYER, false, block.timestamp);
         IERC20 out_ = buffer_ ? IERC20(address(dai)) : seShares[0];
-        uint256 amount_ = p_ / 1000;
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(IERC20(detf), amount_, out_);
+        uint256 amount_ = p_ / 1000;(uint256 quote_,) = detfExchangeIn.previewExchangeIn(IERC20(detf), amount_, out_);
         uint256 supply_ = IERC20(detf).totalSupply();
         vm.startPrank(BUYER);
         IERC20(detf).approve(detf, amount_);
-        assertEq(detfExchangeIn.exchangeIn(IERC20(detf), amount_, out_, quote_, BUYER, false, block.timestamp), quote_);
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(detfExchangeIn)), IERC20(detf), amount_, out_, quote_, BUYER, false, block.timestamp), quote_);
         vm.stopPrank();
         assertGt(quote_, 0);
         assertEq(IERC20(detf).totalSupply(), supply_);
@@ -214,8 +210,7 @@ contract MixedBufferFundedStakingTest is
         vm.warp(nft_.positionOf(id_).startTimestamp + DEFAULT_MIN_LOCK / 2);
         vm.prank(BUYER);
         uint256 vested_ = nft_.claimPrincipal(id_, BUYER);
-        vm.prank(BUYER);
-        staking_.exchangeIn(IERC20(address(staking_)), vested_, IERC20(detf), vested_, BUYER, false, block.timestamp);
+        vm.prank(BUYER);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(staking_)), IERC20(address(staking_)), vested_, IERC20(detf), vested_, BUYER, false, block.timestamp);
         vm.warp(block.timestamp + 25 hours);
         _assertFundedDonation(detf, nft_, staking_, IERC20(detf), vested_ / 100, BUYER, id_);
     }
@@ -292,8 +287,7 @@ contract MixedBufferFundedStakingTest is
         _bootstrapDefault(detf, BUYER);
         _fundBuffer(TRADER, 1 ether);
         vm.startPrank(TRADER);
-        dai.approve(detf, 1 ether);
-        detfExchangeIn.exchangeIn(IERC20(address(dai)), 1 ether, IERC20(detf), 1, TRADER, false, block.timestamp);
+        dai.approve(detf, 1 ether);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(detfExchangeIn)), IERC20(address(dai)), 1 ether, IERC20(detf), 1, TRADER, false, block.timestamp);
         vm.stopPrank();
         _assertDirectExactOutCredits(detf, _staking(), TRADER);
     }
@@ -302,8 +296,7 @@ contract MixedBufferFundedStakingTest is
         _bootstrapDefault(detf, BUYER);
         _fundBuffer(TRADER, 1 ether);
         vm.startPrank(TRADER);
-        dai.approve(detf, 1 ether);
-        detfExchangeIn.exchangeIn(IERC20(address(dai)), 1 ether, IERC20(detf), 1, TRADER, false, block.timestamp);
+        dai.approve(detf, 1 ether);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(detfExchangeIn)), IERC20(address(dai)), 1 ether, IERC20(detf), 1, TRADER, false, block.timestamp);
         vm.stopPrank();
         _assertDirectExactOutUnstakeCredit(detf, _staking(), TRADER);
     }

@@ -17,9 +17,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Permit2Recurrence is
             address asset = fxs[i].faceToken();
             address se = fxs[i].se();
             vm.startPrank(user);
-            IERC20(asset).approve(se, type(uint256).max);
-            amounts[i] = IStandardExchangeIn(se).exchangeIn(
-                IERC20(asset), _legUnits(i, 100), IERC20(se), 1, user, false, block.timestamp
+            IERC20(asset).approve(se, type(uint256).max);(amounts[i],) = IStandardExchangeIn(se).exchangeIn(IERC20(asset), _legUnits(i, 100), IERC20(se), 1, user, false, block.timestamp
             );
             IERC20(se).approve(hook, type(uint256).max);
             vm.stopPrank();

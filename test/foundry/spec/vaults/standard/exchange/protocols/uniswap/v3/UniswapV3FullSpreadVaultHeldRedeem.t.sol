@@ -172,9 +172,7 @@ contract UniswapV3FullSpreadVaultHeldRedeem_Test is TestBase_UniswapV3FullSpread
         address caller = address(this);
         vault.approve(address(vault), requested);
         uint256 callerBefore = vault.balanceOf(caller);
-        uint256 vaultBefore = vault.balanceOf(address(vault));
-        uint256 paid = vault.exchangeIn(
-            IERC20(address(vault)), requested, token0, 0, recipient, false, block.timestamp
+        uint256 vaultBefore = vault.balanceOf(address(vault));(uint256 paid,) = vault.exchangeIn(IERC20(address(vault)), requested, token0, 0, recipient, false, block.timestamp
         );
         assertGt(paid, 0);
         assertEq(vault.balanceOf(caller), callerBefore - requested, "pulled once; caller is not burned again");
@@ -187,9 +185,7 @@ contract UniswapV3FullSpreadVaultHeldRedeem_Test is TestBase_UniswapV3FullSpread
         uint256 extra = requested;
         vault.transfer(address(vault), requested + extra);
         uint256 callerBefore = vault.balanceOf(address(this));
-        uint256 vaultBefore = vault.balanceOf(address(vault));
-        uint256 paid = vault.exchangeIn(
-            IERC20(address(vault)), requested, token0, 0, recipient, true, block.timestamp
+        uint256 vaultBefore = vault.balanceOf(address(vault));(uint256 paid,) = vault.exchangeIn(IERC20(address(vault)), requested, token0, 0, recipient, true, block.timestamp
         );
         assertGt(paid, 0);
         assertEq(vault.balanceOf(address(this)), callerBefore, "does not burn the original caller again");

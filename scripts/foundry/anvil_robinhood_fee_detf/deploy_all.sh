@@ -218,7 +218,7 @@ run_stage() {
   local script_path="$2"
   log_info "Running $label"
 
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
+  local cmd=(forge script --use solar "$script_path" --rpc-url "$RPC_URL")
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi

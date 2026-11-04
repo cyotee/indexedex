@@ -46,8 +46,8 @@ MorphoBlueService._borrow(m, marketParams, debt, address(this), address(this));
 
 | Layer | Command / base |
 |-------|----------------|
-| Domain compile | `FOUNDRY_PROFILE=morpho_port forge build` |
-| Blue upstream | `forge test --match-path '…/morpho/blue/upstream/**'` |
+| Domain compile | `FOUNDRY_PROFILE=morpho_port forge build --use solar` |
+| Blue upstream | `forge test --use solar --match-path '…/morpho/blue/upstream/**'` |
 | Crane hermetic | `TestBase_MorphoBlue`, `TestBase_MetaMorpho` |
 | Fork parity | `MorphoBluePortedMarketParity_Fork` ETH + Base |
 | Profile | Always set `FOUNDRY_PROFILE=morpho_port` for Morpho work |

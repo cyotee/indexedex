@@ -110,7 +110,8 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
 
     function test_PKG02_proxySelectors() public view {
         assertEq(vault.asset(), address(asset));
-        assertEq(IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(vault))), 0);
+        (uint256 previewAmountOut1,) = IStandardExchangeIn(address(vault)).previewExchangeIn(IERC20(address(asset)), 0, IERC20(address(vault)));
+        assertEq(previewAmountOut1, 0);
         assertEq(IStandardizedYield(address(vault)).yieldToken(), address(asset));
         assertEq(IBasicVault(address(vault)).vaultTokens().length, 1);
         assertEq(IStandardVault(address(vault)).vaultFeeTypeIds(), bytes32(0));
@@ -177,9 +178,7 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares / 4);
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
-        vm.prank(address(caller));
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(vault)),
+        vm.prank(address(caller));IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)),
             shares / 8,
             IERC20(address(asset)),
             0,

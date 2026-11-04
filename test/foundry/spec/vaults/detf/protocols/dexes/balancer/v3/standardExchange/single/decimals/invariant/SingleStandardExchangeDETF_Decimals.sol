@@ -52,18 +52,14 @@ abstract contract SingleStandardExchangeDETFInvariant_Decimals is TestBase_Singl
     function invMint(address user, uint256 lpAmount) external override returns (uint256 out_) {
         uint256 shares_ = _fundSeShares(user, lpAmount);
         vm.startPrank(user);
-        seShare.approve(invInstanceAddr, shares_);
-        out_ = IStandardExchangeIn(invInstanceAddr).exchangeIn(
-            seShare, shares_, IERC20(invInstanceAddr), 0, user, false, block.timestamp + 1 hours
+        seShare.approve(invInstanceAddr, shares_);(out_,) = IStandardExchangeIn(invInstanceAddr).exchangeIn(seShare, shares_, IERC20(invInstanceAddr), 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
 
     function invBurn(address user, uint256 detfAmount) external override returns (uint256 out_) {
         vm.startPrank(user);
-        IERC20(invInstanceAddr).approve(invInstanceAddr, detfAmount);
-        out_ = IStandardExchangeIn(invInstanceAddr).exchangeIn(
-            IERC20(invInstanceAddr), detfAmount, seShare, 0, user, false, block.timestamp + 1 hours
+        IERC20(invInstanceAddr).approve(invInstanceAddr, detfAmount);(out_,) = IStandardExchangeIn(invInstanceAddr).exchangeIn(IERC20(invInstanceAddr), detfAmount, seShare, 0, user, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }

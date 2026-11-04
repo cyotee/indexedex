@@ -309,14 +309,14 @@ contract TokenStaking_Test is TestBase_TokenStaking {
         staking.notifyRewardAmount(700e18);
         vm.stopPrank();
 
-        vm.warp(block.timestamp + 1 days);
+        vm.warp(vm.getBlockTimestamp() + 1 days);
         vm.startPrank(stakerA);
         stakeToken.approve(address(staking), 100e18);
         staking.stake(100e18);
         vm.stopPrank();
         assertEq(staking.earned(stakerA), 0);
 
-        vm.warp(block.timestamp + 1 days);
+        vm.warp(vm.getBlockTimestamp() + 1 days);
         assertApproxEqAbs(staking.earned(stakerA), 100e18, 1e5);
     }
 

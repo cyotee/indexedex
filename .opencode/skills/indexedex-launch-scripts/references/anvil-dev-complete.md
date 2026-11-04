@@ -21,14 +21,14 @@ mainnet funding quote. See [anvil-gas-estimate.md](anvil-gas-estimate.md) for th
 exceeds 24kb and the product still needs that bytecode locally.
 
 On 46630 that contract is rehearsal `UniswapV3Factory` (`Phase_01_Stage_04`).
-Pass the flag on **both** the Anvil node **and** `forge script` (Foundry also enforces EIP-170
+Pass the flag on **both** the Anvil node **and** `forge script --use solar` (Foundry also enforces EIP-170
 during simulation).
 
 Do **not** pass it on:
 
 - 4663 gas / funding `simulate`
 - any chain whose launch is pin-only for that bytecode
-- hermetic `forge test` (not this skill)
+- hermetic `forge test --use solar` (not this skill)
 
 `--disable-block-gas-limit` appears only on the 46630 **offline** Anvil path
 (`launch_anvil_offline` after `anvil_dumpState`). Do not use it on a live-fork gas quote.
@@ -52,7 +52,7 @@ anvil
 Forge (Anvil shell `forge_script_base`):
 
 ```text
-forge script Phase_<PP>_Stage_<SS>_*.s.sol
+forge script --use solar Phase_<PP>_Stage_<SS>_*.s.sol
   --rpc-url http://127.0.0.1:8545
   --sender <Anvil Dev 0>
   --unlocked

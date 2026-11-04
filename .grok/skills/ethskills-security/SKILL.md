@@ -435,10 +435,10 @@ slither .                     # Detects common vulnerabilities
 mythril analyze Contract.sol  # Symbolic execution
 
 # Foundry fuzzing (built-in)
-forge test --fuzz-runs 10000  # Fuzz all test functions with random inputs
+forge test --use solar --fuzz-runs 10000  # Fuzz all test functions with random inputs
 
 # Gas optimization (bonus)
-forge test --gas-report       # Identify expensive functions
+forge test --use solar --gas-report       # Identify expensive functions
 ```
 
 **Slither findings to NEVER ignore:**

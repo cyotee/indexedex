@@ -31,10 +31,10 @@ contract EtherFiWeETHStandardExchangeInTarget is
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         if (amountIn == 0) revert ZeroAmount();
-        return _quoteExactIn(address(tokenIn), amountIn, address(tokenOut));
+        return (_quoteExactIn(address(tokenIn), amountIn, address(tokenOut)), 0);
     }
 
     function exchangeIn(
@@ -45,7 +45,7 @@ contract EtherFiWeETHStandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         if (block.timestamp > deadline) revert DeadlineExpired();
         if (amountIn == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();
@@ -61,7 +61,7 @@ contract EtherFiWeETHStandardExchangeInTarget is
             _burnShares(amountIn);
             _payAsset(out_, amountOut, recipient);
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // asset → SE mint exact-in
@@ -77,7 +77,7 @@ contract EtherFiWeETHStandardExchangeInTarget is
                 _splitWethSleeveAfterSeMint();
             }
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         // asset → asset exact-in
@@ -86,7 +86,7 @@ contract EtherFiWeETHStandardExchangeInTarget is
             amountOut = _execAssetToAsset(in_, actualIn, out_, recipient);
             if (amountOut < minAmountOut) revert Slippage();
             _syncAllExpectedHoldReserves();
-            return amountOut;
+            return (amountOut, 0);
         }
 
         revert InvalidRoute(in_, out_);

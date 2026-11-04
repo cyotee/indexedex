@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 
 import {
@@ -28,8 +29,7 @@ abstract contract Adversarial_ComposedStable_P0_Decimals is TestBase_ComposedSta
     }
 
     function test_E5_zeroAmount_principalPreviewZero() public view {
-        assertEq(
-            IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, 0, IERC20(address(rebasingDetfToken))),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(deployedDetfVault))), detfToken, 0, IERC20(address(rebasingDetfToken))),
             0
         );
     }
@@ -40,9 +40,7 @@ abstract contract Adversarial_ComposedStable_P0_Decimals is TestBase_ComposedSta
         deal(address(rateAsset), attacker, amount_, true);
         vm.startPrank(attacker);
         rateAsset.approve(deployedDetfVault, amount_);
-        vm.expectRevert();
-        IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(rateAsset, amount_, detfToken, 0, attacker, false, block.timestamp - 1);
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(deployedDetfVault))), rateAsset, amount_, detfToken, 0, attacker, false, block.timestamp - 1);
         vm.stopPrank();
     }
 
@@ -81,13 +79,10 @@ abstract contract Adversarial_ComposedStable_P0_Decimals is TestBase_ComposedSta
     function test_H3_minOutTooHigh_leavesNoStrandedMint() public {
         _bootstrapReserveGraph();
         uint256 amount_ = _from18(address(rateAsset), 10e18);
-        deal(address(rateAsset), attacker, amount_, true);
-        uint256 preview_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(rateAsset, amount_, detfToken);
+        deal(address(rateAsset), attacker, amount_, true);(uint256 preview_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(rateAsset, amount_, detfToken);
         vm.startPrank(attacker);
         rateAsset.approve(deployedDetfVault, amount_);
-        vm.expectRevert();
-        IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(rateAsset, amount_, detfToken, preview_ + 1e9, attacker, false, block.timestamp + 1);
+        vm.expectRevert();ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(deployedDetfVault))), rateAsset, amount_, detfToken, preview_ + 1e9, attacker, false, block.timestamp + 1);
         vm.stopPrank();
         // no free detf minted to attacker on fail
         assertEq(detfToken.balanceOf(attacker), 0, "H3: no detf on fail");

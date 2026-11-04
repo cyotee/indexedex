@@ -13,7 +13,7 @@ Turn **historical DeFi loss themes** (SunWeb3Sec DeFiHackLabs corpus) into catal
 | This skill does | This skill does **not** |
 |-----------------|-------------------------|
 | Map root causes → Crane catalog **A–K + A0 + L/M/N/O** | Make profitable fork PoCs the definition of done |
-| Cite curated paths under `lib/DeFiHackLabs` for study | Compile or run HackLabs into IndexedEx `forge test` |
+| Cite curated paths under `lib/DeFiHackLabs` for study | Compile or run HackLabs into IndexedEx `forge test --use solar` |
 | Drive secure-dev checklists while writing facets/vaults/routers | Instruct offensive use against live/unowned systems |
 | Point agents to hermetic adversarial templates | Replace `crane-adversarial-testing` method law |
 

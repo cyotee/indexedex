@@ -56,9 +56,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
     }
 
     function _seedLiquidity(uint256 underlyingIn) internal {
-        vm.prank(user);
-        seIn.exchangeIn(
-            IERC20(address(underlying)),
+        vm.prank(user);seIn.exchangeIn(IERC20(address(underlying)),
             underlyingIn,
             IERC20(se),
             0,
@@ -99,9 +97,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 attackerSeBefore_ = IERC20(se).balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)),
             claimed_,
             IERC20(se),
             0,
@@ -126,9 +122,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 supplyBefore_ = IERC20(se).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(underlying)), claimed_, IERC20(se), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(underlying)), claimed_, IERC20(se), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1 wrap: no free mint");
@@ -184,9 +178,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 supplyBefore_ = IERC20(se).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)),
             claimed_,
             IERC20(se),
             0,
@@ -210,9 +202,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         vm.startPrank(user);
         protocolVault.deposit(residualSeed_ + pull_, user);
         protocolVault.transfer(se, residualSeed_);
-        protocolVault.approve(se, pull_);
-        uint256 minted_ = seIn.exchangeIn(
-            IERC20(address(protocolVault)),
+        protocolVault.approve(se, pull_);(uint256 minted_,) = seIn.exchangeIn(IERC20(address(protocolVault)),
             pull_,
             IERC20(se),
             0,
@@ -230,9 +220,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 claim_ = residualSeed_;
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)), claim_, IERC20(se), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)), claim_, IERC20(se), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I3: no second free mint");
@@ -313,10 +301,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
             address(IERC4626StandardExchange(se).protocolVault()),
             address(protocolVault),
             "J3 protocolVault live on proxy"
-        );
-
-        uint256 previewIn_ =
-            seIn.previewExchangeIn(IERC20(address(underlying)), 1 ether, IERC20(se));
+        );(uint256 previewIn_,) = seIn.previewExchangeIn(IERC20(address(underlying)), 1 ether, IERC20(se));
         assertEq(previewIn_, 1 ether, "J3 previewExchangeIn live on proxy");
 
         uint256 previewOut_ =
@@ -324,9 +309,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         assertEq(previewOut_, 1 ether, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        seIn.exchangeIn(
-            IERC20(address(protocolVault)), 1 ether, IERC20(se), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);seIn.exchangeIn(IERC20(address(protocolVault)), 1 ether, IERC20(se), 0, attacker, true, _deadline()
         );
     }
 
@@ -348,9 +331,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         fot.transfer(fotSe, claimed_);
         uint256 observed_ = fot.balanceOf(fotSe);
         assertLt(observed_, claimed_, "L2: FoT delivered less than claimed");
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        fotSeIn.exchangeIn(
-            IERC20(address(fot)), claimed_, IERC20(fotSe), 0, user, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);fotSeIn.exchangeIn(IERC20(address(fot)), claimed_, IERC20(fotSe), 0, user, true, _deadline()
         );
         vm.stopPrank();
         assertEq(IERC20(fotSe).totalSupply(), 0, "L2: no SE mint on FoT face claim");

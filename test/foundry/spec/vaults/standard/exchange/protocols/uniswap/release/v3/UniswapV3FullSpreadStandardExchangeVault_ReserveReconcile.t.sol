@@ -121,8 +121,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_ReserveReconcile_Test is
 
         // Trade: zap token0 in for shares.
         ERC20PermitMintableStub(_token0()).mint(address(this), 1_000 ether);
-        IERC20(_token0()).approve(address(vault), 1_000 ether);
-        vault.exchangeIn(IERC20(_token0()), 1_000 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+        IERC20(_token0()).approve(address(vault), 1_000 ether);vault.exchangeIn(IERC20(_token0()), 1_000 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
 
         // Booking stays consistent after the trade.
         assertEq(IBasicVault(address(vault)).reserveOfToken(_token0()), liquid.localReserve(_token0()), "reserve0 == free after trade");
@@ -144,8 +143,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_ReserveReconcile_Test is
 
     function _assertCreditAfterFundedPoolTrade() internal {
         ERC20PermitMintableStub(_token0()).mint(address(this), 1_000 ether);
-        IERC20(_token0()).approve(address(vault), 1_000 ether);
-        uint256 output = vault.exchangeIn(IERC20(_token0()), 1_000 ether, IERC20(_token1()), 1, address(this), false, _deadline());
+        IERC20(_token0()).approve(address(vault), 1_000 ether);(uint256 output,) = vault.exchangeIn(IERC20(_token0()), 1_000 ether, IERC20(_token1()), 1, address(this), false, _deadline());
         assertGt(output, 0, "funded pool trade succeeds");
         _assertLocalReserveMatchesCustody();
         _assertNoDeliveryRejectedThenFunded(_token0());

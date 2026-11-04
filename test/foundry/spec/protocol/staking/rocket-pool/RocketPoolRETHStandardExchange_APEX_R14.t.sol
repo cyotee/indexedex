@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -15,9 +16,7 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
     function _wethToSe(uint256 amount, address who) internal returns (uint256 shares) {
         _dealWeth(who, amount);
         vm.startPrank(who);
-        hermeticWeth.approve(seVault, amount);
-        shares = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(seVault), 0, who, false, block.timestamp + 1 hours
+        hermeticWeth.approve(seVault, amount);(shares,) = seIn.exchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault), 0, who, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -33,8 +32,7 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
     function test_APEX_D39_subMinimumInput_bookedAndMintedWithoutDeposit() public {
         _setTarget(0);
         hermeticSettings.setMinimumDeposit(1 ether);
-        uint256 amount = 0.5 ether;
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
+        uint256 amount = 0.5 ether;(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
         uint256 rethBefore = hermeticReth.balanceOf(seVault);
         uint256 shares = _wethToSe(amount, address(this));
         assertEq(shares, preview, "preview equals execution");
@@ -73,8 +71,7 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
         assertEq(rocketPoolSe.liquidReserveEth(), 80 ether, "80 booked while closed");
         assertEq(hermeticReth.balanceOf(seVault), 0);
         // Reopen with exactly 100 of capacity.
-        hermeticPool.setMaxDepositAmount(100 ether);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 50 ether, IERC20(seVault));
+        hermeticPool.setMaxDepositAmount(100 ether);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 50 ether, IERC20(seVault));
         uint256 callerShares = _wethToSe(50 ether, address(0xCA11));
         assertEq(callerShares, preview, "preview equals execution across the sweep");
         assertEq(hermeticPool.getMaximumDepositAmount(), 0, "capacity fully consumed: 80 + 20");
@@ -105,9 +102,7 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
         uint256 supplyBefore = IERC20(failingSe).totalSupply();
         vm.expectRevert(
             abi.encodeWithSelector(FailingRocketDepositPool.DependencyRejected.selector, amount, failing.TAG())
-        );
-        IStandardExchangeIn(failingSe).exchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(failingSe), 0, address(this), false, block.timestamp + 1 hours
+        );ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(failingSe))), IERC20(address(hermeticWeth)), amount, IERC20(failingSe), 0, address(this), false, block.timestamp + 1 hours
         );
         assertEq(IERC20(failingSe).totalSupply(), supplyBefore, "no shares survive");
         assertEq(hermeticWeth.balanceOf(failingSe), 0, "no reserve change survives");
@@ -165,14 +160,10 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
         uint256 firstShares = _wethToSe(400 ether, address(this));
         assertEq(rocketPoolSe.liquidReserveEth(), 80 ether, "20% sleeve: 80 liquid");
         assertEq(rocketPoolSe.lockedReserveEth(), 320 ether, "80% staked: 320 locked (1:1 rETH)");
-        assertEq(rocketPoolSe.totalReserveEth(), 400 ether, "NAV 400");
-        uint256 firstEntitlementBefore =
-            seIn.previewExchangeIn(IERC20(seVault), firstShares, IERC20(address(hermeticWeth)));
+        assertEq(rocketPoolSe.totalReserveEth(), 400 ether, "NAV 400");(uint256 firstEntitlementBefore,) = seIn.previewExchangeIn(IERC20(seVault), firstShares, IERC20(address(hermeticWeth)));
 
         // Finite capacity 100 for the sweep.
-        hermeticPool.setMaxDepositAmount(100 ether);
-
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 50 ether, IERC20(seVault));
+        hermeticPool.setMaxDepositAmount(100 ether);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 50 ether, IERC20(seVault));
         uint256 callerShares = _wethToSe(50 ether, address(0xCA11));
         assertEq(callerShares, preview, "preview equals execution across the sweep");
 
@@ -183,13 +174,11 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
         assertEq(hermeticPool.getMaximumDepositAmount(), 60 ether, "capacity consumed exactly 40");
 
         // Share offset is 3, so relate the caller's shares to value, not to a hand-computed literal.
-        assertApproxEqRel(
-            seIn.previewExchangeIn(IERC20(seVault), callerShares, IERC20(address(hermeticWeth))),
+        assertApproxEqRel(ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), IERC20(seVault), callerShares, IERC20(address(hermeticWeth))),
             50 ether, 0.0001e18, "caller's shares are worth ~its own 50 WETH input"
         );
         // No entitlement transfer to the first holder from the sweep.
-        assertApproxEqAbs(
-            seIn.previewExchangeIn(IERC20(seVault), firstShares, IERC20(address(hermeticWeth))),
+        assertApproxEqAbs(ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), IERC20(seVault), firstShares, IERC20(address(hermeticWeth))),
             firstEntitlementBefore, 1e6, "first holder's entitlement unchanged by the sweep"
         );
     }
@@ -222,16 +211,12 @@ contract RocketPoolRETHStandardExchange_APEX_R14_Test is TestBase_RocketPoolRETH
 
         _wethToSe(100 ether, address(this));
         assertEq(rocketPoolSe.liquidReserveEth(), 100 ether, "100% target: sleeve keeps the whole input");
-        assertEq(hermeticReth.balanceOf(seVault), 0, "best-effort staked nothing at a 100% target");
-
-        // Hard WETH -> rETH still stakes and pays rETH to the recipient.
-        uint256 quote = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 10 ether, IERC20(address(hermeticReth)));
+        assertEq(hermeticReth.balanceOf(seVault), 0, "best-effort staked nothing at a 100% target");// Hard WETH -> rETH still stakes and pays rETH to the recipient.
+        (uint256 quote,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 10 ether, IERC20(address(hermeticReth)));
         assertGt(quote, 0, "hard-stake quote");
         _dealWeth(address(0xCA11), 10 ether);
         vm.startPrank(address(0xCA11));
-        hermeticWeth.approve(seVault, 10 ether);
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)), 10 ether, IERC20(address(hermeticReth)), 0, address(0xCA11), false, block.timestamp + 1 hours
+        hermeticWeth.approve(seVault, 10 ether);(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)), 10 ether, IERC20(address(hermeticReth)), 0, address(0xCA11), false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(out, quote, "hard-stake preview equals execution");

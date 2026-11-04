@@ -11,12 +11,10 @@ import {
 contract ComposedStableCommonDetfExchangeIn_Test is TestBase_ComposedFundedRoutes {
     function test_previewExchangeIn_routesSharedTokenToFundedPool() public {
         _live();
-        deal(address(dai), alice, 10e18, true);
-        uint256 quote_ = composedIn.previewExchangeIn(dai, 10e18, IERC20(composedDetf));
+        deal(address(dai), alice, 10e18, true);(uint256 quote_,) = composedIn.previewExchangeIn(dai, 10e18, IERC20(composedDetf));
         assertGt(quote_, 0);
         vm.startPrank(alice);
-        dai.approve(composedDetf, 10e18);
-        uint256 actual_ = composedIn.exchangeIn(dai, 10e18, IERC20(composedDetf), quote_, alice, false, block.timestamp);
+        dai.approve(composedDetf, 10e18);(uint256 actual_,) = composedIn.exchangeIn(dai, 10e18, IERC20(composedDetf), quote_, alice, false, block.timestamp);
         vm.stopPrank();
         assertEq(actual_, quote_);
         assertEq(IERC20(composedDetf).balanceOf(alice), actual_);
@@ -39,11 +37,11 @@ contract ComposedStableCommonDetfExchangeIn_Test is TestBase_ComposedFundedRoute
 
     function test_previewExchangeIn_returnsZeroWhenReservePoolUninitialized() public {
         assertFalse(composedInfo.isReserveLive());
-        assertEq(composedIn.previewExchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf)), 0);
+        (uint256 previewAmountOut1,) = composedIn.previewExchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf));
+        assertEq(previewAmountOut1, 0);
         uint256 held_ = IERC20(address(composedStable)).balanceOf(composedDetf);
         uint256 supply_ = IERC20(composedDetf).totalSupply();
-        vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));
-        composedIn.exchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf), 0, alice, false, block.timestamp);
+        vm.expectRevert(bytes4(keccak256("ReservePoolNotInitialized()")));composedIn.exchangeIn(IERC20(address(composedStable)), 1e18, IERC20(composedDetf), 0, alice, false, block.timestamp);
         assertEq(IERC20(address(composedStable)).balanceOf(composedDetf), held_);
         assertEq(IERC20(composedDetf).totalSupply(), supply_);
     }

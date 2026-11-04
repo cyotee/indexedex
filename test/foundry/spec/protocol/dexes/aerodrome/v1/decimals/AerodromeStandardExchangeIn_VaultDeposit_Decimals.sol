@@ -56,14 +56,10 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         address recipient = makeAddr("recipient");
 
         // Approve vault to spend LP
-        lpToken.approve(address(vault), lpAmount);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute
+        (uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         assertEq(sharesOut, preview, "Execution should match preview");
         assertEq(vault.balanceOf(recipient), preview, "Recipient should receive preview shares");
@@ -95,9 +91,7 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
 
         uint256 senderLPBefore = lpToken.balanceOf(address(this));
         uint256 recipientSharesBefore = vault.balanceOf(recipient);
-        uint256 vaultLPBefore = lpToken.balanceOf(address(vault));
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        uint256 vaultLPBefore = lpToken.balanceOf(address(vault));(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         // Sender LP decreased
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore - lpAmount, "Sender LP decreased");
@@ -125,9 +119,7 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         assertTrue(sharesOut > 0, "Should receive shares on first deposit");
         assertEq(vault.balanceOf(recipient), sharesOut, "Recipient balance matches");
@@ -149,14 +141,11 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
 
         // First deposit
         address depositor1 = makeAddr("depositor1");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares1 = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, depositor1, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares1,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, depositor1, false, _deadline());
 
         // Second deposit (same amount)
         address depositor2 = makeAddr("depositor2");
-        lpToken.approve(address(vault), lpAmount);
-        uint256 preview2 = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        uint256 shares2 = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, depositor2, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview2,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);(uint256 shares2,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, depositor2, false, _deadline());
 
         assertEq(shares2, preview2, "Second deposit matches preview");
         // Shares should be roughly equal for same LP amount (may differ slightly due to fees)
@@ -177,12 +166,8 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-
-        // Should succeed with exact minAmountOut
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, preview, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);// Should succeed with exact minAmountOut
+        (uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, preview, recipient, false, _deadline());
 
         assertEq(sharesOut, preview, "Should succeed with exact minimum");
     }
@@ -197,13 +182,10 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
 
         // Should revert with minAmountOut too high
-        vm.expectRevert();
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, preview + 1, recipient, false, _deadline());
+        vm.expectRevert();vault.exchangeIn(lpToken, lpAmount, vaultToken, preview + 1, recipient, false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -223,10 +205,8 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         // Transfer LP to vault first
         lpToken.transfer(address(vault), lpAmount);
 
-        uint256 senderLPBefore = lpToken.balanceOf(address(this));
-
-        // Execute with pretransferred=true
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
+        uint256 senderLPBefore = lpToken.balanceOf(address(this));// Execute with pretransferred=true
+        (uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
 
         // Sender balance should not change
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore, "No additional transfer from sender");
@@ -250,9 +230,7 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         require(donation > 0, "Donation too small");
 
         lpToken.transfer(address(vault), donation);
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), false, _deadline());
         assertGt(sharesOut, 0, "L-CLAIM-3: extra inbound must not lock honest pull");
     }
 
@@ -267,9 +245,7 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
 
-        lpToken.transfer(address(vault), lpAmount + donation);
-
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), true, _deadline());
+        lpToken.transfer(address(vault), lpAmount + donation);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), true, _deadline());
         assertGt(sharesOut, 0, "L-CLAIM-3: claim <= U succeeds; surplus is not exact-delta grief");
     }
 
@@ -302,10 +278,7 @@ abstract contract AerodromeStandardExchangeIn_VaultDeposit_Decimals is TestBase_
         IERC20 vaultToken = IERC20(address(vault));
         address recipient = makeAddr("recipient");
 
-        lpToken.approve(address(vault), lpAmount);
-
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);(uint256 sharesOut,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
         assertEq(sharesOut, preview, "Fuzz: execution should match preview");
         assertEq(vault.balanceOf(recipient), sharesOut, "Fuzz: recipient balance correct");

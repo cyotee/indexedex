@@ -25,8 +25,7 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15OpenBase is UniswapV4Detf_Cla
 
     function _redeemOn(address d, address who, uint256 amt) internal returns (uint256 detfOut) {
         IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());
-        vm.prank(who);
-        detfOut = IStandardExchangeIn(address(staking_)).exchangeIn(staking_, amt, IERC20(d), amt, who, false, block.timestamp);
+        vm.prank(who);(detfOut,) = IStandardExchangeIn(address(staking_)).exchangeIn(staking_, amt, IERC20(d), amt, who, false, block.timestamp);
         assertEq(detfOut, amt, "funded one-to-one unstake");
     }
 
@@ -62,8 +61,7 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15OpenBase is UniswapV4Detf_Cla
         uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 10 ether);
         uint256 redeem_ = claimBal_ / _d15IdentityDenom();
         if (redeem_ == 0) redeem_ = 1;
-        IRebasingClaimToken claim_ = _claimTok();
-        uint256 preview_ = IStandardExchangeIn(address(claim_)).previewExchangeIn(IERC20(address(claim_)), redeem_, IERC20(detf));
+        IRebasingClaimToken claim_ = _claimTok();(uint256 preview_,) = IStandardExchangeIn(address(claim_)).previewExchangeIn(IERC20(address(claim_)), redeem_, IERC20(detf));
         uint256 detfBefore_ = IERC20(detf).balanceOf(detfUser);
         uint256 out_ = _redeemOn(detf, detfUser, redeem_);
         assertEq(out_, preview_, "D15-1 preview==exec");

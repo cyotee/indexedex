@@ -145,9 +145,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         uint256 amount = 5 ether;
         vm.deal(address(this), amount);
         IWETH(payable(WETH)).deposit{value: amount}();
-        IERC20(WETH).approve(seVault, amount);
-        uint256 shares = seIn.exchangeIn(
-            IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WETH).approve(seVault, amount);(uint256 shares,) = seIn.exchangeIn(IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         assertGt(shares, 0, "minted");
         assertLt(etherFiSe.liquidReserveEth(), amount, "open capacity: not everything stayed in the sleeve");
@@ -158,11 +156,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         uint256 amount = 5 ether;
         vm.deal(address(this), amount);
         IWETH(payable(WETH)).deposit{value: amount}();
-        IERC20(WETH).approve(seVault, amount);
-
-        uint256 preview = seIn.previewExchangeIn(IERC20(WETH), amount, IERC20(seVault));
-        uint256 out = seIn.exchangeIn(
-            IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WETH).approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(WETH), amount, IERC20(seVault));(uint256 out,) = seIn.exchangeIn(IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         assertEq(out, preview);
 
@@ -179,9 +173,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         uint256 amount = 2 ether;
         vm.deal(address(this), amount * 3);
         IWETH(payable(WETH)).deposit{value: amount * 2}();
-        IERC20(WETH).approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WETH).approve(seVault, amount);seIn.exchangeIn(IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         // top up sleeve
         IERC20(WETH).transfer(seVault, amount);
@@ -199,11 +191,9 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
 
         // exact-in
         uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;
-        if (shares == 0) return;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(WETH));
-        if (preview > etherFiSe.liquidReserveEth()) return; // sleeve exhausted
-        seIn.exchangeIn(
-            IERC20(seVault), shares, IERC20(WETH), preview, address(this), false, block.timestamp + 1 hours
+        if (shares == 0) return;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(WETH));
+        if (preview > etherFiSe.liquidReserveEth()) return;// sleeve exhausted
+        seIn.exchangeIn(IERC20(seVault), shares, IERC20(WETH), preview, address(this), false, block.timestamp + 1 hours
         );
     }
 
@@ -211,9 +201,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         uint256 amount = 3 ether;
         vm.deal(address(this), amount * 5);
         IWETH(payable(WETH)).deposit{value: amount * 4}();
-        IERC20(WETH).approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WETH).approve(seVault, amount);seIn.exchangeIn(IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         // donate large sleeve
         IERC20(WETH).transfer(seVault, amount * 3);
@@ -228,13 +216,9 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         vm.deal(address(this), amount * 2);
         IWETH(payable(WETH)).deposit{value: amount * 2}();
         // stake to weETH via SE asset route, then mint SE with weETH
-        IERC20(WETH).approve(seVault, amount);
-        uint256 weOut = seIn.exchangeIn(
-            IERC20(WETH), amount, IERC20(WEETH), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WETH).approve(seVault, amount);(uint256 weOut,) = seIn.exchangeIn(IERC20(WETH), amount, IERC20(WEETH), 0, address(this), false, block.timestamp + 1 hours
         );
-        IERC20(WEETH).approve(seVault, weOut);
-        seIn.exchangeIn(
-            IERC20(WEETH), weOut, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WEETH).approve(seVault, weOut);seIn.exchangeIn(IERC20(WEETH), weOut, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         // tiny sleeve → deficit
         // rebalance should queue if liquid << target
@@ -256,13 +240,9 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         uint256 stakeAmt = 3 ether;
         vm.deal(address(this), stakeAmt + 1 ether);
         IWETH(payable(WETH)).deposit{value: stakeAmt}();
-        IERC20(WETH).approve(seVault, stakeAmt);
-        uint256 weOut = seIn.exchangeIn(
-            IERC20(WETH), stakeAmt, IERC20(WEETH), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WETH).approve(seVault, stakeAmt);(uint256 weOut,) = seIn.exchangeIn(IERC20(WETH), stakeAmt, IERC20(WEETH), 0, address(this), false, block.timestamp + 1 hours
         );
-        IERC20(WEETH).approve(seVault, weOut);
-        seIn.exchangeIn(
-            IERC20(WEETH), weOut, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(WEETH).approve(seVault, weOut);seIn.exchangeIn(IERC20(WEETH), weOut, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
 
         uint256 sleeve = etherFiSe.liquidReserveEth();
@@ -322,7 +302,8 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         (, uint256 input, uint256 output,) =
             quote.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amount);
         assertEq(input, amount, "EtherFi: exact-in consumes the whole input");
-        assertEq(output, seIn.previewExchangeIn(IERC20(WETH), amount, IERC20(seVault)), "EtherFi: transition quote equals previewExchangeIn on mainnet");
+        (uint256 previewAmountOut1,) = seIn.previewExchangeIn(IERC20(WETH), amount, IERC20(seVault));
+        assertEq(output, previewAmountOut1, "EtherFi: transition quote equals previewExchangeIn on mainnet");
     }
 }
 
@@ -341,10 +322,8 @@ contract EtherFiStandardExchangeProjectionFork is EtherFiWeETHStandardExchange_F
         uint256 received = IERC20(EETH).balanceOf(address(this));
         IERC20(EETH).approve(WEETH, received);
         IWeETH(WEETH).wrap(received);
-        IERC20(WETH).approve(seVault, 200 ether);
-        seIn.exchangeIn(IERC20(WETH), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
-        IERC20(WEETH).approve(seVault, 100 ether);
-        seIn.exchangeIn(IERC20(WEETH), 100 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        IERC20(WETH).approve(seVault, 200 ether);seIn.exchangeIn(IERC20(WETH), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        IERC20(WEETH).approve(seVault, 100 ether);seIn.exchangeIn(IERC20(WEETH), 100 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
         assertGt(IWeETH(WEETH).getEETHByWeETH(1e18), 1e18, "actual fractional rate");
     }
 

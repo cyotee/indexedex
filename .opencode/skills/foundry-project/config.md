@@ -1,6 +1,6 @@
 # Foundry Configuration Reference
 
-Complete foundry.toml configuration options.
+Complete foundry.toml configuration options. In this repo, `via_ir` stays false and every compiling `forge` command uses `--use solar`. Do not copy a `via_ir = true` example from older Foundry docs.
 
 ## Basic Project Settings
 
@@ -242,7 +242,7 @@ verbosity = 2
 [profile.production]
 optimizer = true
 optimizer_runs = 10000
-via_ir = true
+via_ir = false  # required here; Solar is `--use solar`, not via_ir
 ```
 
 ### Lite Profile (Fast Compilation)
@@ -310,7 +310,7 @@ invariant = { runs = 500, depth = 25 }
 [profile.production]
 optimizer = true
 optimizer_runs = 10000
-via_ir = true
+via_ir = false  # required here; Solar is `--use solar`, not via_ir
 
 [rpc_endpoints]
 mainnet = "${MAINNET_RPC_URL}"
@@ -338,14 +338,14 @@ Most settings can be overridden via CLI flags:
 
 ```bash
 # Override optimizer
-forge build --optimizer-runs 10000
+forge build --use solar --optimizer-runs 10000
 
-# Override solc version
-forge build --use solc:0.8.20
+# Compiler is Solar. Do not pass --use solc: or a solc path.
+forge build --use solar
 
 # Override fuzz runs
-forge test --fuzz-runs 1000
+forge test --use solar --fuzz-runs 1000
 
 # Override verbosity
-forge test -vvvv
+forge test --use solar -vvvv
 ```

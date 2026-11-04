@@ -181,8 +181,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         address se = l.standardExchanges[index];
         if (se == address(0)) return 0;
         uint256 bal = IERC20(se).balanceOf(address(this));
-        if (bal == 0) return 0;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+        if (bal == 0) return 0;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+        return quotedAmountOut;
     }
 
     function ratedBalance(uint256 index) public view returns (uint256) {
@@ -320,8 +320,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         if (rp != address(0)) {
             uint256 rate = _getRateFailClosed(rp);
             return (seBal * rate) / Math.RATE_PRECISION;
-        }
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        }(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        return quotedAmountOut;
     }
 
     function _getRateFailClosed(address provider) internal view returns (uint256 rate) {
@@ -493,12 +493,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         if (se == address(0)) {
             l.rawReserves[i] += amount;
             return 0;
-        }
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
+        }(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
         if (minOut == 0) revert BufferFailed();
-        IERC20(t).forceApprove(se, amount);
-        seOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
+        IERC20(t).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
         if (seOut < minOut) revert BufferFailed();
     }
@@ -507,12 +504,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
-        address t = l.tokens[i];
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
+        address t = l.tokens[i];(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
         if (minOut == 0) revert UnwrapFailed();
-        IERC20(se).forceApprove(se, seIn);
-        pairOut = IStandardExchangeIn(se).exchangeIn(
-            IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
+        IERC20(se).forceApprove(se, seIn);(pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
         );
         if (pairOut < minOut) revert UnwrapFailed();
     }
@@ -550,8 +544,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             IERC20 pair_ = IERC20(l.tokens[i]);
             uint256 bal = pair_.balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) continue;
-            uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
+            uint256 excess = bal - Repo.MAX_DUST_WEI;(uint256 preview,) = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
             if (preview > 0) {
                 _bufferToken(i, excess);
                 bal = pair_.balanceOf(address(this));
@@ -576,9 +569,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             address se = l.standardExchanges[i];
             if (se == address(0)) {
                 invDeltas[i] = pairAmounts[i];
-            } else {
-                invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
-                    IERC20(l.tokens[i]), pairAmounts[i], IERC20(se)
+            } else {(invDeltas[i],) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmounts[i], IERC20(se)
                 );
             }
         }

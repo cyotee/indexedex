@@ -30,7 +30,7 @@ Never pass private keys to AI tools. Import keys manually into Foundry keystore.
 
 - Always deploy to BattleChain before mainnet.
 - Use `battlechain-lib` deployment helpers (`bcDeployCreate*`).
-- On BattleChain, all `forge script` broadcasts should include `--skip-simulation`.
+- On BattleChain, all `forge script --use solar` broadcasts should include `--skip-simulation`.
 - Prefer identical bytecode to mainnet (only constructor/config differences by chain).
 
 ## Recommended Setup

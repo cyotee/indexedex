@@ -14,8 +14,7 @@ contract RocketPoolRETHStandardExchange_APEX_Recurrence is RocketPoolRETHStandar
         _wethToSe(0.6 ether, address(this));
         assertEq(rocketPoolSe.liquidReserveEth(), 0.6 ether, "first credit stays in the sleeve");
         assertEq(hermeticReth.balanceOf(seVault), 0, "below-minimum excess is not deposited");
-        uint256 holderShares = IERC20(seVault).balanceOf(address(this));
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 0.6 ether, IERC20(seVault));
+        uint256 holderShares = IERC20(seVault).balanceOf(address(this));(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 0.6 ether, IERC20(seVault));
         uint256 minted = _wethToSe(0.6 ether, address(0xCA11));
         assertEq(minted, preview, "caller receives its quoted shares");
         assertEq(IERC20(seVault).balanceOf(address(this)), holderShares, "old shares unchanged");
@@ -28,8 +27,7 @@ contract RocketPoolRETHStandardExchange_APEX_Recurrence is RocketPoolRETHStandar
         _zeroUsageFees();
         _setTarget(0);
         hermeticSettings.setMinimumDeposit(1 ether);
-        _wethToSe(0.6 ether, address(this));
-        uint256 requested = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 0.6 ether, IERC20(seVault));
+        _wethToSe(0.6 ether, address(this));(uint256 requested,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 0.6 ether, IERC20(seVault));
         uint256 used = _wethToSeExactOut(requested, address(0xCA11));
         assertLt(used, 1 ether, "caller allocation remains individually below minimum");
         assertGe(used + 0.6 ether, 1 ether, "aggregate crosses minimum");

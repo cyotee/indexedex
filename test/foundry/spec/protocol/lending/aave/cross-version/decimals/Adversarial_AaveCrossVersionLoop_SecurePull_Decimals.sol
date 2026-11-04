@@ -110,9 +110,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
     function _honestDeposit(address to_, uint256 amount_) internal returns (uint256 shares_) {
         _mint(tokenA, to_, amount_);
         vm.startPrank(to_);
-        tokenA.approve(vault, amount_);
-        shares_ = IStandardExchangeIn(vault).exchangeIn(
-            tokenA, amount_, IERC20(vault), 0, to_, false, _deadline()
+        tokenA.approve(vault, amount_);(shares_,) = IStandardExchangeIn(vault).exchangeIn(tokenA, amount_, IERC20(vault), 0, to_, false, _deadline()
         );
         vm.stopPrank();
         assertGt(shares_, 0, "honest mint");
@@ -127,8 +125,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, seed, uint256(0))
-        );
-        IStandardExchangeIn(vault).exchangeIn(tokenA, seed, IERC20(vault), 0, attacker, true, _deadline());
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, seed, IERC20(vault), 0, attacker, true, _deadline());
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I1 In: no free vaultShare mint");
         assertEq(IERC20(vault).balanceOf(attacker), attackerSharesBefore, "I1 In: attacker shares unchanged");
         assertEq(tokenA.balanceOf(vault), invBefore, "I1 In: inventory unmoved");
@@ -158,8 +155,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
-        IStandardExchangeIn(vault).exchangeIn(tokenA, claimed_, IERC20(vault), 0, attacker, true, _deadline());
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, claimed_, IERC20(vault), 0, attacker, true, _deadline());
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I2 In: no mint");
         assertEq(tokenA.balanceOf(vault), observed_, "I2 In: inventory unmoved");
     }
@@ -197,8 +193,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
-        );
-        IStandardExchangeIn(vault).exchangeIn(tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline());
+        );IStandardExchangeIn(vault).exchangeIn(tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline());
         assertEq(IERC20(vault).balanceOf(attacker), attackerBefore, "I3 In: no second free credit");
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I3 In: supply unchanged");
         assertEq(tokenA.balanceOf(vault), 0, "I3 In: no raw tokenA is left unbooked after the sweep");

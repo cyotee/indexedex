@@ -72,8 +72,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         require(lp_.balanceOf(address(this)) >= lpAmount_, "need LP inventory");
         lp_.transfer(to_, lpAmount_);
         vm.startPrank(to_);
-        lp_.approve(address(vault), lpAmount_);
-        shares_ = vault.exchangeIn(lp_, lpAmount_, IERC20(address(vault)), 0, to_, false, _deadline());
+        lp_.approve(address(vault), lpAmount_);(shares_,) = vault.exchangeIn(lp_, lpAmount_, IERC20(address(vault)), 0, to_, false, _deadline());
         vm.stopPrank();
         assertGt(shares_, 0, "minted SE shares");
     }
@@ -89,9 +88,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
 
     function test_E5_zeroAmount_reverts() public {
         vm.prank(attacker);
-        vm.expectRevert();
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenA)), 0, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        vm.expectRevert();IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tokenA)), 0, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
     }
 
@@ -107,13 +104,10 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
     /// @notice H3: failed Route1 minOut leaves no free vault share inventory. Amount `_uA(50)`.
     function test_H3_minOutTooHigh_noFreeShares() public {
         uint256 amount_ = _uA(50);
-        tokenA.mint(attacker, amount_);
-        uint256 preview_ = vault.previewExchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)));
+        tokenA.mint(attacker, amount_);(uint256 preview_,) = vault.previewExchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)));
         vm.startPrank(attacker);
         tokenA.approve(address(vault), amount_);
-        vm.expectRevert();
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenA)),
+        vm.expectRevert();IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tokenA)),
             amount_,
             IERC20(address(tokenB)),
             preview_ + type(uint128).max,
@@ -175,14 +169,10 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         uint256 amount_ = _uA(25);
         tokenA.mint(attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), amount_);
-        uint256 outB_ = IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault), amount_);(uint256 outB_,) = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         assertTrue(outB_ > 0, "got tokenB");
-        tokenB.approve(address(vault), outB_);
-        uint256 backA_ = IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenB)), outB_, IERC20(address(tokenA)), 0, attacker, false, _deadline()
+        tokenB.approve(address(vault), outB_);(uint256 backA_,) = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tokenB)), outB_, IERC20(address(tokenA)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertLe(backA_, amount_, "E1: no free lunch on SE swap round-trip");
@@ -198,9 +188,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         uint256 amount_ = _uA(25);
         tokenA.mint(attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), amount_);
-        uint256 out_ = vault.exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault), amount_);(uint256 out_,) = vault.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertGt(out_, 0, "attacker swap");
@@ -216,9 +204,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         tokenA.approve(address(vault), amount_);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, expired_, block.timestamp)
-        );
-        IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, expired_
+        );IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, expired_
         );
         vm.stopPrank();
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0, "H3 residual vault shares");
@@ -233,8 +219,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         tokenA.approve(address(vault), amount_);
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(tokenA), address(junk_))
-        );
-        vault.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(junk_)), 0, attacker, false, _deadline());
+        );vault.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(junk_)), 0, attacker, false, _deadline());
         vm.stopPrank();
     }
 
@@ -320,8 +305,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         tokenA.mint(address(vault), residual_);
         tokenA.mint(attacker, pull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), pull_);
-        vault.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault), pull_);vault.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
 
         uint256 supplyBefore_ = vault.totalSupply();
@@ -329,15 +313,13 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         uint256 invBefore_ = tokenA.balanceOf(address(vault));
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         vm.prank(address(atomic));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
-        );
-        vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, address(atomic), true, _deadline());
+        );vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, address(atomic), true, _deadline());
 
         assertEq(vault.totalSupply(), supplyBefore_, "I1: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1: attacker shares unchanged");
@@ -353,14 +335,12 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         tokenA.mint(address(vault), inventory_);
         tokenA.mint(attacker, pull_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), pull_);
-        vault.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        tokenA.approve(address(vault), pull_);vault.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
         vm.stopPrank();
         assertGe(tokenA.balanceOf(address(vault)), claimed_, "claimed <= booked inventory");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
     }
 
     /// @notice EOA prepaid is rejected; a contract may consume unbooked push credit atomically.
@@ -371,9 +351,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         vm.prank(attacker);
         tokenA.transfer(address(vault), claimed_);
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(attacker);
-        vault.exchangeIn(
-            IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
+        vm.prank(attacker);vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
 
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
@@ -413,9 +391,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
 
         tokenA.mint(attacker, amount_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), amount_);
-        uint256 out_ = vault.exchangeIn(
-            IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault), amount_);(uint256 out_,) = vault.exchangeIn(IERC20(address(tokenA)), amount_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest first pull");
@@ -425,15 +401,13 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
 
         uint256 claim_ = residualSeed_;
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         vm.prank(address(atomic));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0))
-        );
-        vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, address(atomic), true, _deadline());
+        );vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, address(atomic), true, _deadline());
 
         assertEq(tokenA.balanceOf(address(vault)), residual_, "I3 second call must not move inventory");
     }
@@ -443,9 +417,7 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         uint256 amountIn_ = _uA(50);
         tokenA.mint(attacker, amountIn_);
         vm.startPrank(attacker);
-        tokenA.approve(address(vault), amountIn_);
-        uint256 out_ = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
+        tokenA.approve(address(vault), amountIn_);(uint256 out_,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn_, IERC20(address(tokenB)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest !pretransferred swap");

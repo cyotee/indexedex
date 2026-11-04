@@ -112,8 +112,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
 
     function test_T7_14_commonNftUnused_claimHoldsNoHookLp() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
         address nft_ = detfInfo.bondNftVault();
         address claim_ = detfInfo.rebasingClaimToken();
@@ -126,8 +125,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
 
     function test_T7_19_afterMint_diamondHasNoJoinableBalances() public {
         _firstBond(80 ether);
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
         _assertNoJoinableDust();
         assertEq(IERC20(reserveHook).balanceOf(detfInfo.rebasingClaimToken()), 0, "no LP on claim");
@@ -210,8 +208,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 60 ether);
         uint256 redeem_ = claimBal_ / 2;
         if (redeem_ == 0) redeem_ = 1;
-        IRebasingClaimToken claim_ = _claimTok();
-        uint256 preview_ = IStandardExchangeIn(address(claim_)).previewExchangeIn(IERC20(address(claim_)), redeem_, IERC20(detf));
+        IRebasingClaimToken claim_ = _claimTok();(uint256 preview_,) = IStandardExchangeIn(address(claim_)).previewExchangeIn(IERC20(address(claim_)), redeem_, IERC20(detf));
         uint256 detfBefore_ = IERC20(detf).balanceOf(detfUser);
         uint256 out_ = _redeemOn(detf, detfUser, redeem_);
         assertEq(out_, preview_, "D15-1 preview==exec");
@@ -269,8 +266,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         _fundLaunch(attacker, 1 ether);
         vm.startPrank(attacker);
         IERC20(launchToken).approve(instance_, 1 ether);
-        vm.expectRevert(UniswapV4DetfRepo.ReserveNotLive.selector);
-        IStandardExchangeIn(address(info_)).exchangeIn(IERC20(launchToken), 1 ether, IERC20(address(info_)), 0, attacker, false, _deadline());
+        vm.expectRevert(UniswapV4DetfRepo.ReserveNotLive.selector);IStandardExchangeIn(address(info_)).exchangeIn(IERC20(launchToken), 1 ether, IERC20(address(info_)), 0, attacker, false, _deadline());
         vm.stopPrank();
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "no free detfToken");
     }
@@ -283,8 +279,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         _bookPairResidual(detf, residual_);
         uint256 claimed_ = residual_;
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), claimed_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), claimed_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I1: no free detfToken mint");
     }
 
@@ -362,8 +357,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
             residualAfter_ = IERC20(launchToken).balanceOf(detf);
         }
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), residualAfter_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), residualAfter_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3: no free mint");
     }
 
@@ -400,8 +394,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         assertGt(victimOut_, 0, "victim honest mint");
         uint256 attBefore_ = IERC20(detf).balanceOf(attacker);
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), donate_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), donate_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), attBefore_, "K1: donation not mint credit");
     }
 
@@ -423,9 +416,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         uint256 U = Bh > Rh ? Bh - Rh : 0;
         assertTrue(U > 0, "need surplus");
         uint256 claimOver_ = U + 1;
-        vm.expectRevert();
-        IStandardExchangeIn(address(ponsSe)).exchangeIn(
-            IERC20(launchToken), claimOver_, IERC20(address(ponsSe)), 0, detfUser, true, _deadline()
+        vm.expectRevert();IStandardExchangeIn(address(ponsSe)).exchangeIn(IERC20(launchToken), claimOver_, IERC20(address(ponsSe)), 0, detfUser, true, _deadline()
         );
     }
 
@@ -437,9 +428,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         uint256 Bh = tokenIn_.balanceOf(address(ponsSe));
         uint256 U = Bh >= Rh ? Bh - Rh : 0;
         uint256 claim_ = U >= 1 ? U + 1 : uint256(1);
-        vm.expectRevert();
-        IStandardExchangeIn(address(ponsSe)).exchangeIn(
-            tokenIn_, claim_, IERC20(address(ponsSe)), 0, detfUser, true, _deadline()
+        vm.expectRevert();IStandardExchangeIn(address(ponsSe)).exchangeIn(tokenIn_, claim_, IERC20(address(ponsSe)), 0, detfUser, true, _deadline()
         );
     }
 
@@ -451,14 +440,11 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         uint256 U = B >= R ? B - R : 0;
         if (U == 0) {
             vm.expectRevert();
-            vm.prank(detfUser);
-            IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
+            vm.prank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
         } else {
-            vm.prank(detfUser);
-            IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), U, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
+            vm.prank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), U, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
             vm.expectRevert();
-            vm.prank(detfUser);
-            IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
+            vm.prank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
         }
     }
 
@@ -477,8 +463,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         address se_ = IUniswapV4SeBufferHook(detfInfo.hook()).standardExchangeOf(address(payment_));
         _fundOpenPair(dnDonor, 20 ether);
         vm.startPrank(dnDonor);
-        payment_.approve(se_, 20 ether);
-        uint256 shares_ = IStandardExchangeIn(se_).exchangeIn(payment_, 20 ether, IERC20(se_), 1, dnDonor, false, _deadline());
+        payment_.approve(se_, 20 ether);(uint256 shares_,) = IStandardExchangeIn(se_).exchangeIn(payment_, 20 ether, IERC20(se_), 1, dnDonor, false, _deadline());
         vm.stopPrank();
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 quote_ = _nftDonate().previewDonate(IERC20(se_), shares_);
@@ -638,12 +623,10 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         uint256 amount_ = raw_ / 3;
         IERC20 payment_ = _openPairToken();
         bool primary_ = detfInfo.isBurningAllowed(payment_);
-        uint256 supply_ = IERC20(detf).totalSupply();
-        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(detf), amount_, payment_);
+        uint256 supply_ = IERC20(detf).totalSupply();(uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(detf), amount_, payment_);
         uint256 before_ = payment_.balanceOf(detfUser);
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, amount_);
-        uint256 actual_ = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), amount_, payment_, quote_, detfUser, false, _deadline());
+        IERC20(detf).approve(detf, amount_);(uint256 actual_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), amount_, payment_, quote_, detfUser, false, _deadline());
         vm.stopPrank();
         assertGt(actual_, 0, "exit after donated capital");
         assertEq(actual_, quote_, "post-donation burn preview equals execution");
@@ -710,16 +693,14 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         vm.startPrank(detfUser);
         vm.expectRevert(error_);
         detfInfo.donate(token_, 1 ether, false);
-        vm.expectRevert(error_);
-        IStandardExchangeIn(detf).exchangeIn(token_, 1 ether, IERC20(detf), 0, detfUser, false, deadline_);
+        vm.expectRevert(error_);IStandardExchangeIn(detf).exchangeIn(token_, 1 ether, IERC20(detf), 0, detfUser, false, deadline_);
         vm.expectRevert(error_);
         detfInfo.bond(token_, 1 ether, DEFAULT_MIN_LOCK, detfUser, false, deadline_);
         vm.stopPrank();
         _claimFundedDonationPosition(detfInfo, bobId_, bob_);
         assertGt(_donationUnstake(detfInfo, carol_), 0, "disabled instance retains funded unstaking");
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, raw_ / 4);
-        uint256 out_ = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), raw_ / 4, token_, 1, detfUser, false, deadline_);
+        IERC20(detf).approve(detf, raw_ / 4);(uint256 out_,) = IStandardExchangeIn(detf).exchangeIn(IERC20(detf), raw_ / 4, token_, 1, detfUser, false, deadline_);
         vm.stopPrank();
         assertGt(out_, 0, "disabled instance retains reserve exit");
     }

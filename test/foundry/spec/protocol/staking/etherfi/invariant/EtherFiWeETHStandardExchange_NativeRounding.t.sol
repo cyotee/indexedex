@@ -69,8 +69,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
         seIn = IStandardExchangeIn(seVault);
         seOut = IStandardExchangeOut(seVault);
         nativeWe.approve(seVault, type(uint256).max);
-        nativeE.approve(seVault, type(uint256).max);
-        seIn.exchangeIn(IERC20(address(nativeWe)), 20 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        nativeE.approve(seVault, type(uint256).max);seIn.exchangeIn(IERC20(address(nativeWe)), 20 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
         _fundSleeve(20 ether);
         atomic = new AtomicPretransferCaller();
         nativeE.approve(address(atomic), type(uint256).max);
@@ -93,9 +92,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
 
     function test_APEX_nativePullWrapCreditsOnlyActualReceipt() public {
         uint256 expected_ = nativePool.sharesForAmount(_receive(nativeE.shares(seVault), 5));
-        uint256 before_ = nativeWe.balanceOf(recipient);
-        uint256 out_ = seIn.exchangeIn(
-            IERC20(address(nativeE)), 5, IERC20(address(nativeWe)), expected_, recipient, false, block.timestamp
+        uint256 before_ = nativeWe.balanceOf(recipient);(uint256 out_,) = seIn.exchangeIn(IERC20(address(nativeE)), 5, IERC20(address(nativeWe)), expected_, recipient, false, block.timestamp
         );
         assertEq(out_, expected_);
         assertEq(nativeWe.balanceOf(recipient) - before_, out_);
@@ -103,9 +100,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
     }
 
     function test_APEX_nativeUnwrapReportsActualRecipientDelta() public {
-        uint256 expected_ = _receive(0, _receive(nativeE.shares(seVault), nativePool.amountForShare(5)));
-        uint256 out_ = seIn.exchangeIn(
-            IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), expected_, recipient, false, block.timestamp
+        uint256 expected_ = _receive(0, _receive(nativeE.shares(seVault), nativePool.amountForShare(5)));(uint256 out_,) = seIn.exchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), expected_, recipient, false, block.timestamp
         );
         assertEq(out_, nativeE.balanceOf(recipient), "return is actual native delivery");
         assertEq(out_, expected_);
@@ -115,8 +110,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
     function test_APEX_nativeUnwrapMinimumUsesActualRecipientDelta() public {
         bytes32 beforeState_ = _state();
         uint256 before_ = nativeWe.balanceOf(address(this));
-        vm.expectRevert(IEtherFiWeETHStandardVault.Slippage.selector);
-        seIn.exchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), 7, recipient, false, block.timestamp);
+        vm.expectRevert(IEtherFiWeETHStandardVault.Slippage.selector);seIn.exchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), 7, recipient, false, block.timestamp);
         assertEq(nativeWe.balanceOf(address(this)), before_);
         assertEq(nativeE.balanceOf(recipient), 0);
         assertEq(_state(), beforeState_, "complete minimum failure rollback");
@@ -191,11 +185,8 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
     }
 
     function test_APEX_nativeShareRedemptionReportsActualDeliveryAndHonorsClaimBudget() public {
-        uint256 shares_ = IERC20(seVault).balanceOf(address(this)) / 13;
-        uint256 budget_ = seIn.previewExchangeIn(IERC20(seVault), shares_, IERC20(address(nativeWe)));
-        uint256 before_ = nativeWe.balanceOf(seVault);
-        uint256 out_ =
-            seIn.exchangeIn(IERC20(seVault), shares_, IERC20(address(nativeE)), 1, recipient, false, block.timestamp);
+        uint256 shares_ = IERC20(seVault).balanceOf(address(this)) / 13;(uint256 budget_,) = seIn.previewExchangeIn(IERC20(seVault), shares_, IERC20(address(nativeWe)));
+        uint256 before_ = nativeWe.balanceOf(seVault);(uint256 out_,) = seIn.exchangeIn(IERC20(seVault), shares_, IERC20(address(nativeE)), 1, recipient, false, block.timestamp);
         assertEq(out_, nativeE.balanceOf(recipient));
         assertLe(before_ - nativeWe.balanceOf(seVault), budget_, "native exact input does not overspend share claim");
         _assertBooks();
@@ -231,8 +222,8 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
         );
     }
 
-    function _in(IERC20 token_, uint256 amount_, IERC20 output_, uint256 minimum_) internal returns (uint256) {
-        return seIn.exchangeIn(token_, amount_, output_, minimum_, recipient, false, block.timestamp);
+    function _in(IERC20 token_, uint256 amount_, IERC20 output_, uint256 minimum_) internal returns (uint256) {(uint256 quotedAmountOut,) = seIn.exchangeIn(token_, amount_, output_, minimum_, recipient, false, block.timestamp);
+        return quotedAmountOut;
     }
 
     function _nativeShareSum() internal view returns (uint256) {
@@ -250,10 +241,10 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
 
     function test_APEX_nativeExactInMintCreditsWrappedValue() public {
         uint256 received_ = _receive(nativeE.shares(seVault), 11);
-        uint256 wrapped_ = nativePool.sharesForAmount(received_);
-        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(nativeWe)), wrapped_, IERC20(seVault));
+        uint256 wrapped_ = nativePool.sharesForAmount(received_);(uint256 quote_,) = seIn.previewExchangeIn(IERC20(address(nativeWe)), wrapped_, IERC20(seVault));
         uint256 before_ = nativeWe.balanceOf(seVault);
-        assertEq(seIn.previewExchangeIn(IERC20(address(nativeE)), 11, IERC20(seVault)), quote_);
+        (uint256 previewAmountOut1,) = seIn.previewExchangeIn(IERC20(address(nativeE)), 11, IERC20(seVault));
+        assertEq(previewAmountOut1, quote_);
         assertEq(_in(IERC20(address(nativeE)), 11, IERC20(seVault), quote_), quote_);
         assertEq(IERC20(seVault).balanceOf(recipient), quote_);
         assertEq(nativeWe.balanceOf(seVault) - before_, wrapped_);
@@ -353,8 +344,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
 
     function test_APEX_nativeNonemptyRecipientReceivesMeasuredDelta() public {
         nativeE.transfer(recipient, 5);
-        uint256 before_ = nativeE.balanceOf(recipient);
-        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)));
+        uint256 before_ = nativeE.balanceOf(recipient);(uint256 quote_,) = seIn.previewExchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)));
         uint256 delivered_ = _in(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), quote_);
         assertEq(delivered_, nativeE.balanceOf(recipient) - before_);
         assertGe(delivered_, quote_);
@@ -363,8 +353,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
 
     function test_APEX_nativeWethStakeUsesActualTransfer() public {
         _dealWeth(address(this), 11);
-        hermeticWeth.approve(seVault, 11);
-        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeE)));
+        hermeticWeth.approve(seVault, 11);(uint256 quote_,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeE)));
         assertEq(quote_, 9);
         assertEq(_in(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeE)), quote_), quote_);
         assertEq(nativeE.balanceOf(recipient), quote_);
@@ -389,8 +378,7 @@ contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHSta
         uint256 held_ = nativeE.shares(seVault);
         uint256 sum_ = _nativeShareSum();
         uint256 incoming_ = nativePool.sharesForAmount(amount_);
-        uint256 expected_ = nativePool.sharesForAmount(_receive(held_, amount_));
-        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(nativeE)), amount_, IERC20(address(nativeWe)));
+        uint256 expected_ = nativePool.sharesForAmount(_receive(held_, amount_));(uint256 quote_,) = seIn.previewExchangeIn(IERC20(address(nativeE)), amount_, IERC20(address(nativeWe)));
         assertEq(quote_, expected_);
         assertEq(_in(IERC20(address(nativeE)), amount_, IERC20(address(nativeWe)), quote_), expected_);
         assertEq(nativeWe.balanceOf(recipient), expected_);

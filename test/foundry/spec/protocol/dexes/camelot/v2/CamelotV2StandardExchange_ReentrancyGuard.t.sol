@@ -157,10 +157,7 @@ contract LockChecker {
             require(!locked, "Should not be locked before call");
         } catch {
             // isLocked may not be exposed as a facet function - that's OK
-        }
-
-        IStandardExchangeIn(vaultAddr)
-            .exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        }IStandardExchangeIn(vaultAddr).exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
 
         // Mark as tested - the fact that the call completed means the lock modifier ran
         wasLockedDuringCall = true;

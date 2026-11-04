@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -36,9 +37,7 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
         assertGt(sharesIn_, 0, "funded SE shares");
 
         vm.startPrank(actorB);
-        seShares[0].approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
+        seShares[0].approve(instance_, sharesIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
         vm.stopPrank();
         // DETF has nine decimals; bound the burn to the actual funded output.
         assertGe(detfOut_, 10, "funded DETF supports a partial burn");
@@ -48,9 +47,7 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
         uint256 sharesBefore_ = seShares[0].balanceOf(actorB);
 
         vm.startPrank(actorB);
-        IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), burnAmt_, seShares[0], 0, actorB, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, burnAmt_);(uint256 sharesBack_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, seShares[0], 0, actorB, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(sharesBack_, 0, "partial burn executes");
         assertLe(sharesBack_, sharesIn_, "P-CONS: sharesBack <= sharesIn");
@@ -78,15 +75,13 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
     /// @notice P-BOUND: zero amount mint preview is zero; dust may mint 0 or revert safely.
     function testFuzz_zeroAndTinyAmounts_safe(uint256 tinySeed) public {
         address instance_ = _openLive();
-        assertEq(
-            IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], 0, IERC20(instance_)),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(instance_))), seShares[0], 0, IERC20(instance_)),
             0,
             "P-BOUND: zero preview"
         );
 
-        uint256 tiny_ = bound(tinySeed, 1, 1e6);
-        // Preview or execute must not brick residual inventory.
-        uint256 prev_ = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], tiny_, IERC20(instance_));
+        uint256 tiny_ = bound(tinySeed, 1, 1e6);// Preview or execute must not brick residual inventory.
+        (uint256 prev_,) = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], tiny_, IERC20(instance_));
         if (prev_ == 0) {
             _assertNoFreeInventory(instance_);
             return;

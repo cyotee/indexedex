@@ -20,9 +20,7 @@ contract MixedBufferPretransferRouterHelper_DexBalV3Mix {
     {
         if (transferAmt_ > 0) {
             buffer_.transferFrom(msg.sender, detf_, transferAmt_);
-        }
-        out_ = IStandardExchangeIn(detf_)
-            .exchangeIn(buffer_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours);
+        }(out_,) = IStandardExchangeIn(detf_).exchangeIn(buffer_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours);
     }
 }
 
@@ -62,9 +60,7 @@ abstract contract Adversarial_MixedBuffer_TrustFlag_Decimals is TestBase_MixedBu
         if (honestIn_ == 0) honestIn_ = residual_;
         _fundBuffer(victim, honestIn_);
         vm.startPrank(victim);
-        buffer_.approve(instance_, honestIn_);
-        uint256 out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(buffer_, honestIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
+        buffer_.approve(instance_, honestIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(buffer_, honestIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "book residual: honest mint ok");
     }
@@ -89,9 +85,7 @@ abstract contract Adversarial_MixedBuffer_TrustFlag_Decimals is TestBase_MixedBu
         assertEq(buffer_.balanceOf(attacker), 0, "attacker has no buffer");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(buffer_, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(buffer_, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(attacker), attDetfBefore_, "I1: no free detfToken mint");
         assertEq(buffer_.balanceOf(instance_), invBefore_, "I1: inventory unchanged (no in-call transfer)");
@@ -112,9 +106,7 @@ abstract contract Adversarial_MixedBuffer_TrustFlag_Decimals is TestBase_MixedBu
         vm.startPrank(alice);
         IERC20(instance_).transfer(instance_, donateAmt_);
         IERC20(instance_).approve(instance_, burnHonest_);
-        IERC20 buffer_ = _buffer(instance_);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), burnHonest_, buffer_, 0, alice, false, block.timestamp + 1 hours);
+        IERC20 buffer_ = _buffer(instance_);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnHonest_, buffer_, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         uint256 residualDetf_ = IERC20(instance_).balanceOf(instance_);
@@ -126,9 +118,7 @@ abstract contract Adversarial_MixedBuffer_TrustFlag_Decimals is TestBase_MixedBu
         uint256 bufferBefore_ = buffer_.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), residualDetf_, buffer_, 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), residualDetf_, buffer_, 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(instance_), residualDetf_, "free detf still on diamond");
         assertEq(IERC20(pool_).balanceOf(instance_), bptBefore_, "I1 burn: BPT intact");
@@ -202,9 +192,7 @@ abstract contract Adversarial_MixedBuffer_TrustFlag_Decimals is TestBase_MixedBu
         uint256 victimIn_ = _fixtureAmount(20e18);
         _fundBuffer(victim, victimIn_);
         vm.startPrank(victim);
-        buffer_.approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(buffer_, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
+        buffer_.approve(instance_, victimIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(buffer_, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "honest mint ok");
         // Residual remains on diamond but is booked (R==B) after end-sync.
@@ -212,9 +200,7 @@ abstract contract Adversarial_MixedBuffer_TrustFlag_Decimals is TestBase_MixedBu
 
         // Second call: pretransferred against residual, no new inbound transfer.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(buffer_, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(buffer_, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(buffer_.balanceOf(instance_), residual_, "I3: residual not free-credited");
     }

@@ -177,20 +177,18 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
         (uint256 id_,) = _firstBond(1_000 ether);
         IDetfBondNFT bond_ = _bondVault();
         uint256 principal_ = bond_.positionOf(id_).principal;
-        vm.warp(block.timestamp + DEFAULT_MIN_LOCK / 2);
+        vm.warp(vm.getBlockTimestamp() + DEFAULT_MIN_LOCK / 2);
         vm.prank(detfUser);
         (uint256 paidPrincipal_, uint256 reward_) = bond_.claimBond(id_, detfUser);
         assertEq(paidPrincipal_, principal_ / 2);
         assertEq(_staking().balanceOf(detfUser), paidPrincipal_ + reward_);
         assertEq(bond_.positionOf(id_).claimedPrincipal, paidPrincipal_);
         IStakedDETF staking_ = _staking();
-        vm.prank(detfUser);
-        staking_.exchangeIn(
-            IERC20(address(staking_)), paidPrincipal_ + reward_, IERC20(detf),
-            paidPrincipal_ + reward_, detfUser, false, block.timestamp
+        vm.prank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), paidPrincipal_ + reward_, IERC20(detf),
+            paidPrincipal_ + reward_, detfUser, false, vm.getBlockTimestamp()
         );
         assertEq(IERC20(detf).balanceOf(detfUser), paidPrincipal_ + reward_);
-        vm.warp(block.timestamp + DEFAULT_MIN_LOCK / 2);
+        vm.warp(vm.getBlockTimestamp() + DEFAULT_MIN_LOCK / 2);
         vm.prank(detfUser);
         (uint256 remaining_,) = bond_.claimBond(id_, detfUser);
         assertEq(remaining_, principal_ - paidPrincipal_);
@@ -209,8 +207,7 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK);
         vm.startPrank(detfUser);
         (uint256 principal_, uint256 reward_) = bond_.claimBond(id_, detfUser);
-        amount_ = principal_ + reward_;
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf), amount_, detfUser, false, block.timestamp);
+        amount_ = principal_ + reward_;staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(detf), amount_, detfUser, false, block.timestamp);
         vm.stopPrank();
     }
 
@@ -321,12 +318,9 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
         _firstBond(1_000 ether);
         assertFalse(detfInfo.isMintingAllowed(IERC20(address(pairToken))));
         uint256 supply_ = IERC20(detf).totalSupply();
-        uint256 backing_ = _staking().stakingState().accountedBacking;
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(detf));
+        uint256 backing_ = _staking().stakingState().accountedBacking;(uint256 quote_,) = detfExchangeIn.previewExchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(detf));
         assertGt(quote_, 0);
-        vm.prank(detfUser);
-        uint256 out_ = detfExchangeIn.exchangeIn(
-            IERC20(address(pairToken)), 10 ether, IERC20(detf), quote_, detfUser, false, block.timestamp
+        vm.prank(detfUser);(uint256 out_,) = detfExchangeIn.exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(detf), quote_, detfUser, false, block.timestamp
         );
         assertEq(out_, quote_);
         assertEq(IERC20(detf).totalSupply(), supply_);
@@ -346,13 +340,10 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
         uint256 amount_ = _liquidBondPrincipal() / 100;
         assertFalse(detfInfo.isBurningAllowed(IERC20(address(pairToken))));
         uint256 supply_ = IERC20(detf).totalSupply();
-        uint256 backing_ = _staking().stakingState().accountedBacking;
-        uint256 quote_ = detfExchangeIn.previewExchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)));
+        uint256 backing_ = _staking().stakingState().accountedBacking;(uint256 quote_,) = detfExchangeIn.previewExchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)));
         assertGt(quote_, 0);
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, amount_);
-        uint256 out_ = detfExchangeIn.exchangeIn(
-            IERC20(detf), amount_, IERC20(address(pairToken)), quote_, detfUser, false, block.timestamp
+        IERC20(detf).approve(detf, amount_);(uint256 out_,) = detfExchangeIn.exchangeIn(IERC20(detf), amount_, IERC20(address(pairToken)), quote_, detfUser, false, block.timestamp
         );
         vm.stopPrank();
         assertEq(out_, quote_);
@@ -367,9 +358,7 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
         assertEq(beneficiary_, _bondVault().ownerOf(2), "fixture uses creator fallback");
         uint256 feeBalance_ = staking_.balanceOf(beneficiary_);
         assertGt(feeBalance_, 0);
-        vm.prank(beneficiary_);
-        staking_.exchangeIn(
-            IERC20(address(staking_)), feeBalance_, IERC20(detf), feeBalance_, beneficiary_, false, block.timestamp
+        vm.prank(beneficiary_);staking_.exchangeIn(IERC20(address(staking_)), feeBalance_, IERC20(detf), feeBalance_, beneficiary_, false, block.timestamp
         );
         assertEq(staking_.totalSupply(), 0);
         uint256 index_ = staking_.stakingState().gonsPerUnit;

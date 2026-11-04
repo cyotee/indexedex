@@ -32,8 +32,7 @@ contract MorphoBlueStandardExchange_Routes is TestBase_MorphoBlueStandardExchang
 
     uint256 internal constant AMOUNT = 100 ether;
 
-    function test_P1_R1_in_previewEqExec_morphoSupplyUp_idleRounding() public {
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), AMOUNT, IERC20(se));
+    function test_P1_R1_in_previewEqExec_morphoSupplyUp_idleRounding() public {(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), AMOUNT, IERC20(se));
         uint256 supplyBefore = _expectedSupplyOf(se);
         uint256 out = _wrapExactIn(user, AMOUNT);
         assertEq(out, preview, "P1 preview == exec");
@@ -67,12 +66,9 @@ contract MorphoBlueStandardExchange_Routes is TestBase_MorphoBlueStandardExchang
 
     function test_P3_R2_in_redeemShares() public {
         uint256 shares = _wrapExactIn(user, AMOUNT);
-        uint256 supplyBefore = _expectedSupplyOf(se);
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
+        uint256 supplyBefore = _expectedSupplyOf(se);(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
         uint256 loanBefore = loanToken.balanceOf(user);
-        vm.prank(user);
-        uint256 assetsOut = seIn.exchangeIn(
-            IERC20(se), shares, IERC20(address(loanToken)), preview, user, false, _deadline()
+        vm.prank(user);(uint256 assetsOut,) = seIn.exchangeIn(IERC20(se), shares, IERC20(address(loanToken)), preview, user, false, _deadline()
         );
         assertEq(assetsOut, preview, "P3 preview == exec");
         assertEq(loanToken.balanceOf(user), loanBefore + assetsOut, "P3 loan received");
@@ -98,8 +94,7 @@ contract MorphoBlueStandardExchange_Routes is TestBase_MorphoBlueStandardExchang
         assertEq(loanToken.balanceOf(user), loanBefore + assetsOut, "P4 exact assets");
     }
 
-    function test_P5_IERC4626_matches_P1_P4_amounts() public {
-        uint256 p1Preview = seIn.previewExchangeIn(IERC20(address(loanToken)), AMOUNT, IERC20(se));
+    function test_P5_IERC4626_matches_P1_P4_amounts() public {(uint256 p1Preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), AMOUNT, IERC20(se));
         assertEq(se4626.previewDeposit(AMOUNT), p1Preview, "P5 deposit == R1 exact-in");
 
         uint256 mintShares = 25 ether;
@@ -107,8 +102,7 @@ contract MorphoBlueStandardExchange_Routes is TestBase_MorphoBlueStandardExchang
         assertEq(se4626.previewMint(mintShares), p2Preview, "P5 mint == R1 exact-out");
 
         _wrapExactIn(user, AMOUNT);
-        uint256 userShares = IERC20(se).balanceOf(user);
-        uint256 redeemPreview = seIn.previewExchangeIn(IERC20(se), userShares / 2, IERC20(address(loanToken)));
+        uint256 userShares = IERC20(se).balanceOf(user);(uint256 redeemPreview,) = seIn.previewExchangeIn(IERC20(se), userShares / 2, IERC20(address(loanToken)));
         assertEq(se4626.previewRedeem(userShares / 2), redeemPreview, "P5 redeem == R2 exact-in");
 
         uint256 withdrawAssets = 10 ether;
@@ -127,20 +121,17 @@ contract MorphoBlueStandardExchange_Routes is TestBase_MorphoBlueStandardExchang
             abi.encodeWithSelector(
                 IStandardExchangeErrors.InvalidRoute.selector, address(loanToken), address(loanToken)
             )
-        );
-        seIn.previewExchangeIn(IERC20(address(loanToken)), 1 ether, IERC20(address(loanToken)));
+        );seIn.previewExchangeIn(IERC20(address(loanToken)), 1 ether, IERC20(address(loanToken)));
 
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, se, se)
-        );
-        seIn.previewExchangeIn(IERC20(se), 1 ether, IERC20(se));
+        );seIn.previewExchangeIn(IERC20(se), 1 ether, IERC20(se));
 
         vm.expectRevert(
             abi.encodeWithSelector(
                 IStandardExchangeErrors.InvalidRoute.selector, address(collateralToken), se
             )
-        );
-        seIn.previewExchangeIn(IERC20(address(collateralToken)), 1 ether, IERC20(se));
+        );seIn.previewExchangeIn(IERC20(address(collateralToken)), 1 ether, IERC20(se));
 
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(random_), se)
@@ -165,18 +156,11 @@ contract MorphoBlueStandardExchange_Routes is TestBase_MorphoBlueStandardExchang
         vm.prank(user);
         loan6.approve(se6, type(uint256).max);
 
-        IStandardExchangeIn in6 = IStandardExchangeIn(se6);
-        uint256 preview = in6.previewExchangeIn(IERC20(address(loan6)), amount6, IERC20(se6));
-        vm.prank(user);
-        uint256 shares = in6.exchangeIn(
-            IERC20(address(loan6)), amount6, IERC20(se6), preview, user, false, _deadline()
+        IStandardExchangeIn in6 = IStandardExchangeIn(se6);(uint256 preview,) = in6.previewExchangeIn(IERC20(address(loan6)), amount6, IERC20(se6));
+        vm.prank(user);(uint256 shares,) = in6.exchangeIn(IERC20(address(loan6)), amount6, IERC20(se6), preview, user, false, _deadline()
         );
-        assertEq(shares, preview, "P7 wrap preview");
-
-        uint256 redeemPreview = in6.previewExchangeIn(IERC20(se6), shares, IERC20(address(loan6)));
-        vm.prank(user);
-        uint256 assetsOut = in6.exchangeIn(
-            IERC20(se6), shares, IERC20(address(loan6)), 0, user, false, _deadline()
+        assertEq(shares, preview, "P7 wrap preview");(uint256 redeemPreview,) = in6.previewExchangeIn(IERC20(se6), shares, IERC20(address(loan6)));
+        vm.prank(user);(uint256 assetsOut,) = in6.exchangeIn(IERC20(se6), shares, IERC20(address(loan6)), 0, user, false, _deadline()
         );
         assertEq(assetsOut, redeemPreview, "P7 redeem preview");
         assertGe(assetsOut + 1, amount6, "P7 conservation +/- 1");

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
@@ -14,7 +16,7 @@ contract RebasingDETFTokenPricingTarget_Test is TestBase_ComposedFundedRoutes {
         uint256 id_ = _buyBond(alice, 10e18);
         _assertBondMaturePreviewEqualsPayment(composedDetf, id_, alice);
         uint256 receipt_ = _staked().balanceOf(alice);
-        assertEq(_staked().previewExchangeIn(IERC20(address(_staked())), receipt_, IERC20(composedDetf)), receipt_);
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(_staked())), IERC20(address(_staked())), receipt_, IERC20(composedDetf)), receipt_);
         _assertFundedUnstake(composedDetf, alice, receipt_);
     }
 
@@ -38,8 +40,8 @@ contract RebasingDETFTokenPricingTarget_Test is TestBase_ComposedFundedRoutes {
         IERC20 lp_ = _bondNft().lpToken();
         (uint256 self_, uint256 stable_, uint256 common_) =
             composedInfo.previewReservePoolDecomposition(lp_.balanceOf(address(_bondNft())));
-        uint256 external_ = stableAdapter.previewExchangeIn(IERC20(address(composedStable)), stable_, weth)
-            + commonAdapter.previewExchangeIn(IERC20(address(composedCommon)), common_, weth);
+        uint256 external_ = ExchangeInAmount.previewOut(IStandardExchangeIn(address(stableAdapter)), IERC20(address(composedStable)), stable_, weth)
+            + ExchangeInAmount.previewOut(IStandardExchangeIn(address(commonAdapter)), IERC20(address(composedCommon)), common_, weth);
         uint256 circulating_ = IERC20(composedDetf).totalSupply() - self_;
         assertGt(external_, 0);
         assertGt(circulating_, 0);
@@ -47,13 +49,11 @@ contract RebasingDETFTokenPricingTarget_Test is TestBase_ComposedFundedRoutes {
     }
 
     function test_previewInnerPoolValues_matchActualRateAssetQuotes() public view {
-        assertEq(
-            composedInfo.previewStablePoolBptEthValue(1e18),
-            stableAdapter.previewExchangeIn(IERC20(address(composedStable)), 1e18, weth)
+        assertEq(composedInfo.previewStablePoolBptEthValue(1e18),
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(stableAdapter)), IERC20(address(composedStable)), 1e18, weth)
         );
-        assertEq(
-            composedInfo.previewCommonPoolBptEthValue(1e18),
-            commonAdapter.previewExchangeIn(IERC20(address(composedCommon)), 1e18, weth)
+        assertEq(composedInfo.previewCommonPoolBptEthValue(1e18),
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(commonAdapter)), IERC20(address(composedCommon)), 1e18, weth)
         );
     }
 

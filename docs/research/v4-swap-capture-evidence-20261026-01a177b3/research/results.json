@@ -1,0 +1,2466 @@
+{
+  "selected": {
+    "domain": "infinite-range exact reserves; token1 target; token0 opposing; fee not added to curve",
+    "zero_fee_executed_profit": "80/17",
+    "fee_3000_executed_profit": "909146072454192229/210758608401740140",
+    "fee_3000_deposit_swap_no_exit_swap": {
+      "rule": "executed-price",
+      "exit_swap": "False",
+      "profit1": "-99850/1247",
+      "end0": "49850/1247",
+      "end_shares": "0",
+      "minted": "99700/1497",
+      "p": "1997/997"
+    },
+    "fee_3000_proportional": {
+      "rule": "proportional-vector",
+      "profit1": "-8973027/19940090",
+      "end0": "0",
+      "ratio": "1/2"
+    },
+    "fee_3000_no_vault_swap_reverse": "-8973027/19940090",
+    "executed_grid_cases": 288,
+    "executed_grid_positive": 155,
+    "proportional_grid_positive": 0,
+    "quote_rows": [
+      {
+        "rule": "live-quote-mint",
+        "exit": "quote",
+        "jit": "0",
+        "profit1_after_jit_repay": "0",
+        "end0_after_jit_repay": "0",
+        "value0": "299400/1997",
+        "minted": "199700/1497",
+        "vault_fraction": "1/2",
+        "sleeve_covered": "True"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "slice",
+        "jit": "0",
+        "profit1_after_jit_repay": "148803147300/12197569723",
+        "end0_after_jit_repay": "0",
+        "value0": "299400/1997",
+        "minted": "199700/1497",
+        "vault_fraction": "1/2",
+        "sleeve_covered": "None"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "quote",
+        "jit": "10",
+        "profit1_after_jit_repay": "994009000/38428759",
+        "end0_after_jit_repay": "0",
+        "value0": "299400/1997",
+        "minted": "199700/1497",
+        "vault_fraction": "1/2",
+        "sleeve_covered": "False"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "slice",
+        "jit": "10",
+        "profit1_after_jit_repay": "46073694311184700/3802146056017847",
+        "end0_after_jit_repay": "0",
+        "value0": "299400/1997",
+        "minted": "199700/1497",
+        "vault_fraction": "1/2",
+        "sleeve_covered": "None"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "quote",
+        "jit": "100",
+        "profit1_after_jit_repay": "9940090000/352888759",
+        "end0_after_jit_repay": "0",
+        "value0": "299400/1997",
+        "minted": "199700/1497",
+        "vault_fraction": "1/2",
+        "sleeve_covered": "False"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "slice",
+        "jit": "100",
+        "profit1_after_jit_repay": "173154629622124300/14295413166758993",
+        "end0_after_jit_repay": "0",
+        "value0": "299400/1997",
+        "minted": "199700/1497",
+        "vault_fraction": "1/2",
+        "sleeve_covered": "None"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "quote",
+        "jit": "0",
+        "profit1_after_jit_repay": "0",
+        "end0_after_jit_repay": "0",
+        "value0": "100",
+        "minted": "200",
+        "vault_fraction": "1",
+        "sleeve_covered": "True"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "slice",
+        "jit": "0",
+        "profit1_after_jit_repay": "99700/4491",
+        "end0_after_jit_repay": "0",
+        "value0": "100",
+        "minted": "200",
+        "vault_fraction": "1",
+        "sleeve_covered": "None"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "quote",
+        "jit": "10",
+        "profit1_after_jit_repay": "1994000/32991",
+        "end0_after_jit_repay": "0",
+        "value0": "100",
+        "minted": "200",
+        "vault_fraction": "1",
+        "sleeve_covered": "False"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "slice",
+        "jit": "10",
+        "profit1_after_jit_repay": "308172700/13895181",
+        "end0_after_jit_repay": "0",
+        "value0": "100",
+        "minted": "200",
+        "vault_fraction": "1",
+        "sleeve_covered": "None"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "quote",
+        "jit": "100",
+        "profit1_after_jit_repay": "19940000/302991",
+        "end0_after_jit_repay": "0",
+        "value0": "100",
+        "minted": "200",
+        "vault_fraction": "1",
+        "sleeve_covered": "False"
+      },
+      {
+        "rule": "live-quote-mint",
+        "exit": "slice",
+        "jit": "100",
+        "profit1_after_jit_repay": "299199700/13490991",
+        "end0_after_jit_repay": "0",
+        "value0": "100",
+        "minted": "200",
+        "vault_fraction": "1",
+        "sleeve_covered": "None"
+      }
+    ]
+  },
+  "grid": [
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-559653039/283388606222500",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-5953539/33641062225",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "-334356/44662489",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "84060000/408654631",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "1010000/204081008560301",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "110000/24270451211",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "5000/2050313",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "13750/36907",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "50641376510000/25510177592816147651",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "565331510000/3033872552893151",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "12727010000/1025461295201",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "2016560000/3703532681",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-81721248635286697843833512299777347199/81582696084190097953033767120000000000000",
+      "proportional_profit": "-195960594398401/200019580404900000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-9839381189446912258984886978397199/969282007499376861467671200000000000",
+      "proportional_profit": "-19604694398401/2001958040490000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "-149348893027752339256139065313/1410758485949043295944000000000",
+      "proportional_profit": "-1969104398401/20195804049000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "-8584625154979180192682185599/11756499370485708317737185100",
+      "proportional_profit": "-205545398401/219580404900"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-29596851120903176489260952839/29599281869822054790040000000000",
+      "proportional_profit": "-79983996001/80007992002000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-516864768070949315012656267/51748659760997075350668586600",
+      "proportional_profit": "-8001996001/800799200200"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "-169464585660270993262567/1748265812248528066744660",
+      "proportional_profit": "-803796001/8079920020"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "-364949046154610717197/629195360994160661326",
+      "proportional_profit": "-83976001/87992002"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-11634191859537509023930502237417928557/11655906110536212832871902526712390700000",
+      "proportional_profit": "-203959393598601/200020379605100000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-9532760178590241767137903459449899/970308511177287173613395113173490000",
+      "proportional_profit": "-20405293598601/2002037960510000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "-2884069180420239870973112844899/32789722330813224106275462349000",
+      "proportional_profit": "-2049883598601/20203796051000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "-5028311598632707988533184399/11838404428827563245687684900",
+      "proportional_profit": "-214342598601/220379605100"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-282569715285177841805958780542104373/47093025464716452358133452500000000000",
+      "proportional_profit": "-48928886615609/8334145107350000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-33572597069691131257576642954373/559394585153094941334525000000000",
+      "proportional_profit": "-4895036615609/83414510735000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "-11175158510144235811003039373/18706113508527023345250000000",
+      "proportional_profit": "-491651615609/841451073500"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "-109718093813965262780783519/20300108395186439501998850",
+      "proportional_profit": "-51313115609/9145107350"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-7222165738525398352924931759/1203802827554319516340000000000",
+      "proportional_profit": "-59912982027/10000994009000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-144865011114987493469158271/2416676594077795714600000000",
+      "proportional_profit": "-5993982027/100099400900"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "-48446396178135374024029/81637534397118279128570",
+      "proportional_profit": "-602082027/1009940090"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "-156580791424669291339/29333531631092382827",
+      "proportional_profit": "-62892027/10994009"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-7628189972016711021943718888350851371/1271646428695264032710812134224540350000",
+      "proportional_profit": "-152778256252227/25002534722950000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-18474208296952149398397105977579/308564149074250639208097381715000",
+      "proportional_profit": "-15284806252227/250253472295000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "-300833989809434380693427106371/510385576162278604635662903500",
+      "proportional_profit": "-1535461252227/2525347229500"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "-968759826976600906733026871/183969370108615023276215350",
+      "proportional_profit": "-160526752227/27534722950"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-25244856742197561259668052965799/1262523107230458604742877500000000",
+      "proportional_profit": "-487573532201/25002401245000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-2991333066875734308232965799/14988099346917444928775000000",
+      "proportional_profit": "-48778532201/250240124500"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "-984719218940389525965799/499691752387096787750000",
+      "proportional_profit": "-4899032201/2524012450"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "-3319816652182334360599/179935242934164111755",
+      "proportional_profit": "-511082201/27401245"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-4039591010695127821850599/202004495045398485050000000",
+      "proportional_profit": "-199009801/10000980100"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-479065278379041050599/2398186673843850500000",
+      "proportional_profit": "-19909801/100098010"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "-158386189507880599/79974239647505000",
+      "proportional_profit": "-1999801/1009801"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "-488891401346710/26262275127809",
+      "proportional_profit": "-2088010/109801"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-255075811210245599793468029701/12754109432136836105998211255000",
+      "proportional_profit": "-507475492401/25002499255000"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-6802539630660122288435239/34022563400025222434844500",
+      "proportional_profit": "-50770492401/250249925500"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "-260284590547245936659/130778458087929355450",
+      "proportional_profit": "-5099992401/2524992550"
+    },
+    {
+      "vault_fraction": "1/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "-377963113910643926711/20130244421300726305",
+      "proportional_profit": "-532942401/27499255"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-54753039/2836361222500",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-463539/339112225",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "15411000/140265661",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "27612000/2787857",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "101000/204630496121",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "11000/24909131",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "2000/10127",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "22000/2047",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "518237651000/25579328393438651",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "6943151000/3114316579151",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "363701000/1269365951",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "302512000/26089717",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-83225016050607069730957085819397199/81725873047480642878441030000000000000",
+      "proportional_profit": "-19604694398401/20019580404900000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-11114640522370935850870582602199/985664830550454881910300000000000",
+      "proportional_profit": "-1969104398401/201958040490000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "660682487197965500924563401/40361581999020171221870851000",
+      "proportional_profit": "-205545398401/2195804049000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "368188276224831417683331351/40078269145671667826130100",
+      "proportional_profit": "-29189498401/39580404900"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-4357822130952864637711996327/4363241080013204517345605986000",
+      "proportional_profit": "-8001996001/8007992002000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-503833504353699417256627/53109842823536309868658600",
+      "proportional_profit": "-803796001/80799200200"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "5172135031909011101/50198937164289459220",
+      "proportional_profit": "-83976001/879920020"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "5459863165810075835/544953031102645063",
+      "proportional_profit": "-11994001/15992002"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-6162388865655256458056935155562223/6293263121749357456960982105587300000",
+      "proportional_profit": "-20405293598601/20020379605100000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-7687403350501371313038312603899/996025333018903995329317713490000",
+      "proportional_profit": "-2049883598601/202037960510000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "7755857557318922008008366601/40584424467630004007575849000",
+      "proportional_profit": "-214342598601/2203796051000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "452398495653929035984963651/41673352300359072065629900",
+      "proportional_profit": "-30788498601/40379605100"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-283688484058874735164008927454373/47175412612776754826385000000000000",
+      "proportional_profit": "-4895036615609/834145107350000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-34594326382395399871981489373/568819352162547638850000000000",
+      "proportional_profit": "-491651615609/8414510735000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "-31459806853909854961439519/69769513060072441118988500",
+      "proportional_profit": "-51313115609/91451073500"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "13319817501995089942739/2379387368012938888150",
+      "proportional_profit": "-7279265609/1645107350"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-1221807079221786315171028271/203805869892288736351000000000",
+      "proportional_profit": "-5993982027/1000994009000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-146775836449194839968249/2482583924135232018559700",
+      "proportional_profit": "-602082027/10099400900"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "-37177505005844490859/100744152402864784670",
+      "proportional_profit": "-62892027/109940090"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "323030872159539790/50662851083122927",
+      "proportional_profit": "-8973027/1994009"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-1088641645645085645553404478516053/182154971998505403608871408770050000",
+      "proportional_profit": "-15284806252227/2502534722950000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-891591375562595455319467167371/15519498853129958506623314035000",
+      "proportional_profit": "-1535461252227/25253472295000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "-180411054799671957603922871/631379689813458516203153500",
+      "proportional_profit": "-160526752227/275347229500"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "4622506417773943689151579/645684944355171296532850",
+      "proportional_profit": "-23033302227/5034722950"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-25293414432477827572650015799/1264712283507056290152500000000",
+      "proportional_profit": "-48778532201/2502401245000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-3039850374446723942670799/15238363595038901525000000",
+      "proportional_profit": "-4899032201/25240124500"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "-1090120226859590722099/620339504356490767550",
+      "proportional_profit": "-511082201/274012450"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "-2702292681121278649/606641328173109005",
+      "proportional_profit": "-72287201/4901245"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-4043951719971727559599/202361952998140160000000",
+      "proportional_profit": "-19909801/1000980100"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-483061012061721499/2439055355111600000",
+      "proportional_profit": "-1999801/10098010"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "-15279040310761/9047655837779",
+      "proportional_profit": "-208801/109801"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "-1894386057400/494842526249",
+      "proportional_profit": "-297010/19801"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-401281623180253059878289673/20096044107231853995154115000",
+      "proportional_profit": "-50770492401/2502499255000"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-10195381162806166658567/51846220037798639708500",
+      "proportional_profit": "-5099992401/25249925500"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "-112183054472382403211/69301829586221063050",
+      "proportional_profit": "-532942401/274992550"
+    },
+    {
+      "vault_fraction": "1/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "-20359652570467751/6369638663916505",
+      "proportional_profit": "-76237401/4999255"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-88857351/1025055002500",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "44029800/27819907349",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "43579800/21148349",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "51429600/2076949",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "4040/331330581",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "440/44559",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "400/171",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "550000/21519",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "22831530200/207102473197851",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "507030200/27878862351",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "56580200/21603351",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "58710400/2228433",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-713417553169835494134295245357199/658912897029597323311422000000000000",
+      "proportional_profit": "-3928614398401/4019580404900000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-23893868322281315150951610433/2965667468917621551501637170000",
+      "proportional_profit": "-401496398401/41958040490000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "446647675743290464882994867/225321099262095910384017000",
+      "proportional_profit": "-48784598401/595804049000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "26908528352733955317955397/1105318161125490430604700",
+      "proportional_profit": "-13513418401/23580404900"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-14898079958422370640889971/15138799643957726207271370000",
+      "proportional_profit": "-1603596001/1607992002000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "302365662264677350023/1425027102742556357995000",
+      "proportional_profit": "-163956001/16799200200"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "49409992707399977601/21862508220808463972",
+      "proportional_profit": "-19992001/239920020"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "17270896278843534504/687119577687778787",
+      "proportional_profit": "-5595601/9592002"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-83869760257200028612760655209957/94627021791380723705405883530700000",
+      "proportional_profit": "-4089373598601/4020379605100000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "75799365450013541351122671301/8915842665220126960802561490000",
+      "proportional_profit": "-418291598601/42037960510000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "1753279310175914964143585401/690497738924594677097049000",
+      "proportional_profit": "-51183398601/603796051000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "92204238772277758900176811/3557766273991938508113900",
+      "proportional_profit": "-14472578601/24379605100"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-62260947922244698188045166108071/10269216249260536587833000000000000",
+      "proportional_profit": "-2942749846827/502435322050000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-7796527668638569903790941971/138596754508934559313123465000",
+      "proportional_profit": "-300718846827/5243532205000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "1518040816130994645281739/954623761723143157881500",
+      "proportional_profit": "-36515746827/74353220500"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "1140701552065651708753239/51255075402900650413150",
+      "proportional_profit": "-10095436827/2935322050"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-9852548505262009226797013/1651576081562535880675185000",
+      "proportional_profit": "-400394009/66998003000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-1067728863090551958233/22198865266133748892500",
+      "proportional_profit": "-40934009/699800300"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "633118390847279129/339615865236392598",
+      "proportional_profit": "-4988009/9980030"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "488875479323939332/21241156527188241",
+      "proportional_profit": "-1393409/398003"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-1143189835951815451870533638407/194780861126684673055076020950000",
+      "proportional_profit": "-3063166252227/502534722950000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-113160760466828895712072379/2834472618243625649639715000",
+      "proportional_profit": "-313297252227/5253472295000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "22949384087543682122582329/10725968335262890028953500",
+      "proportional_profit": "-38310352227/75347229500"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "1306884693551343795745219/54989677000651878338850",
+      "proportional_profit": "-10811662227/3034722950"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-203988475577673745591975799/10195766488909076132500000000",
+      "proportional_profit": "-9774532201/502401245000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-25063881787866236866799/131054848054161325000000",
+      "proportional_profit": "-998632201/5240124500"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "5080213606093379101/10331420052100827550",
+      "proportional_profit": "-121042201/74012450"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "814943519381564191/49722352661553205",
+      "proportional_profit": "-33283201/2901245"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-32491819042053080399/1631643701811160000000",
+      "proportional_profit": "-3989801/200980100"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-1345312156144159/7337137006798250",
+      "proportional_profit": "-407801/2098010"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "420581498135/556843336931",
+      "proportional_profit": "-49601/29801"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "1172015037860/68680964009",
+      "proportional_profit": "-137810/11801"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-203153009903046283532010199/10249525192239247283313245000",
+      "proportional_profit": "-10174492401/502499255000"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-493239013167829198351/2810506581533074200500",
+      "proportional_profit": "-1040392401/5249925500"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "10764847714681909901/10551016017011627450",
+      "proportional_profit": "-126982401/74992550"
+    },
+    {
+      "vault_fraction": "1/2",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "945637210656397811/53336735566418195",
+      "proportional_profit": "-35641401/2999255"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-3562165431/25725691202500",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "57360069000/3862641556621",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "18362619000/4623695821",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "20906748000/822211337",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "8181000/209547371249",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "891000/30958739",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "162000/37583",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "1782000/68479",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "5610049731000/26198161181728579",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "165675231000/3877051593079",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "3169683000/681838897",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "23697072000/890605253",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-93924722992847435551980957368158071/83005453741931095975952390000000000000",
+      "proportional_profit": "-19681449585609/20176223644100000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "6735627637649120196975254051829/1235249380667642320179575578790000",
+      "proportional_profit": "-2045859585609/217622364410000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "44375551991936567476768299333/11366282431956263604740183000",
+      "proportional_profit": "-282300585609/3762236441000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "33012855070175699019785775279/1312567014776820367652882900",
+      "proportional_profit": "-105944685609/196223644100"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-12791947046821845332839028109/13404111911320984835254413302000",
+      "proportional_profit": "-8033964009/8071928018000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "3832981423040931482078991/198008080090307628371910200",
+      "proportional_profit": "-835764009/87192801800"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "101912091765328263169701/24020963387968010896820",
+      "proportional_profit": "-115944009/1519280180"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "1407017392446905992143/54659230966648542785",
+      "proportional_profit": "-43962009/79928018"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-65319772225594132844859716233435371/83790847577308941767913202435642100000",
+      "proportional_profit": "-20488442387409/20183416445900000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "41267659938858119160400684669629/1239854301449292179135340014210000",
+      "proportional_profit": "-2133032387409/218341644590000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "698624681352039876854826480129/152526488363647770234965921000",
+      "proportional_profit": "-297491387409/3834164459000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "109104757232791280013601053/4145008042337195682379700",
+      "proportional_profit": "-113937287409/203416445900"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-7887158272992411947408900204823759/1293616058409689331176735000000000000",
+      "proportional_profit": "-14742388621443/2521917898450000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-47005092964256292718885443627/1131686493822766703277658705000",
+      "proportional_profit": "-1532233621443/27191789845000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "8182013284448189081149703841/2293469093188126360981548500",
+      "proportional_profit": "-211218121443/469178984500"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "481994819743530832346678391/20278022136220618600272350",
+      "proportional_profit": "-79116571443/24417898450"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-1236935880569189615442166461/208899075218115490284991193000",
+      "proportional_profit": "-6017838243/1008946081000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-12228735380394310277223/440557269151448831369900",
+      "proportional_profit": "-625938243/10894608100"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "1455228757304006152029/372823864907739263630",
+      "proportional_profit": "-86748243/189460810"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "41098405181394635994/1688837910557486755",
+      "proportional_profit": "-32829243/9946081"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-7506130795032933169453349778210459/1305854416355751266088324806765150000",
+      "proportional_profit": "-15346856270043/2522812506550000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-269527001126922498543312165459/19310132008111354837711851515000",
+      "proportional_profit": "-1597511270043/27281250655000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "323641502697626921613207711/76362339396775184225706500",
+      "proportional_profit": "-222576770043/478125065500"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "546700000462347607668349491/21963655742875233635307650",
+      "proportional_profit": "-85083320043/25312506550"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-25686128179147505632849117471/1284276530636966724972500000000",
+      "proportional_profit": "-48966789809/2521611205000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-3300751762162012469222671/19065494078180368854189500",
+      "proportional_profit": "-5087289809/27161120500"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "5904481255337845561829/2251067065909918143950",
+      "proportional_profit": "-699339809/466112050"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "8310850273562675857/417934783163495035",
+      "proportional_profit": "-260544809/24111205"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-4075946676238617995671/205556835604066160000000",
+      "proportional_profit": "-19988209/1008820900"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-69722998753626787/436583402874332930",
+      "proportional_profit": "-2078209/10882090"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "1079733173100101/365888858209241",
+      "proportional_profit": "-287209/188209"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "66689269846352/3271684255097",
+      "proportional_profit": "-1081090/98209"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-25487731180256272878016059871/1296421590315864802212279605000",
+      "proportional_profit": "-50974431609/2522493295000"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-2798668445431375177404871/19135593538532239550460500",
+      "proportional_profit": "-5303931609/27249329500"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "585787034854344535433/178687214649251020850",
+      "proportional_profit": "-736881609/474932950"
+    },
+    {
+      "vault_fraction": "9/10",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "443993097726458322179/21273140111204284355",
+      "proportional_profit": "-280176609/24993295"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-381036917151/2574806380502500",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "6803707590000/359290541465141",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "22316778990000/5161109134501",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "1150357140000/45644713961",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "9899010000/210104188520399",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "810000/23803219",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "24502500/5248981",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "4455000/172927",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "6288111174510000/26268248789750637649",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "17728375410000/360757767676559",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "26747225010000/5337878050099",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "1302834960000/49513909379",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-8620492079807726871239090859710076591/7559107628210032060876836280000000000000",
+      "proportional_profit": "-196900845441699/201938460085100000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "12121743295869969666272136085890399/1263877364329717502323526227429490000",
+      "proportional_profit": "-20544945441699/2193846008510000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "63857941805621559076011508962309/14993743477285628107168244359000",
+      "proportional_profit": "-2909355441699/39384600851000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "39997701291906697882131194854899/1603044401505617417306848244900",
+      "proportional_profit": "-1145796441699/2138460085100"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-165047466573078515924938444287/174541754884912750779919061026000",
+      "proportional_profit": "-80375604099/80791208198000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "4996423642333521661681760901/202632721236111114583247700200",
+      "proportional_profit": "-8393604099/879120819800"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "11229236781405476088887091/2439823150488181523049820",
+      "proportional_profit": "-1195404099/15912081980"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "6815786741340133098375711/267219841785917426006582",
+      "proportional_profit": "-475584099/871208198"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-74757992554603594753453676348438583/99191167811546598514362992895023300000",
+      "proportional_profit": "-204977966261499/202017580904900000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "50437368389389829220859616210570199/1269034931727593195754686302973510000",
+      "proportional_profit": "-21423866261499/2201758090490000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "6970764477000598596557182184919/1409729203300344490173646631000",
+      "proportional_profit": "-3068456261499/40175809049000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "45301758973899314902913872755699/1738916208519158430275433685100",
+      "proportional_profit": "-1232915261499/2217580904900"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-7908108654868918727520320187066473229/1295864609812480984812798582500000000000",
+      "proportional_profit": "-147488324835873/25241096882950000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-17001458887905669691725630918003/457760213717585564799351832745000",
+      "proportional_profit": "-15386774835873/274109688295000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "10067980619556750755783465930871/2559585869776531028803323303500",
+      "proportional_profit": "-2176619835873/4910968829500"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "586731891943506011643242971371/24764031253856575988611755350",
+      "proportional_profit": "-855604335873/266096882950"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-95208161402733119081732545167/16111753484561464778442727211000",
+      "proportional_profit": "-60205220673/10098406891000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-70068109354044769360578171/3155789110147504695453074300",
+      "proportional_profit": "-6286220673/109840689100"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "1780215938635665324372729/416485230912145615384430",
+      "proportional_profit": "-894320673/1984068910"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "99998337063499426554819/4127957730600426110213",
+      "proportional_profit": "-355130673/108406891"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-7488097934742927503124169080448849929/1309339254864894093558302896334064650000",
+      "proportional_profit": "-153538368970473/25250937572050000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-2922265561987783959686452406121/403341332424210809249446482785000",
+      "proportional_profit": "-16044918970473/275093757205000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "12213446228048456060280010195071/2646984898679655086745208146500",
+      "proportional_profit": "-2295573970473/5009375720500"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "664732309286673631976345504571/26861870736553674729220239650",
+      "proportional_profit": "-920639470473/275937572050"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-25725886742854474660088362803901/1286489332366889372620872500000000",
+      "proportional_profit": "-489879687899/25237723255000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-3277081871898114491681969101/19504138173276889089529224500",
+      "proportional_profit": "-51084687899/273772325500"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "7583106336716655457620899/2511222491371485547172450",
+      "proportional_profit": "-7205187899/4877232550"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "483428489362930373829899/23984021747139916909745",
+      "proportional_profit": "-2817237899/262723255"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-4078777293136066133339101/205918230045984380150000000",
+      "proportional_profit": "-199970299/10097029900"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-479801107822885160599/3126938656953501670010",
+      "proportional_profit": "-20870299/109702990"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "1370104468518099401/408567156328103801",
+      "proportional_profit": "-2960299/1970299"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "824426126393263010/39976950676446581",
+      "proportional_profit": "-11692990/1070299"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-25506066251326255307447445189301/1299861127715137008316928909255000",
+      "proportional_profit": "-509973747699/25247426245000"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-55487783012557480719818149/399645792303626268711549500",
+      "proportional_profit": "-53268747699/274742624500"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "9570175266571599171320699/2596355816428220176342550",
+      "proportional_profit": "-7598247699/4974262450"
+    },
+    {
+      "vault_fraction": "99/100",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "548291734994530267811699/26012693331833626281755",
+      "proportional_profit": "-3031197699/272426245"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-14751/99002500",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "8546100/440245861",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "632775/145084",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "5738400/227953",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "10100/210166103",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "1100/31763",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "80/17",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "34375/1336",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "6364765100/26276042167751",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "198415100/3978547751",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "13640050/2701513",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 0,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "47744/1817",
+      "proportional_profit": "0"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-9400092384286132715632649/8235955468754871000000000000",
+      "proportional_profit": "-1969104398401/2019580404900000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "440077760349266986207433769/43692394430058411256528190000",
+      "proportional_profit": "-205545398401/21958040490000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "717146464805184183094537251/166909240521383909812201000",
+      "proportional_profit": "-29189498401/395804049000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "20407668805105338454391523/818765697349538765012300",
+      "proportional_profit": "-11553908401/21580404900"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-4232918594597581740736633/4481224657386682748286598000",
+      "proportional_profit": "-803796001/807992002000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "1710904630994239723337/67716681844420044665800",
+      "proportional_profit": "-83976001/8799200200"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "21008383809381993667/4527123625520193320",
+      "proportional_profit": "-11994001/159920020"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "23182674253596399137/909965961440176246",
+      "proportional_profit": "-4795801/8792002"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-63093633523877961208688531989799/84039834722188644959375411224900000",
+      "proportional_profit": "-2049883598601/2020379605100000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "51501948048668664259002080701/1272299482059976168738167490000",
+      "proportional_profit": "-214342598601/22037960510000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "860393853865308581390487751/172658552262600395787199000",
+      "proportional_profit": "-30788498601/403796051000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 500,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "5777978343749530675709807/222074777021785688553050",
+      "proportional_profit": "-12433088601/22379605100"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-174085257727950143106523/28523851516140750000000000",
+      "proportional_profit": "-491651615609/84145107350000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-80317471030742273379901619/2192607157462251938161385000",
+      "proportional_profit": "-51313115609/914510735000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "1143246748916797862442331/287804785872025452213500",
+      "proportional_profit": "-7279265609/16451073500"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "33279024392549911200863/1405367973889838291050",
+      "proportional_profit": "-2875880609/895107350"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-72810691694543944025963/12324374428106721081763000",
+      "proportional_profit": "-602082027/100994009000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-68234185800020836981/3163830604755213184100",
+      "proportional_profit": "-62892027/1099400900"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "909146072454192229/210758608401740140",
+      "proportional_profit": "-8973027/19940090"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "1020869147053842119/42170632270225667",
+      "proportional_profit": "-3581127/1094009"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-7486029771535410285788649488471/1309726750079692501371425075350000",
+      "proportional_profit": "-1535461252227/252534722950000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-128449950780278943394593971/19814469835604569108475035000",
+      "proportional_profit": "-160526752227/2753472295000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "12468643368806861283395479/2679239751468483007178500",
+      "proportional_profit": "-23033302227/50347229500"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 3000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "1266004133290463297984/51201094226246897975",
+      "proportional_profit": "-9283957227/2784722950"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2",
+      "executed_profit": "-50966024926224198149/2548742791630000000000",
+      "proportional_profit": "-4899032201/252401245000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "20",
+      "executed_profit": "-3273831595002754761199/19553198582867683125500",
+      "proportional_profit": "-511082201/2740124500"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "200",
+      "executed_profit": "7780857259890391751/2541188696214585050",
+      "proportional_profit": "-72287201/49012450"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "49/100",
+      "deposit": "2000",
+      "executed_profit": "247202342350612273/12249690294779365",
+      "proportional_profit": "-28407701/2651245"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2",
+      "executed_profit": "-403909508019601/20393940947000000",
+      "proportional_profit": "-1999801/100980100"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "20",
+      "executed_profit": "-43525438476499/284987659803170",
+      "proportional_profit": "-208801/1098010"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "200",
+      "executed_profit": "702128864051/206742571448",
+      "proportional_profit": "-29701/19801"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "1/2",
+      "deposit": "2000",
+      "executed_profit": "766408014710/37126486049",
+      "proportional_profit": "-117910/10801"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2",
+      "executed_profit": "-85885662166214489333267/4377924525304815595585000",
+      "proportional_profit": "-5099992401/252499255000"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "20",
+      "executed_profit": "-301040449249076373311/2181406052985690680500",
+      "proportional_profit": "-532942401/2749925500"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "200",
+      "executed_profit": "98987824907412649/26544204785120050",
+      "proportional_profit": "-76237401/49992550"
+    },
+    {
+      "vault_fraction": "1",
+      "fee_pips": 10000,
+      "split": "51/100",
+      "deposit": "2000",
+      "executed_profit": "1730300315905219/82023858593530",
+      "proportional_profit": "-30566901/2749255"
+    }
+  ]
+}

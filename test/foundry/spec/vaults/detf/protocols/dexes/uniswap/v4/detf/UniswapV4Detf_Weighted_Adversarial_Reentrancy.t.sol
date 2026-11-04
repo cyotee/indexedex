@@ -122,9 +122,7 @@ contract UniswapV4Detf_Weighted_Adversarial_Reentrancy is TestBase_UniswapV4Detf
         assertTrue(controlOk, "funded callback succeeds outside the lock");
         hostilePair.arm(hostileDetf, reentry);
 
-        vm.startPrank(detfUser);
-        uint256 out_ = IStandardExchangeIn(hostileDetf).exchangeIn(
-            IERC20(address(hostilePair)),
+        vm.startPrank(detfUser);(uint256 out_,) = IStandardExchangeIn(hostileDetf).exchangeIn(IERC20(address(hostilePair)),
             50 ether,
             IERC20(hostileDetf),
             0,

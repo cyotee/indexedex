@@ -36,9 +36,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
 
         uint256 seShares_ = _fundSeShares0(bob, 200e18);
         vm.startPrank(bob);
-        seShare0.approve(openDetf, seShares_);
-        uint256 out_ =
-            openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare0.approve(openDetf, seShares_);(uint256 out_,) = openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted");
@@ -53,13 +51,10 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         _goLiveViaBptBond(openDetf, alice, 1_000e18);
         assertFalse(openInfo.isMintingAllowed(), "primary mint closed; standard route uses reserve swap");
 
-        uint256 seShares_ = _fundSeShares0(bob, 200e18);
-        uint256 preview_ = openEx.previewExchangeIn(seShare0, seShares_, IERC20(openDetf));
+        uint256 seShares_ = _fundSeShares0(bob, 200e18);(uint256 preview_,) = openEx.previewExchangeIn(seShare0, seShares_, IERC20(openDetf));
 
         vm.startPrank(bob);
-        seShare0.approve(openDetf, seShares_);
-        uint256 out_ =
-            openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare0.approve(openDetf, seShares_);(uint256 out_,) = openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted");
@@ -71,13 +66,10 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         _goLiveViaBptBond(openDetf, alice, 1_000e18);
         uint256 seShares_ = _fundSeShares0(bob, 200e18);
         vm.startPrank(bob);
-        seShare0.approve(openDetf, seShares_);
-        openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare0.approve(openDetf, seShares_);openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         uint256 detfBal_ = IERC20(openDetf).balanceOf(bob);
-        uint256 burnAmt_ = detfBal_ / 2;
-        uint256 preview_ = openEx.previewExchangeIn(IERC20(openDetf), burnAmt_, seShare0);
-        IERC20(openDetf).approve(openDetf, burnAmt_);
-        uint256 out_ = openEx.exchangeIn(IERC20(openDetf), burnAmt_, seShare0, 0, bob, false, block.timestamp + 1 hours);
+        uint256 burnAmt_ = detfBal_ / 2;(uint256 preview_,) = openEx.previewExchangeIn(IERC20(openDetf), burnAmt_, seShare0);
+        IERC20(openDetf).approve(openDetf, burnAmt_);(uint256 out_,) = openEx.exchangeIn(IERC20(openDetf), burnAmt_, seShare0, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "burned to shares");
@@ -93,8 +85,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         dai.approve(openDetf, 1e18);
         vm.expectRevert(
             abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(dai), openDetf)
-        );
-        openEx.exchangeIn(dai, 1e18, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        );openEx.exchangeIn(dai, 1e18, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -107,8 +98,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
             abi.encodeWithSelector(
                 MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(seShare0), address(seShare0)
             )
-        );
-        openEx.exchangeIn(seShare0, seShares_, seShare0, 0, bob, false, block.timestamp + 1 hours);
+        );openEx.exchangeIn(seShare0, seShares_, seShare0, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

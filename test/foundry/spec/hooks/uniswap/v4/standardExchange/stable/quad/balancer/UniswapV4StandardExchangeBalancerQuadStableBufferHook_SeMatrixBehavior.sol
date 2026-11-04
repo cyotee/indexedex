@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 
@@ -252,9 +253,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
             if (address(fxs[i]) != address(0)) {
                 assertEq(quad.standardExchange(i), legSes[i], "SE bound on the leg");
                 assertTrue(quad.isBuffered(i), "SE leg is buffered");
-                assertGt(
-                    IStandardExchangeIn(legSes[i]).previewExchangeIn(
-                        IERC20(legTokens[i]), _legAmt(i, 1), IERC20(legSes[i])
+                assertGt(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(legSes[i]))), IERC20(legTokens[i]), _legAmt(i, 1), IERC20(legSes[i])
                     ),
                     0,
                     "SE quotes its face"
@@ -326,8 +325,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 userShares = IERC20(hook).balanceOf(user);
         uint256 hookFace = IERC20(face).balanceOf(hook);
-        uint256 inventoryBefore = _hookSeShares();
-        uint256 expectedInventory = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), 1, IERC20(seUT));
+        uint256 inventoryBefore = _hookSeShares();(uint256 expectedInventory,) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), 1, IERC20(seUT));
         assertGt(expectedShares, 0, "positive one-unit fixture");
         assertEq(quad.previewDepositSingle(face, 1), expectedShares, "one-unit preview preserves positive shares");
         vm.prank(user);
@@ -377,8 +375,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
         uint256 hookInBefore = tin.balanceOf(hook);
         uint256 outBefore = tout.balanceOf(rowEoa);
         vm.prank(rowEoa);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(tin, amountIn, tout, 0, rowEoa, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(hook))), tin, amountIn, tout, 0, rowEoa, true, block.timestamp + 1 hours);
         assertEq(tin.balanceOf(hook), hookInBefore, "no state change on reject");
         assertEq(tout.balanceOf(rowEoa), outBefore, "no output on reject");
     }
@@ -552,8 +549,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
         uint256 amt = 10 * (10 ** uint256(_erc20Decimals(ot)));
         fx.fundOther(rowBob, amt);
         vm.startPrank(rowBob);
-        IERC20(ot).approve(seUT, amt);
-        IStandardExchangeIn(seUT).exchangeIn(IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
+        IERC20(ot).approve(seUT, amt);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(ot), amt, IERC20(seUT), 0, rowBob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(
             IBasicVault(seUT).reserveOfToken(face), reservedFace, "reserved face leftover unchanged by an other-token caller"

@@ -84,9 +84,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 raw1Before_ = orbital.rawReserve(1);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             claimed_,
             IERC20(address(token1)),
             0,
@@ -101,9 +99,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             claimed_,
             IERC20(address(token1)),
             0,
@@ -134,9 +130,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 face1Before_ = token1.balanceOf(hook);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             claimed_,
             IERC20(address(token2)),
             0,
@@ -151,9 +145,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             claimed_,
             IERC20(address(token2)),
             0,
@@ -222,9 +214,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
     function test_I1_pretransferred_unfunded_revertsDelta0() public {
         _seedThreeLeg(200 ether);
         vm.prank(user);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             5 ether,
             IERC20(address(token1)),
             0,
@@ -239,9 +229,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(5 ether), uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)),
             5 ether,
             IERC20(address(token1)),
             0,
@@ -264,9 +252,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 honestIn_ = 3 ether;
         token1.mint(user, honestIn_);
         vm.startPrank(user);
-        token1.approve(hook, honestIn_);
-        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        token1.approve(hook, honestIn_);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             honestIn_,
             IERC20(address(token2)),
             0,
@@ -285,9 +271,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 outAttBefore_ = token2.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             claimed_,
             IERC20(address(token2)),
             0,
@@ -302,9 +286,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
-        );
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        );IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             claimed_,
             IERC20(address(token2)),
             0,

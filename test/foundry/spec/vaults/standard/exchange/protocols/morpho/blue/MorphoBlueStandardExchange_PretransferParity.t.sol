@@ -12,8 +12,7 @@ contract MorphoBlueStandardExchange_PretransferParity_Test is TestBase_MorphoBlu
         AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.prank(attacker);
         loanToken.approve(address(caller), type(uint256).max);
-        uint256 amount = 100 ether;
-        uint256 quoted = seIn.previewExchangeIn(IERC20(address(loanToken)), amount, IERC20(se));
+        uint256 amount = 100 ether;(uint256 quoted,) = seIn.previewExchangeIn(IERC20(address(loanToken)), amount, IERC20(se));
         uint256 snapshot = vm.snapshotState();
         uint256 pullShares = _executeExactIn(caller, amount, quoted, false);
         assertEq(pullShares, quoted, "pull positive control matches quote");

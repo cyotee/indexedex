@@ -23,8 +23,7 @@ abstract contract MorphoBlueStandardExchange_Routes_Decimals is
     using MorphoBalancesLib for IMorpho;
 
     function test_P1_R1_in_previewEqExec_morphoSupplyUp_idleRounding() public {
-        uint256 amount = _u(100);
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), amount, IERC20(se));
+        uint256 amount = _u(100);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), amount, IERC20(se));
         uint256 supplyBefore = _expectedSupplyOf(se);
         uint256 out = _wrapExactIn(user, amount);
         assertEq(out, preview, "P1 preview == exec");
@@ -53,12 +52,9 @@ abstract contract MorphoBlueStandardExchange_Routes_Decimals is
     function test_P3_R2_in_redeemShares() public {
         uint256 amount = _u(100);
         uint256 shares = _wrapExactIn(user, amount);
-        uint256 supplyBefore = _expectedSupplyOf(se);
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
+        uint256 supplyBefore = _expectedSupplyOf(se);(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), shares, IERC20(address(loanToken)));
         uint256 loanBefore = loanToken.balanceOf(user);
-        vm.prank(user);
-        uint256 assetsOut = seIn.exchangeIn(
-            IERC20(se), shares, IERC20(address(loanToken)), preview, user, false, _deadline()
+        vm.prank(user);(uint256 assetsOut,) = seIn.exchangeIn(IERC20(se), shares, IERC20(address(loanToken)), preview, user, false, _deadline()
         );
         assertEq(assetsOut, preview, "P3 preview == exec");
         assertEq(loanToken.balanceOf(user), loanBefore + assetsOut, "P3 loan received");
@@ -80,8 +76,7 @@ abstract contract MorphoBlueStandardExchange_Routes_Decimals is
     }
 
     function test_P5_IERC4626_matches_P1_P4_amounts() public {
-        uint256 amount = _u(100);
-        uint256 p1Preview = seIn.previewExchangeIn(IERC20(address(loanToken)), amount, IERC20(se));
+        uint256 amount = _u(100);(uint256 p1Preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), amount, IERC20(se));
         assertEq(se4626.previewDeposit(amount), p1Preview, "P5 deposit == R1 exact-in");
 
         uint256 mintShares = _u(25);
@@ -89,9 +84,7 @@ abstract contract MorphoBlueStandardExchange_Routes_Decimals is
         assertEq(se4626.previewMint(mintShares), p2Preview, "P5 mint == R1 exact-out");
 
         _wrapExactIn(user, amount);
-        uint256 userShares = IERC20(se).balanceOf(user);
-        uint256 redeemPreview =
-            seIn.previewExchangeIn(IERC20(se), userShares / 2, IERC20(address(loanToken)));
+        uint256 userShares = IERC20(se).balanceOf(user);(uint256 redeemPreview,) = seIn.previewExchangeIn(IERC20(se), userShares / 2, IERC20(address(loanToken)));
         assertEq(se4626.previewRedeem(userShares / 2), redeemPreview, "P5 redeem == R2 exact-in");
 
         uint256 withdrawAssets = _u(10);
@@ -112,18 +105,15 @@ abstract contract MorphoBlueStandardExchange_Routes_Decimals is
             abi.encodeWithSelector(
                 IStandardExchangeErrors.InvalidRoute.selector, address(loanToken), address(loanToken)
             )
-        );
-        seIn.previewExchangeIn(IERC20(address(loanToken)), one, IERC20(address(loanToken)));
+        );seIn.previewExchangeIn(IERC20(address(loanToken)), one, IERC20(address(loanToken)));
 
-        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, se, se));
-        seIn.previewExchangeIn(IERC20(se), one, IERC20(se));
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, se, se));seIn.previewExchangeIn(IERC20(se), one, IERC20(se));
 
         vm.expectRevert(
             abi.encodeWithSelector(
                 IStandardExchangeErrors.InvalidRoute.selector, address(collateralToken), se
             )
-        );
-        seIn.previewExchangeIn(IERC20(address(collateralToken)), one, IERC20(se));
+        );seIn.previewExchangeIn(IERC20(address(collateralToken)), one, IERC20(se));
 
         vm.expectRevert(
             abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(random_), se)

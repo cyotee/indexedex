@@ -178,9 +178,7 @@ contract RebasingAwareERC4626_Buffers_Weighted is TestBase {
         assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
 
         vm.prank(user);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        IStandardExchangeIn(address(wrapper)).exchangeIn(
-            IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
         );
 
         underlying.setRebaseOnTransfer(int256(1e18), address(wrapper));

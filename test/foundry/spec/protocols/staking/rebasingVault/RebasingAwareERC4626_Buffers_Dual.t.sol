@@ -106,13 +106,10 @@ contract RebasingAwareERC4626_Buffers_Dual is TestBase {
         assertGt(lp, 0);
         vm.stopPrank();
 
-        uint256 swapIn = c0 == address(wrapper) ? IERC20(c0).balanceOf(user) / 8 : 1 ether;
-        uint256 pred = IStandardExchangeIn(wHook).previewExchangeIn(IERC20(c0), swapIn, IERC20(c1));
+        uint256 swapIn = c0 == address(wrapper) ? IERC20(c0).balanceOf(user) / 8 : 1 ether;(uint256 pred,) = IStandardExchangeIn(wHook).previewExchangeIn(IERC20(c0), swapIn, IERC20(c1));
         assertGt(pred, 0);
         uint256 before = IERC20(c1).balanceOf(user);
-        vm.prank(user);
-        uint256 got = IStandardExchangeIn(wHook).exchangeIn(
-            IERC20(c0), swapIn, IERC20(c1), 0, user, false, block.timestamp + 1 hours
+        vm.prank(user);(uint256 got,) = IStandardExchangeIn(wHook).exchangeIn(IERC20(c0), swapIn, IERC20(c1), 0, user, false, block.timestamp + 1 hours
         );
         assertEq(got, pred);
         assertEq(IERC20(c1).balanceOf(user) - before, got);
@@ -153,9 +150,7 @@ contract RebasingAwareERC4626_Buffers_Dual is TestBase {
         assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
 
         vm.prank(user);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        IStandardExchangeIn(address(wrapper)).exchangeIn(
-            IERC20(address(rebaseA)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(rebaseA)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
         );
 
         rebaseA.setRebaseOnTransfer(int256(1e18), address(wrapper));

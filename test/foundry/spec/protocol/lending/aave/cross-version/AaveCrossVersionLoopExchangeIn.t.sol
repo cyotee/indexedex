@@ -71,12 +71,8 @@ contract AaveCrossVersionLoopExchangeIn_Test is TestBase_AaveCrossVersionLoopV3M
 
         uint256 deposit = 100e18; // $200k at $2000
         _mint(tokenA, address(this), deposit);
-        tokenA.approve(address(vault), deposit);
-
-        // Preview equals execution for the share amount.
-        uint256 previewed = vault.previewExchangeIn(tokenA, deposit, IERC20(address(vault)));
-        uint256 shares =
-            vault.exchangeIn(tokenA, deposit, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        tokenA.approve(address(vault), deposit);// Preview equals execution for the share amount.
+        (uint256 previewed,) = vault.previewExchangeIn(tokenA, deposit, IERC20(address(vault)));(uint256 shares,) = vault.exchangeIn(tokenA, deposit, IERC20(address(vault)), 0, address(this), false, block.timestamp);
 
         assertEq(shares, previewed, "preview == execution (shares)");
         // First deposit: shares ~= deposit value (oracle base 1e8) minus MINIMUM_LIQUIDITY.

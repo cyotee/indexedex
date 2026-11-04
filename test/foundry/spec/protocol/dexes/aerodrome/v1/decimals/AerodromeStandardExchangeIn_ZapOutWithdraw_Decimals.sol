@@ -42,10 +42,7 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         (MintableERC20Decimals tokenA,) = _getTokens(config);
 
         tokenA.mint(address(this), tokenAmount);
-        tokenA.approve(address(vault), tokenAmount);
-
-        shares = vault.exchangeIn(
-            IERC20(address(tokenA)), tokenAmount, IERC20(address(vault)), 0, address(this), false, _deadline()
+        tokenA.approve(address(vault), tokenAmount);(shares,) = vault.exchangeIn(IERC20(address(tokenA)), tokenAmount, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
     }
 
@@ -84,15 +81,10 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         address recipient = makeAddr("recipient");
 
         // Approve vault to burn shares
-        vault.approve(address(vault), sharesToWithdraw);
-
-        // Get preview - shares to token
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, _deadline());
+        vault.approve(address(vault), sharesToWithdraw);// Get preview - shares to token
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute
+        (uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(tokenOutAmount, preview, "Execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), preview, "Recipient should receive preview token amount");
@@ -127,10 +119,7 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
 
         uint256 senderSharesBefore = vault.balanceOf(address(this));
         uint256 recipientTokenBefore = tokenOut.balanceOf(recipient);
-        uint256 totalSupplyBefore = vault.totalSupply();
-
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, _deadline());
+        uint256 totalSupplyBefore = vault.totalSupply();(uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, _deadline());
 
         // Sender shares decreased
         assertEq(vault.balanceOf(address(this)), senderSharesBefore - sharesToWithdraw, "Sender shares should decrease");
@@ -156,11 +145,8 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         IERC20 vaultToken = IERC20(address(vault));
         address recipient = makeAddr("recipient");
 
-        vault.approve(address(vault), shares);
-
-        // Withdraw all shares to token
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, shares, IERC20(address(tokenA)), 0, recipient, false, _deadline());
+        vault.approve(address(vault), shares);// Withdraw all shares to token
+        (uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, shares, IERC20(address(tokenA)), 0, recipient, false, _deadline());
 
         assertEq(vault.balanceOf(address(this)), 0, "All shares withdrawn");
         assertEq(vault.totalSupply(), 0, "Vault should be empty");
@@ -179,13 +165,8 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         uint256 sharesToWithdraw = shares / 2;
         address recipient = makeAddr("recipient");
 
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(address(tokenA)));
-
-        // Should succeed with exact minAmountOut
-        uint256 tokenOut = vault.exchangeIn(
-            IERC20(address(vault)), sharesToWithdraw, IERC20(address(tokenA)), preview, recipient, false, _deadline()
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(address(tokenA)));// Should succeed with exact minAmountOut
+        (uint256 tokenOut,) = vault.exchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(address(tokenA)), preview, recipient, false, _deadline()
         );
 
         assertEq(tokenOut, preview, "Should succeed with exact minimum");
@@ -199,14 +180,10 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         uint256 sharesToWithdraw = shares / 2;
         address recipient = makeAddr("recipient");
 
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(address(tokenA)));
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(vault)), sharesToWithdraw, IERC20(address(tokenA)));
 
         // Should revert with minAmountOut too high
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(address(vault)),
+        vm.expectRevert();vault.exchangeIn(IERC20(address(vault)),
             sharesToWithdraw,
             IERC20(address(tokenA)),
             preview + 1,
@@ -231,11 +208,8 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         // Transfer shares to vault first
         vault.transfer(address(vault), sharesToWithdraw);
 
-        uint256 senderSharesBefore = vault.balanceOf(address(this));
-
-        // Execute with pretransferred=true
-        uint256 tokenOut = vault.exchangeIn(
-            IERC20(address(vault)),
+        uint256 senderSharesBefore = vault.balanceOf(address(this));// Execute with pretransferred=true
+        (uint256 tokenOut,) = vault.exchangeIn(IERC20(address(vault)),
             sharesToWithdraw,
             IERC20(address(tokenA)),
             0,
@@ -266,14 +240,10 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
 
         // Deposit via Route 6
         vm.startPrank(user);
-        tokenA.approve(address(vault), amountIn);
-        uint256 shares =
-            vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, user, false, _deadline());
+        tokenA.approve(address(vault), amountIn);(uint256 shares,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, user, false, _deadline());
 
         // Withdraw via Route 7
-        vault.approve(address(vault), shares);
-        uint256 tokenOut =
-            vault.exchangeIn(IERC20(address(vault)), shares, IERC20(address(tokenA)), 0, user, false, _deadline());
+        vault.approve(address(vault), shares);(uint256 tokenOut,) = vault.exchangeIn(IERC20(address(vault)), shares, IERC20(address(tokenA)), 0, user, false, _deadline());
         vm.stopPrank();
 
         // User should have tokens back (minus any fees/slippage)
@@ -324,11 +294,7 @@ abstract contract AerodromeStandardExchangeIn_ZapOutWithdraw_Decimals is TestBas
         if (sharesToWithdraw > shares) sharesToWithdraw = shares;
 
         address recipient = makeAddr("recipient");
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);
-        uint256 tokenOutAmount =
-            vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, _deadline());
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, tokenOut);(uint256 tokenOutAmount,) = vault.exchangeIn(vaultToken, sharesToWithdraw, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(tokenOutAmount, preview, "Fuzz: execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), tokenOutAmount, "Fuzz: recipient balance correct");

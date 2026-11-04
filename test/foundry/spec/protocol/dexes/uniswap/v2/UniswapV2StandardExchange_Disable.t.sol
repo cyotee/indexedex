@@ -33,14 +33,11 @@ contract UniswapV2StandardExchange_Disable_Test is TestBase_UniswapV2StandardExc
         assertTrue(disableQuery.isDisabled(vaultAddr));
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
-        require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP");
-
-        // preview still works
+        require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP");// preview still works
         vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
 
         lpToken.approve(vaultAddr, lpAmount);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, vaultAddr));
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, vaultAddr));vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
     }
 
     function test_reenableVaultAddress_allowsExchangeIn() public {
@@ -57,8 +54,7 @@ contract UniswapV2StandardExchange_Disable_Test is TestBase_UniswapV2StandardExc
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP");
-        lpToken.approve(vaultAddr, lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(vaultAddr, lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
         assertTrue(shares > 0);
     }
 
@@ -82,8 +78,7 @@ contract UniswapV2StandardExchange_Disable_Test is TestBase_UniswapV2StandardExc
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP");
         lpToken.approve(vaultAddr, lpAmount);
-        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, vaultAddr));
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, vaultAddr));vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
     }
 
     function test_reenablePackage_allowsExchangeIn() public {
@@ -101,8 +96,7 @@ contract UniswapV2StandardExchange_Disable_Test is TestBase_UniswapV2StandardExc
         IERC20 vaultToken = IERC20(vaultAddr);
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP");
-        lpToken.approve(vaultAddr, lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(vaultAddr, lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
         assertTrue(shares > 0);
     }
 }

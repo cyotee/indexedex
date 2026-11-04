@@ -43,9 +43,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
 
         uint256 seShares_ = _smallMintShares(bob);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        uint256 userOut_ =
-            openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, seShares_);(uint256 userOut_,) = openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(userOut_ > 0, "user mint");
@@ -63,16 +61,13 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
         _bootstrapDetf(openDetf, alice, 2_000e18);
         uint256 aliceShares_ = _smallMintShares(alice);
         vm.startPrank(alice);
-        seShare.approve(openDetf, aliceShares_);
-        uint256 aliceDetf_ =
-            openEx.exchangeIn(seShare, aliceShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, aliceShares_);(uint256 aliceDetf_,) = openEx.exchangeIn(seShare, aliceShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(aliceDetf_, 0, "existing holder acquired funded DETF");
 
         uint256 seShares_ = _smallMintShares(bob);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, seShares_);openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertEq(IERC20(openDetf).balanceOf(alice), aliceDetf_, "alice free detf non-diluted");
@@ -117,9 +112,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
         }
 
         vm.startPrank(bob);
-        tokenIn_.approve(openDetf, amountIn_);
-        uint256 out_ =
-            openEx.exchangeIn(tokenIn_, amountIn_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        tokenIn_.approve(openDetf, amountIn_);(uint256 out_,) = openEx.exchangeIn(tokenIn_, amountIn_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted via allowlisted asset");
@@ -141,8 +134,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
             address(dai), address(usdc), false, amountIn_, amountIn_, 1, 1, bob, block.timestamp + 1 hours
         );
         IERC20 lp_ = IERC20(address(aeroDaiUsdcPool));
-        lp_.approve(openDetf, liq_);
-        uint256 out_ = openEx.exchangeIn(lp_, liq_, seShare, 0, bob, false, block.timestamp + 1 hours);
+        lp_.approve(openDetf, liq_);(uint256 out_,) = openEx.exchangeIn(lp_, liq_, seShare, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "passthrough out");
@@ -177,11 +169,8 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
         _bootstrapDetf(openDetf, alice, 2_000e18);
         uint256 seShares_ = _smallMintShares(bob);
         vm.startPrank(bob);
-        seShare.approve(openDetf, seShares_);
-        uint256 minted_ =
-            openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
-        IERC20(openDetf).approve(openDetf, minted_ / 2);
-        openEx.exchangeIn(IERC20(openDetf), minted_ / 2, seShare, 0, bob, false, block.timestamp + 1 hours);
+        seShare.approve(openDetf, seShares_);(uint256 minted_,) = openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
+        IERC20(openDetf).approve(openDetf, minted_ / 2);openEx.exchangeIn(IERC20(openDetf), minted_ / 2, seShare, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertNoFreeInventory(openDetf);
     }

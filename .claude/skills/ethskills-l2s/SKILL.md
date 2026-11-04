@@ -167,7 +167,7 @@ Use CREATE2 for deterministic addresses across chains:
 
 ```bash
 # Same salt + same bytecode + same deployer = same address on every chain
-forge create src/MyContract.sol:MyContract \
+forge create --use solar src/MyContract.sol:MyContract \
   --rpc-url https://mainnet.base.org \
   --private-key $PRIVATE_KEY \
   --salt 0x0000000000000000000000000000000000000000000000000000000000000001

@@ -1,10 +1,12 @@
 ---
 name: crane-testing
-description: This skill should be used when the user asks about "testbase", "behavior library", "invariant test", "handler", "fuzz test", "test pattern", "Behavior_", "TestBase_", "mock", "vm.mockCall", "unit test", "write a test", "CraneTest", or needs guidance on Crane's testing infrastructure for writing comprehensive smart contract tests. Prefer production code over mocks.
+description: "Write Crane production-first tests with CraneTest, TestBases, Behavior libraries, handlers, fuzzing and invariants."
 license: MIT
 ---
 
 # Crane Testing Patterns
+
+Compile and test with Solar: `forge build --use solar` then `forge test --use solar`. Do not enable `via_ir`. Do not fall back to solc. IndexedEx agent law § Compiler is the full rule.
 
 Crane uses structured testing patterns with TestBase contracts, Behavior libraries, and Handler contracts for comprehensive coverage. All patterns must comply with LR-7 (see PRD) and LR-1 (NatSpec on test code).
 

@@ -130,8 +130,7 @@ function _expectFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 amount) intern
         _wrapExactIn(user, 100 ether);
         uint256 rate = rp.getRate();
         assertGt(rate, 0, "RP1 rate > 0");
-        uint256 supply = IERC20(se).totalSupply();
-        uint256 quote = seIn.previewExchangeIn(IERC20(se), supply, IERC20(address(loanToken)));
+        uint256 supply = IERC20(se).totalSupply();(uint256 quote,) = seIn.previewExchangeIn(IERC20(se), supply, IERC20(address(loanToken)));
         uint256 scale = 10 ** (18 + uint256(IERC20Metadata(se).decimals()) - loanToken.decimals());
         assertEq(rate, Math.mulDiv(quote, scale, supply, Math.Rounding.Ceil), "RP1 whole-book rate");
     }
@@ -151,8 +150,7 @@ function _expectFixtureQuote(ApexD48QuoteReplyFixture fx, uint256 amount) intern
     function test_RP3_providerSourceUnmodified_quotesThisVaultNav() public {
         _wrapExactIn(user, 50 ether);
         uint256 rate = rp.getRate();
-        uint256 supply = IERC20(se).totalSupply();
-        uint256 preview = seIn.previewExchangeIn(IERC20(se), supply, IERC20(address(loanToken)));
+        uint256 supply = IERC20(se).totalSupply();(uint256 preview,) = seIn.previewExchangeIn(IERC20(se), supply, IERC20(address(loanToken)));
         uint256 scale = 10 ** (18 + uint256(IERC20Metadata(se).decimals()) - loanToken.decimals());
         assertGt(rate, 0);
         assertEq(rate, Math.mulDiv(preview, scale, supply, Math.Rounding.Ceil), "RP3 whole-book NAV");

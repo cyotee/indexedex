@@ -119,8 +119,7 @@ library FullSpreadSameManagerAmmFixture {
             output = address(IRebasingAwareERC4626DFPkg(wrapper.pkg()).deployVault(IERC20Metadata(assetAddress), 10, bytes32(0)));
         }
         IERC20 asset = IERC20(assetAddress);
-        asset.approve(output, funding);
-        uint256 shares = IStandardExchangeIn(output).exchangeIn(asset, funding, IERC20(output), 0, address(this), false, block.timestamp);
+        asset.approve(output, funding);(uint256 shares,) = IStandardExchangeIn(output).exchangeIn(asset, funding, IERC20(output), 0, address(this), false, block.timestamp);
         uint256 seed = 10 ** uint256(IERC20Metadata(output).decimals());
         require(shares >= 2 * seed, "funded identity shares");
         IERC20(output).transfer(r.owner, seed);
@@ -137,8 +136,7 @@ library FullSpreadSameManagerAmmFixture {
         uint256 assets = amount / 1e10 + (amount % 1e10 == 0 ? 0 : 1);
         if (f.identityAsset == wrapper.faceToken()) wrapper.fund(address(this), assets);
         else ERC20PermitMintableStub(f.identityAsset).mint(address(this), assets);
-        asset.approve(f.output, assets);
-        uint256 shares = IStandardExchangeIn(f.output).exchangeIn(asset, assets, IERC20(f.output), amount, to, false, block.timestamp);
+        asset.approve(f.output, assets);(uint256 shares,) = IStandardExchangeIn(f.output).exchangeIn(asset, assets, IERC20(f.output), amount, to, false, block.timestamp);
         require(shares >= amount, "funded wrapper inventory");
     }
 

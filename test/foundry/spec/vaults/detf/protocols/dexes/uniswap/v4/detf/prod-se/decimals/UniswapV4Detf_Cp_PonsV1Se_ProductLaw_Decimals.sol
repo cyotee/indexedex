@@ -66,8 +66,7 @@ abstract contract UniswapV4Detf_Cp_PonsV1Se_ProductLaw_Decimals is
     function _d25SeedHook() internal virtual override {
         _buyLaunchFor(detfUser, 30 ether);
         vm.startPrank(detfUser);
-        IERC20(mintToken).approve(detf, type(uint256).max);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), _uPair(10), IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
+        IERC20(mintToken).approve(detf, type(uint256).max);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), _uPair(10), IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 }

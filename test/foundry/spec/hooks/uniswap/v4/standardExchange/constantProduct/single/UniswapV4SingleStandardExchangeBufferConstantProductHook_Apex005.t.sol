@@ -43,8 +43,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Apex005Test is
         uint256 hookInBefore = tin.balanceOf(hook);
         uint256 attackerOutBefore = tout.balanceOf(apexAttacker);
         vm.prank(apexAttacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(tin, amountIn, tout, 0, apexAttacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(tin, amountIn, tout, 0, apexAttacker, true, block.timestamp + 1 hours);
         assertEq(tin.balanceOf(hook), hookInBefore, "no state change on reject");
         assertEq(tout.balanceOf(apexAttacker), attackerOutBefore, "no output on reject");
     }
@@ -115,8 +114,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Apex005Test is
         IERC20 tin = _apexIn();
         IERC20 tout = _apexOut();
         uint256 resting = 100 ether;
-        uint256 request = 1 ether;
-        uint256 quote = IStandardExchangeIn(hook).previewExchangeIn(tin, request, tout);
+        uint256 request = 1 ether;(uint256 quote,) = IStandardExchangeIn(hook).previewExchangeIn(tin, request, tout);
         assertGt(quote, 0);
         _apexMint(address(tin), address(this), resting);
         tin.approve(address(apexCaller), resting);

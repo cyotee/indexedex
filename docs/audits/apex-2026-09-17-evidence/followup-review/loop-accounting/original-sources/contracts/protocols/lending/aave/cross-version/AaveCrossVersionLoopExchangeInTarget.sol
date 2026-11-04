@@ -16,11 +16,11 @@ contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBas
     using SafeERC20 for IERC20;
 
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external view returns (uint256 amountOut)
+        external view returns (uint256 amountOut, uint256 amountRefunded)
     {
         ReentrancyLockRepo._onlyUnlocked();
         CrossVersionLoopExecutor.Market memory m = _market();
-        if (address(tokenIn) == address(this) && tokenOut == m.tokenA) return _amountForShares(m, amountIn);
+        if (address(tokenIn) == address(this) && tokenOut == m.tokenA) return (_amountForShares(m, amountIn), 0);
         if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert ExchangeInNotAvailable();
         uint256 supply_ = ERC20Repo._totalSupply();
         amountOut = CrossVersionLoopService.sharesForDeposit(CrossVersionLoopExecutor.navUsd(m), supply_,
@@ -30,7 +30,7 @@ contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBas
 
     function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut,
         address recipient, bool pretransferred, uint256 deadline)
-        external nonReentrant returns (uint256 amountOut)
+        external nonReentrant returns (uint256 amountOut, uint256 amountRefunded)
     {
         _requireExchange(deadline, amountIn, recipient);
         CrossVersionLoopExecutor.Market memory m = _market();
@@ -41,11 +41,11 @@ contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBas
             uint256 supplyBefore_ = ERC20Repo._totalSupply();
             _burnWithdrawalShares(amountIn, pretransferred);
             _withdrawAndPay(m, amountOut, recipient, amountIn, supplyBefore_);
-            return amountOut;
+            return (amountOut, 0);
         }
         if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert ExchangeInNotAvailable();
         if (pretransferred) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, 0);
-        return _depositInput(m, amountIn, minAmountOut, recipient);
+        return (_depositInput(m, amountIn, minAmountOut, recipient), 0);
     }
 
     function _depositInput(CrossVersionLoopExecutor.Market memory m, uint256 amountIn,

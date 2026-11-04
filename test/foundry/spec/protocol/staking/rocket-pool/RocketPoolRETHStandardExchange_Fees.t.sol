@@ -16,9 +16,7 @@ contract RocketPoolRETHStandardExchange_Fees_Test is TestBase_RocketPoolRETHStan
         // Default usage fee 0
         uint256 amount = 10 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -34,9 +32,7 @@ contract RocketPoolRETHStandardExchange_Fees_Test is TestBase_RocketPoolRETHStan
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(seVault, 0.01e18);
 
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,

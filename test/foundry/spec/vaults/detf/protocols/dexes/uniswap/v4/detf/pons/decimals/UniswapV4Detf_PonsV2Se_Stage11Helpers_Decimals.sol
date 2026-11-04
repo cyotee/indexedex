@@ -161,9 +161,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
         }
         _wrapWeth(to_, need_ + 2 ether);
         vm.startPrank(to_);
-        IERC20(address(weth)).approve(address(ponsSe), type(uint256).max);
-        try IStandardExchangeIn(address(ponsSe)).exchangeIn(
-            IERC20(address(weth)), need_, tok_, 0, to_, false, _deadline()
+        IERC20(address(weth)).approve(address(ponsSe), type(uint256).max);try IStandardExchangeIn(address(ponsSe)).exchangeIn(IERC20(address(weth)), need_, tok_, 0, to_, false, _deadline()
         ) {} catch {}
         vm.stopPrank();
         if (tok_.balanceOf(to_) >= amount_) return;
@@ -290,15 +288,13 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
     function _mintOn(address d, uint256 amt) internal returns (uint256 userDetf) {
         _fundLaunch(detfUser, amt * 4);
         vm.startPrank(detfUser);
-        IERC20(launchToken).approve(d, type(uint256).max);
-        userDetf = IStandardExchangeIn(d).exchangeIn(IERC20(launchToken), amt, IERC20(d), 0, detfUser, false, _deadline());
+        IERC20(launchToken).approve(d, type(uint256).max);(userDetf,) = IStandardExchangeIn(d).exchangeIn(IERC20(launchToken), amt, IERC20(d), 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 
     function _burnOn(address d, uint256 detfIn, IERC20 tokenOut) internal returns (uint256 amountOut) {
         vm.startPrank(detfUser);
-        IERC20(d).approve(d, type(uint256).max);
-        amountOut = IStandardExchangeIn(d).exchangeIn(IERC20(d), detfIn, tokenOut, 0, detfUser, false, _deadline());
+        IERC20(d).approve(d, type(uint256).max);(amountOut,) = IStandardExchangeIn(d).exchangeIn(IERC20(d), detfIn, tokenOut, 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 
@@ -315,8 +311,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
     function _liveMintOn(address d, address who, uint256 amt) internal returns (uint256 userDetf) {
         _fundLaunch(who, amt * 4);
         vm.startPrank(who);
-        IERC20(launchToken).approve(d, type(uint256).max);
-        userDetf = IStandardExchangeIn(d).exchangeIn(IERC20(launchToken), amt, IERC20(d), 0, who, false, _deadline());
+        IERC20(launchToken).approve(d, type(uint256).max);(userDetf,) = IStandardExchangeIn(d).exchangeIn(IERC20(launchToken), amt, IERC20(d), 0, who, false, _deadline());
         vm.stopPrank();
     }
 
@@ -473,8 +468,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
 
     function _redeemOn(address d, address who, uint256 amt) internal returns (uint256 detfOut) {
         IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());
-        vm.prank(who);
-        detfOut = IStandardExchangeIn(address(staking_)).exchangeIn(staking_, amt, IERC20(d), amt, who, false, block.timestamp);
+        vm.prank(who);(detfOut,) = IStandardExchangeIn(address(staking_)).exchangeIn(staking_, amt, IERC20(d), amt, who, false, block.timestamp);
         assertEq(detfOut, amt, "funded one-to-one unstake");
     }
 
@@ -533,8 +527,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
         (aliceId_,) = _bondAs(d25Alice, 40 ether);
         _fundLaunch(detfUser, 30 ether);
         vm.startPrank(detfUser);
-        IERC20(launchToken).approve(detf, type(uint256).max);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
+        IERC20(launchToken).approve(detf, type(uint256).max);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
     }
@@ -564,9 +557,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
         vm.startPrank(detfUser);
         IERC20(d).approve(hook_, amount_);
         for (uint256 i_; i_ < tokens_.length; ++i_) {
-            if (tokens_[i_] == d) continue;
-            IStandardExchangeIn(hook_).exchangeIn(
-                IERC20(d), chunk_, IERC20(tokens_[i_]), 0, detfUser, false, _deadline()
+            if (tokens_[i_] == d) continue;IStandardExchangeIn(hook_).exchangeIn(IERC20(d), chunk_, IERC20(tokens_[i_]), 0, detfUser, false, _deadline()
             );
         }
         vm.stopPrank();
@@ -585,8 +576,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
         delete _policyInitialBond[d];
         IStakedDETF staking_ = IStakedDETF(IUniswapV4Detf(d).rebasingClaimToken());
         uint256 amount_ = principal_ + rewards_;
-        vm.prank(detfUser);
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d), amount_, detfUser, false, _deadline());
+        vm.prank(detfUser);staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(d), amount_, detfUser, false, _deadline());
         assertGe(IERC20(d).balanceOf(detfUser), amt, "only actually purchased DETF can fund fixture");
     }
 
@@ -766,11 +756,9 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
 
     function _buyDonationRaw(uint256 amount_) internal returns (uint256 out_) {
         IERC20 token_ = _openPairToken();
-        _fundOpenPair(detfUser, amount_);
-        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(token_, amount_, IERC20(detf));
+        _fundOpenPair(detfUser, amount_);(uint256 quote_,) = IStandardExchangeIn(detf).previewExchangeIn(token_, amount_, IERC20(detf));
         vm.startPrank(detfUser);
-        token_.approve(detf, amount_);
-        out_ = IStandardExchangeIn(detf).exchangeIn(token_, amount_, IERC20(detf), quote_, detfUser, false, _deadline());
+        token_.approve(detf, amount_);(out_,) = IStandardExchangeIn(detf).exchangeIn(token_, amount_, IERC20(detf), quote_, detfUser, false, _deadline());
         vm.stopPrank();
         assertEq(out_, quote_, "actual standard acquisition for self-leg or burn");
         assertGt(out_, 0, "actual acquired DETF");

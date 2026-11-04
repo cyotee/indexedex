@@ -251,10 +251,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultBoundPoolLockSeCaller is IUnisw
 
             IERC20(c.tokenIn).transfer(c.se, c.amountInOrMax);
         }
-        if (c.op == Op.ExchangeIn) {
-            lastResult = IStandardExchangeIn(c.se)
-                .exchangeIn(
-                    IERC20(c.tokenIn),
+        if (c.op == Op.ExchangeIn) {(lastResult,) = IStandardExchangeIn(c.se).exchangeIn(IERC20(c.tokenIn),
                     c.amountInOrMax,
                     IERC20(c.tokenOut),
                     c.minOrExactOut,

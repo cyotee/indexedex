@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {TestBase_FundedBalancerDETF} from "contracts/test/bases/TestBase_FundedBalancerDETF.sol";
@@ -167,9 +168,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
     function _liveMint(address who_, uint256 daiIn_) internal returns (uint256 detfOut_) {
         deal(address(dai), who_, daiIn_, true);
         vm.startPrank(who_);
-        dai.approve(deployedDetfVault, daiIn_);
-        detfOut_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(dai, daiIn_, IERC20(address(detfToken)), 0, who_, false, block.timestamp + 1 hours);
+        dai.approve(deployedDetfVault, daiIn_);(detfOut_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(dai, daiIn_, IERC20(address(detfToken)), 0, who_, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -321,8 +320,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         assertTrue(bonds_.isAcceptedBondToken(IERC20(address(dai))));
         assertTrue(bonds_.isAcceptedBondToken(IERC20(address(stablePool))));
         assertTrue(bonds_.isAcceptedBondToken(IERC20(address(commonPool))));
-        assertEq(
-            IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, 0, IERC20(address(rebasingDetfToken))),
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(deployedDetfVault))), detfToken, 0, IERC20(address(rebasingDetfToken))),
             0
         );
         assertEq(
@@ -358,14 +356,11 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         _bootstrapReserveGraph();
         IERC20 payment_ = IERC20(address(stablePool));
         vm.prank(owner);
-        payment_.transfer(alice, 1e18);
-        uint256 preview_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(payment_, 1e18, detfToken);
+        payment_.transfer(alice, 1e18);(uint256 preview_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(payment_, 1e18, detfToken);
         assertGt(preview_, 0, "funded route quote");
         uint256 before_ = detfToken.balanceOf(alice);
         vm.startPrank(alice);
-        payment_.approve(deployedDetfVault, 1e18);
-        uint256 out_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(payment_, 1e18, detfToken, preview_, alice, false, block.timestamp);
+        payment_.approve(deployedDetfVault, 1e18);(uint256 out_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(payment_, 1e18, detfToken, preview_, alice, false, block.timestamp);
         vm.stopPrank();
         assertEq(out_, preview_);
         assertEq(detfToken.balanceOf(alice), before_ + out_);
@@ -708,9 +703,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         deal(address(payment_), owner, native_, true);
         deal(address(weth), owner, 100_000e18, true);
         vm.startPrank(owner);
-        payment_.approve(address(daiUsdcVault), native_);
-        uint256 shares_ = IStandardExchangeIn(address(daiUsdcVault))
-            .exchangeIn(payment_, native_, IERC20(address(daiUsdcVault)), 0, owner, false, block.timestamp);
+        payment_.approve(address(daiUsdcVault), native_);(uint256 shares_,) = IStandardExchangeIn(address(daiUsdcVault)).exchangeIn(payment_, native_, IERC20(address(daiUsdcVault)), 0, owner, false, block.timestamp);
         (IERC20[] memory tokens_,,,) = vault.getPoolTokenInfo(address(stablePool));
         uint256[] memory amounts_ = new uint256[](2);
         for (uint256 i_; i_ < tokens_.length; ++i_) {
@@ -742,13 +735,10 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         IERC20 input_ = IERC20(address(stablePool));
         uint256 amount_ = 10e18;
         vm.prank(owner);
-        input_.transfer(who_, amount_);
-        uint256 quote_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(input_, amount_, detfToken);
+        input_.transfer(who_, amount_);(uint256 quote_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(input_, amount_, detfToken);
         assertGt(quote_, 0, "funded raw DETF quote");
         vm.startPrank(who_);
-        input_.approve(deployedDetfVault, amount_);
-        paid_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(input_, amount_, detfToken, quote_, who_, false, block.timestamp);
+        input_.approve(deployedDetfVault, amount_);(paid_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(input_, amount_, detfToken, quote_, who_, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, quote_);
     }

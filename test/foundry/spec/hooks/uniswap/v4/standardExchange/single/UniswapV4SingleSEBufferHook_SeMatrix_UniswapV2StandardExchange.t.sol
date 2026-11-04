@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrixFixture.sol";
 import {SeMatrix_UniV2Fixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrix_UniV2Fixture.sol";
@@ -29,15 +30,13 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_UniswapV2StandardExchange is Unisw
     ///      Uni V2 exact-out zap-out legitimately over-delivers by rounding.
     function test_row_previewMatchesExecution() public override {
         uint256 x = _f(3);
-        assertEq(
-            buffer.previewWrap(x),
-            IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), x, IERC20(seUT)),
+        assertEq(buffer.previewWrap(x),
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(face), x, IERC20(seUT)),
             "wrap preview is the SE quote"
         );
         uint256 seOut = _wrapExactIn(x);
-        assertEq(
-            buffer.previewUnwrap(seOut),
-            IStandardExchangeIn(seUT).previewExchangeIn(IERC20(seUT), seOut, IERC20(face)),
+        assertEq(buffer.previewUnwrap(seOut),
+            ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(seUT))), IERC20(seUT), seOut, IERC20(face)),
             "unwrap preview is the SE quote"
         );
         _unwrapExactIn(seOut);

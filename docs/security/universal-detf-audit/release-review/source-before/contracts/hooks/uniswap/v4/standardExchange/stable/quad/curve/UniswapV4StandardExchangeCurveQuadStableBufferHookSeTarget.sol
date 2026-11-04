@@ -57,9 +57,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
-        return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
+        return (_previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn), 0);
     }
 
     function exchangeIn(
@@ -70,7 +70,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut, uint256 amountRefunded) {
         _requireDeadline(deadline);
         if (amountIn == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();

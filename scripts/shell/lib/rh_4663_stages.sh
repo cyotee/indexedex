@@ -156,7 +156,7 @@ build_rehearsal_artifacts() {
       | sort
   )
   log_info "Building production artifacts for the package rehearsal"
-  run_forge_cmd forge build "${sources[@]}"
+  run_forge_cmd forge build --use solar "${sources[@]}"
 }
 
 rh_fee_accrual_copy_core() {

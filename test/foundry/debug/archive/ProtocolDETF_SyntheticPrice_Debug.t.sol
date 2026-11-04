@@ -20,19 +20,14 @@ contract ProtocolDETFSyntheticPriceDebugTest is ProtocolDETFIntegrationBase {
 
         uint256 amountIn = 10e18;
         uint256 syntheticPrice = detf.syntheticPrice();
-        console.log("Synthetic price before mint:", syntheticPrice);
-
-        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(
-            IERC20(address(weth9)),
+        console.log("Synthetic price before mint:", syntheticPrice);(uint256 previewOut,) = IStandardExchangeIn(address(detf)).previewExchangeIn(IERC20(address(weth9)),
             amountIn,
             IERC20(address(detf))
         );
         console.log("Preview CHIR out:", previewOut);
 
         vm.startPrank(detfAlice);
-        IERC20(address(weth9)).approve(address(detf), amountIn);
-        uint256 chirOut = IStandardExchangeIn(address(detf)).exchangeIn(
-            IERC20(address(weth9)),
+        IERC20(address(weth9)).approve(address(detf), amountIn);(uint256 chirOut,) = IStandardExchangeIn(address(detf)).exchangeIn(IERC20(address(weth9)),
             amountIn,
             IERC20(address(detf)),
             0,

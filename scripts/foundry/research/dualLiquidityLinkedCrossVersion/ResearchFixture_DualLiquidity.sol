@@ -243,9 +243,8 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
             if (address(info[iA].rateProvider) != address(0)) {
                 return IRateProvider(address(info[iA].rateProvider)).getRate();
             }
-        }
-        // Off-pool / fallback: preview redeem 1e18 shareA → commonToken
-        try IStandardExchangeIn(shareA).previewExchangeIn(IERC20(shareA), 1e18, commonToken) returns (uint256 out) {
+        }// Off-pool / fallback: preview redeem 1e18 shareA → commonToken
+        try IStandardExchangeIn(shareA).previewExchangeIn(IERC20(shareA), 1e18, commonToken) returns (uint256 out, uint256) {
             if (out > 0) return out;
         } catch {}
         return 1e18;
@@ -279,8 +278,7 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
     function markShareBookBpt(address who_) public view returns (uint256 bptOut) {
         uint256 sh = IERC20(linkedVault).balanceOf(who_);
         if (sh == 0) return 0;
-        address pool_ = _reservePool();
-        bptOut = IStandardExchangeIn(linkedVault).previewExchangeIn(IERC20(linkedVault), sh, IERC20(pool_));
+        address pool_ = _reservePool();(bptOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(IERC20(linkedVault), sh, IERC20(pool_));
     }
 
     /// @notice Alias for v2 share-book hero field name (same as markShareBookBpt).
@@ -362,13 +360,10 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
 
     /// @notice Deposit commonToken → DualLiquidity shares; records preview vs exec.
     function depositCommonRoute(address who_, uint256 amountIn_) public returns (uint256 execOut_) {
-        lastRoute = "deposit_common";
-        lastPreviewOut = IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, amountIn_, IERC20(linkedVault));
+        lastRoute = "deposit_common";(lastPreviewOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, amountIn_, IERC20(linkedVault));
         _fund(commonToken, who_, amountIn_);
         vm.startPrank(who_);
-        commonToken.approve(linkedVault, amountIn_);
-        execOut_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, amountIn_, IERC20(linkedVault), 0, who_, false, block.timestamp
+        commonToken.approve(linkedVault, amountIn_);(execOut_,) = IStandardExchangeIn(linkedVault).exchangeIn(commonToken, amountIn_, IERC20(linkedVault), 0, who_, false, block.timestamp
         );
         vm.stopPrank();
         lastExecOut = execOut_;
@@ -381,14 +376,10 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
 
     /// @notice Deposit tokenA → DualLiquidity shares (linked-token route).
     function depositTokenARoute(address who_, uint256 amountIn_) public returns (uint256 execOut_) {
-        lastRoute = "deposit_tokenA";
-        lastPreviewOut =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, amountIn_, IERC20(linkedVault));
+        lastRoute = "deposit_tokenA";(lastPreviewOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, amountIn_, IERC20(linkedVault));
         _fund(tokenA, who_, amountIn_);
         vm.startPrank(who_);
-        tokenA.approve(linkedVault, amountIn_);
-        execOut_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenA, amountIn_, IERC20(linkedVault), 0, who_, false, block.timestamp
+        tokenA.approve(linkedVault, amountIn_);(execOut_,) = IStandardExchangeIn(linkedVault).exchangeIn(tokenA, amountIn_, IERC20(linkedVault), 0, who_, false, block.timestamp
         );
         vm.stopPrank();
         lastExecOut = execOut_;
@@ -400,14 +391,10 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
 
     /// @notice Deposit tokenB → DualLiquidity shares (linked-token route).
     function depositTokenBRoute(address who_, uint256 amountIn_) public returns (uint256 execOut_) {
-        lastRoute = "deposit_tokenB";
-        lastPreviewOut =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(tokenB, amountIn_, IERC20(linkedVault));
+        lastRoute = "deposit_tokenB";(lastPreviewOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenB, amountIn_, IERC20(linkedVault));
         _fund(tokenB, who_, amountIn_);
         vm.startPrank(who_);
-        tokenB.approve(linkedVault, amountIn_);
-        execOut_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenB, amountIn_, IERC20(linkedVault), 0, who_, false, block.timestamp
+        tokenB.approve(linkedVault, amountIn_);(execOut_,) = IStandardExchangeIn(linkedVault).exchangeIn(tokenB, amountIn_, IERC20(linkedVault), 0, who_, false, block.timestamp
         );
         vm.stopPrank();
         lastExecOut = execOut_;
@@ -423,15 +410,9 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
         address pairShare_ = _pairVaultShare();
         _fund(tokenA, who_, amountIn_);
         vm.startPrank(who_);
-        tokenA.approve(pairShare_, amountIn_);
-        uint256 gotShare_ = IStandardExchangeIn(pairShare_).exchangeIn(
-            tokenA, amountIn_, IERC20(pairShare_), 0, who_, false, block.timestamp
-        );
-        lastPreviewOut =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(IERC20(pairShare_), gotShare_, IERC20(linkedVault));
-        IERC20(pairShare_).approve(linkedVault, gotShare_);
-        execOut_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            IERC20(pairShare_), gotShare_, IERC20(linkedVault), 0, who_, false, block.timestamp
+        tokenA.approve(pairShare_, amountIn_);(uint256 gotShare_,) = IStandardExchangeIn(pairShare_).exchangeIn(tokenA, amountIn_, IERC20(pairShare_), 0, who_, false, block.timestamp
+        );(lastPreviewOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(IERC20(pairShare_), gotShare_, IERC20(linkedVault));
+        IERC20(pairShare_).approve(linkedVault, gotShare_);(execOut_,) = IStandardExchangeIn(linkedVault).exchangeIn(IERC20(pairShare_), gotShare_, IERC20(linkedVault), 0, who_, false, block.timestamp
         );
         vm.stopPrank();
         lastExecOut = execOut_;
@@ -447,15 +428,9 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
         address shareA_ = _vaultAShare();
         _fund(commonToken, who_, amountIn_);
         vm.startPrank(who_);
-        commonToken.approve(shareA_, amountIn_);
-        uint256 gotShare_ = IStandardExchangeIn(shareA_).exchangeIn(
-            commonToken, amountIn_, IERC20(shareA_), 0, who_, false, block.timestamp
-        );
-        lastPreviewOut =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(IERC20(shareA_), gotShare_, IERC20(linkedVault));
-        IERC20(shareA_).approve(linkedVault, gotShare_);
-        execOut_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            IERC20(shareA_), gotShare_, IERC20(linkedVault), 0, who_, false, block.timestamp
+        commonToken.approve(shareA_, amountIn_);(uint256 gotShare_,) = IStandardExchangeIn(shareA_).exchangeIn(commonToken, amountIn_, IERC20(shareA_), 0, who_, false, block.timestamp
+        );(lastPreviewOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(IERC20(shareA_), gotShare_, IERC20(linkedVault));
+        IERC20(shareA_).approve(linkedVault, gotShare_);(execOut_,) = IStandardExchangeIn(linkedVault).exchangeIn(IERC20(shareA_), gotShare_, IERC20(linkedVault), 0, who_, false, block.timestamp
         );
         vm.stopPrank();
         lastExecOut = execOut_;
@@ -467,13 +442,10 @@ contract ResearchFixture_DualLiquidity is TestBase_DualLiquidityLinkedCrossVersi
 
     /// @notice Product-surface swap tokenA → tokenB (no DualLiquidity share mint; volume driver).
     function swapTokenATokenBRoute(address who_, uint256 amountIn_) public returns (uint256 execOut_) {
-        lastRoute = "swap_tokenA_tokenB";
-        lastPreviewOut = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, amountIn_, tokenB);
+        lastRoute = "swap_tokenA_tokenB";(lastPreviewOut,) = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, amountIn_, tokenB);
         _fund(tokenA, who_, amountIn_);
         vm.startPrank(who_);
-        tokenA.approve(linkedVault, amountIn_);
-        execOut_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenA, amountIn_, tokenB, 0, who_, false, block.timestamp
+        tokenA.approve(linkedVault, amountIn_);(execOut_,) = IStandardExchangeIn(linkedVault).exchangeIn(tokenA, amountIn_, tokenB, 0, who_, false, block.timestamp
         );
         vm.stopPrank();
         lastExecOut = execOut_;

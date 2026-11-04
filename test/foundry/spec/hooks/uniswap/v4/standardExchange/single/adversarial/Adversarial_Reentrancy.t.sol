@@ -64,9 +64,7 @@ contract Adversarial_Reentrancy_Test is AdvBase {
         hostilePair.mint(user, 1_000_000 ether);
         vm.startPrank(user);
         hostilePair.approve(hostileSe, type(uint256).max);
-        hostilePair.approve(address(hostileRouter), type(uint256).max);
-        IStandardExchangeIn(hostileSe).exchangeIn(
-            IERC20(address(hostilePair)),
+        hostilePair.approve(address(hostileRouter), type(uint256).max);IStandardExchangeIn(hostileSe).exchangeIn(IERC20(address(hostilePair)),
             200 ether,
             IERC20(hostileSe),
             0,

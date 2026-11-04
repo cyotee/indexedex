@@ -35,16 +35,14 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultInvariantHandler {
     }
     function deposit(uint64 seed_) external {
         uint256 amount = uint256(seed_) % 1e10 + 1;
-        if (amount > target.balanceOf(address(this))) return;
-        try IStandardExchangeIn(address(vault)).exchangeIn(target, amount, IERC20(address(vault)), 0, address(this), false, block.timestamp)
-            returns (uint256) { ++deposits; funded += amount; } catch {}
+        if (amount > target.balanceOf(address(this))) return;try IStandardExchangeIn(address(vault)).exchangeIn(target, amount, IERC20(address(vault)), 0, address(this), false, block.timestamp)
+            returns (uint256, uint256) { ++deposits; funded += amount; } catch {}
     }
     function redeem(uint16 seed_) external {
         uint256 balance = IERC20(address(vault)).balanceOf(address(this));
         uint256 shares = balance * (uint256(seed_) % 10000 + 1) / 10000;
-        if (shares == 0) return;
-        try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, target, 0, address(this), false, block.timestamp)
-            returns (uint256 assets) { ++withdrawals; paid += assets; } catch {}
+        if (shares == 0) return;try IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), shares, target, 0, address(this), false, block.timestamp)
+            returns (uint256 assets, uint256) { ++withdrawals; paid += assets; } catch {}
     }
     function rebalance() external {
         try Rebalance(address(vault)).rebalance(0, block.timestamp) returns (uint256) {} catch {}

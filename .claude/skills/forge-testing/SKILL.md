@@ -1,6 +1,6 @@
 ---
 name: forge-testing
-description: Foundry cheatcodes, assertions, and forge test CLI. Use for vm.prank, expectRevert, verbosity, and general Foundry mechanics. For Crane/IndexedEx protocol and Diamond tests, prefer crane-testing and production-first deploy paths over mocks.
+description: Foundry cheatcodes, assertions, and forge test CLI. Use for vm.prank, expectRevert, verbosity, and general Foundry mechanics. Compiling commands use --use solar. For Crane/IndexedEx protocol and Diamond tests, prefer crane-testing and production-first deploy paths over mocks.
 ---
 
 # Forge Testing
@@ -8,6 +8,8 @@ description: Foundry cheatcodes, assertions, and forge test CLI. Use for vm.pran
 Write native Solidity tests using Foundry's testing framework.
 
 ## Crane / IndexedEx note (read first)
+
+Every compiling `forge` command includes `--use solar`. Do not enable `via_ir`. Do not fall back to solc. Agent law § Compiler.
 
 In this monorepo, **prefer production contracts and factory/TestBase deploy paths**. Do not invent mocks for facets, DFPkgs, vaults, or managers.
 
@@ -64,19 +66,19 @@ contract MyContractTest is Test {
 
 ```bash
 # Run all tests
-forge test
+forge test --use solar
 
 # Run specific test contract
-forge test --match-contract MyContractTest
+forge test --use solar --match-contract MyContractTest
 
 # Run specific test function
-forge test --match-test test_BasicFunction
+forge test --use solar --match-test test_BasicFunction
 
 # Run with verbosity (show logs)
-forge test -vvv
+forge test --use solar -vvv
 
 # Watch mode
-forge test --watch
+forge test --use solar --watch
 ```
 
 ## Verbosity Levels

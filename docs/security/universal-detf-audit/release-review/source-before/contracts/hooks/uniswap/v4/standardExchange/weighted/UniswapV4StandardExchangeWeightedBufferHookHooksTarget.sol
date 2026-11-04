@@ -261,18 +261,15 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
         address se = l.standardExchanges[i];
         if (se == address(0)) {
             return Math.scaleTo(pairAmount, l.ratedScales[i]);
-        }
-        // Buffer preview → shares → pair units (rate or claim delta) → rated WAD
-        uint256 shares =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
+        }// Buffer preview → shares → pair units (rate or claim delta) → rated WAD
+        (uint256 shares,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
         address rp = l.rateProviders[i];
         uint256 pairUnits;
         if (rp != address(0)) {
             pairUnits = (shares * _getRateFailClosed(rp)) / Math.RATE_PRECISION;
-        } else {
-            // claim of those shares alone
-            pairUnits = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
+        } else {// claim of those shares alone
+            (pairUnits,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
         }
         return Math.scaleTo(pairUnits, l.ratedScales[i]);
     }

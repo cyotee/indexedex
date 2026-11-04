@@ -26,24 +26,19 @@ abstract contract UniswapV4Detf_Orbital_Univ3Se_Lifecycle_Decimals is TestBase_U
     }
     function test_H_OR_GV3_mint() public {
         _firstBond(_bondIn());
-        uint256 mintIn = _mintIn();
-        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)));
-        vm.startPrank(detfUser);
-        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 mintIn = _mintIn();(uint256 userPred,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)));
+        vm.startPrank(detfUser);(uint256 out,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out, 0, "out");
         assertEq(out, userPred, "previewMint==exec");
     }
     function test_H_OR_GV3_burn() public {
         _firstBond(_bondIn());
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
-        uint256 burnIn = minted / 2;
-        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
+        uint256 burnIn = minted / 2;(uint256 preview,) = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)));
         vm.startPrank(detfUser);
-        IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours);
+        IERC20(detf).approve(detf, burnIn);(uint256 amountOut,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertApproxEqAbs(amountOut, preview, 1, "previewBurn==exec");
     }
@@ -51,9 +46,7 @@ abstract contract UniswapV4Detf_Orbital_Univ3Se_Lifecycle_Decimals is TestBase_U
     function test_H_OR_GV3_claimProcessesUnsettledEpochsWithinGasBudget() public {
         (uint256 tokenId,) = _firstBond(_bondIn());
         uint256 amount_ = _mintIn();
-        vm.prank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(
-            IERC20(address(pairToken)), amount_, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        vm.prank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), amount_, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
         );
         IDetfBondNFT nft_ = IDetfBondNFT(detfInfo.bondNftVault());
         uint256 principal_ = nft_.positionOf(tokenId).principal;
@@ -74,8 +67,7 @@ abstract contract UniswapV4Detf_Orbital_Univ3Se_Lifecycle_Decimals is TestBase_U
 
     function test_H_OR_GV3_close() public {
         (uint256 tokenId,) = _firstBond(_bondIn());
-        vm.startPrank(detfUser);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), _mintIn(), IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertFundedMatureClaim(detf, tokenId, detfUser);
     }

@@ -29,14 +29,11 @@ contract ComposedStableCommonDetf_Sequences_Test is ComposedStableCommonDetf_Int
         uint256 raw_ = _buyFixtureRaw(actorA);
         uint256 amount_ = raw_ / 2;
         assertGt(amount_, 0);
-        IERC20 output_ = IERC20(address(stablePool));
-        uint256 quote_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, amount_, output_);
+        IERC20 output_ = IERC20(address(stablePool));(uint256 quote_,) = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, amount_, output_);
         assertGt(quote_, 0);
         uint256 before_ = output_.balanceOf(actorA);
         vm.startPrank(actorA);
-        detfToken.approve(deployedDetfVault, amount_);
-        uint256 paid_ = IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(detfToken, amount_, output_, quote_, actorA, false, block.timestamp);
+        detfToken.approve(deployedDetfVault, amount_);(uint256 paid_,) = IStandardExchangeIn(deployedDetfVault).exchangeIn(detfToken, amount_, output_, quote_, actorA, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, quote_);
         assertEq(output_.balanceOf(actorA), before_ + paid_);

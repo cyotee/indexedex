@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # APEX 2026-09-17 / R11.6: run the APEX fuzz/invariant campaigns under a PINNED seed for
 # reproducible evidence, and retain any counterexample from the gitignored cache/ trees.
-# Default `forge test` stays unseeded (rotating) so hermetic runs keep exploring; the seed
+# Default `forge test --use solar` stays unseeded (rotating) so hermetic runs keep exploring; the seed
 # is pinned only here, at invocation, via the environment (never in foundry.toml).
 #
 # forge 1.5.1 REJECTS repeated --match-path on a single invocation, so each match-path glob
-# is run as its own `forge test` invocation (one glob per invocation) under the same seed.
+# is run as its own `forge test --use solar` invocation (one glob per invocation) under the same seed.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 SEED="${APEX_FUZZ_SEED:-0x4150455832303236}"   # "APEX2026" — recorded in evidence
@@ -25,9 +25,9 @@ for GLOB in "${MATCH_PATHS[@]}"; do
   # Slug for a per-glob log file name.
   SLUG=$(printf '%s' "$GLOB" | tr '/*.' '___' | tr -s '_')
   LOG="$EV/fuzz-invariant-${SEED}-${SLUG}.log"
-  echo "== forge test --match-path '$GLOB'"
+  echo "== forge test --use solar --match-path '$GLOB'"
   set +e
-  forge test --match-path "$GLOB" -vvv | tee "$LOG"
+  forge test --use solar --match-path "$GLOB" -vvv | tee "$LOG"
   GRC=${PIPESTATUS[0]}
   set -e
   [ "$GRC" -ne 0 ] && RC="$GRC"

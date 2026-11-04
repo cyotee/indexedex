@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -28,9 +29,7 @@ abstract contract TransitionQuoteAssertions is Test {
         uint256 heldShares = IERC20(exchange).balanceOf(address(this));
         uint256 supply = IERC20(exchange).totalSupply();
         uint256 beforeAssets = asset.balanceOf(address(this));
-        tokenIn.approve(exchange, amount);
-        uint256 actual = IStandardExchangeIn(exchange).exchangeIn(
-            tokenIn, amount, asset, output, address(this), false, block.timestamp
+        tokenIn.approve(exchange, amount);(uint256 actual,) = IStandardExchangeIn(exchange).exchangeIn(tokenIn, amount, asset, output, address(this), false, block.timestamp
         );
         assertEq(actual, output, "external payment conversion output");
         assertEq(asset.balanceOf(address(this)) - beforeAssets, output, "external conversion receipt");
@@ -53,8 +52,7 @@ abstract contract TransitionQuoteAssertions is Test {
         address recipient = makeAddr("external SE mint recipient");
         uint256 beforeShares = IERC20(exchange).balanceOf(recipient);
         tokenIn.approve(exchange, amount);
-        assertEq(IStandardExchangeIn(exchange).exchangeIn(
-            tokenIn, amount, IERC20(exchange), step.output, recipient, false, block.timestamp
+        assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange))), tokenIn, amount, IERC20(exchange), step.output, recipient, false, block.timestamp
         ), step.output, "external mint return equals projection");
         assertEq(IERC20(exchange).balanceOf(recipient) - beforeShares, step.output, "funded user share receipt");
         assertEq(IERC20(exchange).totalSupply(), quote.quoteTotalSupply(step.state), "external mint includes issued fee shares");
@@ -131,8 +129,7 @@ abstract contract TransitionQuoteAssertions is Test {
                 IERC20(exchange_), step_.input, asset_, amount_, holder_, false, block.timestamp
             ), step_.input, "exact-output share charge");
         } else {
-            assertEq(IStandardExchangeIn(exchange_).exchangeIn(
-                deposit_ ? asset_ : IERC20(exchange_), amount_,
+            assertEq(ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange_))), deposit_ ? asset_ : IERC20(exchange_), amount_,
                 deposit_ ? IERC20(exchange_) : asset_, step_.output, holder_, false, block.timestamp
             ), step_.output, "exact-input output");
         }
@@ -141,7 +138,6 @@ abstract contract TransitionQuoteAssertions is Test {
     }
 
     function _liveClaim(address exchange_, IERC20 asset_, address holder_) private view returns (uint256) {
-        uint256 shares_ = IERC20(exchange_).balanceOf(holder_);
-        return shares_ == 0 ? 0 : IStandardExchangeIn(exchange_).previewExchangeIn(IERC20(exchange_), shares_, asset_);
+        uint256 shares_ = IERC20(exchange_).balanceOf(holder_);return shares_ == 0 ? 0 : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange_))), IERC20(exchange_), shares_, asset_);
     }
 }

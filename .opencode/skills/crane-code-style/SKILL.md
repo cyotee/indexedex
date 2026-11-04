@@ -1,7 +1,7 @@
 ---
-name: Crane Code Style
-description: This skill should be used when the user asks about "code style", "naming convention", "imports", "section headers", "slot naming", "viaIR", "stack too deep", "formatting", or needs guidance on Crane's code conventions and style requirements.
-version: 0.1.0
+name: crane-code-style
+description: "Crane Solidity conventions for naming, imports, storage slots, formatting, Solar compilation, and stack-depth fixes without viaIR."
+license: MIT
 ---
 
 # Crane Code Style Guide
@@ -73,12 +73,12 @@ Order functions by visibility:
 
 | Pattern | Usage | Example |
 |---------|-------|---------|
-| `_layout()` | Storage access | `_layout()`, `_layout(bytes32 slot_)` |
+| `_layoutStruct()` | Storage access | `_layoutStruct()`, `_layoutStruct(bytes32 slot_)` |
 | `_initialize()` | Storage setup | `_initialize(address owner_)` |
 | `_functionName()` | Internal Repo functions | `_isOperator()`, `_setOperator()` |
 | `_onlyXxx()` | Guard functions in Repos | `_onlyOwner()`, `_onlyOperator()` |
 | `onlyXxx` | Modifiers | `onlyOwner`, `onlyOperator` |
-| `layout` | Storage parameter name | `Storage storage layout` |
+| `layoutStruct` | Storage parameter name | `Storage storage layoutStruct` |
 | `param_` | Function parameters | `owner_`, `slot_`, `name_` |
 
 ### Parameter Trailing Underscore
@@ -105,19 +105,27 @@ Use hierarchical dot-notation for storage slot names:
 bytes32 internal constant STORAGE_SLOT = keccak256(abi.encode("crane.access.operable"));
 ```
 
-## Critical: No viaIR Compilation
+## Compiler: Solar, never viaIR
 
-**NEVER enable `via_ir` or `viaIR` in foundry.toml.**
+Compile with Solar. Every `forge` subcommand that compiles includes `--use solar`:
 
-IR compilation is forbidden because:
-- Dramatically slower compilation (10-100x slower)
-- Excessive memory usage
-- Breaks parallel agent workflows
-- Not necessary when code is properly structured
+```bash
+forge build --use solar
+forge test --use solar
+forge script --use solar <script>
+```
+
+IndexedEx agent law § Compiler is the full rule. Crane compiles the same way. Do not omit the flag and do not fall back to solc.
+
+**NEVER enable `via_ir` or `viaIR` in foundry.toml, and never pass `--via-ir`.** Solar is not solc's Yul via-IR pipeline. Solc via-IR stays forbidden: it is slow, memory-heavy, and is not the stack-too-deep fix.
+
+Requires a Foundry build that accepts `--use solar` (`foundryup --install nightly` at or after 2026-11-03 / Forge 1.9.1). Forge 1.9.0 rejects the flag.
 
 ### Resolving Stack Too Deep Errors
 
-When encountering "stack too deep" errors, **refactor using structs**:
+Compile with Solar first. Do not refactor a function only because solc would report stack too deep. Solar's pipeline is what removes that solc failure.
+
+If **Solar itself** reports stack too deep, then refactor using structs:
 
 ```solidity
 // WRONG - too many local variables
@@ -163,20 +171,25 @@ function goodFunction(DepositParams memory params) external {
 
 ### Stack Too Deep Solutions
 
+Use these only after Solar itself reports stack too deep:
+
 1. **Group parameters into structs**: Bundle related function parameters
 2. **Group intermediate state**: Use `State` or `Context` structs
 3. **Use `memory` for computation**: Struct fields don't consume stack
 4. **Extract helper functions**: Split complex functions
 5. **Use block scoping**: Limit variable lifetimes with `{ ... }`
 
+Do not enable `via_ir` as step 6.
+
 ## Configuration
 
 Standard Crane configuration:
 
-- **Solidity**: 0.8.35
+- **Solidity**: 0.8.30
 - **Optimizer runs**: 1 (for contract size limits)
 - **EVM version**: Prague
 - **via_ir**: false (ALWAYS)
+- **Compiler**: Solar via `forge … --use solar` (not a `foundry.toml` key; do not set `solc = "solar"`)
 
 ## Additional Resources
 

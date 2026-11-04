@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -83,8 +84,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ZapReserveOrde
         uint256 amount = 1e9;
         bytes32 before_ = _zeroBudgetSnapshot();
         assertEq(single.previewDepositSingle(address(rawToken), amount), 0, "zero opposite leg cannot mint LP");
-        assertEq(IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amount, IERC20(address(pairToken))
+        assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(hook))), IERC20(address(rawToken)), amount, IERC20(address(pairToken))
         ), 0, "valid rounded-zero swap quote");
 
         vm.expectRevert(bytes4(keccak256("ZeroAmount()")));
@@ -96,9 +96,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ZapReserveOrde
         vm.prank(user);
         rawToken.approve(hook, 0);
         vm.expectRevert(bytes4(keccak256("ZeroAmount()")));
-        vm.prank(user);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)), amount, IERC20(address(pairToken)), 0, user, false, block.timestamp
+        vm.prank(user);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(hook))), IERC20(address(rawToken)), amount, IERC20(address(pairToken)), 0, user, false, block.timestamp
         );
         assertEq(_zeroBudgetSnapshot(), before_, "zero swap cannot spend existing claim inventory");
     }

@@ -57,8 +57,7 @@ contract UniswapV4Detf_Cp_PonsV1Se_ProductLaw is
     function _d25SeedHook() internal override {
         _buyLaunchFor(detfUser, 30 ether);
         vm.startPrank(detfUser);
-        IERC20(mintToken).approve(detf, type(uint256).max);
-        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
+        IERC20(mintToken).approve(detf, type(uint256).max);IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 }

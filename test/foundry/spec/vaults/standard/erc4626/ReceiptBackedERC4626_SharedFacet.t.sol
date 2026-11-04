@@ -175,8 +175,7 @@ contract ReceiptBackedERC4626_SharedFacet_Test is TestBase_AaveV3StataStandardEx
         address u = address(0xCA11);
         u2.mint(u, 1_000 ether);
         vm.startPrank(u);
-        u2.approve(se2, type(uint256).max);
-        IStandardExchangeIn(se2).exchangeIn(IERC20(address(u2)), 100 ether, IERC20(se2), 0, u, false, block.timestamp);
+        u2.approve(se2, type(uint256).max);IStandardExchangeIn(se2).exchangeIn(IERC20(address(u2)), 100 ether, IERC20(se2), 0, u, false, block.timestamp);
 
         assertEq(IERC20(address(capped)).balanceOf(se2), 0, "no receipts: local-only backing");
         uint256 shares = IERC20(se2).balanceOf(u);
@@ -205,8 +204,7 @@ contract ReceiptBackedERC4626_SharedFacet_Test is TestBase_AaveV3StataStandardEx
         IERC20(address(gVault)).approve(gSe, type(uint256).max);
 
         // SE mint path applies the dilution usage fee.
-        uint256 feeBeforeSE = IERC20(gSe).balanceOf(feeTo);
-        IStandardExchangeIn(gSe).exchangeIn(IERC20(address(gUnderlying)), 100 ether, IERC20(gSe), 0, u, false, block.timestamp);
+        uint256 feeBeforeSE = IERC20(gSe).balanceOf(feeTo);IStandardExchangeIn(gSe).exchangeIn(IERC20(address(gUnderlying)), 100 ether, IERC20(gSe), 0, u, false, block.timestamp);
         assertGt(IERC20(gSe).balanceOf(feeTo), feeBeforeSE, "SE mint path dilutes via usage fee");
 
         // Adapter deposit mints no usage fee.

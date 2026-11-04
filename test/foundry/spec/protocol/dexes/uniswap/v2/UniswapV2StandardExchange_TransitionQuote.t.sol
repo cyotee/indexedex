@@ -56,8 +56,7 @@ contract UniswapV2StandardExchange_TransitionQuote is TestBase_UniswapV2Standard
             IStandardExchangeProxy se_ = _getVault(PoolConfig(i));
             IUniswapV2Pair pool_ = _getPool(PoolConfig(i));
             uint256 fundedLp_ = pool_.balanceOf(address(this)) / 100;
-            IERC20(address(pool_)).approve(address(se_), fundedLp_);
-            se_.exchangeIn(IERC20(address(pool_)), fundedLp_, IERC20(address(se_)), 1, address(this), false, _deadline());
+            IERC20(address(pool_)).approve(address(se_), fundedLp_);se_.exchangeIn(IERC20(address(pool_)), fundedLp_, IERC20(address(se_)), 1, address(this), false, _deadline());
             IERC20 input_ = IERC20(pool_.token0());
             IERC20 asset_ = IERC20(pool_.token1());
             deal(address(input_), address(this), 10_000 ether);
@@ -72,8 +71,7 @@ contract UniswapV2StandardExchange_TransitionQuote is TestBase_UniswapV2Standard
             IUniswapV2Pair pool = _getPool(PoolConfig(i));
             address holder = address(indexedexManager.feeTo());
             uint256 lp = pool.balanceOf(address(this)) / 100;
-            IERC20(address(pool)).approve(address(se), lp);
-            se.exchangeIn(IERC20(address(pool)), lp, IERC20(address(se)), 1, holder, false, _deadline());
+            IERC20(address(pool)).approve(address(se), lp);se.exchangeIn(IERC20(address(pool)), lp, IERC20(address(se)), 1, holder, false, _deadline());
             vm.prank(owner);
             IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(se), 7e16);
             IERC20 asset = IERC20(pool.token1());
@@ -98,8 +96,7 @@ contract UniswapV2StandardExchange_TransitionQuote is TestBase_UniswapV2Standard
         uint256 lp_ = pool.balanceOf(address(this)) / 100;
         IERC20(address(pool)).transfer(holder_, lp_);
         vm.startPrank(holder_);
-        IERC20(address(pool)).approve(address(se_), lp_);
-        se_.exchangeIn(IERC20(address(pool)), lp_, IERC20(address(se_)), 1, holder_, false, _deadline());
+        IERC20(address(pool)).approve(address(se_), lp_);se_.exchangeIn(IERC20(address(pool)), lp_, IERC20(address(se_)), 1, holder_, false, _deadline());
         vm.stopPrank();
         deal(address(asset_), holder_, 10_000 ether);
         _assertQuoteSequence(address(se_), asset_, holder_, 1 ether);

@@ -44,6 +44,6 @@ rg -n 'import \{.*\} from "\./' contracts/external/<protocol>/ | head
 
 ```bash
 rm -rf cache out
-forge build
-forge test --match-path 'test/foundry/spec/protocols/<...>' -vv
+forge build --use solar
+forge test --use solar --match-path 'test/foundry/spec/protocols/<...>' -vv
 ```

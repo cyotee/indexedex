@@ -1,0 +1,1 @@
+Uniswap V3/V4 fee-earning single-token vault survey. Session /Users/cyotee/Projects/indexedex/.omo/ulw-research/20261023-171500. Axes: arrakis-family, manager-vaults, single-sided, v4-native, rate-oracles, pricing-math, incidents, skeptic. Deliver a cited comparison and one recommended pattern whose getRate does not read same-pool spot.

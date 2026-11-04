@@ -68,10 +68,8 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         uint256 amountIn = TEST_AMOUNT;
 
         // Get expected from pool directly (mainnet pool!)
-        uint256 expectedFromPool = pool.getAmountOut(amountIn, address(tokenIn));
-
-        // Get preview from vault
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        uint256 expectedFromPool = pool.getAmountOut(amountIn, address(tokenIn));// Get preview from vault
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
 
         assertEq(preview, expectedFromPool, "Fork: Preview should match pool.getAmountOut()");
     }
@@ -117,14 +115,9 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
 
         // Mint and approve
         tokenInStub.mint(address(this), amountIn);
-        tokenInStub.approve(address(vault), amountIn);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
-
-        // Execute on mainnet infrastructure
-        uint256 amountOut = vault.exchangeIn(
-            tokenIn,
+        tokenInStub.approve(address(vault), amountIn);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);// Execute on mainnet infrastructure
+        (uint256 amountOut,) = vault.exchangeIn(tokenIn,
             amountIn,
             tokenOut,
             0, // minAmountOut
@@ -173,10 +166,8 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         tokenInStub.approve(address(vault), amountIn);
 
         uint256 senderBalanceBefore = tokenIn.balanceOf(address(this));
-        uint256 recipientBalanceBefore = tokenOut.balanceOf(recipient);
-
-        // Execute
-        uint256 amountOut = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
+        uint256 recipientBalanceBefore = tokenOut.balanceOf(recipient);// Execute
+        (uint256 amountOut,) = vault.exchangeIn(tokenIn, amountIn, tokenOut, 0, recipient, false, _deadline());
 
         // Verify balance changes
         assertEq(
@@ -203,13 +194,8 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
-
-        // Should succeed with exact minAmountOut
-        uint256 amountOut = vault.exchangeIn(
-            IERC20(address(tokenA)),
+        tokenA.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));// Should succeed with exact minAmountOut
+        (uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             preview, // exact minimum
@@ -229,14 +215,10 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
+        tokenA.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)));
 
         // Should revert with minAmountOut too high
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        vm.expectRevert();vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             preview + 1, // too high
@@ -261,11 +243,8 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         tokenA.mint(address(this), amountIn);
         tokenA.transfer(address(vault), amountIn);
 
-        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));
-
-        // Execute with pretransferred=true
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));// Execute with pretransferred=true
+        vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -289,11 +268,8 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         tokenA.mint(address(this), amountIn);
         tokenA.approve(address(vault), amountIn);
 
-        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));
-
-        // Execute with pretransferred=false
-        vault.exchangeIn(
-            IERC20(address(tokenA)),
+        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));// Execute with pretransferred=false
+        vault.exchangeIn(IERC20(address(tokenA)),
             amountIn,
             IERC20(address(tokenB)),
             0,
@@ -341,11 +317,7 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         tokenInStub.mint(address(this), amountIn);
-        tokenInStub.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut);
-        uint256 amountOut =
-            vault.exchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut, 0, recipient, false, _deadline());
+        tokenInStub.approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut);(uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenInStub)), amountIn, tokenOut, 0, recipient, false, _deadline());
 
         assertEq(amountOut, preview, "Fork fuzz: execution should match preview");
         assertEq(tokenOut.balanceOf(recipient), amountOut, "Fork fuzz: recipient balance correct");
@@ -368,11 +340,8 @@ contract AerodromeFork_Swap_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("integration_recipient");
 
         tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-
-        // Execute swap - this goes through mainnet Aerodrome router
-        uint256 amountOut = vault.exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, _deadline()
+        tokenA.approve(address(vault), amountIn);// Execute swap - this goes through mainnet Aerodrome router
+        (uint256 amountOut,) = vault.exchangeIn(IERC20(address(tokenA)), amountIn, IERC20(address(tokenB)), 0, recipient, false, _deadline()
         );
 
         // Verify successful execution with mainnet infrastructure

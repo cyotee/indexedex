@@ -73,17 +73,12 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
     }
 
     function test_SE1_exchangeIn_rawToPair_and_pairToRaw() public {
-        uint256 amountIn = 3 ether;
-
-        // raw -> pair
-        uint256 predPair = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amountIn, IERC20(address(pairToken))
+        uint256 amountIn = 3 ether;// raw -> pair
+        (uint256 predPair,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountIn, IERC20(address(pairToken))
         );
         assertGt(predPair, 0);
         uint256 bPair = pairToken.balanceOf(user);
-        vm.prank(user);
-        uint256 outPair = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);(uint256 outPair,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             amountIn,
             IERC20(address(pairToken)),
             0,
@@ -94,17 +89,12 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
         assertEq(outPair, predPair);
         assertEq(pairToken.balanceOf(user) - bPair, outPair);
         // Did not mint LP
-        assertEq(IERC20(hook).balanceOf(user), IERC20(hook).balanceOf(user));
-
-        // pair -> raw
-        uint256 predRaw = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(pairToken)), amountIn, IERC20(address(rawToken))
+        assertEq(IERC20(hook).balanceOf(user), IERC20(hook).balanceOf(user));// pair -> raw
+        (uint256 predRaw,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(address(rawToken))
         );
         assertGt(predRaw, 0);
         uint256 bRaw = rawToken.balanceOf(user);
-        vm.prank(user);
-        uint256 outRaw = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(pairToken)),
+        vm.prank(user);(uint256 outRaw,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(pairToken)),
             amountIn,
             IERC20(address(rawToken)),
             0,
@@ -161,16 +151,12 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
         uint256 amountIn = 2 ether;
         bool rawIsC0 = _isRawCurrency0();
         // raw -> pair as zeroForOne if raw is currency0
-        bool zfoRawIn = rawIsC0;
-        uint256 seOut = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(rawToken)), amountIn, IERC20(address(pairToken))
+        bool zfoRawIn = rawIsC0;(uint256 seOut,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountIn, IERC20(address(pairToken))
         );
         uint256 v4Out = single.previewSwapExactIn(zfoRawIn, amountIn);
         assertEq(seOut, v4Out);
 
-        bool zfoPairIn = !rawIsC0;
-        seOut = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(pairToken)), amountIn, IERC20(address(rawToken))
+        bool zfoPairIn = !rawIsC0;(seOut,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(address(rawToken))
         );
         v4Out = single.previewSwapExactIn(zfoPairIn, amountIn);
         assertEq(seOut, v4Out);
@@ -178,9 +164,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
 
     function test_SE4_badTokens_reverts() public {
         vm.prank(user);
-        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             1 ether,
             IERC20(se), // SE shares not a pool currency
             0,
@@ -193,9 +177,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
     function test_SE5_exchangeIn_doesNotMintLp() public {
         uint256 supplyBefore = IERC20(hook).totalSupply();
         uint256 userLpBefore = IERC20(hook).balanceOf(user);
-        vm.prank(user);
-        IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(rawToken)),
+        vm.prank(user);IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             2 ether,
             IERC20(address(pairToken)),
             0,

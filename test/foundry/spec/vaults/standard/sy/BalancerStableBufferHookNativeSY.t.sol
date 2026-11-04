@@ -37,8 +37,7 @@ contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExcha
         _seedFullBook(1_000 ether);
         sy_ = IStandardizedYield(hook);
         vm.startPrank(user);
-        token0.approve(se0, 100 ether);
-        IStandardExchangeIn(se0).exchangeIn(token0, 100 ether, IERC20(se0), 0, user, false, block.timestamp);
+        token0.approve(se0, 100 ether);IStandardExchangeIn(se0).exchangeIn(token0, 100 ether, IERC20(se0), 0, user, false, block.timestamp);
         vm.stopPrank();
         vm.prank(user);
         IERC20(se0).approve(hook, type(uint256).max);
@@ -62,8 +61,7 @@ contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExcha
         assertEq(abi.encode(tokens_), abi.encode(sy_.getTokensOut()));
         assertEq(sy_.getRewardTokens().length, 0);
         assertFalse(sy_.isValidTokenIn(hook));
-        uint256[] memory balances_ = new uint256[](4);
-        balances_[0] = IStandardExchangeIn(se0).previewExchangeIn(IERC20(se0), IERC20(se0).balanceOf(hook), token0);
+        uint256[] memory balances_ = new uint256[](4);(balances_[0],) = IStandardExchangeIn(se0).previewExchangeIn(IERC20(se0), IERC20(se0).balanceOf(hook), token0);
         balances_[1] = token1.balanceOf(hook);
         balances_[2] = token2.balanceOf(hook);
         balances_[3] = token3.balanceOf(hook);
@@ -95,7 +93,8 @@ contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExcha
             uint256 amount_ = 5 ether;
             uint256 expected_ = sy_.previewDeposit(in_, amount_);
             uint256 paidBefore_ = IERC20(in_).balanceOf(user);
-            assertEq(IStandardExchangeIn(hook).previewExchangeIn(IERC20(in_), amount_, IERC20(hook)), expected_);
+            (uint256 previewAmountOut1,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(in_), amount_, IERC20(hook));
+            assertEq(previewAmountOut1, expected_);
             vm.prank(user);
             uint256 minted_ = sy_.deposit(user, in_, amount_, expected_);
             assertEq(minted_, expected_);
@@ -157,8 +156,7 @@ contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExcha
         vm.expectRevert();
         sy_.redeem(user, 1 ether, se0, type(uint256).max, false);
         IERC20(se0).transfer(hook, 1 ether);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(IERC20(se0), 1 ether, IERC20(hook), 0, user, true, block.timestamp);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(se0), 1 ether, IERC20(hook), 0, user, true, block.timestamp);
         vm.stopPrank();
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
@@ -180,10 +178,10 @@ contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExcha
     }
 
     function test_balancerStableStandardSwapsRemainSupplyNeutral() public {
-        uint256 supply_ = sy_.totalSupply();
-        uint256 quote_ = IStandardExchangeIn(hook).previewExchangeIn(token1, 1 ether, token0);
+        uint256 supply_ = sy_.totalSupply();(uint256 quote_,) = IStandardExchangeIn(hook).previewExchangeIn(token1, 1 ether, token0);
         vm.prank(user);
-        assertEq(IStandardExchangeIn(hook).exchangeIn(token1, 1 ether, token0, quote_, user, false, block.timestamp), quote_);
+        (uint256 exchangeAmountOut2,) = IStandardExchangeIn(hook).exchangeIn(token1, 1 ether, token0, quote_, user, false, block.timestamp);
+        assertEq(exchangeAmountOut2, quote_);
         assertEq(sy_.totalSupply(), supply_);
     }
 }

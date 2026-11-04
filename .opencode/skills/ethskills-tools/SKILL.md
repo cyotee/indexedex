@@ -25,7 +25,7 @@ When an agent needs to interact with Ethereum:
 2. **Write operations:** Foundry `cast send` or ethers.js/viem
 3. **Contract exploration:** abi.ninja (browser) or `cast interface` (CLI)
 4. **Testing:** Fork mainnet with `anvil`, test locally
-5. **Deployment:** `forge create` or `forge script`
+5. **Deployment:** `forge create --use solar` or `forge script --use solar`
 6. **Verification:** `forge verify-contract` or Etherscan API
 
 ## Blockscout MCP Server

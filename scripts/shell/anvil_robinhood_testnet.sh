@@ -468,10 +468,10 @@ run_forge_with_retries() {
   done
 }
 
-# Base forge script argv. Never append --skip-simulation.
+# Base forge script --use solar argv. Never append --skip-simulation.
 forge_script_base() {
   local script_path="$1"
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
+  local cmd=(forge script --use solar "$script_path" --rpc-url "$RPC_URL")
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi

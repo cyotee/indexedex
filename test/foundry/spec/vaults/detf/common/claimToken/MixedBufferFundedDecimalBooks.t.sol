@@ -97,8 +97,9 @@ contract MixedBufferFundedDecimalBooksTest is TestBase_MixedBufferMultiVaultStab
         assertEq(paid_, principal_ / 2);
         assertEq(staking_.balanceOf(alice), paid_ + rewards_);
         vm.prank(alice);
-        assertEq(staking_.exchangeIn(IERC20(address(staking_)), paid_ + rewards_, IERC20(detf),
-            paid_ + rewards_, alice, false, block.timestamp), paid_ + rewards_);
+        (uint256 exchangeAmountOut1,) = staking_.exchangeIn(IERC20(address(staking_)), paid_ + rewards_, IERC20(detf),
+            paid_ + rewards_, alice, false, block.timestamp);
+        assertEq(exchangeAmountOut1, paid_ + rewards_);
         assertEq(IERC20(detf).balanceOf(alice), raw_ + paid_ + rewards_);
         assertEq(staking_.stakingState().accountedBacking, backing_ - paid_ - rewards_);
         assertEq(nft_.lpToken().balanceOf(address(nft_)), lp_);

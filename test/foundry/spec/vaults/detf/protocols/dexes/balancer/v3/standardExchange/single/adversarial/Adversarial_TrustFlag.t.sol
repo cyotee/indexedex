@@ -21,9 +21,7 @@ contract SingleSEPretransferRouterHelper {
     ) external returns (uint256 out_) {
         if (transferAmt_ > 0) {
             seShare_.transferFrom(msg.sender, detf_, transferAmt_);
-        }
-        out_ = IStandardExchangeIn(detf_)
-            .exchangeIn(seShare_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours);
+        }(out_,) = IStandardExchangeIn(detf_).exchangeIn(seShare_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours);
     }
 }
 
@@ -45,9 +43,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
 
         uint256 honestIn_ = _fundSeShares(victim, residual_ / 2 == 0 ? residual_ : residual_ / 2);
         vm.startPrank(victim);
-        seShare.approve(instance_, honestIn_);
-        uint256 out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, honestIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, honestIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, honestIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "book residual: honest mint ok");
     }
@@ -69,9 +65,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
         assertEq(seShare.allowance(attacker, instance_), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(seShare, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(attacker), attDetfBefore_, "I1: no free detfToken mint");
         assertEq(seShare.balanceOf(instance_), invBefore_, "I1: inventory unchanged (no in-call transfer)");
@@ -89,9 +83,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
 
         vm.startPrank(alice);
         IERC20(instance_).transfer(instance_, donateAmt_);
-        IERC20(instance_).approve(instance_, burnHonest_);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), burnHonest_, seShare, 0, alice, false, block.timestamp + 1 hours);
+        IERC20(instance_).approve(instance_, burnHonest_);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnHonest_, seShare, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         uint256 residualDetf_ = IERC20(instance_).balanceOf(instance_);
@@ -103,9 +95,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
         uint256 seShareBefore_ = seShare.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), residualDetf_, seShare, 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), residualDetf_, seShare, 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(instance_), residualDetf_, "free detf still on diamond");
         assertEq(IERC20(pool_).balanceOf(instance_), bptBefore_, "I1 burn: BPT intact");
@@ -169,9 +159,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
         // Honest first mint via pull path (not pretransfer) — end-sync books residual.
         uint256 victimIn_ = _fundSeShares(victim, 20e18);
         vm.startPrank(victim);
-        seShare.approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
+        seShare.approve(instance_, victimIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(seShare, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "honest mint ok");
         // Residual remains on diamond but is booked (R==B) after end-sync.
@@ -179,9 +167,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
 
         // Second call: pretransferred against residual, no new inbound transfer.
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(instance_)
-            .exchangeIn(seShare, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(instance_).exchangeIn(seShare, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(seShare.balanceOf(instance_), residual_, "I3: residual not free-credited");
     }

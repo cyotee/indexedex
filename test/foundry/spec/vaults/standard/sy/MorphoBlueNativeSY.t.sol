@@ -26,9 +26,7 @@ contract MorphoBlueNativeSYTest is TestBase_MorphoBlueStandardExchange, NativeSY
     function test_morphoSYPreviewDoesNotSelfCallAssetOrExchange() public {
         IStandardizedYield sy_ = _sy();
         vm.prank(user);
-        uint256 shares_ = sy_.deposit(user, address(loanToken), 1_000e18, 0);
-        uint256 deposit_ = seIn.previewExchangeIn(IERC20(address(loanToken)), 1e18, IERC20(se));
-        uint256 redeem_ = seIn.previewExchangeIn(IERC20(se), shares_ / 10, IERC20(address(loanToken)));
+        uint256 shares_ = sy_.deposit(user, address(loanToken), 1_000e18, 0);(uint256 deposit_,) = seIn.previewExchangeIn(IERC20(address(loanToken)), 1e18, IERC20(se));(uint256 redeem_,) = seIn.previewExchangeIn(IERC20(se), shares_ / 10, IERC20(address(loanToken)));
         vm.expectCall(se, abi.encodeWithSelector(IERC4626.asset.selector), uint64(0));
         vm.expectCall(se, abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector), uint64(0));
         assertEq(sy_.previewDeposit(address(loanToken), 1e18), deposit_);
@@ -47,8 +45,7 @@ contract MorphoBlueNativeSYTest is TestBase_MorphoBlueStandardExchange, NativeSY
         assertLe(address(morphoBlueStandardExchangeDFPkg).code.length, 24_576);
     }
     function test_morphoSYRoundTripMatchesExistingSEAndAccruedAssets() public noSelfCalls(se) {
-        IStandardizedYield sy_ = _sy(); uint256 amount_ = 1_000e18;
-        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(loanToken)), amount_, IERC20(se));
+        IStandardizedYield sy_ = _sy(); uint256 amount_ = 1_000e18;(uint256 quote_,) = seIn.previewExchangeIn(IERC20(address(loanToken)), amount_, IERC20(se));
         vm.prank(user); uint256 shares_ = sy_.deposit(user, address(loanToken), amount_, quote_);
         assertEq(shares_, quote_); assertGt(_expectedSupplyOf(se), 0);
         uint256 redemption_ = sy_.previewRedeem(address(loanToken), shares_);

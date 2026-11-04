@@ -84,9 +84,7 @@ contract ERC4626StandardExchange_SfrxETH_Fork is TestBase_ERC4626StandardExchang
         uint256 sfrxShares = IfrxETHMinter(FRX_ETH_MINTER).submitAndDeposit{value: ethIn}(address(this));
         assertGt(sfrxShares, 0, "got sfrxETH");
 
-        IERC20(SFRX_ETH).approve(seVault, sfrxShares);
-        uint256 seOut = IStandardExchangeIn(seVault).exchangeIn(
-            IERC20(SFRX_ETH),
+        IERC20(SFRX_ETH).approve(seVault, sfrxShares);(uint256 seOut,) = IStandardExchangeIn(seVault).exchangeIn(IERC20(SFRX_ETH),
             sfrxShares,
             IERC20(seVault),
             0,
@@ -131,9 +129,7 @@ contract ERC4626StandardExchange_SfrxETH_Fork is TestBase_ERC4626StandardExchang
         uint256 frxBal = IERC20(FRX_ETH).balanceOf(address(this));
         assertGt(frxBal, 0);
 
-        IERC20(FRX_ETH).approve(seVault, frxBal);
-        uint256 seOut = IStandardExchangeIn(seVault).exchangeIn(
-            IERC20(FRX_ETH), frxBal, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        IERC20(FRX_ETH).approve(seVault, frxBal);(uint256 seOut,) = IStandardExchangeIn(seVault).exchangeIn(IERC20(FRX_ETH), frxBal, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
         );
         assertGt(seOut, 0, "SE from underlying path");
     }
@@ -159,8 +155,7 @@ contract ERC4626StandardExchange_SfrxETH_ProjectionFork is
         MINTER.submit{value: 1_000 ether}();
         ASSET.approve(exchange, type(uint256).max);
         ASSET.approve(address(RECEIPT), type(uint256).max);
-        RECEIPT.deposit(200 ether, address(this));
-        IStandardExchangeIn(exchange).exchangeIn(ASSET, 100 ether, IERC20(exchange), 1, address(this), false, block.timestamp);
+        RECEIPT.deposit(200 ether, address(this));IStandardExchangeIn(exchange).exchangeIn(ASSET, 100 ether, IERC20(exchange), 1, address(this), false, block.timestamp);
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(exchange, 7e16);
     }

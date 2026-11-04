@@ -108,8 +108,7 @@ abstract contract StandardExchangePreservedBehavior is Test {
         assertGt(minted, 0, "preserved implementation mints for no transfer");
         assertEq(token.balanceOf(FALSE_DEPOSITOR), 0, "false depositor spent no input");
         assertEq(subject.totalSupply(), supply + minted);
-        subject.approve(address(subject), minted);
-        uint256 redeemed = subject.exchangeIn(IERC20(address(subject)), minted, output, 0, FALSE_DEPOSITOR, false, block.timestamp);
+        subject.approve(address(subject), minted);(uint256 redeemed,) = subject.exchangeIn(IERC20(address(subject)), minted, output, 0, FALSE_DEPOSITOR, false, block.timestamp);
         vm.stopPrank();
         assertGt(redeemed, 0, "phantom shares redeem real inventory");
         assertEq(output.balanceOf(FALSE_DEPOSITOR), redeemed);

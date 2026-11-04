@@ -274,31 +274,27 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         vm.stopPrank();
     }
 
-    function previewMint(uint256 seSharesIn_) public view returns (uint256) {
-        return detfExchangeIn.previewExchangeIn(seShare, seSharesIn_, IERC20(detf));
+    function previewMint(uint256 seSharesIn_) public view returns (uint256) {(uint256 quotedAmountOut,) = detfExchangeIn.previewExchangeIn(seShare, seSharesIn_, IERC20(detf));
+        return quotedAmountOut;
     }
 
     function mintSeSharesForDetf(address user_, uint256 seSharesIn_) public returns (uint256 detfOut_) {
         lastPreviewOut = previewMint(seSharesIn_);
         vm.startPrank(user_);
-        seShare.approve(detf, seSharesIn_);
-        detfOut_ = detfExchangeIn.exchangeIn(
-            seShare, seSharesIn_, IERC20(detf), 0, user_, false, block.timestamp + 1 hours
+        seShare.approve(detf, seSharesIn_);(detfOut_,) = detfExchangeIn.exchangeIn(seShare, seSharesIn_, IERC20(detf), 0, user_, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         lastExecOut = detfOut_;
     }
 
-    function previewBurn(uint256 detfIn_) public view returns (uint256) {
-        return detfExchangeIn.previewExchangeIn(IERC20(detf), detfIn_, seShare);
+    function previewBurn(uint256 detfIn_) public view returns (uint256) {(uint256 quotedAmountOut,) = detfExchangeIn.previewExchangeIn(IERC20(detf), detfIn_, seShare);
+        return quotedAmountOut;
     }
 
     function burnDetfForSeShares(address user_, uint256 detfIn_) public returns (uint256 seOut_) {
         lastPreviewOut = previewBurn(detfIn_);
         vm.startPrank(user_);
-        IERC20(detf).approve(detf, detfIn_);
-        seOut_ = detfExchangeIn.exchangeIn(
-            IERC20(detf), detfIn_, seShare, 0, user_, false, block.timestamp + 1 hours
+        IERC20(detf).approve(detf, detfIn_);(seOut_,) = detfExchangeIn.exchangeIn(IERC20(detf), detfIn_, seShare, 0, user_, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         lastExecOut = seOut_;
@@ -367,9 +363,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         if (burnAmt_ > 50e18) burnAmt_ = 50e18;
         if (burnAmt_ == 0) burnAmt_ = bal_;
         vm.startPrank(who_);
-        IERC20(detf).approve(detf, burnAmt_);
-        try detfExchangeIn.exchangeIn(
-            IERC20(detf), burnAmt_, seShare, 0, who_, false, block.timestamp + 1 hours
+        IERC20(detf).approve(detf, burnAmt_);try detfExchangeIn.exchangeIn(IERC20(detf), burnAmt_, seShare, 0, who_, false, block.timestamp + 1 hours
         ) {
             burned_ = true;
         } catch {}

@@ -59,14 +59,10 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
         deal(token0, address(this), amountIn);
         
         // Approve vault
-        tokenIn.approve(address(vault), amountIn);
-
-        // Get preview - single token to vault shares
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute
-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
+        tokenIn.approve(address(vault), amountIn);// Get preview - single token to vault shares
+        (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute
+        (uint256 sharesOut,) = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
 
         assertEq(sharesOut, preview, "Execution should match preview");
         assertEq(vault.balanceOf(recipient), preview, "Recipient should receive preview shares");
@@ -98,9 +94,7 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
 
         uint256 senderBalanceBefore = tokenIn.balanceOf(address(this));
         uint256 recipientSharesBefore = vault.balanceOf(recipient);
-        uint256 vaultTotalSupplyBefore = vault.totalSupply();
-
-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
+        uint256 vaultTotalSupplyBefore = vault.totalSupply();(uint256 sharesOut,) = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
 
         // Sender token decreased
         assertEq(tokenIn.balanceOf(address(this)), senderBalanceBefore - amountIn, "Sender token balance should decrease");
@@ -127,13 +121,8 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
     //     address recipient = makeAddr("recipient");
 
     //     deal(token0, address(this), amountIn);
-    //     tokenIn.approve(address(vault), amountIn);
-
-    //     uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
-
-    //     // Should succeed with exact minAmountOut
-    //     uint256 sharesOut = vault.exchangeIn(
-    //         tokenIn, amountIn, vaultToken, preview, recipient, false, block.timestamp + 1 hours
+    //     tokenIn.approve(address(vault), amountIn);//     (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);//     // Should succeed with exact minAmountOut
+    //     uint256 sharesOut = vault.exchangeIn(//         tokenIn, amountIn, vaultToken, preview, recipient, false, block.timestamp + 1 hours
     //     );
 
     //     assertEq(sharesOut, preview, "Should succeed with exact minimum");
@@ -152,14 +141,10 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
     //     address recipient = makeAddr("recipient");
 
     //     deal(token0, address(this), amountIn);
-    //     tokenIn.approve(address(vault), amountIn);
-
-    //     uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+    //     tokenIn.approve(address(vault), amountIn);//     (uint256 preview,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
 
     //     // Should revert with minAmountOut too high
-    //     vm.expectRevert();
-    //     vault.exchangeIn(
-    //         tokenIn, amountIn, vaultToken, preview + 1, recipient, false, block.timestamp + 1 hours
+    //     vm.expectRevert();//     vault.exchangeIn(//         tokenIn, amountIn, vaultToken, preview + 1, recipient, false, block.timestamp + 1 hours
     //     );
     // }
 
@@ -181,14 +166,11 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
 
     //     // First deposit
     //     deal(token0, address(this), amountIn * 2);
-    //     tokenIn.approve(address(vault), amountIn * 2);
-
-    //     uint256 shares1 = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
+    //     tokenIn.approve(address(vault), amountIn * 2);//     uint256 shares1 = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
     //     assertTrue(shares1 > 0, "First deposit should mint shares");
 
     //     // Second deposit
-    //     tokenIn.approve(address(vault), amountIn);
-    //     uint256 shares2 = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
+    //     tokenIn.approve(address(vault), amountIn);//     uint256 shares2 = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
     //     assertTrue(shares2 > 0, "Second deposit should mint shares");
 
     //     // Total shares should be more than first deposit alone
@@ -224,12 +206,10 @@ contract SlipstreamFork_ZapInDeposit_Test is TestBase_SlipstreamFork {
             // Success
         } catch {
             return; // Skip if deal fails
-        }
+        }uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+        if (preview == 0) return;// Skip if preview is 0
 
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
-        if (preview == 0) return; // Skip if preview is 0
-
-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
+        (uint256 sharesOut,) = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, block.timestamp + 1 hours);
 
         assertEq(sharesOut, preview, "Fuzz: execution should match preview");
         assertEq(vault.balanceOf(recipient), sharesOut, "Fuzz: recipient balance correct");

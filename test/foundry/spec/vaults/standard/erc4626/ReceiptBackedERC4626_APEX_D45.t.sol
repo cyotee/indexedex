@@ -95,9 +95,7 @@ contract ReceiptBackedERC4626_APEX_D45_Test is TestBase_ERC4626StandardExchange 
     }
 
     function test_APEX004B_maxWithdrawZeroWhenOnlyLocalCash() public {
-        vm.prank(user);
-        IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(underlying)),
+        vm.prank(user);IStandardExchangeIn(se).exchangeIn(IERC20(address(underlying)),
             10 ether,
             IERC20(se),
             0,
@@ -185,9 +183,7 @@ contract ReceiptBackedERC4626_APEX_D45_Test is TestBase_ERC4626StandardExchange 
     ///      plus the caller's refunded balance.
     function test_R14_16_exactOutRefundLandsBeforeSync() public {
         // Seed a non-empty SE via the SE wrap route (receipts booked, reserves synced).
-        vm.prank(user);
-        IStandardExchangeIn(se).exchangeIn(
-            IERC20(address(underlying)), 100 ether, IERC20(se), 0, user, false, block.timestamp
+        vm.prank(user);IStandardExchangeIn(se).exchangeIn(IERC20(address(underlying)), 100 ether, IERC20(se), 0, user, false, block.timestamp
         );
         _assertAllReservesSynced();
 

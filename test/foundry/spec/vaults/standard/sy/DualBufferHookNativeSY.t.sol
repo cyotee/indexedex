@@ -71,9 +71,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         IStandardizedYield sy = IStandardizedYield(hook);
         vm.startPrank(user);
         tokenA.approve(seA, 20 ether);
-        tokenB.approve(seB, 20 ether);
-        IStandardExchangeIn(seA).exchangeIn(tokenA, 20 ether, IERC20(seA), 0, user, false, block.timestamp);
-        IStandardExchangeIn(seB).exchangeIn(tokenB, 20 ether, IERC20(seB), 0, user, false, block.timestamp);
+        tokenB.approve(seB, 20 ether);IStandardExchangeIn(seA).exchangeIn(tokenA, 20 ether, IERC20(seA), 0, user, false, block.timestamp);IStandardExchangeIn(seB).exchangeIn(tokenB, 20 ether, IERC20(seB), 0, user, false, block.timestamp);
         address[] memory inputs = sy.getTokensIn();
         for (uint256 i; i < inputs.length; ++i) {
             IERC20(inputs[i]).approve(hook, 2 ether);

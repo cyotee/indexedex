@@ -252,14 +252,14 @@ contract HostileSE_V3PooStaMix {
         return shares * (10 ** IERC20Metadata(address(bufferToken)).decimals()) / 1e18;
     }
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20) external view returns (uint256) {
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20) external view returns (uint256 amountOut, uint256 amountRefunded) {
         if (failExchangeIn) revert("HostileSE_V3PooStaMix: exchangeIn");
-        return tokenIn == bufferToken ? _sharesForAssets(amountIn) : _assetsForShares(amountIn);
+        return (tokenIn == bufferToken ? _sharesForAssets(amountIn) : _assetsForShares(amountIn), 0);
     }
 
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20, uint256, address recipient, bool, uint256)
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20, uint256, address recipient, bool, uint256)
         external
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         if (failExchangeIn) revert("HostileSE_V3PooStaMix: exchangeIn");
         tokenIn.transferFrom(msg.sender, address(this), amountIn);

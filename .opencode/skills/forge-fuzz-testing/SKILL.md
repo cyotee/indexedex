@@ -5,6 +5,8 @@ description: Property-based testing with Foundry's fuzzer. Use when writing fuzz
 
 # Forge Fuzz Testing
 
+Run fuzz and invariant tests with `forge test --use solar`. Do not enable `via_ir`.
+
 Property-based testing using Foundry's built-in fuzzer to test contract behavior across many inputs.
 
 ## When to Use
@@ -266,19 +268,19 @@ function testFuzz_MatchesReference(uint256 a, uint256 b) public {
 
 ```bash
 # Run all tests (including fuzz)
-forge test
+forge test --use solar
 
 # Run with more fuzz runs
-forge test --fuzz-runs 1000
+forge test --use solar --fuzz-runs 1000
 
 # Run specific fuzz test
-forge test --match-test testFuzz_Withdraw
+forge test --use solar --match-test testFuzz_Withdraw
 
 # Run with seed for reproducibility
-forge test --fuzz-seed 0x1234
+forge test --use solar --fuzz-seed 0x1234
 
 # Show fuzz input on failure
-forge test -vvvv
+forge test --use solar -vvvv
 ```
 
 ## Debugging Failures

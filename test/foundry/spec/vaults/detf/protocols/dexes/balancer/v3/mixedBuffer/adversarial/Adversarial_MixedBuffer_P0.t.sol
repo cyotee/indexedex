@@ -32,9 +32,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         address instance_ = _openLiveGated();
         IERC20 buffer_ = _bufferOf(instance_);
         vm.prank(attacker);
-        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);IStandardExchangeIn(instance_).exchangeIn(buffer_, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
     }
 
@@ -46,9 +44,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         buffer_.approve(instance_, _fixtureAmount(50e18));
         vm.expectRevert(
             abi.encodeWithSelector(MixedBufferMultiVaultStableDetfRepo.DeadlineExpired.selector, block.timestamp - 1)
-        );
-        IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, _fixtureAmount(50e18), IERC20(instance_), 0, attacker, false, block.timestamp - 1
+        );IStandardExchangeIn(instance_).exchangeIn(buffer_, _fixtureAmount(50e18), IERC20(instance_), 0, attacker, false, block.timestamp - 1
         );
         vm.stopPrank();
         assertEq(buffer_.balanceOf(instance_), 0, "H3 residual buffer after failed mint");
@@ -59,14 +55,10 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         address instance_ = _openLiveGated();
         IERC20 buffer_ = _bufferOf(instance_);
         uint256 amountIn_ = _fixtureAmount(30e18);
-        _fundBuffer(attacker, amountIn_);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(buffer_, amountIn_, IERC20(instance_));
+        _fundBuffer(attacker, amountIn_);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(buffer_, amountIn_, IERC20(instance_));
         vm.startPrank(attacker);
         buffer_.approve(instance_, amountIn_);
-        vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, amountIn_, IERC20(instance_), preview_ + 1, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(buffer_, amountIn_, IERC20(instance_), preview_ + 1, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         _assertNoFreeInventory(instance_);
@@ -79,9 +71,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         _fundBuffer(attacker, _fixtureAmount(50e18));
         vm.startPrank(attacker);
         buffer_.approve(instance_, _fixtureAmount(50e18));
-        vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, _fixtureAmount(50e18), IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        vm.expectRevert();IStandardExchangeIn(instance_).exchangeIn(buffer_, _fixtureAmount(50e18), IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(buffer_.balanceOf(instance_), 0, "H3 residual pre-live");
@@ -105,13 +95,9 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         assertEq(IERC20(instance_).balanceOf(attacker), attDetfBefore_, "A1: no free DETF");
 
         uint256 victimIn_ = _fixtureAmount(20e18);
-        _fundBuffer(victim, victimIn_);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(buffer_, victimIn_, IERC20(instance_));
+        _fundBuffer(victim, victimIn_);(uint256 preview_,) = IStandardExchangeIn(instance_).previewExchangeIn(buffer_, victimIn_, IERC20(instance_));
         vm.startPrank(victim);
-        buffer_.approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
+        buffer_.approve(instance_, victimIn_);(uint256 out_,) = IStandardExchangeIn(instance_).exchangeIn(buffer_, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertEq(out_, preview_, "victim mint not inflated by idle donation");
@@ -153,9 +139,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
             if (burnAmt_ == 0) burnAmt_ = hold_;
             IERC20 buffer_ = _bufferOf(instance_);
             vm.startPrank(attacker);
-            IERC20(instance_).approve(instance_, burnAmt_);
-            IStandardExchangeIn(instance_).exchangeIn(
-                IERC20(instance_), burnAmt_, buffer_, 0, attacker, false, block.timestamp + 1 hours
+            IERC20(instance_).approve(instance_, burnAmt_);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, buffer_, 0, attacker, false, block.timestamp + 1 hours
             );
             vm.stopPrank();
             assertEq(IERC20(instance_).balanceOf(instance_), donateAmt_, "donated DETF not spent by burn");
@@ -169,8 +153,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         uint256 lp_ = nft_.lpToken().balanceOf(address(nft_));
         uint256 backing_ = IERC20(instance_).balanceOf(address(staking_));
         assertGt(lp_, 0); assertGt(backing_, 0); assertEq(staking_.balanceOf(attacker), 0);
-        vm.prank(attacker); vm.expectRevert();
-        staking_.exchangeIn(IERC20(address(staking_)), 1e9, IERC20(instance_), 0, attacker, false, block.timestamp);
+        vm.prank(attacker); vm.expectRevert();staking_.exchangeIn(IERC20(address(staking_)), 1e9, IERC20(instance_), 0, attacker, false, block.timestamp);
         assertEq(nft_.lpToken().balanceOf(address(nft_)), lp_);
         assertEq(IERC20(instance_).balanceOf(address(staking_)), backing_);
         assertEq(IERC20(instance_).balanceOf(attacker), 0);
@@ -209,11 +192,11 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         (uint256 id_,,) = _bootstrapDefault(instance_, alice); IStakedDETF staking_ = _matureClaim(instance_, id_, alice);
         uint256 part_ = staking_.balanceOf(alice) / 10; assertGt(part_, 0);
         vm.prank(alice);
-        assertEq(staking_.exchangeIn(IERC20(address(staking_)), part_, IERC20(instance_), part_, alice, false, block.timestamp), part_);
+        (uint256 exchangeAmountOut1,) = staking_.exchangeIn(IERC20(address(staking_)), part_, IERC20(instance_), part_, alice, false, block.timestamp);
+        assertEq(exchangeAmountOut1, part_);
         uint256 left_ = staking_.balanceOf(alice); uint256 raw_ = IERC20(instance_).balanceOf(alice);
         uint256 backing_ = IERC20(instance_).balanceOf(address(staking_));
-        vm.prank(alice); vm.expectRevert();
-        staking_.exchangeIn(IERC20(address(staking_)), left_ + 1, IERC20(instance_), 0, alice, false, block.timestamp);
+        vm.prank(alice); vm.expectRevert();staking_.exchangeIn(IERC20(address(staking_)), left_ + 1, IERC20(instance_), 0, alice, false, block.timestamp);
         assertEq(staking_.balanceOf(alice), left_); assertEq(IERC20(instance_).balanceOf(alice), raw_);
         assertEq(IERC20(instance_).balanceOf(address(staking_)), backing_);
     }
@@ -245,7 +228,8 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         uint256 lp_ = nft_.lpToken().balanceOf(address(nft_));
         uint256 receipt_ = staking_.balanceOf(alice); uint256 supply_ = IERC20(instance_).totalSupply();
         vm.prank(alice);
-        assertEq(staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_), amount_, alice, false, block.timestamp), amount_);
+        (uint256 exchangeAmountOut2,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_), amount_, alice, false, block.timestamp);
+        assertEq(exchangeAmountOut2, amount_);
         assertEq(IERC20(instance_).balanceOf(alice), amount_);
         assertEq(staking_.balanceOf(alice), receipt_ - amount_);
         assertEq(IERC20(instance_).balanceOf(address(staking_)), backing_ - amount_);
@@ -343,9 +327,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         _fundBuffer(attacker, bufferIn_);
 
         vm.startPrank(attacker);
-        buffer_.approve(instance_, bufferIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, bufferIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+        buffer_.approve(instance_, bufferIn_);(uint256 detfOut_,) = IStandardExchangeIn(instance_).exchangeIn(buffer_, bufferIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(detfOut_ > 0, "minted");
@@ -353,9 +335,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         uint256 burnAmt_ = detfOut_ / 2;
         if (burnAmt_ == 0) burnAmt_ = detfOut_;
         vm.startPrank(attacker);
-        IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 bufferBack_ = IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), burnAmt_, buffer_, 0, attacker, false, block.timestamp + 1 hours
+        IERC20(instance_).approve(instance_, burnAmt_);(uint256 bufferBack_,) = IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), burnAmt_, buffer_, 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertLe(bufferBack_, bufferIn_, "E1: partial out <= in");
@@ -396,9 +376,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         {
             IERC20 buffer_ = _bufferOf(instance_);
             vm.startPrank(attacker);
-            IERC20(instance_).approve(instance_, attackerOut_);
-            IStandardExchangeIn(instance_).exchangeIn(
-                IERC20(instance_), attackerOut_, buffer_, 0, attacker, false, block.timestamp + 1 hours
+            IERC20(instance_).approve(instance_, attackerOut_);IStandardExchangeIn(instance_).exchangeIn(IERC20(instance_), attackerOut_, buffer_, 0, attacker, false, block.timestamp + 1 hours
             );
             vm.stopPrank();
         }
@@ -420,10 +398,10 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         uint256 receipt_ = staking_.balanceOf(alice); uint256 amount_ = receipt_ / 10; assertGt(amount_, 0);
         uint256 backing_ = IERC20(instance_).balanceOf(address(staking_));
         vm.startPrank(alice);
-        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, amount_ + 1, amount_));
-        staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_), amount_ + 1, alice, false, block.timestamp);
+        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, amount_ + 1, amount_));staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_), amount_ + 1, alice, false, block.timestamp);
         assertEq(staking_.balanceOf(alice), receipt_); assertEq(IERC20(instance_).balanceOf(address(staking_)), backing_);
-        assertEq(staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_), amount_, alice, false, block.timestamp), amount_);
+        (uint256 exchangeAmountOut3,) = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(instance_), amount_, alice, false, block.timestamp);
+        assertEq(exchangeAmountOut3, amount_);
         vm.stopPrank();
         assertEq(staking_.balanceOf(alice), receipt_ - amount_);
         assertEq(IERC20(instance_).balanceOf(address(staking_)), backing_ - amount_);
@@ -447,9 +425,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         uint256 nestedIn_ = _mintDetfFromBuffer(nested_, attacker, _fixtureAmount(80e18));
         if (nestedIn_ > 20e9) nestedIn_ = 20e9;
         vm.startPrank(attacker);
-        IERC20(nested_).approve(outer_, nestedIn_);
-        uint256 outerOut_ = IStandardExchangeIn(outer_).exchangeIn(
-            IERC20(nested_), nestedIn_, IERC20(outer_), 0, attacker, false, block.timestamp + 1 hours
+        IERC20(nested_).approve(outer_, nestedIn_);(uint256 outerOut_,) = IStandardExchangeIn(outer_).exchangeIn(IERC20(nested_), nestedIn_, IERC20(outer_), 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(outerOut_ > 0, "outer minted");
@@ -459,9 +435,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         if (burnAmt_ == 0) burnAmt_ = outerOut_;
         IERC20 buffer_ = _bufferOf(outer_);
         vm.startPrank(attacker);
-        IERC20(outer_).approve(outer_, burnAmt_);
-        IStandardExchangeIn(outer_).exchangeIn(
-            IERC20(outer_), burnAmt_, buffer_, 0, attacker, false, block.timestamp + 1 hours
+        IERC20(outer_).approve(outer_, burnAmt_);IStandardExchangeIn(outer_).exchangeIn(IERC20(outer_), burnAmt_, buffer_, 0, attacker, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 

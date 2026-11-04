@@ -157,9 +157,7 @@ contract RebasingAwareHandler is Test {
             IStandardExchangeIn.exchangeIn, (share, amount, IERC20(address(asset)), 0, recipient, true, block.timestamp)
         );
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(actors[3]);
-        IStandardExchangeIn(address(share))
-            .exchangeIn(share, amount, IERC20(address(asset)), 0, recipient, true, block.timestamp);
+        vm.prank(actors[3]);IStandardExchangeIn(address(share)).exchangeIn(share, amount, IERC20(address(asset)), 0, recipient, true, block.timestamp);
         ++eoaRejections;
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, available));
         AtomicPretransferCaller(actors[4]).execute(address(share), data);
@@ -267,9 +265,8 @@ contract RebasingAwareHandler is Test {
         IERC4626 vault = vaults[v];
         if (route == 0) return vault.deposit(amount, actor);
         if (route == 1) return vault.mint(amount, actor);
-        if (route == 2) {
-            return IStandardExchangeIn(address(vault))
-                .exchangeIn(IERC20(address(asset)), amount, IERC20(address(vault)), 0, actor, false, block.timestamp);
+        if (route == 2) {(uint256 quotedAmountOut,) = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(asset)), amount, IERC20(address(vault)), 0, actor, false, block.timestamp);
+            return quotedAmountOut;
         }
         if (route == 3) {
             return IStandardExchangeOut(address(vault))
@@ -359,11 +356,9 @@ contract RebasingAwareHandler is Test {
         }
         if (route == 5) return vault.redeem(amount, recipient, actor);
         if (route == 6) return vault.withdraw(amount, recipient, actor);
-        if (route == 7) {
-            return IStandardExchangeIn(address(vault))
-                .exchangeIn(
-                    IERC20(address(vault)), amount, IERC20(address(asset)), 0, recipient, prepaid, block.timestamp
+        if (route == 7) {(uint256 quotedAmountOut,) = IStandardExchangeIn(address(vault)).exchangeIn(IERC20(address(vault)), amount, IERC20(address(asset)), 0, recipient, prepaid, block.timestamp
                 );
+            return quotedAmountOut;
         }
         if (route == 8) {
             return IStandardExchangeOut(address(vault))
@@ -466,9 +461,7 @@ contract RebasingAwareHandler is Test {
         address actor = actors[actorSeed % actors.length];
         IERC20 share = IERC20(address(vaults[v]));
         vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
-        vm.prank(actor);
-        IStandardExchangeIn(address(share))
-            .exchangeIn(IERC20(address(asset)), 1, share, 0, actor, true, block.timestamp);
+        vm.prank(actor);IStandardExchangeIn(address(share)).exchangeIn(IERC20(address(asset)), 1, share, 0, actor, true, block.timestamp);
         vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
         vm.prank(actor);
         IStandardExchangeOut(address(share))

@@ -52,9 +52,7 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
     function test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient() public virtual {
         // DETF-local shortfall (true without unbooked surplus).
         IERC20 buffer_ = IERC20(liveInfo.bufferToken());
-        vm.expectRevert();
-        liveExchangeIn.exchangeIn(
-            buffer_, 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.expectRevert();liveExchangeIn.exchangeIn(buffer_, 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
         );
     }
 
@@ -66,9 +64,7 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
         uint256 B = buffer_.balanceOf(liveDetf);
         uint256 U = B >= R ? B - R : 0;
         vm.expectRevert();
-        vm.prank(bob);
-        liveExchangeIn.exchangeIn(
-            buffer_, U + 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.prank(bob);liveExchangeIn.exchangeIn(buffer_, U + 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
         );
     }
 
@@ -100,9 +96,7 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
 
     function test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount() public virtual {
         IERC20 buffer_ = IERC20(liveInfo.bufferToken());
-        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);
-        liveExchangeIn.exchangeIn(
-            buffer_, 0, IERC20(liveDetf), 0, bob, false, block.timestamp + 1 hours
+        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ZeroAmount.selector);liveExchangeIn.exchangeIn(buffer_, 0, IERC20(liveDetf), 0, bob, false, block.timestamp + 1 hours
         );
     }
 
@@ -118,8 +112,9 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
         vm.startPrank(bob);
         if (unstake_) {
             raw_.approve(liveDetf, target_ * 2);
-            assertEq(liveExchangeIn.exchangeIn(raw_, target_ * 2, receipt_, target_ * 2,
-                bob, false, block.timestamp), target_ * 2);
+            (uint256 exchangeAmountOut1,) = liveExchangeIn.exchangeIn(raw_, target_ * 2, receipt_, target_ * 2,
+                bob, false, block.timestamp);
+            assertEq(exchangeAmountOut1, target_ * 2);
         }
         IERC20 input_ = unstake_ ? receipt_ : raw_;
         IERC20 output_ = unstake_ ? raw_ : receipt_;
@@ -169,9 +164,7 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
         IERC20 buffer_ = IERC20(liveInfo.bufferToken());
         assertEq(liveBook.reserveOfToken(address(buffer_)), buffer_.balanceOf(liveDetf), "booked");
         vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        vm.prank(bob);
-        liveExchangeIn.exchangeIn(
-            buffer_, 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
+        vm.prank(bob);liveExchangeIn.exchangeIn(buffer_, 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
         );
         AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         vm.expectRevert(

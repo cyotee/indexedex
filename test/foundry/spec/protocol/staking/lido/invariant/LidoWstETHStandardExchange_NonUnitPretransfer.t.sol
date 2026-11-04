@@ -43,8 +43,7 @@ contract LidoWstETHStandardExchange_NonUnitPretransfer is TestBase_LidoWstETHSta
         vm.stopPrank();
         integrator = new AtomicPretransferCaller();
         _fund(IERC20(address(wrapped)), 2 ether);
-        wrapped.approve(vault, 2 ether);
-        uint256 issued = IStandardExchangeIn(vault).exchangeIn(IERC20(address(wrapped)), 2 ether, IERC20(vault), 1, address(this), false, block.timestamp);
+        wrapped.approve(vault, 2 ether);(uint256 issued,) = IStandardExchangeIn(vault).exchangeIn(IERC20(address(wrapped)), 2 ether, IERC20(vault), 1, address(this), false, block.timestamp);
         assertEq(issued, 3 ether * 1000, "initial receipt value with package virtual offset");
     }
 
@@ -97,8 +96,8 @@ contract LidoWstETHStandardExchange_NonUnitPretransfer is TestBase_LidoWstETHSta
     function _exactIn(IERC20 token_, uint256 amount_, uint256 minimum_, bool prepaid_) internal returns (uint256) {
         _fund(token_, amount_);
         if (!prepaid_) {
-            token_.approve(vault, amount_);
-            return IStandardExchangeIn(vault).exchangeIn(token_, amount_, IERC20(vault), minimum_, address(this), false, block.timestamp);
+            token_.approve(vault, amount_);(uint256 quotedAmountOut,) = IStandardExchangeIn(vault).exchangeIn(token_, amount_, IERC20(vault), minimum_, address(this), false, block.timestamp);
+            return quotedAmountOut;
         }
         token_.approve(address(integrator), amount_);
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
@@ -108,8 +107,7 @@ contract LidoWstETHStandardExchange_NonUnitPretransfer is TestBase_LidoWstETHSta
 
     function _assertExactIn(IERC20 token_, uint256 amount_, uint256 credited_) internal {
         uint256 expected = Math.mulDiv(credited_, IERC20(vault).totalSupply() + 1000,
-            wrapped.getStETHByWstETH(wrapped.balanceOf(vault)) + 1);
-        uint256 quote = IStandardExchangeIn(vault).previewExchangeIn(token_, amount_, IERC20(vault));
+            wrapped.getStETHByWstETH(wrapped.balanceOf(vault)) + 1);(uint256 quote,) = IStandardExchangeIn(vault).previewExchangeIn(token_, amount_, IERC20(vault));
         uint256 snapshot = vm.snapshotState();
         assertEq(_exactIn(token_, amount_, expected, false), expected, "funded pull credits native wrapped value");
         assertTrue(vm.revertToState(snapshot));

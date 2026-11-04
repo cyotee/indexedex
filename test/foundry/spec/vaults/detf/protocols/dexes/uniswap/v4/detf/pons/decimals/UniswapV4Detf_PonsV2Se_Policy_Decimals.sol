@@ -78,8 +78,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Policy_Decimals is UniswapV4Detf_PonsV2
         address d = _deployPolicyLaunchRichLive();
         uint256 claimBal_ = _sellAndClaimOn(d, detfUser, 40 ether, 20 ether);
         uint256 redeem_ = claimBal_ / 2;
-        if (redeem_ == 0) redeem_ = 1;
-        uint256 preview_ = IStandardExchangeIn(address(_claimTokOf(d))).previewExchangeIn(IERC20(address(_claimTokOf(d))), redeem_, IERC20(d));
+        if (redeem_ == 0) redeem_ = 1;(uint256 preview_,) = IStandardExchangeIn(address(_claimTokOf(d))).previewExchangeIn(IERC20(address(_claimTokOf(d))), redeem_, IERC20(d));
         uint256 out_ = _redeemOn(d, detfUser, redeem_);
         assertEq(out_, preview_, "D15-1 preview==exec");
     }

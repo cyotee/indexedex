@@ -26,8 +26,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic is TestBase_Unisw
         uint256 shares = _join(1_000 ether, 1_000 ether, address(this));
         uint256 burn = shares / 10;
         _report("fresh after dual-token first mint", burn);
-        asset0.approve(address(subject), 500 ether);
-        seIn_.exchangeIn(asset0, 500 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        asset0.approve(address(subject), 500 ether);seIn_.exchangeIn(asset0, 500 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
         _report("after a single-token zap-in deposit", burn);
         _trade(true, 100 ether);
         _trade(false, 100 ether);
@@ -49,8 +48,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic is TestBase_Unisw
         _fund(asset1, address(this), 1_000 ether);
         uint256 shares = _join(1_000 ether, 1_000 ether, address(this));
         _assertExactRoutes(shares / 10);
-        asset0.approve(address(subject), 500 ether);
-        seIn_.exchangeIn(asset0, 500 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
+        asset0.approve(address(subject), 500 ether);seIn_.exchangeIn(asset0, 500 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
         _assertExactRoutes(shares / 10);
         _trade(true, 100 ether);
         _trade(false, 100 ether);
@@ -68,11 +66,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic is TestBase_Unisw
     }
 
     function _assertExactIn(IERC20 tokenOut, uint256 burn) internal {
-        uint256 snap = vm.snapshotState();
-        uint256 preview = seIn_.previewExchangeIn(IERC20(address(subject)), burn, tokenOut);
+        uint256 snap = vm.snapshotState();(uint256 preview,) = seIn_.previewExchangeIn(IERC20(address(subject)), burn, tokenOut);
         subject.approve(address(subject), burn);
-        uint256 before = tokenOut.balanceOf(address(this));
-        uint256 got = seIn_.exchangeIn(IERC20(address(subject)), burn, tokenOut, 0, address(this), false, block.timestamp);
+        uint256 before = tokenOut.balanceOf(address(this));(uint256 got,) = seIn_.exchangeIn(IERC20(address(subject)), burn, tokenOut, 0, address(this), false, block.timestamp);
         assertEq(got, preview, "F6: exact-in delivery equals preview to the wei");
         assertEq(tokenOut.balanceOf(address(this)) - before, got, "F6: exact-in returned amount is the delivered amount");
         vm.revertToState(snap);
@@ -103,11 +99,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_F6Diagnostic is TestBase_Unisw
     }
 
     function _reportExactIn(IERC20 tokenOut, uint256 burn, string memory route) internal {
-        uint256 snap = vm.snapshotState();
-        uint256 preview = seIn_.previewExchangeIn(IERC20(address(subject)), burn, tokenOut);
+        uint256 snap = vm.snapshotState();(uint256 preview,) = seIn_.previewExchangeIn(IERC20(address(subject)), burn, tokenOut);
         subject.approve(address(subject), burn);
-        uint256 before = tokenOut.balanceOf(address(this));
-        uint256 got = seIn_.exchangeIn(IERC20(address(subject)), burn, tokenOut, 0, address(this), false, block.timestamp);
+        uint256 before = tokenOut.balanceOf(address(this));(uint256 got,) = seIn_.exchangeIn(IERC20(address(subject)), burn, tokenOut, 0, address(this), false, block.timestamp);
         assertGt(got, 0, "zap-out delivers");
         assertEq(tokenOut.balanceOf(address(this)) - before, got, "returned amount is the delivered amount");
         vm.revertToState(snap);

@@ -35,11 +35,9 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is ComposedStableCommonDe
         _secureTokenTransfer(in_, paid_, prepaid_);
         IERC20 staking_ = IERC20(address(Repo._layoutStruct().rebasingDetfToken));
         if (out_ == staking_) {
-            in_.forceApprove(address(staking_), paid_);
-            IStakedDETF(address(staking_)).exchangeIn(in_, paid_, out_, amount_, to_, false, deadline_);
+            in_.forceApprove(address(staking_), paid_);IStakedDETF(address(staking_)).exchangeIn(in_, paid_, out_, amount_, to_, false, deadline_);
             in_.forceApprove(address(staking_), 0);
-        } else {
-            if (in_ == staking_) IStakedDETF(address(staking_)).exchangeIn(in_, paid_, IERC20(address(this)), paid_, address(this), false, deadline_);
+        } else {if (in_ == staking_) IStakedDETF(address(staking_)).exchangeIn(in_, paid_, IERC20(address(this)), paid_, address(this), false, deadline_);
             if (address(out_) == address(this)) out_.safeTransfer(to_, amount_);
             else {
                 uint256 used_ = _executeExactOutExit(out_, amount_, paid_, to_, deadline_);
@@ -48,8 +46,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is ComposedStableCommonDe
                     uint256 refund_ = credit_ - used_;
                     if (refund_ != 0) {
                         if (in_ == staking_) {
-                            IERC20(address(this)).forceApprove(address(staking_), refund_);
-                            IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), refund_, staking_, refund_, msg.sender, false, deadline_);
+                            IERC20(address(this)).forceApprove(address(staking_), refund_);IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), refund_, staking_, refund_, msg.sender, false, deadline_);
                             IERC20(address(this)).forceApprove(address(staking_), 0);
                         } else IERC20(address(this)).safeTransfer(msg.sender, refund_);
                     }

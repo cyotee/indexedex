@@ -27,9 +27,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_CamelotV2StandardE
         address input = fx.otherToken();
         fx.fundOther(user, 1 ether);
         vm.startPrank(user);
-        IERC20(input).approve(seUT, 1 ether);
-        IStandardExchangeIn(seUT).exchangeIn(
-            IERC20(input), 1 ether, IERC20(seUT), 0, user, false, block.timestamp
+        IERC20(input).approve(seUT, 1 ether);IStandardExchangeIn(seUT).exchangeIn(IERC20(input), 1 ether, IERC20(seUT), 0, user, false, block.timestamp
         );
         vm.stopPrank();
         assertGe(fx.seBooked(), bookedBefore + 1, "donated dust is booked before the isolation check");

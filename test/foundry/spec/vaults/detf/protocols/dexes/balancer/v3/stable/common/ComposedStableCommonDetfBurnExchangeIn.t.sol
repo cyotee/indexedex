@@ -10,14 +10,11 @@ import {
 
 contract ComposedStableCommonDetfBurnExchangeIn_Test is TestBase_ComposedFundedRoutes {
     function test_previewExchangeIn_selectsFundedEligibleExit() public {
-        uint256 raw_ = _buyRaw(alice, 10e18);
-        uint256 quote_ = composedIn.previewExchangeIn(IERC20(composedDetf), raw_ / 2, weth);
+        uint256 raw_ = _buyRaw(alice, 10e18);(uint256 quote_,) = composedIn.previewExchangeIn(IERC20(composedDetf), raw_ / 2, weth);
         assertGt(quote_, 0);
         uint256 before_ = weth.balanceOf(alice);
         vm.startPrank(alice);
-        IERC20(composedDetf).approve(composedDetf, raw_ / 2);
-        uint256 paid_ =
-            composedIn.exchangeIn(IERC20(composedDetf), raw_ / 2, weth, quote_, alice, false, block.timestamp);
+        IERC20(composedDetf).approve(composedDetf, raw_ / 2);(uint256 paid_,) = composedIn.exchangeIn(IERC20(composedDetf), raw_ / 2, weth, quote_, alice, false, block.timestamp);
         vm.stopPrank();
         assertEq(paid_, quote_);
         assertEq(weth.balanceOf(alice), before_ + paid_);
@@ -29,9 +26,7 @@ contract ComposedStableCommonDetfBurnExchangeIn_Test is TestBase_ComposedFundedR
         assertFalse(composedInfo.isBurningAllowed());
         uint256 supply_ = IERC20(composedDetf).totalSupply();
         vm.startPrank(alice);
-        IERC20(composedDetf).approve(composedDetf, raw_ / 2);
-        uint256 paid_ = composedIn.exchangeIn(
-            IERC20(composedDetf), raw_ / 2, IERC20(address(composedStable)), 0, alice, false, block.timestamp
+        IERC20(composedDetf).approve(composedDetf, raw_ / 2);(uint256 paid_,) = composedIn.exchangeIn(IERC20(composedDetf), raw_ / 2, IERC20(address(composedStable)), 0, alice, false, block.timestamp
         );
         vm.stopPrank();
         assertGt(paid_, 0);

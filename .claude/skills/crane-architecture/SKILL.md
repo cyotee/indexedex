@@ -1,12 +1,12 @@
 ---
 name: crane-architecture
-description: This skill should be used when the user asks about "facet", "target", "repo", "diamond pattern", "storage slot", "guard function", "DFPkg", "AwareRepo", "Service pattern", "Modifiers", "ERC2535", or needs guidance on Crane's core architectural patterns for building modular, upgradeable smart contracts.
+description: "Crane diamond architecture: facets, targets, storage repos, ERC-2535, DFPkgs, guards and service patterns."
 license: MIT
 ---
 
 # Crane Architecture Patterns
 
-**LR-3 Alignment (Current Standards):** This skill is kept in sync with finalized PRD requirements. All NatSpec/@custom values in examples use **ONLY** entries from `docs/reports/gap/CENTRALLY_COMPUTED_NATSPEC_VALUES.md` (e.g. IFacet: 0x5b6f4d01/0x2ea80826/0x574a4cff/0xf10d7a75; IDiamondPackageCallBackFactory interfaceId 0x949da331 + selectors 0xe97fac05 etc.; IDiamondFactoryPackage 0xabc8b346/0x870d4838/0x70068fcf/0xa4b3ad35; deployCreate3Factory 0x34cb11b5). NatSpec verification requires the dedicated Foundry Script (`forge script scripts/foundry/ComputeNatSpecValues.s.sol --sig "run()" -vvv`), never ad-hoc cast. Storage examples use the ERC1967 form. DFPkg rules (structs on interface), LR-7 full-init/Behavior/declaration-tests, and GitBook-required content (Create3FactoryDFPkg bootstrap, reusable DiamondPackageCallBackFactory, registries, utilities/Sets, test patterns) are explicitly covered. See also AGENTS.md, PRD LR-1/LR-2/LR-3/LR-6/LR-7, `crane-natspec`, `crane-deployment`, `crane-testing`, and `crane-utilities` skills.
+**LR-3 Alignment (Current Standards):** This skill is kept in sync with finalized PRD requirements. All NatSpec/@custom values in examples use **ONLY** entries from `docs/reports/gap/CENTRALLY_COMPUTED_NATSPEC_VALUES.md` (e.g. IFacet: 0x5b6f4d01/0x2ea80826/0x574a4cff/0xf10d7a75; IDiamondPackageCallBackFactory interfaceId 0x949da331 + selectors 0xe97fac05 etc.; IDiamondFactoryPackage 0xabc8b346/0x870d4838/0x70068fcf/0xa4b3ad35; deployCreate3Factory 0x34cb11b5). NatSpec verification requires the dedicated Foundry Script (`forge script --use solar scripts/foundry/ComputeNatSpecValues.s.sol --sig "run()" -vvv`), never ad-hoc cast. Storage examples use the ERC1967 form. DFPkg rules (structs on interface), LR-7 full-init/Behavior/declaration-tests, and GitBook-required content (Create3FactoryDFPkg bootstrap, reusable DiamondPackageCallBackFactory, registries, utilities/Sets, test patterns) are explicitly covered. See also AGENTS.md, PRD LR-1/LR-2/LR-3/LR-6/LR-7, `crane-natspec`, `crane-deployment`, `crane-testing`, and `crane-utilities` skills.
 
 Crane is a Diamond-first (ERC2535) Solidity development framework for building modular, upgradeable smart contracts. This skill provides guidance on the core architectural patterns.
 

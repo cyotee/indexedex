@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {ERC20} from "@crane/contracts/external/openzeppelin-contracts/token/ERC20/ERC20.sol";
@@ -180,8 +181,7 @@ abstract contract ConstantProductAccountingHandler is StandardExchangeAccounting
         ++poolCounts[action].attempted;
         ++poolCounts[attack].attempted;
         IERC20 input = IERC20(address(token0));
-        IERC20 output = IERC20(address(token1));
-        uint256 desired = seIn.previewExchangeIn(input, amount_, output);
+        IERC20 output = IERC20(address(token1));(uint256 desired,) = seIn.previewExchangeIn(input, amount_, output);
         assertGt(desired, 0, "SE swap nonzero");
         uint256 needed = exactOut_
             ? IStandardExchangeOut(address(seIn)).previewExchangeOut(input, output, desired)
@@ -221,8 +221,8 @@ abstract contract ConstantProductAccountingHandler is StandardExchangeAccounting
         if (exactOut_) {
             return IStandardExchangeOut(address(seIn))
                 .exchangeOut(input, needed_, output, desired_, actor_, false, block.timestamp + 1 hours);
-        }
-        return seIn.exchangeIn(input, needed_, output, desired_, actor_, false, block.timestamp + 1 hours);
+        }(uint256 quotedAmountOut,) = seIn.exchangeIn(input, needed_, output, desired_, actor_, false, block.timestamp + 1 hours);
+        return quotedAmountOut;
     }
 
     function _compoundFees(address actor_) internal {
@@ -230,11 +230,10 @@ abstract contract ConstantProductAccountingHandler is StandardExchangeAccounting
         uint256 amount = 1e12;
         _fund(actor_, amount);
         Checkpoint memory before_ =
-            Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), seIn.previewExchangeIn(base, amount, share));
+            Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), ExchangeInAmount.previewOut(IStandardExchangeIn(address(seIn)), base, amount, share));
         uint256 held = base.balanceOf(address(seIn));
         vm.startPrank(actor_);
-        base.approve(address(seIn), amount);
-        uint256 minted = seIn.exchangeIn(base, amount, share, before_.quote, actor_, false, block.timestamp + 1 hours);
+        base.approve(address(seIn), amount);(uint256 minted,) = seIn.exchangeIn(base, amount, share, before_.quote, actor_, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(minted, before_.quote, "fee-compounding funded deposit honors quote");
         assertGt(minted, 0, "fee-compounding deposit is nonzero");

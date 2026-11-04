@@ -58,16 +58,14 @@ contract MorphoBlueStandardExchangeHandlerDecimals is Test {
 
     function wrap(uint256 amount) external {
         amount = bound(amount, 1, maxWrap);
-        vm.prank(user);
-        try seIn.exchangeIn(loan, amount, IERC20(se), 0, user, false, block.timestamp + 1 hours) {} catch {}
+        vm.prank(user);try seIn.exchangeIn(loan, amount, IERC20(se), 0, user, false, block.timestamp + 1 hours) {} catch {}
     }
 
     function unwrap(uint256 shares) external {
         uint256 bal = IERC20(se).balanceOf(user);
         if (bal == 0) return;
         shares = bound(shares, 1, bal);
-        vm.prank(user);
-        try seIn.exchangeIn(IERC20(se), shares, loan, 0, user, false, block.timestamp + 1 hours) {} catch {}
+        vm.prank(user);try seIn.exchangeIn(IERC20(se), shares, loan, 0, user, false, block.timestamp + 1 hours) {} catch {}
     }
 
     function deposit4626(uint256 amount) external {
@@ -213,8 +211,7 @@ abstract contract MorphoBlueStandardExchange_Invariant_Decimals is
         _mintLoan(attacker, _u(10));
         vm.prank(attacker);
         loanToken.transfer(se, _u(10));
-        assertEq(IERC20(se).totalSupply(), supplyBefore, "N4 donate does not mint");
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(loanToken)), _u(5), IERC20(se));
+        assertEq(IERC20(se).totalSupply(), supplyBefore, "N4 donate does not mint");(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(loanToken)), _u(5), IERC20(se));
         uint256 shares = _wrapExactIn(user, _u(5));
         assertEq(shares, preview, "N4 wrap vs live NAV including donation");
         assertLt(shares, _u(5) + _u(10), "N4 wrap does not mint donation as extra shares");

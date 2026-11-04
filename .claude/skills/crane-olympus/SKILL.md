@@ -71,9 +71,9 @@ contract StrategyPolicy is Policy, RolesConsumer {
 
 | Layer | Command / pattern |
 |-------|-------------------|
-| Domain + suite compile | `FOUNDRY_PROFILE=olympus_v3_port forge build` |
-| Full hermetic suite | `FOUNDRY_PROFILE=olympus_v3_port forge test` |
-| Path match | `… forge test --match-path 'test/foundry/spec/protocols/tokens/stable/olympus/v3/**'` |
+| Domain + suite compile | `FOUNDRY_PROFILE=olympus_v3_port forge build --use solar` |
+| Full hermetic suite | `FOUNDRY_PROFILE=olympus_v3_port forge test --use solar` |
+| Path match | `… forge test --use solar --match-path 'test/foundry/spec/protocols/tokens/stable/olympus/v3/**'` |
 | Kernel unit | `Kernel.t.sol` — real Kernel install/activate |
 | Module permissions | `modules/MINTR.t.sol` etc. — Quabi godmode fixtures need **ffi + ast** |
 

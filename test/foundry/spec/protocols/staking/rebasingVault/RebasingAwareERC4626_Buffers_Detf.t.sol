@@ -92,14 +92,10 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
 
     function _mintRedeem(IERC4626 w, address wDetf) internal {
         uint8 d = IERC20Metadata(address(w)).decimals();
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(wDetf).exchangeIn(
-            IERC20(address(w)), 10 * (10 ** d), IERC20(wDetf), 0, detfUser, false, block.timestamp + 1 hours
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(address(w)), 10 * (10 ** d), IERC20(wDetf), 0, detfUser, false, block.timestamp + 1 hours
         );
         assertGt(minted, 0, "minted");
-        IERC20(wDetf).approve(wDetf, minted);
-        uint256 redeemed = IStandardExchangeIn(wDetf).exchangeIn(
-            IERC20(wDetf), minted, IERC20(address(w)), 0, detfUser, false, block.timestamp + 1 hours
+        IERC20(wDetf).approve(wDetf, minted);(uint256 redeemed,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(wDetf), minted, IERC20(address(w)), 0, detfUser, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(redeemed, 0, "redeemed");
@@ -242,14 +238,10 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
         assertGt(lp, 0);
         assertTrue(info.isReserveLive());
 
-        vm.startPrank(detfUser);
-        uint256 minted = IStandardExchangeIn(wDetf).exchangeIn(
-            IERC20(address(w)), 10 * (10 ** d), IERC20(wDetf), 0, detfUser, false, block.timestamp + 1 hours
+        vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(address(w)), 10 * (10 ** d), IERC20(wDetf), 0, detfUser, false, block.timestamp + 1 hours
         );
         assertGt(minted, 0);
-        IERC20(wDetf).approve(wDetf, minted);
-        uint256 redeemed = IStandardExchangeIn(wDetf).exchangeIn(
-            IERC20(wDetf), minted, IERC20(address(w)), 0, detfUser, false, block.timestamp + 1 hours
+        IERC20(wDetf).approve(wDetf, minted);(uint256 redeemed,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(wDetf), minted, IERC20(address(w)), 0, detfUser, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(redeemed, 0);

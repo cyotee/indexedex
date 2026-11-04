@@ -228,8 +228,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         assertEq(token.totalShares(), 6, 'total shares after redeem');
     }
 
-    function test_previewExchangeIn_returnsConfiguredCommonTokenQuote() public {
-        uint256 quotedOut = IStandardExchangeIn(address(token)).previewExchangeIn(IERC20(address(token)), 4 ether, IERC20(address(weth)));
+    function test_previewExchangeIn_returnsConfiguredCommonTokenQuote() public {(uint256 quotedOut,) = IStandardExchangeIn(address(token)).previewExchangeIn(IERC20(address(token)), 4 ether, IERC20(address(weth)));
 
         assertEq(quotedOut, 4 ether, 'preview exchange-in quote');
     }
@@ -257,9 +256,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
 
         vm.startPrank(alice);
         token.approve(address(token), 4 ether);
-        vm.expectRevert(bytes('claim-liquidity'));
-        IStandardExchangeIn(address(token)).exchangeIn(
-            IERC20(address(token)), 4 ether, IERC20(address(weth)), 0, bob, false, block.timestamp
+        vm.expectRevert(bytes('claim-liquidity'));IStandardExchangeIn(address(token)).exchangeIn(IERC20(address(token)), 4 ether, IERC20(address(weth)), 0, bob, false, block.timestamp
         );
         vm.stopPrank();
 
@@ -335,9 +332,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
 
         uint256 claimed = 4 ether;
         vm.prank(alice);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(address(token)).exchangeIn(
-            IERC20(address(token)), claimed, IERC20(address(weth)), 0, alice, true, block.timestamp + 1
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(address(token)).exchangeIn(IERC20(address(token)), claimed, IERC20(address(weth)), 0, alice, true, block.timestamp + 1
         );
     }
 

@@ -155,7 +155,7 @@ run_forge_script() {
   local rpc_url="$2"
   shift 2
 
-  local forge_args=(forge script "$script_path")
+  local forge_args=(forge script --use solar "$script_path")
 
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     forge_args+=("$FORGE_VERBOSITY")

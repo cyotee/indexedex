@@ -39,8 +39,7 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         IERC20 lpToken = IERC20(address(pool));
         IERC20 vaultToken = IERC20(address(vault));
 
-        lpToken.approve(address(vault), lpAmount);
-        shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -76,14 +75,10 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         address recipient = makeAddr("recipient");
 
         // Approve vault to burn shares
-        vault.approve(address(vault), sharesToWithdraw);
-
-        // Get preview
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);
-        assertTrue(preview > 0, "Preview should be non-zero");
-
-        // Execute
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, false, _deadline());
+        vault.approve(address(vault), sharesToWithdraw);// Get preview
+        (uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);
+        assertTrue(preview > 0, "Preview should be non-zero");// Execute
+        (uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, false, _deadline());
 
         assertEq(lpOut, preview, "Execution should match preview");
         assertEq(lpToken.balanceOf(recipient), preview, "Recipient should receive preview LP amount");
@@ -120,9 +115,7 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         uint256 senderSharesBefore = vault.balanceOf(address(this));
         uint256 recipientLPBefore = lpToken.balanceOf(recipient);
         uint256 vaultLPBefore = lpToken.balanceOf(address(vault));
-        uint256 totalSupplyBefore = vault.totalSupply();
-
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, false, _deadline());
+        uint256 totalSupplyBefore = vault.totalSupply();(uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, false, _deadline());
 
         // Sender shares decreased
         assertEq(vault.balanceOf(address(this)), senderSharesBefore - sharesToWithdraw, "Sender shares decreased");
@@ -150,10 +143,8 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         uint256 shares = _seedVaultWithShares(PoolConfig.Balanced, lpToDeposit);
 
         address recipient = makeAddr("recipient");
-        vault.approve(address(vault), shares);
-
-        // Withdraw all shares
-        uint256 lpOut = vault.exchangeIn(vaultToken, shares, lpToken, 0, recipient, false, _deadline());
+        vault.approve(address(vault), shares);// Withdraw all shares
+        (uint256 lpOut,) = vault.exchangeIn(vaultToken, shares, lpToken, 0, recipient, false, _deadline());
 
         assertEq(vault.balanceOf(address(this)), 0, "All shares withdrawn");
         assertEq(vault.totalSupply(), 0, "Vault should be empty");
@@ -177,12 +168,8 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         uint256 sharesToWithdraw = shares / 2;
         address recipient = makeAddr("recipient");
 
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);
-
-        // Should succeed with exact minAmountOut
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, preview, recipient, false, _deadline());
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);// Should succeed with exact minAmountOut
+        (uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, preview, recipient, false, _deadline());
 
         assertEq(lpOut, preview, "Should succeed with exact minimum");
     }
@@ -200,13 +187,10 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         uint256 sharesToWithdraw = shares / 2;
         address recipient = makeAddr("recipient");
 
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);
 
         // Should revert with minAmountOut too high
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, preview + 1, recipient, false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, preview + 1, recipient, false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -229,10 +213,8 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         // Transfer shares to vault first
         vault.transfer(address(vault), sharesToWithdraw);
 
-        uint256 senderSharesBefore = vault.balanceOf(address(this));
-
-        // Execute with pretransferred=true
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, true, _deadline());
+        uint256 senderSharesBefore = vault.balanceOf(address(this));// Execute with pretransferred=true
+        (uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, true, _deadline());
 
         // Sender balance should not change
         assertEq(vault.balanceOf(address(this)), senderSharesBefore, "No additional transfer from sender");
@@ -259,12 +241,10 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         uint256 lpBefore = lpToken.balanceOf(address(this));
 
         // Deposit
-        lpToken.approve(address(vault), lpAmount);
-        uint256 shares = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);(uint256 shares,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
 
         // Withdraw all
-        vault.approve(address(vault), shares);
-        uint256 lpOut = vault.exchangeIn(vaultToken, shares, lpToken, 0, address(this), false, _deadline());
+        vault.approve(address(vault), shares);(uint256 lpOut,) = vault.exchangeIn(vaultToken, shares, lpToken, 0, address(this), false, _deadline());
 
         // Should get back approximately same amount (minus any fees)
         uint256 lpAfter = lpToken.balanceOf(address(this));
@@ -315,10 +295,7 @@ contract AerodromeFork_VaultWithdraw_Test is TestBase_AerodromeFork {
         if (sharesToWithdraw > shares) sharesToWithdraw = shares;
 
         address recipient = makeAddr("recipient");
-        vault.approve(address(vault), sharesToWithdraw);
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);
-        uint256 lpOut = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, false, _deadline());
+        vault.approve(address(vault), sharesToWithdraw);(uint256 preview,) = vault.previewExchangeIn(vaultToken, sharesToWithdraw, lpToken);(uint256 lpOut,) = vault.exchangeIn(vaultToken, sharesToWithdraw, lpToken, 0, recipient, false, _deadline());
 
         assertEq(lpOut, preview, "Fuzz: execution should match preview");
         assertEq(lpToken.balanceOf(recipient), lpOut, "Fuzz: recipient balance correct");

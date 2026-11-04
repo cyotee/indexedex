@@ -89,12 +89,8 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Swap is TestBase {
 
     function test_seExchangeIn_previewEqualsExec() public {
         _firstMintEqual(1_000 ether);
-        uint256 amountIn = 3 ether;
-        uint256 preview =
-            IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(token1)), amountIn, IERC20(address(token2)));
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        uint256 amountIn = 3 ether;(uint256 preview,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(token1)), amountIn, IERC20(address(token2)));
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             amountIn,
             IERC20(address(token2)),
             0,

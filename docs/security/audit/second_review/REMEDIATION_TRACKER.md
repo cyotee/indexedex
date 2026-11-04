@@ -18,6 +18,7 @@ the state at execution time.
 | APEX-2026-041 | Closed by the same V4 FullSpread deletion. | Closed in source. Latent at the audit snapshot. |
 | APEX-2026-042 | Closed by the same V4 FullSpread deletion. | Closed in source. Latent at the audit snapshot. |
 | APEX-2026-051 | Closed by the same V4 FullSpread deletion. | Closed in source. Latent at the audit snapshot. |
+| APEX-2026-012 | Same apportioned-reserve accounting on both Uniswap V3 and Uniswap V4 Upper Lower Wings vaults. Build the missing V3 family. Other token converts only on the acting holder's entry or exit. `getRate` is the last settled target balance per share. | Design recorded. V3 Wings must be built. V3 FullSpread stays. Implementation is not authorized. Deployed vaults are not upgraded. |
 
 ## APEX-2026-054: immutable deployments and user-assisted recovery
 
@@ -348,6 +349,23 @@ Not closed by this retirement:
 - APEX-2026-023 is only partly touched. The V4 hookless maintenance path is gone. The V3 FullSpread path remains, and the executed proofs were on V3. V3 FullSpread stays open, including APEX-2026-022.
 - UpperLowerWings findings stay open: APEX-2026-012, 024, 025, 026, and 040.
 - Deployed pre-HEAD findings stay open as deployment problems: APEX-2026-010, 036, 037, 038, 039, and 054. Deleting source does not change those immutable contracts.
+
+## APEX-2026-012: apportioned reserve
+
+Owner ruling 2026-10-23: do not repair the live liquidation quote. Replace it.
+
+PRD: `docs/security/audit/second_review/APEX-2026-012-APPORTIONED-RESERVE-PRD.md`.
+
+- The same rule applies to both the Uniswap V3 and Uniswap V4 Upper Lower Wings SE vaults. One family does not close the other.
+- A share is a fraction of every position the vault holds, core and both wings, not a quoted pile of target.
+- Each vault still accepts and pays only the target token. A one-token deposit into a two-sided position swaps into the current mix against the same pool. An exit sells only that holder's other token through the same pool.
+- Other token is sold only inside the acting holder's entry or exit. Harvest credits collected target fees and does not sell the other token.
+- No V3 Upper Lower Wings source exists. This PRD requires that family to be built. V3 FullSpread stays in place.
+- The remaining position taking that sale is intended. Tests must prove share fraction, not a constant target balance.
+- `getRate` is the last settled target balance per share. It does not read `slot0` and does not preview the sale.
+- This does not upgrade deployed vaults and does not close 024, 025, 026, or 040 by itself.
+- Implementation is not authorized.
+- Open questions, to be answered one by one: `docs/security/audit/second_review/APEX-2026-012-OPEN-QUESTIONS.md`.
 
 ## Migration design checkpoint - 2026-10-23
 

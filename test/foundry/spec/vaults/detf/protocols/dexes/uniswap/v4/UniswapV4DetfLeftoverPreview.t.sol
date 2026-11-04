@@ -90,8 +90,7 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         bytes memory failure_ = abi.encodeWithSignature("ResidualPreviewDependencyFailure()");
         // Fault only a non-SUT funding token query. Both SE and DETF proxies remain real.
         vm.mockCallRevert(address(seOther), abi.encodeWithSelector(IERC20.balanceOf.selector, se), failure_);
-        vm.expectRevert(failure_);
-        IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), before_.held, IERC20(se));
+        vm.expectRevert(failure_);IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), before_.held, IERC20(se));
         vm.expectRevert(failure_);
         detfInfo.sweepDust{gas: 30_000_000}();
         vm.clearMockedCalls();
@@ -116,8 +115,8 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         _assertUnmoved(before_);
     }
 
-    function _preview(uint256 amount_) internal view returns (uint256) {
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), amount_, IERC20(se));
+    function _preview(uint256 amount_) internal view returns (uint256) {(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), amount_, IERC20(se));
+        return quotedAmountOut;
     }
 
     function _balances() internal view returns (Balances memory b_) {

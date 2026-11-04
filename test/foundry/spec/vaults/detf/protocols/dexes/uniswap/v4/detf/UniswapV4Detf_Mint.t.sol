@@ -24,8 +24,7 @@ contract UniswapV4Detf_Mint is TestBase_UniswapV4Detf {
     function test_T7_6_liveMint_grossSwapQuote_d11() public {
         _firstBond(100 ether);
         uint256 mintIn = 10 ether;
-        assertTrue(detfInfo.isMintingAllowed(IERC20(address(pairToken))), "rich launch selects primary issuance");
-        uint256 userPred = IStandardExchangeIn(detf).previewExchangeIn(IERC20(address(pairToken)), mintIn, IERC20(detf));
+        assertTrue(detfInfo.isMintingAllowed(IERC20(address(pairToken))), "rich launch selects primary issuance");(uint256 userPred,) = IStandardExchangeIn(detf).previewExchangeIn(IERC20(address(pairToken)), mintIn, IERC20(detf));
         uint256 lpPred = IUniswapV4SeBufferHook(reserveHook).previewJoinSingleAssetExactIn(address(pairToken), mintIn);
         assertGt(userPred, 0, "user");
         assertGt(lpPred, 0, "lp preview");
@@ -42,8 +41,7 @@ contract UniswapV4Detf_Mint is TestBase_UniswapV4Detf {
         uint256 detfBefore = IERC20(detf).balanceOf(detfUser);
         uint256 nftLpBefore = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
         uint256 supplyBefore = IERC20(detf).totalSupply();
-        vm.startPrank(detfUser);
-        uint256 userDetf = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 userDetf,) = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(userDetf, userPred, "preview==exec user");
         assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore, userDetf, "user DETF");

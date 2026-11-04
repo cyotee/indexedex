@@ -27,12 +27,9 @@ contract EtherFiWeETHStandardExchange_TransitionQuote is TestBase_EtherFiWeETHSt
         (bytes memory state,) = quote.quoteState(address(hermeticWeth), address(this));
         (, uint256 input, uint256 output,) =
             quote.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amount);
-        assertEq(input, amount, "exact-in consumes the whole input");
-        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
+        assertEq(input, amount, "exact-in consumes the whole input");(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
         assertEq(output, preview, "transition quote agrees with previewExchangeIn");
-        hermeticWeth.approve(seVault, amount);
-        uint256 minted = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(seVault), output, address(this), false, block.timestamp + 1 hours
+        hermeticWeth.approve(seVault, amount);(uint256 minted,) = seIn.exchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault), output, address(this), false, block.timestamp + 1 hours
         );
         assertEq(minted, output, "execution mints the quoted shares");
     }

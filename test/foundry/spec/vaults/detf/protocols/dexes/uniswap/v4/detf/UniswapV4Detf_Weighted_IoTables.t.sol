@@ -113,8 +113,7 @@ contract UniswapV4Detf_Weighted_IoTables is
         }
 
         uint256 userBefore = IERC20(custom_).balanceOf(detfUser);
-        vm.startPrank(detfUser);
-        uint256 minted_ = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pair0)), 5 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.startPrank(detfUser);(uint256 minted_,) = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pair0)), 5 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted_, 0, "custom mint");
         assertEq(IERC20(custom_).balanceOf(detfUser) - userBefore, minted_, "user DETF");

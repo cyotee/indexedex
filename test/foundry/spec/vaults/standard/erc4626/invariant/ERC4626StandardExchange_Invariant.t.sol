@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {
     LendingAccountingHandler,
@@ -111,10 +112,9 @@ contract ERC4626StandardExchange_Invariant is TestBase_ERC4626StandardExchange, 
         handler.assertAccounting();
         handler.assertLendingAccounting();
         uint256 backing = protocolVault.convertToAssets(protocolVault.balanceOf(se)) + underlying.balanceOf(se);
-        uint256 supply = IERC20(se).totalSupply();
-        uint256 claim = supply == 0
+        uint256 supply = IERC20(se).totalSupply();uint256 claim = supply == 0
             ? 0
-            : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), supply, IERC20(address(underlying)));
+            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), supply, IERC20(address(underlying)));
         assertLe(claim, backing, "all shares backed by local assets and protocol receipts");
     }
 

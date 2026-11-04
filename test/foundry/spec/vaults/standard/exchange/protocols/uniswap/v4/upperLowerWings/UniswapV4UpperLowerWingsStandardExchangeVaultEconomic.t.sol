@@ -14,8 +14,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultEconomicTest is Fixture {
     function test_vaultRateIsCanonicalEconomicValueAndReachableOnProxy() public {
         assertTrue(IERC165(address(wings0)).supportsInterface(type(IRateProvider).interfaceId));
         assertTrue(IERC165(address(wings0)).supportsInterface(type(RateQuote).interfaceId));
-        assertEq(IRateProvider(address(wings0)).getRate(), 1e18);
-        IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
+        assertEq(IRateProvider(address(wings0)).getRate(), 1e18);IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
         uint256 canonical = FullMath.mulDiv(wings0.liquidationValue().value, 1e18, IERC20(address(wings0)).totalSupply());
         assertEq(IRateProvider(address(wings0)).getRate(), canonical);
         bytes memory returned = externalLp.callWhileUnlocked(key, address(wings0), abi.encodeCall(IRateProvider.getRate, ()));
@@ -30,8 +29,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultEconomicTest is Fixture {
         assertEq(IERC20(address(wings0)).totalSupply(), 0, "quote cannot mint live supply");
         assertEq(RateQuote(address(wings0)).quoteRate(address(wings1), address(token1), state), 1e18);
     }
-    function test_sleeveAndInventoryViewsUseCurrentOracleAndPhysicalPrincipal() public {
-        IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
+    function test_sleeveAndInventoryViewsUseCurrentOracleAndPhysicalPrincipal() public {IStandardExchangeIn(address(wings0)).exchangeIn(token0, 1e12, IERC20(address(wings0)), 0, address(this), false, block.timestamp);
         Economic economic = Economic(address(wings0));
         (uint256 local,uint256 required,uint256 percentage,bool unavailable) = economic.sleeveState();
         assertEq(local, token0.balanceOf(address(wings0)));

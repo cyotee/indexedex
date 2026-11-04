@@ -30,8 +30,7 @@ contract UniswapV4Detf_Cp_Univ3Se_ResidualGas is TestBase_UniswapV4Detf_Cp_Univ3
         IERC20(mintToken).transfer(detf, amount_);
         uint256 userBefore_ = IERC20(mintToken).balanceOf(detfUser);
 
-        uint256 held_ = IERC20(mintToken).balanceOf(detf);
-        uint256 quoted_ = IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), held_, IERC20(se));
+        uint256 held_ = IERC20(mintToken).balanceOf(detf);(uint256 quoted_,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), held_, IERC20(se));
         bool retained_ = quoted_ == 0 || _hookPreviewIsZero(held_);
         uint256 callerBefore_ = IERC20(mintToken).balanceOf(address(this));
         uint256 feeBefore_ = IERC20(mintToken).balanceOf(address(feeCollector));
@@ -49,8 +48,7 @@ contract UniswapV4Detf_Cp_Univ3Se_ResidualGas is TestBase_UniswapV4Detf_Cp_Univ3
         assertGe(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "protocol LP custody preserved");
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "LP belongs in NFT custody");
         uint256 remaining_ = IERC20(mintToken).balanceOf(detf);
-        if (remaining_ != 0) {
-            uint256 seQuote_ = IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), remaining_, IERC20(se));
+        if (remaining_ != 0) {(uint256 seQuote_,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(mintToken), remaining_, IERC20(se));
             assertTrue(seQuote_ == 0 || _hookPreviewIsZero(remaining_), "remaining tokens cannot mint through either complete route");
         }
         assertEq(IBasicVault(detf).reserveOfToken(mintToken), remaining_, "all local custody is booked to holders");

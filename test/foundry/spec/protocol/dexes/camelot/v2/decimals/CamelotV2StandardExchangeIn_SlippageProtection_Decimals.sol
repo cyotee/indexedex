@@ -72,13 +72,8 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         uint256 amountIn = _uToken(token0, 1);
 
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
-        address recipient = makeAddr("recipient");
-
-        uint256 out =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview, recipient, false, _deadline());
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -88,13 +83,9 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         uint256 amountIn = _uToken(token0, 1);
 
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(token1));
-
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(token0), amountIn, IERC20(token1), preview + 1, makeAddr("recipient"), false, _deadline()
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), preview + 1, makeAddr("recipient"), false, _deadline()
         );
     }
 
@@ -108,12 +99,8 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         uint256 amountIn = _uToken(token0, 1);
 
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview, recipient, false, _deadline());
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -123,12 +110,9 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         uint256 amountIn = _uToken(token0, 1);
 
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, lpToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -144,8 +128,7 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
 
         lpToken.approve(address(vault), lpAmount);
 
-        address recipient = makeAddr("recipient");
-        uint256 out = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
         assertTrue(out > 0, "Should receive vault shares");
     }
 
@@ -156,12 +139,9 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         require(lpAmount > MIN_TEST_AMOUNT, "LP fraction too small");
 
-        lpToken.approve(address(vault), lpAmount);
+        lpToken.approve(address(vault), lpAmount);(uint256 preview,) = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
 
-        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(lpToken, lpAmount, vaultToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -174,12 +154,8 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 shares = vault.balanceOf(address(this));
         require(shares > 0, "No vault shares");
-        shares = shares / 10;
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, lpToken);
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(vaultToken, shares, lpToken, preview, recipient, false, _deadline());
+        shares = shares / 10;(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, lpToken);
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(vaultToken, shares, lpToken, preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -189,12 +165,9 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 shares = vault.balanceOf(address(this));
         require(shares > 0, "No vault shares");
-        shares = shares / 10;
+        shares = shares / 10;(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, lpToken);
 
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, lpToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, shares, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, shares, lpToken, preview + 1, makeAddr("recipient"), false, _deadline());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -209,8 +182,7 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         MintableERC20Decimals(token0).mint(address(this), amountIn);
         IERC20(token0).approve(address(vault), amountIn);
 
-        address recipient = makeAddr("recipient");
-        uint256 out = vault.exchangeIn(IERC20(token0), amountIn, vaultToken, 0, recipient, false, _deadline());
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(IERC20(token0), amountIn, vaultToken, 0, recipient, false, _deadline());
         assertTrue(out > 0, "Should receive shares");
     }
 
@@ -220,13 +192,9 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
         uint256 amountIn = _uToken(token0, 1);
 
         MintableERC20Decimals(token0).mint(address(this), amountIn);
-        IERC20(token0).approve(address(vault), amountIn);
+        IERC20(token0).approve(address(vault), amountIn);(uint256 preview,) = vault.previewExchangeIn(IERC20(token0), amountIn, vaultToken);
 
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, vaultToken);
-
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(token0), amountIn, vaultToken, preview + 1, makeAddr("recipient"), false, _deadline()
+        vm.expectRevert();vault.exchangeIn(IERC20(token0), amountIn, vaultToken, preview + 1, makeAddr("recipient"), false, _deadline()
         );
     }
 
@@ -240,12 +208,8 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 shares = vault.balanceOf(address(this));
         require(shares > 0, "No vault shares");
-        shares = shares / 10;
-
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
-        address recipient = makeAddr("recipient");
-
-        uint256 out = vault.exchangeIn(vaultToken, shares, IERC20(token0), preview, recipient, false, _deadline());
+        shares = shares / 10;(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
+        address recipient = makeAddr("recipient");(uint256 out,) = vault.exchangeIn(vaultToken, shares, IERC20(token0), preview, recipient, false, _deadline());
         assertEq(out, preview, "Should succeed with exact minimum");
     }
 
@@ -255,11 +219,8 @@ abstract contract CamelotV2StandardExchangeIn_SlippageProtection_Decimals is
 
         uint256 shares = vault.balanceOf(address(this));
         require(shares > 0, "No vault shares");
-        shares = shares / 10;
+        shares = shares / 10;(uint256 preview,) = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
 
-        uint256 preview = vault.previewExchangeIn(vaultToken, shares, IERC20(token0));
-
-        vm.expectRevert();
-        vault.exchangeIn(vaultToken, shares, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
+        vm.expectRevert();vault.exchangeIn(vaultToken, shares, IERC20(token0), preview + 1, makeAddr("recipient"), false, _deadline());
     }
 }

@@ -265,9 +265,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_N2_Decimals is
         assertGt(preview, 0);
 
         uint256 bal0 = token0.balanceOf(user);
-        vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token1)),
+        vm.prank(user);(uint256 out,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(token1)),
             amountIn,
             IERC20(address(token0)),
             0,
@@ -343,9 +341,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_N2_Decimals is
         uint256 amountIn = _u(0, 10);
         token0.mint(user, amountIn);
         vm.startPrank(user);
-        token0.approve(se0, type(uint256).max);
-        uint256 seOut = IStandardExchangeIn(se0).exchangeIn(
-            IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
+        token0.approve(se0, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se0).exchangeIn(IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
         );
         assertGt(seOut, 0, "minted SE shares");
         IERC20(se0).transfer(hook, seOut);

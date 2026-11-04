@@ -58,7 +58,7 @@ All commands below assume `DEV_ADDRESS` is set.
    skips fork resolution if `FOUNDRY_FORK_RPC_ALIAS=` is empty.
 2. Starts (or reuses) Anvil on `127.0.0.1:8545` with chain id `11155111`
    (Sepolia) by default. Override via env vars below.
-3. Runs the requested stage(s) via `forge script --broadcast --slow --unlocked`.
+3. Runs the requested stage(s) via `forge script --use solar --broadcast --slow --unlocked`.
 4. After the last stage, invokes the Token List aggregator
    (`scripts/node/src/main.ts`) unless `SKIP_TOKENLIST_BUILD=1` is set.
 

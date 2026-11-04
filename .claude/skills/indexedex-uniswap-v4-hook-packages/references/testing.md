@@ -10,14 +10,14 @@
 
 ## Profile and commands
 
-Default monorepo `forge test` may be stack-heavy; use the narrow profile for factory + hook package work:
+Default monorepo `forge test --use solar` may be stack-heavy; use the narrow profile for factory + hook package work:
 
 ```bash
-FOUNDRY_PROFILE=hook_factory forge test \
+FOUNDRY_PROFILE=hook_factory forge test --use solar \
   --match-path 'test/foundry/spec/hooks/uniswap/v4/factory/*' -vv
 
 # Product package suite (add paths as packages land)
-FOUNDRY_PROFILE=hook_factory forge test \
+FOUNDRY_PROFILE=hook_factory forge test --use solar \
   --match-path 'test/foundry/spec/hooks/uniswap/v4/**' -vv
 ```
 

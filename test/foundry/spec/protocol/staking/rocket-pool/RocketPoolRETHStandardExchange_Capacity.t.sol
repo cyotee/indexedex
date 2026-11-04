@@ -17,11 +17,8 @@ contract RocketPoolRETHStandardExchange_Capacity_Test is TestBase_RocketPoolRETH
         hermeticPool.setMaxDepositAmount(0);
         uint256 amount = 2 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-
-        // Preview still non-zero (ungated)
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticReth))
+        hermeticWeth.approve(seVault, amount);// Preview still non-zero (ungated)
+        (uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticReth))
         );
         assertGt(preview, 0);
 
@@ -29,9 +26,7 @@ contract RocketPoolRETHStandardExchange_Capacity_Test is TestBase_RocketPoolRETH
             abi.encodeWithSelector(
                 IRocketPoolRETHStandardVault.InsufficientDepositCapacity.selector, 0, amount
             )
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticReth)),
             0,
@@ -45,12 +40,8 @@ contract RocketPoolRETHStandardExchange_Capacity_Test is TestBase_RocketPoolRETH
         hermeticPool.setMaxDepositAmount(type(uint256).max);
         uint256 amount = 4 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 preview = seIn.previewExchangeIn(
-            IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticReth))
-        );
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(address(hermeticReth))
+        );(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticReth)),
             preview,
@@ -65,9 +56,7 @@ contract RocketPoolRETHStandardExchange_Capacity_Test is TestBase_RocketPoolRETH
         hermeticPool.setMaxDepositAmount(0);
         uint256 amount = 10 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,
@@ -92,9 +81,7 @@ contract RocketPoolRETHStandardExchange_Capacity_Test is TestBase_RocketPoolRETH
             abi.encodeWithSelector(
                 IRocketPoolRETHStandardVault.InsufficientDepositCapacity.selector, 0, amount
             )
-        );
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        );seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(address(hermeticReth)),
             0,
@@ -113,9 +100,7 @@ contract RocketPoolRETHStandardExchange_Capacity_Test is TestBase_RocketPoolRETH
         hermeticPool.setMaxDepositAmount(10 ether);
         uint256 amount = 100 ether;
         _dealWeth(address(this), amount);
-        hermeticWeth.approve(seVault, amount);
-        seIn.exchangeIn(
-            IERC20(address(hermeticWeth)),
+        hermeticWeth.approve(seVault, amount);seIn.exchangeIn(IERC20(address(hermeticWeth)),
             amount,
             IERC20(seVault),
             0,

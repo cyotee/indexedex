@@ -120,14 +120,12 @@ contract Handler_SinglePoolActions is Test {
         uint256 beforeBase = base.balanceOf(actor);
         uint256 supply = bpt.totalSupply();
         uint256 beforeBpt = bpt.balanceOf(actor);
-        vm.prank(actor);
-        uint256 issued = adapter.exchangeIn(IERC20(address(base)), amount, bpt, 1, actor, false, block.timestamp + 1 hours);
+        vm.prank(actor);uint256 issued = adapter.exchangeIn(IERC20(address(base)), amount, bpt, 1, actor, false, block.timestamp + 1 hours);
         assertGt(issued, 0, "callback-disabled funded control succeeds");
         assertEq(beforeBase - base.balanceOf(actor), amount, "control exact debit");
         assertEq(bpt.balanceOf(actor) - beforeBpt, issued, "control exact issuance");
         vm.startPrank(actor);
-        bpt.approve(address(adapter), issued);
-        uint256 paid = adapter.exchangeIn(bpt, issued, IERC20(address(base)), 1, actor, false, block.timestamp + 1 hours);
+        bpt.approve(address(adapter), issued);uint256 paid = adapter.exchangeIn(bpt, issued, IERC20(address(base)), 1, actor, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(paid, 0, "control exit pays");
         assertEq(base.balanceOf(actor), beforeBase - amount + paid, "control complete cash accounting");

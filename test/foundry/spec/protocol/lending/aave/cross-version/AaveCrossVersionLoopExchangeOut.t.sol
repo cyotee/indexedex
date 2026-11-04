@@ -77,8 +77,7 @@ contract AaveCrossVersionLoopExchangeOut_Test is TestBase_AaveCrossVersionLoopV3
 
     function _deposit(uint256 amount) internal returns (uint256 shares) {
         _mint(tokenA, address(this), amount);
-        tokenA.approve(address(vault), amount);
-        shares = vault.exchangeIn(tokenA, amount, IERC20(address(vault)), 0, address(this), false, block.timestamp);
+        tokenA.approve(address(vault), amount);(shares,) = vault.exchangeIn(tokenA, amount, IERC20(address(vault)), 0, address(this), false, block.timestamp);
     }
 
     function test_exchangeOut_partial_withdraw_burns_shares_and_delivers() public {

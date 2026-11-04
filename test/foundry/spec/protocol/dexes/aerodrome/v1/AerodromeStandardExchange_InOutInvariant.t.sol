@@ -66,8 +66,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
 
         uint256 lpAmount = lpToken.balanceOf(address(this)) / lpFraction;
         require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP for seeding");
-        lpToken.approve(address(vault), lpAmount);
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
+        lpToken.approve(address(vault), lpAmount);vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, address(this), false, _deadline());
         require(vault.balanceOf(address(this)) > 0, "Seed produced zero shares");
     }
 
@@ -81,8 +80,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 tokenIn = IERC20(pool.token0());
         IERC20 tokenOut = IERC20(pool.token1());
 
-        uint256 amountIn = 1e18;
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        uint256 amountIn = 1e18;(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         assertGt(Y, 0, "Route1 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, tokenOut, Y);
@@ -147,9 +145,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         uint256 reserveIn = pool.token0() == address(tokenIn) ? r0 : r1;
         uint256 reserveOut = pool.token0() == address(tokenIn) ? r1 : r0;
 
-        amountIn = bound(amountIn, 1e12, reserveIn / 10);
-
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        amountIn = bound(amountIn, 1e12, reserveIn / 10);(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         if (Y == 0 || Y >= reserveOut) return;
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, tokenOut, Y);
@@ -168,8 +164,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 tokenIn = IERC20(pool.token0());
         IERC20 lpToken = IERC20(address(pool));
 
-        uint256 amountIn = 2e18;
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
+        uint256 amountIn = 2e18;(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
         assertGt(Y, 0, "Route2 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, lpToken, Y);
@@ -189,9 +184,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         require(lpTarget > MIN_TEST_AMOUNT, "LP target too small");
 
         uint256 Xrequired = vault.previewExchangeOut(tokenIn, lpToken, lpTarget);
-        assertGt(Xrequired, 0, "Route2 Out preview must be non-zero");
-
-        uint256 Yprime = vault.previewExchangeIn(tokenIn, Xrequired, lpToken);
+        assertGt(Xrequired, 0, "Route2 Out preview must be non-zero");(uint256 Yprime,) = vault.previewExchangeIn(tokenIn, Xrequired, lpToken);
         // Allow 1 wei below lpTarget: ZapIn forward rounding can land 1 wei under on boundary.
         assertGe(Yprime + 1, lpTarget, "Route2: forward(reverse(Y)) >= Y - 1");
     }
@@ -250,9 +243,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         uint256 reserveIn = pool.token0() == address(tokenIn) ? r0 : r1;
 
         // Lower bound 1e16: avoids tiny-deposit fallback; upper bound reserveIn/100.
-        amountIn = bound(amountIn, 1e16, reserveIn / 100);
-
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
+        amountIn = bound(amountIn, 1e16, reserveIn / 100);(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, lpToken);
         if (Y == 0) return;
 
         uint256 Xprime = vault.previewExchangeOut(tokenIn, lpToken, Y);
@@ -274,9 +265,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 tokenOut = IERC20(pool.token0());
 
         uint256 lpAmountIn = lpToken.balanceOf(address(this)) / 200;
-        require(lpAmountIn > MIN_TEST_AMOUNT);
-
-        uint256 Y = vault.previewExchangeIn(lpToken, lpAmountIn, tokenOut);
+        require(lpAmountIn > MIN_TEST_AMOUNT);(uint256 Y,) = vault.previewExchangeIn(lpToken, lpAmountIn, tokenOut);
         assertGt(Y, 0, "Route3 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(lpToken, tokenOut, Y);
@@ -293,8 +282,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 lpToken = IERC20(address(pool));
         IERC20 tokenOut = IERC20(pool.token0());
 
-        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;
-        uint256 Y = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
+        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;(uint256 Y,) = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
         uint256 desiredOut = Y * 9 / 10;
         require(desiredOut > MIN_TEST_AMOUNT);
 
@@ -316,8 +304,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 lpToken = IERC20(address(pool));
         IERC20 tokenOut = IERC20(pool.token0());
 
-        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;
-        uint256 Y = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
+        uint256 lpIn = lpToken.balanceOf(address(this)) / 200;(uint256 Y,) = vault.previewExchangeIn(lpToken, lpIn, tokenOut);
         uint256 desiredOut = Y * 9 / 10;
         require(desiredOut > MIN_TEST_AMOUNT);
 
@@ -352,9 +339,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         require(sharesTarget > 0, "Shares target zero");
 
         uint256 Xrequired = vault.previewExchangeOut(lpToken, vaultToken, sharesTarget);
-        assertGt(Xrequired, 0, "Route4 Out preview must be non-zero");
-
-        uint256 Yprime = vault.previewExchangeIn(lpToken, Xrequired, vaultToken);
+        assertGt(Xrequired, 0, "Route4 Out preview must be non-zero");(uint256 Yprime,) = vault.previewExchangeIn(lpToken, Xrequired, vaultToken);
         assertGt(Yprime, 0, "Route4: forward(reverse(Y)) must be non-zero");
     }
 
@@ -408,9 +393,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 vaultToken = IERC20(address(vault));
 
         uint256 sharesIn = vault.balanceOf(address(this)) / 2;
-        require(sharesIn > 0, "No shares available");
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, lpToken);
+        require(sharesIn > 0, "No shares available");(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, lpToken);
         assertGt(Y, 0, "Route5 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, lpToken, Y);
@@ -469,9 +452,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
 
         uint256 available = vault.balanceOf(address(this));
         if (available < 4) return;
-        sharesIn = bound(sharesIn, 1, available / 4);
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, lpToken);
+        sharesIn = bound(sharesIn, 1, available / 4);(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, lpToken);
         if (Y == 0) return;
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, lpToken, Y);
@@ -504,9 +485,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 vaultToken = IERC20(address(vault));
 
         uint256 totalShares = vault.totalSupply();
-        uint256 amountIn = 0.1e18;
-
-        uint256 Y = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+        uint256 amountIn = 0.1e18;(uint256 Y,) = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
         if (Y == 0) return;
 
         // Only test when Y is small relative to supply (avoids extreme ERC-4626 amplification).
@@ -530,9 +509,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         require(sharesTarget > 0, "No shares for route6 reverse test");
 
         uint256 Xrequired = vault.previewExchangeOut(tokenIn, vaultToken, sharesTarget);
-        assertGt(Xrequired, 0, "Route6: previewExchangeOut zero");
-
-        uint256 Yprime = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
+        assertGt(Xrequired, 0, "Route6: previewExchangeOut zero");(uint256 Yprime,) = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
         assertGe(Yprime, sharesTarget, "Route6: forward(reverse(Y)) >= Y");
     }
 
@@ -592,9 +569,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         sharesTarget = bound(sharesTarget, 1, totalShares / 2);
 
         uint256 Xrequired = vault.previewExchangeOut(tokenIn, vaultToken, sharesTarget);
-        if (Xrequired == 0) return;
-
-        uint256 Yprime = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
+        if (Xrequired == 0) return;(uint256 Yprime,) = vault.previewExchangeIn(tokenIn, Xrequired, vaultToken);
         assertGe(Yprime, sharesTarget, "Fuzz Route6: forward(reverse(Y)) >= Y");
     }
 
@@ -609,9 +584,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 tokenOut = IERC20(pool.token0());
 
         uint256 sharesIn = vault.balanceOf(address(this)) / 2;
-        require(sharesIn > 0, "No shares for route7 test");
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
+        require(sharesIn > 0, "No shares for route7 test");(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
         assertGt(Y, 0, "Route7 In preview zero");
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, tokenOut, Y);
@@ -627,8 +600,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
         IERC20 vaultToken = IERC20(address(vault));
         IERC20 tokenOut = IERC20(pool.token0());
 
-        uint256 sharesIn = vault.balanceOf(address(this)) / 2;
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
+        uint256 sharesIn = vault.balanceOf(address(this)) / 2;(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
         uint256 desiredOut = Y / 2;
         require(desiredOut > 0, "desiredOut zero");
 
@@ -661,9 +633,7 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
 
         uint256 available = vault.balanceOf(address(this));
         if (available < 4) return;
-        sharesIn = bound(sharesIn, 1, available / 4);
-
-        uint256 Y = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
+        sharesIn = bound(sharesIn, 1, available / 4);(uint256 Y,) = vault.previewExchangeIn(vaultToken, sharesIn, tokenOut);
         if (Y == 0) return;
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, tokenOut, Y);

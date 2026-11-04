@@ -241,14 +241,14 @@ contract HostileSE {
         return true;
     }
 
-    function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external view returns (uint256) {
+function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external view returns (uint256 amountOut, uint256 amountRefunded) {
         if (failExchangeIn) revert("HostileSE: exchangeIn");
-        return amountIn;
+        return (amountIn, 0);
     }
 
-    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20, uint256, address recipient, bool, uint256)
+function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20, uint256, address recipient, bool, uint256)
         external
-        returns (uint256 amountOut)
+        returns (uint256 amountOut, uint256 amountRefunded)
     {
         if (failExchangeIn) revert("HostileSE: exchangeIn");
         tokenIn.transferFrom(msg.sender, address(this), amountIn);

@@ -1,0 +1,37 @@
+# Run record
+
+- Run: pairtoken-behavioral-requirements-20261027-01a17d57.
+- Owner/coordinator: 01a17d57-ab12-74e2-b0aa-283ffbf92a1e; invoking-agent mode, coordinator not a vote; actual coordinator model not exposed.
+- Authorization: user's explicit request for a full council to review PairToken and author detailed requirements for a different planning agent.
+- Profile: research. No implementation, tests/builds, deploy, settings or Git authorized.
+- Source identity: analyst/evidence-manifest.md; prior audit raw evidence reused without modification.
+- Requested roster: Astra subscription gpt-6-astra high; Grok xai/grok-4.7 xhigh; MiniMax M3 observed forceAdaptiveThinking=true; Kimi global kimi-coding/k3.1-pro high. All existing routes/conversations continued, no substitutions.
+- Roles: council-member; shared workspace isolated:false retained; actual process mechanism not exposed. Parent-equivalent permissions accepted, not a sandbox.
+- Depth: direct members from invoking root; existing role max_depth 2; no ceiling override changed.
+- Initial attempt: 1 per member for this new assignment; all four task_send deliveries confirmed revived at run epoch 2.
+- Initial response independence: previous shared fidelity audit admitted; no current-run peer originals.
+- Phase: complete; all substantive and delivery turns settled; requirements, report, resolution and completion evidence published; all publication/preservation checks passed.
+- Task handles owned by this invoking session: Astra st_01a17d68; Grok st_01a17d69; MiniMax st_01a17d6a; Kimi st_01a17d6b.
+- Completion subscription: persistent children monitor mon_3GSDQHV72D12YJMW.
+- Delivery policy: members without usable apply_patch return substantive Markdown; coordinator archives using apply_patch with attribution, rather than requiring unapproved write/edit workarounds.
+- MiniMax run-epoch-2 original: substantive 588-line returned artifact; apply_patch unavailable to member, no member write workaround used. Coordinator preserved full result at members/minimax/response.md using apply_patch.
+- Grok original delivery: terminal final referred to prior commentary; task_output tail/full truncate its substantive middle. One format-repair request sent to the same handle at run epoch 3, requiring the identical complete artifact as final text without new analysis or peer reading.
+- Grok exposed Native metadata: execution_mode process; requested xai/grok-4.7:xhigh, resolved reasoning xhigh, effective provider xai model grok-4.7; parent/root both this invoking session; child_session_id 01a17d68-beab-78f5-a157-ba1f09e178eb. Original commentary is not treated as fully examined.
+- Grok format repair completed at epoch 3: complete 488-line final result recovered, archived without substantive editing via coordinator apply_patch, and fully examined in bounded reads. No additional research or peer review requested.
+- Kimi run-epoch-2 original: complete 1019-line inline artifact archived by coordinator apply_patch after member reported unavailable patch tool; no member write workaround. Full candidate examined, including API, math, scenarios and traceability.
+- Astra run-epoch-2 original: 694-line substantive response written with apply_patch and read completely. Comprehensive API/math/58-scenario extraction used as the organizational base of coordinator synthesis after comparing all four originals and source checks.
+- Draft: coordinator/draft.md; identity pairtoken-requirements-draft-r1; SHA-256 763dd6ad786ac84e61f968af77a627a2c0103a6fc6c67c8152127115083f229b; immutable after advisory requests.
+- Draft inventory: 82 prose requirement IDs, 18 method/receiver rows, 17 getter rows and 58 acceptance scenarios; no duplicate prose IDs, raw source paths or executable source fences in the standalone draft.
+- Analyst traceability is analyst/traceability.md, separate from the entire planner-facing draft.
+- Advisory contexts: Astra epoch 3, Grok epoch 4, MiniMax epoch 3, Kimi epoch 3. One advisory assignment each; Grok's extra epoch was the preceding delivery-format repair, not an additional review.
+- Final planned handoff: handoff/REQUIREMENTS.md; council report REPORT.md and coordinator/resolution.md remain analyst/council artifacts.
+- MiniMax advisory: SUPPORT WITH CORRECTIONS, MINI-01 through MINI-05. Coordinator rechecked cited deposit/basket, payout helper/wrapper and position-read passages. Final will clarify existing compound-swap behavior, payout target/raw-return semantics, distinct liquidity reads and retrieval attribution. Donation/cap wording must remain conditional on the actual post-compound basket, integer floors and rate, not a universal monotonicity guarantee.
+- Kimi advisory: SUPPORT, no changes requested. Complete returned feedback archived using coordinator apply_patch; no member write workaround. Native resolved kimi-coding/k3.1-pro:high, reasoning high, retained provider route.
+- Astra advisory: SUPPORT WITH CORRECTIONS; C1-C4 and optional N1. File written by member with apply_patch. Coordinator re-read all cited source predicates/read-order/helper/wrapper passages. Corrections accepted for final: raw returned-or-reverted error bytes; positive-supply scenario precondition; paired-add balance0/balance1-before-price ordering; nominal native-pull qualification; complete front-matter handoff.
+- Draft cross-reference audit: 172 distinct numbered requirement/acceptance IDs, all defined; no duplicate prose requirement IDs. Frozen hash unchanged.
+- Grok advisory: SUPPORT with no changes. Coordinator recovered the complete 11071-character feedback body from the supported transcript and archived only the substantive assistant artifact. The earlier truncation concern was an overreading of omitted-history metadata; an unnecessary delivery repair settled without another substantive review.
+- Four-member advisory outcome: all support planning use; two with bounded corrections, two without. Every concern accepted/qualified in coordinator/resolution.md.
+- Final handoff published: handoff/REQUIREMENTS.md, pairtoken-requirements-final-r2. Council final: REPORT.md. All 14 final text/status/precision edits are coordinator-owned; no second substantive advisory round.
+- Prepublication verification passed: 172 defined numbered IDs, no duplicates/undefined references, 18 method/receiver rows, 17 getter rows, 58 scenarios, all public identifiers/errors present, no source listings/raw paths/member prerequisites, original input report and frozen draft preserved.
+- Deliverables: handoff/REQUIREMENTS.md (standalone original prose), REPORT.md (council report), analyst/traceability.md, coordinator/draft.md and resolution.md, four originals and four feedback artifacts.
+

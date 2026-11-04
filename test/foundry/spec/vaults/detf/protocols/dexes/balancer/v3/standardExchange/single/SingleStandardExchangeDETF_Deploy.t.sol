@@ -30,8 +30,7 @@ contract SingleStandardExchangeDETF_Deploy_Test is TestBase_SingleStandardExchan
         uint256 seShares_ = _fundSeShares(alice, 100e18);
         vm.startPrank(alice);
         seShare.approve(detf, seShares_);
-        vm.expectRevert(SingleStandardExchangeDETFRepo.ReservePoolNotInitialized.selector);
-        detfExchangeIn.exchangeIn(seShare, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
+        vm.expectRevert(SingleStandardExchangeDETFRepo.ReservePoolNotInitialized.selector);detfExchangeIn.exchangeIn(seShare, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

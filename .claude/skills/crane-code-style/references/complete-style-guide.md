@@ -328,7 +328,7 @@ solc_version = '0.8.30'
 evm_version = 'prague'
 optimizer = true
 optimizer_runs = 1
-via_ir = false  # NEVER enable
+via_ir = false  # NEVER enable. Compile with `forge … --use solar`, not solc via-IR.
 
 [fmt]
 line_length = 120

@@ -66,12 +66,10 @@ contract EtherFiWeETHStandardExchange_InstantRedeem_Test is TestBase_EtherFiWeET
 
         // SE → WETH exact-in: quote assumes 1:1 sleeve path; with fee, execution may under-deliver
         // relative to minOut = preview. Use a high minOut that should fail after fee.
-        uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeth)));
+        uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeth)));
         // Require full preview; redeem pays less after fee → Slippage
-        vm.expectRevert(); // Slippage or InsufficientLiquidReserve depending on capacity after fee
-        seIn.exchangeIn(
-            IERC20(seVault),
+        vm.expectRevert();// Slippage or InsufficientLiquidReserve depending on capacity after fee
+        seIn.exchangeIn(IERC20(seVault),
             shares,
             IERC20(address(hermeticWeth)),
             preview, // minOut = full face
@@ -94,11 +92,8 @@ contract EtherFiWeETHStandardExchange_InstantRedeem_Test is TestBase_EtherFiWeET
         );
 
         // exact-in
-        uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;
-        uint256 preview = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeth)));
-        // Allow dust under-delivery if fee=0 (fee=0 so should match)
-        uint256 out = seIn.exchangeIn(
-            IERC20(seVault), shares, IERC20(address(hermeticWeth)), preview, address(this), false, block.timestamp + 1 hours
+        uint256 shares = IERC20(seVault).balanceOf(address(this)) / 10;(uint256 preview,) = seIn.previewExchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeth)));// Allow dust under-delivery if fee=0 (fee=0 so should match)
+        (uint256 out,) = seIn.exchangeIn(IERC20(seVault), shares, IERC20(address(hermeticWeth)), preview, address(this), false, block.timestamp + 1 hours
         );
         assertEq(out, preview);
     }
@@ -110,13 +105,8 @@ contract EtherFiWeETHStandardExchange_InstantRedeem_Test is TestBase_EtherFiWeET
 
         uint256 amount = 3 ether;
         _mintWeViaE(address(this), amount);
-        hermeticWeEth.approve(seVault, amount);
-
-        // exact-in
-        uint256 preview =
-            seIn.previewExchangeIn(IERC20(address(hermeticWeEth)), amount, IERC20(address(hermeticWeth)));
-        uint256 out = seIn.exchangeIn(
-            IERC20(address(hermeticWeEth)),
+        hermeticWeEth.approve(seVault, amount);// exact-in
+        (uint256 preview,) = seIn.previewExchangeIn(IERC20(address(hermeticWeEth)), amount, IERC20(address(hermeticWeth)));(uint256 out,) = seIn.exchangeIn(IERC20(address(hermeticWeEth)),
             amount,
             IERC20(address(hermeticWeth)),
             preview,

@@ -16,11 +16,13 @@ IndexedEx layers a **vault registry + manager** on Crane. Tests must use the sam
 
 Generic Foundry skills (`forge-testing` mock sections) are **subordinate** to Crane + this skill.
 
-## `forge build` before `forge test` (LOCKED)
+## `forge build --use solar` before `forge test --use solar` (LOCKED)
+
+Compiler is Solar. Every compiling `forge` command includes `--use solar`. Do not fall back to solc. Do not enable `via_ir`. Full text: agent law § Compiler.
 
 IndexedEx FactoryServices load creation bytecode from `out/` via `ArtifactCreationCode` (`vm.getCode`). They do not import Facet/DFPkg implementations for `type().creationCode`. Editing production source does not recompile FactoryService or TestBases that only `using` it.
 
-After any production contract change, run **`forge build` then `forge test`** (same for `forge script`). `forge test` alone can CREATE3-deploy stale `out/` bytecode. Full text: root `CLAUDE.md` item 10 and agent law § FactoryService creation bytecode.
+After any production contract change, run **`forge build --use solar` then `forge test --use solar`** (same for `forge script --use solar`). `forge test --use solar` alone can CREATE3-deploy stale `out/` bytecode. Full text: root `CLAUDE.md` item 10 and agent law § FactoryService creation bytecode.
 
 ## Production-first (IndexedEx)
 
@@ -160,7 +162,7 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 - [ ] Inbound credit uses `LocalCreditLib.available(balance, booked)` / `budget`, not absolute balance + claimed amount. Never bless EOA prepayment, exact-in refunds, excess-pretransfer rejection, blanket catch-and-book, or pull-max-then-refund on `pretransferred=false` exact-out.
 - [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (normalize only where the price adapter requires WAD; retain native units at token boundaries; DETF/sDETF/SY are 9-dec); pause/blacklist accepted; no `PkgArgs` allowlist
 - [ ] `--match-test` prefixes unique enough (or `--match-contract` the suite); do not treat colliding extras as this change
-- [ ] After production contract edits: `forge build` then `forge test` (FactoryService reads `out/`; tests can deploy stale bytecode)
+- [ ] After production contract edits: `forge build --use solar` then `forge test --use solar` (FactoryService reads `out/`; tests can deploy stale bytecode)
 
 ## Token policy (LOCKED)
 

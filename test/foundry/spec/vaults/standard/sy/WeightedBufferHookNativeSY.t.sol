@@ -73,7 +73,8 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
             uint256 amount_ = 5 ether;
             uint256 expected_ = sy_.previewDeposit(in_, amount_);
             uint256 paidBefore_ = IERC20(in_).balanceOf(user);
-            assertEq(IStandardExchangeIn(hook).previewExchangeIn(IERC20(in_), amount_, IERC20(hook)), expected_);
+            (uint256 previewAmountOut1,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(in_), amount_, IERC20(hook));
+            assertEq(previewAmountOut1, expected_);
             vm.prank(user);
             uint256 minted_ = sy_.deposit(user, in_, amount_, expected_);
             assertEq(minted_, expected_);
@@ -132,8 +133,7 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         vm.expectRevert();
         sy_.redeem(user, 1 ether, se0, type(uint256).max, false);
         IERC20(se0).transfer(hook, 1 ether);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(hook).exchangeIn(IERC20(se0), 1 ether, IERC20(hook), 0, user, true, block.timestamp);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(hook).exchangeIn(IERC20(se0), 1 ether, IERC20(hook), 0, user, true, block.timestamp);
         vm.stopPrank();
         AtomicPretransferCaller atomic = new AtomicPretransferCaller();
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
@@ -155,10 +155,10 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
     }
 
     function test_weightedStandardSwapsRemainSupplyNeutral() public {
-        uint256 supply_ = sy_.totalSupply();
-        uint256 quote_ = IStandardExchangeIn(hook).previewExchangeIn(token1, 1 ether, token0);
+        uint256 supply_ = sy_.totalSupply();(uint256 quote_,) = IStandardExchangeIn(hook).previewExchangeIn(token1, 1 ether, token0);
         vm.prank(user);
-        assertEq(IStandardExchangeIn(hook).exchangeIn(token1, 1 ether, token0, quote_, user, false, block.timestamp), quote_);
+        (uint256 exchangeAmountOut2,) = IStandardExchangeIn(hook).exchangeIn(token1, 1 ether, token0, quote_, user, false, block.timestamp);
+        assertEq(exchangeAmountOut2, quote_);
         assertEq(sy_.totalSupply(), supply_);
     }
 }

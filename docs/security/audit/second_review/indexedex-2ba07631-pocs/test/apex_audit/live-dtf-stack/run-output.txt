@@ -1,0 +1,234 @@
+forge test --match-path test/apex_audit/live-dtf-stack/LiveDtfStack.t.sol -vv --skip */bal-detf-bond-unlock/* */staking-no-killswitch/* */live-cp-hooks/* */p4-* */live-old-v4se/* */h2-admin-upgrade/*
+Compiling 2688 files with Solc 0.8.35
+Solc 0.8.35 finished in 146.62s
+Compiler run successful with warnings:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ran 6 tests for test/apex_audit/live-dtf-stack/LiveDtfStack.t.sol:LiveDtfStackTest
+[PASS] test_A_custodyRestingShareSweep_live() (gas: 674648)
+Logs:
+  block 26239730
+  custody self-share balance (live exposure) 0
+  victim deposit DTF 1000000000000000000000000
+  attacker swept shares 9999999999999999999999900000000000
+  attacker DTF profit (capital 0) 1000000000000000000000000
+
+[PASS] test_B_wethLegFrozen_live() (gas: 9829542)
+Logs:
+  block 26239730
+  hook preview 0.01 WETH->DETF 67219958802
+  detf preview 0.01 WETH->DETF 67191906972
+  hook WETH->DETF reverts, sel:
+  0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009
+  hook DETF->WETH reverts, sel:
+  0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009
+  DETF mint(WETH) reverts, sel:
+  0x1ba84b43000000000000000000000000999dae02d22e5fee1c4508430d5196d31d631009
+
+[PASS] test_C_detfSpotMint_sameLeg_live() (gas: 120227914)
+Logs:
+  block 26239730
+  syntheticPrice 8040842986451098722
+    liquidation value of inventory pre (DTF) 6093735446638549040763
+    liquidation value of inventory post(DTF) 6029912825752977834576
+  d(DETF 1e9) 0 m(DTF) 500000
+    pnl attack incl. inventory revaluation (DTF wei) -5817120120596643215679
+    pnl control(DTF wei) -5817120120596643215679
+    liquidation value of inventory pre (DTF) 6093735446638549040763
+    liquidation value of inventory post(DTF) 5974247423597645347117
+  d(DETF 1e9) 0 m(DTF) 1000000
+    pnl attack incl. inventory revaluation (DTF wei) -21655504226898959306072
+    pnl control(DTF wei) -21655504226898959306072
+    liquidation value of inventory pre (DTF) 6093735446638549040763
+    liquidation value of inventory post(DTF) 5815214060856674841280
+  d(DETF 1e9) 0 m(DTF) 3000000
+    pnl attack incl. inventory revaluation (DTF wei) -163511052577493799884188
+    pnl control(DTF wei) -163511052577493799884188
+    liquidation value of inventory pre (DTF) 7188621012563624595643613
+    liquidation value of inventory post(DTF) 7096025255367586487218506
+  d(DETF 1e9) 1000 m(DTF) 500000
+    pnl attack incl. inventory revaluation (DTF wei) -8768715257265739125287
+    pnl control(DTF wei) -3998891193469445333609
+    liquidation value of inventory pre (DTF) 7188621012563624595643613
+    liquidation value of inventory post(DTF) 7012725555932449245411418
+  d(DETF 1e9) 1000 m(DTF) 1000000
+    pnl attack incl. inventory revaluation (DTF wei) -24120893317408058451187
+    pnl control(DTF wei) -14883965168297814443047
+    liquidation value of inventory pre (DTF) 7188621012563624595643613
+    liquidation value of inventory post(DTF) 6763624273801372349271445
+  d(DETF 1e9) 1000 m(DTF) 3000000
+    pnl attack incl. inventory revaluation (DTF wei) -162225607082404229087800
+    pnl control(DTF wei) -116744890713122350750742
+    liquidation value of inventory pre (DTF) 17601848228556982195163502
+    liquidation value of inventory post(DTF) 17342661673867127864425100
+  d(DETF 1e9) 2000 m(DTF) 500000
+    pnl attack incl. inventory revaluation (DTF wei) -11031040246273638281272
+    pnl control(DTF wei) -2780003262985040861255
+    liquidation value of inventory pre (DTF) 17601848228556982195163502
+    liquidation value of inventory post(DTF) 17104516502814505782592754
+  d(DETF 1e9) 2000 m(DTF) 1000000
+    pnl attack incl. inventory revaluation (DTF wei) -25369292284300757217877
+    pnl control(DTF wei) -10236034068315243477962
+    liquidation value of inventory pre (DTF) 17601848228556982195163502
+    liquidation value of inventory post(DTF) 16366226389915386665301347
+  d(DETF 1e9) 2000 m(DTF) 3000000
+    pnl attack incl. inventory revaluation (DTF wei) -155517229233307258961683
+    pnl control(DTF wei) -81858184876987395931446
+
+[PASS] test_D_reenableCrossLegArb_whatIf() (gas: 9371955)
+Logs:
+  block 26239730
+  weth in 1000000000000000 weth out 2894475800631073
+  weth in 5000000000000000 weth out 14209552594713019
+  weth in 20000000000000000 weth out 53240546162267734
+  weth in 50000000000000000 weth out 118362450519965130
+  weth in 100000000000000000 weth out 200587271096018820
+  best profit wei WETH 100587271096018820
+  at input 100000000000000000
+
+[PASS] test_E_reenableCrossLegArb_total_whatIf() (gas: 16640824)
+Logs:
+  block 26239730
+  before
+    custody DTF 14832646451439727359744574
+    hook DETF   7298053220382
+    hook liqSE shares 2363429102804833127507538
+  after
+    custody DTF 10460662404137602112923477
+    hook DETF   7298053220382
+    hook liqSE shares 3351877352162116309806528
+  profitable loops 4
+  attacker WETH start 100000000000000000
+  attacker WETH end   214118996323698738
+
+[PASS] test_F_detfSpotMint_fullCycle_live() (gas: 129223073)
+Logs:
+  block 26239730
+  pre spot DTF per DETF 6093
+  d 1000 m 1000000
+    k 0
+    attacker DTF pnl -538145773888259884051849
+    hook value delta @p0 (DTF) 6810756183262650864757305
+    DETF supply delta (1e9) 1039751424385
+    post spot DTF per DETF 5534
+  d 1000 m 1000000
+    k 1
+    attacker DTF pnl -562314607639650444179962
+    hook value delta @p0 (DTF) 7889109529037328772887179
+    DETF supply delta (1e9) 1214493641166
+    post spot DTF per DETF 5430
+  d 1000 m 1000000
+    k 3
+    attacker DTF pnl -654743511070598259344477
+    hook value delta @p0 (DTF) 9910551112121325161957040
+    DETF supply delta (1e9) 1534247866349
+    post spot DTF per DETF 5266
+  d 1000 m 3000000
+    k 0
+    attacker DTF pnl -538145773888259884051849
+    hook value delta @p0 (DTF) 6810756183262650864757305
+    DETF supply delta (1e9) 1039751424385
+    post spot DTF per DETF 5534
+  d 1000 m 3000000
+    k 1
+    attacker DTF pnl -700371614396465932697169
+    hook value delta @p0 (DTF) 9896622173014746384852959
+    DETF supply delta (1e9) 1524375657547
+    post spot DTF per DETF 5288
+  d 1000 m 3000000
+    k 3
+    attacker DTF pnl -1223738695688765330789045
+    hook value delta @p0 (DTF) 15082022129690768065357853
+    DETF supply delta (1e9) 2297156845339
+    post spot DTF per DETF 5029
+  d 2000 m 1000000
+    k 0
+    attacker DTF pnl -1778234965668107698367138
+    hook value delta @p0 (DTF) 14232844977259054203293033
+    DETF supply delta (1e9) 2064483150484
+    post spot DTF per DETF 5331
+  d 2000 m 1000000
+    k 1
+    attacker DTF pnl -1803685542832753635001803
+    hook value delta @p0 (DTF) 15356020830990616246583865
+    DETF supply delta (1e9) 2246442708850
+    post spot DTF per DETF 5238
+  d 2000 m 1000000
+    k 3
+    attacker DTF pnl -1896520914251605731293037
+    hook value delta @p0 (DTF) 17469333805668946577400373
+    DETF supply delta (1e9) 2581358211140
+    post spot DTF per DETF 5090
+  d 2000 m 3000000
+    k 0
+    attacker DTF pnl -1778234965668107698367138
+    hook value delta @p0 (DTF) 14232844977259054203293033
+    DETF supply delta (1e9) 2064483150484
+    post spot DTF per DETF 5331
+  d 2000 m 3000000
+    k 1
+    attacker DTF pnl -1933788482086038509738491
+    hook value delta @p0 (DTF) 17448991866659262999091862
+    DETF supply delta (1e9) 2571808826931
+    post spot DTF per DETF 5106
+  d 2000 m 3000000
+    k 3
+    attacker DTF pnl -2443092762820810517995033
+    hook value delta @p0 (DTF) 22903754063794100527352488
+    DETF supply delta (1e9) 3391570708704
+    post spot DTF per DETF 4861
+  best attacker DTF pnl 0
+
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 16.02s (71.92s CPU time)
+
+Ran 1 test suite in 16.02s (16.02s CPU time): 6 tests passed, 0 failed, 0 skipped (6 total tests)
+[exit 0]

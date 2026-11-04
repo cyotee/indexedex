@@ -77,7 +77,7 @@ NETWORK_PROFILE=ethereum_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia/base \
 PUBLIC_SEPOLIA_SKIP_STAGE16=true \
-forge script scripts/foundry/public_sepolia/ethereum/Script_DeployAll.s.sol:Script_DeployAll \
+forge script --use solar scripts/foundry/public_sepolia/ethereum/Script_DeployAll.s.sol:Script_DeployAll \
   --rpc-url sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -98,7 +98,7 @@ SENDER=0xYourAddress \
 PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR=deployments/public_sepolia/ethereum \
 PUBLIC_SEPOLIA_BASE_OUT_DIR=deployments/public_sepolia/base \
 PUBLIC_SEPOLIA_SHARED_OUT_DIR=deployments/public_sepolia/shared \
-forge script scripts/foundry/public_sepolia/base/Script_05_CreateBridgeTokens.s.sol:Script_05_CreateBridgeTokens \
+forge script --use solar scripts/foundry/public_sepolia/base/Script_05_CreateBridgeTokens.s.sol:Script_05_CreateBridgeTokens \
   --rpc-url base_sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -125,7 +125,7 @@ This bridges the required balances from Ethereum Sepolia to the Base Sepolia wra
 SENDER=0xYourAddress \
 PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR=deployments/public_sepolia/ethereum \
 PUBLIC_SEPOLIA_SHARED_OUT_DIR=deployments/public_sepolia/shared \
-forge script scripts/foundry/public_sepolia/ethereum/Script_17_BridgeTokensToBase.s.sol:Script_17_BridgeTokensToBase \
+forge script --use solar scripts/foundry/public_sepolia/ethereum/Script_17_BridgeTokensToBase.s.sol:Script_17_BridgeTokensToBase \
   --rpc-url sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -153,7 +153,7 @@ NETWORK_PROFILE=base_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/base \
 REMOTE_OUT_DIR=deployments/public_sepolia/ethereum \
 PUBLIC_SEPOLIA_SKIP_STAGE16=true \
-forge script scripts/foundry/public_sepolia/base/Script_DeployAll.s.sol:Script_DeployAll \
+forge script --use solar scripts/foundry/public_sepolia/base/Script_DeployAll.s.sol:Script_DeployAll \
   --rpc-url base_sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -170,7 +170,7 @@ Outputs written here:
 ```bash
 SENDER=0xYourAddress \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/ethereum \
-forge script scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
+forge script --use solar scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
   --rpc-url sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -183,7 +183,7 @@ forge script scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.so
 ```bash
 SENDER=0xYourAddress \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/base \
-forge script scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
+forge script --use solar scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
   --rpc-url base_sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -203,7 +203,7 @@ SENDER=0xYourAddress \
 NETWORK_PROFILE=ethereum_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia/base \
-forge script scripts/foundry/public_sepolia/ethereum/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
+forge script --use solar scripts/foundry/public_sepolia/ethereum/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -218,7 +218,7 @@ SENDER=0xYourAddress \
 NETWORK_PROFILE=base_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/base \
 REMOTE_OUT_DIR=deployments/public_sepolia/ethereum \
-forge script scripts/foundry/public_sepolia/base/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
+forge script --use solar scripts/foundry/public_sepolia/base/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url base_sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -237,7 +237,7 @@ Outputs written here:
 SENDER=0xYourAddress \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia/base \
-forge script scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
+forge script --use solar scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
   --rpc-url sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -251,7 +251,7 @@ forge script scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.so
 SENDER=0xYourAddress \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/base \
 REMOTE_OUT_DIR=deployments/public_sepolia/ethereum \
-forge script scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
+forge script --use solar scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
   --rpc-url base_sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -378,7 +378,7 @@ NETWORK_PROFILE=ethereum_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/base \
 PUBLIC_SEPOLIA_SKIP_STAGE16=true \
-forge script scripts/foundry/public_sepolia/ethereum/Script_DeployAll.s.sol:Script_DeployAll \
+forge script --use solar scripts/foundry/public_sepolia/ethereum/Script_DeployAll.s.sol:Script_DeployAll \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -392,7 +392,7 @@ SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR=deployments/public_sepolia_supersim/ethereum \
 PUBLIC_SEPOLIA_BASE_OUT_DIR=deployments/public_sepolia_supersim/base \
 PUBLIC_SEPOLIA_SHARED_OUT_DIR=deployments/public_sepolia_supersim/shared \
-forge script scripts/foundry/public_sepolia/base/Script_05_CreateBridgeTokens.s.sol:Script_05_CreateBridgeTokens \
+forge script --use solar scripts/foundry/public_sepolia/base/Script_05_CreateBridgeTokens.s.sol:Script_05_CreateBridgeTokens \
   --rpc-url http://127.0.0.1:9545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -405,7 +405,7 @@ Stage 2B:
 SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR=deployments/public_sepolia_supersim/ethereum \
 PUBLIC_SEPOLIA_SHARED_OUT_DIR=deployments/public_sepolia_supersim/shared \
-forge script scripts/foundry/public_sepolia/ethereum/Script_17_BridgeTokensToBase.s.sol:Script_17_BridgeTokensToBase \
+forge script --use solar scripts/foundry/public_sepolia/ethereum/Script_17_BridgeTokensToBase.s.sol:Script_17_BridgeTokensToBase \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -434,7 +434,7 @@ NETWORK_PROFILE=base_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/base \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/ethereum \
 PUBLIC_SEPOLIA_SKIP_STAGE16=true \
-forge script scripts/foundry/public_sepolia/base/Script_DeployAll.s.sol:Script_DeployAll \
+forge script --use solar scripts/foundry/public_sepolia/base/Script_DeployAll.s.sol:Script_DeployAll \
   --rpc-url http://127.0.0.1:9545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -446,7 +446,7 @@ Stage 4A:
 ```bash
 SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/ethereum \
-forge script scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
+forge script --use solar scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -458,7 +458,7 @@ Stage 4B:
 ```bash
 SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/base \
-forge script scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
+forge script --use solar scripts/foundry/supersim/Script_24_DeploySuperchainBridgeInfra.s.sol:Script_24_DeploySuperchainBridgeInfra \
   --rpc-url http://127.0.0.1:9545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -472,7 +472,7 @@ SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 NETWORK_PROFILE=ethereum_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/base \
-forge script scripts/foundry/public_sepolia/ethereum/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
+forge script --use solar scripts/foundry/public_sepolia/ethereum/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -486,7 +486,7 @@ SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 NETWORK_PROFILE=base_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/base \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/ethereum \
-forge script scripts/foundry/public_sepolia/base/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
+forge script --use solar scripts/foundry/public_sepolia/base/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url http://127.0.0.1:9545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -499,7 +499,7 @@ Stage 6A:
 SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/base \
-forge script scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
+forge script --use solar scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -512,7 +512,7 @@ Stage 6B:
 SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/base \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/ethereum \
-forge script scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
+forge script --use solar scripts/foundry/supersim/Script_25_ConfigureProtocolDetfBridge.s.sol:Script_25_ConfigureProtocolDetfBridge \
   --rpc-url http://127.0.0.1:9545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \

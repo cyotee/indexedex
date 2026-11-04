@@ -29,9 +29,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
     function _mintSeShares(address to_, uint256 underlyingAmt_) internal returns (uint256 shares_) {
         uint256 stataShares_ = _acquireStata(to_, underlyingAmt_);
         vm.startPrank(to_);
-        IERC20(realStata).approve(realVault, stataShares_);
-        shares_ = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), stataShares_, IERC20(realVault), 0, to_, false, _deadline()
+        IERC20(realStata).approve(realVault, stataShares_);(shares_,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), stataShares_, IERC20(realVault), 0, to_, false, _deadline()
         );
         vm.stopPrank();
         assertGt(shares_, 0, "minted SE shares");
@@ -50,9 +48,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
 
         uint256 pullStata_ = _acquireStata(attacker, pull_);
         vm.startPrank(attacker);
-        IERC20(realStata).approve(realVault, pullStata_);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), pullStata_, IERC20(realVault), 0, attacker, false, _deadline()
+        IERC20(realStata).approve(realVault, pullStata_);IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), pullStata_, IERC20(realVault), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -61,9 +57,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 invBefore_ = IERC20(realStata).balanceOf(realVault);
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), residualStata_, IERC20(realVault), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), residualStata_, IERC20(realVault), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(realVault).totalSupply(), supplyBefore_, "I1: no free SE mint");
@@ -80,18 +74,14 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
 
         uint256 dust_ = _acquireStata(attacker, _u(1));
         vm.startPrank(attacker);
-        IERC20(realStata).approve(realVault, dust_);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), dust_, IERC20(realVault), 0, attacker, false, _deadline()
+        IERC20(realStata).approve(realVault, dust_);IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), dust_, IERC20(realVault), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
         uint256 supplyBefore_ = IERC20(realVault).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(realVault).totalSupply(), supplyBefore_, "FreeMint blocked");
@@ -104,18 +94,14 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
 
         _fundUnderlying(_u(1), attacker);
         vm.startPrank(attacker);
-        IERC20(realBase).approve(realVault, _u(1));
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), _u(1), IERC20(realVault), 0, attacker, false, _deadline()
+        IERC20(realBase).approve(realVault, _u(1));IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), _u(1), IERC20(realVault), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
 
         uint256 supplyBefore_ = IERC20(realVault).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realBase), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);IStandardExchangeIn(realVault).exchangeIn(IERC20(realBase), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
         );
 
         assertEq(IERC20(realVault).totalSupply(), supplyBefore_, "base FreeMint blocked");
@@ -128,9 +114,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
 
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
+        );IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
         );
     }
 
@@ -139,9 +123,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 amount_ = _testAmt();
         uint256 stataShares_ = _acquireStata(attacker, amount_);
         vm.startPrank(attacker);
-        IERC20(realStata).approve(realVault, stataShares_);
-        uint256 out_ = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), stataShares_, IERC20(realVault), 0, attacker, false, _deadline()
+        IERC20(realStata).approve(realVault, stataShares_);(uint256 out_,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), stataShares_, IERC20(realVault), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertEq(out_, stataShares_, "1:1 first deposit");
@@ -208,14 +190,10 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
     function test_E1_mintRedeemRoundTrip_bounded() public {
         uint256 paid = _acquireStata(attacker, _testAmt());
         vm.startPrank(attacker);
-        IERC20(realStata).approve(realVault, paid);
-        uint256 shares = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), paid, IERC20(realVault), 1, attacker, false, _deadline()
+        IERC20(realStata).approve(realVault, paid);(uint256 shares,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), paid, IERC20(realVault), 1, attacker, false, _deadline()
         );
         uint256 expected = Math.mulDiv(shares, IERC20(realStata).balanceOf(realVault), IERC20(realVault).totalSupply());
-        uint256 beforeStata = IERC20(realStata).balanceOf(attacker);
-        uint256 received = IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realVault), shares, IERC20(realStata), expected, attacker, false, _deadline()
+        uint256 beforeStata = IERC20(realStata).balanceOf(attacker);(uint256 received,) = IStandardExchangeIn(realVault).exchangeIn(IERC20(realVault), shares, IERC20(realStata), expected, attacker, false, _deadline()
         );
         vm.stopPrank();
         assertEq(received, expected, "independent proportional redemption");
@@ -238,9 +216,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
     function test_E5_zeroAmount_noFreeMint() public {
         uint256 supplyBefore_ = IERC20(realVault).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(StataIn.InvalidStataPayment.selector);
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), 0, IERC20(realVault), 0, attacker, false, _deadline()
+        vm.expectRevert(StataIn.InvalidStataPayment.selector);IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), 0, IERC20(realVault), 0, attacker, false, _deadline()
         );
         assertEq(IERC20(realVault).balanceOf(attacker), 0, "E5 no free shares");
         assertEq(IERC20(realVault).totalSupply(), supplyBefore_, "E5 supply unchanged");
@@ -254,9 +230,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 stataShares_ = _acquireStata(attacker, amount_);
         vm.startPrank(attacker);
         IERC20(realStata).approve(realVault, stataShares_);
-        vm.expectRevert(abi.encodeWithSelector(StataCommon.InvalidStataRoute.selector, realStata, address(junk_)));
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), stataShares_, IERC20(address(junk_)), 0, attacker, false, _deadline()
+        vm.expectRevert(abi.encodeWithSelector(StataCommon.InvalidStataRoute.selector, realStata, address(junk_)));IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), stataShares_, IERC20(address(junk_)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
     }
@@ -271,9 +245,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
 
         vm.startPrank(attacker);
         IERC20(realStata).approve(realVault, stataShares_);
-        vm.expectRevert(abi.encodeWithSelector(StataIn.StataSlippage.selector, stataShares_ + 1, stataShares_));
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), stataShares_, IERC20(realVault), stataShares_ + 1, attacker, false, _deadline()
+        vm.expectRevert(abi.encodeWithSelector(StataIn.StataSlippage.selector, stataShares_ + 1, stataShares_));IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), stataShares_, IERC20(realVault), stataShares_ + 1, attacker, false, _deadline()
         );
         vm.stopPrank();
 
@@ -290,9 +262,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
 
         vm.startPrank(attacker);
         IERC20(realStata).approve(realVault, stataShares_);
-        vm.expectRevert(abi.encodeWithSelector(StataIn.StataSlippage.selector, uint256(type(uint128).max), stataShares_));
-        IStandardExchangeIn(realVault).exchangeIn(
-            IERC20(realStata), stataShares_, IERC20(realVault), type(uint128).max, attacker, false, _deadline()
+        vm.expectRevert(abi.encodeWithSelector(StataIn.StataSlippage.selector, uint256(type(uint128).max), stataShares_));IStandardExchangeIn(realVault).exchangeIn(IERC20(realStata), stataShares_, IERC20(realVault), type(uint128).max, attacker, false, _deadline()
         );
         vm.stopPrank();
 
