@@ -112,7 +112,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
     function rawReserve(uint8 i) public view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address t = Repo._tokenAt(l, i);
-        if (Repo._seAt(l, i) != address(0)) return 0;
         return l.reserves[t];
     }
 
@@ -121,7 +120,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         Repo.Layout storage l = Repo._layout();
         address se = Repo._seAt(l, i);
         if (se == address(0)) return 0;
-        return IERC20(se).balanceOf(address(this));
+        return l.seShares[se];
     }
 
 
@@ -130,7 +129,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         address se = Repo._seAt(l, i);
         if (se == address(0)) return 0;
         // D60: the held SE reserve is valued through the leg's rate provider, never through the SE's quotes.
-        return ClaimLib.effectiveNative(se, Repo._rpAt(l, i), Repo._tokenAt(l, i), 0, IERC20(se).balanceOf(address(this)));
+        return ClaimLib.effectiveNative(se, Repo._rpAt(l, i), Repo._tokenAt(l, i), 0, l.seShares[se]);
     }
 
 
@@ -402,8 +401,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         if (l.legs.pairTokens._contains(l.token2)) n[w_++] = l.token2;
     }
 
-    function requiredFirstBondTokens() public view returns (address[] memory) {
-        return tokens();
+    function requiredFirstBondTokens() public view returns (address[] memory required) {
+        Repo.Layout storage l = Repo._layout();
+        required = new address[](3);
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            required[i] = se == address(0) ? Repo._tokenAt(l, i) : se;
+        }
     }
 
     function firstJoinMustBeFullBook() public pure returns (bool) {

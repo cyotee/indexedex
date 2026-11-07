@@ -8,14 +8,12 @@ import {
 
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookRepo
- * @notice Diamond storage: 4-token binding, optional SE/RP per leg, dual scales, kLast, lock.
+ * @notice Diamond storage: four-token bindings, separate component books, dual scales and lock.
  * @dev Slot: indexedex.hooks.uv4.se.stable.quad.buffer.storage
  *      LP ERC-20 uses shared ERC20Repo; vaultTokens use MultiAssetBasicVaultRepo.
- *      Live inventory (D21): raw = face balanceOf(hook) (donations dilute LP);
- *      SE inventory = SE share balanceOf(hook); retained pair tokens have a separate funding baseline.
- *      rawReserves[i] = raw-leg book or retained SE-leg pair balance for the funding gate
- *      (free_raw = bal - rawReserves; inventory cannot fund pretransfer).
- *      I1 freeze: kLast = geometricMean4(invWad0..3).
+ *      rawReserves[i] is the booked raw/local pair component; seReserves[i] is the booked share component.
+ *      Ambient custody and pending caller inventory are excluded from both.
+ *      kLast is retained for storage/selector compatibility and no longer accrues a growth fee.
  *      DETF-facing membership is `legs` (AddressSetRepo); do not scan tokens() at runtime.
  */
 library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
@@ -52,12 +50,14 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
         uint256[4] ratedScales;
         uint8[4] pairDecimals;
         uint8[4] invDecimals;
-        /// @dev Raw-leg inventory baseline; on SE legs, recorded retained pair-token balance.
+        /// @dev Booked raw tokens or local pair tokens; never an ambient balance snapshot.
         uint256[4] rawReserves;
         /// @dev Append-only: set by finalizeInitialization after all six product doors are live.
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
         UniswapV4SeBufferHookLegLib.Layout legs;
+        /// @dev Pool-owned SE shares only. Pending and unsolicited custody is not backing.
+        uint256[4] seReserves;
     }
 
     function _layout() internal pure returns (Layout storage l) {

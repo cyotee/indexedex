@@ -20,6 +20,11 @@ library UniswapV4SingleStandardExchangeBufferHookRepo {
         bool wrapZeroForOne;
         bool bindingsInitialized;
         bool initializationFinalized;
+        // Deployment authority, independent of this conversion-only product's zero feeOracle.
+        address vaultRegistry;
+        // Only operation-created residuals. Ambient transfers are never booked or spent.
+        uint256 retainedPair;
+        uint256 retainedShares;
     }
 
     function _layout() internal pure returns (Layout storage l) {

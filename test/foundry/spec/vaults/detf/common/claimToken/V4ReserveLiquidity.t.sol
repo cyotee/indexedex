@@ -375,6 +375,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
     function test_customBondQuoteIncludesWrappingBeforeIssuance() public {
         IUniswapV4Detf subject = _activateFallbackInstance();
         (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
+        _assertWrappedBondProjection(subject, input, shares);
         CustomBondQuote memory quoted;
         (, quoted.principal, quoted.rewards, quoted.liquidity) = subject.previewBond(input, shares, 30 days);
         assertGt(quoted.principal, 0);
@@ -395,6 +396,44 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         _assertAcquiredProtocolLp(subject, owned, lpAdded);
         assertGt(lpAdded, 0, "ordinary payment adds a matching liquidity leg");
         assertGt(nft.previewClaim(id).rewardsDue, 0, "new funded bond earns its immediate staking reward");
+    }
+
+    function _assertWrappedBondProjection(IUniswapV4Detf subject, IERC20 input, uint256 amount) private {
+        address pair = _leadPayment();
+        uint256[3] memory projected;
+        (projected[0], projected[1], projected[2]) = IDetfReserveQuote(subject.hook()).previewBondAfterDeposit(
+            address(input), pair, address(subject), amount, 1e18
+        );
+        uint256 checkpoint = vm.snapshotState();
+        uint256 pairValue;
+        {
+            address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(pair);
+            vm.startPrank(_buyer());
+            input.approve(se, amount);
+            (uint256 acquired,) = IStandardExchangeIn(se).exchangeIn(input, amount, IERC20(se), 0, _buyer(), false, block.timestamp);
+            vm.stopPrank();
+            (pairValue,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), acquired, IERC20(pair));
+        }
+        assertEq(projected[0], pairValue, "projected caller share value matches actual wrapping");
+        {
+            (uint256 purchased,) = IStandardExchangeIn(subject.hook()).previewExchangeIn(
+                IERC20(pair), pairValue, IERC20(address(subject))
+            );
+            assertEq(projected[1], purchased, "projected purchase matches post-wrap issuance quote");
+        }
+        uint256[] memory quantities = IUniswapV4SeBufferHook(subject.hook()).previewExitProportional(
+            IERC20(subject.hook()).totalSupply()
+        );
+        address[] memory tokens = IUniswapV4SeBufferHook(subject.hook()).tokens();
+        uint256 raw;
+        uint256 backing;
+        for (uint256 i; i < tokens.length; ++i) {
+            if (tokens[i] == address(subject)) raw = quantities[i];
+            if (tokens[i] == pair) backing = quantities[i];
+        }
+        assertGt(backing, 0);
+        assertEq(projected[2], raw * pairValue / backing, "projected native reserve-ratio liquidity");
+        assertTrue(vm.revertToStateAndDelete(checkpoint));
     }
 
     function _assertAcquiredProtocolLp(IUniswapV4Detf subject, uint256 ownedBefore, uint256 joined) private {
@@ -486,12 +525,28 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         address buyer_ = _buyer();
         vm.startPrank(buyer_);
         lp_.approve(address(receiver_), amount_);
+        vm.recordLogs();
         uint256 received_ = receiver_.donate(lp_, amount_, amount_, false, block.timestamp);
         vm.stopPrank();
         assertEq(received_, amount_, "whole external LP received");
         assertEq(lp_.balanceOf(buyer_), 0, "external ownership transferred");
-        assertEq(lp_.balanceOf(address(receiver_)), owned_ + amount_, "actual protocol custody credited once");
-        assertEq(lp_.totalSupply(), lpSupply_, "gift needs no new LP join or unwind");
+        Vm.Log[] memory logs_ = vm.getRecordedLogs();
+        uint256 minted_;
+        uint256 custodyMinted_;
+        for (uint256 i_; i_ < logs_.length; ++i_) {
+            if (logs_[i_].emitter != address(lp_) || logs_[i_].topics.length != 3
+                || logs_[i_].topics[0] != keccak256("Transfer(address,address,uint256)")) continue;
+            assertTrue(logs_[i_].topics[2] != bytes32(0), "gift must not unwind existing LP");
+            if (logs_[i_].topics[1] == bytes32(0)) {
+                uint256 value_ = abi.decode(logs_[i_].data, (uint256));
+                minted_ += value_;
+                if (address(uint160(uint256(logs_[i_].topics[2]))) == address(receiver_)) custodyMinted_ += value_;
+            }
+        }
+        // External liquidity can make previously sub-quantum protocol capital
+        // joinable. Its sweep mint is separate from the unchanged whole-LP gift.
+        assertEq(lp_.balanceOf(address(receiver_)), owned_ + amount_ + custodyMinted_, "gift and sweep receipts credited once");
+        assertEq(lp_.totalSupply(), lpSupply_ + minted_, "only observed residual-sweep mints change LP supply");
         assertEq(IERC20(address(subject_)).totalSupply(), supply_, "existing LP gift has no DETF issuance");
         assertEq(keccak256(abi.encode(staking_.stakingState())), state_, "LP gift neither creates staking backing nor purchased principal");
     }

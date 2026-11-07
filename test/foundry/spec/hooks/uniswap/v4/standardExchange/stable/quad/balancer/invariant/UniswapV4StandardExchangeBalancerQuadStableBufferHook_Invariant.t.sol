@@ -29,11 +29,16 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Invariant is Test
         c.tokens[1] = token1;
         c.tokens[2] = token2;
         c.tokens[3] = token3;
+        c.standardExchanges = new address[](c.tokens.length);
+        for (uint256 i; i < c.tokens.length; ++i) {
+            c.standardExchanges[i] = quad.standardExchange(i);
+        }
         c.input = address(token0);
         c.output = address(token1);
         c.inputSE = se0;
         c.inputVault = address(vault0);
         c.feeRecipient = address(feeCollector);
+        c.feeOracle = address(indexedexManager);
         c.router = route_;
         c.key = poolKey01;
         c.observedTokens = new IERC20[](7);

@@ -222,6 +222,11 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
 
     function _joinAll(uint256 faceAmt, uint256 otherHuman) internal returns (uint256 shares, uint256 usedFace) {
         uint256[] memory amounts = _amounts(faceAmt, otherHuman);
+        if (IERC20(hook).totalSupply() == 0) {
+            uint256 beforeFace = IERC20(face).balanceOf(user);
+            shares = _seedFromPairs(amounts);
+            return (shares, beforeFace - IERC20(face).balanceOf(user));
+        }
         uint256[] memory used;
         vm.prank(user);
         (shares, used) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
@@ -297,13 +302,14 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
         uint256 allow = _f(10);
         fx.limitCapacity(allow);
         uint256 bookedBefore = fx.seBooked();
+        uint256 localBefore = IERC20(face).balanceOf(hook);
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 seBefore = _hookSeShares();
         (, uint256 usedFace) = _joinAll(_f(50), 50);
         assertGt(usedFace, allow, "join used more face than the dependency could take");
         assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "no refund of the unconsumed part");
         uint256 booked = fx.seBooked() - bookedBefore;
-        assertGe(booked, usedFace - allow, "SE booked the remainder above capacity");
+        assertGe(booked + IERC20(face).balanceOf(hook) - localBefore, usedFace - allow, "SE and hook local books retain the remainder above capacity");
         assertLe(booked, usedFace, "booked remainder never exceeds what was used");
         assertGt(_hookSeShares(), seBefore, "hook still receives SE shares for the booked input");
         fx.openCapacity();
@@ -321,20 +327,19 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
         _roundingToZeroControl();
     }
 
-    function _positiveOneUnitDepositControl(uint256 expectedShares) internal {
+    function _positiveSmallDepositControl(uint256 amount) internal {
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 userShares = IERC20(hook).balanceOf(user);
-        uint256 hookFace = IERC20(face).balanceOf(hook);
-        uint256 inventoryBefore = _hookSeShares();(uint256 expectedInventory,) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), 1, IERC20(seUT));
-        assertGt(expectedShares, 0, "positive one-unit fixture");
-        assertEq(quad.previewDepositSingle(face, 1), expectedShares, "one-unit preview preserves positive shares");
-        vm.prank(user);
-        uint256 minted = quad.depositSingle(face, 1, user, expectedShares, block.timestamp + 1 hours);
-        assertEq(minted, expectedShares, "one-unit execution matches preview");
-        assertEq(IERC20(hook).balanceOf(user) - userShares, expectedShares, "recipient receives quoted shares");
-        assertEq(userFace - IERC20(face).balanceOf(user), 1, "caller pays one face unit");
-        assertEq(_hookSeShares() - inventoryBefore, expectedInventory, "input becomes SE inventory");
-        assertEq(IERC20(face).balanceOf(hook), hookFace, "no new face residual");
+        uint256[] memory amounts = _amounts(amount, 1);
+        (uint256 expectedShares, uint256[] memory expectedUsed) = quad.previewJoinProportional(amounts);
+        assertGt(expectedShares, 0, "complete native budgets fund every ceil component");
+        (uint256 minted, uint256 spent) = _joinAll(amount, 1);
+        assertEq(minted, expectedShares);
+        assertEq(IERC20(hook).balanceOf(user) - userShares, expectedShares);
+        assertEq(userFace - IERC20(face).balanceOf(user), spent);
+        assertEq(spent, expectedUsed[_legIndex(face)]);
+        assertGt(spent, 0);
+        assertLe(spent, amount, "only caller budget spent; unused assets refunded");
     }
 
     /// @dev A zero-rounded deposit previews zero and rejects execution without taking input.
@@ -392,7 +397,8 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
-        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
+        uint256 local = IERC20(face).balanceOf(hook);
+        uint256 expectedDebit = wantOut <= local ? 0 : IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut - local);
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
@@ -447,34 +453,39 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix
 
     function test_row_poolManagerSwap_bothDirections_noFaceResidual() public virtual {
         _seed();
-        uint256[] memory resting = _hookFaceBalances();
-        uint256 uFace = IERC20(face).balanceOf(user);
-        uint256 uOther = IERC20(other).balanceOf(user);
-        uint256 oneOther = _legAmt(otherIdx, 1);
+        _assertLocalExactIn(faceIdx, otherIdx, _f(1));
+        _assertLocalExactIn(otherIdx, faceIdx, _legAmt(otherIdx, 1));
+        _assertLocalExactOut(faceIdx, otherIdx, _legAmt(otherIdx, 1) / 2);
+        _assertLocalExactOut(otherIdx, faceIdx, _f(1) / 2);
+    }
 
-        _swapExactIn(face, other, _f(1));
-        assertGt(IERC20(other).balanceOf(user), uOther, "exact-in face->other paid");
-        uOther = IERC20(other).balanceOf(user);
-        uFace = IERC20(face).balanceOf(user);
+    function _assertLocalExactIn(uint256 i, uint256 j, uint256 amount) private {
+        address input = legTokens[i]; address output = legTokens[j];
+        uint256 quoted = quad.previewSwapExactIn(input, output, amount);
+        uint256 localIn = IERC20(input).balanceOf(hook);
+        uint256 localOut = IERC20(output).balanceOf(hook);
+        uint256 refund;
+        if (legSes[i] != address(0)) (, refund) = IStandardExchangeIn(legSes[i]).previewExchangeIn(IERC20(input), amount, IERC20(legSes[i]));
+        uint256 recipientBefore = IERC20(output).balanceOf(user);
+        _swapExactIn(input, output, amount);
+        assertEq(IERC20(output).balanceOf(user) - recipientBefore, quoted, "quoted actual-route payout");
+        assertEq(IERC20(input).balanceOf(hook), localIn + (legSes[i] == address(0) ? amount : refund), "only attributed intake enters local book");
+        assertEq(IERC20(output).balanceOf(hook), localOut > quoted ? localOut - quoted : 0, "local-first output debit");
+    }
 
-        _swapExactIn(other, face, oneOther);
-        assertGt(IERC20(face).balanceOf(user), uFace, "exact-in other->face paid");
-        uFace = IERC20(face).balanceOf(user);
-        uOther = IERC20(other).balanceOf(user);
-
-        uint256 quoteOut = quad.previewSwapExactIn(face, other, _f(1));
-        _swapExactOut(face, other, quoteOut / 2);
-        assertEq(IERC20(other).balanceOf(user) - uOther, quoteOut / 2, "exact-out face->other delivers the request");
-        uFace = IERC20(face).balanceOf(user);
-
-        _swapExactOut(other, face, _f(1) / 2);
-        assertEq(IERC20(face).balanceOf(user) - uFace, _f(1) / 2, "exact-out other->face delivers the request");
-
-        uint256[] memory closing = _hookFaceBalances();
-        for (uint256 i; i < LEGS; ++i) {
-            if (legSes[i] == address(0)) continue;
-            assertApproxEqAbs(closing[i], resting[i], _residualTolerance(), "no operation-created face residual on a buffered leg");
-        }
+    function _assertLocalExactOut(uint256 i, uint256 j, uint256 output) private {
+        address input = legTokens[i]; address tokenOut = legTokens[j];
+        uint256 local = IERC20(tokenOut).balanceOf(hook);
+        assertGe(local, output, "seed supplies this local-only output case");
+        uint256 sharesBefore = legSes[j] == address(0) ? 0 : IERC20(legSes[j]).balanceOf(hook);
+        uint256 amount = quad.previewSwapExactOut(input, tokenOut, output);
+        uint256 beforeInput = IERC20(input).balanceOf(user);
+        uint256 beforeOutput = IERC20(tokenOut).balanceOf(user);
+        _swapExactOut(input, tokenOut, output);
+        assertEq(beforeInput - IERC20(input).balanceOf(user), amount);
+        assertEq(IERC20(tokenOut).balanceOf(user) - beforeOutput, output);
+        assertEq(IERC20(tokenOut).balanceOf(hook), local - output);
+        if (legSes[j] != address(0)) assertEq(IERC20(legSes[j]).balanceOf(hook), sharesBefore, "sufficient local output does not redeem");
     }
 
     function test_row_seFailure_rollsBack() public virtual {

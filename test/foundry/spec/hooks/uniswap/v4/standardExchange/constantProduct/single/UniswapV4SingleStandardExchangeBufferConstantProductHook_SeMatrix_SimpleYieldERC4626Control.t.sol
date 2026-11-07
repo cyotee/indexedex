@@ -28,26 +28,21 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_Simpl
         return new SeMatrix_SimpleYieldERC4626ControlFixture(_ctx(), erc4626StandardExchangeDFPkg, 18);
     }
 
-    /// @dev Production check retained from the original row, asserted on the observed path. This
-    ///      package validates addresses and decimals only (`_validateArgs` in the family DFPkg has no
-    ///      SE-surface probe, and neither `Repo._initializeBindings` nor the registry's
-    ///      `deployHookVault` probes the candidate), so a bare protocol vault deploys and registers.
-    ///      The first buffering operation probes `previewExchangeIn` on the candidate
-    ///      (`_bufferPair` in DepositCommon); `SimpleYieldERC4626` has neither that selector nor a
-    ///      fallback, so the deposit reverts with empty data, which the hook propagates unchanged.
+    /// @dev A bare yield stub is not wrapper-share inventory and has no `vaultTokens()`. Bind rejects
+    ///      it. `asset()` is not enough to deploy.
     function test_control_bareProtocolVault_rejectedAtFirstBuffer() public {
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchange = address(pairProtocolVault);
+        vm.expectRevert(
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.TokenNotInVaultTokens.selector
+        );
+        this.deployBare(args);
+    }
+
+    function deployBare(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args)
+        external
+    {
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
-        address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
-        assertTrue(h.code.length > 0, "package accepted the bare vault at init");
-        assertTrue(_registry().isVault(h), "registered through the vault registry");
-        _ensureProductDoorsAndFinalize(h, address(rawToken), address(pairToken));
-        vm.startPrank(user);
-        rawToken.approve(h, type(uint256).max);
-        pairToken.approve(h, type(uint256).max);
-        vm.expectRevert(bytes(""));
-        IHook(h).deposit(100 ether, 100 ether, user, 0, block.timestamp + 1 hours);
-        vm.stopPrank();
+        PkgFactory.deployHook(hookPkg, args, mineNonce);
     }
 }

@@ -66,7 +66,7 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
 
     /// @notice Legacy V3 zero-share residuals stay booked across retries and cannot fund an unpaid mint.
     function test_DN22_legacyV3Residual_booked_repeatSweep_noFreePretransfer() public {
-        test_DN22_donate_whilePoolManagerUnlocked();
+        _firstBond(80 ether);
         (IERC20 pair_, address se_, uint256 retained_) = _legacyZeroShareResidual();
         Uv4DetfDonateDuringUnlockHarness harness_ = new Uv4DetfDonateDuringUnlockHarness(pm);
         bytes32 before_ = _legacyResidualState(pair_, se_);
@@ -87,15 +87,23 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
 
     /// @notice New real capital makes a previously zero-share residual joinable on a later sweep.
     function test_DN22_legacyV3Residual_laterFundedRetry() public {
-        test_DN22_donate_whilePoolManagerUnlocked();
+        _firstBond(80 ether);
         (IERC20 pair_, address se_, uint256 retained_) = _legacyZeroShareResidual();
         // Derive a small, mintable top-up from this book, with room for the
         // hook's used-input rounding rather than retrying exactly at one share.
         uint256 topUp_ = retained_;
+        address[] memory tokens_ = new address[](1);
+        uint256[] memory amounts_ = new uint256[](1);
+        tokens_[0] = address(pair_);
         for (uint256 i_; i_ < 64; ++i_) {
-            if (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se_))), pair_, retained_ + topUp_, IERC20(se_)) >= 1024) break;
+            amounts_[0] = retained_ + topUp_;
+            if (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se_))), pair_, amounts_[0], IERC20(se_)) >= 1024
+                && IUniswapV4SeBufferHook(reserveHook).previewJoinUnbalanced(tokens_, amounts_) != 0) break;
             topUp_ *= 2;
         }
+        amounts_[0] = retained_ + topUp_;
+        assertGt(IUniswapV4SeBufferHook(reserveHook).previewJoinUnbalanced(tokens_, amounts_), 0,
+            "funded retry buys backed hook LP, not only SE shares");
         assertGt(topUp_, retained_, "fixture has real capital for retry");
         assertLe(topUp_, pair_.balanceOf(detfUser), "real holder funds the full top-up");
         (uint256 previewAmountOut1,) = IStandardExchangeIn(se_).previewExchangeIn(pair_, retained_ + topUp_, IERC20(se_));
@@ -116,19 +124,22 @@ contract UniswapV4Detf_Orbital_PonsV1Se_ProductLaw is
         assertEq(pair_.allowance(reserveHook, se_), 0, "SE allowance cleared");
     }
 
-    /// @dev Discover the actual terminal residual; do not depend on CREATE3 addresses or rounding constants.
-    function _legacyZeroShareResidual() private view returns (IERC20 pair_, address se_, uint256 retained_) {
+    /// @dev Fund a real zero-share remainder explicitly: successful cleanup need
+    /// not naturally leave one behind. Eleven units exceed the old dust cutoff.
+    function _legacyZeroShareResidual() private returns (IERC20 pair_, address se_, uint256 retained_) {
         address[] memory tokens_ = IUniswapV4SeBufferHook(reserveHook).tokens();
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             address candidateSe_ = IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(tokens_[i_]);
             if (candidateSe_ == address(0) || candidateSe_ == tokens_[i_]) continue;
-            uint256 balance_ = IERC20(tokens_[i_]).balanceOf(detf);
-            if (balance_ <= 10) continue;
+            uint256 balance_ = IERC20(tokens_[i_]).balanceOf(detf) + 11;
+            (uint256 previewAmountOut2,) = IStandardExchangeIn(candidateSe_).previewExchangeIn(IERC20(tokens_[i_]), balance_, IERC20(candidateSe_));
+            if (previewAmountOut2 != 0) continue;
             assertFalse(IERC165(candidateSe_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId),
                 "exercise explicit unsupported inverse");
-            (uint256 previewAmountOut2,) = IStandardExchangeIn(candidateSe_).previewExchangeIn(IERC20(tokens_[i_]), balance_, IERC20(candidateSe_));
-            assertEq(previewAmountOut2, 0,
-                "entire residual independently previews zero shares");
+            vm.prank(detfUser);
+            assertTrue(IERC20(tokens_[i_]).transfer(detf, 11), "real holder funds zero-share remainder");
+            detfInfo.sweepDust();
+            assertEq(IERC20(tokens_[i_]).balanceOf(detf), balance_, "zero-share capital remains owned");
             _assertPairResidualBooked(tokens_[i_], candidateSe_);
             return (IERC20(tokens_[i_]), candidateSe_, balance_);
         }

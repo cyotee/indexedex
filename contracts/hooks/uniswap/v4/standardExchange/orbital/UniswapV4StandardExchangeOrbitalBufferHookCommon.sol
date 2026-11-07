@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
-import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "./UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -171,9 +175,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
     function _legLive(Repo.Layout storage l, uint8 i) private view returns (bool) {
-        address se = Repo._seAt(l, i);
-        if (se == address(0)) return l.reserves[Repo._tokenAt(l, i)] > 0;
-        return IERC20(se).balanceOf(address(this)) > 0;
+        return l.reserves[Repo._tokenAt(l, i)] != 0 || l.seShares[Repo._seAt(l, i)] != 0;
     }
 
     /// @dev D89: owner may zap at MINIMUM_LIQUIDITY. Public still sees isZapEligible()==false.
@@ -346,7 +348,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         address t = Repo._tokenAt(l, i);
         address se = Repo._seAt(l, i);
         address rp = Repo._rpAt(l, i);
-        uint256 seBal = se == address(0) ? 0 : IERC20(se).balanceOf(address(this));
+        uint256 seBal = se == address(0) ? 0 : l.seShares[se];
         return ClaimLib.effectiveNative(se, rp, t, l.reserves[t], seBal);
     }
 
@@ -364,106 +366,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
     /// @dev Booked face for a raw leg, held SE shares for a buffered leg. Not a rate.
-    function _rawInventoryAt(uint8 i) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address se = Repo._seAt(l, i);
-        if (se == address(0)) return l.reserves[Repo._tokenAt(l, i)];
-        return IERC20(se).balanceOf(address(this));
-    }
-
-    function _rawSnap() private view returns (RawSnap memory s) {
-        s.b0 = _rawInventoryAt(0);
-        s.b1 = _rawInventoryAt(1);
-        s.b2 = _rawInventoryAt(2);
-    }
-
-    /// @dev Face input in ownership units. A zero SE mint is zero credit, not the face amount.
-    function _previewRawSharesFromFace(uint8 i, uint256 face) private view returns (uint256) {
-        if (face == 0) return 0;
-        Repo.Layout storage l = Repo._layout();
-        address se = Repo._seAt(l, i);
-        if (se == address(0)) return face;
-        return ClaimLib.previewBufferSharesIn(se, Repo._tokenAt(l, i), face);
-    }
-
-    function _rawOffered(uint8 i, uint256 amount, bool isShare) private view returns (uint256) {
-        if (isShare) return amount;
-        return _previewRawSharesFromFace(i, amount);
-    }
-
-    /// @dev Smallest face at or under `faceMax` whose forward share preview covers `required`.
-    ///      Raw and identity legs use the required amount itself. Zero means the max cannot back.
-    function _faceForRawShares(uint8 i, uint256 required, uint256 faceMax) private view returns (uint256) {
-        if (required == 0) return 0;
-        Repo.Layout storage l = Repo._layout();
-        address se = Repo._seAt(l, i);
-        address token = Repo._tokenAt(l, i);
-        if (se == address(0) || se == token) return required > faceMax ? 0 : required;
-        return _searchFaceForShares(i, required, faceMax);
-    }
-
-    function _searchFaceForShares(uint8 i, uint256 required, uint256 faceMax) private view returns (uint256) {
-        uint256 above = _previewRawSharesFromFace(i, faceMax);
-        if (above < required || faceMax == 0) return 0;
-        uint256 low = 1;
-        uint256 high = faceMax;
-        uint256 below;
-        uint256 probes;
-        while (low < high) {
-            uint256 mid = low + (high - low) / 2;
-            if (above > below && probes < 8) {
-                mid = low - 1 + FullPrecisionMath.mulDiv(required - below, high - low + 1, above - below);
-                if (mid < low) mid = low;
-                if (mid >= high) mid = high - 1;
-                unchecked { ++probes; }
-            }
-            uint256 got = _previewRawSharesFromFace(i, mid);
-            if (got >= required) {
-                high = mid;
-                above = got;
-            } else {
-                low = mid + 1;
-                below = got;
-            }
-        }
-        if (_previewRawSharesFromFace(i, low) < required) return 0;
-        return low;
-    }
-
-    function _usedForRawRequired(uint8 i, uint256 offered, bool isShare, uint256 required)
-        private
-        view
-        returns (uint256)
-    {
-        if (required == 0) return 0;
-        if (isShare) return required > offered ? 0 : required;
-        return _faceForRawShares(i, required, offered);
-    }
-
-    function _guardFlexibleFullBookBacking(uint256 supply, DepositFlexibleVars memory v, RawSnap memory before)
-        private
-        view
-    {
-        if (supply == 0 || v.shares == 0 || v.amount0 == 0 || v.amount1 == 0 || v.amount2 == 0) return;
-        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        if (e0 == 0 || e1 == 0 || e2 == 0) return;
-        _requireRawBacking(supply, v.shares, before);
-    }
-
-    function _requireRawBacking(uint256 supply, uint256 shares, RawSnap memory before) private view {
-        if (!Math.rawInventoryBacks(_deliveredRaw(0, before.b0), supply, shares, before.b0)
-            || !Math.rawInventoryBacks(_deliveredRaw(1, before.b1), supply, shares, before.b1)
-            || !Math.rawInventoryBacks(_deliveredRaw(2, before.b2), supply, shares, before.b2))
-        {
-            revert InsufficientTokenOut();
-        }
-    }
-
-    function _deliveredRaw(uint8 i, uint256 before) private view returns (uint256) {
-        uint256 nowBal = _rawInventoryAt(i);
-        if (nowBal < before) revert InsufficientTokenOut();
-        return nowBal - before;
-    }
 
 
     function _onlyPoolManager() internal view {
@@ -481,18 +383,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _feeOnAndShare()
-        internal
-        view
-        returns (bool feeOn, address feeTo_, uint256 ownerFeeShare, uint256 usageFeeWad)
-    {
-        IVaultFeeOracleQuery fo = _feeOracle();
-        feeTo_ = address(fo.feeTo());
-        usageFeeWad = fo.usageFeeOfVault(address(this));
-        ownerFeeShare = (usageFeeWad * Repo.FEE_DENOMINATOR) / Math.WAD;
-        feeOn = feeTo_ != address(0) && usageFeeWad != 0 && usageFeeWad < Math.WAD
-            && ownerFeeShare != 0;
-    }
+
 
 
     function _measureK(uint256 r0, uint256 r1, uint256 r2)
@@ -512,11 +403,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _rootFromStored(uint8 mode, uint256 kStored) internal pure returns (uint256) {
-        if (kStored == 0) return 0;
-        if (mode == 0) return Math.cbrt(kStored);
-        return kStored;
-    }
+
 
 
     function _take(Currency currency, address to, uint256 amount) internal {
@@ -568,11 +455,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     function _syncVaultReserves() internal {
         Repo.Layout storage l = Repo._layout();
-        // Identity legs custody their backing in the face token; keep its native-unit book.
-        for (uint8 i; i < 3; ++i) {
-            address token = Repo._tokenAt(l, i);
-            if (Repo._seAt(l, i) == token) l.reserves[token] = IERC20(token).balanceOf(address(this));
-        }
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token0), _effectiveNativeAt(0));
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token1), _effectiveNativeAt(1));
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token2), _effectiveNativeAt(2));
@@ -625,30 +507,43 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         return _bufferToken(token, amount, true);
     }
 
-    function _bufferToken(address token, uint256 amount, bool quoteMin_) internal returns (uint256 seOut) {
+    function _bufferToken(address token, uint256 amount, bool) internal returns (uint256 seOut) {
         if (amount == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
         address se = _seOf(token);
-        if (se == address(0)) {
-            Repo._layout().reserves[token] += amount;
+        if (se == address(0) || Repo._isDisabled(se)) {
+            l.reserves[token] += amount;
             return 0;
         }
-        if (se == token) return amount;
-        uint256 minOut;
-        if (quoteMin_) {(uint256 m,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
-            minOut = m;
-        }
-        IERC20(token).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
-        );
-        IERC20(token).forceApprove(se, 0);
+        ExchangeInAmount.Result memory result = _convertCaller(token, amount, false, 0);
+        l.seShares[se] += result.amountOut;
+        l.reserves[token] += result.amountRefunded;
+        return result.amountOut;
+    }
+
+    /// @dev Does not mutate pool books. Both tuple words must reconcile with actual custody.
+    function _convertCaller(address token, uint256 amount, bool redeem, uint256 minimum)
+        internal returns (ExchangeInAmount.Result memory result)
+    {
+        if (amount == 0) return result;
+        address se = _seOf(token);
+        if (!redeem && Repo._isDisabled(se)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+        IERC20 input = IERC20(redeem ? se : token);
+        IERC20 output = IERC20(redeem ? token : se);
+        uint256 inputBefore = input.balanceOf(address(this));
+        uint256 outputBefore = output.balanceOf(address(this));
+        input.forceApprove(se, amount);
+        result = ExchangeInAmount.exchangeResult(IStandardExchangeIn(se), input, amount, output,
+            minimum, address(this), false, block.timestamp);
+        input.forceApprove(se, 0);
+        ExchangeInAmount.requireReceipt(amount, result, inputBefore, input.balanceOf(address(this)),
+            outputBefore, output.balanceOf(address(this)));
     }
 
 
     function _spendableSeShares(address token) internal view returns (uint256) {
-        address se = _seOf(token);
-        if (se == address(0)) return 0;
-        uint256 seBal = IERC20(se).balanceOf(address(this));
-        // Leave 1 wei so `_isLive` stays true. Keep-10 blocked owner last-exit unwrap.
-        return seBal > 1 ? seBal - 1 : 0;
+        uint256 shares = Repo._layout().seShares[_seOf(token)];
+        return shares > 1 ? shares - 1 : 0;
     }
 
     struct ExactInOutput {
@@ -665,68 +560,61 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         return _receiveOutput(token, output, false);
     }
 
-    function _receiveOutput(address token, ExactInOutput memory output, bool quoteMin_)
+    function _receiveOutput(address token, ExactInOutput memory output, bool)
         private returns (uint256 amountOut)
     {
-        if (_seOf(token) == address(0)) {
-            uint256 reserve = Repo._layout().reserves[token];
-            if (output.amountOut == 0 || output.amountOut >= reserve) revert Math.Drain();
-            Repo._layout().reserves[token] = reserve - output.amountOut;
-            return output.amountOut;
+        Repo.Layout storage l = Repo._layout();
+        address se = _seOf(token);
+        uint256 local = output.sharesOut == 0 ? output.amountOut : l.reserves[token];
+        if (local > l.reserves[token]) revert Math.Drain();
+        l.reserves[token] -= local;
+        amountOut = local;
+        if (output.sharesOut != 0) {
+            if (output.sharesOut > _spendableSeShares(token)) revert Math.Drain();
+            ExchangeInAmount.Result memory result = _convertCaller(token, output.sharesOut, true, 0);
+            l.seShares[se] -= ExchangeInAmount.consumedInput(output.sharesOut, result.amountRefunded);
+            amountOut += result.amountOut;
         }
-        if (output.sharesOut == 0) revert InsufficientTokenOut();
-        if (output.sharesOut > _spendableSeShares(token)) revert Math.Drain();
-        if (_seOf(token) == token) return output.sharesOut;
-        uint256 beforeOut = IERC20(token).balanceOf(address(this));
-        uint256 minOut = output.amountOut > 0 ? output.amountOut - 1 : 0;
-        if (quoteMin_) _unwrapSeShares(token, output.sharesOut);
-        else _unwrapSeShares(token, output.sharesOut, minOut);
-        amountOut = IERC20(token).balanceOf(address(this)) - beforeOut;
-        if (amountOut < output.amountOut) revert InsufficientTokenOut();
+        if (amountOut == 0 || amountOut < output.amountOut) revert InsufficientTokenOut();
     }
 
     function _unwrapSeShares(address token, uint256 seIn) internal returns (uint256 pairOut) {
-        if (seIn == 0) return 0;
-        address se = _seOf(token);
-        if (se == token) return seIn;(uint256 m,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
-        return _unwrapSeShares(token, seIn, m > 0 ? m - 1 : 0);
+        return _unwrapSeShares(token, seIn, 0);
     }
 
     function _unwrapSeShares(address token, uint256 seIn, uint256 minOut) internal returns (uint256 pairOut) {
-        if (seIn == 0) return 0;
-        address se = _seOf(token);
-        if (se == token) return seIn;
-        IERC20(se).forceApprove(se, seIn);(pairOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
-        );
-        IERC20(se).forceApprove(se, 0);
+        ExchangeInAmount.Result memory result = _convertCaller(token, seIn, true, minOut);
+        if (result.amountRefunded != 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+        return result.amountOut;
     }
 
 
     function _unwrapExactTokenOut(address token, uint256 amountOut) internal {
         if (amountOut == 0) return;
+        Repo.Layout storage l = Repo._layout();
+        uint256 local = amountOut < l.reserves[token] ? amountOut : l.reserves[token];
+        l.reserves[token] -= local;
+        uint256 deficit = amountOut - local;
+        if (deficit == 0) return;
         address se = _seOf(token);
-        if (se == token) return;
-        uint256 cap = _spendableSeShares(token);
-        if (cap == 0) revert InsufficientTokenOut();
-        uint256 quotedIn = ClaimLib.invertUnwrapExactTokenOut(se, token, amountOut);
-        if (quotedIn == 0 || quotedIn > cap) revert InsufficientTokenOut();
-        uint256 maxIn = quotedIn;
-        IERC20(se).forceApprove(se, maxIn);
-        uint256 beforeOut = IERC20(token).balanceOf(address(this));
-        IStandardExchangeOut(se).exchangeOut(
-            IERC20(se), maxIn, IERC20(token), amountOut, address(this), false, block.timestamp
-        );
+        uint256 quoted = ClaimLib.invertUnwrapExactTokenOut(se, token, deficit);
+        if (quoted == 0 || quoted > _spendableSeShares(token)) revert InsufficientTokenOut();
+        uint256 beforeShares = IERC20(se).balanceOf(address(this));
+        uint256 beforePair = IERC20(token).balanceOf(address(this));
+        IERC20(se).forceApprove(se, quoted);
+        uint256 spent = IStandardExchangeOut(se).exchangeOut(IERC20(se), quoted, IERC20(token),
+            deficit, address(this), false, block.timestamp);
         IERC20(se).forceApprove(se, 0);
-        if (IERC20(token).balanceOf(address(this)) - beforeOut < amountOut) revert InsufficientTokenOut();
+        uint256 received = IERC20(token).balanceOf(address(this)) - beforePair;
+        if (beforeShares - IERC20(se).balanceOf(address(this)) != spent || spent > quoted || received < deficit) {
+            revert ExchangeInAmount.InvalidExchangeReceipt();
+        }
+        l.seShares[se] -= spent;
+        l.reserves[token] += received - deficit;
     }
 
 
-    function _bufferLastUsed(uint256 u0, uint256 u1, uint256 u2) internal {
-        // Binding index order for used > 0
-        if (u0 > 0) _bufferToken(Repo._layout().token0, u0);
-        if (u1 > 0) _bufferToken(Repo._layout().token1, u1);
-        if (u2 > 0) _bufferToken(Repo._layout().token2, u2);
-    }
+
 
 
     function _swapExactInExecute(address tokenIn, address tokenOut, uint256 amountIn, uint256 feeWad)
@@ -759,22 +647,32 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _previewSwapAfterExchange(address tokenIn, address pairToken, address rawTokenOut, uint256 amountIn)
+    function _previewSwapAfterExchange(address tokenIn, address pair, address rawOut, uint256 amountIn)
         internal view returns (uint256 amountOut)
     {
-        address se = _seOf(pairToken);
-        if (se == address(0) || _seOf(rawTokenOut) != address(0)) revert InvalidPoolToken();
-        SwapLiveCtx memory ctx = _loadSwapLiveCtx(pairToken, rawTokenOut);
-        LegLib.ExternalQuote memory q = LegLib.afterExternalExchange(se, pairToken, tokenIn, amountIn, address(this));
-        (uint256 minted,) = LegLib.depositAfterExchange(q, q.assets);
-        // D60: a buffered leg is valued as shares x rate; the SE never values the hook's reserve.
-        (uint256 held, uint256 inflow) = _projectedInputValue(q, pairToken, minted);
-        if (held == 0) revert NotLive();
-        SphereLegsWad memory legs = _loadSphereLegs(pairToken, rawTokenOut, ctx.tokenZ);
-        legs.xWad = _toWad(pairToken, held);
+        address se = _seOf(pair);
+        if (se == address(0) || _seOf(rawOut) != address(0)) revert InvalidPoolToken();
+        if (Repo._isDisabled(se) && tokenIn != se) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+        if (!ContextQuote.transitionSupported(se)) {
+            ExchangeInAmount.Result memory result = ExchangeInAmount.previewResult(IStandardExchangeIn(se), IERC20(tokenIn), amountIn, IERC20(pair));
+            return _previewSwapExactIn(pair, rawOut, result.amountOut);
+        }
+        SwapLiveCtx memory ctx = _loadSwapLiveCtx(pair, rawOut);
+        LegLib.ExternalQuote memory q = LegLib.afterExternalExchange(se, pair, tokenIn, amountIn, address(this));
+        uint256 held;
+        uint256 inflow;
+        if (Repo._isDisabled(se)) {
+            held = _effectiveNativeOf(pair);
+            inflow = q.assets;
+        } else {
+            (ExchangeInAmount.Result memory result,) = ClaimLib.conversionQuote(se, pair, q.assets, false, q.state, false);
+            (held, inflow) = _projectedInputValue(q, pair, result.amountOut);
+            inflow += result.amountRefunded;
+        }
+        SphereLegsWad memory legs = _loadSphereLegs(pair, rawOut, ctx.tokenZ);
+        legs.xWad = _toWad(pair, held);
         legs.L2 = Math.recomputeL2(legs.R, legs.xWad, legs.yWad, legs.zWad);
-        uint256 net = Math.applyTradingFeeNet(_toWad(pairToken, inflow), ctx.feeWad);
-        amountOut = _fromWadFloor(rawTokenOut, _sphereExactIn(legs, net));
+        amountOut = _fromWadFloor(rawOut, _sphereExactIn(legs, Math.applyTradingFeeNet(_toWad(pair, inflow), ctx.feeWad)));
         if (amountOut == 0 || amountOut >= ctx.eOutNative) revert Math.Drain();
     }
 
@@ -784,7 +682,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         address provider = _rpOf(pair);
         if (provider == address(0)) revert ClaimLib.RateProviderRequired();
         uint256 rate = LegLib.rateAfterExchange(q, pair, provider);
-        held = ClaimLib.ratedNative(q.heldShares, rate, address(q.exchange), pair);
+        held = Repo._layout().reserves[pair] + ClaimLib.ratedNative(Repo._layout().seShares[address(q.exchange)], rate, address(q.exchange), pair);
         inflow = ClaimLib.ratedNative(minted, rate, address(q.exchange), pair);
     }
 
@@ -822,7 +720,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     function _effectiveNativeWithContext(address token, address manager) private view returns (uint256) {
         address se = _seOf(token);
         return ClaimLib.effectiveNativeWithContext(se, _rpOf(token), token, Repo._layout().reserves[token],
-            se == address(0) ? 0 : IERC20(se).balanceOf(address(this)), manager);
+            se == address(0) ? 0 : Repo._layout().seShares[se], manager);
     }
 
     function _sphereLegsWithContext(address input, address output, address other, address manager) private view returns (SphereLegsWad memory s) {
@@ -914,34 +812,10 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _faceInToEffectiveNative(address tokenIn, uint256 amountIn)
-        private
-        view
-        returns (uint256 dInNative)
-    {
-        dInNative = amountIn;
-        address se = _seOf(tokenIn);
-        if (se != address(0) && se != tokenIn) {
-            uint256 claim_ = ClaimLib.previewBufferClaimIn(se, _rpOf(tokenIn), tokenIn, amountIn, address(this));
-            if (claim_ != 0) dInNative = claim_;
-        }
-    }
 
 
-    function _effectiveOutToFaceOut(address tokenOut, uint256 dOutNative)
-        private
-        view
-        returns (ExactInOutput memory output)
-    {
-        address se = _seOf(tokenOut);
-        if (se != address(0)) {
-            (output.amountOut, output.sharesOut) = ClaimLib.previewUnwrapForEffectiveOut(se, _rpOf(tokenOut), tokenOut, dOutNative);
-            if (output.sharesOut == 0) revert InsufficientTokenOut();
-            if (output.sharesOut > _spendableSeShares(tokenOut)) revert Math.Drain();
-        } else {
-            output.amountOut = dOutNative;
-        }
-    }
+
+
 
 
     function _invertBufferForEffective(address token, uint256 dInNative)
@@ -954,420 +828,438 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _maybeMintProtocolFee() internal returns (uint256 protocolLp) {
-        (bool feeOn, address feeTo_, uint256 ownerFeeShare,) = _feeOnAndShare();
+    struct JoinBasket {
+        uint256[3] shares;
+        uint256[3] local;
+        uint256[3] used;
+        uint256[3] purchased;
+    }
+
+    struct JoinBook {
+        uint256 supply;
+        uint256[3] shares;
+        uint256[3] local;
+    }
+
+    /// @dev Mint ownership uses the incumbent quantities after caller-paid preparation.
+    function _joinBook() internal view returns (JoinBook memory book) {
         Repo.Layout storage l = Repo._layout();
-        if (!feeOn || l.kLast == 0) return 0;
-
-        (uint256 r0, uint256 r1, uint256 r2) = _effectiveWad();
-        (uint8 mode, uint256 k, uint256 rootK) = _measureK(r0, r1, r2);
-        if (mode != l.kLastMode) return 0;
-
-        uint256 rootKLast = _rootFromStored(mode, l.kLast);
-        protocolLp = Math.protocolLpShares(_totalSupply(), rootK, rootKLast, ownerFeeShare);
-        if (protocolLp > 0) {
-            _mintLp(feeTo_, protocolLp);
-            l.kLast = k;
-            emit ProtocolFeeMinted(feeTo_, protocolLp);
+        book.supply = _totalSupply();
+        for (uint8 i; i < 3; ++i) {
+            book.shares[i] = l.seShares[Repo._seAt(l, i)];
+            book.local[i] = l.reserves[Repo._tokenAt(l, i)];
         }
     }
 
-
-    function _snapshotKLastIfFeeOn() internal {
-        (bool feeOn,,,) = _feeOnAndShare();
-        Repo.Layout storage l = Repo._layout();
-        if (!feeOn) {
-            l.kLast = 0;
-            return;
+    function _missingJoinLeg(uint256[3] memory amounts, JoinBook memory book) private pure returns (bool) {
+        if (book.supply == 0) return false;
+        for (uint8 i; i < 3; ++i) {
+            if (amounts[i] == 0 && (book.shares[i] != 0 || book.local[i] != 0)) return true;
         }
-        (uint256 r0, uint256 r1, uint256 r2) = _effectiveWad();
-        (uint8 mode, uint256 k,) = _measureK(r0, r1, r2);
-        l.kLast = k;
-        l.kLastMode = mode;
+        return false;
     }
 
-
-    function _previewProtocolMintShares()
-        internal
-        view
-        returns (uint256 protocolLp, uint256 supplyAfter)
-    {
-        supplyAfter = _totalSupply();
-        (bool feeOn,, uint256 ownerFeeShare,) = _feeOnAndShare();
-        Repo.Layout storage l = Repo._layout();
-        if (!feeOn || l.kLast == 0) return (0, supplyAfter);
-
-        (uint256 r0, uint256 r1, uint256 r2) = _effectiveWad();
-        (uint8 mode,, uint256 rootK) = _measureK(r0, r1, r2);
-        if (mode != l.kLastMode) return (0, supplyAfter);
-
-        uint256 rootKLast = _rootFromStored(mode, l.kLast);
-        protocolLp = Math.protocolLpShares(_totalSupply(), rootK, rootKLast, ownerFeeShare);
-        supplyAfter = _totalSupply() + protocolLp;
-    }
-
-
-    function _computeAdd(uint256 a0Max, uint256 a1Max, uint256 a2Max, uint256 supply)
-        internal
-        view
-        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
-    {
-        if (supply == 0) {
-            return _computeFirstMint(a0Max, a1Max, a2Max);
-        }
-        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        // Live 3-positive book still accepts 1- or 2-leg residual joins via partial
-        // NAV (R19 leftover pair/SE). Full-book is only when every leg is offered.
-        if (e0 > 0 && e1 > 0 && e2 > 0 && a0Max > 0 && a1Max > 0 && a2Max > 0) {
-            return _computeFullBook(a0Max, a1Max, a2Max, supply);
-        }
-        if (Repo._layout().R == 0) revert NotLive();
-        return _computePartial(a0Max, a1Max, a2Max, supply);
-    }
-
-
-    function _computeFirstMint(uint256 a0Max, uint256 a1Max, uint256 a2Max)
-        internal
-        view
-        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
-    {
-        uint256 nPos;
-        if (a0Max > 0) nPos++;
-        if (a1Max > 0) nPos++;
-        if (a2Max > 0) nPos++;
-        if (nPos < 2) revert FirstMintRequiresTwoLegs();
-        used0 = a0Max;
-        used1 = a1Max;
-        used2 = a2Max;
-        shares = Math.firstMintShares(_sumFaceEffectiveWad(used0, used1, used2));
-    }
-
-
-    function _computeFullBook(uint256 a0Max, uint256 a1Max, uint256 a2Max, uint256 supply)
-        internal
-        view
-        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
-    {
-        if (a0Max == 0 || a1Max == 0 || a2Max == 0) revert FullBookRequiresThreeLegs();
-        SharesUsed memory r = _fullBookSharesUsed(a0Max, a1Max, a2Max, supply);
-        shares = r.shares;
-        used0 = r.used0;
-        used1 = r.used1;
-        used2 = r.used2;
-    }
-
-
-    function _computePartial(uint256 a0Max, uint256 a1Max, uint256 a2Max, uint256 supply)
-        internal
-        view
-        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
-    {
-        (a0Max, a1Max, a2Max) = _capFaceUnderRadius(a0Max, a1Max, a2Max);
-        if (a0Max == 0 && a1Max == 0 && a2Max == 0) return (0, 0, 0, 0);
-        SharesUsed memory r = _partialSharesUsed(a0Max, a1Max, a2Max, supply);
-        shares = r.shares;
-        used0 = r.used0;
-        used1 = r.used1;
-        used2 = r.used2;
-    }
-
-    /// @dev Single-sided leftover must stay strictly inside R (same gate as `_requirePostUnderRadius`).
-    function _capFaceUnderRadius(uint256 a0, uint256 a1, uint256 a2)
-        private
-        view
-        returns (uint256, uint256, uint256)
+    function _quoteJoin(uint256[3] memory amounts, bool[3] memory flags, JoinBook memory book)
+        private view returns (JoinBasket memory basket, uint256 gross)
     {
         Repo.Layout storage l = Repo._layout();
-        if (l.R == 0) return (a0, a1, a2);
-        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        a0 = _capOneFaceUnderRadius(l.token0, a0, e0, l.R);
-        a1 = _capOneFaceUnderRadius(l.token1, a1, e1, l.R);
-        a2 = _capOneFaceUnderRadius(l.token2, a2, e2, l.R);
-        return (a0, a1, a2);
+        if (book.supply != 0 && _missingJoinLeg(amounts, book)) {
+            ExitQuoteLib.JoinQuote memory q = ExitQuoteLib.quotePreparedJoin(amounts, flags);
+            basket.shares = q.shares;
+            basket.local = q.local;
+            basket.purchased = q.purchased;
+            book.shares = q.bookShares;
+            book.local = q.bookLocal;
+            gross = _basketGross(basket, book);
+            for (uint8 i; i < 3; ++i) {
+                uint256 refund = flags[i] ? basket.shares[i] - LiquidityRoute.componentContribution(gross, book.shares[i], book.supply)
+                    : basket.local[i] - LiquidityRoute.componentContribution(gross, book.local[i], book.supply);
+                basket.used[i] = amounts[i] - FullPrecisionMath.min(amounts[i], refund);
+            }
+            return (basket, gross);
+        }
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            address token = Repo._tokenAt(l, i);
+            ClaimLib.Contribution memory c = ClaimLib.quoteContribution(
+                se, token, book.shares[i], book.local[i], amounts[i], flags[i], book.supply == 0,
+                bytes("")
+            );
+            basket.shares[i] = c.shares;
+            basket.local[i] = c.local;
+        }
+        gross = _basketGross(basket, book);
+        for (uint8 i; i < 3; ++i) {
+            uint256 accepted = book.supply == 0 ? (flags[i] ? basket.shares[i] : basket.local[i])
+                : LiquidityRoute.componentContribution(gross,
+                    flags[i] ? book.shares[i] : book.local[i], book.supply);
+            uint256 available = flags[i] ? basket.shares[i] : basket.local[i];
+            basket.used[i] = amounts[i] - FullPrecisionMath.min(amounts[i], available - accepted);
+        }
     }
 
-    function _capOneFaceUnderRadius(address token, uint256 face, uint256 eWad, uint256 R)
-        private
-        view
-        returns (uint256)
-    {
-        if (face == 0) return 0;
-        if (eWad + 1 >= R) return 0;
-        uint256 roomFace = _fromWadFloor(token, R - eWad - 1);
-        return face > roomFace ? roomFace : face;
-    }
-
-
-    function _previewClaimInAt(uint8 i, uint256 faceAmount) private view returns (uint256) {
-        if (faceAmount == 0) return 0;
+    function _basketGross(JoinBasket memory basket, JoinBook memory book) private view returns (uint256 gross) {
         Repo.Layout storage l = Repo._layout();
-        address se = Repo._seAt(l, i);
-        if (se == address(0)) return faceAmount;
-        return ClaimLib.previewBufferClaimIn(
-            se, Repo._rpAt(l, i), Repo._tokenAt(l, i), faceAmount, address(this)
-        );
+        if (book.supply == 0) {
+            uint256 positive;
+            uint256 seed;
+            for (uint8 i; i < 3; ++i) {
+                address se = Repo._seAt(l, i);
+                uint256 coordinate = se == address(0) ? basket.local[i] : basket.shares[i];
+                if (coordinate != 0) ++positive;
+                seed += Math.toWad(coordinate, se == address(0) ? _decimalsOf(Repo._tokenAt(l, i)) : IERC20Metadata(se).decimals());
+            }
+            if (positive < 2) revert FirstMintRequiresTwoLegs();
+            return LiquidityRoute.genesisGross(seed, Repo.MINIMUM_LIQUIDITY);
+        }
+        uint256[] memory available = new uint256[](6);
+        uint256[] memory booked = new uint256[](6);
+        for (uint8 i; i < 3; ++i) {
+            available[2 * i] = basket.shares[i];
+            available[2 * i + 1] = basket.local[i];
+            booked[2 * i] = book.shares[i];
+            booked[2 * i + 1] = book.local[i];
+        }
+        return LiquidityRoute.maxComponentMint(available, booked, book.supply);
     }
 
-
-    function _sumFaceEffectiveWad(uint256 a0, uint256 a1, uint256 a2)
-        private
-        view
-        returns (uint256 sumWad)
+    /// @dev Conversion receipts stay caller-owned until the common six-component mint is accepted.
+    function _assembleJoin(uint256[3] memory amounts, bool[3] memory flags, JoinBook memory book)
+        private returns (JoinBasket memory basket)
     {
         Repo.Layout storage l = Repo._layout();
-        sumWad = _toWad(l.token0, _previewClaimInAt(0, a0));
-        sumWad += _toWad(l.token1, _previewClaimInAt(1, a1));
-        sumWad += _toWad(l.token2, _previewClaimInAt(2, a2));
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            address token = Repo._tokenAt(l, i);
+            if (se == address(0)) basket.local[i] = amounts[i];
+            else {
+                if (book.supply == 0 && !flags[i] && amounts[i] != 0) {
+                    ExchangeInAmount.Result memory acquired = _convertCaller(token, amounts[i], false, 0);
+                    (uint256 seedBurn,) = LiquidityRoute.bootstrapSplit(acquired.amountOut);
+                    ExchangeInAmount.Result memory seed = _convertCaller(token, seedBurn, true, 0);
+                    if (seed.amountRefunded != 0 || seed.amountOut == 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+                    basket.shares[i] = acquired.amountOut - seedBurn;
+                    basket.local[i] = acquired.amountRefunded + seed.amountOut;
+                    continue;
+                }
+                ClaimLib.Contribution memory c = ClaimLib.quoteContribution(
+                    se, token, book.shares[i], book.local[i], amounts[i], flags[i], book.supply == 0, bytes("")
+                );
+                ExchangeInAmount.Result memory result = _convertCaller(token, c.convert, flags[i], 0);
+                if (flags[i]) {
+                    basket.shares[i] = ExchangeInAmount.localCredit(amounts[i], c.convert, result.amountRefunded);
+                    basket.local[i] = result.amountOut;
+                    if (book.supply == 0 && amounts[i] != 0 && (c.convert == 0 || result.amountRefunded != 0 || result.amountOut == 0)) {
+                        revert ExchangeInAmount.InvalidExchangeReceipt();
+                    }
+                } else {
+                    basket.shares[i] = result.amountOut;
+                    basket.local[i] = ExchangeInAmount.localCredit(amounts[i], c.convert, result.amountRefunded);
+                }
+            }
+        }
     }
 
-
-    /// @dev Subsequent full-book ownership. Incumbent and contribution are raw inventory
-    ///      units (booked face, or SE shares). Rates stay on the partial and swap paths.
-    function _fullBookSharesUsed(uint256 a0Max, uint256 a1Max, uint256 a2Max, uint256 supply)
-        private
-        view
-        returns (SharesUsed memory r)
+    function _acceptJoin(uint256[3] memory amounts, bool[3] memory flags, address to, uint256 minimum, JoinBook memory book)
+        private returns (uint256 net, uint256[3] memory used)
     {
-        uint256 b0 = _rawInventoryAt(0);
-        uint256 b1 = _rawInventoryAt(1);
-        uint256 b2 = _rawInventoryAt(2);
-        uint256 c0 = _previewRawSharesFromFace(0, a0Max);
-        uint256 c1 = _previewRawSharesFromFace(1, a1Max);
-        uint256 c2 = _previewRawSharesFromFace(2, a2Max);
-        r.shares = Math.rawFullBookShares(supply, c0, b0, c1, b1, c2, b2);
-        if (r.shares == 0) return r;
-        r.used0 = _faceForRawShares(0, Math.rawRequiredInventory(r.shares, b0, supply), a0Max);
-        r.used1 = _faceForRawShares(1, Math.rawRequiredInventory(r.shares, b1, supply), a1Max);
-        r.used2 = _faceForRawShares(2, Math.rawRequiredInventory(r.shares, b2, supply), a2Max);
-        if (r.used0 == 0 || r.used1 == 0 || r.used2 == 0) {
-            r.shares = 0;
-            r.used0 = 0;
-            r.used1 = 0;
-            r.used2 = 0;
+        JoinBasket memory basket;
+        if (book.supply != 0 && _missingJoinLeg(amounts, book)) {
+            basket = _prepareJoin(amounts, flags, book);
+            book = _joinBook();
+        } else basket = _assembleJoin(amounts, flags, book);
+        net = _acceptJoinBasket(basket, book, to, minimum);
+        for (uint8 i; i < 3; ++i) {
+            used[i] = amounts[i] - FullPrecisionMath.min(amounts[i], flags[i] ? basket.shares[i] : basket.local[i]);
         }
     }
 
-
-    function _partialSharesUsed(uint256 a0Max, uint256 a1Max, uint256 a2Max, uint256 supply)
-        private
-        view
-        returns (SharesUsed memory r)
+    /// @dev Mutates the caller basket to the refunded components, for legacy used-amount reporting.
+    function _acceptJoinBasket(JoinBasket memory basket, JoinBook memory book, address to, uint256 minimum)
+        private returns (uint256 net)
     {
-        uint256 e0n = _effectiveNativeAt(0);
-        uint256 e1n = _effectiveNativeAt(1);
-        uint256 e2n = _effectiveNativeAt(2);
-        (r.used0, r.used1, r.used2) = _partialUsed(a0Max, a1Max, a2Max, e0n, e1n, e2n);
-        r.used0 = _executablePartialFace(0, r.used0, a0Max);
-        r.used1 = _executablePartialFace(1, r.used1, a1Max);
-        r.used2 = _executablePartialFace(2, r.used2, a2Max);
-        r.shares = _partialNavShares(supply, e0n, e1n, e2n, r.used0, r.used1, r.used2);
-    }
-
-
-    /// @dev Forward deposit feasibility is discontinuous in native units. A
-    /// ratio-rounded intake can fail even though the offered budget is valid.
-    /// Both candidates are within the radius-capped budget; reprice LP from
-    /// the selected amounts rather than executing a zero-quote reduced intake.
-    function _executablePartialFace(uint8 i, uint256 used, uint256 offered) private view returns (uint256) {
-        if (used == 0 || _previewRawSharesFromFace(i, used) != 0) return used;
-        if (used != offered && _previewRawSharesFromFace(i, offered) != 0) return offered;
-        return 0;
-    }
-
-    function _partialUsed(
-        uint256 a0Max,
-        uint256 a1Max,
-        uint256 a2Max,
-        uint256 r0,
-        uint256 r1,
-        uint256 r2
-    ) internal view returns (uint256 used0, uint256 used1, uint256 used2) {
-        bool anyZ;
-        if (r0 == 0 && a0Max > 0) {
-            used0 = a0Max;
-            anyZ = true;
-        }
-        if (r1 == 0 && a1Max > 0) {
-            used1 = a1Max;
-            anyZ = true;
-        }
-        if (r2 == 0 && a2Max > 0) {
-            used2 = a2Max;
-            anyZ = true;
-        }
-
-        uint256 minShares = _partialMinShares(a0Max, a1Max, a2Max, r0, r1, r2);
-        if (minShares == type(uint256).max) {
-            if (!anyZ) return (0, 0, 0);
-            return (used0, used1, used2);
-        }
-        if (minShares == 0) return (0, 0, 0);
-
-        uint256 supply = _totalSupply();
+        uint256 gross = _basketGross(basket, book);
+        if (gross == 0) revert ZeroAmount();
+        uint256 fee;
+        address feeRecipient;
+        (net, fee, feeRecipient) = ClaimLib.netMint(gross);
+        if (net < minimum) revert InsufficientSharesOut();
         Repo.Layout storage l = Repo._layout();
-        if (r0 > 0 && a0Max > 0) {
-            used0 = _fromWadFloor(l.token0, Math.fullBookUsedWad(minShares, _toWad(l.token0, r0), supply));
-            if (used0 == 0) return (0, 0, 0);
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            address token = Repo._tokenAt(l, i);
+            uint256 shareAccepted = book.supply == 0 ? basket.shares[i]
+                : LiquidityRoute.componentContribution(gross, book.shares[i], book.supply);
+            uint256 localAccepted = book.supply == 0 ? basket.local[i]
+                : LiquidityRoute.componentContribution(gross, book.local[i], book.supply);
+            uint256 shareRefund = basket.shares[i] - shareAccepted;
+            uint256 localRefund = basket.local[i] - localAccepted;
+            if (se != address(0)) l.seShares[se] += shareAccepted;
+            l.reserves[token] += localAccepted;
+            basket.shares[i] = shareRefund;
+            basket.local[i] = localRefund;
         }
-        if (r1 > 0 && a1Max > 0) {
-            used1 = _fromWadFloor(l.token1, Math.fullBookUsedWad(minShares, _toWad(l.token1, r1), supply));
-            if (used1 == 0) return (0, 0, 0);
+        if (book.supply == 0) {
+            (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
+            l.R = Math.firstMintRadius(e0, e1, e2);
+            _mintLp(address(0), Repo.MINIMUM_LIQUIDITY);
+        } else _requirePostUnderRadius();
+        _mintLp(to, net);
+        if (fee != 0) {
+            _mintLp(feeRecipient, fee);
+            emit ProtocolFeeMinted(feeRecipient, fee);
         }
-        if (r2 > 0 && a2Max > 0) {
-            used2 = _fromWadFloor(l.token2, Math.fullBookUsedWad(minShares, _toWad(l.token2, r2), supply));
-            if (used2 == 0) return (0, 0, 0);
+        _recomputeL2();
+        _syncVaultReserves();
+        for (uint8 i; i < 3; ++i) {
+            if (basket.shares[i] != 0) IERC20(Repo._seAt(l, i)).safeTransfer(msg.sender, basket.shares[i]);
+            if (basket.local[i] != 0) IERC20(Repo._tokenAt(l, i)).safeTransfer(msg.sender, basket.local[i]);
         }
     }
 
-
-    function _partialMinShares(
-        uint256 a0Max,
-        uint256 a1Max,
-        uint256 a2Max,
-        uint256 r0,
-        uint256 r1,
-        uint256 r2
-    ) internal view returns (uint256 minShares) {
-        minShares = type(uint256).max;
-        uint256 supply = _totalSupply();
+    function _nativeJoinQuote(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        private view returns (ExitQuoteLib.JoinQuote memory q)
+    {
+        if (localAmounts.length != 3 || shareAmounts.length != 3) revert InvalidRoute(address(0), address(0));
+        if (!_isLive()) revert NotLive();
         Repo.Layout storage l = Repo._layout();
-        if (r0 > 0 && a0Max > 0) {
-            minShares = (_toWad(l.token0, a0Max) * supply) / _toWad(l.token0, r0);
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            if (se == address(0) && shareAmounts[i] != 0) revert InvalidSeShareLeg();
+            q.local[i] = localAmounts[i];
+            q.shares[i] = shareAmounts[i];
+            q.bookLocal[i] = l.reserves[Repo._tokenAt(l, i)];
+            q.bookShares[i] = l.seShares[se];
+            if (se != address(0) && (q.bookShares[i] != 0 || q.shares[i] != 0)) {
+                q.rates[i] = ClaimLib.getRateFailClosed(Repo._rpAt(l, i));
+            }
         }
-        if (r1 > 0 && a1Max > 0) {
-            uint256 s = (_toWad(l.token1, a1Max) * supply) / _toWad(l.token1, r1);
-            if (s < minShares) minShares = s;
-        }
-        if (r2 > 0 && a2Max > 0) {
-            uint256 s = (_toWad(l.token2, a2Max) * supply) / _toWad(l.token2, r2);
-            if (s < minShares) minShares = s;
+        return ExitQuoteLib.prepareNativeInKind(q);
+    }
+
+    /// @dev Keep every paid receipt. Only a missing native component may require conversion.
+    function _nativeJoinBasket(ExitQuoteLib.JoinQuote memory q)
+        private view returns (JoinBasket memory basket, uint256[3] memory conversions, bool[3] memory redeems)
+    {
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < 3; ++i) {
+            basket.shares[i] = q.shares[i];
+            basket.local[i] = q.local[i];
+            basket.purchased[i] = q.purchased[i];
+            address se = Repo._seAt(l, i);
+            if (se == address(0)) continue;
+            bool redeem = q.local[i] == 0 && q.bookLocal[i] != 0;
+            bool deposit = q.shares[i] == 0 && q.bookShares[i] != 0;
+            if (!redeem && !deposit) continue;
+            address token = Repo._tokenAt(l, i);
+            uint256 amount = redeem ? q.shares[i] : q.local[i];
+            ClaimLib.Contribution memory c = ClaimLib.quoteContribution(
+                se, token, q.bookShares[i], q.bookLocal[i], amount, redeem, false, bytes("")
+            );
+            basket.shares[i] = c.shares;
+            basket.local[i] = c.local;
+            conversions[i] = c.convert;
+            redeems[i] = redeem;
         }
     }
 
+    function _previewJoinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        internal view returns (uint256 net)
+    {
+        ExitQuoteLib.JoinQuote memory q = _nativeJoinQuote(localAmounts, shareAmounts);
+        (JoinBasket memory basket,,) = _nativeJoinBasket(q);
+        JoinBook memory book = _joinBook();
+        book.shares = q.bookShares;
+        book.local = q.bookLocal;
+        (net,,) = ClaimLib.netMint(_basketGross(basket, book));
+    }
 
-    function _addLiquidity(
-        uint256 a0Max,
-        uint256 a1Max,
-        uint256 a2Max,
-        address to,
-        uint256 sharesMin,
-        uint256 deadline,
-        bytes memory permit2Data
-    ) internal returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
+    function _joinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts,
+        address to, uint256 minimum, uint256 deadline) internal returns (uint256 net)
+    {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-
-        FaceSnap memory snap = _faceSnap();
-        _maybeMintProtocolFee();
-        (shares, used0, used1, used2) = _fundFullOrPartial(a0Max, a1Max, a2Max, to, sharesMin, permit2Data);
-        _refundConservation(msg.sender, snap);
-        emit LiquidityAdded(msg.sender, to, shares, used0, used1, used2);
-    }
-
-    function _fundFullOrPartial(
-        uint256 a0Max,
-        uint256 a1Max,
-        uint256 a2Max,
-        address to,
-        uint256 sharesMin,
-        bytes memory permit2Data
-    ) private returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
-        uint256 supply = _totalSupply();
-        RawSnap memory book = _rawSnap();
-        bool fullBook = _offerIsFullBook(supply, a0Max, a1Max, a2Max);
-        (shares, used0, used1, used2) = _computeAdd(a0Max, a1Max, a2Max, supply);
-        if (shares == 0) revert ZeroAmount();
-        if (shares < sharesMin) revert InsufficientSharesOut();
-        _pullLegs(used0, used1, used2, permit2Data);
-        _bufferLastUsed(used0, used1, used2);
-        if (fullBook) _requireRawBacking(supply, shares, book);
-        _applyAdd(supply, shares, used0, used1, used2, to);
-    }
-
-    function _offerIsFullBook(uint256 supply, uint256 a0, uint256 a1, uint256 a2) private view returns (bool) {
-        if (supply == 0 || a0 == 0 || a1 == 0 || a2 == 0) return false;
-        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        return e0 > 0 && e1 > 0 && e2 > 0;
-    }
-
-
-    function _applyAdd(
-        uint256 supply,
-        uint256 shares,
-        uint256 used0,
-        uint256 used1,
-        uint256 used2,
-        address to
-    ) private {
+        ExitQuoteLib.JoinQuote memory q = _nativeJoinQuote(localAmounts, shareAmounts);
         Repo.Layout storage l = Repo._layout();
-        if (supply == 0) {
-            // R from post-buffer effective used
-            uint256 e0 = _effectiveNativeAt(0);
-            uint256 e1 = _effectiveNativeAt(1);
-            uint256 e2 = _effectiveNativeAt(2);
-            // If only partial legs deposited, effective may be zero on unused
-            if (used0 == 0) e0 = 0;
-            if (used1 == 0) e1 = 0;
-            if (used2 == 0) e2 = 0;
-            // For first mint, R from the used effective amounts after buffer
-            // Re-read post-buffer: unused legs stay 0
-            e0 = used0 > 0 ? _effectiveNativeAt(0) : 0;
-            e1 = used1 > 0 ? _effectiveNativeAt(1) : 0;
-            e2 = used2 > 0 ? _effectiveNativeAt(2) : 0;
-            l.R = Math.firstMintRadius(
-                _toWad(l.token0, e0), _toWad(l.token1, e1), _toWad(l.token2, e2)
-            );
-            _mintLp(address(0), Repo.MINIMUM_LIQUIDITY);
-            _mintLp(to, shares);
-        } else {
-            _requirePostUnderRadius();
-            _mintLp(to, shares);
+        for (uint8 i; i < 3; ++i) {
+            _pullDirectExact(Repo._tokenAt(l, i), localAmounts[i]);
+            if (shareAmounts[i] != 0) _pullDirectExact(Repo._seAt(l, i), shareAmounts[i]);
         }
-        used0;
-        used1;
-        used2;
-        _recomputeL2();
-        _snapshotKLastIfFeeOn();
-        _syncVaultReserves();
+        for (uint8 i; i < 3; ++i) {
+            l.reserves[Repo._tokenAt(l, i)] = q.bookLocal[i];
+            if (Repo._seAt(l, i) != address(0)) l.seShares[Repo._seAt(l, i)] = q.bookShares[i];
+        }
+        JoinBook memory book = _joinBook();
+        (JoinBasket memory basket, uint256[3] memory conversions, bool[3] memory redeems) = _nativeJoinBasket(q);
+        for (uint8 i; i < 3; ++i) {
+            if (conversions[i] == 0) continue;
+            ExchangeInAmount.Result memory result = _convertCaller(Repo._tokenAt(l, i), conversions[i], redeems[i], 0);
+            if (redeems[i]) {
+                basket.shares[i] = ExchangeInAmount.localCredit(q.shares[i], conversions[i], result.amountRefunded);
+                basket.local[i] = result.amountOut;
+            } else {
+                basket.shares[i] = result.amountOut;
+                basket.local[i] = ExchangeInAmount.localCredit(q.local[i], conversions[i], result.amountRefunded);
+            }
+        }
+        return _acceptJoinBasket(basket, book, to, minimum);
     }
 
-
-    function _removeLiquidity(
-        uint256 shares,
-        address to,
-        uint256 a0Min,
-        uint256 a1Min,
-        uint256 a2Min,
-        uint256 deadline
-    ) internal returns (uint256 a0, uint256 a1, uint256 a2) {
-        return _removeLiquidityAndSettle(shares, to, a0Min, a1Min, a2Min, deadline, true);
+    function _addLiquidity(uint256 a0, uint256 a1, uint256 a2, address to, uint256 minimum,
+        uint256 deadline, bytes memory permit2Data)
+        internal returns (uint256 net, uint256 u0, uint256 u1, uint256 u2)
+    {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        uint256[3] memory amounts = [a0, a1, a2];
+        bool[3] memory flags;
+        JoinBook memory book = _joinBook();
+        _pullLegs(a0, a1, a2, permit2Data);
+        uint256[3] memory used;
+        (net, used) = _acceptJoin(amounts, flags, to, minimum, book);
+        emit LiquidityAdded(msg.sender, to, net, used[0], used[1], used[2]);
+        return (net, used[0], used[1], used[2]);
     }
 
-    function _removeLiquidityAndSettle(uint256 shares, address to, uint256 a0Min, uint256 a1Min,
-        uint256 a2Min, uint256 deadline, bool refundFree)
+    function _depositFlexible(DepositFlexibleVars memory v, uint256 deadline)
+        internal returns (uint256 net, uint256 u0, uint256 u1, uint256 u2)
+    {
+        _requireDeadline(deadline);
+        if (v.to == address(0)) revert ZeroAddress();
+        _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
+        uint256[3] memory amounts = [v.amount0, v.amount1, v.amount2];
+        bool[3] memory flags = [v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare];
+        JoinBook memory book = _joinBook();
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < 3; ++i) _pullDirectExact(flags[i] ? Repo._seAt(l, i) : Repo._tokenAt(l, i), amounts[i]);
+        uint256[3] memory used;
+        (net, used) = _acceptJoin(amounts, flags, v.to, v.sharesMin, book);
+        emit DepositFlexible(msg.sender, v.to, v.amount0, flags[0], v.amount1, flags[1], v.amount2, flags[2],
+            used[0], used[1], used[2], net);
+        return (net, used[0], used[1], used[2]);
+    }
+
+    function _previewDepositFlexible(DepositFlexibleVars memory v)
+        internal view returns (uint256 net, uint256 u0, uint256 u1, uint256 u2)
+    {
+        _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
+        (JoinBasket memory basket, uint256 gross) = _quoteJoin([v.amount0, v.amount1, v.amount2],
+            [v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare], _joinBook());
+        (net,,) = ClaimLib.netMint(gross);
+        return (net, basket.used[0], basket.used[1], basket.used[2]);
+    }
+
+    function _previewAddLiquidity(uint256 a0, uint256 a1, uint256 a2)
+        internal view returns (uint256 net, uint256 u0, uint256 u1, uint256 u2)
+    {
+        bool[3] memory flags;
+        (JoinBasket memory basket, uint256 gross) = _quoteJoin([a0, a1, a2], flags, _joinBook());
+        (net,,) = ClaimLib.netMint(gross);
+        return (net, basket.used[0], basket.used[1], basket.used[2]);
+    }
+
+    function _validateSeShareFlags(bool f0, bool f1, bool f2) private view {
+        Repo.Layout storage l = Repo._layout();
+        if ((f0 && l.se0 == address(0)) || (f1 && l.se1 == address(0)) || (f2 && l.se2 == address(0))) revert InvalidSeShareLeg();
+    }
+
+    function _removeLiquidity(uint256 shares, address to, uint256 min0, uint256 min1, uint256 min2, uint256 deadline)
         internal returns (uint256 a0, uint256 a1, uint256 a2)
     {
-        return _removeLiquidityFrom(msg.sender, shares, to, a0Min, a1Min, a2Min, deadline, refundFree);
+        return _removeLiquidityFrom(msg.sender, shares, to, min0, min1, min2, deadline, true);
     }
 
-    function _removeLiquidityFrom(address holder, uint256 shares, address to, uint256 a0Min, uint256 a1Min,
-        uint256 a2Min, uint256 deadline, bool refundFree)
+    function _removeLiquidityFrom(address holder, uint256 shares, address to, uint256 min0, uint256 min1,
+        uint256 min2, uint256 deadline, bool)
         internal returns (uint256 a0, uint256 a1, uint256 a2)
     {
         _requireDeadline(deadline);
         _requireNonZero(shares);
         if (to == address(0)) revert ZeroAddress();
-
-        _maybeMintProtocolFee();
         if (shares > _balanceOf(holder)) revert InsufficientSharesOut();
-
-        (a0, a1, a2) = _proRataOut(shares);
-        if (a0 < a0Min || a1 < a1Min || a2 < a2Min) revert InsufficientTokenOut();
-
-        (a0, a1, a2) = _burnAndPay(holder, shares, to, a0, a1, a2, refundFree);
+        uint256 supply = _totalSupply();
+        _burnLp(holder, shares);
+        a0 = _payComponentLeg(0, shares, supply, to, false);
+        a1 = _payComponentLeg(1, shares, supply, to, false);
+        a2 = _payComponentLeg(2, shares, supply, to, false);
+        if (a0 < min0 || a1 < min1 || a2 < min2) revert InsufficientTokenOut();
+        _recomputeL2();
+        _syncVaultReserves();
         emit LiquidityRemoved(msg.sender, to, shares, a0, a1, a2);
     }
 
+    function _withdrawFlexible(WithdrawFlexibleVars memory w, uint256 deadline)
+        internal returns (uint256 a0, uint256 a1, uint256 a2)
+    {
+        _requireDeadline(deadline);
+        _requireNonZero(w.shares);
+        if (w.to == address(0)) revert ZeroAddress();
+        _validateSeShareFlags(w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2);
+        if (w.shares > _balanceOf(msg.sender)) revert InsufficientSharesOut();
+        uint256 supply = _totalSupply();
+        _burnLp(msg.sender, w.shares);
+        a0 = _payComponentLeg(0, w.shares, supply, w.to, w.receiveSeShare0);
+        a1 = _payComponentLeg(1, w.shares, supply, w.to, w.receiveSeShare1);
+        a2 = _payComponentLeg(2, w.shares, supply, w.to, w.receiveSeShare2);
+        if (a0 < w.a0Min || a1 < w.a1Min || a2 < w.a2Min) revert InsufficientTokenOut();
+        _recomputeL2();
+        _syncVaultReserves();
+        emit WithdrawFlexible(msg.sender, w.to, w.shares, w.receiveSeShare0, w.receiveSeShare1,
+            w.receiveSeShare2, a0, a1, a2);
+    }
+
+    function _payComponentLeg(uint8 i, uint256 burned, uint256 supply, address to, bool asShare)
+        private returns (uint256 amountOut)
+    {
+        Repo.Layout storage l = Repo._layout();
+        address token = Repo._tokenAt(l, i);
+        address se = Repo._seAt(l, i);
+        uint256 local = LiquidityRoute.componentAllocation(burned, l.reserves[token], supply);
+        uint256 shares = LiquidityRoute.componentAllocation(burned, l.seShares[se], supply);
+        l.reserves[token] -= local;
+        if (se != address(0)) l.seShares[se] -= shares;
+        if (se == address(0)) amountOut = local;
+        else {
+            ExchangeInAmount.Result memory result = _convertCaller(token, asShare ? local : shares, !asShare, 0);
+            // A requested single-asset payout cannot silently retain the holder's other component.
+            if (result.amountRefunded != 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+            amountOut = (asShare ? shares : local) + result.amountOut;
+        }
+        if (amountOut != 0 && to != address(this)) IERC20(asShare ? se : token).safeTransfer(to, amountOut);
+    }
+
+    function _previewComponentLeg(uint8 i, uint256 burned, uint256 supply, bool asShare)
+        private view returns (uint256 amountOut)
+    {
+        Repo.Layout storage l = Repo._layout();
+        address token = Repo._tokenAt(l, i);
+        address se = Repo._seAt(l, i);
+        uint256 local = LiquidityRoute.componentAllocation(burned, l.reserves[token], supply);
+        uint256 shares = LiquidityRoute.componentAllocation(burned, l.seShares[se], supply);
+        if (se == address(0)) return local;
+        if (asShare && local != 0 && Repo._isDisabled(se)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+        (ExchangeInAmount.Result memory result,) = ClaimLib.conversionQuote(se, token,
+            asShare ? local : shares, !asShare, bytes(""), false);
+        if (result.amountRefunded != 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+        return (asShare ? shares : local) + result.amountOut;
+    }
+
+    function _previewRemoveLiquidity(uint256 shares) internal view returns (uint256, uint256, uint256) {
+        _requireNonZero(shares);
+        uint256 supply = _totalSupply();
+        return (_previewComponentLeg(0, shares, supply, false), _previewComponentLeg(1, shares, supply, false),
+            _previewComponentLeg(2, shares, supply, false));
+    }
+
+    function _previewWithdrawFlexible(uint256 shares, bool f0, bool f1, bool f2)
+        internal view returns (uint256, uint256, uint256)
+    {
+        _requireNonZero(shares);
+        _validateSeShareFlags(f0, f1, f2);
+        uint256 supply = _totalSupply();
+        return (_previewComponentLeg(0, shares, supply, f0), _previewComponentLeg(1, shares, supply, f1),
+            _previewComponentLeg(2, shares, supply, f2));
+    }
 
     function _exitSingleAssetFrom(address holder, address tokenOut, uint256 shares, address to, uint256 deadline)
         internal returns (uint256 amountOut)
@@ -1375,633 +1267,85 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         address pair = _resolveBurnTokenOut(tokenOut);
         if (pair == address(0)) revert InvalidRoute(tokenOut, address(0));
         if (to == address(0)) revert ZeroAddress();
-        uint256 freeBefore = _freeTokenBalance(pair);
         uint256[3] memory amounts;
-        (amounts[0], amounts[1], amounts[2]) = _removeLiquidityFrom(
-            holder, shares, address(this), 0, 0, 0, deadline, false
-        );
+        (amounts[0], amounts[1], amounts[2]) = _removeLiquidityFrom(holder, shares, address(this), 0, 0, 0, deadline, false);
         for (uint8 i; i < 3; ++i) {
             address input = Repo._tokenAt(Repo._layout(), i);
-            if (input == pair || amounts[i] == 0) continue;
-            _internalSwapExactIn(input, pair, amounts[i], _feeOracle().dexSwapFeeOfVault(address(this)));
+            if (input == pair) amountOut += amounts[i];
+            else if (amounts[i] != 0) amountOut += _internalSwapExactIn(input, pair, amounts[i], _feeOracle().dexSwapFeeOfVault(address(this)));
         }
-        amountOut = _freeTokenBalance(pair) - freeBefore;
-        if (tokenOut != pair && amountOut > 0) amountOut = _bufferToken(pair, amountOut);
+        if (tokenOut != pair && amountOut != 0) {
+            ExchangeInAmount.Result memory result = _convertCaller(pair, amountOut, false, 0);
+            if (result.amountRefunded != 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+            amountOut = result.amountOut;
+        }
         IERC20(tokenOut).safeTransfer(to, amountOut);
         _syncVaultReserves();
     }
 
     function _resolveBurnTokenOut(address tokenOut) internal view returns (address) {
         Repo.Layout storage l = Repo._layout();
-        LegLib.LegKind kind_ = LegLib.classify(l.legs, tokenOut);
-        if (kind_ == LegLib.LegKind.StandardExchange) return l.legs.pairOfStandardExchange[tokenOut];
-        if (kind_ == LegLib.LegKind.Pair || kind_ == LegLib.LegKind.Detf) return tokenOut;
+        LegLib.LegKind kind = LegLib.classify(l.legs, tokenOut);
+        if (kind == LegLib.LegKind.StandardExchange) return l.legs.pairOfStandardExchange[tokenOut];
+        if (kind == LegLib.LegKind.Pair || kind == LegLib.LegKind.Detf) return tokenOut;
         return address(0);
     }
 
-    function _proRataOut(uint256 shares)
-        private
-        view
-        returns (uint256 a0, uint256 a1, uint256 a2)
+    function _depositSingle(address tokenIn, uint256 amountIn, address to, uint256 sharesMin,
+        uint256 deadline, bytes calldata permit2Data) internal returns (uint256 shares)
     {
-        Repo.Layout storage l = Repo._layout();
-        uint256 supply = _totalSupply();
-        // Pro-rata on raw reserves and/or SE share balances
-        if (l.se0 == address(0)) {
-            a0 = (shares * l.reserves[l.token0]) / supply;
-        } else {
-            uint256 seBal = IERC20(l.se0).balanceOf(address(this));
-            uint256 seOut = (shares * seBal) / supply;
-            a0 = ClaimLib.previewUnwrapShares(l.se0, l.token0, seOut);
-        }
-        if (l.se1 == address(0)) {
-            a1 = (shares * l.reserves[l.token1]) / supply;
-        } else {
-            uint256 seBal = IERC20(l.se1).balanceOf(address(this));
-            uint256 seOut = (shares * seBal) / supply;
-            a1 = ClaimLib.previewUnwrapShares(l.se1, l.token1, seOut);
-        }
-        if (l.se2 == address(0)) {
-            a2 = (shares * l.reserves[l.token2]) / supply;
-        } else {
-            uint256 seBal = IERC20(l.se2).balanceOf(address(this));
-            uint256 seOut = (shares * seBal) / supply;
-            a2 = ClaimLib.previewUnwrapShares(l.se2, l.token2, seOut);
-        }
-    }
-
-
-    function _burnAndPay(address holder, uint256 shares, address to, uint256 a0, uint256 a1, uint256 a2, bool refundFree)
-        private
-        returns (uint256, uint256, uint256)
-    {
-        Repo.Layout storage l = Repo._layout();
-        FaceSnap memory snap = _faceSnap();
-        uint256 supply = _totalSupply();
-        _burnLp(holder, shares);
-
-        if (l.se0 == address(0)) {
-            l.reserves[l.token0] -= a0;
-            if (a0 > 0) IERC20(l.token0).safeTransfer(to, a0);
-        } else {
-            uint256 seBal = IERC20(l.se0).balanceOf(address(this));
-            uint256 seOut = (shares * seBal) / supply;
-            uint256 pairOut = seOut > 0 ? _unwrapSeShares(l.token0, seOut) : 0;
-            if (pairOut > 0) IERC20(l.token0).safeTransfer(to, pairOut);
-            a0 = pairOut;
-        }
-        if (l.se1 == address(0)) {
-            l.reserves[l.token1] -= a1;
-            if (a1 > 0) IERC20(l.token1).safeTransfer(to, a1);
-        } else {
-            uint256 seBal = IERC20(l.se1).balanceOf(address(this));
-            uint256 seOut = (shares * seBal) / supply;
-            uint256 pairOut = seOut > 0 ? _unwrapSeShares(l.token1, seOut) : 0;
-            if (pairOut > 0) IERC20(l.token1).safeTransfer(to, pairOut);
-            a1 = pairOut;
-        }
-        if (l.se2 == address(0)) {
-            l.reserves[l.token2] -= a2;
-            if (a2 > 0) IERC20(l.token2).safeTransfer(to, a2);
-        } else {
-            uint256 seBal = IERC20(l.se2).balanceOf(address(this));
-            uint256 seOut = (shares * seBal) / supply;
-            uint256 pairOut = seOut > 0 ? _unwrapSeShares(l.token2, seOut) : 0;
-            if (pairOut > 0) IERC20(l.token2).safeTransfer(to, pairOut);
-            a2 = pairOut;
-        }
-
-        if (_totalSupply() == 0) {
-            l.L_SQUARED = 0;
-        } else {
-            _recomputeL2();
-        }
-        _snapshotKLastIfFeeOn();
-        if (refundFree) _refundConservation(msg.sender, snap);
-        _syncVaultReserves();
-        return (a0, a1, a2);
-    }
-
-
-    function _depositFlexible(DepositFlexibleVars memory v, uint256 deadline)
-        internal
-        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
-    {
-        // Pure pair path: reuse existing multipath deposit (empty Permit2 = transferFrom).
-        if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
-            bytes memory emptyPermit2;
-            (shares, used0, used1, used2) = _addLiquidity(
-                v.amount0, v.amount1, v.amount2, v.to, v.sharesMin, deadline, emptyPermit2
-            );
-            v.used0 = used0;
-            v.used1 = used1;
-            v.used2 = used2;
-            v.shares = shares;
-            _emitDepositFlexible(v);
-            return (shares, used0, used1, used2);
-        }
-
-        _requireDeadline(deadline);
-        if (v.to == address(0)) revert ZeroAddress();
-        _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
-
-        FaceSnap memory snap = _faceSnap();
-        _maybeMintProtocolFee();
-        uint256 supply = _totalSupply();
-        RawSnap memory book = _rawSnap();
-        _fillComputeAddFlexible(v, supply);
-        if (v.shares == 0) revert ZeroAmount();
-        if (v.shares < v.sharesMin) revert InsufficientSharesOut();
-
-        _pullFlexible(v);
-        _bufferFlexibleUsed(v);
-        _guardFlexibleFullBookBacking(supply, v, book);
-        _applyAdd(supply, v.shares, v.used0, v.used1, v.used2, v.to);
-        _refundConservation(msg.sender, snap);
-        _emitDepositFlexible(v);
-        return (v.shares, v.used0, v.used1, v.used2);
-    }
-
-
-    function _emitDepositFlexible(DepositFlexibleVars memory v) private {
-        emit DepositFlexible(
-            msg.sender,
-            v.to,
-            v.amount0,
-            v.amount0IsSeShare,
-            v.amount1,
-            v.amount1IsSeShare,
-            v.amount2,
-            v.amount2IsSeShare,
-            v.used0,
-            v.used1,
-            v.used2,
-            v.shares
-        );
-    }
-
-
-    function _withdrawFlexible(WithdrawFlexibleVars memory w, uint256 deadline)
-        internal
-        returns (uint256 a0, uint256 a1, uint256 a2)
-    {
-        if (!w.receiveSeShare0 && !w.receiveSeShare1 && !w.receiveSeShare2) {
-            (a0, a1, a2) =
-                _removeLiquidity(w.shares, w.to, w.a0Min, w.a1Min, w.a2Min, deadline);
-            emit WithdrawFlexible(msg.sender, w.to, w.shares, false, false, false, a0, a1, a2);
-            return (a0, a1, a2);
-        }
-
-        _requireDeadline(deadline);
-        _requireNonZero(w.shares);
-        if (w.to == address(0)) revert ZeroAddress();
-        _validateSeShareFlags(w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2);
-
-        _maybeMintProtocolFee();
-        if (w.shares > _balanceOf(msg.sender)) revert InsufficientSharesOut();
-
-        (a0, a1, a2) = _proRataOutFlexible(
-            w.shares, w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2
-        );
-        if (a0 < w.a0Min || a1 < w.a1Min || a2 < w.a2Min) revert InsufficientTokenOut();
-
-        _burnAndPayFlexible(w.shares, w.to, w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2);
-        emit WithdrawFlexible(
-            msg.sender,
-            w.to,
-            w.shares,
-            w.receiveSeShare0,
-            w.receiveSeShare1,
-            w.receiveSeShare2,
-            a0,
-            a1,
-            a2
-        );
-    }
-
-
-    function _previewDepositFlexible(DepositFlexibleVars memory v)
-        internal
-        view
-        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
-    {
-        if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
-            return _previewAddLiquidity(v.amount0, v.amount1, v.amount2);
-        }
-        _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
-        (, uint256 supplyAfter) = _previewProtocolMintShares();
-        _fillComputeAddFlexible(v, supplyAfter);
-        return (v.shares, v.used0, v.used1, v.used2);
-    }
-
-
-    function _previewWithdrawFlexible(
-        uint256 shares_,
-        bool receiveSeShare0,
-        bool receiveSeShare1,
-        bool receiveSeShare2
-    ) internal view returns (uint256 a0, uint256 a1, uint256 a2) {
-        if (!receiveSeShare0 && !receiveSeShare1 && !receiveSeShare2) {
-            return _previewRemoveLiquidity(shares_);
-        }
-        _requireNonZero(shares_);
-        _validateSeShareFlags(receiveSeShare0, receiveSeShare1, receiveSeShare2);
-        (uint256 protocolLp, uint256 supplyAfter) = _previewProtocolMintShares();
-        protocolLp;
-        return _proRataOutFlexibleAtSupply(
-            shares_, supplyAfter, receiveSeShare0, receiveSeShare1, receiveSeShare2
-        );
-    }
-
-
-    function _validateSeShareFlags(bool f0, bool f1, bool f2) private view {
-        Repo.Layout storage l = Repo._layout();
-        if (f0 && l.se0 == address(0)) revert InvalidSeShareLeg();
-        if (f1 && l.se1 == address(0)) revert InvalidSeShareLeg();
-        if (f2 && l.se2 == address(0)) revert InvalidSeShareLeg();
-    }
-
-
-    function _offeredEffectiveNative(uint8 i, uint256 amount, bool isSeShare)
-        private
-        view
-        returns (uint256)
-    {
-        if (amount == 0) return 0;
-        Repo.Layout storage l = Repo._layout();
-        address se = Repo._seAt(l, i);
-        address token = Repo._tokenAt(l, i);
-        address rp = Repo._rpAt(l, i);
-        if (isSeShare) {
-            if (rp == address(0)) revert ClaimLib.RateProviderRequired();
-            return ClaimLib.ratedNative(amount, ClaimLib.getRateFailClosed(rp), se, token);
-        }
-        return _previewClaimInAt(i, amount);
-    }
-
-
-    function _fillComputeAddFlexible(DepositFlexibleVars memory v, uint256 supply) private view {
-        FlexScratch memory s;
-        s.supply = supply;
-
-        if (supply == 0) {
-            s.o0 = _offeredEffectiveNative(0, v.amount0, v.amount0IsSeShare);
-            s.o1 = _offeredEffectiveNative(1, v.amount1, v.amount1IsSeShare);
-            s.o2 = _offeredEffectiveNative(2, v.amount2, v.amount2IsSeShare);
-            _fillFirstMintFlexible(v, s);
-            return;
-        }
-
-        (s.e0, s.e1, s.e2) = _effectiveWad();
-        if (
-            s.e0 > 0 && s.e1 > 0 && s.e2 > 0 && v.amount0 > 0 && v.amount1 > 0 && v.amount2 > 0
-        ) {
-            _fillFullBookFlexible(v, s);
-            return;
-        }
-
-        if (Repo._layout().R == 0) revert NotLive();
-        if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
-            (v.amount0, v.amount1, v.amount2) = _capFaceUnderRadius(v.amount0, v.amount1, v.amount2);
-            if (v.amount0 == 0 && v.amount1 == 0 && v.amount2 == 0) return;
-        }
-        s.o0 = _offeredEffectiveNative(0, v.amount0, v.amount0IsSeShare);
-        s.o1 = _offeredEffectiveNative(1, v.amount1, v.amount1IsSeShare);
-        s.o2 = _offeredEffectiveNative(2, v.amount2, v.amount2IsSeShare);
-        _fillPartialFlexible(v, s);
-    }
-
-
-    function _fillFirstMintFlexible(DepositFlexibleVars memory v, FlexScratch memory s)
-        private
-        view
-    {
-        uint256 nPos;
-        if (v.amount0 > 0) nPos++;
-        if (v.amount1 > 0) nPos++;
-        if (v.amount2 > 0) nPos++;
-        if (nPos < 2) revert FirstMintRequiresTwoLegs();
-        v.used0 = v.amount0;
-        v.used1 = v.amount1;
-        v.used2 = v.amount2;
-        Repo.Layout storage l = Repo._layout();
-        v.shares = Math.firstMintShares(
-            _toWad(l.token0, s.o0) + _toWad(l.token1, s.o1) + _toWad(l.token2, s.o2)
-        );
-    }
-
-
-    function _fillFullBookFlexible(DepositFlexibleVars memory v, FlexScratch memory s)
-        private
-        view
-    {
-        if (v.amount0 == 0 || v.amount1 == 0 || v.amount2 == 0) revert FullBookRequiresThreeLegs();
-        uint256 b0 = _rawInventoryAt(0);
-        uint256 b1 = _rawInventoryAt(1);
-        uint256 b2 = _rawInventoryAt(2);
-        uint256 c0 = _rawOffered(0, v.amount0, v.amount0IsSeShare);
-        uint256 c1 = _rawOffered(1, v.amount1, v.amount1IsSeShare);
-        uint256 c2 = _rawOffered(2, v.amount2, v.amount2IsSeShare);
-        v.shares = Math.rawFullBookShares(s.supply, c0, b0, c1, b1, c2, b2);
-        if (v.shares == 0) return;
-        v.used0 = _usedForRawRequired(0, v.amount0, v.amount0IsSeShare, Math.rawRequiredInventory(v.shares, b0, s.supply));
-        v.used1 = _usedForRawRequired(1, v.amount1, v.amount1IsSeShare, Math.rawRequiredInventory(v.shares, b1, s.supply));
-        v.used2 = _usedForRawRequired(2, v.amount2, v.amount2IsSeShare, Math.rawRequiredInventory(v.shares, b2, s.supply));
-        if (v.used0 == 0 || v.used1 == 0 || v.used2 == 0) {
-            v.shares = 0;
-            v.used0 = 0;
-            v.used1 = 0;
-            v.used2 = 0;
-        }
-    }
-
-
-    function _fillPartialFlexible(DepositFlexibleVars memory v, FlexScratch memory s) private view {
-        uint256 e0n = _effectiveNativeAt(0);
-        uint256 e1n = _effectiveNativeAt(1);
-        uint256 e2n = _effectiveNativeAt(2);
-        (uint256 u0, uint256 u1, uint256 u2) = _partialUsed(s.o0, s.o1, s.o2, e0n, e1n, e2n);
-        v.shares = _partialNavShares(s.supply, e0n, e1n, e2n, u0, u1, u2);
-        v.used0 = s.o0 > 0 ? (v.amount0 * u0) / s.o0 : 0;
-        v.used1 = s.o1 > 0 ? (v.amount1 * u1) / s.o1 : 0;
-        v.used2 = s.o2 > 0 ? (v.amount2 * u2) / s.o2 : 0;
-    }
-
-
-    function _partialNavShares(
-        uint256 supply,
-        uint256 e0n,
-        uint256 e1n,
-        uint256 e2n,
-        uint256 u0,
-        uint256 u1,
-        uint256 u2
-    ) private view returns (uint256) {
-        if (u0 == 0 && u1 == 0 && u2 == 0) return 0;
-        uint256 radius = Repo._layout().R;
-        if (supply == 0 || radius == 0) return 0;
-        Repo.Layout storage l = Repo._layout();
-        Math.SphereNavArgs memory nav;
-        nav.supply = supply;
-        nav.R = radius;
-        nav.r0Wad = _toWad(l.token0, e0n);
-        nav.r1Wad = _toWad(l.token1, e1n);
-        nav.r2Wad = _toWad(l.token2, e2n);
-        if (nav.r0Wad >= radius || nav.r1Wad >= radius || nav.r2Wad >= radius) return 0;
-        nav.used0Wad = _toWad(l.token0, u0);
-        nav.used1Wad = _toWad(l.token1, u1);
-        nav.used2Wad = _toWad(l.token2, u2);
-        return Math.sphereNavShares(nav);
-    }
-
-
-    function _pullFlexible(DepositFlexibleVars memory v) private {
-        Repo.Layout storage l = Repo._layout();
-        if (v.used0 > 0) {
-            address t0 = v.amount0IsSeShare ? l.se0 : l.token0;
-            _pullDirectExact(t0, v.used0);
-        }
-        if (v.used1 > 0) {
-            address t1 = v.amount1IsSeShare ? l.se1 : l.token1;
-            _pullDirectExact(t1, v.used1);
-        }
-        if (v.used2 > 0) {
-            address t2 = v.amount2IsSeShare ? l.se2 : l.token2;
-            _pullDirectExact(t2, v.used2);
-        }
-    }
-
-
-    function _bufferFlexibleUsed(DepositFlexibleVars memory v) private {
-        if (!v.amount0IsSeShare && v.used0 > 0) _bufferToken(Repo._layout().token0, v.used0);
-        if (!v.amount1IsSeShare && v.used1 > 0) _bufferToken(Repo._layout().token1, v.used1);
-        if (!v.amount2IsSeShare && v.used2 > 0) _bufferToken(Repo._layout().token2, v.used2);
-    }
-
-
-    function _proRataOutFlexible(
-        uint256 shares,
-        bool receiveSeShare0,
-        bool receiveSeShare1,
-        bool receiveSeShare2
-    ) private view returns (uint256 a0, uint256 a1, uint256 a2) {
-        return _proRataOutFlexibleAtSupply(
-            shares, _totalSupply(), receiveSeShare0, receiveSeShare1, receiveSeShare2
-        );
-    }
-
-
-    function _proRataOutFlexibleAtSupply(
-        uint256 shares,
-        uint256 supply,
-        bool receiveSeShare0,
-        bool receiveSeShare1,
-        bool receiveSeShare2
-    ) private view returns (uint256 a0, uint256 a1, uint256 a2) {
-        Repo.Layout storage l = Repo._layout();
-        if (l.se0 == address(0)) {
-            a0 = (shares * l.reserves[l.token0]) / supply;
-        } else {
-            uint256 seOut = (shares * IERC20(l.se0).balanceOf(address(this))) / supply;
-            a0 = receiveSeShare0 ? seOut : ClaimLib.previewUnwrapShares(l.se0, l.token0, seOut);
-        }
-        if (l.se1 == address(0)) {
-            a1 = (shares * l.reserves[l.token1]) / supply;
-        } else {
-            uint256 seOut = (shares * IERC20(l.se1).balanceOf(address(this))) / supply;
-            a1 = receiveSeShare1 ? seOut : ClaimLib.previewUnwrapShares(l.se1, l.token1, seOut);
-        }
-        if (l.se2 == address(0)) {
-            a2 = (shares * l.reserves[l.token2]) / supply;
-        } else {
-            uint256 seOut = (shares * IERC20(l.se2).balanceOf(address(this))) / supply;
-            a2 = receiveSeShare2 ? seOut : ClaimLib.previewUnwrapShares(l.se2, l.token2, seOut);
-        }
-    }
-
-
-    function _burnAndPayFlexible(
-        uint256 shares,
-        address to,
-        bool receiveSeShare0,
-        bool receiveSeShare1,
-        bool receiveSeShare2
-    ) private {
-        Repo.Layout storage l = Repo._layout();
-        FaceSnap memory snap = _faceSnap();
-        uint256 supply = _totalSupply();
-        _burnLp(msg.sender, shares);
-
-        _payFlexibleLeg(0, shares, supply, to, receiveSeShare0);
-        _payFlexibleLeg(1, shares, supply, to, receiveSeShare1);
-        _payFlexibleLeg(2, shares, supply, to, receiveSeShare2);
-
-        if (_totalSupply() == 0) {
-            l.L_SQUARED = 0;
-        } else {
-            _recomputeL2();
-        }
-        _snapshotKLastIfFeeOn();
-        _refundConservation(msg.sender, snap);
-        _syncVaultReserves();
-    }
-
-
-    function _payFlexibleLeg(
-        uint8 i,
-        uint256 shares,
-        uint256 supply,
-        address to,
-        bool receiveSeShare
-    ) private {
-        Repo.Layout storage l = Repo._layout();
-        address se = Repo._seAt(l, i);
-        address token = Repo._tokenAt(l, i);
-        if (se == address(0)) {
-            uint256 amt = (shares * l.reserves[token]) / supply;
-            l.reserves[token] -= amt;
-            if (amt > 0) IERC20(token).safeTransfer(to, amt);
-            return;
-        }
-        uint256 seOut = (shares * IERC20(se).balanceOf(address(this))) / supply;
-        if (seOut == 0) return;
-        if (receiveSeShare) {
-            IERC20(se).safeTransfer(to, seOut);
-        } else {
-            uint256 pairOut = _unwrapSeShares(token, seOut);
-            if (pairOut > 0) IERC20(token).safeTransfer(to, pairOut);
-        }
-    }
-
-
-    function _previewAddLiquidity(uint256 a0Max, uint256 a1Max, uint256 a2Max)
-        internal
-        view
-        returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2)
-    {
-        (, uint256 supplyAfter) = _previewProtocolMintShares();
-        return _computeAdd(a0Max, a1Max, a2Max, supplyAfter);
-    }
-
-
-    function _previewRemoveLiquidity(uint256 shares_)
-        internal
-        view
-        returns (uint256 a0, uint256 a1, uint256 a2)
-    {
-        _requireNonZero(shares_);
-        (uint256 protocolLp, uint256 supplyAfter) = _previewProtocolMintShares();
-        protocolLp;
-        // Use supplyAfter for pro-rata simulation
-        Repo.Layout storage l = Repo._layout();
-        if (l.se0 == address(0)) {
-            a0 = (shares_ * l.reserves[l.token0]) / supplyAfter;
-        } else {
-            uint256 seBal = IERC20(l.se0).balanceOf(address(this));
-            a0 = ClaimLib.previewUnwrapShares(l.se0, l.token0, (shares_ * seBal) / supplyAfter);
-        }
-        if (l.se1 == address(0)) {
-            a1 = (shares_ * l.reserves[l.token1]) / supplyAfter;
-        } else {
-            uint256 seBal = IERC20(l.se1).balanceOf(address(this));
-            a1 = ClaimLib.previewUnwrapShares(l.se1, l.token1, (shares_ * seBal) / supplyAfter);
-        }
-        if (l.se2 == address(0)) {
-            a2 = (shares_ * l.reserves[l.token2]) / supplyAfter;
-        } else {
-            uint256 seBal = IERC20(l.se2).balanceOf(address(this));
-            a2 = ClaimLib.previewUnwrapShares(l.se2, l.token2, (shares_ * seBal) / supplyAfter);
-        }
-    }
-
-
-    function _depositSingle(
-        address tokenIn,
-        uint256 amountIn,
-        address to,
-        uint256 sharesMin,
-        uint256 deadline,
-        bytes calldata permit2Data
-    ) internal returns (uint256 shares) {
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
         if (to == address(0)) revert ZeroAddress();
         _requireZapEligibleOrOwnerMin();
         if (!_isBound(tokenIn)) revert InvalidPoolToken();
-
-        FaceSnap memory snap = _faceSnap();
-        _maybeMintProtocolFee();
-        ZapPlan memory plan = _planZap(tokenIn, amountIn);
-        if (plan.shares == 0) revert ZeroAmount();
-        if (plan.shares < sharesMin) revert InsufficientSharesOut();
-
+        JoinBook memory book = _joinBook();
         _pullTokenIn(tokenIn, amountIn, permit2Data);
-        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan, snap);
+        return _acceptSingle(tokenIn, amountIn, false, to, sharesMin, book);
     }
 
-    /// @dev Zap-in when `amountIn` of `tokenIn` is already on the hook (joinSingleAsset SE unwrap).
-    function _depositSingleFromBalance(
-        address tokenIn,
-        uint256 amountIn,
-        address to,
-        uint256 sharesMin,
-        uint256 deadline
-    ) internal returns (uint256 shares) {
-        _requireDeadline(deadline);
-        _requireNonZero(amountIn);
-        if (to == address(0)) revert ZeroAddress();
-        _requireZapEligibleOrOwnerMin();
-        if (!_isBound(tokenIn)) revert InvalidPoolToken();
+    /// @dev The caller buys missing legs before proportional component acceptance.
+    function _acceptSingle(address pair, uint256 amountIn, bool asShare, address to,
+        uint256 minimum, JoinBook memory book) internal returns (uint256 shares)
+    {
+        uint256[3] memory offered;
+        bool[3] memory flags;
+        uint8 index = Repo._indexOf(Repo._layout(), pair);
+        offered[index] = amountIn;
+        flags[index] = asShare;
+        (shares,) = _acceptJoin(offered, flags, to, minimum, book);
+        emit DepositSingle(msg.sender, to, asShare ? _seOf(pair) : pair, amountIn, shares);
+    }
 
-        FaceSnap memory snap = _faceSnap();
+    function _prepareJoin(uint256[3] memory amounts, bool[3] memory flags, JoinBook memory book)
+        private returns (JoinBasket memory basket)
+    {
         Repo.Layout storage l = Repo._layout();
-        if (tokenIn == l.token0) snap.o0 -= amountIn;
-        else if (tokenIn == l.token1) snap.o1 -= amountIn;
-        else snap.o2 -= amountIn;
-        _maybeMintProtocolFee();
-        ZapPlan memory plan = _planZap(tokenIn, amountIn);
-        if (plan.shares == 0) revert ZeroAmount();
-        if (plan.shares < sharesMin) revert InsufficientSharesOut();
-        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan, snap);
+        ExitQuoteLib.JoinQuote memory q;
+        q.bookShares = book.shares;
+        q.bookLocal = book.local;
+        for (uint8 i; i < 3; ++i) {
+            if (flags[i]) q.shares[i] = amounts[i];
+            else q.local[i] = amounts[i];
+            if (Repo._seAt(l, i) != address(0) && (q.bookShares[i] != 0 || q.shares[i] != 0)) {
+                q.rates[i] = ClaimLib.getRateFailClosed(Repo._rpAt(l, i));
+            }
+        }
+        q = ExitQuoteLib.prepareInKind(q, amounts);
+        uint256[3] memory remaining;
+        for (uint8 i; i < 3; ++i) {
+            if ((q.bookShares[i] != 0 || q.bookLocal[i] != 0) && q.shares[i] == 0 && q.local[i] == 0) revert ZeroAmount();
+            if (Repo._seAt(l, i) != address(0)) l.seShares[Repo._seAt(l, i)] = q.bookShares[i];
+            l.reserves[Repo._tokenAt(l, i)] = q.bookLocal[i];
+            if (amounts[i] != 0) remaining[i] = flags[i] ? q.shares[i] : q.local[i];
+        }
+        basket = _assembleJoin(remaining, flags, _joinBook());
+        basket.purchased = q.purchased;
+        for (uint8 i; i < 3; ++i) if (amounts[i] == 0) {
+            basket.shares[i] = q.shares[i];
+            basket.local[i] = q.local[i];
+        }
     }
-
-    function _executeDepositSinglePlan(
-        address tokenIn,
-        uint256 amountIn,
-        address to,
-        ZapPlan memory plan,
-        FaceSnap memory snap
-    ) private returns (uint256 shares) {
-        _executeZapSwaps(tokenIn, plan);
-        uint256 supplyBefore = _totalSupply();
-        _bufferLastUsed(plan.used0, plan.used1, plan.used2);
-        // Planned zap settlement does not reproduce the projection exactly on fee-bearing
-        // nested pools. Re-checking the quoted mint against that live book rejects a few
-        // share wei and splits preview from execution. Direct joins still check backing.
-        _syncRawFaceToBook();
-        _applyAdd(supplyBefore, plan.shares, plan.used0, plan.used1, plan.used2, to);
-        shares = plan.shares;
-        _refundConservation(msg.sender, snap);
-        emit DepositSingle(msg.sender, to, tokenIn, amountIn, shares);
-    }
-
-    /// @dev Internal sphere swaps rebook without moving face. Floor/ceil of used vs
-    ///      sales leaves raw face above `reserves`. Raise the book to face so leftover
-    ///      free face is zero (SeLifecycle). Buffered SE legs keep share-backed book.
-    function _syncRawFaceToBook() private {
-        Repo.Layout storage l = Repo._layout();
-        _raiseRawBookToFace(l.token0, l.se0);
-        _raiseRawBookToFace(l.token1, l.se1);
-        _raiseRawBookToFace(l.token2, l.se2);
-    }
-
-    function _raiseRawBookToFace(address token, address se) private {
-        if (se != address(0)) return;
-        uint256 bal = IERC20(token).balanceOf(address(this));
-        uint256 book = Repo._layout().reserves[token];
-        if (bal > book) Repo._layout().reserves[token] = bal;
-    }
-
 
     function _pullTokenIn(address tokenIn, uint256 amountIn, bytes calldata permit2Data) private {
         uint256 beforeBalance = IERC20(tokenIn).balanceOf(address(this));
@@ -2014,41 +1358,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _executeZapSwaps(address tokenIn, ZapPlan memory plan) private {
-        Repo.Layout storage l = Repo._layout();
-        address tokenJ = Repo._tokenAt(l, plan.j);
-        address tokenK = Repo._tokenAt(l, plan.k);
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (plan.saleJ > 0) {
-            uint256 gotJ = _executePlannedOrQuotedSwap(tokenIn, tokenJ, plan.saleJ, plan.outJ, plan.sharesJ, feeWad);
-            emit ZapSwap(msg.sender, tokenIn, tokenJ, plan.saleJ, gotJ);
-        }
-        if (plan.saleK > 0) {
-            uint256 gotK = _executePlannedOrQuotedSwap(tokenIn, tokenK, plan.saleK, plan.outK, plan.sharesK, feeWad);
-            emit ZapSwap(msg.sender, tokenIn, tokenK, plan.saleK, gotK);
-        }
-    }
-
-    /// @dev The deposit plan already simulated this swap, including the sequential rate.
-    ///      Re-quoting inside the 31M chain cap runs out of gas on the second leg and
-    ///      reports RateProviderFailed. Settle the planned output.
-    function _executePlannedOrQuotedSwap(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn,
-        uint256 plannedOut,
-        uint256 plannedShares,
-        uint256 feeWad
-    ) private returns (uint256 amountOut) {
-        feeWad;
-        ExactInOutput memory output;
-        output.amountOut = plannedOut;
-        output.sharesOut = plannedShares;
-        amountOut = _receivePlannedOutput(tokenOut, output);
-        if (_seOf(tokenIn) != address(0)) _bufferToken(tokenIn, amountIn, false);
-        else Repo._layout().reserves[tokenIn] += amountIn;
-        _recomputeL2();
-    }
 
 
     function _internalSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn, uint256 feeWad)
@@ -2056,7 +1365,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         returns (uint256 amountOut)
     {
         // Single-source fee with zap plan (do not re-fetch oracle fee inside preview).
-        ExactInOutput memory output = _previewSwapExactInPlan(tokenIn, tokenOut, amountIn, feeWad);
+        ExactInOutput memory output;
+        (output.amountOut, output.sharesOut) = ClaimLib.previewLiquiditySwap(tokenIn, tokenOut, amountIn, feeWad);
         amountOut = _receiveExactInOutput(tokenOut, output);
         if (_seOf(tokenIn) != address(0)) {
             _bufferToken(tokenIn, amountIn);
@@ -2067,74 +1377,31 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _otherIdx(uint8 inIdx) private pure returns (uint8 j, uint8 k) {
-        if (inIdx == 0) return (1, 2);
-        if (inIdx == 1) return (0, 2);
-        return (0, 1);
-    }
+
 
 
     function _planZap(address tokenIn, uint256 amountIn) internal view returns (ZapPlan memory p) {
         _requireZapEligibleOrOwnerMin();
         if (!_isBound(tokenIn)) revert InvalidPoolToken();
         _requireNonZero(amountIn);
-
-        Repo.Layout storage l = Repo._layout();
-        p.inIdx = Repo._indexOf(l, tokenIn);
-        (p.j, p.k) = _otherIdx(p.inIdx);
-
-        // Close rejoin can return more DETF than remaining book. A 3-leg ratio zap
-        // would drain pair SE (MathDomain). Use single-sided only when an other
-        // leg is small vs amountIn (live depositClaim/Policy mint stays ratio zap).
-        uint256 eIn = _effectiveNativeOf(tokenIn);
-        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        if (e0 + 1 >= l.R || e1 + 1 >= l.R || e2 + 1 >= l.R
-            || (eIn > 0 && amountIn > eIn && _ratioZapWouldDrain(p.inIdx, amountIn)))
-        {
-            return _singleSidedPlan(tokenIn, amountIn);
-        }
-
-        if (e0 == 0 || e1 == 0 || e2 == 0 || l.R == 0
-            || _toWad(tokenIn, amountIn) < 3)
-        {
-            return _singleSidedPlan(tokenIn, amountIn);
-        }
-
-        ExitQuoteLib.DepositQuote memory q = ExitQuoteLib.planDeposit(tokenIn, amountIn);
-        if (q.shares == 0) return _singleSidedPlan(tokenIn, amountIn);
-        p.saleJ = q.saleJ;
-        p.saleK = q.saleK;
-        p.residual = q.offered[p.inIdx];
-        p.outJ = q.offered[p.j];
-        p.outK = q.offered[p.k];
-        p.sharesJ = q.sharesJ;
-        p.sharesK = q.sharesK;
-        p.shares = q.shares;
-        p.used0 = q.used[0];
-        p.used1 = q.used[1];
-        p.used2 = q.used[2];
-    }
-
-    function _ratioZapWouldDrain(uint8 inIdx, uint256 amountIn) private view returns (bool) {
-        (uint8 j, uint8 k) = _otherIdx(inIdx);
-        uint256 quarter = amountIn / 4;
-        return _effectiveNativeAt(j) < quarter || _effectiveNativeAt(k) < quarter;
-    }
-
-    function _singleSidedPlan(address tokenIn, uint256 amountIn) private view returns (ZapPlan memory p) {
-        Repo.Layout storage l = Repo._layout();
-        p.inIdx = Repo._indexOf(l, tokenIn);
-        (p.j, p.k) = _otherIdx(p.inIdx);
+        p.inIdx = Repo._indexOf(Repo._layout(), tokenIn);
+        p.j = p.inIdx == 0 ? 1 : 0;
+        p.k = 3 - p.inIdx - p.j;
         p.residual = amountIn;
-        uint256 a0;
-        uint256 a1;
-        uint256 a2;
-        if (p.inIdx == 0) a0 = amountIn;
-        else if (p.inIdx == 1) a1 = amountIn;
-        else a2 = amountIn;
-        (, uint256 supplyAfter) = _previewProtocolMintShares();
-        (p.shares, p.used0, p.used1, p.used2) = _computePartial(a0, a1, a2, supplyAfter);
+        uint256[3] memory offered;
+        bool[3] memory flags;
+        offered[p.inIdx] = amountIn;
+        (JoinBasket memory basket, uint256 gross) = _quoteJoin(offered, flags, _joinBook());
+        (p.shares,,) = ClaimLib.netMint(gross);
+        uint256 total = _toWad(_bindingToken0(), _effectiveNativeAt(0))
+            + _toWad(_bindingToken1(), _effectiveNativeAt(1)) + _toWad(_bindingToken2(), _effectiveNativeAt(2));
+        p.saleJ = FullPrecisionMath.mulDiv(amountIn, _toWad(Repo._tokenAt(Repo._layout(), p.j), _effectiveNativeAt(p.j)), total);
+        p.saleK = FullPrecisionMath.mulDiv(amountIn, _toWad(Repo._tokenAt(Repo._layout(), p.k), _effectiveNativeAt(p.k)), total);
+        p.residual = amountIn - p.saleJ - p.saleK;
+        p.outJ = basket.purchased[p.j];
+        p.outK = basket.purchased[p.k];
     }
+
 
 
     function _previewZapSplit(address tokenIn, uint256 amountIn)
@@ -2158,42 +1425,10 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     /// @dev Opening face balances of the three pool tokens. Refunds compare against this snap
     ///      so resting D12 credit is not paid to the current caller (APEX-2026-008 / R6).
-    function _faceSnap() internal view returns (FaceSnap memory snap) {
-        Repo.Layout storage l = Repo._layout();
-        snap.o0 = IERC20(l.token0).balanceOf(address(this));
-        snap.o1 = IERC20(l.token1).balanceOf(address(this));
-        snap.o2 = IERC20(l.token2).balanceOf(address(this));
-    }
-
-    /// @dev Refund this-call surplus only. Non-identity buffered legs: face above the opening
-    ///      snap (`offered - used` plus SE receipts this call). Identity (`se == token`): 0
-    ///      (share backing). Raw: 0 (unused is not pulled; resting above book stays as book).
-    ///      Never the whole free balance. Dust, including amounts at or below `MAX_DUST_WEI`,
-    ///      is returned when it is this-call surplus.
-    function _refundConservation(address to, FaceSnap memory snap) internal {
-        if (to == address(0)) return;
-        Repo.Layout storage l = Repo._layout();
-        _refundThisCallSurplus(l.token0, l.se0, snap.o0, to);
-        _refundThisCallSurplus(l.token1, l.se1, snap.o1, to);
-        _refundThisCallSurplus(l.token2, l.se2, snap.o2, to);
-    }
-
-    function _refundThisCallSurplus(address token, address se, uint256 opening, address to) private {
-        if (se == token || se == address(0)) return;
-        uint256 bal = IERC20(token).balanceOf(address(this));
-        if (bal > opening) IERC20(token).safeTransfer(to, bal - opening);
-    }
 
 
-    function _freeTokenBalance(address token) internal view returns (uint256 free) {
-        uint256 bal = IERC20(token).balanceOf(address(this));
-        if (_seOf(token) != address(0)) {
-            if (_seOf(token) == token) return 0;
-            // Buffered leg: free face balance is never book (SE shares are book).
-            return bal;
-        }
-        uint256 book = Repo._layout().reserves[token];
-        return bal > book ? bal - book : 0;
+    function _freeTokenBalance(address token) internal view returns (uint256) {
+        return LocalCreditLib.available(IERC20(token).balanceOf(address(this)), Repo._layout().reserves[token]);
     }
 
 
@@ -2232,10 +1467,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     /// @dev Credit is measured in locally held token units, never against rated claim value.
     ///      Non-identity buffered legs hold their backing as a different SE token.
     function _unbookedBalance(IERC20 token) internal view returns (uint256) {
-        address se = _seOf(address(token));
-        uint256 booked = se == address(0) || se == address(token)
-            ? Repo._layout().reserves[address(token)] : 0;
-        return LocalCreditLib.available(token.balanceOf(address(this)), booked);
+        return LocalCreditLib.available(token.balanceOf(address(this)), Repo._layout().reserves[address(token)]);
     }
 
 

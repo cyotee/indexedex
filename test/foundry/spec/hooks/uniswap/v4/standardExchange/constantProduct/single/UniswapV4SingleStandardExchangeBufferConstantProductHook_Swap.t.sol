@@ -73,38 +73,43 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
     }
 
     function test_SE1_exchangeIn_rawToPair_and_pairToRaw() public {
-        uint256 amountIn = 3 ether;// raw -> pair
-        (uint256 predPair,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(rawToken)), amountIn, IERC20(address(pairToken))
-        );
-        assertGt(predPair, 0);
-        uint256 bPair = pairToken.balanceOf(user);
-        vm.prank(user);(uint256 outPair,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
-            amountIn,
-            IERC20(address(pairToken)),
-            0,
-            user,
-            false,
-            block.timestamp + 1
-        );
-        assertEq(outPair, predPair);
-        assertEq(pairToken.balanceOf(user) - bPair, outPair);
-        // Did not mint LP
-        assertEq(IERC20(hook).balanceOf(user), IERC20(hook).balanceOf(user));// pair -> raw
-        (uint256 predRaw,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(address(pairToken)), amountIn, IERC20(address(rawToken))
-        );
-        assertGt(predRaw, 0);
-        uint256 bRaw = rawToken.balanceOf(user);
-        vm.prank(user);(uint256 outRaw,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(pairToken)),
-            amountIn,
-            IERC20(address(rawToken)),
-            0,
-            user,
-            false,
-            block.timestamp + 1
-        );
-        assertEq(outRaw, predRaw);
-        assertEq(rawToken.balanceOf(user) - bRaw, outRaw);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        uint256 amountIn = 3 ether;
+        uint256 lpBefore = IERC20(hook).balanceOf(user);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        {
+            uint256 localBefore = pairToken.balanceOf(hook);
+            uint256 sharesBefore = IERC20(se).balanceOf(hook);
+            (uint256 predicted,) = IStandardExchangeIn(hook).previewExchangeIn(
+                IERC20(address(rawToken)), amountIn, IERC20(address(pairToken)));
+            assertGt(predicted, 0);
+            uint256 userBefore = pairToken.balanceOf(user);
+            vm.prank(user);
+            (uint256 paid,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)), amountIn,
+                IERC20(address(pairToken)), 0, user, false, block.timestamp + 1);
+            assertEq(paid, predicted);
+            assertEq(pairToken.balanceOf(user) - userBefore, paid);
+            assertEq(pairToken.balanceOf(hook), localBefore > paid ? localBefore - paid : 0);
+            if (localBefore >= paid) assertEq(IERC20(se).balanceOf(hook), sharesBefore);
+        }
+        {
+            uint256 localBefore = pairToken.balanceOf(hook);
+            uint256 sharesBefore = IERC20(se).balanceOf(hook);
+            (uint256 minted, uint256 refunded) = IStandardExchangeIn(se).previewExchangeIn(
+                IERC20(address(pairToken)), amountIn, IERC20(se));
+            (uint256 predicted,) = IStandardExchangeIn(hook).previewExchangeIn(
+                IERC20(address(pairToken)), amountIn, IERC20(address(rawToken)));
+            assertGt(predicted, 0);
+            uint256 userBefore = rawToken.balanceOf(user);
+            vm.prank(user);
+            (uint256 paid,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(pairToken)), amountIn,
+                IERC20(address(rawToken)), 0, user, false, block.timestamp + 1);
+            assertEq(paid, predicted);
+            assertEq(rawToken.balanceOf(user) - userBefore, paid);
+            assertEq(pairToken.balanceOf(hook), localBefore + refunded);
+            assertEq(IERC20(se).balanceOf(hook), sharesBefore + minted);
+        }
+        assertEq(IERC20(hook).balanceOf(user), lpBefore, "swaps mint no LP");
+        assertEq(IERC20(hook).totalSupply(), supplyBefore, "swaps mint no protocol LP");
     }
 
     function test_SE2_exchangeOut_bothDirections() public {

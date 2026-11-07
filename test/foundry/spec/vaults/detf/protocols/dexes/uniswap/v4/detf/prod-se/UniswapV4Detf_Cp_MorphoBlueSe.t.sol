@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 
@@ -74,7 +75,7 @@ contract UniswapV4Detf_Cp_MorphoBlueSe is TestBase_UniswapV4Detf_Cp_MorphoBlueSe
         address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
         for (uint256 i; i < toks.length; ++i) {
             if (toks[i] != detf) {
-                assertLe(IERC20(toks[i]).balanceOf(reserveHook), 10, "hook pair <=10 wei");
+                DetfResidualAssertions.assertHookPairClaim(reserveHook, i);
             }
         }
     }

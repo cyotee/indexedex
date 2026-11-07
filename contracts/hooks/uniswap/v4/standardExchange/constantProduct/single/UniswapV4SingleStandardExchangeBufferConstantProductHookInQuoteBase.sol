@@ -29,6 +29,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
         uint256 pairReserve;
         uint256 rawAdded;
         uint256 pairAdded;
+        uint256 shareReserve;
+        uint256 localReserve;
+        uint256 sharesAdded;
     }
 
     function _previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
@@ -45,34 +48,17 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
     }
 
     function _singlePreviewJoin(address tokenIn, uint256 amountIn) internal view returns (uint256) {
-        if (!_singleIsLive() || amountIn == 0) return 0;
+        if (ERC20Repo._totalSupply() == 0 || amountIn == 0) return 0;
         return _singlePreviewDeposit(tokenIn, amountIn);
     }
 
     function _singleIsLive() private view returns (bool) {
         Repo.Layout storage l = Repo._layout();
-        if (_singleReserve(l.currency0) > 0 && _singleReserve(l.currency1) > 0) return true;
-        return IERC20(l.rawToken).balanceOf(address(this)) > 0 && IERC20(l.standardExchange).balanceOf(address(this)) > 0;
+        return ERC20Repo._totalSupply() != 0 && l.bookedRaw != 0 && (l.bookedSeShares != 0 || l.localPairReserve != 0);
     }
 
-    function _singlePreviewDeposit(address tokenIn, uint256 amountIn) internal view returns (uint256 minted) {
-        Repo.Layout storage l = Repo._layout();
-        if (ClaimLib.supportsTransitionQuote(l.standardExchange, l.pairToken, address(this))) {
-            SingleZapQuote memory q = _singleZapState(tokenIn, amountIn);
-            (, minted,) = _singleFinishDeposit(q, _singleSupply());
-            return minted;
-        }
-        (, uint256 otherOut, uint256 kept) = _singleZapSplit(tokenIn, amountIn);
-        if (otherOut == 0 || kept == 0) return 0;
-        uint256 add0 = tokenIn == l.currency0 ? kept : otherOut;
-        uint256 add1 = tokenIn == l.currency0 ? otherOut : kept;
-        (uint256 used0, uint256 used1) = _singleClamp(
-            _singleReserve(l.currency0), _singleReserve(l.currency1), add0, add1
-        );
-        return Math.mintSharesLater(
-            _singleRawDelta(true, used0, used1), _singleRawDelta(false, used0, used1),
-            _singleRawReserve(l.currency0), _singleRawReserve(l.currency1), _singleSupply()
-        );
+    function _singlePreviewDeposit(address tokenIn, uint256 amountIn) internal view returns (uint256) {
+        return ClaimLib.previewSingleComponentJoin(tokenIn, amountIn);
     }
 
     function _singlePreviewExit(address tokenOut, uint256 shares) internal view returns (uint256) {
@@ -80,33 +66,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
         return _singleWithdrawalPlan(shares, _singleExitSupply(), tokenOut);
     }
 
-    function _singleExitSupply() private view returns (uint256 supply) {
-        supply = ERC20Repo._totalSupply();
-        (bool feeOn, uint256 share) = _singleFeeShare();
-        Repo.Layout storage l = Repo._layout();
-        if (feeOn && l.kLast != 0 && supply > 0) {
-            uint256 product = Math.toWad(_singleReserve(l.currency0), _singleDecimals(l.currency0))
-                * Math.toWad(_singleReserve(l.currency1), _singleDecimals(l.currency1));
-            supply += Math.calculateProtocolFee(supply, product, l.kLast, share);
-        }
-    }
+    function _singleExitSupply() private view returns (uint256) { return ERC20Repo._totalSupply(); }
 
-    function _singleWithdrawalPlan(uint256 lpAmount, uint256 supply, address tokenOut) internal view returns (uint256) {
-        if (lpAmount == 0 || supply == 0) return 0;
+    function _singleWithdrawalPlan(uint256 lpAmount, uint256, address tokenOut) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         if (tokenOut != l.rawToken && tokenOut != l.pairToken) revert ISingleBufferQuoteErrors.InvalidToken();
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        uint256 rawUser = (rawBal * lpAmount) / supply;
-        uint256 seUser = (seBal * lpAmount) / supply;
-        uint256 rawCap = rawBal > Repo.MAX_DUST_WEI ? rawBal - Repo.MAX_DUST_WEI : 0;
-        uint256 seCap = seBal > Repo.MAX_DUST_WEI ? seBal - Repo.MAX_DUST_WEI : 0;
-        if (rawUser > rawCap) rawUser = rawCap;
-        if (seUser > seCap) seUser = seCap;
-        ClaimLib.WithdrawalPlan memory plan = ClaimLib.withdrawalPlan(rawUser, seUser, rawBal - rawUser, tokenOut == l.pairToken);
-        uint256 result = (tokenOut == l.pairToken ? plan.pairUser : rawUser) + plan.residualOut;
-        if (tokenOut == l.rawToken && result >= rawBal) result = rawBal > 1 ? rawBal - 1 : 0;
-        return result;
+        return ClaimLib.previewSingleComponentExit(lpAmount, tokenOut == l.pairToken);
     }
 
     function _singleZapState(address tokenIn, uint256 amountIn) internal view returns (SingleZapQuote memory q) {
@@ -142,7 +107,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
         Repo.Layout storage l = Repo._layout();
         bool zfo = _singleRoute(tokenIn, tokenIn == l.rawToken ? l.pairToken : l.rawToken);
         if (tokenIn == l.rawToken) {
-            uint256 rInN = Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), _singleDecimals(l.rawToken));
+            uint256 rInN = Math.toWad(l.bookedRaw, _singleDecimals(l.rawToken));
             saleAmt = Math.fromWadFloor(Math.swapDepositSaleAmt(Math.toWad(amountIn, _singleDecimals(l.rawToken)), rInN), _singleDecimals(l.rawToken));
         } else {
             uint256 claimInFull = ClaimLib.previewBufferClaimIn(amountIn);
@@ -162,7 +127,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
         if (amountIn == 0) revert ISingleBufferQuoteErrors.ZeroAmount();
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zeroForOne == (l.currency0 == l.rawToken);
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
+        uint256 rawBal = l.bookedRaw;
         uint256 seClaim = manager == address(0) ? ClaimLib.ratedReserve() : ClaimLib.ratedReserveWithContext(manager);
         if (rawIn) {
             uint256 rInN = Math.toWad(rawBal, _singleDecimals(l.rawToken));
@@ -172,13 +137,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
             output = manager == address(0) ? ClaimLib.previewBudget(budget) : ClaimLib.previewBudgetWithContext(budget, manager);
         } else {
             uint256 claimIn = manager == address(0) ? ClaimLib.previewBufferClaimIn(amountIn) : ClaimLib.previewBufferClaimInWithContext(amountIn, manager);
-            output.amountOut = _singlePairRawOut(claimIn, seClaim, IERC20(l.rawToken).balanceOf(address(this)));
+            output.amountOut = _singlePairRawOut(claimIn, seClaim, l.bookedRaw);
         }
     }
 
     function _singleSwapQuote(bool zfo, uint256 amount, bool zap) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
+        uint256 rawBal = l.bookedRaw;
         uint256 claim = ClaimLib.ratedReserve();
         if (zfo == (l.currency0 == l.rawToken)) {
             uint256 budget = Math.fromWadFloor(Math.saleQuote(Math.toWad(amount, _singleDecimals(l.rawToken)),
@@ -189,18 +154,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
         return _singlePairRawOut(ClaimLib.previewBufferClaimIn(amount), claim, rawBal);
     }
 
-    function _singleSupply() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return _singleSupplyForProduct(Math.toWad(_singleReserve(l.currency0), _singleDecimals(l.currency0))
-            * Math.toWad(_singleReserve(l.currency1), _singleDecimals(l.currency1)));
-    }
+    function _singleSupply() internal view returns (uint256) { return ERC20Repo._totalSupply(); }
 
-    function _singleSupplyForProduct(uint256 product) internal view returns (uint256 supply) {
-        supply = ERC20Repo._totalSupply();
-        (bool feeOn, uint256 share) = _singleFeeShare();
-        uint256 kLast = Repo._layout().kLast;
-        if (feeOn && kLast != 0 && supply > 0) supply += Math.calculateProtocolFee(supply, product, kLast, share);
-    }
+    function _singleSupplyForProduct(uint256) internal view returns (uint256) { return ERC20Repo._totalSupply(); }
 
     function _singleFeeShare() internal view returns (bool feeOn, uint256 share) {
         (IFeeCollectorProxy to, uint256 fee) = IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeAndFeeToOfVault(address(this));
@@ -209,10 +165,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInQuot
     }
 
     function _singleReserve(address token) private view returns (uint256) {
-        return token == Repo._layout().rawToken ? IERC20(token).balanceOf(address(this)) : ClaimLib.ratedReserve();
+        return token == Repo._layout().rawToken ? Repo._layout().bookedRaw : ClaimLib.ratedReserve();
     }
     function _singleRawReserve(address token) internal view returns (uint256) {
-        return IERC20(token == Repo._layout().rawToken ? token : Repo._layout().standardExchange).balanceOf(address(this));
+        return token == Repo._layout().rawToken ? Repo._layout().bookedRaw : Repo._layout().bookedSeShares;
     }
     function _singleRawDelta(bool for0, uint256 used0, uint256 used1) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();

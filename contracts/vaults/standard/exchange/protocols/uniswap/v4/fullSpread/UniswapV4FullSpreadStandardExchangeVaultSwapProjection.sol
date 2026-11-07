@@ -10,7 +10,9 @@ import {SwapMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Sw
 import {LiquidityMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityMath.sol";
 import {ProtocolFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/ProtocolFeeLibrary.sol";
 import {BitMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/BitMath.sol";
+import {UniswapV4SinglePositionAwareRepo} from "@crane/contracts/protocols/dexes/uniswap/v4/aware/UniswapV4SinglePositionAwareRepo.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultTypes as Types} from "./UniswapV4FullSpreadStandardExchangeVaultTypes.sol";
+import {UniswapV4FullSpreadStandardExchangeVaultMath as Math} from "./UniswapV4FullSpreadStandardExchangeVaultMath.sol";
 
 /// @notice Unbounded exact-input projection of the bound hookless pool. No step cap.
 library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
@@ -62,11 +64,19 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
             if (paid_ > remaining_) paid_ = remaining_;
             remaining_ -= paid_;
             quote_.spent += paid_;
+            quote_.applied += amountInStep_;
             quote_.received += amountOutStep_;
             quote_.sqrtPriceX96 = sqrtNextPrice_;
             if (quote_.sqrtPriceX96 == sqrtNext_) {
                 if (initialized_) {
                     int128 liquidityNet_ = _liquidityNet(manager_, key_, tickNext_);
+                    if (liquidityAdjust_ != 0) {
+                        if (tickNext_ == UniswapV4SinglePositionAwareRepo._tickLower()) {
+                            liquidityNet_ = _addInt128(liquidityNet_, liquidityAdjust_);
+                        } else if (tickNext_ == UniswapV4SinglePositionAwareRepo._tickUpper()) {
+                            liquidityNet_ = _addInt128(liquidityNet_, -liquidityAdjust_);
+                        }
+                    }
                     int128 net_ = zeroForOne_ ? -liquidityNet_ : liquidityNet_;
                     quote_.liquidity = LiquidityMath.addDelta(quote_.liquidity, net_);
                 }
@@ -75,6 +85,44 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
                 quote_.tick = TickMath.getTickAtSqrtPrice(quote_.sqrtPriceX96);
             }
             if (quote_.sqrtPriceX96 == before_ && quote_.tick == beforeTick_ && remaining_ == beforeRemaining_) break;
+        }
+    }
+
+    function swapFee(IPoolManager manager_, PoolKey memory key_, bool zeroForOne_) internal view returns (uint24) {
+        (, , uint24 protocolFee_, uint24 lpFee_) = StateLibrary.getSlot0(manager_, key_.toId());
+        uint16 protocol_ = zeroForOne_ ? protocolFee_.getZeroForOneFee() : protocolFee_.getOneForZeroFee();
+        return protocol_ == 0 ? lpFee_ : protocol_.calculateSwapFee(lpFee_);
+    }
+
+    /// @dev The first initialized tick the solved input would reach. Not a split search.
+    function limitingSqrt(
+        IPoolManager manager_,
+        PoolKey memory key_,
+        int24 tick_,
+        bool zeroForOne_,
+        uint160 sqrtPrice_,
+        uint128 active_,
+        uint256 n_
+    ) internal view returns (uint160 bound_, bool cap_) {
+        int24 cursor_ = tick_;
+        unchecked {
+            while (true) {
+                (int24 next_, bool init_) = _nextTick(manager_, key_, cursor_, zeroForOne_);
+                if (next_ < TickMath.MIN_TICK) next_ = TickMath.MIN_TICK;
+                if (next_ > TickMath.MAX_TICK) next_ = TickMath.MAX_TICK;
+                uint160 edge_ = TickMath.getSqrtPriceAtTick(next_);
+                uint256 capN_ = Math.boundaryInput(zeroForOne_, sqrtPrice_, edge_, active_);
+                if (n_ <= capN_) return (edge_, false);
+                if (init_) return (edge_, true);
+                if (next_ == TickMath.MIN_TICK || next_ == TickMath.MAX_TICK) {
+                    return (zeroForOne_ ? TickMath.MIN_SQRT_PRICE : TickMath.MAX_SQRT_PRICE, true);
+                }
+                int24 advanced_ = zeroForOne_ ? next_ - 1 : next_;
+                if (advanced_ == cursor_) {
+                    return (zeroForOne_ ? TickMath.MIN_SQRT_PRICE : TickMath.MAX_SQRT_PRICE, true);
+                }
+                cursor_ = advanced_;
+            }
         }
     }
 
@@ -102,11 +150,34 @@ library UniswapV4FullSpreadStandardExchangeVaultSwapProjection {
         }
     }
 
+    function _addInt128(int128 left_, int128 right_) private pure returns (int128) {
+        int256 sum_ = int256(left_) + int256(right_);
+        if (sum_ > type(int128).max || sum_ < type(int128).min) revert LiquidityMath.SafeCastOverflow();
+        return int128(sum_);
+    }
+
     function _liquidityNet(IPoolManager manager_, PoolKey memory key_, int24 tick_)
         private
         view
         returns (int128 liquidityNet_)
     {
         (, liquidityNet_) = StateLibrary.getTickLiquidity(manager_, key_.toId(), tick_);
+    }
+}
+
+/// @dev Exposes the segment-bound scan to the cap test. Not a vault facet.
+contract UniswapV4FullSpreadSwapProjectionHarness {
+    function limitingSqrt(
+        IPoolManager manager_,
+        PoolKey memory key_,
+        int24 tick_,
+        bool zeroForOne_,
+        uint160 sqrtPrice_,
+        uint128 active_,
+        uint256 n_
+    ) external view returns (uint160 bound_, bool cap_) {
+        return UniswapV4FullSpreadStandardExchangeVaultSwapProjection.limitingSqrt(
+            manager_, key_, tick_, zeroForOne_, sqrtPrice_, active_, n_
+        );
     }
 }

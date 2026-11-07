@@ -20,6 +20,7 @@ import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IRateProvider} from
@@ -300,18 +301,12 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSwapCore is
         internal returns (uint256 amountOut)
     {
         Repo.Layout storage l = Repo._layout();
-        if (output.sharesOut != 0) {
-            if (output.sharesOut >= _nativeAt(j)) revert WouldZeroReserve();
-            uint256 beforeOut = IERC20(l.tokens[j]).balanceOf(recipient);
-            _unwrapSeShares(j, output.sharesOut, recipient);
-            amountOut = IERC20(l.tokens[j]).balanceOf(recipient) - beforeOut;
-            if (amountOut < output.amountOut) revert UnwrapFailed();
-        } else {
-            amountOut = output.amountOut;
-            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
-            if (l.standardExchanges[j] == address(0)) l.rawReserves[j] -= amountOut;
-            if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
-        }
+        uint256 local = output.sharesOut == 0 ? output.amountOut : l.rawReserves[j];
+        l.rawReserves[j] -= local;
+        amountOut = local;
+        if (output.sharesOut != 0) amountOut += _unwrapSeShares(j, output.sharesOut, address(this));
+        if (amountOut < output.amountOut) revert UnwrapFailed();
+        if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
     }
 
     function _swapExactOutExecute(address tokenIn, address tokenOut, uint256 amountOut, uint256)
@@ -396,9 +391,10 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookQuoteTarget is Unis
         Repo.Layout storage l = Repo._layout();
         pairValue = q.exchange.quoteAssets(q.state, q.assets);
         if (!_isLive()) return (pairValue, 0, 0);
-        uint256[] memory inv = _invWadAll();
-        inv[i] = Math.scaleTo(q.heldShares, l.invScales[i]);
-        liquidityDetf = LegLib.matchingLiquidityDetf(q, _nativeAt(j), pairValue, _previewSupplyAfterProtocolMint(inv), 0);
+        uint256 reservePair = l.rawReserves[i] + q.exchange.quoteAssets(q.state, l.seReserves[i]);
+        // Match DETF's unboosted native reserve ratio directly. LP component
+        // rounding belongs to the subsequent join, not to DETF issuance.
+        if (reservePair != 0) liquidityDetf = FullMath.mulDiv(l.rawReserves[j], pairValue, reservePair);
         q.assets = FullMath.mulDiv(pairValue, multiplier, 1e18);
         purchasedDetf = _swapAtExternalState(q, i, j);
     }
@@ -409,19 +405,17 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookQuoteTarget is Unis
         Repo.Layout storage l = Repo._layout();
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
-        (uint256 minted,) = LegLib.depositAfterExchange(q, Math.applyTradingFeeNet(q.assets, feeWad));
+        uint256 net = Math.applyTradingFeeNet(q.assets, feeWad);
         uint256[] memory rated = _ratedWadAll();
-        if (l.rateProviders[i] == address(0)) revert ClaimLib.RateProviderRequired();
-        {
-            // D60: held reserve and inflow are shares x rate; `minted` carries the rated inflow from here on.
-            uint256 rate = LegLib.rateAfterExchange(q, l.tokens[i], l.rateProviders[i]);
-            rated[i] = Math.scaleTo(
-                Math.ratedPairUnits(q.heldShares, rate, l.invScales[i], l.ratedScales[i]), l.ratedScales[i]
-            );
-            minted = Math.ratedPairUnits(minted, rate, l.invScales[i], l.ratedScales[i]);
+        uint256 rate = LegLib.rateAfterExchange(q, l.tokens[i], l.rateProviders[i]);
+        rated[i] = Math.scaleTo(l.rawReserves[i] + Math.ratedPairUnits(l.seReserves[i], rate, l.invScales[i], l.ratedScales[i]), l.ratedScales[i]);
+        uint256 inflow = net;
+        if (!ClaimLib.isDisabled(i)) {
+            (, uint256 consumed, uint256 minted,) = q.exchange.quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, net);
+            inflow = net - consumed + Math.ratedPairUnits(minted, rate, l.invScales[i], l.ratedScales[i]);
         }
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
-        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(minted, l.ratedScales[i]));
+        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(inflow, l.ratedScales[i]));
     }
 
 }

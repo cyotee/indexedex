@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as Components} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 
 import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib}
     from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
@@ -84,6 +86,15 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     error PairAndShareSameLeg();
     error FirstJoinMustBeFullBook();
 
+    modifier unlockedQuery() {
+        _requireQueryUnlocked();
+        _;
+    }
+
+    function _requireQueryUnlocked() internal view {
+        if (Repo._layout().reentrancyStatus == Repo.ENTERED) revert Reentrancy();
+    }
+
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
         if (l.reentrancyStatus == Repo.ENTERED) revert Reentrancy();
@@ -92,57 +103,23 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         l.reentrancyStatus = Repo.NOT_ENTERED;
     }
 
-    /// @dev Stack-safe frame for flexible deposit (B6).
-    struct DepositFlexibleVars {
-        uint256 amount0;
-        bool amount0IsSeShare;
-        uint256 amount1;
-        bool amount1IsSeShare;
-        address to;
-        uint256 minLpAmount;
-        address se0;
-        address se1;
-        address currency0;
-        address currency1;
-        uint256 used0;
-        uint256 used1;
-        uint256 lpAmount;
-    }
-
-    /// @dev Stack-safe frame for flexible withdraw (B6).
-    struct WithdrawFlexibleVars {
-        address to;
-        bool receiveSeShare0;
-        bool receiveSeShare1;
-        uint256 minAmount0;
-        uint256 minAmount1;
-        address se0;
-        address se1;
-        address currency0;
-        address currency1;
-        uint256 seOut0;
-        uint256 seOut1;
-        uint256 amount0;
-        uint256 amount1;
-    }
-
     /* views used by deposit/withdraw internals (also on Hooks Facet) */
-    function claimSupply0() public view returns (uint256) {
+    function claimSupply0() public view unlockedQuery returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         return _claimSupply(l.se0, l.token0);
     }
 
-    function claimSupply1() public view returns (uint256) {
+    function claimSupply1() public view unlockedQuery returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         return _claimSupply(l.se1, l.token1);
     }
 
-    function claimSupplyCurrency0() public view returns (uint256) {
+    function claimSupplyCurrency0() public view unlockedQuery returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         return _claimSupply(_seFor(l.currency0), l.currency0);
     }
 
-    function claimSupplyCurrency1() public view returns (uint256) {
+    function claimSupplyCurrency1() public view unlockedQuery returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         return _claimSupply(_seFor(l.currency1), l.currency1);
     }
@@ -172,8 +149,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     /// @dev Buffered face is unbooked; an identity leg deducts its native-unit custody book.
     function _unbookedBalance(IERC20 token) internal view returns (uint256) {
-        uint256 booked = _seFor(address(token)) == address(token)
-            ? Repo._layout().localReserves[address(token)] : 0;
+        Repo.Layout storage l = Repo._layout();
+        uint256 booked = l.localReserves[address(token)] + l.shareReserves[address(token)];
         return LocalCreditLib.available(token.balanceOf(address(this)), booked);
     }
 
@@ -186,32 +163,6 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         if (!pretransferred) return;
         uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);
         if (credit > used) token.safeTransfer(msg.sender, credit - used);
-    }
-
-
-    /* ----------------------------- D59 raw liquidity book ----------------------------- */
-
-    /// @dev D59: LP issuance is proportional in raw SE share balances (an identity leg's pair balance); the
-    ///      provider rate never enters issuance.
-    function _rawShareReserve(address pairToken) internal view returns (uint256) {
-        return IERC20(_seFor(pairToken)).balanceOf(address(this));
-    }
-
-    /// @dev Raw share balance of a leg before a pull: pulled shares, and an identity leg's pulled pair, already
-    ///      sit in the balance; a buffered leg's pulled pair sits as free pair, outside it.
-    function _rawShareBefore(address pairToken, uint256 pulledPair, uint256 pulledShares)
-        internal view returns (uint256)
-    {
-        uint256 bal = _rawShareReserve(pairToken);
-        uint256 inBal = pulledShares + (_seFor(pairToken) == pairToken ? pulledPair : 0);
-        return bal >= inBal ? bal - inBal : 0;
-    }
-
-    /// @dev Raw shares a leg gains from buffering `amount` pair tokens (the SE's own preview, D73).
-    function _previewRawShares(address se, address pairToken, uint256 amount) internal view returns (uint256) {
-        if (amount == 0) return 0;
-        if (se == pairToken) return amount;(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amount, IERC20(se));
-        return quotedAmountOut;
     }
 
     /// @dev D60: SE shares held x the leg's provider rate (pair units); never an SE self-quote.
@@ -269,12 +220,14 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
 
     function _isLive() internal view returns (bool) {
-        return claimSupplyCurrency0() > 0 && claimSupplyCurrency1() > 0;
+        Repo.Layout storage l = Repo._layout();
+        return (l.shareReserves[l.se0] != 0 || l.localReserves[l.token0] != 0)
+            && (l.shareReserves[l.se1] != 0 || l.localReserves[l.token1] != 0);
     }
 
 
     function _isZapEligible() internal view returns (bool) {
-        return _isLive() && ERC20Repo._totalSupply() > Repo.MINIMUM_LIQUIDITY;
+        return ERC20Repo._totalSupply() > Repo.MINIMUM_LIQUIDITY;
     }
 
 
@@ -327,16 +280,6 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         return xN * yN;
     }
 
-
-    function _feeOnAndShare() internal view returns (bool feeOn, address feeTo_, uint256 ownerFeeShare) {
-        (IFeeCollectorProxy ft, uint256 dexFeeWad) =
-            IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeAndFeeToOfVault(address(this));
-        feeTo_ = address(ft);
-        feeOn = feeTo_ != address(0) && dexFeeWad != 0;
-        ownerFeeShare = (dexFeeWad * Repo.TRADING_FEE_DENOMINATOR) / 1e18;
-    }
-
-
     function _previewBufferClaimIn(address se, address pairToken, uint256 amountInRaw)
         internal
         view
@@ -355,40 +298,188 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     }
 
 
+    /// @dev Receipts belong to the current operation until explicitly accepted or booked.
+    function _convert(address se, address pair, uint256 amount, bool deposit)
+        internal returns (ExchangeInAmount.Result memory result)
+    {
+        if (amount == 0) return result;
+        IERC20 input = IERC20(deposit ? pair : se);
+        IERC20 output = IERC20(deposit ? se : pair);
+        uint256 inputBefore = input.balanceOf(address(this));
+        uint256 outputBefore = output.balanceOf(address(this));
+        input.forceApprove(se, amount);
+        result = ExchangeInAmount.exchangeResult(IStandardExchangeIn(se), input, amount, output,
+            0, address(this), false, block.timestamp);
+        ExchangeInAmount.requireReceipt(amount, result, inputBefore, input.balanceOf(address(this)),
+            outputBefore, output.balanceOf(address(this)));
+        input.forceApprove(se, 0);
+    }
+
+    function _bufferPool(address se, address pair, uint256 amount) internal {
+        Repo.Layout storage l = Repo._layout();
+        if (se == pair || ClaimLib.disabled(se)) {
+            l.localReserves[pair] += amount;
+            return;
+        }
+        ExchangeInAmount.Result memory result = _convert(se, pair, amount, true);
+        l.shareReserves[se] += result.amountOut;
+        l.localReserves[pair] += result.amountRefunded;
+    }
+
+    function _assemble(address pair, uint256 amount, bool asShare, bool genesis, DepositQuoteLib.Component memory old)
+        private returns (DepositQuoteLib.Component memory available)
+    {
+        if (amount == 0) return available;
+        address se = _seFor(pair);
+        if (se == pair) { available.local = amount; return available; }
+        if (asShare) available.shares = amount;
+        else if (genesis) {
+            if (ClaimLib.disabled(se)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+            ExchangeInAmount.Result memory result = _convert(se, pair, amount, true);
+            available.shares = result.amountOut;
+            available.local = result.amountRefunded;
+        }
+        else if (old.shares == 0 || ClaimLib.disabled(se)) available.local = amount;
+        else {
+            uint256 forwarded = DepositQuoteLib.pairToDeposit(se, amount, old, bytes(""));
+            ExchangeInAmount.Result memory result = _convert(se, pair, forwarded, true);
+            available.shares = result.amountOut;
+            available.local = ExchangeInAmount.localCredit(amount, forwarded, result.amountRefunded);
+        }
+        uint256 spend;
+        if (genesis) (spend,) = Components.bootstrapSplit(available.shares);
+        else spend = DepositQuoteLib.redemptionFor(se, available, old, bytes(""));
+        if (spend != 0) {
+            ExchangeInAmount.Result memory redeemed = _convert(se, pair, spend, false);
+            if (genesis && (redeemed.amountRefunded != 0 || redeemed.amountOut == 0)) revert InsufficientTokenOut();
+            available.local += redeemed.amountOut;
+            available.shares -= spend - redeemed.amountRefunded;
+        }
+    }
+
+    function _accept(address pair, DepositQuoteLib.Component memory available, DepositQuoteLib.Component memory old,
+        uint256 gross, uint256 supply, bool asShare, uint256 supplied) private returns (uint256 used)
+    {
+        Repo.Layout storage l = Repo._layout();
+        address se = _seFor(pair);
+        uint256 shares = supply == 0 ? available.shares : Components.componentContribution(gross, old.shares, supply);
+        uint256 local = supply == 0 ? available.local : Components.componentContribution(gross, old.local, supply);
+        l.shareReserves[se] = old.shares + shares;
+        l.localReserves[pair] = old.local + local;
+        uint256 refundShares = available.shares - shares;
+        uint256 refundPair = available.local - local;
+        used = supplied - (asShare && se != pair ? refundShares : refundPair);
+    }
+
+    function _joinComponents(uint256 amount0, bool asShare0, uint256 amount1, bool asShare1, address to, uint256 minimum)
+        internal returns (uint256 netLp, uint256 used0, uint256 used1)
+    {
+        if (to == address(0)) revert ZeroAddress();
+        if (amount0 == 0 && amount1 == 0) revert ZeroAmount();
+        Repo.Layout storage l = Repo._layout();
+        uint256 supply = ERC20Repo._totalSupply();
+        if (supply == 0) {
+            _requireNonZero(amount0);
+            _requireNonZero(amount1);
+        }
+        DepositQuoteLib.Component memory x = DepositQuoteLib.book(l.currency0);
+        DepositQuoteLib.Component memory y = DepositQuoteLib.book(l.currency1);
+        if (supply != 0 && (amount0 == 0 || amount1 == 0)) {
+            bool first = amount0 != 0;
+            address token = first ? (asShare0 ? _seFor(l.currency0) : l.currency0)
+                : (asShare1 ? _seFor(l.currency1) : l.currency1);
+            uint256 amount = first ? amount0 : amount1;
+            uint256 callerBefore = IERC20(token).balanceOf(msg.sender);
+            netLp = _depositSingle(token, amount, to, minimum, block.timestamp);
+            uint256 used = amount - (IERC20(token).balanceOf(msg.sender) - callerBefore);
+            return (netLp, first ? used : 0, first ? 0 : used);
+        }
+        DepositQuoteLib.Component memory a = _assemble(l.currency0, amount0, asShare0, supply == 0, x);
+        DepositQuoteLib.Component memory b = _assemble(l.currency1, amount1, asShare1, supply == 0, y);
+        // Paid swaps (if any) completed before this call. Custody conversions above
+        // do not credit contributions; take the incumbent mint boundary now.
+        x = DepositQuoteLib.book(l.currency0);
+        y = DepositQuoteLib.book(l.currency1);
+        uint256 gross = supply == 0 ? DepositQuoteLib.seed(a, b) : DepositQuoteLib.limit(a, b, x, y, supply);
+        if (gross == 0) revert InsufficientLpOut();
+        (IFeeCollectorProxy feeTo, uint256 fee) = IVaultFeeOracleQuery(l.feeOracle).dexSwapFeeAndFeeToOfVault(address(this));
+        uint256 feeLp;
+        (netLp, feeLp) = Components.splitMintFee(gross, fee, address(feeTo), fee != 0);
+        if (netLp < minimum) revert InsufficientLpOut();
+        used0 = _accept(l.currency0, a, x, gross, supply, asShare0, amount0);
+        used1 = _accept(l.currency1, b, y, gross, supply, asShare1, amount1);
+        if (supply == 0) _mintLp(address(0), Repo.MINIMUM_LIQUIDITY);
+        _mintLp(address(feeTo), feeLp);
+        _mintLp(to, netLp);
+        _refundAccepted(l.currency0, a, x, gross, supply);
+        _refundAccepted(l.currency1, b, y, gross, supply);
+        _syncReserves();
+    }
+
+    function _refundAccepted(address pair, DepositQuoteLib.Component memory available, DepositQuoteLib.Component memory old,
+        uint256 gross, uint256 supply) private
+    {
+        if (supply == 0) return;
+        uint256 shares = available.shares - Components.componentContribution(gross, old.shares, supply);
+        uint256 local = available.local - Components.componentContribution(gross, old.local, supply);
+        if (shares != 0) IERC20(_seFor(pair)).safeTransfer(msg.sender, shares);
+        if (local != 0) IERC20(pair).safeTransfer(msg.sender, local);
+    }
+
+    function _allocateExit(address pair, uint256 burned, uint256 supply)
+        private returns (DepositQuoteLib.Component memory allocated)
+    {
+        Repo.Layout storage l = Repo._layout();
+        address se = _seFor(pair);
+        allocated.shares = Components.componentAllocation(burned, l.shareReserves[se], supply);
+        allocated.local = Components.componentAllocation(burned, l.localReserves[pair], supply);
+        l.shareReserves[se] -= allocated.shares;
+        l.localReserves[pair] -= allocated.local;
+    }
+
+    function _payComponent(address pair, DepositQuoteLib.Component memory allocated, bool asShare, address to)
+        private returns (uint256 amount)
+    {
+        address se = _seFor(pair);
+        if (se == pair) amount = allocated.local;
+        else if (asShare) amount = allocated.shares + (allocated.local == 0 ? 0 : _buffer(se, pair, allocated.local));
+        else amount = allocated.local + (allocated.shares == 0 ? 0 : _unwrap(se, pair, allocated.shares));
+        if (to != address(this) && amount != 0) IERC20(asShare ? se : pair).safeTransfer(to, amount);
+    }
+
     function _buffer(address se, address pairToken, uint256 amount) internal returns (uint256 seOut) {
-        _requireNonZero(amount);
-        if (se == pairToken) return amount;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amount, IERC20(se)
-        );
-        IERC20(pairToken).forceApprove(se, amount);(seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(pairToken), amount, IERC20(se), minOut, address(this), false, block.timestamp
-        );
+        if (se == pairToken) return amount;
+        if (ClaimLib.disabled(se)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+        ExchangeInAmount.Result memory result = _convert(se, pairToken, amount, true);
+        // A share-only request cannot silently discard the caller's refunded pair component.
+        if (result.amountRefunded != 0 || (amount != 0 && result.amountOut == 0)) revert InsufficientTokenOut();
+        return result.amountOut;
     }
 
 
     function _unwrap(address se, address pairToken, uint256 seIn) internal returns (uint256 tokenOut) {
-        _requireNonZero(seIn);
-        if (se == pairToken) return seIn;(uint256 minOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(pairToken)
-        );
-        // Uni V4 SE pulls shares with transferFrom when pretransferred=false.
-        IERC20(se).forceApprove(se, seIn);(tokenOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(se), seIn, IERC20(pairToken), minOut, address(this), false, block.timestamp
-        );
+        if (seIn == 0 || se == pairToken) return seIn;
+        ExchangeInAmount.Result memory result = _convert(se, pairToken, seIn, false);
+        if (result.amountRefunded != 0 || result.amountOut == 0) revert InsufficientTokenOut();
+        return result.amountOut;
     }
 
 
     function _unwrapExactOut(address se, address pairToken, uint256 tokenOut, uint256 maxShares)
-        internal
-        returns (uint256 seIn)
+        internal returns (uint256 seIn)
     {
         _requireNonZero(tokenOut);
-        if (se == pairToken) return tokenOut;
-        seIn = maxShares;
-        if (seIn == 0 || seIn >= IERC20(se).balanceOf(address(this))) revert InsufficientTokenOut();
-        // SEs pull shares with transferFrom when pretransferred=false (same as `_unwrap`).
-        IERC20(se).forceApprove(se, seIn);
-        uint256 spent = IStandardExchangeOut(se).exchangeOut(
-            IERC20(se), seIn, IERC20(pairToken), tokenOut, address(this), false, block.timestamp
-        );
-        require(spent == seIn, "unwrap exact-out");
+        if (maxShares == 0 || maxShares >= Repo._layout().shareReserves[se]) revert InsufficientTokenOut();
+        uint256 sharesBefore = IERC20(se).balanceOf(address(this));
+        uint256 pairBefore = IERC20(pairToken).balanceOf(address(this));
+        IERC20(se).forceApprove(se, maxShares);
+        seIn = IStandardExchangeOut(se).exchangeOut(IERC20(se), maxShares, IERC20(pairToken), tokenOut,
+            address(this), false, block.timestamp);
         IERC20(se).forceApprove(se, 0);
+        if (seIn != maxShares || sharesBefore - IERC20(se).balanceOf(address(this)) != seIn) revert InsufficientTokenOut();
+        uint256 received = IERC20(pairToken).balanceOf(address(this)) - pairBefore;
+        if (received < tokenOut) revert InsufficientTokenOut();
+        Repo._layout().localReserves[pairToken] += received - tokenOut;
     }
 
 
@@ -420,31 +511,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     function _syncReserves() internal {
         Repo.Layout storage l = Repo._layout();
-        if (l.se0 == l.token0) l.localReserves[l.token0] = IERC20(l.token0).balanceOf(address(this));
-        if (l.se1 == l.token1) l.localReserves[l.token1] = IERC20(l.token1).balanceOf(address(this));
-        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.currency0), claimSupplyCurrency0());
-        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.currency1), claimSupplyCurrency1());
+        uint256 reserve0 = _claimSupply(_seFor(l.currency0), l.currency0);
+        uint256 reserve1 = _claimSupply(_seFor(l.currency1), l.currency1);
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.currency0), reserve0);
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.currency1), reserve1);
     }
-
-
-    function _refundPairDust(address token, address to) internal {
-        to;
-        address se = _seFor(token);
-        if (se == token) return;
-        uint256 bal = IERC20(token).balanceOf(address(this));
-        if (bal == 0) return;(uint256 preview,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), bal, IERC20(se)
-        );
-        if (preview > 0) _buffer(se, token, bal);
-        // Unconvertible remainder stays as D12 resting credit (D36).
-    }
-
-
-    function _refundBothPairDust(address to) internal {
-        Repo.Layout storage l = Repo._layout();
-        _refundPairDust(l.currency0, to);
-        _refundPairDust(l.currency1, to);
-    }
-
 
     function _swapExactIn(bool zeroForOne, uint256 amountInRaw)
         internal
@@ -537,60 +608,13 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     }
 
 
-    function _deposit(
-        uint256 amount0,
-        uint256 amount1,
-        address to,
-        uint256 minLpAmount,
-        uint256 deadline
-    ) internal returns (uint256 lpAmount, uint256 used0, uint256 used1) {
+    function _deposit(uint256 amount0, uint256 amount1, address to, uint256 minLpAmount, uint256 deadline)
+        internal returns (uint256 lpAmount, uint256 used0, uint256 used1)
+    {
         _requireDeadline(deadline);
-        _requireNonZero(amount0);
-        _requireNonZero(amount1);
-        _mintProtocolFeeIfNeeded(true);
-
-        Repo.Layout storage l = Repo._layout();
-        if (ERC20Repo._totalSupply() == 0) {
-            used0 = amount0;
-            used1 = amount1;
-            lpAmount = _firstMint(used0, used1, to);
-        } else {
-            (used0, used1) = _clampToClaimRatio(amount0, amount1);
-            if (amount0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, amount0 - used0);
-            if (amount1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, amount1 - used1);
-            // D59: the clamp sized the intake on the rated book; issuance follows the raw share book.
-            uint256 xBefore = _rawShareBefore(l.currency0, used0, 0);
-            uint256 yBefore = _rawShareBefore(l.currency1, used1, 0);
-            _buffer(_seFor(l.currency0), l.currency0, used0);
-            _buffer(_seFor(l.currency1), l.currency1, used1);
-            lpAmount = _mintFromClaimDeltas(xBefore, yBefore, to);
-        }
-
-        if (lpAmount < minLpAmount) revert InsufficientLpOut();
-        _setKLastPostOp();
-        _refundBothPairDust(msg.sender);
-        _syncReserves();
+        (lpAmount, used0, used1) = _joinComponents(amount0, false, amount1, false, to, minLpAmount);
         emit IHook.Deposit(msg.sender, to, used0, used1, lpAmount);
     }
-
-
-    function _firstMint(uint256 used0, uint256 used1, address to)
-        internal
-        returns (uint256 lpAmount)
-    {
-        Repo.Layout storage l = Repo._layout();
-        _buffer(_seFor(l.currency0), l.currency0, used0);
-        _buffer(_seFor(l.currency1), l.currency1, used1);
-        uint256 geometric = Math.mintSharesFirst(
-            Math.toWad(claimSupplyCurrency0(), _decimalsCurrency0()),
-            Math.toWad(claimSupplyCurrency1(), _decimalsCurrency1())
-        );
-        if (geometric <= Repo.MINIMUM_LIQUIDITY) revert InsufficientLpOut();
-        lpAmount = geometric - Repo.MINIMUM_LIQUIDITY;
-        _mintLp(address(0), Repo.MINIMUM_LIQUIDITY);
-        _mintLp(to, lpAmount);
-    }
-
 
     function _depositSingle(
         address tokenIn,
@@ -601,110 +625,30 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     ) internal returns (uint256 lpAmount) {
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
-        if (!_isBoundPairToken(tokenIn)) revert InvalidPairToken();
+        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenIn);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidPairToken();
         _requireZapEligible();
-        _mintProtocolFeeIfNeeded(true);
-
-        (uint256 saleAmt, uint256 amountOtherOut) = _executeZapSwap(tokenIn, amountIn);
-        lpAmount = _proportionalAddAfterZap(tokenIn, amountIn - saleAmt, amountOtherOut, to);
-        if (lpAmount < minLpAmount) revert InsufficientLpOut();
-
-        _setKLastPostOp();
-        _refundBothPairDust(msg.sender);
-        _syncReserves();
+        bool asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        Repo.Layout storage l = Repo._layout();
+        address pair = asShare ? l.legs.pairOfStandardExchange[tokenIn] : tokenIn;
+        bool first = pair == l.currency0;
+        if (!asShare && amountIn == 1) revert InsufficientLpOut();
+        uint256 pairAmount = amountIn;
+        if (asShare) {
+            ExchangeInAmount.Result memory result = _convert(tokenIn, pair, amountIn, false);
+            pairAmount = result.amountOut;
+            if (result.amountRefunded != 0) IERC20(tokenIn).safeTransfer(msg.sender, result.amountRefunded);
+        }
+        uint256 swapAmount = DepositQuoteLib.swapAmount(pair, pairAmount);
+        if (swapAmount == 0 || swapAmount >= pairAmount) revert InsufficientLpOut();
+        uint256 other = _executePlannedSwap(_planExactIn(first, swapAmount), true, address(this));
+        emit IHook.ZapSwap(msg.sender, pair, first ? l.currency1 : l.currency0, swapAmount, other);
+        // Only the unspent caller input and actual swap proceeds back the mint.
+        uint256 kept = pairAmount - swapAmount;
+        (lpAmount,,) = _joinComponents(first ? kept : other, false,
+            first ? other : kept, false, to, minLpAmount);
         emit IHook.DepositSingle(msg.sender, to, tokenIn, amountIn, lpAmount);
     }
-
-
-    function _executeZapSwap(address tokenIn, uint256 amountIn)
-        internal
-        returns (uint256 saleAmt, uint256 amountOtherOut)
-    {
-        Repo.Layout storage l = Repo._layout();
-        address tokenOut = tokenIn == l.currency0 ? l.currency1 : l.currency0;
-        address seIn = _seFor(tokenIn);
-        address seOut = _seFor(tokenOut);
-        saleAmt = _computeSaleAmt(tokenIn, amountIn, seIn);
-        ClaimLib.OutputQuote memory output = _quoteExactInOutput(tokenIn, tokenOut, seIn, seOut, saleAmt);
-        amountOtherOut = output.amount;
-        if (amountOtherOut == 0) revert InsufficientTokenOut();
-        _buffer(seIn, tokenIn, saleAmt);
-        amountOtherOut = _unwrapPlanned(seOut, tokenOut, output);
-        emit IHook.ZapSwap(msg.sender, tokenIn, tokenOut, saleAmt, amountOtherOut);
-    }
-
-
-    function _computeSaleAmt(address tokenIn, uint256 amountIn, address seIn)
-        internal
-        view
-        returns (uint256 saleAmt)
-    {
-        uint8 decIn = _decimalsOf(tokenIn);
-        uint256 rInN = Math.toWad(_claimSupply(seIn, tokenIn), decIn);
-        saleAmt = Math.fromWadFloor(
-            Math.swapDepositSaleAmt(Math.toWad(amountIn, decIn), rInN), decIn
-        );
-        if (saleAmt > amountIn) saleAmt = amountIn;
-        if (saleAmt == 0) saleAmt = amountIn / 2;
-    }
-
-
-    function _proportionalAddAfterZap(
-        address tokenIn,
-        uint256 keptIn,
-        uint256 amountOtherOut,
-        address to
-    ) internal returns (uint256 lpAmount) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 add0 = tokenIn == l.currency0 ? keptIn : amountOtherOut;
-        uint256 add1 = tokenIn == l.currency0 ? amountOtherOut : keptIn;
-        (uint256 used0, uint256 used1) = _clampToClaimRatio(add0, add1);
-        if (add0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, add0 - used0);
-        if (add1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, add1 - used1);
-
-        // D59: issuance follows the raw share book measured before the intake.
-        uint256 xBefore = _rawShareBefore(l.currency0, used0, 0);
-        uint256 yBefore = _rawShareBefore(l.currency1, used1, 0);
-        _buffer(_seFor(l.currency0), l.currency0, used0);
-        _buffer(_seFor(l.currency1), l.currency1, used1);
-        lpAmount = _mintFromClaimDeltas(xBefore, yBefore, to);
-    }
-
-
-    function _clampToClaimRatio(uint256 amount0, uint256 amount1)
-        internal
-        view
-        returns (uint256 used0, uint256 used1)
-    {
-        used0 = amount0;
-        used1 = amount1;
-        uint256 x = claimSupplyCurrency0();
-        uint256 y = claimSupplyCurrency1();
-        if (x == 0 || y == 0) revert NotLive();
-        uint256 ideal1 = (used0 * y) / x;
-        if (ideal1 <= used1) {
-            used1 = ideal1;
-        } else {
-            used0 = (used1 * x) / y;
-        }
-        if (used0 == 0 || used1 == 0) revert ZeroAmount();
-    }
-
-
-    /// @dev D59: LP for a later join is the smaller raw share-balance growth ratio of the two legs, measured
-    ///      against the raw share book (pool order) before the intake; the provider rate plays no part.
-    function _mintFromClaimDeltas(uint256 xBefore, uint256 yBefore, address to)
-        internal
-        returns (uint256 lpAmount)
-    {
-        Repo.Layout storage l = Repo._layout();
-        uint256 x = _rawShareReserve(l.currency0);
-        uint256 y = _rawShareReserve(l.currency1);
-        lpAmount = Math.mintSharesLater(x - xBefore, y - yBefore, xBefore, yBefore, ERC20Repo._totalSupply());
-        if (lpAmount == 0) revert InsufficientLpOut();
-        _mintLp(to, lpAmount);
-    }
-
 
     function _withdraw(
         uint256 lpAmount,
@@ -730,48 +674,22 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     function _withdrawFrom(
         address holder, uint256 lpAmount, address to, uint256 minAmount0,
-        uint256 minAmount1, uint256 deadline, bool refundDust
+        uint256 minAmount1, uint256 deadline, bool
     ) internal returns (uint256 amount0, uint256 amount1) {
         _requireDeadline(deadline);
         _requireNonZero(lpAmount);
-
-        {
-        _mintProtocolFeeIfNeeded(false);
-
+        if (to == address(0)) revert ZeroAddress();
         uint256 supply = ERC20Repo._totalSupply();
         if (lpAmount > ERC20Repo._balanceOf(holder)) revert InsufficientLpOut();
-
         Repo.Layout storage l = Repo._layout();
-        uint256 seBal0 = IERC20(_seFor(l.currency0)).balanceOf(address(this));
-        uint256 seBal1 = IERC20(_seFor(l.currency1)).balanceOf(address(this));
-        uint256 seOut0 = (seBal0 * lpAmount) / supply;
-        uint256 seOut1 = (seBal1 * lpAmount) / supply;
-
+        DepositQuoteLib.Component memory a = _allocateExit(l.currency0, lpAmount, supply);
+        DepositQuoteLib.Component memory b = _allocateExit(l.currency1, lpAmount, supply);
         _burnLp(holder, lpAmount);
-
-        if (seOut0 > 0) {
-            amount0 = _unwrap(_seFor(l.currency0), l.currency0, seOut0);
-            IERC20(l.currency0).safeTransfer(to, amount0);
-        }
-        if (seOut1 > 0) {
-            amount1 = _unwrap(_seFor(l.currency1), l.currency1, seOut1);
-            IERC20(l.currency1).safeTransfer(to, amount1);
-        }
-
-        }
+        amount0 = _payComponent(l.currency0, a, false, to);
+        amount1 = _payComponent(l.currency1, b, false, to);
         if (amount0 < minAmount0 || amount1 < minAmount1) revert InsufficientTokenOut();
-        _setKLastPostOp();
-        if (refundDust) _refundBothPairDust(msg.sender);
         _syncReserves();
         emit IHook.Withdraw(msg.sender, to, lpAmount, amount0, amount1);
-    }
-
-
-    struct ExitState {
-        address pair;
-        bool asShare;
-        bool outIs0;
-        uint256 beforeOut;
     }
 
     function _exitSingleAssetFrom(address holder, address tokenOut, uint256 sharesIn, address to, uint256 deadline)
@@ -781,254 +699,47 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
         Repo.Layout storage l = Repo._layout();
-        ExitState memory state;
-        state.asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
-        state.pair = state.asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
-        state.outIs0 = state.pair == l.currency0;
-        if (!state.outIs0 && state.pair != l.currency1) revert InvalidRoute();
-        state.beforeOut = IERC20(state.pair).balanceOf(address(this));
+        bool asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        address pair = asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
+        bool outIs0 = pair == l.currency0;
+        if (!outIs0 && pair != l.currency1) revert InvalidRoute();
         (uint256 a0, uint256 a1) = _withdrawFrom(holder, sharesIn, address(this), 0, 0, deadline, false);
-        uint256 residual = state.outIs0 ? a1 : a0;
-        if (residual > 0) {
-            BookSwapPlan memory plan = _planExactIn(!state.outIs0, residual);
-            if (plan.output.amount > 0) {
-                _executePlannedSwap(plan, true, address(this));
-            } else {
-                IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);
-            }
-        }
-        amountOut = IERC20(state.pair).balanceOf(address(this)) - state.beforeOut;
-        if (state.asShare && amountOut > 0) amountOut = _buffer(tokenOut, state.pair, amountOut);
+        amountOut = outIs0 ? a0 : a1;
+        uint256 residual = outIs0 ? a1 : a0;
+        if (residual > 0) amountOut += _executePlannedSwap(_planExactIn(!outIs0, residual), true, address(this));
+        if (asShare && amountOut > 0) amountOut = _buffer(tokenOut, pair, amountOut);
         IERC20(tokenOut).safeTransfer(to, amountOut);
         _syncReserves();
     }
 
     function _depositFlexibleSe(
-        uint256 amount0,
-        bool amount0IsSeShare,
-        uint256 amount1,
-        bool amount1IsSeShare,
-        address to,
-        uint256 minLpAmount,
-        uint256 xPre,
-        uint256 yPre
+        uint256 amount0, bool amount0IsSeShare, uint256 amount1, bool amount1IsSeShare,
+        address to, uint256 minLpAmount
     ) internal returns (uint256 lpAmount, uint256 used0, uint256 used1) {
-        DepositFlexibleVars memory v;
-        v.amount0 = amount0;
-        v.amount0IsSeShare = amount0IsSeShare;
-        v.amount1 = amount1;
-        v.amount1IsSeShare = amount1IsSeShare;
-        v.to = to;
-        v.minLpAmount = minLpAmount;
-        _loadFlexibleLegs(v);
-
-        if (ERC20Repo._totalSupply() == 0) {
-            v.used0 = amount0;
-            v.used1 = amount1;
-            // First mint: SE pulls already contribute claims; buffer any pair legs then mint.
-            v.lpAmount = _firstMintFlexible(v);
-        } else {
-            // Clamp against pre-pull claims (SE pulls already inflated live claim supplies).
-            (v.used0, v.used1) = _clampFlexible(v, xPre, yPre);
-            // D59: raw share book before the pull (pulled shares and an identity leg's pulled pair backed out).
-            uint256 rawPre0 = _rawShareBefore(
-                v.currency0, v.amount0IsSeShare ? 0 : v.amount0, v.amount0IsSeShare ? v.amount0 : 0
-            );
-            uint256 rawPre1 = _rawShareBefore(
-                v.currency1, v.amount1IsSeShare ? 0 : v.amount1, v.amount1IsSeShare ? v.amount1 : 0
-            );
-            _refundFlexibleExcess(v);
-            // Buffer pair legs only; SE legs already in inventory from pull.
-            _intakeFlexible(v);
-            v.lpAmount = _mintFromClaimDeltas(rawPre0, rawPre1, to);
-        }
-
-        if (v.lpAmount < minLpAmount) revert InsufficientLpOut();
-        _setKLastPostOp();
-        _refundBothPairDust(msg.sender);
-        _syncReserves();
-        emit IHook.DepositFlexible(
-            msg.sender,
-            to,
-            amount0,
-            amount0IsSeShare,
-            amount1,
-            amount1IsSeShare,
-            v.used0,
-            v.used1,
-            v.lpAmount
-        );
-        return (v.lpAmount, v.used0, v.used1);
+        (lpAmount, used0, used1) = _joinComponents(amount0, amount0IsSeShare, amount1, amount1IsSeShare, to, minLpAmount);
+        emit IHook.DepositFlexible(msg.sender, to, amount0, amount0IsSeShare, amount1, amount1IsSeShare,
+            used0, used1, lpAmount);
     }
-
-
-    function _loadFlexibleLegs(DepositFlexibleVars memory v) private view {
-        Repo.Layout storage l = Repo._layout();
-        v.currency0 = l.currency0;
-        v.currency1 = l.currency1;
-        v.se0 = _seFor(l.currency0);
-        v.se1 = _seFor(l.currency1);
-    }
-
-
-    function _firstMintFlexible(DepositFlexibleVars memory v) private returns (uint256 lpAmount) {
-        _intakeFlexible(v);
-        uint256 geometric = Math.mintSharesFirst(
-            Math.toWad(claimSupplyCurrency0(), _decimalsCurrency0()),
-            Math.toWad(claimSupplyCurrency1(), _decimalsCurrency1())
-        );
-        if (geometric <= Repo.MINIMUM_LIQUIDITY) revert InsufficientLpOut();
-        lpAmount = geometric - Repo.MINIMUM_LIQUIDITY;
-        _mintLp(address(0), Repo.MINIMUM_LIQUIDITY);
-        _mintLp(v.to, lpAmount);
-    }
-
-
-    function _clampFlexible(DepositFlexibleVars memory v, uint256 x, uint256 y)
-        private
-        view
-        returns (uint256 used0, uint256 used1)
-    {
-        uint256 claim0 = v.amount0IsSeShare
-            ? _claimOfSe(v.se0, v.currency0, v.amount0)
-            : _previewBufferClaimIn(v.se0, v.currency0, v.amount0);
-        uint256 claim1 = v.amount1IsSeShare
-            ? _claimOfSe(v.se1, v.currency1, v.amount1)
-            : _previewBufferClaimIn(v.se1, v.currency1, v.amount1);
-        if (claim0 == 0 || claim1 == 0) revert ZeroAmount();
-        if (x == 0 || y == 0) revert NotLive();
-
-        uint256 usedClaim0 = claim0;
-        uint256 usedClaim1 = claim1;
-        uint256 ideal1 = (usedClaim0 * y) / x;
-        if (ideal1 <= usedClaim1) {
-            usedClaim1 = ideal1;
-        } else {
-            usedClaim0 = (usedClaim1 * x) / y;
-        }
-        if (usedClaim0 == 0 || usedClaim1 == 0) revert ZeroAmount();
-
-        // Pro-rate input units so claim contribution matches clamp (anti-skew: SE path has no buffer fee).
-        used0 = (v.amount0 * usedClaim0) / claim0;
-        used1 = (v.amount1 * usedClaim1) / claim1;
-        if (used0 == 0 || used1 == 0) revert ZeroAmount();
-    }
-
-
-    function _intakeFlexible(DepositFlexibleVars memory v) private {
-        if (v.amount0IsSeShare) {
-            // SE shares already on hook from pull; inventory is live SE balance.
-            if (v.used0 == 0) revert ZeroAmount();
-        } else {
-            _buffer(v.se0, v.currency0, v.used0);
-        }
-        if (v.amount1IsSeShare) {
-            if (v.used1 == 0) revert ZeroAmount();
-        } else {
-            _buffer(v.se1, v.currency1, v.used1);
-        }
-    }
-
-
-    function _refundFlexibleExcess(DepositFlexibleVars memory v) private {
-        if (v.amount0 > v.used0) {
-            address t0 = v.amount0IsSeShare ? v.se0 : v.currency0;
-            IERC20(t0).safeTransfer(msg.sender, v.amount0 - v.used0);
-        }
-        if (v.amount1 > v.used1) {
-            address t1 = v.amount1IsSeShare ? v.se1 : v.currency1;
-            IERC20(t1).safeTransfer(msg.sender, v.amount1 - v.used1);
-        }
-    }
-
 
     function _withdrawFlexible(
-        uint256 lpAmount,
-        address to,
-        bool receiveSeShare0,
-        bool receiveSeShare1,
-        uint256 minAmount0,
-        uint256 minAmount1,
-        uint256 deadline
+        uint256 lpAmount, address to, bool receiveSeShare0, bool receiveSeShare1,
+        uint256 minAmount0, uint256 minAmount1, uint256 deadline
     ) internal returns (uint256 amount0, uint256 amount1) {
-        if (!receiveSeShare0 && !receiveSeShare1) {
-            (amount0, amount1) = _withdraw(lpAmount, to, minAmount0, minAmount1, deadline);
-            emit IHook.WithdrawFlexible(msg.sender, to, lpAmount, false, false, amount0, amount1);
-            return (amount0, amount1);
-        }
-
         _requireDeadline(deadline);
         _requireNonZero(lpAmount);
-        _mintProtocolFeeIfNeeded(false);
-        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
-
-        WithdrawFlexibleVars memory v;
-        v.to = to;
-        v.receiveSeShare0 = receiveSeShare0;
-        v.receiveSeShare1 = receiveSeShare1;
-        v.minAmount0 = minAmount0;
-        v.minAmount1 = minAmount1;
-        _fillWithdrawFlexibleSeOuts(v, lpAmount);
-        _burnLp(msg.sender, lpAmount);
-        _payWithdrawFlexibleLegs(v);
-
-        if (v.amount0 < v.minAmount0 || v.amount1 < v.minAmount1) revert InsufficientTokenOut();
-        _setKLastPostOp();
-        _refundBothPairDust(msg.sender);
-        _syncReserves();
-        emit IHook.WithdrawFlexible(
-            msg.sender, v.to, lpAmount, v.receiveSeShare0, v.receiveSeShare1, v.amount0, v.amount1
-        );
-        return (v.amount0, v.amount1);
-    }
-
-
-    function _fillWithdrawFlexibleSeOuts(WithdrawFlexibleVars memory v, uint256 lpAmount)
-        private
-        view
-    {
-        Repo.Layout storage l = Repo._layout();
-        v.currency0 = l.currency0;
-        v.currency1 = l.currency1;
-        v.se0 = _seFor(l.currency0);
-        v.se1 = _seFor(l.currency1);
+        if (to == address(0)) revert ZeroAddress();
         uint256 supply = ERC20Repo._totalSupply();
-        v.seOut0 = (IERC20(v.se0).balanceOf(address(this)) * lpAmount) / supply;
-        v.seOut1 = (IERC20(v.se1).balanceOf(address(this)) * lpAmount) / supply;
+        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
+        Repo.Layout storage l = Repo._layout();
+        DepositQuoteLib.Component memory a = _allocateExit(l.currency0, lpAmount, supply);
+        DepositQuoteLib.Component memory b = _allocateExit(l.currency1, lpAmount, supply);
+        _burnLp(msg.sender, lpAmount);
+        amount0 = _payComponent(l.currency0, a, receiveSeShare0, to);
+        amount1 = _payComponent(l.currency1, b, receiveSeShare1, to);
+        if (amount0 < minAmount0 || amount1 < minAmount1) revert InsufficientTokenOut();
+        _syncReserves();
+        emit IHook.WithdrawFlexible(msg.sender, to, lpAmount, receiveSeShare0, receiveSeShare1, amount0, amount1);
     }
-
-
-    function _payWithdrawFlexibleLegs(WithdrawFlexibleVars memory v) private {
-        if (v.seOut0 > 0) {
-            if (v.receiveSeShare0) {
-                v.amount0 = v.seOut0;
-                IERC20(v.se0).safeTransfer(v.to, v.seOut0);
-            } else {
-                v.amount0 = _unwrap(v.se0, v.currency0, v.seOut0);
-                IERC20(v.currency0).safeTransfer(v.to, v.amount0);
-            }
-        }
-        if (v.seOut1 > 0) {
-            if (v.receiveSeShare1) {
-                v.amount1 = v.seOut1;
-                IERC20(v.se1).safeTransfer(v.to, v.seOut1);
-            } else {
-                v.amount1 = _unwrap(v.se1, v.currency1, v.seOut1);
-                IERC20(v.currency1).safeTransfer(v.to, v.amount1);
-            }
-        }
-    }
-
-
-    function _claimOfSe(address se, address pairToken, uint256 seAmount)
-        internal
-        view
-        returns (uint256)
-    {
-        pairToken;
-        return ClaimLib.ratedOf(se, seAmount); // D60
-    }
-
 
     function _routeZeroForOne(address tokenIn, address tokenOut) internal view returns (bool) {
         Repo.Layout storage l = Repo._layout();
@@ -1068,110 +779,41 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     }
 
     function _unwrapPlanned(address se, address pair, ClaimLib.OutputQuote memory output) internal returns (uint256 amountOut) {
-        if (output.shares == 0 || output.shares >= IERC20(se).balanceOf(address(this))) revert InsufficientTokenOut();
-        if (se == pair) return output.shares;
-        uint256 beforeOut = IERC20(pair).balanceOf(address(this));
-        _unwrap(se, pair, output.shares);
-        IERC20(se).forceApprove(se, 0);
-        amountOut = IERC20(pair).balanceOf(address(this)) - beforeOut;
+        Repo.Layout storage l = Repo._layout();
+        l.localReserves[pair] -= output.local;
+        amountOut = output.local;
+        if (output.shares != 0) {
+            if (output.shares >= l.shareReserves[se]) revert InsufficientTokenOut();
+            ExchangeInAmount.Result memory result = _convert(se, pair, output.shares, false);
+            l.shareReserves[se] -= output.shares - result.amountRefunded;
+            amountOut += result.amountOut;
+        }
         if (amountOut < output.amount) revert InsufficientTokenOut();
     }
 
     function _executePlannedSwap(BookSwapPlan memory plan, bool exactIn, address recipient) internal returns (uint256 amountOut) {
         if (plan.output.amount == 0) revert InsufficientTokenOut();
-        _buffer(plan.seIn, plan.tokenIn, plan.amountIn);
+        _bufferPool(plan.seIn, plan.tokenIn, plan.amountIn);
         if (exactIn) amountOut = _unwrapPlanned(plan.seOut, plan.tokenOut, plan.output);
         else {
+            Repo.Layout storage l = Repo._layout();
+            l.localReserves[plan.tokenOut] -= plan.output.local;
             amountOut = plan.output.amount;
-            _unwrapExactOut(plan.seOut, plan.tokenOut, amountOut, plan.output.shares);
+            if (plan.output.shares != 0) {
+                uint256 spent = _unwrapExactOut(plan.seOut, plan.tokenOut,
+                    amountOut - plan.output.local, plan.output.shares);
+                l.shareReserves[plan.seOut] -= spent;
+            }
         }
         if (recipient != address(this)) IERC20(plan.tokenOut).safeTransfer(recipient, amountOut);
         _syncReserves();
     }
 
-
-    function _mintProtocolFeeIfNeeded(bool measurePreBuffer) internal {
-        measurePreBuffer;
-        (bool feeOn, address feeTo_, uint256 ownerFeeShare) = _feeOnAndShare();
-        Repo.Layout storage l = Repo._layout();
-        if (!feeOn) {
-            l.kLast = 0;
-            return;
-        }
-        uint256 kLast_ = l.kLast;
-        if (kLast_ == 0) return;
-        uint256 currentK = _wadProduct();
-        uint256 protocolLp =
-            Math.calculateProtocolFee(ERC20Repo._totalSupply(), currentK, kLast_, ownerFeeShare);
-        if (protocolLp > 0) {
-            _mintLp(feeTo_, protocolLp);
-        }
-    }
-
-
-    function _setKLastPostOp() internal {
-        (bool feeOn,,) = _feeOnAndShare();
-        Repo.Layout storage l = Repo._layout();
-        l.kLast = feeOn ? _wadProduct() : 0;
-    }
-
-
-    function _supplyAfterProtocolMint() internal view returns (uint256 supplyAdj) {
-        supplyAdj = ERC20Repo._totalSupply();
-        (bool feeOn,, uint256 ownerFeeShare) = _feeOnAndShare();
-        uint256 kLast_ = Repo._layout().kLast;
-        if (feeOn && kLast_ != 0 && supplyAdj > 0) {
-            supplyAdj += Math.calculateProtocolFee(supplyAdj, _wadProduct(), kLast_, ownerFeeShare);
-        }
-    }
-
-
     function _previewDeposit(uint256 amount0, uint256 amount1)
-        internal
-        view
-        returns (uint256 lpAmount, uint256 used0, uint256 used1)
+        internal view returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
-        if (amount0 == 0 || amount1 == 0) return (0, 0, 0);
-        if (ERC20Repo._totalSupply() == 0) {
-            used0 = amount0;
-            used1 = amount1;
-            lpAmount = _previewFirstMintLp(used0, used1);
-            return (lpAmount, used0, used1);
-        }
-        (used0, used1) = _clampToClaimRatio(amount0, amount1);
-        lpAmount = _previewSubsequentLp(used0, used1, _supplyAfterProtocolMint());
+        return DepositQuoteLib.previewFlexible(amount0, false, amount1, false);
     }
-
-
-    function _previewFirstMintLp(uint256 used0, uint256 used1) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 geometric = Math.mintSharesFirst(
-            Math.toWad(
-                _previewBufferClaimIn(_seFor(l.currency0), l.currency0, used0), _decimalsCurrency0()
-            ),
-            Math.toWad(
-                _previewBufferClaimIn(_seFor(l.currency1), l.currency1, used1), _decimalsCurrency1()
-            )
-        );
-        if (geometric <= Repo.MINIMUM_LIQUIDITY) return 0;
-        return geometric - Repo.MINIMUM_LIQUIDITY;
-    }
-
-
-    function _previewSubsequentLp(uint256 used0, uint256 used1, uint256 supplyAdj)
-        internal
-        view
-        returns (uint256)
-    {
-        Repo.Layout storage l = Repo._layout();
-        // D59: issuance follows the raw share book.
-        return Math.mintSharesLater(
-            _previewRawShares(_seFor(l.currency0), l.currency0, used0),
-            _previewRawShares(_seFor(l.currency1), l.currency1, used1),
-            _rawShareReserve(l.currency0), _rawShareReserve(l.currency1), supplyAdj
-        );
-    }
-
 
     function _previewZapSplit(address tokenIn, uint256 amountIn)
         internal
@@ -1181,128 +823,39 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         _requireZapEligible();
         _requireNonZero(amountIn);
         if (!_isBoundPairToken(tokenIn)) revert InvalidPairToken();
-        Repo.Layout storage l = Repo._layout();
-        address seIn = _seFor(tokenIn);
-        amountToSwap = _computeSaleAmt(tokenIn, amountIn, seIn);
-        address tokenOut = tokenIn == l.currency0 ? l.currency1 : l.currency0;
-        amountOtherOut =
-            _quoteExactInAmountOut(tokenIn, tokenOut, seIn, _seFor(tokenOut), amountToSwap);
+        amountToSwap = DepositQuoteLib.swapAmount(tokenIn, amountIn);
         amountKeptIn = amountIn - amountToSwap;
+        if (amountToSwap != 0)
+            amountOtherOut = _planExactIn(tokenIn == Repo._layout().currency0, amountToSwap).output.amount;
     }
 
 
-    function _previewDepositSingle(address tokenIn, uint256 amountIn)
-        internal
-        view
-        returns (uint256 lpAmount)
-    {
+    function _previewDepositSingle(address tokenIn, uint256 amountIn) internal view returns (uint256 lpAmount) {
         _requireZapEligible();
         _requireNonZero(amountIn);
-        if (!_isBoundPairToken(tokenIn)) revert InvalidPairToken();
-        (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
-        if (supported) return projected;
-        uint256 supply = _supplyAfterProtocolMint();
-        DepositQuoteLib.DepositSinglePreview memory p;
-        (p.amountToSwap, p.amountOtherOut, p.amountKeptIn) = _previewZapSplit(tokenIn, amountIn);
-        return DepositQuoteLib.previewLegacy(tokenIn, p, supply);
+        if (_classify(tokenIn) == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidPairToken();
+        (, lpAmount) = DepositQuoteLib.preview(tokenIn, amountIn);
     }
 
 
-    function _previewWithdraw(uint256 lpAmount)
-        internal
-        view
-        returns (uint256 amount0, uint256 amount1)
+    function _previewWithdraw(uint256 lpAmount) internal view returns (uint256 amount0, uint256 amount1) {
+        _requireNonZero(lpAmount);
+        return DepositQuoteLib.previewWithdraw(lpAmount, false, false);
+    }
+
+
+    function _previewDepositFlexible(uint256 amount0, bool asShare0, uint256 amount1, bool asShare1)
+        internal view returns (uint256 lpAmount, uint256 used0, uint256 used1)
+    {
+        return DepositQuoteLib.previewFlexible(amount0, asShare0, amount1, asShare1);
+    }
+
+
+    function _previewWithdrawFlexible(uint256 lpAmount, bool asShare0, bool asShare1)
+        internal view returns (uint256 amount0, uint256 amount1)
     {
         _requireNonZero(lpAmount);
-        uint256 supplyAdj = _supplyAfterProtocolMint();
-        Repo.Layout storage l = Repo._layout();
-        address se0 = _seFor(l.currency0);
-        address se1 = _seFor(l.currency1);
-        uint256 seOut0 = (IERC20(se0).balanceOf(address(this)) * lpAmount) / supplyAdj;
-        uint256 seOut1 = (IERC20(se1).balanceOf(address(this)) * lpAmount) / supplyAdj;
-        if (seOut0 > 0) {amount0 = se0 == l.currency0
-                ? seOut0
-                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se0))), IERC20(se0), seOut0, IERC20(l.currency0)
-                );
-        }
-        if (seOut1 > 0) {amount1 = se1 == l.currency1
-                ? seOut1
-                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se1))), IERC20(se1), seOut1, IERC20(l.currency1)
-                );
-        }
-    }
-
-
-    function _previewDepositFlexible(
-        uint256 amount0,
-        bool amount0IsSeShare,
-        uint256 amount1,
-        bool amount1IsSeShare
-    ) internal view returns (uint256 lpAmount, uint256 used0, uint256 used1) {
-        if (!amount0IsSeShare && !amount1IsSeShare) {
-            return _previewDeposit(amount0, amount1);
-        }
-        _requireNonZero(amount0);
-        _requireNonZero(amount1);
-
-        DepositFlexibleVars memory v;
-        v.amount0 = amount0;
-        v.amount0IsSeShare = amount0IsSeShare;
-        v.amount1 = amount1;
-        v.amount1IsSeShare = amount1IsSeShare;
-        _loadFlexibleLegs(v);
-
-        if (ERC20Repo._totalSupply() == 0) {
-            used0 = amount0;
-            used1 = amount1;
-            uint256 c0 = amount0IsSeShare
-                ? _claimOfSe(v.se0, v.currency0, used0)
-                : _previewBufferClaimIn(v.se0, v.currency0, used0);
-            uint256 c1 = amount1IsSeShare
-                ? _claimOfSe(v.se1, v.currency1, used1)
-                : _previewBufferClaimIn(v.se1, v.currency1, used1);
-            uint256 geometric = Math.mintSharesFirst(
-                Math.toWad(c0, _decimalsCurrency0()), Math.toWad(c1, _decimalsCurrency1())
-            );
-            if (geometric <= Repo.MINIMUM_LIQUIDITY) return (0, used0, used1);
-            return (geometric - Repo.MINIMUM_LIQUIDITY, used0, used1);
-        }
-
-        uint256 x = claimSupplyCurrency0();
-        uint256 y = claimSupplyCurrency1();
-        (used0, used1) = _clampFlexible(v, x, y);
-        // D59: issuance follows the raw share book (pulled shares count as-is).
-        uint256 dx = amount0IsSeShare ? used0 : _previewRawShares(v.se0, v.currency0, used0);
-        uint256 dy = amount1IsSeShare ? used1 : _previewRawShares(v.se1, v.currency1, used1);
-        lpAmount = Math.mintSharesLater(
-            dx, dy, _rawShareReserve(v.currency0), _rawShareReserve(v.currency1), _supplyAfterProtocolMint()
-        );
-    }
-
-
-    function _previewWithdrawFlexible(uint256 lpAmount, bool receiveSeShare0, bool receiveSeShare1)
-        internal
-        view
-        returns (uint256 amount0, uint256 amount1)
-    {
-        if (!receiveSeShare0 && !receiveSeShare1) {
-            return _previewWithdraw(lpAmount);
-        }
-        _requireNonZero(lpAmount);
-        uint256 supplyAdj = _supplyAfterProtocolMint();
-        Repo.Layout storage l = Repo._layout();
-        address se0 = _seFor(l.currency0);
-        address se1 = _seFor(l.currency1);
-        uint256 seOut0 = (IERC20(se0).balanceOf(address(this)) * lpAmount) / supplyAdj;
-        uint256 seOut1 = (IERC20(se1).balanceOf(address(this)) * lpAmount) / supplyAdj;
-        if (seOut0 > 0) {amount0 = receiveSeShare0 || se0 == l.currency0
-                ? seOut0
-                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se0))), IERC20(se0), seOut0, IERC20(l.currency0));
-        }
-        if (seOut1 > 0) {amount1 = receiveSeShare1 || se1 == l.currency1
-                ? seOut1
-                : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se1))), IERC20(se1), seOut1, IERC20(l.currency1));
-        }
+        return DepositQuoteLib.previewWithdraw(lpAmount, asShare0, asShare1);
     }
 
 

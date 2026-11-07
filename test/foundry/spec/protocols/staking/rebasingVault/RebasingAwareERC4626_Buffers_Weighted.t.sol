@@ -31,177 +31,167 @@ import {IStandardExchangeTransitionQuote} from
     "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+
 contract RebasingAwareERC4626_Buffers_Weighted is TestBase {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
 
     IERC4626 internal wrapper;
-    RebasingERC20Harness internal underlying;
+    IERC4626 internal rebasingWrapper;
+    RebasingERC20Harness internal rebasingUnderlying;
 
-    function test_F16_weightedProcessArgsAcceptsWrapperShareInventory() public {
+    // The control binds a real wrapper over non-rebasing token0, never its share or a rebasing asset.
+    function test_F16_weightedProcessArgsAcceptsMemberAndRejectsForgedDecimals() public {
         _deployWrapper();
-        IPkg.PkgArgs memory args = _wrapperMixedArgs();
-        bytes memory processed = hookPkg.processArgs(abi.encode(args));
-        assertGt(processed.length, 0);
-        uint256 wIdx;
-        for (uint256 i; i < args.tokens.length; ++i) {
-            if (args.tokens[i] == address(wrapper)) {
-                wIdx = i;
-                break;
-            }
-        }
-        args.tokenDecimals[wIdx] = 18;
+        IPkg.PkgArgs memory args = _controlArgs();
+        assertGt(hookPkg.processArgs(abi.encode(args)).length, 0);
+        args.tokenDecimals[0] = 6;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+        args = _controlArgs();
+        args.seDecimals[0] = 18;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+        args = _controlArgs();
+        args.tokenDecimals[0] = 19;
         vm.expectRevert(IPkg.InvalidDecimals.selector);
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_F16_weightedProcessArgsRejectsOrdinaryOverlapAndHighDecimals() public {
-        IPkg.PkgArgs memory overlap = _defaultPkgArgs();
-        overlap.standardExchanges[0] = overlap.tokens[0];
-        overlap.seDecimals[0] = overlap.tokenDecimals[0];
+    function test_F16_weightedProcessArgsRejectsNonmemberAndIdentity() public {
+        _deployWrapper();
+        IPkg.PkgArgs memory args = _controlArgs();
+        args.standardExchanges[0] = address(rebasingWrapper);
         vm.expectRevert(IPkg.InvalidSE.selector);
-        hookPkg.processArgs(abi.encode(overlap));
-
-        IPkg.PkgArgs memory high = _defaultPkgArgs();
-        high.tokenDecimals[0] = 19;
-        vm.expectRevert(IPkg.InvalidDecimals.selector);
-        hookPkg.processArgs(abi.encode(high));
+        hookPkg.processArgs(abi.encode(args));
+        args = _controlArgs();
+        args.standardExchanges[0] = args.tokens[0];
+        args.seDecimals[0] = args.tokenDecimals[0];
+        vm.expectRevert(IPkg.InvalidSE.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_F16_weightedWrapperShareInventoryJoinExit() public {
-        _deployWrapper();
-        _wrapUser(80e18);
-        IPkg.PkgArgs memory args = _wrapperMixedArgs();
-        _deployHookWithArgs(args);
-        uint256 wAmt = IERC20(address(wrapper)).balanceOf(user) / 2;
-        uint256 rawAmt = 50 ether;
-        token1.mint(user, rawAmt);
-        vm.startPrank(user);
-        IERC20(address(wrapper)).approve(hook, type(uint256).max);
-        token1.approve(hook, type(uint256).max);
+    function test_F16_weightedNonRebasingWrapperJoinExit() public {
+        uint256 lp = _seedControl();
         uint256[] memory amounts = new uint256[](2);
-        if (args.tokens[0] == address(wrapper)) {
-            amounts[0] = wAmt;
-            amounts[1] = rawAmt;
-        } else {
-            amounts[0] = rawAmt;
-            amounts[1] = wAmt;
-        }
-        (uint256 lp,) = IHook(hook).joinProportional(amounts, user, 0, block.timestamp + 1 hours);
-        assertGt(lp, 0);
-        uint256 beforeAssets = wrapper.totalAssets();
-        vm.stopPrank();
-        underlying.rebase(address(wrapper), int256(5e18));
-        assertGt(wrapper.totalAssets(), beforeAssets);
-        uint256[] memory mins = new uint256[](2);
+        for (uint256 i; i < amounts.length; ++i) amounts[i] = 10 ether;
         vm.prank(user);
-        uint256[] memory out = IHook(hook).exitProportional(lp, user, mins, block.timestamp + 1 hours);
-        assertGt(out[0], 0);
-        assertGt(out[1], 0);
+        (uint256 joined,) = IHook(hook).joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(joined, 0, "caller funds every incumbent component");
+        uint256[] memory expected = IHook(hook).previewExitProportional(lp + joined);
+        vm.prank(user);
+        uint256[] memory out = IHook(hook).exitProportional(lp + joined, user, new uint256[](amounts.length), block.timestamp + 1 hours);
+        for (uint256 i; i < out.length; ++i) { assertGt(out[i], 0); assertEq(out[i], expected[i]); }
     }
 
-    function test_F16_weightedWrapperShareInventoryQuoteSwap() public {
-        _deployWrapper();
-        _wrapUser(200e18);
-        IPkg.PkgArgs memory args = _wrapperMixedArgs();
-        _deployHookWithArgs(args);
-        uint256 wAmt = IERC20(address(wrapper)).balanceOf(user) / 2;
-        uint256 rawAmt = 80 ether;
-        token1.mint(user, rawAmt * 2);
-        vm.startPrank(user);
-        IERC20(address(wrapper)).approve(hook, type(uint256).max);
-        IERC20(address(wrapper)).approve(address(swapRouter), type(uint256).max);
-        token1.approve(hook, type(uint256).max);
-        uint256[] memory amounts = new uint256[](2);
-        if (args.tokens[0] == address(wrapper)) {
-            amounts[0] = wAmt;
-            amounts[1] = rawAmt;
-        } else {
-            amounts[0] = rawAmt;
-            amounts[1] = wAmt;
-        }
-        (uint256 lp,) = IHook(hook).joinProportional(amounts, user, 0, block.timestamp + 1 hours);
-        assertGt(lp, 0);
-        vm.stopPrank();
-
-        address other = args.tokens[0] == address(wrapper) ? args.tokens[1] : args.tokens[0];
-        uint256 swapIn = IERC20(address(wrapper)).balanceOf(user) / 8;
-        uint256 pred = IHook(hook).previewSwapExactIn(address(wrapper), other, swapIn);
+    function test_F16_weightedNonRebasingWrapperQuoteSwap() public {
+        _seedControl();
+        uint256 pred = IHook(hook).previewSwapExactIn(address(token0), address(token1), 1 ether);
+        uint256 beforeOut = token1.balanceOf(user);
+        _swapExactIn(address(token0), address(token1), 1 ether);
         assertGt(pred, 0);
-        uint256 before = IERC20(other).balanceOf(user);
-        _swapExactIn(address(wrapper), other, swapIn);
-        assertGt(IERC20(other).balanceOf(user) - before, 0);
-
-        uint256 rawIn = 1 ether;
-        uint256 predBack = IHook(hook).previewSwapExactIn(other, address(wrapper), rawIn);
-        assertGt(predBack, 0);
-        uint256 shareBefore = IERC20(address(wrapper)).balanceOf(user);
-        _swapExactIn(other, address(wrapper), rawIn);
-        assertGt(IERC20(address(wrapper)).balanceOf(user) - shareBefore, 0);
+        assertEq(token1.balanceOf(user) - beforeOut, pred);
+        pred = IHook(hook).previewSwapExactIn(address(token1), address(token0), 1 ether);
+        beforeOut = token0.balanceOf(user);
+        _swapExactIn(address(token1), address(token0), 1 ether);
+        assertGt(pred, 0);
+        assertEq(token0.balanceOf(user) - beforeOut, pred);
     }
 
-    function test_F16_weightedAmendmentMatrixLiveHook() public {
-        _deployWrapper();
-        _wrapUser(200e18);
-        IPkg.PkgArgs memory args = _wrapperMixedArgs();
-        _deployHookWithArgs(args);
-        uint256 wAmt = IERC20(address(wrapper)).balanceOf(user) / 2;
-        uint256 rawAmt = 80 ether;
-        token1.mint(user, rawAmt);
-        vm.startPrank(user);
-        IERC20(address(wrapper)).approve(hook, type(uint256).max);
-        token1.approve(hook, type(uint256).max);
-        uint256[] memory amounts = new uint256[](2);
-        if (args.tokens[0] == address(wrapper)) {
-            amounts[0] = wAmt;
-            amounts[1] = rawAmt;
-        } else {
-            amounts[0] = rawAmt;
-            amounts[1] = wAmt;
-        }
-        (uint256 lp,) = IHook(hook).joinProportional(amounts, user, 0, block.timestamp + 1 hours);
-        assertGt(lp, 0);
-        vm.stopPrank();
-
-        (bytes memory qState,) = IStandardExchangeTransitionQuote(address(wrapper)).quoteState(
-            address(underlying), hook
-        );
-        uint256 sample = IERC20(address(wrapper)).balanceOf(hook) / 10;
-        uint256 stale = IStandardExchangeTransitionQuote(address(wrapper)).quoteAssets(qState, sample);
-        underlying.rebase(address(wrapper), int256(5e18));
-        assertTrue(wrapper.convertToAssets(sample) != stale);
-        underlying.rebase(address(wrapper), -int256(1e18));
-        underlying.mint(address(wrapper), 2e18);
-        assertEq(wrapper.totalAssets(), underlying.balanceOf(address(wrapper)));
-
-        vm.prank(owner);
-        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(hook, 1e16);
-        assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
-
-        vm.prank(user);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
-        );
-
-        underlying.setRebaseOnTransfer(int256(1e18), address(wrapper));
-        vm.startPrank(user);
-        underlying.approve(address(wrapper), type(uint256).max);
-        vm.expectRevert();
-        wrapper.deposit(1e18, user);
-        vm.stopPrank();
-        underlying.setRebaseOnTransfer(0, address(0));
-        vm.prank(user);
-        assertGt(wrapper.deposit(1e18, user), 0);
-
+    function test_F16_weightedDisabledNonRebasingWrapperExit() public {
+        uint256 lp = _seedControl();
         vm.prank(owner);
         IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(wrapper), true);
-        vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(wrapper))
+        vm.startPrank(user);
+        token0.approve(address(wrapper), type(uint256).max);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(wrapper)));
+        wrapper.deposit(1 ether, user);
+        uint256[] memory out = IHook(hook).exitProportional(lp / 2, user, new uint256[](2), block.timestamp + 1 hours);
+        vm.stopPrank();
+        for (uint256 i; i < out.length; ++i) assertGt(out[i], 0);
+    }
+
+    function _seedControl() internal returns (uint256 lp) {
+        _deployWrapper();
+        _deployHookWithArgs(_controlArgs());
+        vm.startPrank(user);
+        token0.approve(hook, type(uint256).max);
+        token1.approve(hook, type(uint256).max);
+        vm.stopPrank();
+        // The base acquires caller-owned SE shares before its flexible genesis join.
+        lp = _firstMintEqual(80 ether);
+        assertGt(lp, 0);
+        assertEq(wrapper.balanceOf(hook), 76e28, "95 percent retained own-share inventory");
+        assertEq(token0.balanceOf(hook), 4 ether, "actual 5 percent redemption proceeds");
+        assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
+    }
+
+    /// @notice Rebasing behavior is a standalone wrapper proof, not a lawful hook binding.
+    function test_F16_standaloneOwnShareAndRebaseProcessing() public {
+        _deployWrapper();
+        rebasingUnderlying.mint(user, 400 ether);
+        vm.startPrank(user);
+        rebasingUnderlying.approve(address(rebasingWrapper), type(uint256).max);
+        (uint256 shares,) = IStandardExchangeIn(address(rebasingWrapper)).exchangeIn(
+            IERC20(address(rebasingUnderlying)), 200 ether, IERC20(address(rebasingWrapper)),
+            1, user, false, block.timestamp
         );
-        wrapper.deposit(1e18, user);
-        uint256[] memory mins = new uint256[](2);
-        vm.prank(user);
-        uint256[] memory out = IHook(hook).exitProportional(lp / 2, user, mins, block.timestamp + 1 hours);
-        assertGt(out[0] + out[1], 0);
+        vm.stopPrank();
+        assertGt(shares, 0);
+        assertEq(rebasingWrapper.balanceOf(user), shares);
+        (bytes memory state,) = IStandardExchangeTransitionQuote(address(rebasingWrapper)).quoteState(
+            address(rebasingUnderlying), user
+        );
+        assertEq(state.length, 288);
+        uint256 sample = shares / 10;
+        uint256 stale = IStandardExchangeTransitionQuote(address(rebasingWrapper)).quoteAssets(state, sample);
+        uint256 beforeAssets = rebasingWrapper.totalAssets();
+        rebasingUnderlying.rebase(address(rebasingWrapper), int256(5 ether));
+        assertEq(rebasingWrapper.totalAssets(), beforeAssets + 5 ether);
+        assertTrue(rebasingWrapper.convertToAssets(sample) != stale);
+        rebasingUnderlying.rebase(address(rebasingWrapper), -int256(1 ether));
+        assertEq(rebasingWrapper.totalAssets(), beforeAssets + 4 ether);
+        rebasingUnderlying.mint(address(rebasingWrapper), 2 ether);
+        assertEq(rebasingWrapper.totalAssets(), rebasingUnderlying.balanceOf(address(rebasingWrapper)));
+        assertEq(rebasingWrapper.balanceOf(user), shares, "rebase cannot invent wrapper shares");
+
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(rebasingWrapper), 1e16);
+        assertEq(IStandardVault(address(rebasingWrapper)).vaultFeeTypeIds(), bytes32(0));
+        vm.startPrank(user);
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
+        IStandardExchangeIn(address(rebasingWrapper)).exchangeIn(
+            IERC20(address(rebasingUnderlying)), 1 ether, IERC20(address(rebasingWrapper)),
+            0, user, true, block.timestamp
+        );
+        rebasingUnderlying.setRebaseOnTransfer(int256(1 ether), address(rebasingWrapper));
+        uint256 heldBefore = rebasingWrapper.totalAssets();
+        vm.expectRevert();
+        rebasingWrapper.deposit(1 ether, user);
+        assertEq(rebasingWrapper.totalAssets(), heldBefore, "failed transfer rebase rolls back");
+        rebasingUnderlying.setRebaseOnTransfer(0, address(0));
+        assertGt(rebasingWrapper.deposit(1 ether, user), 0);
+        vm.stopPrank();
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(rebasingWrapper), true);
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(rebasingWrapper)));
+        rebasingWrapper.deposit(1 ether, user);
+        IERC20(address(rebasingWrapper)).approve(address(rebasingWrapper), sample);
+        (uint256 quote,) = IStandardExchangeIn(address(rebasingWrapper)).previewExchangeIn(
+            IERC20(address(rebasingWrapper)), sample, IERC20(address(rebasingUnderlying))
+        );
+        uint256 beforeOut = rebasingUnderlying.balanceOf(user);
+        uint256 sharesBeforeRedeem = rebasingWrapper.balanceOf(user);
+        (uint256 out,) = IStandardExchangeIn(address(rebasingWrapper)).exchangeIn(
+            IERC20(address(rebasingWrapper)), sample, IERC20(address(rebasingUnderlying)),
+            quote, user, false, block.timestamp
+        );
+        vm.stopPrank();
+        assertGt(out, 0);
+        assertEq(out, quote);
+        assertEq(rebasingUnderlying.balanceOf(user) - beforeOut, out);
+        assertEq(sharesBeforeRedeem - rebasingWrapper.balanceOf(user), sample);
     }
 
     function _deployWrapper() internal {
@@ -225,36 +215,15 @@ contract RebasingAwareERC4626_Buffers_Weighted is TestBase {
                 vaultRegistry: IVaultRegistryDeployment(address(indexedexManager))
             })
         );
-        underlying = new RebasingERC20Harness("Rebase", "RBS", 18);
-        wrapper = wpkg.deployVault(IERC20Metadata(address(underlying)), 10, bytes32(uint256(11)));
+        rebasingUnderlying = new RebasingERC20Harness("Rebase", "RBS", 18);
+        rebasingWrapper = wpkg.deployVault(IERC20Metadata(address(rebasingUnderlying)), 10, bytes32(uint256(11)));
+        wrapper = wpkg.deployVault(IERC20Metadata(address(token0)), 10, bytes32(uint256(111)));
     }
 
-    function _wrapUser(uint256 assets) internal {
-        underlying.mint(user, assets * 2);
-        vm.startPrank(user);
-        underlying.approve(address(wrapper), type(uint256).max);
-        wrapper.deposit(assets, user);
-        vm.stopPrank();
-    }
-
-    function _wrapperMixedArgs() internal returns (IPkg.PkgArgs memory args) {
-        address w = address(wrapper);
-        address raw = address(token1);
-        address[] memory toks = new address[](2);
-        uint256[] memory weights = new uint256[](2);
-        address[] memory ses = new address[](2);
-        address[] memory rps = new address[](2);
-        weights[0] = 0.5e18;
-        weights[1] = 0.5e18;
-        if (w < raw) {
-            toks[0] = w;
-            toks[1] = raw;
-            ses[0] = w;
-        } else {
-            toks[0] = raw;
-            toks[1] = w;
-            ses[1] = w;
-        }
-        args = _pkgArgs(toks, weights, ses, rps);
+    function _controlArgs() internal returns (IPkg.PkgArgs memory args) {
+        args = _defaultPkgArgs();
+        args.standardExchanges[0] = address(wrapper);
+        args.seDecimals[0] = IERC20Metadata(address(wrapper)).decimals();
+        args.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, args.tokens, args.standardExchanges, new address[](args.tokens.length));
     }
 }

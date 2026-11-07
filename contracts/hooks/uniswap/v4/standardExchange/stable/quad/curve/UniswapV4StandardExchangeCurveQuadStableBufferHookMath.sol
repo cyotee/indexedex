@@ -317,7 +317,12 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
 
         for (uint256 iter; iter < MAX_NR_ITERS; ++iter) {
             uint256 yPrev = y;
-            y = (y * y + c) / (2 * y + b - D);
+            uint256 denominator = 2 * y + b - D;
+            uint256 remainder = mulmod(y, y, denominator);
+            uint256 quotient = FixedPointMathLib.fullMulDiv(y, y, denominator);
+            // Preserve floor((y*y+c)/denominator) without overflowing y*y.
+            y = quotient + c / denominator;
+            if (remainder >= denominator - c % denominator) ++y;
             if (y > yPrev) {
                 if (y - yPrev <= 1) return y;
             } else if (yPrev - y <= 1) {

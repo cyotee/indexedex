@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -196,12 +197,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
         internal
         returns (uint256 seOut)
     {
+        _requireWrapEnabled();
         seOut = _previewWrap(pairIn);
         if (seOut == 0) revert IStandardExchangeErrors.MinAmountNotMet(1, 0);
         _take(pairC, address(this), pairIn);
         // SE pulls via transferFrom; do not pretransfer+true free-mint path.
         IERC20(_pair()).forceApprove(_se(), pairIn);
         uint256 got = _seExchangeIn(IERC20(_pair()), pairIn, IERC20(_se()), seOut, false);
+        IERC20(_pair()).forceApprove(_se(), 0);
         require(got == seOut || got >= seOut, "wrap seOut");
         seOut = got;
         _settle(seC, seOut);
@@ -211,11 +214,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
         internal
         returns (uint256 amountIn)
     {
+        _requireWrapEnabled();
         amountIn = _previewWrapExactOut(seOut);
         _take(pairC, address(this), amountIn);
         IERC20(_pair()).forceApprove(_se(), amountIn);
-        uint256 spent = _seExchangeOut(IERC20(_pair()), amountIn, IERC20(_se()), seOut, false);
-        require(spent == amountIn, "wrap exact-out spend");
+        _seExchangeOut(IERC20(_pair()), amountIn, IERC20(_se()), seOut, false);
+        IERC20(_pair()).forceApprove(_se(), 0);
         _settle(seC, seOut);
     }
 
@@ -240,19 +244,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
     {
         seIn = _previewUnwrapExactOut(pairOut);
         _take(seC, address(this), seIn);
-        // Delta-only settle: never settle full balanceOf (O11 idle donations must not enter swap accounting).
-        uint256 pairBefore = IERC20(_pair()).balanceOf(address(this));
         // SE pulls shares via transferFrom when pretransferred=false (e.g. Balancer pool SE, Uni V3/V4 SE).
         IERC20(_se()).forceApprove(_se(), seIn);
-        uint256 spent = _seExchangeOut(IERC20(_se()), seIn, IERC20(_pair()), pairOut, false);
+        _seExchangeOut(IERC20(_se()), seIn, IERC20(_pair()), pairOut, false);
         IERC20(_se()).forceApprove(_se(), 0);
-        require(spent == seIn, "unwrap exact-out spend");
         // Settle exactly the delta `beforeSwap` reports (`pairOut`). An AMM SE zap-out can deliver
         // `got > pairOut`; settling `got` would leave the surplus as a positive PoolManager credit that
         // nothing takes and end the swap `CurrencyNotSettled()` (APEX matrix finding F5). The surplus
         // stays on the hook as retained residual (D6).
-        uint256 got = IERC20(_pair()).balanceOf(address(this)) - pairBefore;
-        require(got >= pairOut, "unwrap exact-out short");
         _settle(pairC, pairOut);
     }
 
@@ -262,7 +261,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
 
     function previewWrap(uint256 pairIn) external view returns (uint256 seOut) {
         _requireNonZero(pairIn);
-        (seOut,) = ContextQuote.deposit(_se(), _pair(), address(this), pairIn, address(poolManager()));
+        if (!ContextQuote.supported(_se())) return _previewWrap(pairIn);
+        (ExchangeInAmount.Result memory result,) =
+            ContextQuote.depositResult(_se(), _pair(), address(this), pairIn, address(poolManager()));
+        return result.amountOut;
     }
 
     function previewWrapExactOut(uint256 seOut) external view returns (uint256 pairIn) {
@@ -272,7 +274,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
 
     function previewUnwrap(uint256 seIn) external view returns (uint256 pairOut) {
         _requireNonZero(seIn);
-        return ContextQuote.redeemReceived(_se(), _pair(), seIn, address(poolManager()));
+        if (!ContextQuote.supported(_se())) return _previewUnwrap(seIn);
+        return ContextQuote.redeemReceivedResult(_se(), _pair(), seIn, address(poolManager())).amountOut;
     }
 
     function previewUnwrapExactOut(uint256 pairOut) external view returns (uint256 seIn) {

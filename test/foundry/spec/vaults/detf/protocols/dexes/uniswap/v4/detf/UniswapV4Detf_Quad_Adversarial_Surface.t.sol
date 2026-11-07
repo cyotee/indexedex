@@ -9,7 +9,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
-import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookClaimQuote, IUniswapV4SeBufferHookClaimExitQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookClaimQuote, IUniswapV4SeBufferHookClaimExitQuote, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IStandardExchangeMultiAssetLiquidity} from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
 import {IUniswapV4StandardExchangeCurveQuadStableBufferHook as IQuadHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 
@@ -83,7 +83,7 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
     }
     /// @notice Independent controls cover both installed liquidity facets and the native SY surface.
     function test_hookJoinFacet_exposesCompleteSurface() public {
-        bytes4[] memory execution = new bytes4[](9);
+        bytes4[] memory execution = new bytes4[](10);
         execution[0] = IUniswapV4SeBufferHook.joinProportional.selector;
         execution[1] = IStandardExchangeMultiAssetLiquidity.joinUnbalanced.selector;
         execution[2] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
@@ -93,8 +93,9 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
         execution[6] = IQuadHook.joinSingleAssetExactInFlexible.selector;
         execution[7] = IQuadHook.depositSingleFlexible.selector;
         execution[8] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        execution[9] = IUniswapV4SeBufferHookNativeLiquidity.joinNativeComponents.selector;
         _assertInstalledHookFacet(execution);
-        bytes4[] memory queries = new bytes4[](26);
+        bytes4[] memory queries = new bytes4[](27);
         queries[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
         queries[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
         queries[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -121,6 +122,7 @@ contract UniswapV4Detf_Quad_Adversarial_Surface is
         queries[23] = IStandardizedYield.rewardIndexesCurrent.selector;
         queries[24] = IStandardizedYield.rewardIndexesStored.selector;
         queries[25] = IStandardizedYield.claimRewards.selector;
+        queries[26] = IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector;
         _assertInstalledHookFacet(queries);
         bytes4[] memory exchange = new bytes4[](7);
         exchange[0] = IStandardExchangeIn.exchangeIn.selector;

@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as Components} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase as QuoteBase, ISingleBufferQuoteErrors} from "./UniswapV4SingleStandardExchangeBufferConstantProductHookInQuoteBase.sol";
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
@@ -30,6 +36,586 @@ import {
  */
 library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     using SafeERC20 for IERC20;
+
+    error InvalidRoute();
+    error ZeroAmount();
+    error InsufficientLpOut();
+    event ZapSwap(address indexed sender, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
+
+    struct Basket {
+        uint256 raw;
+        uint256 shares;
+        uint256 local;
+    }
+
+    function componentBook() public view returns (Basket memory book_) {
+        Repo.Layout storage l = Repo._layout();
+        return Basket(l.bookedRaw, l.bookedSeShares, l.localPairReserve);
+    }
+
+    function disabled() public view returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        IVaultRegistryDisableQuery registry_ = IVaultRegistryDisableQuery(l.registry);
+        if (registry_.packageOfVault(l.standardExchange) == address(0)) revert InvalidRoute();
+        return registry_.isDisabled(l.standardExchange);
+    }
+
+    function mintFee(uint256 gross_) public view returns (uint256 net_, uint256 fee_, address recipient_) {
+        (IFeeCollectorProxy to_, uint256 percentage_) =
+            IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeAndFeeToOfVault(address(this));
+        recipient_ = address(to_);
+        (net_, fee_) = Components.splitMintFee(gross_, percentage_, recipient_, percentage_ != 0);
+    }
+
+    /// @dev One forward conversion estimate assembles caller inventory; only actual
+    /// receipts determine acceptance. This does not invert an SE exact-output route.
+    function _shareSale(uint256 shares_, uint256 local_, Basket memory book_) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (shares_ == 0 || book_.local == 0) return 0;
+        if (book_.shares == 0) return shares_;
+        uint256 requiredLocal_ = FullMath.mulDiv(shares_, book_.local, book_.shares, FullMath.Rounding.Ceil);
+        if (local_ >= requiredLocal_) return 0;
+        ExchangeInAmount.Result memory q_ = ExchangeInAmount.previewResult(
+            IStandardExchangeIn(l.standardExchange), IERC20(l.standardExchange), shares_, IERC20(l.pairToken)
+        );
+        uint256 equivalent_ = FullMath.mulDiv(q_.amountOut, book_.shares, shares_);
+        uint256 missing_ = book_.local - FullMath.mulDiv(local_, book_.shares, shares_);
+        return FullMath.mulDiv(shares_, missing_, book_.local + equivalent_, FullMath.Rounding.Ceil);
+    }
+
+    function _pairDeposit(uint256 pair_, Basket memory book_) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (pair_ == 0 || book_.shares == 0 || disabled()) return 0;
+        if (book_.local == 0) return pair_;
+        ExchangeInAmount.Result memory q_ = ExchangeInAmount.previewResult(
+            IStandardExchangeIn(l.standardExchange), IERC20(l.pairToken), pair_, IERC20(l.standardExchange)
+        );
+        uint256 localForShares_ = FullMath.mulDiv(q_.amountOut, book_.local, book_.shares, FullMath.Rounding.Ceil);
+        return FullMath.mulDiv(pair_, pair_, pair_ + localForShares_);
+    }
+
+    function _convert(uint256 amount_, bool sharesIn_) private returns (ExchangeInAmount.Result memory receipt_) {
+        Repo.Layout storage l = Repo._layout();
+        IERC20 input_ = IERC20(sharesIn_ ? l.standardExchange : l.pairToken);
+        IERC20 output_ = IERC20(sharesIn_ ? l.pairToken : l.standardExchange);
+        uint256 beforeIn_ = input_.balanceOf(address(this));
+        uint256 beforeOut_ = output_.balanceOf(address(this));
+        input_.forceApprove(l.standardExchange, amount_);
+        receipt_ = ExchangeInAmount.exchangeResult(
+            IStandardExchangeIn(l.standardExchange), input_, amount_, output_, 0, address(this), false, block.timestamp
+        );
+        input_.forceApprove(l.standardExchange, 0);
+        ExchangeInAmount.requireReceipt(amount_, receipt_, beforeIn_, input_.balanceOf(address(this)),
+            beforeOut_, output_.balanceOf(address(this)));
+    }
+
+    function convertCallerShares(uint256 shares_) external returns (uint256 pair_) {
+        ExchangeInAmount.Result memory receipt_ = _convert(shares_, true);
+        if (receipt_.amountRefunded != 0) revert InsufficientTokenOut();
+        return receipt_.amountOut;
+    }
+
+    /// @notice Attribute pool-owned input and its actual refund exactly once.
+    function bufferPoolPair(uint256 amount_) public returns (uint256 shares_) {
+        if (amount_ == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        if (disabled()) {
+            l.localPairReserve += amount_;
+            return 0;
+        }
+        ExchangeInAmount.Result memory receipt_ = _convert(amount_, false);
+        l.bookedSeShares += receipt_.amountOut;
+        l.localPairReserve += receipt_.amountRefunded;
+        return receipt_.amountOut;
+    }
+
+    /// @notice Fixed pair output uses local custody before an existing supported SE inverse.
+    function takeExactPair(uint256 amount_) external returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 local_ = FullMath.min(l.localPairReserve, amount_);
+        l.localPairReserve -= local_;
+        uint256 deficit_ = amount_ - local_;
+        if (deficit_ == 0) return amount_;
+        uint256 shares_ = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+            IERC20(l.standardExchange), IERC20(l.pairToken), deficit_
+        );
+        if (shares_ == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        if (shares_ > l.bookedSeShares) revert InsufficientTokenOut();
+        uint256 beforeShares_ = IERC20(l.standardExchange).balanceOf(address(this));
+        uint256 beforePair_ = IERC20(l.pairToken).balanceOf(address(this));
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, shares_);
+        uint256 consumed_ = IStandardExchangeOut(l.standardExchange).exchangeOut(
+            IERC20(l.standardExchange), shares_, IERC20(l.pairToken), deficit_, address(this), false, block.timestamp
+        );
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
+        uint256 received_ = IERC20(l.pairToken).balanceOf(address(this)) - beforePair_;
+        if (consumed_ > shares_ || beforeShares_ - IERC20(l.standardExchange).balanceOf(address(this)) != consumed_
+            || received_ < deficit_) revert InsufficientTokenOut();
+        l.bookedSeShares -= consumed_;
+        l.localPairReserve += received_ - deficit_;
+        return amount_;
+    }
+
+    function _assemble(uint256 raw_, uint256 input_, bool sharesIn_, bool genesis_, Basket memory book_)
+        private returns (Basket memory basket_)
+    {
+        basket_.raw = raw_;
+        if (sharesIn_) {
+            uint256 spend_ = genesis_ ? input_ / 20 : _shareSale(input_, 0, book_);
+            basket_.shares = input_;
+            if (spend_ != 0) {
+                ExchangeInAmount.Result memory receipt_ = _convert(spend_, true);
+                if (receipt_.amountRefunded != 0) revert InsufficientTokenOut();
+                basket_.shares -= spend_;
+                basket_.local = receipt_.amountOut;
+            }
+            if (genesis_ && (spend_ == 0 || basket_.local == 0)) revert ZeroAmount();
+        } else {
+            if (genesis_) {
+                if (disabled()) revert IVaultRegistryDisableQuery.VaultDisabled(Repo._layout().standardExchange);
+                ExchangeInAmount.Result memory acquired_ = _convert(input_, false);
+                uint256 spend_ = acquired_.amountOut / 20;
+                if (spend_ == 0) revert ZeroAmount();
+                ExchangeInAmount.Result memory redeemed_ = _convert(spend_, true);
+                if (redeemed_.amountRefunded != 0 || redeemed_.amountOut == 0) revert InsufficientTokenOut();
+                basket_.shares = acquired_.amountOut - spend_;
+                basket_.local = acquired_.amountRefunded + redeemed_.amountOut;
+                return basket_;
+            }
+            uint256 deposit_ = _pairDeposit(input_, book_);
+            basket_.local = input_;
+            if (deposit_ != 0) {
+                ExchangeInAmount.Result memory receipt_ = _convert(deposit_, false);
+                basket_.shares = receipt_.amountOut;
+                basket_.local = ExchangeInAmount.localCredit(input_, deposit_, receipt_.amountRefunded);
+            }
+        }
+    }
+
+    function _previewBasket(uint256 raw_, uint256 input_, bool sharesIn_, bool genesis_, Basket memory book_)
+        private view returns (Basket memory basket_)
+    {
+        Repo.Layout storage l = Repo._layout();
+        basket_.raw = raw_;
+        if (sharesIn_) {
+            uint256 spend_ = genesis_ ? input_ / 20 : _shareSale(input_, 0, book_);
+            basket_.shares = input_;
+            if (spend_ != 0) {
+                ExchangeInAmount.Result memory receipt_ = ExchangeInAmount.previewResult(
+                    IStandardExchangeIn(l.standardExchange), IERC20(l.standardExchange), spend_, IERC20(l.pairToken)
+                );
+                if (receipt_.amountRefunded != 0) return Basket(0, 0, 0);
+                basket_.shares -= spend_;
+                basket_.local = receipt_.amountOut;
+            }
+            if (genesis_ && (spend_ == 0 || basket_.local == 0)) return Basket(0, 0, 0);
+        } else {
+            if (genesis_) {
+                if (disabled()) revert IVaultRegistryDisableQuery.VaultDisabled(l.standardExchange);
+                if (!_supportsTransitionQuote(l.standardExchange, l.pairToken, address(this))) {
+                    revert Transition.InvalidQuoteState();
+                }
+                (bytes memory state_,) = Transition(l.standardExchange).quoteState(l.pairToken, address(this));
+                uint256 consumed_;
+                uint256 acquired_;
+                (state_, consumed_, acquired_,) = Transition(l.standardExchange).quoteTransition(
+                    state_, Transition.Operation.DepositExactIn, input_
+                );
+                uint256 spend_ = acquired_ / 20;
+                if (spend_ == 0) return Basket(0, 0, 0);
+                uint256 burned_;
+                uint256 local_;
+                (, burned_, local_,) = Transition(l.standardExchange).quoteTransition(
+                    state_, Transition.Operation.RedeemExactIn, spend_
+                );
+                if (burned_ != spend_ || local_ == 0) return Basket(0, 0, 0);
+                basket_.shares = acquired_ - spend_;
+                basket_.local = input_ - consumed_ + local_;
+                return basket_;
+            }
+            uint256 deposit_ = _pairDeposit(input_, book_);
+            basket_.local = input_;
+            if (deposit_ != 0) {
+                ExchangeInAmount.Result memory receipt_ = ExchangeInAmount.previewResult(
+                    IStandardExchangeIn(l.standardExchange), IERC20(l.pairToken), deposit_, IERC20(l.standardExchange)
+                );
+                basket_.shares = receipt_.amountOut;
+                basket_.local = ExchangeInAmount.localCredit(input_, deposit_, receipt_.amountRefunded);
+            }
+        }
+    }
+
+    function _accepted(Basket memory available_, Basket memory book_, uint256 supply_)
+        private view returns (uint256 gross_, Basket memory accepted_)
+    {
+        Repo.Layout storage l = Repo._layout();
+        if (supply_ == 0) {
+            if (available_.raw == 0 || available_.shares == 0 || available_.local == 0) return (0, accepted_);
+            uint256 seed_ = Math.mintSharesFirst(
+                Math.toWad(available_.raw, singleDecimals(l.rawToken)),
+                Math.toWad(available_.shares, l.seDecimals)
+            );
+            if (seed_ <= Repo.MINIMUM_LIQUIDITY) return (0, accepted_);
+            return (seed_ - Repo.MINIMUM_LIQUIDITY, available_);
+        }
+        uint256[] memory available = new uint256[](3);
+        uint256[] memory booked = new uint256[](3);
+        available[0] = available_.raw; available[1] = available_.shares; available[2] = available_.local;
+        booked[0] = book_.raw; booked[1] = book_.shares; booked[2] = book_.local;
+        gross_ = Components.maxComponentMint(available, booked, supply_);
+        accepted_ = Basket(
+            Components.componentContribution(gross_, booked[0], supply_),
+            Components.componentContribution(gross_, booked[1], supply_),
+            Components.componentContribution(gross_, booked[2], supply_)
+        );
+    }
+
+    function _commitBasket(
+        Basket memory book_, Basket memory available_, uint256 gross_, Basket memory accepted_,
+        address to_, uint256 minimum_, uint256 supply_
+    ) private returns (uint256 net_) {
+        if (gross_ == 0) revert ZeroAmount();
+        uint256 fee_;
+        address feeTo_;
+        (net_, fee_, feeTo_) = mintFee(gross_);
+        if (net_ < minimum_) revert InsufficientLpOut();
+        Repo.Layout storage l = Repo._layout();
+        l.bookedRaw = book_.raw + accepted_.raw;
+        l.bookedSeShares = book_.shares + accepted_.shares;
+        l.localPairReserve = book_.local + accepted_.local;
+        uint256 unusedRaw_ = available_.raw - accepted_.raw;
+        uint256 unusedShares_ = available_.shares - accepted_.shares;
+        uint256 unusedPair_ = available_.local - accepted_.local;
+        if (supply_ == 0) ERC20Repo._mint(address(0), Repo.MINIMUM_LIQUIDITY);
+        if (fee_ != 0) ERC20Repo._mint(feeTo_, fee_);
+        if (net_ != 0) ERC20Repo._mint(to_, net_);
+        if (unusedRaw_ != 0) IERC20(l.rawToken).safeTransfer(msg.sender, unusedRaw_);
+        if (unusedShares_ != 0) IERC20(l.standardExchange).safeTransfer(msg.sender, unusedShares_);
+        if (unusedPair_ != 0) IERC20(l.pairToken).safeTransfer(msg.sender, unusedPair_);
+    }
+
+    /// @dev Initial caller inventory is separate from the incumbent book.
+    function _singleInput(address input_, uint256 amount_) private view returns (Basket memory available_) {
+        Repo.Layout storage l = Repo._layout();
+        if (input_ == l.rawToken) available_.raw = amount_;
+        else if (input_ == l.pairToken) available_.local = amount_;
+        else if (input_ == l.standardExchange) available_.shares = amount_;
+        else revert InvalidRoute();
+    }
+
+    /// @dev Price a paid preparatory trade, then accept LP against the resulting
+    /// book. Raw input buys the buffered leg in kind; pair/share sales retain
+    /// their native input in that leg. No SE conversion is needed for this trade.
+    function _singleSwap(address input_, uint256 amount_, Basket memory book_)
+        private view returns (Basket memory available_, uint256 sold_, uint256 counter_, uint256 kept_)
+    {
+        return _singleSwapAtRate(input_, amount_, book_, _rate(Repo._layout()));
+    }
+
+    function _singleSwapAtRate(address input_, uint256 amount_, Basket memory book_, uint256 rate_)
+        private view returns (Basket memory available_, uint256 sold_, uint256 counter_, uint256 kept_)
+    {
+        Repo.Layout storage l = Repo._layout();
+        available_ = _singleInput(input_, amount_);
+        uint256 pairReserve_ = book_.local + _ratedWith(l, book_.shares, rate_);
+        if (amount_ == 0 || book_.raw == 0 || pairReserve_ == 0) return (available_, 0, 0, amount_);
+        if (input_ == l.rawToken) {
+            sold_ = Math.fromWadFloor(Math.swapDepositSaleAmt(
+                Math.toWad(amount_, singleDecimals(l.rawToken)),
+                Math.toWad(book_.raw, singleDecimals(l.rawToken))
+            ), singleDecimals(l.rawToken));
+            if (sold_ == 0 || sold_ >= amount_) return (available_, 0, 0, amount_);
+            counter_ = Math.fromWadFloor(Math.saleQuote(
+                Math.toWad(sold_, singleDecimals(l.rawToken)),
+                Math.toWad(book_.raw, singleDecimals(l.rawToken)),
+                Math.toWad(pairReserve_, _pairDecimals(l))
+            ), _pairDecimals(l));
+            available_.raw = amount_ - sold_;
+            available_.shares = FullMath.mulDiv(book_.shares, counter_, pairReserve_);
+            available_.local = FullMath.mulDiv(book_.local, counter_, pairReserve_);
+            book_.raw += sold_;
+            book_.shares -= available_.shares;
+            book_.local -= available_.local;
+        } else {
+            uint256 value_ = input_ == l.pairToken ? amount_ : _ratedWith(l, amount_, rate_);
+            if (value_ == 0) return (available_, 0, 0, amount_);
+            uint256 saleValue_ = Math.fromWadFloor(Math.swapDepositSaleAmt(
+                Math.toWad(value_, _pairDecimals(l)),
+                Math.toWad(pairReserve_, _pairDecimals(l))
+            ), _pairDecimals(l));
+            sold_ = input_ == l.pairToken ? saleValue_
+                : FullMath.mulDiv(amount_, saleValue_, value_, FullMath.Rounding.Ceil);
+            if (sold_ == 0 || sold_ >= amount_) return (available_, 0, 0, amount_);
+            uint256 actualValue_ = input_ == l.pairToken ? sold_ : _ratedWith(l, sold_, rate_);
+            counter_ = singlePairRawOut(actualValue_, pairReserve_, book_.raw);
+            book_.raw -= counter_;
+            available_.raw = counter_;
+            if (input_ == l.pairToken) {
+                book_.local += sold_;
+                available_.local = amount_ - sold_;
+            } else {
+                book_.shares += sold_;
+                available_.shares = amount_ - sold_;
+            }
+        }
+        kept_ = amount_ - sold_;
+    }
+
+    function singleComponentJoin(address input_, uint256 amount_, address to_, uint256 minimum_, uint256 exactNet_)
+        public returns (uint256 net_)
+    {
+        uint256 supply_ = ERC20Repo._totalSupply();
+        if (supply_ == 0) revert InvalidRoute();
+        Basket memory book_ = componentBook();
+        (Basket memory available_, uint256 sold_, uint256 counter_, uint256 kept_) = _singleSwap(input_, amount_, book_);
+        if (book_.raw != 0 && available_.raw == 0) revert ZeroAmount();
+        Repo.Layout storage l = Repo._layout();
+        if (input_ != l.rawToken) {
+            available_ = _assemble(available_.raw, kept_, input_ == l.standardExchange, false, book_);
+        }
+        (uint256 gross_, Basket memory accepted_) = _accepted(available_, book_, supply_);
+        if (exactNet_ != 0) {
+            (IFeeCollectorProxy toFee_, uint256 percentage_) =
+                IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeAndFeeToOfVault(address(this));
+            uint256 required_ = Components.grossForNet(exactNet_, percentage_, address(toFee_), percentage_ != 0);
+            if (gross_ < required_) revert InsufficientLpOut();
+            gross_ = required_;
+            accepted_ = Basket(
+                Components.componentContribution(gross_, book_.raw, supply_),
+                Components.componentContribution(gross_, book_.shares, supply_),
+                Components.componentContribution(gross_, book_.local, supply_)
+            );
+        }
+        net_ = _commitBasket(book_, available_, gross_, accepted_, to_, minimum_, supply_);
+        if (sold_ != 0) emit ZapSwap(msg.sender, input_, input_ == l.rawToken ? l.pairToken : l.rawToken, sold_, counter_);
+    }
+
+    function previewSingleComponentJoin(address input_, uint256 amount_) external view returns (uint256 net_) {
+        uint256 supply_ = ERC20Repo._totalSupply();
+        if (supply_ == 0 || amount_ == 0) return 0;
+        Basket memory book_ = componentBook();
+        (Basket memory available_,,, uint256 kept_) = _singleSwap(input_, amount_, book_);
+        if (book_.raw != 0 && available_.raw == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        if (input_ != l.rawToken) {
+            available_ = _previewBasket(available_.raw, kept_, input_ == l.standardExchange, false, book_);
+        }
+        (uint256 gross_,) = _accepted(available_, book_, supply_);
+        (net_,,) = mintFee(gross_);
+    }
+
+    /// @notice Raw-input LP assembly changes only hook custody, not SE state.
+    function previewRawClaimAfterJoin(uint256 rawInput_, uint256 lp_) external view returns (uint256 rawOutput_) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        if (lp_ == 0 || supply_ == 0) return 0;
+        Basket memory book_ = componentBook();
+        (Basket memory available_,,,) = _singleSwap(l.rawToken, rawInput_, book_);
+        (uint256 gross_, Basket memory accepted_) = _accepted(available_, book_, supply_);
+        if (gross_ == 0) return 0;
+        book_.raw += accepted_.raw;
+        book_.shares += accepted_.shares;
+        book_.local += accepted_.local;
+        supply_ += gross_;
+        Basket memory claim_ = Basket(
+            Components.componentAllocation(lp_, book_.raw, supply_),
+            Components.componentAllocation(lp_, book_.shares, supply_),
+            Components.componentAllocation(lp_, book_.local, supply_)
+        );
+        uint256 value_ = claim_.local + _ratedOf(l, claim_.shares);
+        uint256 remainingPair_ = book_.local - claim_.local + _ratedOf(l, book_.shares - claim_.shares);
+        rawOutput_ = claim_.raw;
+        if (value_ != 0) rawOutput_ += singlePairRawOut(value_, remainingPair_, book_.raw - claim_.raw);
+    }
+
+    /// @notice Quote the paid preparatory trade separately from LP acceptance.
+    function previewComponentSplit(address input_, uint256 amount_)
+        external view returns (uint256 sold_, uint256 counter_, uint256 kept_)
+    {
+        (, sold_, counter_, kept_) = _singleSwap(input_, amount_, componentBook());
+    }
+
+    /// @notice Accept the actual caller basket; never count ambient balances or rated growth.
+    function joinComponents(uint256 raw_, uint256 input_, bool sharesIn_, address to_, uint256 minimum_)
+        external returns (uint256 net_, uint256 usedRaw_, uint256 usedInput_)
+    {
+        uint256 supply_ = ERC20Repo._totalSupply();
+        if (supply_ != 0 && (raw_ == 0 || input_ == 0)) {
+            Repo.Layout storage l = Repo._layout();
+            IERC20 token_ = IERC20(raw_ != 0 ? l.rawToken : sharesIn_ ? l.standardExchange : l.pairToken);
+            uint256 before_ = token_.balanceOf(msg.sender);
+            uint256 supplied_ = raw_ != 0 ? raw_ : input_;
+            net_ = singleComponentJoin(address(token_), supplied_, to_, minimum_, 0);
+            uint256 used_ = supplied_ - (token_.balanceOf(msg.sender) - before_);
+            if (raw_ != 0) usedRaw_ = used_;
+            else usedInput_ = used_;
+            return (net_, usedRaw_, usedInput_);
+        }
+        Basket memory book_ = componentBook();
+        Basket memory available_ = _assemble(raw_, input_, sharesIn_, supply_ == 0, book_);
+        (uint256 gross_, Basket memory accepted_) = _accepted(available_, book_, supply_);
+        net_ = _commitBasket(book_, available_, gross_, accepted_, to_, minimum_, supply_);
+        usedRaw_ = accepted_.raw;
+        usedInput_ = input_ - (sharesIn_ ? available_.shares - accepted_.shares : available_.local - accepted_.local);
+    }
+
+    function previewComponentJoin(uint256 raw_, uint256 input_, bool sharesIn_)
+        external view returns (uint256 net_, uint256 usedRaw_, uint256 usedInput_)
+    {
+        uint256 supply_ = ERC20Repo._totalSupply();
+        if (supply_ != 0 && (raw_ == 0 || input_ == 0)) {
+            Repo.Layout storage l = Repo._layout();
+            address token_ = raw_ != 0 ? l.rawToken : sharesIn_ ? l.standardExchange : l.pairToken;
+            Basket memory book_ = componentBook();
+            (Basket memory prepared_,,, uint256 kept_) = _singleSwap(token_, raw_ != 0 ? raw_ : input_, book_);
+            if (book_.raw != 0 && prepared_.raw == 0) return (0, 0, 0);
+            if (raw_ == 0) prepared_ = _previewBasket(prepared_.raw, kept_, sharesIn_, false, book_);
+            (uint256 gross_, Basket memory accepted_) = _accepted(prepared_, book_, supply_);
+            if (gross_ == 0) return (0, 0, 0);
+            (net_,,) = mintFee(gross_);
+            if (raw_ != 0) usedRaw_ = raw_ - (prepared_.raw - accepted_.raw);
+            else usedInput_ = input_ - (sharesIn_
+                ? prepared_.shares - accepted_.shares : prepared_.local - accepted_.local);
+            return (net_, usedRaw_, usedInput_);
+        }
+        Basket memory available_ = _previewBasket(raw_, input_, sharesIn_, ERC20Repo._totalSupply() == 0, componentBook());
+        (uint256 gross_, Basket memory accepted_) = _accepted(available_, componentBook(), ERC20Repo._totalSupply());
+        if (gross_ == 0) return (0, 0, 0);
+        (net_,,) = mintFee(gross_);
+        usedRaw_ = accepted_.raw;
+        usedInput_ = input_ - (sharesIn_ ? available_.shares - accepted_.shares : available_.local - accepted_.local);
+    }
+
+    function componentClaim(uint256 burned_) public view returns (Basket memory claim_) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        claim_.raw = Components.componentAllocation(burned_, l.bookedRaw, supply_);
+        claim_.shares = Components.componentAllocation(burned_, l.bookedSeShares, supply_);
+        claim_.local = Components.componentAllocation(burned_, l.localPairReserve, supply_);
+    }
+
+    /// @dev Allocate first, then price only the exiting basket against remaining
+    /// backing. In-kind shares do not mutate the underlying SE before its sole
+    /// final redemption, so ordinary exact-input previews need no invented state.
+    function _singleExitBasket(uint256 burned_, bool asPair_)
+        private view returns (Basket memory book_, Basket memory payout_)
+    {
+        Repo.Layout storage l = Repo._layout();
+        payout_ = componentClaim(burned_);
+        book_ = componentBook();
+        book_.raw -= payout_.raw;
+        book_.shares -= payout_.shares;
+        book_.local -= payout_.local;
+        uint256 reservePair_ = book_.local + _ratedOf(l, book_.shares);
+        if (asPair_) {
+            if (payout_.raw == 0) return (book_, payout_);
+            if (book_.raw == 0 || reservePair_ == 0) revert InsufficientTokenOut();
+            uint256 budget_ = Math.fromWadFloor(Math.saleQuote(
+                Math.toWad(payout_.raw, singleDecimals(l.rawToken)),
+                Math.toWad(book_.raw, singleDecimals(l.rawToken)),
+                Math.toWad(reservePair_, _pairDecimals(l))
+            ), _pairDecimals(l));
+            uint256 shares_ = FullMath.mulDiv(book_.shares, budget_, reservePair_);
+            uint256 local_ = FullMath.mulDiv(book_.local, budget_, reservePair_);
+            book_.raw += payout_.raw;
+            book_.shares -= shares_;
+            book_.local -= local_;
+            payout_.raw = 0;
+            payout_.shares += shares_;
+            payout_.local += local_;
+        } else {
+            uint256 value_ = payout_.local + _ratedOf(l, payout_.shares);
+            if (value_ == 0 && (payout_.shares != 0 || payout_.local != 0)) revert InsufficientTokenOut();
+            if (value_ == 0) return (book_, payout_);
+            if (book_.raw == 0 || reservePair_ == 0) revert InsufficientTokenOut();
+            uint256 raw_ = singlePairRawOut(value_, reservePair_, book_.raw);
+            book_.raw -= raw_;
+            book_.shares += payout_.shares;
+            book_.local += payout_.local;
+            payout_.raw += raw_;
+            payout_.shares = 0;
+            payout_.local = 0;
+        }
+    }
+
+    function previewSingleComponentExit(uint256 burned_, bool asPair_) external view returns (uint256 output_) {
+        if (burned_ == 0 || ERC20Repo._totalSupply() == 0) return 0;
+        (, Basket memory payout_) = _singleExitBasket(burned_, asPair_);
+        if (!asPair_) return payout_.raw;
+        output_ = payout_.local;
+        if (payout_.shares != 0) {
+            Repo.Layout storage l = Repo._layout();
+            ExchangeInAmount.Result memory quote_ = ExchangeInAmount.previewResult(
+                IStandardExchangeIn(l.standardExchange), IERC20(l.standardExchange), payout_.shares, IERC20(l.pairToken)
+            );
+            if (quote_.amountRefunded != 0 || quote_.amountOut == 0) revert InsufficientTokenOut();
+            output_ += quote_.amountOut;
+        }
+    }
+
+    function singleComponentExit(address holder_, uint256 burned_, address to_, uint256 minimum_, bool asPair_)
+        external returns (uint256 output_)
+    {
+        if (burned_ == 0) revert ZeroAmount();
+        (Basket memory book_, Basket memory payout_) = _singleExitBasket(burned_, asPair_);
+        ERC20Repo._burn(holder_, burned_);
+        Repo.Layout storage l = Repo._layout();
+        l.bookedRaw = book_.raw;
+        l.bookedSeShares = book_.shares;
+        l.localPairReserve = book_.local;
+        output_ = asPair_ ? payout_.local : payout_.raw;
+        if (payout_.shares != 0) {
+            ExchangeInAmount.Result memory receipt_ = _convert(payout_.shares, true);
+            if (receipt_.amountRefunded != 0 || receipt_.amountOut == 0) revert InsufficientTokenOut();
+            output_ += receipt_.amountOut;
+        }
+        if (output_ < minimum_) revert InsufficientTokenOut();
+        if (output_ != 0) IERC20(asPair_ ? l.pairToken : l.rawToken).safeTransfer(to_, output_);
+    }
+
+    function previewComponentExit(uint256 burned_, bool sharesOut_)
+        external view returns (uint256 raw_, uint256 output_)
+    {
+        if (burned_ == 0 || ERC20Repo._totalSupply() == 0) return (0, 0);
+        Repo.Layout storage l = Repo._layout();
+        Basket memory claim_ = componentClaim(burned_);
+        raw_ = claim_.raw;
+        output_ = sharesOut_ ? claim_.shares : claim_.local;
+        uint256 convert_ = sharesOut_ ? claim_.local : claim_.shares;
+        if (convert_ != 0) {
+            ExchangeInAmount.Result memory q_ = ExchangeInAmount.previewResult(
+                IStandardExchangeIn(l.standardExchange),
+                IERC20(sharesOut_ ? l.pairToken : l.standardExchange), convert_,
+                IERC20(sharesOut_ ? l.standardExchange : l.pairToken)
+            );
+            if (q_.amountRefunded != 0) revert InsufficientTokenOut();
+            output_ += q_.amountOut;
+        }
+    }
+
+    function withdrawComponents(
+        address holder_, uint256 burned_, address to_, uint256 minRaw_, uint256 minOutput_, bool sharesOut_
+    ) external returns (uint256 raw_, uint256 output_) {
+        if (burned_ == 0) revert ZeroAmount();
+        Repo.Layout storage l = Repo._layout();
+        Basket memory claim_ = componentClaim(burned_);
+        ERC20Repo._burn(holder_, burned_);
+        l.bookedRaw -= claim_.raw;
+        l.bookedSeShares -= claim_.shares;
+        l.localPairReserve -= claim_.local;
+        raw_ = claim_.raw;
+        output_ = sharesOut_ ? claim_.shares : claim_.local;
+        uint256 convert_ = sharesOut_ ? claim_.local : claim_.shares;
+        if (convert_ != 0) {
+            if (sharesOut_ && disabled()) revert IVaultRegistryDisableQuery.VaultDisabled(l.standardExchange);
+            ExchangeInAmount.Result memory receipt_ = _convert(convert_, !sharesOut_);
+            if (receipt_.amountRefunded != 0 || receipt_.amountOut == 0) revert InsufficientTokenOut();
+            output_ += receipt_.amountOut;
+        }
+        if (raw_ < minRaw_ || output_ < minOutput_) revert InsufficientTokenOut();
+        if (raw_ != 0) IERC20(l.rawToken).safeTransfer(to_, raw_);
+        if (output_ != 0) IERC20(sharesOut_ ? l.standardExchange : l.pairToken).safeTransfer(to_, output_);
+    }
 
     function singleZapState(address tokenIn, uint256 sold, uint256 other, uint256 kept)
         external view returns (QuoteBase.SingleZapQuote memory q)
@@ -61,43 +647,49 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         Transition quote = Transition(l.standardExchange);
         q.state = state;
         (q.state,,,) = quote.quoteTransition(q.state, Transition.Operation.ReceiveShares, shares);
-        uint256 amount;
-        (q.state,, amount,) = quote.quoteTransition(q.state, Transition.Operation.RedeemExactIn, shares);
-        q.pairReserve = ratedClaimOfState(l.standardExchange, q.state);
-        if (q.pairReserve == 0) q.pairReserve = 1;
-        q.rawReserve = IERC20(l.rawToken).balanceOf(address(this));
-        (,,, uint256 fullClaim) = _singleMintableDeposit(q.state, amount);
-        fullClaim = fullClaim > q.pairReserve ? fullClaim - q.pairReserve : 0;
-        uint256 sold = _singlePairZapSale(amount, fullClaim, q.pairReserve);
-        uint256 afterClaim;
-        (q.state,,, afterClaim) = _singleMintableDeposit(q.state, sold);
-        uint256 claimIn = afterClaim > q.pairReserve ? afterClaim - q.pairReserve : 0;
-        q.rawAdded = singlePairRawOut(claimIn, q.pairReserve, q.rawReserve);
-        q.rawReserve -= q.rawAdded;
-        q.pairReserve = afterClaim == 0 ? 1 : afterClaim;
-        q.pairAdded = amount - sold;
+        Basket memory book = componentBook();
+        (Basket memory available,,,) = _singleSwapAtRate(
+            l.standardExchange, shares, book, _rateForState(l, q.state)
+        );
+        q.rawReserve = book.raw;
+        q.shareReserve = book.shares;
+        q.localReserve = book.local;
+        q.rawAdded = available.raw;
+        shares = available.shares;
+        uint256 redeem;
+        if (q.localReserve != 0 && shares != 0) {
+            if (q.shareReserve == 0) redeem = shares;
+            else {
+                (,, uint256 quotedOut,) = quote.quoteTransition(q.state, Transition.Operation.RedeemExactIn, shares);
+                uint256 equivalent = FullMath.mulDiv(quotedOut, q.shareReserve, shares);
+                redeem = FullMath.mulDiv(shares, q.localReserve, q.localReserve + equivalent, FullMath.Rounding.Ceil);
+            }
+        }
+        q.sharesAdded = shares - redeem;
+        if (redeem != 0) {
+            uint256 consumed;
+            (q.state, consumed, q.pairAdded,) = quote.quoteTransition(q.state, Transition.Operation.RedeemExactIn, redeem);
+            if (consumed != redeem) revert InsufficientTokenOut();
+        }
+        q.pairReserve = q.localReserve + _ratedWith(l, q.shareReserve, _rateForState(l, q.state));
     }
 
     /// @dev Return the mutated projection because external library calls copy memory arguments.
     function singleFinishDeposit(QuoteBase.SingleZapQuote memory q, uint256 supply)
         external view returns (QuoteBase.SingleZapQuote memory updated, uint256 minted, uint256 finalSupply)
     {
-        if (q.rawAdded == 0 || q.pairAdded == 0) return (q, 0, supply);
-        Repo.Layout storage l = Repo._layout();
-        (uint256 used0, uint256 used1) = singleClamp(
-            singleOrderX(q.rawReserve, q.pairReserve), singleOrderY(q.rawReserve, q.pairReserve),
-            singleOrderX(q.rawAdded, q.pairAdded), singleOrderY(q.rawAdded, q.pairAdded)
-        );
-        uint256 claimAfter;
-        uint256 sharesBefore = Transition(l.standardExchange).quoteShareBalance(q.state);
-        (q.state,,, claimAfter) = _singleMintableDeposit(q.state, l.currency0 == l.pairToken ? used0 : used1);
-        if (claimAfter == 0) claimAfter = 1;
-        uint256 sharesAfter = Transition(l.standardExchange).quoteShareBalance(q.state);
-        minted = _singleSharesAfterZap(q, sharesAfter - sharesBefore, sharesBefore, supply);
-        q.rawReserve += q.rawAdded;
-        q.pairReserve = claimAfter;
-        q.pairAdded -= l.currency0 == l.pairToken ? used0 : used1;
-        finalSupply = supply + minted;
+        Basket memory available = Basket(q.rawAdded, q.sharesAdded, q.pairAdded);
+        Basket memory book = Basket(q.rawReserve, q.shareReserve, q.localReserve);
+        (uint256 gross, Basket memory accepted) = _accepted(available, book, supply);
+        (minted,,) = mintFee(gross);
+        q.rawReserve += accepted.raw;
+        q.shareReserve += accepted.shares;
+        q.localReserve += accepted.local;
+        q.rawAdded -= accepted.raw;
+        q.sharesAdded -= accepted.shares;
+        q.pairAdded -= accepted.local;
+        q.pairReserve = q.localReserve + _ratedWith(Repo._layout(), q.shareReserve, _rateForState(Repo._layout(), q.state));
+        finalSupply = supply + gross;
         updated = q;
     }
 
@@ -253,69 +845,84 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
 
     function previewBudget(uint256 ratedBudget) public view returns (ExactInOutput memory output) {
         Repo.Layout storage l = Repo._layout();
-        output.sharesOut = sharesForPairUnitsDown(ratedBudget);
-        uint256 held = IERC20(l.standardExchange).balanceOf(address(this));
-        if (held == 0 || output.sharesOut >= held) revert InsufficientTokenOut();
-        if (output.sharesOut == 0) return output;output.amountOut = l.standardExchange == l.pairToken ? output.sharesOut
-            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.standardExchange), output.sharesOut, IERC20(l.pairToken));
-        if (output.amountOut == 0) output.sharesOut = 0;
+        uint256 local = FullMath.min(ratedBudget, l.localPairReserve);
+        output.amountOut = local;
+        if (local == ratedBudget) return output;
+        output.sharesOut = sharesForPairUnitsDown(ratedBudget - local);
+        if (output.sharesOut > l.bookedSeShares) revert InsufficientTokenOut();
+        if (output.sharesOut == 0) return output;
+        ExchangeInAmount.Result memory receipt = ExchangeInAmount.previewResult(
+            IStandardExchangeIn(l.standardExchange), IERC20(l.standardExchange), output.sharesOut, IERC20(l.pairToken)
+        );
+        if (receipt.amountRefunded != 0) revert InsufficientTokenOut();
+        if (receipt.amountOut == 0) output.sharesOut = 0;
+        output.amountOut += receipt.amountOut;
     }
 
     function previewBudgetWithContext(uint256 ratedBudget, address manager) external view returns (ExactInOutput memory output) {
         Repo.Layout storage l = Repo._layout();
+        uint256 local = FullMath.min(ratedBudget, l.localPairReserve);
+        if (local == ratedBudget) return ExactInOutput(local, 0);
         bytes memory state = ContextQuote.snapshot(l.standardExchange, l.pairToken, address(this), manager);
         if (state.length == 0) return previewBudget(ratedBudget);
         (uint256 invScale, uint256 ratedScale) = _scales(l);
-        output.sharesOut = Math.sharesForPairUnitsDown(ratedBudget, _rateForState(l, state), invScale, ratedScale);
-        uint256 held = IStandardExchangeTransitionQuote(l.standardExchange).quoteShareBalance(state);
-        if (held == 0 || output.sharesOut >= held) revert InsufficientTokenOut();
+        output.amountOut = local;
+        output.sharesOut = Math.sharesForPairUnitsDown(ratedBudget - local, _rateForState(l, state), invScale, ratedScale);
+        if (output.sharesOut > l.bookedSeShares) revert InsufficientTokenOut();
         if (output.sharesOut == 0) return output;
-        (,, output.amountOut,) = IStandardExchangeTransitionQuote(l.standardExchange).quoteTransition(
+        (, uint256 consumed, uint256 received,) = IStandardExchangeTransitionQuote(l.standardExchange).quoteTransition(
             state, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, output.sharesOut);
-        if (output.amountOut == 0) output.sharesOut = 0;
+        if (consumed != output.sharesOut) revert InsufficientTokenOut();
+        if (received == 0) output.sharesOut = 0;
+        output.amountOut += received;
     }
 
     function ratedReserveWithContext(address manager) external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         bytes memory state = ContextQuote.snapshot(l.standardExchange, l.pairToken, address(this), manager);
-        uint256 held = IERC20(l.standardExchange).balanceOf(address(this));
-        uint256 value = state.length == 0 ? _ratedOf(l, held) : _ratedWith(l, held, _rateForState(l, state));
-        return value == 0 && held != 0 ? 1 : value;
+        return l.localPairReserve + (state.length == 0 ? _ratedOf(l, l.bookedSeShares)
+            : _ratedWith(l, l.bookedSeShares, _rateForState(l, state)));
     }
 
     function previewBufferClaimInWithContext(uint256 amount, address manager) external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
+        if (amount == 0 || disabled()) return amount;
         bytes memory state = ContextQuote.snapshot(l.standardExchange, l.pairToken, address(this), manager);
         if (state.length == 0) return _claimIn(l, amount);
-        if (amount == 0) return 0;
-        uint256 held = IStandardExchangeTransitionQuote(l.standardExchange).quoteShareBalance(state);
-        (, uint256 gained) = projectedClaimIn(l.standardExchange, state, held, amount);
+        (, uint256 gained) = projectedClaimIn(l.standardExchange, state, l.bookedSeShares, amount);
         return gained;
     }
 
     function unwrapQuoted(ExactInOutput memory output) external returns (uint256 amountOut) {
         Repo.Layout storage l = Repo._layout();
-        if (output.sharesOut == 0 || output.sharesOut >= IERC20(l.standardExchange).balanceOf(address(this))) revert InsufficientTokenOut();
-        if (l.standardExchange == l.pairToken) return output.sharesOut;
-        uint256 beforeOut = IERC20(l.pairToken).balanceOf(address(this));
-        IERC20(l.standardExchange).forceApprove(l.standardExchange, output.sharesOut);ExchangeInAmount.exchangeOut(IStandardExchangeIn(address(IStandardExchangeIn(l.standardExchange))), IERC20(l.standardExchange), output.sharesOut,
-            IERC20(l.pairToken), output.amountOut, address(this), false, block.timestamp);
-        IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
-        amountOut = IERC20(l.pairToken).balanceOf(address(this)) - beforeOut;
+        uint256 local = FullMath.min(l.localPairReserve, output.amountOut);
+        if (output.sharesOut > l.bookedSeShares) revert InsufficientTokenOut();
+        l.localPairReserve -= local;
+        l.bookedSeShares -= output.sharesOut;
+        amountOut = local;
+        if (output.sharesOut != 0) {
+            ExchangeInAmount.Result memory receipt = _convert(output.sharesOut, true);
+            if (receipt.amountRefunded != 0) revert InsufficientTokenOut();
+            amountOut += receipt.amountOut;
+        }
         if (amountOut < output.amountOut) revert InsufficientTokenOut();
     }
 
     function exactOutputRatedDebit(uint256 amountOut) public view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        uint256 shares = l.standardExchange == l.pairToken ? amountOut
-            : IStandardExchangeOut(l.standardExchange).previewExchangeOut(IERC20(l.standardExchange), IERC20(l.pairToken), amountOut);
-        if (shares == 0 || shares >= IERC20(l.standardExchange).balanceOf(address(this))) revert InsufficientTokenOut();
+        uint256 local = FullMath.min(amountOut, l.localPairReserve);
+        if (local == amountOut) return amountOut;
+        uint256 shares = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+            IERC20(l.standardExchange), IERC20(l.pairToken), amountOut - local);
+        if (shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        if (shares > l.bookedSeShares) revert InsufficientTokenOut();
         (uint256 invScale, uint256 ratedScale) = _scales(l);
-        return Math.ratedPairUnitsUp(shares, _rate(l), invScale, ratedScale);
+        return local + Math.ratedPairUnitsUp(shares, _rate(l), invScale, ratedScale);
     }
 
     function requireInputInverse(uint256 ratedInput) public view {
         Repo.Layout storage l = Repo._layout();
+        if (disabled()) return;
         if (l.standardExchange == l.pairToken || !ContextQuote.supported(l.standardExchange)) return;
         (uint256 invScale, uint256 ratedScale) = _scales(l);
         uint256 shares = Math.sharesForPairUnitsUp(ratedInput, _rate(l), invScale, ratedScale);
@@ -338,15 +945,18 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     {
         Repo.Layout storage l = Repo._layout();
         ExactOutputContext memory q;
-        q.state = ContextQuote.exactOutputState(l.standardExchange, l.pairToken, manager);
-        uint256 held = IERC20(l.standardExchange).balanceOf(address(this));
-        q.reserve = q.state.length == 0 ? _ratedOf(l, held) : _ratedWith(l, held, _rateForState(l, q.state));
-        if (held != 0 && q.reserve == 0) q.reserve = 1;
+        bool localOnly = zeroForOne == (l.currency0 == l.rawToken) && amountOut <= l.localPairReserve;
+        q.state = localOnly || disabled()
+            ? ContextQuote.snapshot(l.standardExchange, l.pairToken, address(this), manager)
+            : ContextQuote.exactOutputState(l.standardExchange, l.pairToken, manager);
+        uint256 held = l.bookedSeShares;
+        q.reserve = l.localPairReserve
+            + (q.state.length == 0 ? _ratedOf(l, held) : _ratedWith(l, held, _rateForState(l, q.state)));
         q.rawDecimals = l.rawToken == l.currency0 ? l.decimalsCurrency0 : l.decimalsCurrency1;
         if (q.rawDecimals == 0) q.rawDecimals = 18;
         q.pairDecimals = _pairDecimals(l);
         if (q.pairDecimals == 0) q.pairDecimals = 18;
-        q.raw = Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), q.rawDecimals);
+        q.raw = Math.toWad(l.bookedRaw, q.rawDecimals);
         q.reserve = Math.toWad(q.reserve, q.pairDecimals);
         if (zeroForOne == (l.currency0 == l.rawToken)) {
             uint256 debit = _exactOutputDebit(l, amountOut, q.state);
@@ -358,6 +968,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     }
 
     function _requireInputInverseContext(Repo.Layout storage l, uint256 needed, bytes memory state) private view {
+        if (disabled()) return;
         if (l.standardExchange == l.pairToken || !ContextQuote.supported(l.standardExchange)) return;
         if (state.length == 0) requireInputInverse(needed);
         else {
@@ -370,10 +981,12 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
 
     function _exactOutputDebit(Repo.Layout storage l, uint256 amount, bytes memory state) private view returns (uint256) {
         if (state.length == 0) return exactOutputRatedDebit(amount);
-        uint256 shares = ContextQuote.withdrawFromState(l.standardExchange, l.pairToken, amount, state);
-        if (shares == 0 || shares >= IERC20(l.standardExchange).balanceOf(address(this))) revert InsufficientTokenOut();
+        uint256 local = FullMath.min(amount, l.localPairReserve);
+        if (local == amount) return amount;
+        uint256 shares = ContextQuote.withdrawFromState(l.standardExchange, l.pairToken, amount - local, state);
+        if (shares == 0 || shares > l.bookedSeShares) revert InsufficientTokenOut();
         (uint256 invScale, uint256 ratedScale) = _scales(l);
-        return Math.ratedPairUnitsUp(shares, _rateForState(l, state), invScale, ratedScale);
+        return local + Math.ratedPairUnitsUp(shares, _rateForState(l, state), invScale, ratedScale);
     }
 
     /// @dev Residual maintenance only. A zero quote means the amount cannot enter
@@ -419,10 +1032,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     /// @notice The hook's SE balance valued at the provider rate; a non-empty book never reads zero.
     function ratedReserve() external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        uint256 claim = _ratedOf(l, seBal);
-        return claim == 0 ? 1 : claim;
+        return l.localPairReserve + _ratedOf(l, l.bookedSeShares);
     }
 
     function _rate(Repo.Layout storage l) private view returns (uint256 rate_) {
@@ -546,14 +1156,14 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         public view returns (uint256 reserveBefore, uint256 claimIn)
     {
         Repo.Layout storage l = Repo._layout();
-        reserveBefore = _ratedWith(l, heldShares, _rateForState(l, state));
+        reserveBefore = l.localPairReserve + _ratedWith(l, heldShares, _rateForState(l, state));
         if (assets == 0) return (reserveBefore, 0);
-        if (l.pairToken == se) return (reserveBefore, _ratedOf(l, assets));
-        if (!ContextQuote.supported(se) && _previewPairToShares(se, l.pairToken, assets) == 0) return (reserveBefore, 0);
-        (bytes memory next_,, uint256 minted_,) = IStandardExchangeTransitionQuote(se)
+        if (disabled()) return (reserveBefore, assets);
+        (bytes memory next, uint256 consumed, uint256 minted,) = IStandardExchangeTransitionQuote(se)
             .quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, assets);
-        uint256 after_ = _ratedWith(l, heldShares + minted_, _rateForState(l, next_));
-        claimIn = after_ > reserveBefore ? after_ - reserveBefore : 0;
+        uint256 refund = ExchangeInAmount.fromConsumedInput(assets, consumed, minted).amountRefunded;
+        uint256 afterValue = l.localPairReserve + refund + _ratedWith(l, heldShares + minted, _rateForState(l, next));
+        claimIn = afterValue > reserveBefore ? afterValue - reserveBefore : 0;
     }
 
     /* ------------------------------ buffer claim-in ------------------------------ */
@@ -565,19 +1175,16 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     ///      transition quote the gain is `previewExchangeIn(pair -> se) x live rate`. Identity leg: the pair units.
     function _claimIn(Repo.Layout storage l, uint256 amountInRaw) private view returns (uint256) {
         if (amountInRaw == 0) return 0;
-        address se = l.standardExchange;
-        address pairToken = l.pairToken;
-        if (se == pairToken) return _ratedOf(l, amountInRaw);
-        uint256 sharesOut = _previewPairToShares(se, pairToken, amountInRaw);
-        if (sharesOut == 0) return 0;
-        if (!_supportsTransitionQuote(se, pairToken, address(this))) return _ratedOf(l, sharesOut);
-        (bytes memory state_,) = IStandardExchangeTransitionQuote(se).quoteState(pairToken, address(this));
-        uint256 held_ = IStandardExchangeTransitionQuote(se).quoteShareBalance(state_);
-        (bytes memory next_,, uint256 minted_,) = IStandardExchangeTransitionQuote(se)
-            .quoteTransition(state_, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amountInRaw);
-        uint256 after_ = _ratedWith(l, held_ + minted_, _rateForState(l, next_));
-        uint256 before_ = _ratedOf(l, held_);
-        return after_ > before_ ? after_ - before_ : 0;
+        if (disabled()) return amountInRaw;
+        ExchangeInAmount.Result memory receipt = ExchangeInAmount.previewResult(
+            IStandardExchangeIn(l.standardExchange), IERC20(l.pairToken), amountInRaw, IERC20(l.standardExchange)
+        );
+        if (!_supportsTransitionQuote(l.standardExchange, l.pairToken, address(this))) {
+            return receipt.amountRefunded + _ratedOf(l, receipt.amountOut);
+        }
+        (bytes memory state,) = IStandardExchangeTransitionQuote(l.standardExchange).quoteState(l.pairToken, address(this));
+        (, uint256 gain) = projectedClaimIn(l.standardExchange, state, l.bookedSeShares, amountInRaw);
+        return gain;
     }
 
     function previewBufferClaimIn(uint256 amountInRaw) external view returns (uint256) {
@@ -589,13 +1196,14 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     }
 
     function _claimInContext(Repo.Layout storage l, uint256 amount, bytes memory state) private view returns (uint256 gain) {
+        if (disabled()) return amount;
         if (state.length == 0) return _claimIn(l, amount);
-        (, gain) = projectedClaimIn(l.standardExchange, state,
-            IStandardExchangeTransitionQuote(l.standardExchange).quoteShareBalance(state), amount);
+        (, gain) = projectedClaimIn(l.standardExchange, state, l.bookedSeShares, amount);
     }
 
     function _invertBufferClaimIn(Repo.Layout storage l, uint256 claimInNeeded, bytes memory state) private view returns (uint256) {
         if (claimInNeeded == 0) return 0;
+        if (disabled()) return claimInNeeded;
         uint256 hi = claimInNeeded;
         uint256 guard;
         while (_claimInContext(l, hi, state) < claimInNeeded && guard < 64) {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Vm} from "forge-std/Vm.sol";
 import {TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook as TestBase} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
 import {IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage as IPkg} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.sol";
 import {IUniswapV4StandardExchangeBalancerQuadStableBufferHook as IHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
@@ -93,7 +94,11 @@ abstract contract BalancerStableTokenCountBase is TestBase {
 
     function test_count_bootstrap_and_proportional_round_trip() public {
         uint256 minted = _firstMintEqual(1000 ether);
-        assertEq(minted, 1000 ether - 1000);
+        uint256[] memory seed = new uint256[](activeCount());
+        for (uint256 i; i < seed.length; ++i) seed[i] = quad.nativeReserve(i) * quad.invScale(i) / 1e18;
+        uint256 initialSupply = StableMath.computeInvariant(quad.getCurrentAmp(), seed) / seed.length;
+        assertEq(IERC20(hook).totalSupply(), initialSupply);
+        assertEq(minted + IERC20(hook).balanceOf(feeRecipient), initialSupply - 1000);
         assertEq(IERC20(hook).balanceOf(address(0)), 1000);
         uint256[] memory amounts = _amounts(20 ether);
         (uint256 expected, uint256[] memory used) = quad.previewJoinProportional(amounts);
@@ -110,6 +115,58 @@ abstract contract BalancerStableTokenCountBase is TestBase {
             assertEq(afterBalances[i] - beforeBalances[i], quote[i]);
             assertLe(quote[i], spent[i]);
         }
+    }
+
+    /// @notice Every required leg may be pair-funded; only actual acquired shares seed the SE leg.
+    function test_count_pairBootstrap_usesActualFivePercentReceipt() public {
+        uint256[] memory amounts = _amounts(1000 ether);
+        uint256 index = activeCount() - 1;
+        address pair = quad.token(index);
+        address se = quad.standardExchange(index);
+        (uint256 incoming, uint256 refund) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), amounts[index], IERC20(se));
+        assertEq(refund, 0);
+        SimpleMintableERC20(pair).mint(hook, 7 ether);
+        (uint256 expected,) = quad.previewJoinProportional(amounts);
+        vm.recordLogs();
+        vm.prank(user);
+        (uint256 minted, uint256[] memory used) = quad.joinProportional(amounts, user, expected, block.timestamp);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        uint256 localReceipt;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter != pair || logs[i].topics.length != 3
+                || logs[i].topics[0] != keccak256("Transfer(address,address,uint256)")) continue;
+            address from = address(uint160(uint256(logs[i].topics[1])));
+            address to = address(uint160(uint256(logs[i].topics[2])));
+            if (to == hook && from != user) localReceipt += abi.decode(logs[i].data, (uint256));
+        }
+        assertEq(minted, expected);
+        assertEq(used, amounts);
+        assertEq(quad.seBalance(index), incoming - incoming / 20);
+        assertGt(localReceipt, 0);
+        assertEq(IERC20(pair).balanceOf(hook), localReceipt + 7 ether, "ambient remains separate from the actual seed");
+        uint256[] memory inventory = _amounts(1000 ether);
+        inventory[index] = incoming - incoming / 20;
+        assertEq(IERC20(hook).totalSupply(), StableMath.computeInvariant(quad.getCurrentAmp(), inventory) / activeCount());
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000);
+    }
+
+    /// @notice Both public unbalanced forms retain ongoing single-leg funding for every token count.
+    function test_count_singleInput_standardAndUnitsPreviewExecution() public {
+        _firstMintEqual(1000 ether);
+        uint256[] memory amounts = new uint256[](activeCount());
+        amounts[0] = 20 ether;
+        uint256 quote = quad.previewJoinUnbalanced(amounts);
+        assertGt(quote, 0);
+        vm.prank(user);
+        assertEq(quad.joinUnbalanced(amounts, user, quote, block.timestamp), quote);
+        address[] memory inputs = new address[](1);
+        inputs[0] = quad.token(0);
+        uint256[] memory budgets = new uint256[](1);
+        budgets[0] = 10 ether;
+        quote = IUnits(hook).previewJoinUnbalanced(inputs, budgets);
+        assertGt(quote, 0);
+        vm.prank(user);
+        assertEq(IUnits(hook).joinUnbalanced(inputs, budgets, user, quote, block.timestamp), quote);
     }
 
     function test_count_all_directed_swaps_exact_in_and_out() public {
@@ -175,10 +232,13 @@ abstract contract BalancerStableTokenCountBase is TestBase {
     function _outputForRatedBudget(uint256 index, uint256 budget) internal view returns (uint256) {
         address se = activeArgs.standardExchanges[index];
         if (se == address(0)) return budget; // These reference cases use 18-decimal raw legs.
+        uint256 local = IERC20(activeArgs.tokens[index]).balanceOf(hook);
+        if (budget <= local) return budget;
+        budget -= local;
         uint256 rate = IRateProvider(activeArgs.rateProviders[index]).getRate();
         uint256 sharesWad = Math.mulDiv(budget, 1e18, rate);
         uint256 shares = Math.mulDiv(sharesWad, 10 ** IERC20Metadata(se).decimals(), 1e18);(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(activeArgs.tokens[index]));
-        return quotedAmountOut;
+        return local + quotedAmountOut;
     }
 
     function test_count_accrued_yield_lp_swap_round_trip_cannot_extract_value() public {
@@ -191,16 +251,31 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         address raw = quad.token(0);
         address buffered = quad.token(activeCount() - 1);
         _accrueYield(address(lastVault), buffered, 100 ether);
-        assertGt(quad.seClaim(activeCount() - 1), 1000 ether, "accrued yield reaches the SE-valued book");
+        assertGt(quad.seClaim(activeCount() - 1), quad.nativeReserve(activeCount() - 1), "accrued yield reaches retained shares");
         uint256[] memory beforeBalances = _userBalances();
         uint256[] memory amounts = new uint256[](activeCount());
-        amounts[0] = 1 ether;
+        uint256 part = 1 ether / activeCount();
+        amounts[0] = 1 ether - part * (activeCount() - 1);
+        for (uint256 i = 1; i < activeCount(); ++i) {
+            address output = quad.token(i);
+            uint256 beforeOutput = IERC20(output).balanceOf(user);
+            _swapExactIn(raw, output, part);
+            amounts[i] = IERC20(output).balanceOf(user) - beforeOutput;
+            assertGt(amounts[i], 0, "caller separately purchases the complete basket");
+        }
         vm.prank(user);
         uint256 minted = quad.joinUnbalanced(amounts, user, 0, block.timestamp);
         vm.prank(user);
         quad.withdrawSingle(buffered, minted, user, 0, block.timestamp);
         uint256 received = IERC20(buffered).balanceOf(user) - beforeBalances[activeCount() - 1];
         _swapExactIn(buffered, raw, received);
+        // Component acceptance can return caller-bought but unused raw coordinates.
+        // Close those actual caller positions before comparing the round trip.
+        for (uint256 i = 1; i + 1 < activeCount(); ++i) {
+            address token = quad.token(i);
+            uint256 returned = IERC20(token).balanceOf(user) - beforeBalances[i];
+            if (returned != 0) _swapExactIn(token, raw, returned);
+        }
         assertEq(IERC20(hook).balanceOf(user), 0, "round trip leaves no LP position");
         uint256[] memory afterBalances = _userBalances();
         assertLe(afterBalances[0], beforeBalances[0], "LP and swap use consistent SE value");
@@ -222,22 +297,25 @@ abstract contract BalancerStableTokenCountBase is TestBase {
     }
 
     function _singleExactOutputRoundTrip(address token_) internal {
-        uint256 shares = 1 ether;
-        uint256 required = quad.previewJoinSingleAssetExactOut(token_, shares);
-        if (token_ == quad.standardExchange(activeCount() - 1)) {
-            _fundShares(token_, required);
-            required = quad.previewJoinSingleAssetExactOut(token_, shares);
-        }
-        uint256 initial = IERC20(token_).balanceOf(user);
+        if (token_ == quad.standardExchange(activeCount() - 1)) _fundShares(token_, 100 ether);
+        uint256 maximum = quad.previewJoinSingleAssetExactOut(token_, 1 ether);
+        assertGt(maximum, 0);
+        uint256 beforeLp = IERC20(hook).balanceOf(user);
+        uint256 beforeInput = IERC20(token_).balanceOf(user);
         vm.prank(user);
-        assertEq(quad.joinSingleAssetExactOut(token_, shares, user, required, block.timestamp), required);
-        assertEq(initial - IERC20(token_).balanceOf(user), required);
-        uint256 amountOut = required / 2;
+        uint256 spent = quad.joinSingleAssetExactOut(token_, 1 ether, user, maximum, block.timestamp);
+        uint256 shares = IERC20(hook).balanceOf(user) - beforeLp;
+        assertEq(shares, 1 ether, "exact requested net LP");
+        assertEq(beforeInput - IERC20(token_).balanceOf(user), spent, "actual refunded input accounting");
+        assertLe(spent, maximum);
+        uint256 amountOut = quad.previewWithdrawSingle(token_, shares / 2);
+        assertGt(amountOut, 0, "round trip requests an executable half-position payout");
         uint256 burned = quad.previewExitSingleAssetExactTokenOut(token_, amountOut);
-        initial = IERC20(token_).balanceOf(user);
+        address recipient = address(0xE817);
+        uint256 initial = IERC20(token_).balanceOf(recipient);
         vm.prank(user);
-        assertEq(quad.exitSingleAssetExactTokenOut(token_, amountOut, user, burned, block.timestamp), burned);
-        assertEq(IERC20(token_).balanceOf(user) - initial, amountOut);
+        assertEq(quad.exitSingleAssetExactTokenOut(token_, amountOut, recipient, burned, block.timestamp), burned);
+        assertEq(IERC20(token_).balanceOf(recipient) - initial, amountOut, "recipient receives exactly the request");
         assertLt(burned, shares);
     }
 
@@ -254,17 +332,25 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         _firstMintEqual(1000 ether);
         uint256 k = quad.kLast();
         uint256 inventory = quad.nativeReserve(activeCount() - 1);
+        uint256 beforeFees = IERC20(hook).balanceOf(feeRecipient);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
         address yieldToken = quad.token(activeCount() - 1);
         _accrueYield(address(lastVault), yieldToken, 100 ether);
         assertEq(quad.nativeReserve(activeCount() - 1), inventory);
         assertGt(quad.seClaim(activeCount() - 1), inventory);
         assertEq(quad.kLast(), k);
-        uint256 beforeFees = IERC20(hook).balanceOf(feeRecipient);
-        address input = quad.token(0);
-        uint256 quoted = quad.previewJoinSingleAssetExactIn(input, 1 ether);
-        vm.prank(user);
-        assertEq(quad.joinSingleAssetExactIn(input, 1 ether, user, quoted, block.timestamp), quoted);
+        assertEq(IERC20(hook).totalSupply(), supplyBefore, "yield itself mints no LP");
         assertEq(IERC20(hook).balanceOf(feeRecipient), beforeFees);
+        uint256[] memory amounts = _amounts(1 ether);
+        (uint256 quoted,) = quad.previewJoinProportional(amounts);
+        assertGt(quoted, 0);
+        vm.prank(user);
+        (uint256 minted,) = quad.joinProportional(amounts, user, quoted, block.timestamp);
+        assertEq(minted, quoted);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        uint256 fee = IERC20(hook).balanceOf(feeRecipient) - beforeFees;
+        assertEq(fee, gross * 0.1e18 / 1e18, "fee applies only to new backed gross");
+        assertEq(minted + fee, gross);
     }
 
     function test_count_last_pair_required_and_finalization_gas() public {
@@ -340,7 +426,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         vm.prank(user);
         (uint256 minted,) = units.joinProportionalFlexible(amounts, flags, user, expected, block.timestamp);
         assertEq(minted, expected);
-        assertEq(quad.seBalance(n - 1), amounts[n - 1]);
+        assertEq(quad.seBalance(n - 1), amounts[n - 1] - amounts[n - 1] / 20);
         uint256[] memory quote = units.previewExitProportionalFlexible(minted / 10, flags);
         uint256 sharesBefore = IERC20(se).balanceOf(user);
         vm.prank(user);
@@ -400,41 +486,40 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         _firstMintEqual(1000 ether);
         IERC20 input = IERC20(quad.token(activeCount() - 1));
         IERC20 output = IERC20(quad.token(0));
-        SimpleMintableERC20(address(input)).mint(hook, 10);
+        uint256 localBefore = input.balanceOf(hook);
+        uint256 received = quad.previewSwapExactIn(address(output), address(input), 1 ether);
         _swapExactIn(address(output), address(input), 1 ether);
-        assertEq(input.balanceOf(hook), 10);
-        assertGt(quad.previewSwapExactIn(address(input), address(output), 10), 0);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));IStandardExchangeIn(hook).exchangeIn(input, 10, output, 0, address(this), true, block.timestamp);
+        assertEq(input.balanceOf(hook), localBefore - received);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));
+        IStandardExchangeIn(hook).exchangeIn(input, 10, output, 0, address(this), true, block.timestamp);
         uint256 required = quad.previewSwapExactOut(address(input), address(output), 1);
-        assertLe(required, 10, "retained balance could otherwise cover exact-out input");
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, required, 0));
         IStandardExchangeOut(hook).exchangeOut(input, required, output, 1, address(this), true, block.timestamp);
         uint256 quote = quad.previewSwapExactIn(address(input), address(output), 1 ether);
-        // APEX D9: pretransfer is contract-only; the honest funded push goes through the atomic fixture.
         AtomicPretransferCaller atomic_ = new AtomicPretransferCaller();
-        vm.prank(user);
-        input.approve(address(atomic_), 1 ether);
-        assertEq(abi.decode(atomic_.consumePretransfer(
-            input, user, hook, 1 ether,
-            abi.encodeCall(IStandardExchangeIn.exchangeIn, (input, 1 ether, output, quote, user, true, block.timestamp))
-        ), (uint256)), quote);
-        assertEq(input.balanceOf(hook), 10, "new funding leaves reserve dust owned by the hook");
+        vm.prank(user); input.approve(address(atomic_), 1 ether);
+        uint256 beforeOut = output.balanceOf(user);
+        bytes memory result = atomic_.consumePretransfer(input, user, hook, 1 ether,
+            abi.encodeCall(IStandardExchangeIn.exchangeIn, (input, 1 ether, output, quote, user, true, block.timestamp)));
+        (uint256 actual, uint256 refund) = abi.decode(result, (uint256, uint256));
+        assertEq(actual, quote); assertEq(refund, 0);
+        assertEq(output.balanceOf(user) - beforeOut, quote);
+        assertEq(input.balanceOf(hook), localBefore - received, "local backing cannot fund another caller");
     }
 
-    function test_count_raw_donation_prices_live_book_and_becomes_booked() public {
+    function test_count_raw_donation_remains_unbooked() public {
         _firstMintEqual(1000 ether);
-        address input = quad.token(0);
-        address output = quad.token(activeCount() - 1);
+        address input = quad.token(0); address output = quad.token(activeCount() - 1);
+        uint256 beforeBook = quad.nativeReserve(0);
+        uint256 quote = quad.previewSwapExactIn(input, output, 1 ether);
         SimpleMintableERC20(input).mint(hook, 100 ether);
-        uint256[] memory balances = quad.ratedBalances();
-        uint256 d = StableMath.computeInvariant(quad.getCurrentAmp(), balances);
-        uint256 expected = StableMath.computeOutGivenExactIn(quad.getCurrentAmp(), balances, 0, activeCount() - 1, 1 ether - quad.dexSwapFee(), d);
-        expected = _outputForRatedBudget(activeCount() - 1, expected);
-        assertEq(quad.previewSwapExactIn(input, output, 1 ether), expected);
+        assertEq(quad.nativeReserve(0), beforeBook);
+        assertEq(quad.previewSwapExactIn(input, output, 1 ether), quote);
         uint256 beforeOut = IERC20(output).balanceOf(user);
         _swapExactIn(input, output, 1 ether);
-        assertEq(IERC20(output).balanceOf(user) - beforeOut, expected, "donation-priced payout matches reference");
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));IStandardExchangeIn(hook).exchangeIn(IERC20(input), 1 ether, IERC20(output), 0, address(this), true, block.timestamp);
+        assertEq(IERC20(output).balanceOf(user) - beforeOut, quote);
+        assertEq(quad.nativeReserve(0), beforeBook + 1 ether);
+        assertEq(IERC20(input).balanceOf(hook) - quad.nativeReserve(0), 100 ether, "ambient remains excluded after settlement");
     }
 
     function test_count_fee_on_transfer_bootstrap_reverts_atomically() public {
@@ -452,10 +537,11 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         }
         _deployHookWithArgs(a);
         _approveActive();
+        (uint256[] memory amounts, bool[] memory flags) = _prepareShareSeed(_amounts(1000 ether));
         uint256[] memory beforeBalances = _userBalances();
-        uint256[] memory amounts = _amounts(1000 ether);
         vm.prank(user);
-        vm.expectRevert(abi.encodeWithSignature("InvalidTransferAmount()")); quad.joinProportional(amounts, user, 0, block.timestamp);
+        vm.expectRevert(abi.encodeWithSignature("InvalidTransferAmount()"));
+        IUnits(hook).joinProportionalFlexible(amounts, flags, user, 0, block.timestamp);
         assertEq(_userBalances(), beforeBalances);
         assertEq(IERC20(hook).totalSupply(), 0);
         for (uint256 i; i < a.tokens.length; ++i) assertEq(quad.nativeReserve(i), 0);
@@ -497,9 +583,11 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         _approveActive();
         uint256[] memory amounts = new uint256[](n);
         for (uint256 i; i < n; ++i) amounts[i] = 1000 * 10 ** uint256(a.tokenDecimals[i]);
-        vm.prank(user);
-        (uint256 minted,) = quad.joinProportional(amounts, user, 0, block.timestamp);
-        assertEq(minted, 1000 ether - 1000, "native inventory normalized per active leg");
+        uint256 minted = _seedFromPairs(amounts);
+        uint256[] memory seed = new uint256[](n);
+        for (uint256 i; i < n; ++i) seed[i] = quad.nativeReserve(i) * quad.invScale(i) / 1e18;
+        uint256 gross = StableMath.computeInvariant(quad.getCurrentAmp(), seed) / n - 1000;
+        assertEq(minted + IERC20(hook).balanceOf(feeRecipient), gross, "retained native seed and one floor");
         _setAccruedNetRate(a, bufferedIndex, yieldVault, provider);
         _assertMixedSwap(a, bufferedIndex);
         uint256 amountOut = 10 ** uint256(a.tokenDecimals[bufferedIndex]);
@@ -528,7 +616,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         assertGt(netRate, 1 ether, "net accrued rate");
         provider.mockRate(_metaRate(netRate, se, a.tokens[index])); // D60: provider convention
         assertEq(quad.seClaim(index), expectedClaim, "net vault redemption claim");
-        assertEq(quad.ratedBalance(index), inventory * netRate / 1 ether, "rate applied once");
+        assertEq(quad.ratedBalance(index), IERC20(a.tokens[index]).balanceOf(hook) + inventory * netRate / 1 ether, "local plus rate applied once");
     }
 
     function _assertMixedSwap(IPkg.PkgArgs memory a, uint256 buffered) internal {

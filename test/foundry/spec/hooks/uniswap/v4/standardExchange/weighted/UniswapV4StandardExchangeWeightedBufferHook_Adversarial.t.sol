@@ -37,10 +37,9 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
 
     function test_retained_buffered_inventory_is_not_new_funding() public {
         _firstMintEqual(1000 ether);
-        uint256 retained = 1e12;
-        token0.mint(hook, retained);
         _swapExactIn(address(token1), address(token0), 1 ether);
-        assertEq(token0.balanceOf(hook), retained, "recorded pair-native inventory");
+        uint256 retained = token0.balanceOf(hook);
+        assertGt(retained, 0, "genesis local backing remains after the local-first swap");
         assertGt(weighted.previewSwapExactIn(address(token0), address(token1), retained), 0);
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, retained, 0));IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)), retained, IERC20(address(token1)), 0, attacker, true, block.timestamp
         );
@@ -54,6 +53,23 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
             abi.encodeCall(IStandardExchangeIn.exchangeIn, (IERC20(address(token0)), 1 ether, IERC20(address(token1)), quote, user, true, block.timestamp))
         ), (uint256)), quote);
         assertEq(token0.balanceOf(hook), retained, "fresh funding cannot consume retained inventory");
+    }
+
+    function test_unbookedPretransferUsesOnlyDeclaredBudget() public {
+        _firstMintEqual(1000 ether);
+        uint256 local = token0.balanceOf(hook);
+        uint256 staged = 2 ether;
+        uint256 budget = 1 ether;
+        token0.mint(hook, staged);
+        uint256 expected = weighted.previewSwapExactIn(address(token0), address(token1), budget);
+        uint256 beforeOut = token1.balanceOf(attacker);
+        (uint256 received, uint256 refund) = IStandardExchangeIn(hook).exchangeIn(
+            token0, budget, token1, expected, attacker, true, block.timestamp
+        );
+        assertEq(received, expected);
+        assertEq(token1.balanceOf(attacker) - beforeOut, received);
+        assertEq(refund, 0);
+        assertEq(token0.balanceOf(hook), local + staged - budget, "unrequested staged credit remains unbooked");
     }
 
     function setUp() public virtual override {
@@ -373,16 +389,15 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 100 ether;
         amounts[1] = 100 ether;
-        vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedAmounts(user, amounts);
         assertGt(shares, 0);
         assertTrue(weighted.isFullBook());
 
-        // Control: unarmed single-asset join on hostile succeeds
+        // Control: a complete unarmed caller basket succeeds
+        for (uint256 i; i < 2; ++i) amounts[i] = 5 ether;
         vm.prank(user);
-        uint256 okShares =
-            weighted.depositSingle(address(hostile), 5 ether, user, 0, block.timestamp + 1 hours);
-        assertGt(okShares, 0, "control depositSingle works");
+        (uint256 okShares,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(okShares, 0, "complete-basket control works");
 
         // Arm: reenter depositSingle mid transferFrom
         bytes memory reentry = abi.encodeWithSelector(
@@ -395,10 +410,12 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         );
         hostile.arm(hook, reentry);
 
+        for (uint256 i; i < 2; ++i) amounts[i] = 10 ether;
         uint256 lpBefore = IERC20(hook).balanceOf(user);
         vm.prank(user);
         // Outer completes; nested must fail with Reentrancy
-        weighted.depositSingle(address(hostile), 10 ether, user, 0, block.timestamp + 1 hours);
+        (uint256 outerShares,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(outerShares, 0);
 
         assertEq(hostile.reentryAttempts(), 1, "nested reentry attempted once");
         assertFalse(hostile.nestedCallSucceeded(), "nested depositSingle must not succeed");
@@ -407,6 +424,6 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
             bytes4(keccak256("Reentrancy()")),
             "nested must revert Reentrancy"
         );
-        assertGe(IERC20(hook).balanceOf(user), lpBefore, "outer path continued after blocked reentry");
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, outerShares, "outer complete basket minted its receipt");
     }
 }

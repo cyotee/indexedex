@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {
     TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
@@ -15,6 +21,55 @@ import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol"
  * @notice H1–H2 deploy + binding rejects; six doors; first mint.
  */
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy is TestBase {
+    function test_interfaceMetadataAdvertisesInstalledReserveProjections() public view {
+        assertTrue(IERC165(hook).supportsInterface(type(IUniswapV4SeBufferHook).interfaceId));
+        assertTrue(IERC165(hook).supportsInterface(type(IDetfReserveQuote).interfaceId));
+        bytes4[5] memory selectors = [
+            IDetfReserveQuote.previewSwapAfterExchange.selector,
+            IDetfReserveQuote.previewJoinAfterDeposit.selector,
+            IDetfReserveQuote.previewBondAfterDeposit.selector,
+            IDetfReserveQuote.previewSynthetic.selector,
+            IDetfReserveQuote.previewBurnToToken.selector
+        ];
+        for (uint256 i; i < selectors.length; ++i) {
+            assertNotEq(IDiamondLoupe(hook).facetAddress(selectors[i]), address(0),
+                "advertised reserve projection is installed on the real proxy");
+        }
+    }
+
+    function test_binding_memberPairAndImplicitOwnShareRoundTrip() public {
+        address se_ = se0;
+        address pair_ = address(token0);
+        address[] memory members_ = IBasicVault(se_).vaultTokens();
+        bool found_;
+        for (uint256 i_; i_ < members_.length; ++i_) {
+            assertTrue(members_[i_] != se_, "own share omitted from members");
+            if (members_[i_] == pair_) found_ = true;
+        }
+        assertTrue(found_, "configured pair is a member");
+        uint256 input_ = IERC20(pair_).balanceOf(user) / 100;
+        assertGt(input_, 0);
+        uint256 sharesBefore_ = IERC20(se_).balanceOf(user);
+        vm.startPrank(user);
+        IERC20(pair_).approve(se_, input_);
+        (uint256 minted_, uint256 refund_) = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(pair_), input_, IERC20(se_), 1, user, false, block.timestamp
+        );
+        assertGt(minted_, 0);
+        assertLe(refund_, input_);
+        assertEq(IERC20(se_).balanceOf(user), sharesBefore_ + minted_);
+        IERC20(se_).approve(se_, minted_);
+        uint256 pairBefore_ = IERC20(pair_).balanceOf(user);
+        (uint256 paid_, uint256 sharesRefunded_) = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(se_), minted_, IERC20(pair_), 1, user, false, block.timestamp
+        );
+        vm.stopPrank();
+        assertGt(paid_, 0);
+        assertEq(sharesRefunded_, 0);
+        assertEq(IERC20(se_).balanceOf(user), sharesBefore_);
+        assertEq(IERC20(pair_).balanceOf(user), pairBefore_ + paid_);
+    }
+
     function test_deploy_bindsFourTokens_withOneSE() public view {
         assertEq(quad.numTokens(), 4);
         assertEq(quad.token(0), address(token0));

@@ -45,14 +45,21 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerOnlyLiquidity_T
         quad.joinProportional(amounts, user, 0, block.timestamp + 1 days);
     }
 
+    function test_ownerOnlyLiquidity_nativeComponentsThirdPartyReverts() public {
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
+        quad.joinNativeComponents(new uint256[](4), new uint256[](4), user, 0, block.timestamp);
+    }
+
     function test_ownerOnlyLiquidity_ownerAddSucceeds() public {
         uint256[] memory amounts = new uint256[](4);
         amounts[0] = 100 ether;
         amounts[1] = 100 ether;
         amounts[2] = 100 ether;
         amounts[3] = 100 ether;
+        bool[] memory flags = _prepareShareSeed(amounts, owner);
         vm.prank(owner);
-        (uint256 shares,) = quad.joinProportional(amounts, owner, 0, block.timestamp + 1 days);
+        (uint256 shares,) = quad.joinProportionalFlexible(amounts, flags, owner, 0, block.timestamp + 1 days);
         assertGt(shares, 0);
         assertGt(IERC20(hook).balanceOf(owner), 0);
     }
@@ -63,8 +70,9 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerOnlyLiquidity_T
         amounts[1] = 500 ether;
         amounts[2] = 500 ether;
         amounts[3] = 500 ether;
+        bool[] memory flags = _prepareShareSeed(amounts, owner);
         vm.prank(owner);
-        quad.joinProportional(amounts, owner, 0, block.timestamp + 1 days);
+        quad.joinProportionalFlexible(amounts, flags, owner, 0, block.timestamp + 1 days);
         uint256 preview = quad.previewSwapExactIn(address(token1), address(token2), 1 ether);
         assertGt(preview, 0);
         uint256 before = token2.balanceOf(user);

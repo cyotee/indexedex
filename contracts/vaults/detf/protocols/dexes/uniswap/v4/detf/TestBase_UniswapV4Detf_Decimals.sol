@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
@@ -523,10 +524,7 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
     }
 
     function _assertNoJoinableDust() internal view virtual {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        _assertPairResidualBooked(address(pairToken), se);
-        assertLe(IERC20(se).balanceOf(detf), 10, "no SE share on diamond");
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 
     /// @dev Above-dust custody requires SE no-issuance or exact alignment rejection in the attempted hook mode.

@@ -36,6 +36,12 @@ library UniswapV4SeBufferHookContextQuoteLib {
         return ok && result.length == 32 && abi.decode(result, (bool));
     }
 
+    function transitionSupported(address exchange) public view returns (bool) {
+        (bool ok, bytes memory result) = exchange.staticcall(abi.encodeCall(IERC165.supportsInterface,
+            (type(Transition).interfaceId)));
+        return ok && result.length == 32 && abi.decode(result, (bool));
+    }
+
     function project(address exchange, bytes memory state, address unavailableManager) public view returns (bytes memory) {
         if (unavailableManager == address(0) || !supported(exchange)) return state;
         return IStandardExchangeUnlockContextQuote(exchange).quoteStateWithUnavailableUnlock(state, unavailableManager);
@@ -44,7 +50,7 @@ library UniswapV4SeBufferHookContextQuoteLib {
     function snapshot(address exchange, address pair, address holder, address unavailableManager)
         public view returns (bytes memory state)
     {
-        if (!supported(exchange)) return bytes("");
+        if (!transitionSupported(exchange)) return bytes("");
         (state,) = Transition(exchange).quoteState(pair, holder);
         return project(exchange, state, unavailableManager);
     }
@@ -54,8 +60,14 @@ library UniswapV4SeBufferHookContextQuoteLib {
     function exactOutputState(address exchange, address pair, address unavailableManager)
         public view returns (bytes memory state)
     {
+        return _exactOutputState(exchange, pair, address(this), unavailableManager);
+    }
+
+    function _exactOutputState(address exchange, address pair, address holder, address unavailableManager)
+        private view returns (bytes memory state)
+    {
         if (unavailableManager == address(0) || exchange == address(0) || exchange == pair || !supported(exchange)) return bytes("");
-        (bytes memory live,) = Transition(exchange).quoteState(pair, address(this));
+        (bytes memory live,) = Transition(exchange).quoteState(pair, holder);
         state = project(exchange, live, unavailableManager);
         if (keccak256(state) == keccak256(live)) return bytes("");
         _requireQuantity(exchange);
@@ -91,35 +103,68 @@ library UniswapV4SeBufferHookContextQuoteLib {
     function deposit(address exchange, address pair, address holder, uint256 amount, address unavailableManager)
         public view returns (uint256 shares, bytes memory next)
     {
-        if (amount == 0) return (0, bytes(""));
-        if (exchange == pair) return (amount, bytes(""));
-        bytes memory state = snapshot(exchange, pair, holder, unavailableManager);
-        if (state.length == 0) return (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange))), IERC20(pair), amount, IERC20(exchange)), state);
-        (next,, shares,) = Transition(exchange).quoteTransition(state, Transition.Operation.DepositExactIn, amount);
+        ExchangeInAmount.Result memory result;
+        (result, next) = depositResult(exchange, pair, holder, amount, unavailableManager);
+        return (result.amountOut, next);
+    }
+
+    /// @notice Preserve caller-owned input refunds in both ordinary and projected quotes.
+    function depositResult(address exchange_, address pair_, address holder_, uint256 amount_, address unavailableManager_)
+        internal view returns (ExchangeInAmount.Result memory result_, bytes memory next_)
+    {
+        if (amount_ == 0 || exchange_ == pair_) return (ExchangeInAmount.Result(amount_, 0), bytes(""));
+        bytes memory state_ = snapshot(exchange_, pair_, holder_, unavailableManager_);
+        if (state_.length == 0) {
+            return (ExchangeInAmount.previewResult(IStandardExchangeIn(exchange_), IERC20(pair_), amount_, IERC20(exchange_)), state_);
+        }
+        uint256 consumed_;
+        uint256 shares_;
+        (next_, consumed_, shares_,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.DepositExactIn, amount_);
+        result_ = ExchangeInAmount.fromConsumedInput(amount_, consumed_, shares_);
     }
 
     function redeem(address exchange, address pair, address holder, uint256 shares, address unavailableManager)
         public view returns (uint256 assets, bytes memory next)
     {
-        if (shares == 0) return (0, bytes(""));
-        if (exchange == pair) return (shares, bytes(""));
-        bytes memory state = snapshot(exchange, pair, holder, unavailableManager);
-        if (state.length == 0) return (ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(exchange))), IERC20(exchange), shares, IERC20(pair)), state);
-        (next,, assets,) = Transition(exchange).quoteTransition(state, Transition.Operation.RedeemExactIn, shares);
+        ExchangeInAmount.Result memory result;
+        (result, next) = redeemResult(exchange, pair, holder, shares, unavailableManager);
+        return (result.amountOut, next);
+    }
+
+    function redeemResult(address exchange_, address pair_, address holder_, uint256 shares_, address unavailableManager_)
+        internal view returns (ExchangeInAmount.Result memory result_, bytes memory next_)
+    {
+        if (shares_ == 0 || exchange_ == pair_) return (ExchangeInAmount.Result(shares_, 0), bytes(""));
+        bytes memory state_ = snapshot(exchange_, pair_, holder_, unavailableManager_);
+        if (state_.length == 0) {
+            return (ExchangeInAmount.previewResult(IStandardExchangeIn(exchange_), IERC20(exchange_), shares_, IERC20(pair_)), state_);
+        }
+        uint256 consumed_;
+        uint256 assets_;
+        (next_, consumed_, assets_,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.RedeemExactIn, shares_);
+        result_ = ExchangeInAmount.fromConsumedInput(shares_, consumed_, assets_);
     }
 
     /// @dev A passthrough wrapper receives its specified shares before redeeming; it owns no reserve.
     function redeemReceived(address exchange, address pair, uint256 shares, address unavailableManager)
         external view returns (uint256 assets)
     {
-        if (shares == 0) return 0;
-        if (exchange == pair) return shares;
-        bytes memory state = snapshot(exchange, pair, address(0), unavailableManager);
-        if (state.length == 0) {(uint256 quotedAmountOut,) = IStandardExchangeIn(exchange).previewExchangeIn(IERC20(exchange), shares, IERC20(pair));
-            return quotedAmountOut;
+        return redeemReceivedResult(exchange, pair, shares, unavailableManager).amountOut;
+    }
+
+    function redeemReceivedResult(address exchange_, address pair_, uint256 shares_, address unavailableManager_)
+        internal view returns (ExchangeInAmount.Result memory result_)
+    {
+        if (shares_ == 0 || exchange_ == pair_) return ExchangeInAmount.Result(shares_, 0);
+        bytes memory state_ = snapshot(exchange_, pair_, address(0), unavailableManager_);
+        if (state_.length == 0) {
+            return ExchangeInAmount.previewResult(IStandardExchangeIn(exchange_), IERC20(exchange_), shares_, IERC20(pair_));
         }
-        (state,,,) = Transition(exchange).quoteTransition(state, Transition.Operation.ReceiveShares, shares);
-        (,, assets,) = Transition(exchange).quoteTransition(state, Transition.Operation.RedeemExactIn, shares);
+        (state_,,,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.ReceiveShares, shares_);
+        uint256 consumed_;
+        uint256 assets_;
+        (, consumed_, assets_,) = Transition(exchange_).quoteTransition(state_, Transition.Operation.RedeemExactIn, shares_);
+        result_ = ExchangeInAmount.fromConsumedInput(shares_, consumed_, assets_);
     }
 
     function withdraw(address exchange, address pair, address holder, uint256 amount, address unavailableManager)
@@ -127,9 +172,8 @@ library UniswapV4SeBufferHookContextQuoteLib {
     {
         if (amount == 0) return 0;
         if (exchange == pair) return amount;
-        bytes memory state = snapshot(exchange, pair, holder, unavailableManager);
+        bytes memory state = _exactOutputState(exchange, pair, holder, unavailableManager);
         if (state.length == 0) return IStandardExchangeOut(exchange).previewExchangeOut(IERC20(exchange), IERC20(pair), amount);
-        _requireQuantity(exchange);
         return IStandardExchangeExactOutputQuantityQuote(exchange).quoteSharesForExactAssets(state, amount);
     }
 
@@ -139,9 +183,8 @@ library UniswapV4SeBufferHookContextQuoteLib {
     {
         if (shares == 0) return 0;
         if (exchange == pair) return shares;
-        bytes memory state = snapshot(exchange, pair, address(0), unavailableManager);
+        bytes memory state = _exactOutputState(exchange, pair, address(0), unavailableManager);
         if (state.length == 0) return IStandardExchangeOut(exchange).previewExchangeOut(IERC20(pair), IERC20(exchange), shares);
-        _requireQuantity(exchange);
         return IStandardExchangeExactOutputQuantityQuote(exchange).quoteInputForExactShares(state, shares);
     }
 }

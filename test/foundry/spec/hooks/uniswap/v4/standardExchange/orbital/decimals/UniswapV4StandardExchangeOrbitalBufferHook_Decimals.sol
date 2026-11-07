@@ -105,22 +105,31 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
         _assertMoneyEq(a2, p2, "a2");
     }
 
-    function test_partialBook_seedThirdLeg() public {
+    function test_partialBook_singleLegPaysForExistingComponents() public {
         (uint256 a0, uint256 a1, uint256 a2) = _twoLegFirstMintAmounts();
         _addLiquidity(a0, a1, a2);
         uint256 z0 = a0 == 0 ? _u0(50) : 0;
         uint256 z1 = a1 == 0 ? _u1(50) : 0;
         uint256 z2 = a2 == 0 ? _u2(50) : 0;
-        if (z0 == 0 && z1 == 0 && z2 == 0) {
-            // ALL6/ALL9 already three-leg first mint.
-            assertGt(orbital.effectiveReserve(2), 0);
-            return;
+        // ALL6/ALL9 deliberately bootstrap all three buffered legs.
+        if (z0 + z1 + z2 == 0) z0 = _u0(50);
+        assertGt(z0 + z1 + z2, 0, "exercise one caller-funded leg");
+        (uint256 quote,,,) = orbital.previewAddLiquidity(z0, z1, z2);
+        assertGt(quote, 0);
+        uint256 beforeLp = IERC20(hook).balanceOf(user);
+        vm.prank(user);
+        (uint256 minted,,,) = orbital.addLiquidity(z0, z1, z2, user, quote, block.timestamp + 1 hours, "");
+        assertEq(minted, quote);
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
+        address[3] memory tokens_ = [address(token0), address(token1), address(token2)];
+        for (uint8 i; i < 3; ++i) {
+            assertGt(orbital.effectiveReserve(i), 0, "every leg has backing after paid preparation");
+            assertEq(orbital.rawReserve(i), IERC20(tokens_[i]).balanceOf(hook));
+            address se_ = orbital.standardExchange(i);
+            if (se_ != address(0)) assertEq(orbital.seBalance(i), IERC20(se_).balanceOf(hook));
         }
-        (uint256 shares,,,) = _addLiquidity(z0, z1, z2);
-        assertGt(shares, 0);
-        if (z0 > 0) assertGt(orbital.effectiveReserve(0), 0);
-        if (z1 > 0) assertGt(orbital.effectiveReserve(1), 0);
-        if (z2 > 0) assertGt(orbital.effectiveReserve(2), 0);
+        (uint256 shares,,,) = _addLiquidity(a0 / 10, a1 / 10, a2 / 10);
+        assertGt(shares, 0, "later partial input buys the now-required third leg");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -275,7 +284,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
         _setUsageFee(0.05e18);
         _setDexFee(0.01e18);
         _addLiquidity(_u0(1), _u1(1), _u2(1));
-        assertGt(orbital.kLast(), 0, "kLast set");
+        assertEq(orbital.kLast(), 0, "growth checkpoint retired");
 
         for (uint256 i; i < 5; i++) {
             _swapExactIn(address(token0), address(token1), _u0(5));
@@ -284,9 +293,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
 
         address ft = orbital.feeTo();
         uint256 feeBalBefore = IERC20(hook).balanceOf(ft);
-        _addLiquidity(_u0(2), _u1(2), _u2(2));
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        (uint256 net,,,) = _addLiquidity(_u0(2), _u1(2), _u2(2));
         uint256 feeBalAfter = IERC20(hook).balanceOf(ft);
-        assertGt(feeBalAfter, feeBalBefore, "protocol growth LP must mint to feeTo");
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        assertEq(feeBalAfter - feeBalBefore, gross * 0.05e18 / 1e18);
+        assertEq(net + feeBalAfter - feeBalBefore, gross);
         assertEq(
             uint8(orbital.kLastMode()),
             uint8(IUniswapV4StandardExchangeOrbitalBufferHook.KLastMode.FullProduct)
@@ -323,13 +335,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        o.addLiquidity(_u0(100), _u1(100), _u2(100), user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, _u0(100), _u1(100), _u2(100));
 
         uint256 seBal = o.seBalance(0);
         assertGt(seBal, 0, "SE shares");
         uint256 expected = seBal * 2; // D60: the rate is whole tokens per whole share; 2x in metadata terms
-        assertEq(o.effectiveReserve(0), expected, "effective = shares x rate (metadata scales)");
+        assertEq(o.effectiveReserve(0), o.rawReserve(0) + expected, "effective = shares x rate (metadata scales)");
         assertEq(o.rateProvider(0), address(rp));
     }
 
@@ -385,8 +397,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
         t0.approve(h, type(uint256).max);
         t1.approve(h, type(uint256).max);
         hostile.approve(h, type(uint256).max);
-        o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, 100 ether, 100 ether, 100 ether);
 
         uint256 sharesBefore = IERC20(h).balanceOf(user);
         bytes memory reentry = abi.encodeWithSelector(
@@ -435,7 +447,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
 
     function _assertLegBook(uint8 i, uint256 face) internal view {
         if (orbital.isBuffered(i)) {
-            assertEq(orbital.rawReserve(i), 0, "buffered raw book");
+            assertEq(orbital.rawReserve(i), IERC20(orbital.tokens()[i]).balanceOf(hook), "local component custody");
+            assertGt(orbital.rawReserve(i), 0);
             assertGt(orbital.seBalance(i), 0, "SE shares");
             assertGt(orbital.effectiveReserve(i), 0, "effective > 0");
         } else {

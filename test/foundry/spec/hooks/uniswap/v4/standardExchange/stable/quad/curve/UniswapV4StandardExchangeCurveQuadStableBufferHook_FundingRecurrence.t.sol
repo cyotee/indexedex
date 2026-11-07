@@ -50,10 +50,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_FundingRecurrence is
         }
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 100 ether;
+        bool[] memory flags = _prepareShareSeed(amounts, user);
         uint256 snapshot = vm.snapshotState();
-        (uint256 quoted,) = quad.previewJoinProportional(amounts);
+        (uint256 quoted,) = quad.previewJoinProportionalFlexible(amounts, flags);
         vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, quoted, block.timestamp);
+        (uint256 shares,) = quad.joinProportionalFlexible(amounts, flags, user, quoted, block.timestamp);
         assertGt(shares, 0);
         assertEq(shares, quoted, "untaxed funded control");
         assertEq(taxed.balanceOf(hook), 100 ether);
@@ -62,7 +63,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_FundingRecurrence is
         uint256 payerBefore = taxed.balanceOf(user);
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 100 ether, 90 ether));
         vm.prank(user);
-        quad.joinProportional(amounts, user, quoted, block.timestamp);
+        quad.joinProportionalFlexible(amounts, flags, user, quoted, block.timestamp);
         assertEq(taxed.balanceOf(user), payerBefore);
         assertEq(IERC20(hook).totalSupply(), 0);
         for (uint256 i; i < 4; ++i) {

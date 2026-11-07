@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {Vm} from "forge-std/Vm.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4UpperLowerWingsStandardExchangeVaultRebalanceFixture as Fixture} from "./UniswapV4UpperLowerWingsStandardExchangeVaultRebalance.t.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -29,6 +31,16 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultFamilyConsumersTest is Fix
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     uint256 internal constant SEED = 1e12;
 
+    struct ExitSnapshot {
+        uint256 hookShares;
+        uint256 holderShares;
+        uint256 supply;
+        uint256 local;
+        uint256 lpSupply;
+        uint256 opposing;
+        uint256 holderOpposing;
+    }
+
     function test_singleCpJoinAndShareExit() public { _roundTrip(Amm.Family.SingleCp); }
     function test_dualCpJoinAndShareExit() public { _roundTrip(Amm.Family.Dual); }
     function test_orbitalJoinAndShareExit() public { _roundTrip(Amm.Family.Orbital); }
@@ -40,9 +52,10 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultFamilyConsumersTest is Fix
         Amm.Fixture memory f = _deploy(family);
         uint256 shares = IERC20(address(wings0)).balanceOf(address(this)) / 2;
         for (uint256 i; i < f.tokens.length; ++i) if (f.tokens[i] != address(token0)) {
-            f.amounts[i] = 1_000 * 10 ** _decimals(f.tokens[i]);
-            Amm.fundInventory(f, f.tokens[i], address(this), f.amounts[i]);
-            IERC20(f.tokens[i]).approve(f.hook, type(uint256).max);
+            address input = family == Amm.Family.Dual ? f.output : f.tokens[i];
+            f.amounts[i] = 1_000 * 10 ** _decimals(input);
+            Amm.fundInventory(f, input, address(this), f.amounts[i]);
+            IERC20(input).approve(f.hook, type(uint256).max);
         }
         IERC20(address(wings0)).approve(f.hook, shares);
         uint256 wingsBefore = IERC20(address(wings0)).balanceOf(address(this));
@@ -53,9 +66,41 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultFamilyConsumersTest is Fix
         assertLt(IERC20(address(wings0)).balanceOf(address(this)), wingsBefore, "Wings shares left the holder");
         uint256 hookShares = IERC20(address(wings0)).balanceOf(f.hook);
         assertGt(hookShares, 0, "consumer holds Wings shares");
-        _exit(family, f, lp / 2);
-        assertLt(IERC20(address(wings0)).balanceOf(f.hook), hookShares, "exit returned Wings shares");
-        assertEq(token1.balanceOf(f.hook), token1.balanceOf(f.hook));
+        _assertShareExit(family, f, lp / 2);
+    }
+
+    /// @dev FS-HOOK-08: allocate both components, then convert only the exiting local claim.
+    function _assertShareExit(Amm.Family family, Amm.Fixture memory f, uint256 burned) private {
+        IERC20 se = IERC20(address(wings0));
+        ExitSnapshot memory beforeExit = ExitSnapshot(se.balanceOf(f.hook), se.balanceOf(address(this)),
+            se.totalSupply(), token0.balanceOf(f.hook), IERC20(f.hook).totalSupply(),
+            token1.balanceOf(f.hook), token1.balanceOf(address(this)));
+        // This fixture stages no donations: its held shares and local tokens are the funded book.
+        uint256 allocatedShares = Math.mulDiv(burned, beforeExit.hookShares, beforeExit.lpSupply);
+        uint256 allocatedLocal = Math.mulDiv(burned, beforeExit.local, beforeExit.lpSupply);
+        assertGt(allocatedLocal, 0, "bootstrap seeded the exiting local claim");
+        vm.recordLogs();
+        uint256 paid = _exit(family, f, burned);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        uint256 minted;
+        uint256 spent;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].topics.length != 3 || logs[i].topics[0] != keccak256("Transfer(address,address,uint256)")) continue;
+            address from = address(uint160(uint256(logs[i].topics[1])));
+            address to = address(uint160(uint256(logs[i].topics[2])));
+            if (logs[i].emitter == address(se) && from == address(0) && to == f.hook) minted += abi.decode(logs[i].data, (uint256));
+            if (logs[i].emitter == address(token0) && from == f.hook && to == address(se)) spent += abi.decode(logs[i].data, (uint256));
+        }
+        assertGt(minted, 0, "allocated local claim minted actual Wings shares");
+        assertEq(spent, allocatedLocal, "only allocated local claim converted");
+        assertEq(paid, allocatedShares + minted, "exit receipt includes held and newly minted shares");
+        assertEq(se.balanceOf(address(this)) - beforeExit.holderShares, paid, "exit receipt matches shares received");
+        assertEq(se.balanceOf(f.hook), beforeExit.hookShares - allocatedShares, "remaining share component conserved");
+        assertEq(token0.balanceOf(f.hook), beforeExit.local - allocatedLocal, "remaining local component conserved");
+        assertEq(se.totalSupply(), beforeExit.supply + minted, "SE supply includes local claim conversion");
+        assertEq(IERC20(f.hook).totalSupply(), beforeExit.lpSupply - burned, "exit only burns requested LP");
+        assertEq(token1.balanceOf(f.hook), beforeExit.opposing, "opposing vault currency does not leak into consumer");
+        assertEq(token1.balanceOf(address(this)), beforeExit.holderOpposing, "share exit does not pay opposing vault currency");
     }
 
     function _deploy(Amm.Family family) private returns (Amm.Fixture memory) {
@@ -85,22 +130,26 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultFamilyConsumersTest is Fix
         return Amm.deploy(family, request);
     }
 
-    function _exit(Amm.Family family, Amm.Fixture memory f, uint256 lp) private {
+    function _exit(Amm.Family family, Amm.Fixture memory f, uint256 lp) private returns (uint256 paid) {
         if (family == Amm.Family.SingleCp) {
-            CpHook(f.hook).withdrawSeShares(lp, address(this), 0, 0, block.timestamp);
+            (, paid) = CpHook(f.hook).withdrawSeShares(lp, address(this), 0, 0, block.timestamp);
         } else if (family == Amm.Family.Dual) {
             bool first = f.tokens[0] == address(token0);
-            DualHook(f.hook).withdrawFlexible(lp, address(this), first, !first, 0, 0, block.timestamp);
+            (uint256 a, uint256 b) = DualHook(f.hook).withdrawFlexible(lp, address(this), first, !first, 0, 0, block.timestamp);
+            paid = first ? a : b;
         } else if (family == Amm.Family.Orbital) {
             bool a = f.tokens[0] == address(token0);
             bool b = f.tokens[1] == address(token0);
-            OrbitalHook(f.hook).withdrawFlexible(lp, address(this), a, b, !a && !b, 0, 0, 0, block.timestamp);
+            (uint256 x, uint256 y, uint256 z) = OrbitalHook(f.hook).withdrawFlexible(lp, address(this), a, b, !a && !b, 0, 0, 0, block.timestamp);
+            paid = a ? x : b ? y : z;
         } else {
             bool[] memory shares = new bool[](f.tokens.length);
             uint256[] memory minimums = new uint256[](f.tokens.length);
             for (uint256 i; i < shares.length; ++i) shares[i] = f.tokens[i] == address(token0);
-            if (family == Amm.Family.CurveQuad) CurveHook(f.hook).exitProportionalFlexible(lp, address(this), shares, minimums, block.timestamp);
-            else IUniswapV4BalancerStableLiquidityUnits(f.hook).exitProportionalFlexible(lp, address(this), shares, minimums, block.timestamp);
+            uint256[] memory amounts;
+            if (family == Amm.Family.CurveQuad) amounts = CurveHook(f.hook).exitProportionalFlexible(lp, address(this), shares, minimums, block.timestamp);
+            else amounts = IUniswapV4BalancerStableLiquidityUnits(f.hook).exitProportionalFlexible(lp, address(this), shares, minimums, block.timestamp);
+            for (uint256 i; i < shares.length; ++i) if (shares[i]) paid = amounts[i];
         }
     }
 

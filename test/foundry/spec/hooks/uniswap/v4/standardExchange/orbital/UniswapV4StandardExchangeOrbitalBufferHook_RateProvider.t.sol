@@ -80,13 +80,13 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, 100 ether, 100 ether, 100 ether);
 
         uint256 seBal = o.seBalance(0);
         assertGt(seBal, 0, "SE shares");
         uint256 expected = (seBal * 2e18) / 1e18;
-        assertEq(o.effectiveReserve(0), expected, "effective = shares * rate / 1e18");
+        assertEq(o.effectiveReserve(0), o.rawReserve(0) + expected, "effective = shares * rate / 1e18");
         // seClaim is unwrap path (not rate); should differ under non-1 rate or dilution
         assertEq(o.rateProvider(0), address(rp));
     }
@@ -108,8 +108,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        o.addLiquidity(50 ether, 50 ether, 50 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, 50 ether, 50 ether, 50 ether);
 
         uint256 beforeReserve = o.effectiveReserve(0);
         assertGt(beforeReserve, 0, "funded rate read succeeds");

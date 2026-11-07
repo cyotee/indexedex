@@ -128,30 +128,28 @@ contract UniswapV4StandardExchangeWeightedBufferHook_B6Firm is
         assertEq(shares, predPair);
     }
 
-    function test_B6_depositSingleFlexible_seShare_previewEqualsExec() public {
+    function test_B6_singleShareInputPaysForOtherComponents() public {
         _firstMintEqual(100 ether);
-        uint256 seAmt = _userAcquireSeShares(se0, token0, 15 ether);
-
-        uint256 pred = weighted.previewDepositSingleFlexible(address(token0), seAmt, true);
-        assertEq(pred, weighted.previewJoinSingleAssetExactInFlexible(address(token0), seAmt, true));
-
+        uint256 amount = _userAcquireSeShares(se0, token0, 15 ether);
+        uint256 preview = weighted.previewDepositSingleFlexible(address(token0), amount, true);
+        assertGt(preview, 0);
+        assertEq(weighted.previewJoinSingleAssetExactInFlexible(address(token0), amount, true), preview);
         uint256 lpBefore = IERC20(hook).balanceOf(user);
-        uint256 seBefore = IERC20(se0).balanceOf(user);
+        uint256 sharesBefore = IERC20(se0).balanceOf(user);
         vm.prank(user);
-        uint256 shares = weighted.depositSingleFlexible(
-            address(token0), seAmt, true, user, 0, block.timestamp + 1 hours
-        );
-        assertEq(shares, pred);
-        assertEq(IERC20(hook).balanceOf(user) - lpBefore, shares);
-        assertEq(seBefore - IERC20(se0).balanceOf(user), seAmt);
-        assertGt(weighted.seBalance(0), 0);
+        uint256 minted = weighted.depositSingleFlexible(address(token0), amount, true, user, 1, block.timestamp + 1 hours);
+        assertEq(minted, preview);
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, minted);
+        assertLe(sharesBefore - IERC20(se0).balanceOf(user), amount);
     }
 
     function test_B6_withdrawSingleFlexible_paysSeShares() public {
         _firstMintEqual(100 ether);
-        // top up SE inventory via pair single join first
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 20 ether; amounts[1] = 20 ether;
         vm.prank(user);
-        weighted.depositSingle(address(token0), 20 ether, user, 0, block.timestamp + 1 hours);
+        (uint256 minted,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(minted, 0);
 
         uint256 burn = IERC20(hook).balanceOf(user) / 20;
         uint256 pred = weighted.previewWithdrawSingleFlexible(address(token0), burn, true);

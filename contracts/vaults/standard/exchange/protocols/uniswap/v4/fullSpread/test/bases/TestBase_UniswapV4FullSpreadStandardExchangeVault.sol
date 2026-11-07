@@ -41,6 +41,7 @@ abstract contract TestBase_UniswapV4FullSpreadStandardExchangeVault is Indexedex
     ERC20PermitMintableStub internal token1;
     PoolKey internal key;
     IPackage internal package;
+    IPackage.PkgInit internal packageInit;
     IFullSpreadVault internal vault;
 
     function setUp() public virtual override(IndexedexTest, TestBase_Weth9) {
@@ -52,10 +53,10 @@ abstract contract TestBase_UniswapV4FullSpreadStandardExchangeVault is Indexedex
             keccak256("FullSpread.Test.PoolManager")
         ));
         _deployPool(_native());
-        IPackage.PkgInit memory init_ = _packageInit();
+        packageInit = _packageInit();
         vm.prank(owner);
-        package = Components.deployUniswapV4FullSpreadStandardExchangeVaultDFPkg(indexedexManager, init_);
-        vault = IFullSpreadVault(package.deployVault(IPackage.PkgArgs(key, "Full spread shares", "FS")));
+        package = Components.deployUniswapV4FullSpreadStandardExchangeVaultDFPkg(indexedexManager, packageInit);
+        vault = IFullSpreadVault(package.deployVault(IPackage.PkgArgs(key)));
         vm.label(address(vault), "FullSpreadVault");
     }
 
@@ -88,12 +89,13 @@ abstract contract TestBase_UniswapV4FullSpreadStandardExchangeVault is Indexedex
         init_.uniswapV4ProtocolAwareFacet = Components.deployProtocolAwareFacet(create3Factory);
         init_.uniswapV4SinglePositionAwareFacet = Components.deploySinglePositionAwareFacet(create3Factory);
         init_.poolManager = pool;
-        init_.positionDescriptor = address(0xD1);
-        init_.positionManager = address(0xD2);
-        init_.quoter = address(0xD3);
-        init_.stateView = address(0xD4);
-        init_.reservesLens = address(0xD5);
-        init_.universalRouter = address(0xD6);
+        address infra_ = address(new FullSpreadInfrastructureStub());
+        init_.positionDescriptor = infra_;
+        init_.positionManager = infra_;
+        init_.quoter = infra_;
+        init_.stateView = infra_;
+        init_.reservesLens = infra_;
+        init_.universalRouter = infra_;
         init_.registry = indexedexManager;
         init_.oracle = IVaultFeeOracleQuery(address(indexedexManager));
         init_.weth = IWETH(address(weth));
@@ -111,3 +113,5 @@ abstract contract TestBase_UniswapV4FullSpreadStandardExchangeVault is Indexedex
         IERC20(address(token1)).approve(vault_, type(uint256).max);
     }
 }
+
+contract FullSpreadInfrastructureStub {}

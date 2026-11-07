@@ -22,10 +22,9 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](3);
+        interfaces = new bytes4[](2);
         interfaces[0] = type(IHooks).interfaceId;
         interfaces[1] = type(IUniswapV4SeBufferHook).interfaceId;
-        interfaces[2] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {

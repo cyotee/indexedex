@@ -5,7 +5,7 @@ import {TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase}
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
-import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+import {HookLiquidityInvariantHandler, IInvariantHookLiquidity} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
 
 /// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
 contract Handler_CurveQuadLiquidity is HookLiquidityInvariantHandler {
@@ -29,11 +29,16 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Invariant is TestBas
         c.tokens[1] = token1;
         c.tokens[2] = token2;
         c.tokens[3] = token3;
+        c.standardExchanges = new address[](c.tokens.length);
+        for (uint256 i; i < c.tokens.length; ++i) {
+            c.standardExchanges[i] = IInvariantHookLiquidity(hook).standardExchangeOf(address(c.tokens[i]));
+        }
         c.input = address(token0);
         c.output = address(token1);
         c.inputSE = se0;
         c.inputVault = address(vault0);
         c.feeRecipient = address(feeCollector);
+        c.feeOracle = address(indexedexManager);
         c.router = route_;
         c.key = poolKey01;
         c.observedTokens = new IERC20[](7);

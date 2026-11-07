@@ -34,7 +34,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYi
     function test_control_bareProtocolVault_rejectedAtPackageInit() public {
         IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchanges[0] = address(vault0);
-        vm.expectRevert(bytes(""));
+        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.InvalidSE.selector);
         DeployLib.deployHookInstance(hookFactory, hookPkg, args);
     }
 }

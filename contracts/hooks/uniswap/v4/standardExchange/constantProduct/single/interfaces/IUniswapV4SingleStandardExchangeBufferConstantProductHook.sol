@@ -177,6 +177,7 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook is
 
     function previewDepositSingle(address tokenIn, uint256 amountIn) external view returns (uint256 lpAmount);
 
+    /// @notice Buffered counter output is the pair-unit value of acquired native components.
     function previewZapSplit(address tokenIn, uint256 amountIn)
         external
         view

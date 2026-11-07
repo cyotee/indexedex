@@ -8,7 +8,7 @@ import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 import {
     IStandardExchangeMultiAssetLiquidity
 } from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -44,7 +44,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet_IFacet
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](9);
+        controlFuncs = new bytes4[](10);
         controlFuncs[0] = IUniswapV4SeBufferHook.joinProportional.selector;
         controlFuncs[1] = IStandardExchangeMultiAssetLiquidity.joinUnbalanced.selector;
         controlFuncs[2] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
@@ -54,5 +54,6 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet_IFacet
         controlFuncs[6] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinSingleAssetExactInFlexible.selector;
         controlFuncs[7] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.depositSingleFlexible.selector;
         controlFuncs[8] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        controlFuncs[9] = IUniswapV4SeBufferHookNativeLiquidity.joinNativeComponents.selector;
     }
 }

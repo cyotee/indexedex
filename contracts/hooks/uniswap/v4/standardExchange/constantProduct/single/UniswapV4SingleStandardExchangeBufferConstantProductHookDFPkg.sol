@@ -22,6 +22,7 @@ import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
@@ -351,6 +352,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
             a.poolManager, a.feeOracle, a.standardExchange, a.pairToken, a.rawToken, c0, c1, d0, d1
         );
         Repo._layout().ownerOnlyLiquidity = a.ownerOnlyLiquidity;
+        Repo._layout().registry = address(VAULT_REGISTRY_DEPLOYMENT);
         // D60: the swap invariant values the SE leg as shares x provider rate.
         Repo._layout().rateProvider = a.rateProvider;
         Repo._layout().seDecimals = IERC20Metadata(a.standardExchange).decimals();
@@ -396,13 +398,16 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         }
         if (a.rawToken == a.pairToken) revert SameToken();
         if (a.rawToken == a.standardExchange) revert RawIsSE();
+        if (!UniswapV4SeBufferHookLegLib.pairInVaultTokens(a.standardExchange, a.pairToken)) {
+            revert TokenNotInVaultTokens();
+        }
+        // Effective disable authority must recognize this SE, including its package.
+        if (IVaultRegistryDisableQuery(address(VAULT_REGISTRY_DEPLOYMENT)).packageOfVault(a.standardExchange) == address(0)) {
+            revert TokenNotInVaultTokens();
+        }
         // D60: a buffered pair leg is priced by its rate provider, never by the hook.
         if (a.pairToken != a.standardExchange && a.rateProvider == address(0)) revert RateProviderRequired();
-        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(a.pairToken, a.standardExchange)) {
-            if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(a.pairTokenDecimals)) {
-                revert InvalidDecimals();
-            }
-        } else if (a.pairTokenDecimals < 6 || a.pairTokenDecimals > 18) {
+        if (a.pairTokenDecimals < 6 || a.pairTokenDecimals > 18) {
             revert InvalidDecimals();
         }
         if (a.rawTokenDecimals < 6 || a.rawTokenDecimals > 18) revert InvalidDecimals();

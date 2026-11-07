@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 import {
     TestBase_UniswapV4StandardExchangeWeightedBufferHook
@@ -87,16 +88,20 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8 is
         for (uint256 i; i < 8; ++i) {
             amounts[i] = 50 ether;
         }
-        vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedAmounts(user, amounts);
         assertGt(shares, 0);
 
-        // one single-asset join
+        uint256 singleQuote = weighted.previewJoinSingleAssetExactIn(a.tokens[1], 5 ether);
+        assertGt(singleQuote, 0);
+        uint256 lpBefore = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        uint256 s2 = weighted.joinSingleAssetExactIn(
-            a.tokens[1], 5 ether, user, 0, block.timestamp + 1 hours
-        );
-        assertGt(s2, 0);
+        uint256 singleMinted = weighted.joinSingleAssetExactIn(a.tokens[1], 5 ether, user, singleQuote, block.timestamp + 1 hours);
+        assertEq(singleMinted, singleQuote);
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, singleMinted);
+        for (uint256 i; i < 8; ++i) amounts[i] = 5 ether;
+        vm.prank(user);
+        (uint256 s2,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(s2, 0, "all eight required caller components are supplied");
 
         // one V4 swap between raw legs if possible
         _swapExactIn(a.tokens[1], a.tokens[2], 0.5 ether);

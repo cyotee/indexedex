@@ -252,7 +252,15 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     }
     function isValidTokenOut(address token_) public view override returns (bool) { return isValidTokenIn(token_); }
 function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_) external returns (uint256 amountOut, uint256 amountRefunded) {
-        return (_entryExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_), 0);
+        bool liquidityDeposit = address(out_) == address(this) && address(in_) != address(this)
+            && isValidTokenIn(address(in_));
+        uint256 beforeInput = liquidityDeposit ? in_.balanceOf(msg.sender) : 0;
+        amountOut = _entryExchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+        if (liquidityDeposit) {
+            uint256 afterInput = in_.balanceOf(msg.sender);
+            uint256 spent = beforeInput > afterInput ? beforeInput - afterInput : 0;
+            amountRefunded = amount_ - spent;
+        }
     }
 }
 

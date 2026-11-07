@@ -16,6 +16,23 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
+    function test_stableInvariant_newtonOvershootUsesFullWidthSquare() public pure {
+        uint256[4] memory reserves = [
+            uint256(499482250145296174215000000000000),
+            499999999999961962030,
+            499999999999961962030,
+            499999999999961962030
+        ];
+        // Independent arbitrary-precision integer iteration, including the
+        // solver's invariant +1 and final output -1 rounding.
+        assertEq(Math.getD(reserves, 10_000), 316847265070611102519523408);
+        uint256 out = Math.quoteExactInRated(reserves, 1, 0, 36136072, 10_000);
+        assertEq(out, 18049320843520141448);
+        reserves[1] += 36136072;
+        reserves[0] -= out;
+        assertGe(Math.getD(reserves, 10_000), 316847265070611102519523408);
+    }
+
     function test_stableInvariant_extremeImbalance_independentRootAndPermutation() public pure {
         uint256 expectedD = 65_389_163_658;
         // Integer root of 400*S = 399*D + D^5/(256*product(book)),
@@ -134,24 +151,25 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
         for (uint8 i; i < 4; ++i) {
             amounts[i] = toks[i] == address(t6) ? 100_000e6 : 100 ether;
         }
-        (uint256 prev,) = quad.previewJoinProportional(amounts);
+        bool[] memory flags = _prepareShareSeed(amounts, user);
+        (uint256 prev,) = quad.previewJoinProportionalFlexible(amounts, flags);
         vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, prev, block.timestamp + 1 hours);
+        (uint256 shares,) = quad.joinProportionalFlexible(amounts, flags, user, prev, block.timestamp + 1 hours);
         assertEq(shares, prev);
         assertGt(shares, 0, "first mint mixed decimals");
         assertTrue(quad.isFullBook());
         assertEq(IERC20(hook).balanceOf(address(0)), 1000);
     }
 
-    function test_donation_rawFace_dilutesJoin() public {
+    function test_donation_rawFace_doesNotChangeBookedJoin() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 20 ether;
         (uint256 sharesBefore,) = quad.previewJoinProportional(amounts);
         token1.mint(hook, 100 ether);
-        assertEq(quad.nativeReserve(1), token1.balanceOf(hook), "live face");
+        assertEq(quad.nativeReserve(1) + 100 ether, token1.balanceOf(hook), "ambient custody excluded");
         (uint256 sharesAfter,) = quad.previewJoinProportional(amounts);
-        assertLt(sharesAfter, sharesBefore, "raw donation dilutes join mint");
+        assertEq(sharesAfter, sharesBefore, "ambient custody does not value LP ownership");
     }
 
     function test_FIX_RATED_RP_nonOneRate() public {
@@ -171,7 +189,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
         uint256 seBal = quad.seBalance(0);
         uint256 rated = quad.ratedBalance(0);
         // rated = seBal * rate / 1e18 in pair units (before scale display)
-        assertEq(rated, (seBal * 1.25e18) / 1e18, "rated uses seBal*rate");
+        assertEq(rated, token0.balanceOf(hook) + (seBal * 1.25e18) / 1e18, "local plus rated shares");
         uint256 preview = quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
         assertGt(preview, 0);
         uint256 b1 = token1.balanceOf(user);

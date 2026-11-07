@@ -16,7 +16,8 @@ import {
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
@@ -104,8 +105,10 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(queries_, IHook.previewDepositFlexible.selector), "J1 previewDepositFlexible");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
         assertTrue(_contains(zaps_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
-        assertEq(funcs_.length, 4, "J1 deposit execution selectors");
-        assertEq(queries_.length, 26, "J1 deposit query selectors");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHookNativeLiquidity.joinNativeComponents.selector));
+        assertTrue(_contains(queries_, IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector));
+        assertEq(funcs_.length, 5, "J1 deposit execution selectors");
+        assertEq(queries_.length, 27, "J1 deposit query selectors");
         assertTrue(_contains(zaps_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewExchangeOut");
         assertTrue(_contains(zaps_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
         assertEq(zaps_.length, 5, "J1 deposit zap selectors");
@@ -132,7 +135,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
 
     /// @notice Query, discovery and reward selectors remain independent of SY money execution.
     function test_depositQueryFacet_declaration() public {
-        bytes4[] memory expected = new bytes4[](26);
+        bytes4[] memory expected = new bytes4[](27);
         expected[0] = IHook.previewAddLiquidity.selector;
         expected[1] = IHook.previewDepositSingle.selector;
         expected[2] = IHook.previewZapSplit.selector;
@@ -159,7 +162,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         expected[23] = IStandardizedYield.rewardIndexesCurrent.selector;
         expected[24] = IStandardizedYield.rewardIndexesStored.selector;
         expected[25] = IStandardizedYield.claimRewards.selector;
+        expected[26] = IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector;
         _assertExactRole(depositQueryFacet, expected);
+    }
+
+    function test_nativeLiquidity_declarationAndProxyDiscovery() public {
+        bytes4[] memory expected = new bytes4[](5);
+        expected[0] = IHook.addLiquidity.selector;
+        expected[1] = IHook.depositFlexible.selector;
+        expected[2] = IUniswapV4SeBufferHook.joinProportional.selector;
+        expected[3] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        expected[4] = IUniswapV4SeBufferHookNativeLiquidity.joinNativeComponents.selector;
+        _assertExactRole(depositFacet, expected);
+        assertTrue(IERC165(hook).supportsInterface(type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId));
     }
 
     function _assertExactRole(IFacet facet_, bytes4[] memory expected_) internal {

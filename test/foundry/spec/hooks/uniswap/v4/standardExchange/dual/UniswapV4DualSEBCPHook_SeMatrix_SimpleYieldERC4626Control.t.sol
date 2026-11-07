@@ -32,7 +32,7 @@ contract UniswapV4DualSEBCPHook_SeMatrix_SimpleYieldERC4626Control is UniswapV4D
     function test_control_bareProtocolVault_rejectedAtPackageInit() public {
         IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchange0 = address(vaultA);
-        vm.expectRevert(bytes(""));
+        vm.expectRevert(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.TokenNotInVaultTokens.selector);
         this.deployHookArgs(args);
     }
 

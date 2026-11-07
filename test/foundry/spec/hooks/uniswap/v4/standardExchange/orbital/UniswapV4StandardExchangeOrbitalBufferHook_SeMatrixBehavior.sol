@@ -204,7 +204,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
     }
 
     function _hookFace(address token) internal view returns (uint256) {
-        return IERC20(token).balanceOf(hook);
+        uint8 index = token == face0 ? 0 : token == face1 ? 1 : 2;
+        return IERC20(token).balanceOf(hook) - orbital.rawReserve(index);
     }
 
     /// @dev Exact-out through the real PoolManager; `maxAmountIn` is the hook's quote plus a 1%
@@ -269,6 +270,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         uint256 allow = _f0(10);
         fx0.limitCapacity(allow);
         uint256 bookedBefore = fx0.seBooked();
+        uint256 localBefore = orbital.rawReserve(0);
         uint256 hookFaceBefore = _hookFace(face0);
         uint256 userFace = IERC20(face0).balanceOf(user);
         uint256 seBefore = _hookSeShares(0);
@@ -276,7 +278,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         assertGt(used0, allow, "join used more face than the dependency could take");
         assertEq(userFace - IERC20(face0).balanceOf(user), used0, "no refund of the unconsumed part");
         uint256 booked = fx0.seBooked() - bookedBefore;
-        assertGe(booked, used0 - allow, "SE booked the remainder above capacity");
+        assertGe(booked + orbital.rawReserve(0) - localBefore, used0 - allow, "SE and hook local books retain the unconsumed input");
         assertLe(booked, used0, "booked remainder never exceeds what was used");
         assertGt(_hookSeShares(0), seBefore, "hook still receives SE shares for the booked input");
         assertApproxEqAbs(_hookFace(face0), hookFaceBefore, _residualTolerance(), "no operation-created face residual on the non-identity leg");
@@ -295,20 +297,29 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         _roundingToZeroControl();
     }
 
-    function _positiveOneUnitDepositControl(uint256 expectedShares) internal {
-        uint256 userFace = IERC20(face0).balanceOf(user);
-        uint256 userShares = IERC20(hook).balanceOf(user);
-        uint256 hookFace = _hookFace(face0);
-        uint256 inventoryBefore = _hookSeShares(0);(uint256 expectedInventory,) = IStandardExchangeIn(seUT0).previewExchangeIn(IERC20(face0), 1, IERC20(seUT0));
-        assertGt(expectedShares, 0, "positive one-unit fixture");
-        assertEq(orbital.previewDepositSingle(face0, 1), expectedShares, "one-unit preview preserves positive shares");
-        vm.prank(user);
-        uint256 minted = orbital.depositSingle(face0, 1, user, expectedShares, block.timestamp + 1 hours, bytes(""));
-        assertEq(minted, expectedShares, "one-unit execution matches preview");
-        assertEq(IERC20(hook).balanceOf(user) - userShares, expectedShares, "recipient receives quoted shares");
-        assertEq(userFace - IERC20(face0).balanceOf(user), 1, "caller pays one face unit");
-        assertEq(_hookSeShares(0) - inventoryBefore, expectedInventory, "input becomes SE inventory");
-        assertEq(_hookFace(face0), hookFace, "no new face residual");
+    function _positiveOneUnitDepositControl(uint256) internal {
+        uint256 a0 = _f0(1);
+        uint256 a1 = _f1(1);
+        uint256 a2 = _f2(1);
+        Snap memory before_ = _snap();
+        uint256[3] memory local_ = [_hookFace(face0), _hookFace(face1), _hookFace(face2)];
+        uint256 userLp = IERC20(hook).balanceOf(user);
+        (uint256 quote, uint256 q0, uint256 q1, uint256 q2) = orbital.previewAddLiquidity(a0, a1, a2);
+        assertGt(quote, 0, "complete caller-funded basket has a positive quote");
+        (uint256 minted, uint256 used0, uint256 used1, uint256 used2) = _addLiquidity(a0, a1, a2);
+        assertEq(minted, quote);
+        assertEq(used0, q0); assertEq(used1, q1); assertEq(used2, q2);
+        assertEq(IERC20(hook).balanceOf(user) - userLp, minted);
+        assertEq(before_.userFace[0] - IERC20(face0).balanceOf(user), used0);
+        assertEq(before_.userFace[1] - IERC20(face1).balanceOf(user), used1);
+        assertEq(before_.userFace[2] - IERC20(face2).balanceOf(user), used2);
+        assertLe(used0, a0); assertLe(used1, a1); assertLe(used2, a2);
+        uint256 afterSupply = IERC20(hook).totalSupply();
+        address[3] memory faces_ = [face0, face1, face2];
+        for (uint8 i; i < 3; ++i) {
+            assertGe(_hookSeShares(i) * before_.supply, before_.hookSe[i] * afterSupply, "pre-intake share backing");
+            assertGe(_hookFace(faces_[i]) * before_.supply, local_[i] * afterSupply, "pre-intake local backing");
+        }
     }
 
     /// @dev A zero-rounded deposit previews zero and rejects execution without taking input.
@@ -372,7 +383,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares(0);
-        uint256 expectedDebit = IStandardExchangeOut(seUT0).previewExchangeOut(IERC20(seUT0), IERC20(face0), wantOut);
+        uint256 local = orbital.rawReserve(0);
+        uint256 expectedDebit = wantOut <= local ? 0 : IStandardExchangeOut(seUT0).previewExchangeOut(IERC20(seUT0), IERC20(face0), wantOut - local);
         vm.recordLogs();
         uint256 used = _pretransferExactOut(tin, tout, fatMax, wantOut);
         assertGt(used, 0);
@@ -554,11 +566,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior is
     }
 
     function _previewDepositSingleRow() internal {
-        uint256 amt = _f0(1);
-        uint256 pShares = orbital.previewDepositSingle(face0, amt);
+        uint256 amount = _f0(1);
+        uint256 quote = orbital.previewDepositSingle(face0, amount);
+        assertGt(quote, 0, "single input buys the missing components");
+        uint256 beforeLp = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        uint256 got = orbital.depositSingle(face0, amt, user, 0, block.timestamp + 1 hours, "");
-        assertEq(got, pShares, "depositSingle preview == execution");
+        uint256 minted = orbital.depositSingle(face0, amount, user, quote, block.timestamp + 1 hours, "");
+        assertEq(minted, quote, "single deposit preview == execution");
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
     }
 
     function _previewRemoveRow(uint256 burn) internal {

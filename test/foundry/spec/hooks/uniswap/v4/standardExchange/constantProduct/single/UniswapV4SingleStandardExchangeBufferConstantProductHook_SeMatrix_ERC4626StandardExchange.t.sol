@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
@@ -38,6 +39,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_ERC46
         UnderConsumeERC4626 proto = new UnderConsumeERC4626(SimpleMintableERC20(address(pairToken)));
         proto.setLeaveDust(1 ether);
         address underSe = _deployERC4626SE(address(proto));
+        se = underSe;
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchange = underSe;
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
@@ -74,6 +76,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_ERC46
         IERC20 tout = IERC20(raw);
         uint256 wantOut = 1 ether;
         uint256 used = IStandardExchangeOut(hook).previewExchangeOut(tin, tout, wantOut);
+        uint256 localBefore = tin.balanceOf(hook);
+        (, uint256 refundToHook) = IStandardExchangeIn(seUT).previewExchangeIn(tin, used, IERC20(seUT));
         assertGt(maxIn, used, "maximum exceeds quoted input");
         fx.fund(address(this), maxIn);
         tin.approve(address(rowCaller), maxIn);
@@ -85,7 +89,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_ERC46
         assertEq(abi.decode(returned, (uint256)), used, "quoted input consumed");
         assertEq(tin.balanceOf(address(rowCaller)), maxIn - used, "all unused credit refunded");
         assertEq(tout.balanceOf(address(rowCaller)), wantOut, "exact output paid");
-        assertEq(tin.balanceOf(hook), 0, "no prepayment stranded");
+        assertEq(tin.balanceOf(hook), localBefore + refundToHook, "only booked local inventory remains");
     }
 
 }

@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {UniswapV4UpperLowerWingsStandardExchangeVaultRebalanceFixture as Fixture} from
     "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultRebalance.t.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -136,17 +137,27 @@ contract UniswapV4StandardExchangeWeightedBufferHook_WingsRecurrence is Fixture 
         (Weighted consumer, address[] memory faces) = _consumer(choices);
         uint256[] memory amounts = new uint256[](faces.length);
         uint256[] memory balances = new uint256[](faces.length);
+        bool[] memory flags = new bool[](faces.length);
+        address[] memory inputs = new address[](faces.length);
         for (uint256 i; i < faces.length; ++i) {
             amounts[i] = 100 * 10 ** IERC20Metadata(faces[i]).decimals();
-            balances[i] = IERC20(faces[i]).balanceOf(address(this));
+            address se = consumer.standardExchange(i);
+            inputs[i] = se == address(0) ? faces[i] : se;
+            if (se != address(0)) {
+                IERC20(faces[i]).approve(se, amounts[i]);
+                (amounts[i],) = IStandardExchangeIn(se).exchangeIn(IERC20(faces[i]), amounts[i], IERC20(se), 1, address(this), false, block.timestamp);
+                IERC20(se).approve(address(consumer), type(uint256).max);
+                flags[i] = true;
+            }
+            balances[i] = IERC20(inputs[i]).balanceOf(address(this));
         }
-        (uint256 expected, uint256[] memory quotedUsed) = consumer.previewJoinProportional(amounts);
-        (uint256 minted, uint256[] memory used) = consumer.joinProportional(amounts, address(this), expected, block.timestamp);
+        (uint256 expected, uint256[] memory quotedUsed) = consumer.previewJoinProportionalFlexible(amounts, flags);
+        (uint256 minted, uint256[] memory used) = consumer.joinProportionalFlexible(amounts, flags, address(this), expected, block.timestamp);
         assertGt(minted, 0);
         assertEq(minted, expected);
         assertEq(used, quotedUsed);
         for (uint256 i; i < faces.length; ++i) {
-            assertEq(balances[i] - IERC20(faces[i]).balanceOf(address(this)), used[i]);
+            assertEq(balances[i] - IERC20(inputs[i]).balanceOf(address(this)), used[i]);
         }
         uint256 burn = minted / 5;
         uint256[] memory expectedOut = consumer.previewExitProportional(burn);

@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
@@ -26,6 +29,39 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
  * @notice Phase 0 + A + E: SE gate, flags, registry, salt, auto-mine.
  */
 contract UniswapV4SingleSEBufferHook_Deploy_Test is TestBase {
+    function test_binding_memberPairAndImplicitOwnShareRoundTrip() public {
+        address se_ = se;
+        address pair_ = address(pairToken);
+        address[] memory members_ = IBasicVault(se_).vaultTokens();
+        bool found_;
+        for (uint256 i_; i_ < members_.length; ++i_) {
+            assertTrue(members_[i_] != se_, "own share omitted from members");
+            if (members_[i_] == pair_) found_ = true;
+        }
+        assertTrue(found_, "configured pair is a member");
+        uint256 input_ = IERC20(pair_).balanceOf(user) / 100;
+        assertGt(input_, 0);
+        uint256 sharesBefore_ = IERC20(se_).balanceOf(user);
+        vm.startPrank(user);
+        IERC20(pair_).approve(se_, input_);
+        (uint256 minted_, uint256 refund_) = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(pair_), input_, IERC20(se_), 1, user, false, block.timestamp
+        );
+        assertGt(minted_, 0);
+        assertLe(refund_, input_);
+        assertEq(IERC20(se_).balanceOf(user), sharesBefore_ + minted_);
+        IERC20(se_).approve(se_, minted_);
+        uint256 pairBefore_ = IERC20(pair_).balanceOf(user);
+        (uint256 paid_, uint256 sharesRefunded_) = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(se_), minted_, IERC20(pair_), 1, user, false, block.timestamp
+        );
+        vm.stopPrank();
+        assertGt(paid_, 0);
+        assertEq(sharesRefunded_, 0);
+        assertEq(IERC20(se_).balanceOf(user), sharesBefore_);
+        assertEq(IERC20(pair_).balanceOf(user), pairBefore_ + paid_);
+    }
+
     function test_phase0_sePairPreviewEqualsExec() public {
         _assertSePreviewEqualsExec(50 ether);
     }

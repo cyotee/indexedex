@@ -27,39 +27,45 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_Rebas
         return f;
     }
     /// @notice Provider appreciation cannot turn custody on an identity leg into prepaid credit.
-    function test_APEX008_identityLeg_ratedBackingIsNotPretransferCredit() public {
+    function test_APEX008_memberLeg_ratedBackingIsNotPretransferCredit() public {
         RateProviderMock provider = new RateProviderMock();
         provider.mockRate(1.5e18);
         IPkg.PkgArgs memory args = _rowPkgArgs();
-        args.pairToken = seUT;
-        args.pairTokenDecimals = 28;
         args.rateProvider = address(provider);
         _deployRowHook(args);
-
         vm.startPrank(user);
-        IERC20(face).approve(seUT, 300 ether);IStandardExchangeIn(seUT).exchangeIn(IERC20(face), 300 ether, IERC20(seUT), 0, user, false, block.timestamp);
-        IERC20(seUT).approve(hook, type(uint256).max);
+        IERC20(face).approve(hook, type(uint256).max);
         IERC20(raw).approve(hook, type(uint256).max);
-        (uint256 a0, uint256 a1) = single.currency0() == seUT
-            ? (uint256(100e28), uint256(100 ether)) : (uint256(100 ether), uint256(100e28));
-        single.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
         vm.stopPrank();
-
+        _seed();
+        uint256 amount = _f(1);
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
-            (IERC20(seUT), 1e28, IERC20(raw), 0, address(rowCaller), true, block.timestamp + 1 hours));
-        uint256 booked = IERC20(seUT).balanceOf(hook);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1e28, 0));
+            (IERC20(face), amount, IERC20(raw), 0, address(rowCaller), true, block.timestamp + 1 hours));
+        uint256 booked = IERC20(face).balanceOf(hook);
+        uint256 sharesBefore = IERC20(seUT).balanceOf(hook);
+        assertGt(single.seClaimSupply(), booked, "rated backing exceeds physical local custody");
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, 0));
         rowCaller.execute(hook, data);
-        assertEq(IERC20(seUT).balanceOf(hook), booked, "identity backing unchanged");
+        assertEq(IERC20(face).balanceOf(hook), booked);
+        assertEq(IERC20(seUT).balanceOf(hook), sharesBefore);
         assertEq(IERC20(raw).balanceOf(address(rowCaller)), 0, "unfunded caller receives nothing");
-
+        (uint256 minted, uint256 refunded) = IStandardExchangeIn(seUT).previewExchangeIn(IERC20(face), amount, IERC20(seUT));
         vm.prank(user);
-        IERC20(seUT).approve(address(rowCaller), 1e28);
-        rowCaller.consumePretransfer(IERC20(seUT), user, hook, 1e28, data);
-        assertGt(IERC20(raw).balanceOf(address(rowCaller)), 0, "funded identity credit succeeds");
-        assertEq(IERC20(seUT).balanceOf(hook), booked + 1e28, "funded shares become backing");
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1e28, 0));
+        IERC20(face).approve(address(rowCaller), amount);
+        rowCaller.consumePretransfer(IERC20(face), user, hook, amount, data);
+        assertGt(IERC20(raw).balanceOf(address(rowCaller)), 0, "funded member-token credit succeeds");
+        assertEq(IERC20(face).balanceOf(hook), booked + refunded);
+        assertEq(IERC20(seUT).balanceOf(hook), sharesBefore + minted);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, 0));
         rowCaller.execute(hook, data);
+    }
+
+    function test_APEX008_identityBindingCannotBypassMembership() public {
+        IPkg.PkgArgs memory args = _rowPkgArgs();
+        args.pairToken = seUT;
+        args.pairTokenDecimals = 28;
+        vm.expectRevert(IPkg.TokenNotInVaultTokens.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
 }

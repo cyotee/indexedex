@@ -55,6 +55,10 @@ library UniswapV4StandardExchangeWeightedBufferHookRepo {
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
         UniswapV4SeBufferHookLegLib.Layout legs;
+        /// @dev Actual attributed shares; ambient balances are never LP backing.
+        uint256[] seReserves;
+        /// @dev Deployment registry, not a user-selected oracle or inferred SE interface.
+        address vaultRegistry;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -92,6 +96,7 @@ library UniswapV4StandardExchangeWeightedBufferHookRepo {
         l.pairDecimals = pairDecimals_;
         l.invDecimals = invDecimals_;
         l.rawReserves = new uint256[](n);
+        l.seReserves = new uint256[](n);
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
         _initLegs(l, tokens_, ses_);

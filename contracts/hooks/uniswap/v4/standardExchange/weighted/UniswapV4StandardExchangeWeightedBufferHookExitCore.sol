@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeWeightedBufferHookJoinCore} from "./UniswapV4StandardExchangeWeightedBufferHookJoinCore.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -65,16 +66,12 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
 {
     using SafeERC20 for IERC20;
 
-/* ---------------------------------------------------------------------- */
-    /*                         liquidity: join / exit                         */
-    /* ---------------------------------------------------------------------- */
-
     function _entryPreviewBurnToToken(uint256 lpAmount, address tokenOut)
         internal
         view
         returns (uint256 amountOut)
     {
-        if (lpAmount == 0 || _previewSupplyAfterProtocolMint() == 0) return 0;
+        if (lpAmount == 0 || _totalSupply() == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         UniswapV4SeBufferHookLegLib.LegKind k =
             UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
@@ -98,443 +95,92 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
         }
     }
 
-    function _entryPreviewExitProportional(uint256 shares)
-        internal
-        view
-        returns (uint256[] memory amounts)
-    {
-        // amounts = pair-token edge
-        uint256[] memory natives = _nativeAll();
-        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
-        amounts = _invToPairOutPreview(invOut);
-    }
+    function _entryPreviewExitProportional(uint256 burned) internal view returns (uint256[] memory) { return LiqLib.previewExit(burned, _flags()); }
+    function _entryPreviewExitProportionalFlexible(uint256 burned, bool[] calldata flags) internal view returns (uint256[] memory) { return LiqLib.previewExit(burned, flags); }
 
-
-    function _entryExitProportional(
-        uint256 shares,
-        address to,
-        uint256[] calldata amountsMin,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
+    function _entryExitProportional(uint256 burned, address to, uint256[] calldata minima, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-        if (shares == 0) revert ZeroAmount();
-        _maybeMintProtocolFee();
-        Repo.Layout storage l = Repo._layout();
-        if (amountsMin.length != l.numTokens) revert InvalidN();
-        uint256[] memory natives = _nativeAll();
-        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _totalSupply());
-        if (Math.isFullBookReserves(natives)) {
-            for (uint256 i; i < l.numTokens; ++i) {
-                if (invOut[i] >= natives[i]) revert WouldZeroReserve();
-            }
-        }
-        amounts = _invToPairOutPreview(invOut);
-        for (uint256 i; i < l.numTokens; ++i) {
-            if (amounts[i] < amountsMin[i]) revert Slippage();
-        }
-        _burnLp(msg.sender, shares);
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (invOut[i] == 0) continue;
-            if (l.standardExchanges[i] != address(0)) {
-                _unwrapSeShares(i, invOut[i], to);
-            } else {
-                l.rawReserves[i] -= invOut[i];
-                IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);
-            }
-        }
-        _snapshotKLastIfFeeOn();
+        if (burned == 0) revert ZeroAmount();
+        if (minima.length != Repo._layout().numTokens) revert InvalidN();
+        amounts = LiqLib.exit(msg.sender, burned, _flags(), to, minima);
         _syncVaultReserves();
-        int256[] memory deltas = new int256[](l.numTokens);
-        for (uint256 i; i < l.numTokens; ++i) {
-            deltas[i] = -int256(amounts[i]);
-        }
-        emit IUniswapV4StandardExchangeWeightedBufferHook.Exit(msg.sender, to, shares, deltas, 0);
+        int256[] memory deltas = new int256[](amounts.length);
+        for (uint256 i; i < amounts.length; ++i) deltas[i] = -int256(amounts[i]);
+        emit IUniswapV4StandardExchangeWeightedBufferHook.Exit(msg.sender, to, burned, deltas, 0);
     }
-
-
-    function _entryPreviewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        return _quoteExitSingleExactBptIn(tokenOut, sharesIn);
-    }
-
-
-    function _entryExitSingleAssetExactBptIn(
-        address tokenOut,
-        uint256 sharesIn,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
-        amountOut = _exitSingleAssetExactBptIn(tokenOut, sharesIn, to, amountOutMin, deadline);
-    }
-
-
-    function _entryWithdrawSingle(
-        address tokenOut,
-        uint256 sharesIn,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
-        amountOut = _exitSingleAssetExactBptIn(tokenOut, sharesIn, to, amountOutMin, deadline);
-    }
-
-
-    function _exitSingleAssetExactBptIn(
-        address tokenOut,
-        uint256 sharesIn,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal returns (uint256 amountOut) {
+    function _entryExitProportionalFlexible(uint256 burned, address to, bool[] calldata flags, uint256[] calldata minima, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-        if (sharesIn == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        _maybeMintProtocolFee();
-        amountOut = _quoteExitSingleExactBptIn(tokenOut, sharesIn);
-        if (amountOut < amountOutMin) revert Slippage();
-        uint8 idx = _tokenIndex(tokenOut);
-        Repo.Layout storage l = Repo._layout();
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
-        if (l.standardExchanges[idx] != address(0)) {
-            _unwrapSeShares(idx, invOut, to);
-        } else {
-            l.rawReserves[idx] -= invOut;
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
+        if (burned == 0) revert ZeroAmount();
+        amounts = LiqLib.exit(msg.sender, burned, flags, to, minima);
         _syncVaultReserves();
-        emit IUniswapV4StandardExchangeWeightedBufferHook.WithdrawSingle(msg.sender, to, tokenOut, amountOut, sharesIn, 0);
+        emit IUniswapV4StandardExchangeWeightedBufferHook.ExitFlexible(msg.sender, to, burned, flags, amounts, 0);
     }
 
-
-    function _entryPreviewWithdrawSingle(address tokenOut, uint256 sharesIn)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        return _entryPreviewExitSingleAssetExactBptIn(tokenOut, sharesIn);
+    function _singleExitBounds(uint256 burned) private view {
+        if (!_isLive()) revert NotFullBook();
+        if (burned == 0) revert ZeroAmount();
+        if (burned > FullMath.mulDiv(_totalSupply(), Math.WAD - Math.MIN_INVARIANT_RATIO, Math.WAD)) revert Math.MinInvariantRatio();
     }
-
-
-    function _singleExitInvOut(uint8 idx, uint256 sharesIn) internal view returns (uint256 invOut) {
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (feeWad >= Math.WAD) revert InvalidFeeWad();
-        uint256 outS = Math.singleExitExactInAmountOut(
-            _invWadAll(), Repo._layout().weights, idx, sharesIn, _previewSupplyAfterProtocolMint(), feeWad
-        );
-        invOut = Math.descale(outS, Repo._layout().invScales[idx]);
+    function _quoteExitSingleExactBptInFlexible(address tokenOut, uint256 burned, bool asShare) internal view returns (uint256) {
+        _singleExitBounds(burned);
+        return LiqLib.previewSingleExit(_tokenIndex(tokenOut), burned, asShare);
     }
+    function _entryPreviewExitSingleAssetExactBptIn(address tokenOut, uint256 burned) internal view returns (uint256) { return _quoteExitSingleExactBptInFlexible(tokenOut, burned, false); }
+    function _entryPreviewWithdrawSingle(address tokenOut, uint256 burned) internal view returns (uint256) { return _quoteExitSingleExactBptInFlexible(tokenOut, burned, false); }
+    function _entryPreviewExitSingleAssetExactBptInFlexible(address tokenOut, uint256 burned, bool asShare) internal view returns (uint256) { return _quoteExitSingleExactBptInFlexible(tokenOut, burned, asShare); }
+    function _entryPreviewWithdrawSingleFlexible(address tokenOut, uint256 burned, bool asShare) internal view returns (uint256) { return _quoteExitSingleExactBptInFlexible(tokenOut, burned, asShare); }
 
-
-    function _quoteExitSingleExactBptIn(address tokenOut, uint256 sharesIn)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        uint8 idx = _tokenIndex(tokenOut);
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        uint256[] memory inv = new uint256[](Repo._layout().numTokens);
-        inv[idx] = invOut;
-        uint256[] memory pair = _invToPairOutPreview(inv);
-        amountOut = pair[idx];
-    }
-
-
-    function _entryPreviewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
-        internal
-        view
-        returns (uint256 sharesIn)
-    {
-        return _quoteExitSingleExactTokenOut(tokenOut, amountOut);
-    }
-
-
-    function _entryExitSingleAssetExactTokenOut(
-        address tokenOut,
-        uint256 amountOut,
-        address to,
-        uint256 sharesInMax,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256 sharesIn) {
-        sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
-    }
-
-
-    function _entryWithdrawSingleExactOut(
-        address tokenOut,
-        uint256 amountOut,
-        address to,
-        uint256 sharesInMax,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256 sharesIn) {
-        sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
-    }
-
-
-    function _exitSingleAssetExactTokenOut(
-        address tokenOut,
-        uint256 amountOut,
-        address to,
-        uint256 sharesInMax,
-        uint256 deadline
-    ) internal returns (uint256 sharesIn) {
+    function _exitSingleAssetFrom(address holder, address tokenOut, uint256 burned, bool asShare, address to, uint256 minimum, uint256 deadline) internal returns (uint256 out) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-        if (amountOut == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        _maybeMintProtocolFee();
-        sharesIn = _quoteExitSingleExactTokenOut(tokenOut, amountOut);
-        if (sharesIn > sharesInMax) revert Slippage();
-        uint8 idx = _tokenIndex(tokenOut);
-        Repo.Layout storage l = Repo._layout();
-        uint256 invOut;
-        if (l.standardExchanges[idx] == address(0)) {
-            invOut = amountOut;
-        } else {
-            invOut = IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
-                IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut
-            );
-        }
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
-        if (l.standardExchanges[idx] != address(0)) {
-            _unwrapExactTokenOut(idx, amountOut, to);
-        } else {
-            l.rawReserves[idx] -= invOut;
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
+        _singleExitBounds(burned);
+        out = LiqLib.singleExit(holder, _tokenIndex(tokenOut), burned, asShare, to, minimum, 0);
         _syncVaultReserves();
-        emit IUniswapV4StandardExchangeWeightedBufferHook.WithdrawSingleExactOut(msg.sender, to, tokenOut, amountOut, sharesIn, 0);
+        emit IUniswapV4StandardExchangeWeightedBufferHook.WithdrawSingleFlexible(msg.sender, to, tokenOut, out, asShare, burned, 0);
     }
+    function _entryExitSingleAssetExactBptIn(address tokenOut, uint256 burned, address to, uint256 minimum, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256) { return _exitSingleAssetFrom(msg.sender, tokenOut, burned, false, to, minimum, deadline); }
+    function _entryWithdrawSingle(address tokenOut, uint256 burned, address to, uint256 minimum, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256) { return _exitSingleAssetFrom(msg.sender, tokenOut, burned, false, to, minimum, deadline); }
+    function _entryExitSingleAssetExactBptInFlexible(address tokenOut, uint256 burned, bool asShare, address to, uint256 minimum, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256) { return _exitSingleAssetFrom(msg.sender, tokenOut, burned, asShare, to, minimum, deadline); }
+    function _entryWithdrawSingleFlexible(address tokenOut, uint256 burned, bool asShare, address to, uint256 minimum, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256) { return _exitSingleAssetFrom(msg.sender, tokenOut, burned, asShare, to, minimum, deadline); }
 
-
-    function _entryPreviewWithdrawSingleExactOut(address tokenOut, uint256 amountOut)
-        internal
-        view
-        returns (uint256 sharesIn)
-    {
-        return _entryPreviewExitSingleAssetExactTokenOut(tokenOut, amountOut);
-    }
-
-
-    function _quoteExitSingleExactTokenOut(address tokenOut, uint256 amountOut)
-        internal
-        view
-        returns (uint256 sharesIn)
-    {
-        uint8 idx = _tokenIndex(tokenOut);
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+    function _entryPreviewExitSingleAssetExactTokenOut(address tokenOut, uint256 amount) internal view returns (uint256 burned) {
+        if (!_isLive()) revert NotFullBook();
+        if (amount == 0) revert ZeroAmount();
+        uint8 i = _tokenIndex(tokenOut);
         Repo.Layout storage l = Repo._layout();
-        uint256 invOut;
-        if (l.standardExchanges[idx] == address(0)) {
-            invOut = amountOut;
-        } else {
-            invOut = IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
-                IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut
-            );
+        uint256 inventory;
+        if (l.standardExchanges[i] == address(0)) inventory = amount;
+        else {
+            // Preserve the existing unsupported inverse-conversion boundary.
+            inventory = IStandardExchangeOut(l.standardExchanges[i]).previewExchangeOut(IERC20(l.standardExchanges[i]), IERC20(tokenOut), amount);
+            if (inventory == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
         }
-        sharesIn = Math.singleExitExactOutSharesIn(
-            _invWadAll(),
-            l.weights,
-            idx,
-            Math.scaleToUp(invOut, l.invScales[idx]),
-            _previewSupplyAfterProtocolMint(),
-            feeWad
-        );
+        burned = Math.singleExitExactOutSharesIn(_invWadAll(), l.weights, i, Math.scaleToUp(inventory, l.invScales[i]), _totalSupply(), _feeOracle().dexSwapFeeOfVault(address(this)));
+        uint256 predicted = _quoteExitSingleExactBptInFlexible(tokenOut, burned, false);
+        if (predicted < amount && predicted != 0) burned = FullMath.mulDiv(burned, amount, predicted, FullMath.Rounding.Ceil) + 1;
+        if (_quoteExitSingleExactBptInFlexible(tokenOut, burned, false) < amount) revert Slippage();
     }
+    function _entryPreviewWithdrawSingleExactOut(address tokenOut, uint256 amount) internal view returns (uint256) { return _entryPreviewExitSingleAssetExactTokenOut(tokenOut, amount); }
 
-
-    function _entryPreviewExitProportionalFlexible(uint256 shares, bool[] calldata receiveSeShare)
-        internal
-        view
-        returns (uint256[] memory amounts)
-    {
-        _validateSeShareFlags(receiveSeShare);
-        uint256[] memory natives = _nativeAll();
-        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
-        amounts = _invToEdgeOutPreview(invOut, receiveSeShare);
-    }
-
-
-    function _entryExitProportionalFlexible(
-        uint256 shares,
-        address to,
-        bool[] calldata receiveSeShare,
-        uint256[] calldata amountsMin,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
+    function _exitExactOutput(address tokenOut, uint256 amount, address to, uint256 maximum, uint256 deadline) private returns (uint256 burned) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-        if (shares == 0) revert ZeroAmount();
-        _validateSeShareFlags(receiveSeShare);
-        _maybeMintProtocolFee();
-        Repo.Layout storage l = Repo._layout();
-        if (amountsMin.length != l.numTokens || receiveSeShare.length != l.numTokens) {
-            revert ArrayLengthMismatch();
-        }
-        uint256[] memory natives = _nativeAll();
-        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _totalSupply());
-        if (Math.isFullBookReserves(natives)) {
-            for (uint256 i; i < l.numTokens; ++i) {
-                if (invOut[i] >= natives[i]) revert WouldZeroReserve();
-            }
-        }
-        amounts = _invToEdgeOutPreview(invOut, receiveSeShare);
-        for (uint256 i; i < l.numTokens; ++i) {
-            if (amounts[i] < amountsMin[i]) revert Slippage();
-        }
-        _burnLp(msg.sender, shares);
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (invOut[i] == 0) continue;
-            if (l.standardExchanges[i] != address(0)) {
-                if (receiveSeShare[i]) {
-                    IERC20(l.standardExchanges[i]).safeTransfer(to, invOut[i]);
-                } else {
-                    _unwrapSeShares(i, invOut[i], to);
-                }
-            } else {
-                l.rawReserves[i] -= invOut[i];
-                IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);
-            }
-        }
-        _snapshotKLastIfFeeOn();
+        burned = _entryPreviewExitSingleAssetExactTokenOut(tokenOut, amount);
+        if (burned > maximum) revert Slippage();
+        LiqLib.singleExit(msg.sender, _tokenIndex(tokenOut), burned, false, to, amount, amount);
         _syncVaultReserves();
-        emit IUniswapV4StandardExchangeWeightedBufferHook.ExitFlexible(
-            msg.sender, to, shares, receiveSeShare, amounts, 0
-        );
+        emit IUniswapV4StandardExchangeWeightedBufferHook.WithdrawSingleExactOut(msg.sender, to, tokenOut, amount, burned, 0);
     }
-
-
-    function _entryPreviewExitSingleAssetExactBptInFlexible(
-        address tokenOut,
-        uint256 sharesIn,
-        bool receiveSeShare
-    ) internal view returns (uint256 amountOut) {
-        return _quoteExitSingleExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
-    }
-
-
-    function _entryExitSingleAssetExactBptInFlexible(
-        address tokenOut,
-        uint256 sharesIn,
-        bool receiveSeShare,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
-        amountOut = _exitSingleAssetExactBptInFlexible(
-            tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline
-        );
-    }
-
-
-    function _entryWithdrawSingleFlexible(
-        address tokenOut,
-        uint256 sharesIn,
-        bool receiveSeShare,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
-        amountOut = _exitSingleAssetExactBptInFlexible(
-            tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline
-        );
-    }
-
-
-    function _entryPreviewWithdrawSingleFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        return _entryPreviewExitSingleAssetExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
-    }
-
-
-    function _exitSingleAssetExactBptInFlexible(
-        address tokenOut,
-        uint256 sharesIn,
-        bool receiveSeShare,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) internal returns (uint256 amountOut) {
-        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline);
-    }
-
-    function _exitSingleAssetFrom(
-        address holder, address tokenOut, uint256 sharesIn, bool receiveSeShare,
-        address to, uint256 amountOutMin, uint256 deadline
-    ) internal returns (uint256 amountOut) {
-        _requireDeadline(deadline);
-        if (to == address(0)) revert ZeroAddress();
-        if (sharesIn == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        uint8 idx = _tokenIndex(tokenOut);
-        if (receiveSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
-            revert SeShareNotBuffered();
-        }
-        _maybeMintProtocolFee();
-        amountOut = _quoteExitSingleExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
-        if (amountOut < amountOutMin) revert Slippage();
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(holder, sharesIn);
-        Repo.Layout storage l = Repo._layout();
-        if (l.standardExchanges[idx] != address(0)) {
-            if (receiveSeShare) {
-                IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);
-            } else {
-                _unwrapSeShares(idx, invOut, to);
-            }
-        } else {
-            l.rawReserves[idx] -= invOut;
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < l.numTokens; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
-        _syncVaultReserves();
-        emit IUniswapV4StandardExchangeWeightedBufferHook.WithdrawSingleFlexible(
-            msg.sender, to, tokenOut, amountOut, receiveSeShare, sharesIn, 0
-        );
-    }
-
-
-    function _quoteExitSingleExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
-        uint8 idx = _tokenIndex(tokenOut);
-        if (receiveSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
-            revert SeShareNotBuffered();
-        }
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (receiveSeShare || Repo._layout().standardExchanges[idx] == address(0)) {
-            amountOut = invOut;
-        } else {
-            address se = Repo._layout().standardExchanges[idx];(amountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), invOut, IERC20(tokenOut)
-            );
-        }
-    }
-
-
+    function _entryExitSingleAssetExactTokenOut(address tokenOut, uint256 amount, address to, uint256 maximum, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256) { return _exitExactOutput(tokenOut, amount, to, maximum, deadline); }
+    function _entryWithdrawSingleExactOut(address tokenOut, uint256 amount, address to, uint256 maximum, uint256 deadline)
+        internal onlyLiquidityRemover nonReentrant returns (uint256) { return _exitExactOutput(tokenOut, amount, to, maximum, deadline); }
 }

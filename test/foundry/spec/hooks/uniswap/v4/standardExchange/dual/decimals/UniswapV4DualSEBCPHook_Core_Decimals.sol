@@ -49,16 +49,22 @@ abstract contract UniswapV4DualSEBCPHook_Core_Decimals is TestBase_UniswapV4Dual
     function test_F2_protocolFee_mintsToFeeTo() public {
         _enableProtocolFee(0.05e18);
         _depositBoth(_uA(100), _uB(100));
+        address feeTo_ = dual.feeTo();
+        uint256 feeBefore = IERC20(hook).balanceOf(feeTo_);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
         tokenA.mint(address(this), _uA(10));
         tokenB.mint(address(this), _uB(10));
         tokenA.approve(address(vaultA), _uA(10));
         tokenB.approve(address(vaultB), _uB(10));
         vaultA.simulateYield(_uA(10));
         vaultB.simulateYield(_uB(10));
-        address feeTo_ = dual.feeTo();
-        uint256 feeLpBefore = IERC20(hook).balanceOf(feeTo_);
-        _depositBoth(_uA(10), _uB(10));
-        assertGt(IERC20(hook).balanceOf(feeTo_), feeLpBefore);
-        assertGt(dual.kLast(), 0);
+        assertEq(IERC20(hook).totalSupply(), supplyBefore, "yield does not mint LP");
+        assertEq(IERC20(hook).balanceOf(feeTo_), feeBefore, "yield is not the fee basis");
+        uint256 net = _depositBoth(_uA(10), _uB(10));
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        uint256 fee = IERC20(hook).balanceOf(feeTo_) - feeBefore;
+        assertEq(fee, gross * 0.05e18 / 1e18);
+        assertEq(net + fee, gross, "fee split, not an extra mint");
+        assertEq(dual.kLast(), 0, "retired growth checkpoint remains reserved");
     }
 }

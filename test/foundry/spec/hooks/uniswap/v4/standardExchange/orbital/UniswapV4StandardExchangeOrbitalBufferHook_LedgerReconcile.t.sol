@@ -49,8 +49,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LedgerReconcile_Test is
         // effective reserve is the SE-claim valuation (non-zero) and equals seClaim(0).
         assertEq(orbital.seBalance(0), IERC20(se0).balanceOf(hook), "buffered seBalance == hook SE balance");
         assertGt(orbital.seBalance(0), 0, "buffered leg has SE backing");
-        assertEq(orbital.rawReserve(0), 0, "buffered leg has 0 raw reserve");
-        assertEq(orbital.effectiveReserve(0), orbital.seClaim(0), "buffered effective == seClaim");
+        assertEq(orbital.rawReserve(0), token0.balanceOf(hook), "local component custody");
+        assertEq(orbital.effectiveReserve(0), orbital.rawReserve(0) + orbital.seClaim(0), "buffered effective == seClaim");
         assertGt(orbital.effectiveReserve(0), 0, "buffered effective > 0");
 
         // Raw legs settle on raw reserves: effective == raw == the amount actually booked.
@@ -127,7 +127,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LedgerReconcile_Test is
         uint256 beforeUser0 = token0.balanceOf(user);
         uint256 beforeUser2 = token2.balanceOf(user);
         vm.expectRevert(abi.encodeWithSignature("ReservesExceedRadius()"));
-        _addLiquidity(radius, radius, radius);
+        vm.prank(user);
+        orbital.addLiquidity(radius, radius, radius, user, 0, block.timestamp + 1 hours, "");
         assertEq(token0.balanceOf(user), beforeUser0, "failed join restores buffered input");
         assertEq(token1.balanceOf(user), userBefore, "failed join restores first raw input");
         assertEq(token2.balanceOf(user), beforeUser2, "failed join restores second raw input");
@@ -153,7 +154,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LedgerReconcile_Test is
         assertEq(orbital.effectiveReserve(2), orbital.rawReserve(2), "leg2 effective == raw");
         // Buffered leg: SE-share balance tracks the hook's SE token balance.
         assertEq(orbital.seBalance(0), IERC20(se0).balanceOf(hook), "leg0 seBalance == hook SE balance");
-        assertEq(orbital.effectiveReserve(0), orbital.seClaim(0), "leg0 effective == seClaim");
+        assertEq(orbital.effectiveReserve(0), orbital.rawReserve(0) + orbital.seClaim(0), "leg0 effective == seClaim");
         // Guard invariant preserved.
         assertLt(orbital.effectiveReserve(0), orbital.radius(), "leg0 under radius");
         assertLt(orbital.effectiveReserve(1), orbital.radius(), "leg1 under radius");

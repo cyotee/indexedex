@@ -79,20 +79,22 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
         assertEq(IERC20(hook).totalSupply(), supply - burn);
     }
 
-    function test_depositSingle_withdrawSingle_previewEqualsExec() public {
-        _firstMintInvWad(500);
-        (address tok, uint256 amt) = _singleJoinTokenAndAmt(20);
-        uint256 pShares = quad.previewDepositSingle(tok, amt);
+    function test_singleJoinAndExit_previewEqualsExecution() public {
+        uint256 seeded = _firstMintInvWad(500);
+        (address tok, uint256 amount) = _singleJoinTokenAndAmt(20);
+        uint256 predicted = quad.previewDepositSingle(tok, amount);
+        assertGt(predicted, 0);
         vm.prank(user);
-        uint256 shares = quad.depositSingle(tok, amt, user, 0, block.timestamp + 1);
-        _assertPreviewEq(shares, pShares);
-        assertGt(shares, 0);
-
-        uint256 pOut = quad.previewWithdrawSingle(tok, shares);
+        uint256 minted = quad.depositSingle(tok, amount, user, predicted, block.timestamp + 1);
+        _assertPreviewEq(minted, predicted);
+        uint256 burned = seeded / 20;
+        uint256 quotedOut = quad.previewWithdrawSingle(tok, burned);
+        uint256 beforeOutput = IERC20(tok).balanceOf(user);
         vm.prank(user);
-        uint256 out = quad.withdrawSingle(tok, shares, user, 0, block.timestamp + 1);
-        _assertPreviewEq(out, pOut);
+        uint256 out = quad.withdrawSingle(tok, burned, user, 0, block.timestamp + 1);
+        _assertPreviewEq(out, quotedOut);
         assertGt(out, 0);
+        assertEq(IERC20(tok).balanceOf(user) - beforeOutput, out);
     }
 
     function test_swapExactIn_onePair_previewEqualsExec() public {
@@ -239,16 +241,13 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
         for (uint8 i; i < 4; ++i) {
             amounts[i] = toks[i] == address(t6) ? 100_000e6 : 100 ether;
         }
-        (uint256 prev,) = quad.previewJoinProportional(amounts);
-        vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
-        _assertPreviewEq(shares, prev);
+        uint256 shares = _seedFromPairs(amounts);
         assertGt(shares, 0, "first mint mixed decimals");
         assertTrue(quad.isFullBook());
         assertEq(IERC20(hook).balanceOf(address(0)), 1000);
     }
 
-    function test_donation_rawFace_dilutesJoin() public {
+    function test_donation_rawFace_remainsUnbooked() public {
         _firstMintEqual(200);
         uint256[] memory amounts = _balancedAmounts(20);
         (uint256 sharesBefore,) = quad.previewJoinProportional(amounts);
@@ -259,13 +258,13 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
             return;
         }
         token1.mint(hook, _u1(100));
-        assertEq(quad.nativeReserve(1), token1.balanceOf(hook), "live face");
+        assertEq(quad.nativeReserve(1), token1.balanceOf(hook) - _u1(100), "ambient excluded");
         (uint256 sharesAfter,) = quad.previewJoinProportional(amounts);
-        assertLt(sharesAfter, sharesBefore, "raw donation dilutes join mint");
+        assertEq(sharesAfter, sharesBefore, "raw donation remains unbooked");
     }
 
     /// @notice A1: SE share donation dilutes subsequent join (no free LP credit).
-    function test_A1_donation_seShares_dilutesJoin() public {
+    function test_A1_donation_seShares_remainsUnbooked() public {
         _firstMintEqual(200);
         uint256[] memory amounts = _balancedAmounts(20);
         (uint256 sharesBefore,) = quad.previewJoinProportional(amounts);
@@ -278,7 +277,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
         vm.stopPrank();
 
         (uint256 sharesAfter,) = quad.previewJoinProportional(amounts);
-        assertLt(sharesAfter, sharesBefore, "SE share donation must dilute subsequent join");
+        assertEq(sharesAfter, sharesBefore, "unbooked shares do not affect LP issuance");
     }
 
     /// @notice C1: reentrancy-hostile raw ERC20 reenters depositSingle during transferFrom → nested fail.
@@ -318,15 +317,14 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
 
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 100 ether;
-        vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedFromPairs(amounts);
         assertGt(shares, 0);
         assertTrue(quad.isFullBook());
 
+        for (uint256 i; i < 4; ++i) amounts[i] = 5 ether;
         vm.prank(user);
-        uint256 okShares =
-            quad.depositSingle(address(hostile), 5 ether, user, 0, block.timestamp + 1 hours);
-        assertGt(okShares, 0, "control depositSingle works");
+        (uint256 okShares,) = quad.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(okShares, 0, "complete-basket control works");
 
         bytes memory reentry = abi.encodeWithSelector(
             IUniswapV4StandardExchangeBalancerQuadStableBufferHook.depositSingle.selector,
@@ -339,10 +337,14 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals
         hostile.arm(hook, reentry);
 
         for (uint256 i; i < 4; ++i) amounts[i] = 10 ether;
+        uint256 lpBefore = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        (uint256 outerShares,) = quad.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(outerShares, 0);
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, outerShares);
         assertGt(hostile.reentryAttempts(), 0, "reentry attempted");
         assertFalse(hostile.nestedCallSucceeded(), "nested mutator must fail reentrancy guard");
+        assertEq(hostile.nestedErrorSelector(), bytes4(keccak256("Reentrancy()")), "nested call reaches the guard");
     }
 }
 

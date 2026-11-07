@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeWeightedBufferHookInQuoteBase} from "./UniswapV4StandardExchangeWeightedBufferHookInQuoteBase.sol";
 
 import {NativeStandardYieldPreviewTarget as NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldPreviewTarget.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookLiquidityLib as LiqLib} from "./UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
@@ -17,6 +18,14 @@ import {UniswapV4StandardExchangeWeightedBufferHookExitCore} from "contracts/hoo
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is UniswapV4StandardExchangeWeightedBufferHookInQuoteBase, NativeStandardYieldTarget {
 function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        if (address(tokenOut) == address(this) && address(tokenIn) != address(this) && amountIn != 0 && _isLive()
+            && UniswapV4SeBufferHookLegLib.classify(Repo._layout().legs, address(tokenIn)) != UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+            (uint256[] memory amounts, bool[] memory flags) = _singleInputs(address(tokenIn), amountIn, false);
+            uint256[] memory used;
+            (amountOut, used) = LiqLib.previewJoin(amounts, flags, true);
+            for (uint256 i; i < amounts.length; ++i) if (amounts[i] != 0) amountRefunded = amounts[i] - used[i];
+            return (amountOut, amountRefunded);
+        }
         return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
@@ -135,7 +144,7 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
             marked += FullMath.mulDiv(rated[j], wIn, wOut);
         }
         if (marked == 0) return 0;
-        uint256 lpSupply = _previewSupplyAfterProtocolMint();
+        uint256 lpSupply = _totalSupply();
         if (lpSupply == 0) return 0;
         uint256 pairWad = FullMath.mulDiv(marked, ctx.ownedLp, lpSupply);
         if (pairWad == 0) return 0;
@@ -151,11 +160,11 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
         return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
     }
 
-    /// @notice The same weighted native-inventory unit used for LP issuance and protocol LP fees.
+    /// @notice Informational weighted swap-reserve mark per LP; never an ownership denominator.
     function exchangeRate() external view override returns (uint256) {
-        uint256 supply_ = _previewSupplyAfterProtocolMint();
+        uint256 supply_ = _totalSupply();
         if (supply_ == 0) return 1e18;
-        (,, uint256 liquidity_) = _measureK();
+        (,, uint256 liquidity_) = _measureK(_ratedWadAll());
         return FullMath.mulDiv(liquidity_, 1e18, supply_);
     }
 

@@ -25,8 +25,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_N8_Decimals is
         for (uint256 i; i < 8; ++i) {
             amounts[i] = _raw(toks[i], 50);
         }
-        vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedAmounts(user, amounts);
         assertGt(shares, 0);
 
         uint256 swapIn = _raw(toks[1], 1);

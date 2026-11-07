@@ -53,24 +53,72 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi is
     }
 
     function test_T1_6_firstJoinUnbalanced_fullBook_isLive() public {
-        uint256 lp = _joinFullBook(50 ether, 50 ether);
+        address[] memory tokens_ = new address[](2);
+        tokens_[0] = address(rawToken);
+        tokens_[1] = address(pairToken);
+        uint256[] memory amounts_ = new uint256[](2);
+        amounts_[0] = 50 ether;
+        amounts_[1] = 50 ether;
+        uint256 rawBefore_ = rawToken.balanceOf(user);
+        uint256 pairBefore_ = pairToken.balanceOf(user);
+        uint256 preview = single.previewJoinUnbalanced(tokens_, amounts_);
+        assertGt(preview, 0, "pair-funded genesis preview");
+        vm.prank(user);
+        uint256 lp = single.joinUnbalanced(tokens_, amounts_, user, preview, block.timestamp + 1 hours);
+        assertEq(lp, preview, "pair-funded genesis preview equals execution");
+        assertEq(rawToken.balanceOf(user), rawBefore_ - 50 ether, "genesis raw supplied");
+        assertEq(pairToken.balanceOf(user), pairBefore_ - 50 ether, "genesis pair supplied");
+        assertGt(IERC20(se).balanceOf(hook), 0, "pair funding acquires SE shares");
+        assertGt(pairToken.balanceOf(hook), 0, "five-percent redemption seeds local pair");
         assertGt(lp, 0, "T1.6 lp");
         assertTrue(single.isLive(), "T1.6 live");
         assertEq(IERC20(hook).balanceOf(user), lp, "T1.6 to");
     }
 
+    function test_T1_6_firstJoinUnbalanced_rawAndShare_isLive() public {
+        uint256 shares = _mintSeSharesToUser(50 ether);
+        address[] memory tokens_ = new address[](2);
+        tokens_[0] = address(rawToken);
+        tokens_[1] = se;
+        uint256[] memory amounts_ = new uint256[](2);
+        amounts_[0] = 50 ether;
+        amounts_[1] = shares;
+        uint256 preview = single.previewJoinUnbalanced(tokens_, amounts_);
+        uint256 rawBefore = rawToken.balanceOf(user);
+        uint256 shareBefore = IERC20(se).balanceOf(user);
+        assertGt(preview, 0, "share-funded genesis preview");
+        vm.prank(user);
+        uint256 lp = single.joinUnbalanced(tokens_, amounts_, user, preview, block.timestamp + 1 hours);
+        assertEq(lp, preview, "share-funded genesis preview equals execution");
+        assertEq(rawToken.balanceOf(user), rawBefore - 50 ether, "share genesis raw supplied");
+        assertEq(IERC20(se).balanceOf(user), shareBefore - shares, "caller funds all genesis shares");
+        assertEq(IERC20(se).balanceOf(hook), shares - shares / 20, "actual five-percent share redemption");
+        assertGt(pairToken.balanceOf(hook), 0, "actual redemption seeds local pair");
+        assertEq(IERC20(hook).balanceOf(user), lp, "share genesis recipient LP");
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000, "share genesis locks minimum");
+        assertTrue(single.isLive(), "share-funded full book live");
+    }
+
     function test_T1_7_afterLive_joinSingleAsset_pairAndShare() public {
         _joinFullBook(80 ether, 80 ether);
+        uint256 before_ = IERC20(hook).balanceOf(user);
+        uint256 preview = single.previewJoinSingleAssetExactIn(address(pairToken), 5 ether);
+        assertGt(preview, 0, "pair-funded paid preparation");
         vm.prank(user);
-        uint256 lpPair = single.joinSingleAssetExactIn(
-            address(pairToken), 5 ether, user, 0, block.timestamp + 1 hours
+        uint256 minted = single.joinSingleAssetExactIn(
+            address(pairToken), 5 ether, user, preview, block.timestamp + 1 hours
         );
-        assertGt(lpPair, 0, "T1.7 pair");
+        assertEq(minted, preview, "pair preview equals execution");
+        assertEq(IERC20(hook).balanceOf(user) - before_, minted, "pair recipient LP");
 
         uint256 seShares = _mintSeSharesToUser(20 ether);
+        before_ = IERC20(hook).balanceOf(user);
+        preview = single.previewJoinSingleAssetExactIn(se, seShares);
+        assertGt(preview, 0, "share-funded paid preparation");
         vm.prank(user);
-        uint256 lpSe = single.joinSingleAssetExactIn(se, seShares, user, 0, block.timestamp + 1 hours);
-        assertGt(lpSe, 0, "T1.7 share");
+        minted = single.joinSingleAssetExactIn(se, seShares, user, preview, block.timestamp + 1 hours);
+        assertEq(minted, preview, "share preview equals execution");
+        assertEq(IERC20(hook).balanceOf(user) - before_, minted, "share recipient LP");
     }
 
     function test_T1_8_joinUnbalanced_pairAndShare_reverts() public {
@@ -158,13 +206,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi is
     }
 
     function _joinFullBook(uint256 rawAmt, uint256 pairAmt) internal returns (uint256 lp) {
-        address[] memory ts = new address[](2);
-        ts[0] = address(rawToken);
-        ts[1] = address(pairToken);
-        uint256[] memory am = new uint256[](2);
-        am[0] = rawAmt;
-        am[1] = pairAmt;
+        uint256 shares_ = _mintSeSharesToUser(pairAmt);
         vm.prank(user);
-        lp = single.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
+        (lp,,) = single.depositWithSeShares(rawAmt, shares_, user, 1, block.timestamp + 1 hours);
     }
 }

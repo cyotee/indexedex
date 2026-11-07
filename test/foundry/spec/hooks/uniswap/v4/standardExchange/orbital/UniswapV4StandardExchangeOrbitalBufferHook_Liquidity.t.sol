@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeOrbitalBufferHookMath as HookMath} from
     "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
 
+import {IUniswapV4StandardExchangeOrbitalBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
@@ -76,16 +77,18 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LiquidityTest is
         // Default config buffers leg0: SE claim of buffer output tracks face (not always 1:1).
         assertGt(e0, 0);
         assertGt(orbital.seBalance(0), 0);
-        assertEq(orbital.rawReserve(0), 0);
+        assertEq(orbital.rawReserve(0), token0.balanceOf(hook));
+        assertGt(orbital.rawReserve(0), 0);
         assertEq(e1, 100 ether);
         assertEq(e2, 100 ether);
         assertGt(orbital.radius(), 0);
     }
 
     function test_firstMint_oneLeg_reverts() public {
+        uint256 supplied = _mintSeSharesToUser(se0, token0, 100 ether);
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSignature("FirstMintRequiresTwoLegs()"));
-        orbital.addLiquidity(100 ether, 0, 0, user, 0, block.timestamp + 1 hours, "");
+        orbital.depositFlexible(supplied, true, 0, false, 0, false, user, 0, block.timestamp + 1 hours);
     }
 
     function test_fullBook_subsequent_previewEqualsExec() public {
@@ -112,57 +115,34 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LiquidityTest is
         assertEq(a2, p2);
     }
 
-    function test_partialBook_seedThirdLeg() public {
+    function test_partialBook_singleLegPurchasesMissingBasket() public {
         _addLiquidity(100 ether, 100 ether, 0);
-        // partial: add third leg
-        (uint256 shares,,,) = _addLiquidity(0, 0, 50 ether);
-        assertGt(shares, 0);
-        assertGt(orbital.effectiveReserve(2), 0);
+        uint256 beforeInput = token2.balanceOf(user);
+        uint256 beforeLp = IERC20(hook).balanceOf(user);
+        (uint256 quote,,,) = orbital.previewAddLiquidity(0, 0, 50 ether);
+        assertGt(quote, 0);
+        vm.prank(user);
+        (uint256 minted,,,) = orbital.addLiquidity(0, 0, 50 ether, user, quote, block.timestamp, "");
+        assertEq(minted, quote);
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
+        assertGt(beforeInput - token2.balanceOf(user), 0);
+        assertLe(beforeInput - token2.balanceOf(user), 50 ether);
+        assertGt(orbital.rawReserve(2), 0, "new leg has actual paid backing");
+        assertEq(orbital.rawReserve(0), token0.balanceOf(hook));
+        assertEq(orbital.rawReserve(1), token1.balanceOf(hook));
+        assertEq(orbital.rawReserve(2), token2.balanceOf(hook));
+        assertEq(orbital.seBalance(0), IERC20(se0).balanceOf(hook));
     }
 
-    function test_liquidity_1se_bufferLast() public {
-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args =
-            _argsWithSE(true, false, false);
-        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
-        address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
-        // Approve SE to pull token0 when buffering (hook exchangeIn into SE)
-        token0.mint(user, 1000 ether);
-        token1.mint(user, 1000 ether);
-        token2.mint(user, 1000 ether);
-        vm.startPrank(user);
-        token0.approve(h, type(uint256).max);
-        token1.approve(h, type(uint256).max);
-        token2.approve(h, type(uint256).max);
-        (bool ok, bytes memory ret) = h.call(
-            abi.encodeWithSignature(
-                "addLiquidity(uint256,uint256,uint256,address,uint256,uint256,bytes)",
-                100 ether,
-                100 ether,
-                100 ether,
-                user,
-                0,
-                block.timestamp + 1 hours,
-                ""
-            )
-        );
-        vm.stopPrank();
-        if (!ok) {
-            // Decode custom error / string if present for diagnosis
-            if (ret.length > 0) {
-                assembly {
-                    ret := add(ret, 0x04)
-                }
-            }
-            revert(string(ret));
-        }
-        (ok, ret) = h.staticcall(abi.encodeWithSignature("seBalance(uint8)", uint8(0)));
-        assertTrue(ok);
-        assertGt(abi.decode(ret, (uint256)), 0, "SE shares held");
-        (ok, ret) = h.staticcall(abi.encodeWithSignature("rawReserve(uint8)", uint8(0)));
-        assertTrue(ok);
-        assertEq(abi.decode(ret, (uint256)), 0, "buffered leg raw book 0");
-        (ok, ret) = h.staticcall(abi.encodeWithSignature("radius()"));
-        assertTrue(ok);
-        assertGt(abi.decode(ret, (uint256)), 0, "R set with SE");
+    function test_liquidity_1se_shareFundedLocalSeed() public {
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
+        address h = PkgFactory.deployHook(hookPkg, args, PkgFactory.findMineNonce(hookFactory, hookPkg, args));
+        IUniswapV4StandardExchangeOrbitalBufferHook target = IUniswapV4StandardExchangeOrbitalBufferHook(h);
+        (uint256 minted,,,) = _seedFor(target, user, 100 ether, 100 ether, 100 ether);
+        assertGt(minted, 0);
+        assertGt(target.seBalance(0), 0);
+        assertGt(target.rawReserve(0), 0);
+        assertEq(target.rawReserve(0), token0.balanceOf(h));
+        assertGt(target.radius(), 0);
     }
 }

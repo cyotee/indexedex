@@ -11,6 +11,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4StandardExchangeWeightedBufferHook} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook.sol";
@@ -43,7 +44,9 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         assertEq(abi.encode(tokens_), abi.encode(sy_.getTokensOut()));
         assertEq(sy_.getRewardTokens().length, 0);
         assertFalse(sy_.isValidTokenIn(hook));
-        uint256 root_ = Math.sqrt(IERC20(se0).balanceOf(hook) * token1.balanceOf(hook));
+        uint256 rated_ = Math.mulDiv(IERC20(se0).balanceOf(hook), IRateProvider(weighted.rateProvider(address(token0))).getRate(), 1e18)
+            + token0.balanceOf(hook);
+        uint256 root_ = Math.sqrt(rated_ * token1.balanceOf(hook));
         // Existing Balancer powDown subtracts a 1e-14 relative error per power.
         // Two half-weight powers plus integer product rounding fit within 3e-14.
         assertApproxEqRel(sy_.exchangeRate(), Math.mulDiv(root_, 1e18, sy_.totalSupply()), 30_000, "native book matches the geometric mean within the existing conservative power bound");
@@ -65,21 +68,27 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         }
     }
 
-    function test_weightedSYAllPairAndShareInputsAndOutputs() public noSelfCalls(hook) {
+    function test_weightedSYPaidSingleInputsMintAndAllOutputsRedeem() public noSelfCalls(hook) {
         address[3] memory tokens_ = [address(token0), address(token1), se0];
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             address in_ = tokens_[i_];
             address out_ = tokens_[(i_ + 1) % tokens_.length];
             uint256 amount_ = 5 ether;
             uint256 expected_ = sy_.previewDeposit(in_, amount_);
-            uint256 paidBefore_ = IERC20(in_).balanceOf(user);
+            assertGt(expected_, 0, "paid preparation funds the complete basket");
             (uint256 previewAmountOut1,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(in_), amount_, IERC20(hook));
             assertEq(previewAmountOut1, expected_);
+            uint256 lpBefore_ = sy_.balanceOf(user);
+            uint256 inputBefore_ = IERC20(in_).balanceOf(user);
             vm.prank(user);
             uint256 minted_ = sy_.deposit(user, in_, amount_, expected_);
             assertEq(minted_, expected_);
-            assertEq(IERC20(in_).balanceOf(user), paidBefore_ - amount_);
+            assertEq(sy_.balanceOf(user) - lpBefore_, minted_);
+            uint256 spent_ = inputBefore_ - IERC20(in_).balanceOf(user);
+            assertGt(spent_, 0);
+            assertLe(spent_, amount_);
             uint256 quote_ = sy_.previewRedeem(out_, minted_);
+            assertGt(quote_, 0, "real SY redemption remains feasible");
             uint256 receivedBefore_ = IERC20(out_).balanceOf(user);
             vm.prank(user);
             uint256 received_ = sy_.redeem(user, minted_, out_, quote_, false);
@@ -88,26 +97,47 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         }
     }
 
-    function test_weightedStandardExactOutputLiquidityUsesRequiredAmountOnly() public {
+    function test_weightedStandardExactOutputPaidJoinAndRedemptionRespectBudgets() public {
         uint256 wanted_ = 1 ether;
-        uint256 required_ = IStandardExchangeOut(hook).previewExchangeOut(token1, IERC20(hook), wanted_);
-        uint256 before_ = token1.balanceOf(user);
+        uint256 requiredIn_ = IStandardExchangeOut(hook).previewExchangeOut(token1, IERC20(hook), wanted_);
+        assertGt(requiredIn_, 0);
+        bytes32 state_ = _componentOwnershipState(user);
+        vm.prank(user);
+        vm.expectRevert();
+        IStandardExchangeOut(hook).exchangeOut(token1, 0, IERC20(hook), wanted_, user, false, block.timestamp);
+        assertEq(_componentOwnershipState(user), state_, "insufficient input budget restores all custody");
+        uint256 inputBefore_ = token1.balanceOf(user);
         uint256 lpBefore_ = sy_.balanceOf(user);
         vm.prank(user);
-        uint256 spent_ = IStandardExchangeOut(hook).exchangeOut(token1, required_ + 100 ether, IERC20(hook), wanted_, user, false, block.timestamp);
-        assertEq(spent_, required_);
-        assertEq(token1.balanceOf(user), before_ - required_);
-        assertEq(sy_.balanceOf(user), lpBefore_ + wanted_);
-        required_ = IStandardExchangeOut(hook).previewExchangeOut(IERC20(hook), token1, wanted_);
+        uint256 used_ = IStandardExchangeOut(hook).exchangeOut(token1, requiredIn_ + 100 ether, IERC20(hook), wanted_, user, false, block.timestamp);
+        assertGt(used_, 0);
+        assertLe(used_, requiredIn_, "forward quote bounds actual input, not caller fat maximum");
+        assertEq(inputBefore_ - token1.balanceOf(user), used_);
+        assertEq(sy_.balanceOf(user) - lpBefore_, wanted_, "exact net LP delivered after mint fee");
+        uint256 before_ = token1.balanceOf(user);
         lpBefore_ = sy_.balanceOf(user);
-        before_ = token1.balanceOf(user);
+        uint256 required_ = IStandardExchangeOut(hook).previewExchangeOut(IERC20(hook), token1, wanted_);
+        assertGt(required_, 0);
         vm.prank(user);
-        spent_ = IStandardExchangeOut(hook).exchangeOut(IERC20(hook), required_ + 100 ether, token1, wanted_, user, false, block.timestamp);
+        uint256 spent_ = IStandardExchangeOut(hook).exchangeOut(IERC20(hook), required_ + 100 ether, token1, wanted_, user, false, block.timestamp);
         assertEq(spent_, required_);
         assertEq(sy_.balanceOf(user), lpBefore_ - required_);
         assertEq(token1.balanceOf(user), before_ + wanted_);
         vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
         IStandardExchangeOut(hook).previewExchangeOut(IERC20(se0), IERC20(hook), wanted_);
+    }
+
+    function test_weightedCompleteComponentJoinStillMintsPositiveLP() public {
+        uint256[] memory amounts_ = new uint256[](2);
+        amounts_[0] = 5 ether;
+        amounts_[1] = 5 ether;
+        (uint256 preview_,) = weighted.previewJoinProportional(amounts_);
+        assertGt(preview_, 0);
+        uint256 before_ = sy_.balanceOf(user);
+        vm.prank(user);
+        (uint256 net_,) = weighted.joinProportional(amounts_, user, preview_, block.timestamp);
+        assertEq(net_, preview_);
+        assertEq(sy_.balanceOf(user) - before_, net_);
     }
 
     function test_weightedSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public noSelfCalls(hook) {
@@ -199,12 +229,23 @@ contract WeightedBufferHookRestrictedSYTest is TestBase_UniswapV4StandardExchang
         token1.mint(outsider_, 5 ether);
         vm.startPrank(outsider_);
         token1.approve(hook, 5 ether);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, outsider_));
         IStandardizedYield(hook).deposit(outsider_, address(token1), 5 ether, 0);
         vm.stopPrank();
         assertEq(token1.balanceOf(outsider_), 5 ether);
         assertEq(IERC20(hook).balanceOf(outsider_), 0);
+        uint256 depositQuote_ = IStandardizedYield(hook).previewDeposit(address(token1), 5 ether);
+        assertGt(depositQuote_, 0);
         vm.prank(user);
-        assertGt(IStandardizedYield(hook).deposit(user, address(token1), 5 ether, 0), 0);
+        assertEq(IStandardizedYield(hook).deposit(user, address(token1), 5 ether, depositQuote_), depositQuote_);
+        uint256 lpBefore_ = IERC20(hook).balanceOf(user);
+        uint256 shares_ = lpBefore_ / 100;
+        uint256 quote_ = IStandardizedYield(hook).previewRedeem(address(token1), shares_);
+        uint256 before_ = token1.balanceOf(user);
+        vm.prank(user);
+        uint256 paid_ = IStandardizedYield(hook).redeem(user, shares_, address(token1), quote_, false);
+        assertGt(paid_, 0);
+        assertEq(token1.balanceOf(user) - before_, paid_);
+        assertEq(IERC20(hook).balanceOf(user), lpBefore_ - shares_);
     }
 }

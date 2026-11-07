@@ -12,6 +12,12 @@ import {UniswapV4StandardExchangeOrbitalBufferHookDepositCore} from "contracts/h
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore, NativeStandardYieldPreviewTarget {
+    function previewJoinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        external view returns (uint256 netLp)
+    {
+        return _previewJoinNativeComponents(localAmounts, shareAmounts);
+    }
+
     function getTokensIn() public view override returns (address[] memory tokens) {
         Repo.Layout storage l = Repo._layout();
         uint256 count = 3;
@@ -30,13 +36,19 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget i
         return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
     }
     function exchangeRate() external view override returns (uint256) {
-        (, uint256 supply) = _previewProtocolMintShares();
+        uint256 supply = _totalSupply();
         if (supply == 0) return 1e18;
         (uint256 x, uint256 y, uint256 z) = _effectiveWad();
         (,, uint256 root) = _measureK(x, y, z);
         return FullMath.mulDiv(root, 1e18, supply);
     }
 function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        if (address(tokenOut) == address(this) && address(tokenIn) != address(this)
+            && amountIn != 0 && _isLive() && isValidTokenIn(address(tokenIn)))
+        {
+            _requireZapEligibleOrOwnerMin();
+            return ExitQuoteLib.previewDepositReceipt(address(tokenIn), amountIn);
+        }
         return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 

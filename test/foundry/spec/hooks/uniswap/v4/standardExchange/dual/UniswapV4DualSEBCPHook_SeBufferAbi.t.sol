@@ -36,8 +36,8 @@ contract UniswapV4DualSEBCPHook_SeBufferAbi is TestBase {
         assertTrue(dual.firstJoinMustBeFullBook(), "T5.1 full book");
         address[] memory req = dual.requiredFirstBondTokens();
         assertEq(req.length, 2, "T5.1 required length");
-        assertEq(req[0], t[0], "T5.1 required0");
-        assertEq(req[1], t[1], "T5.1 required1");
+        assertEq(req[0], se0, "T5.1 required share0");
+        assertEq(req[1], se1, "T5.1 required share1");
     }
 
     function test_T5_2_fullBookFirstJoin_singleAssetBeforeLiveReverts() public {
@@ -60,18 +60,26 @@ contract UniswapV4DualSEBCPHook_SeBufferAbi is TestBase {
         assertEq(IERC20(hook).balanceOf(user), lp, "T5.2 to");
     }
 
-    function test_T5_3_afterLive_joinSingleAsset_pairAndShare() public {
+    function test_T5_3_afterLive_joinSingleAsset_pairAndShareFundPaidSwap() public {
         _joinFullBook(80 ether, 80 ether);
+        uint256 preview = dual.previewJoinSingleAssetExactIn(address(tokenA), 5 ether);
+        assertGt(preview, 0);
+        uint256 before_ = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        uint256 lpPair = dual.joinSingleAssetExactIn(
-            address(tokenA), 5 ether, user, 0, block.timestamp + 1 hours
+        uint256 net = dual.joinSingleAssetExactIn(
+            address(tokenA), 5 ether, user, preview, block.timestamp + 1 hours
         );
-        assertGt(lpPair, 0, "T5.3 pair");
+        assertEq(net, preview);
+        assertEq(IERC20(hook).balanceOf(user) - before_, net);
 
         uint256 seShares = _userAcquireSeShares(seA, tokenA, 20 ether);
+        preview = dual.previewJoinSingleAssetExactIn(seA, seShares);
+        assertGt(preview, 0);
+        before_ = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        uint256 lpSe = dual.joinSingleAssetExactIn(seA, seShares, user, 0, block.timestamp + 1 hours);
-        assertGt(lpSe, 0, "T5.3 share");
+        net = dual.joinSingleAssetExactIn(seA, seShares, user, preview, block.timestamp + 1 hours);
+        assertEq(net, preview);
+        assertEq(IERC20(hook).balanceOf(user) - before_, net);
     }
 
     function test_T5_4_implementsSharedAbi_oldNamesRemainWrappers() public view {
@@ -140,12 +148,19 @@ contract UniswapV4DualSEBCPHook_SeBufferAbi is TestBase {
 
     function _joinFullBook(uint256 amtA, uint256 amtB) internal returns (uint256 lp) {
         address[] memory ts = new address[](2);
-        ts[0] = address(tokenA);
-        ts[1] = address(tokenB);
         uint256[] memory am = new uint256[](2);
-        am[0] = amtA;
-        am[1] = amtB;
+        if (IERC20(hook).totalSupply() == 0) {
+            ts[0] = seA;
+            ts[1] = seB;
+            am[0] = _userAcquireSeShares(seA, tokenA, amtA);
+            am[1] = _userAcquireSeShares(seB, tokenB, amtB);
+        } else {
+            ts[0] = address(tokenA);
+            ts[1] = address(tokenB);
+            am[0] = amtA;
+            am[1] = amtB;
+        }
         vm.prank(user);
-        lp = dual.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
+        lp = dual.joinUnbalanced(ts, am, user, 1, block.timestamp + 1 hours);
     }
 }

@@ -8,21 +8,13 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {
     TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook as TestBase
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
-import {
-    UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
-
 // tag::UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPreview_Test[]
 /// @title Residual preview through the installed production hook facets
-/// @notice REQ-02: zero quotes retain dust; quote failures roll back the parent operation.
-/// @dev depositWithSeShares reaches DepositCommon._refundPairDust; withdrawSeShares reaches
-/// WithdrawalLib.refundPairDust. Neither entry moves pair tokens before the sweep, so the
-/// pre-call pair balance minus Repo.MAX_DUST_WEI is exactly the sweep's quoted excess.
-/// The monolithic Target._refundPairDust is not installed by this TestBase, and the
-/// SeTarget._refundPairDust copy has no caller. Both remain unreached; no entry is added.
-/// Revert witnesses use the bound receipt's existing checked convertToShares multiplication,
-/// with a real pair-token donation. No receipt code, balanceOf behavior, or vault is replaced.
+/// @notice Ambient pair transfers are never swept into the pool or paid to an incoming caller.
+/// @dev Parent operations convert only caller-owned input or the independently allocated exit
+/// claim. Even an ambient amount whose quote would overflow cannot affect those operations.
 contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPreview_Test is TestBase {
+    uint256 internal seededLocal;
     struct Balances {
         uint256 hookPair;
         uint256 excess;
@@ -35,23 +27,26 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         uint256 lpSupply;
         address feeTo;
         uint256 feePair;
+        uint256 localBook;
+        uint256 feeLp;
     }
 
     /// @notice Deploy the unchanged registry-bound hook and ERC-4626 SE, then fund both share entries.
     function setUp() public override {
         super.setUp();
         _seedLiveLiquidity();
+        seededLocal = pairToken.balanceOf(hook);
         _mintSeSharesToUser(20 ether);
     }
 
-    /// @notice DepositCommon leaves a zero-quoted excess local while minting the previewed LP.
+    /// @notice A zero-quoted ambient donation stays unbooked while caller-funded LP is minted.
     function test_residualPreview_deposit_zeroRetainsExcess() public {
         _prepareZeroQuote();
         Balances memory before_ = _balances();
         (uint256 lpExpected, uint256 rawExpected, uint256 seExpected) =
             single.previewDepositWithSeShares(10 ether, 10 ether);
         assertGt(lpExpected, 0, "positive parent minimum");
-        _expectSweepQuote(before_.excess);
+        _expectNoSweepQuote(before_.excess);
 
         vm.prank(user);
         (uint256 lp, uint256 usedRaw, uint256 usedSe) =
@@ -64,18 +59,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         assertEq(rawToken.balanceOf(user), before_.userRaw - usedRaw, "raw paid");
         assertEq(rawToken.balanceOf(hook), before_.hookRaw + usedRaw, "raw intake");
         assertEq(IERC20(se).balanceOf(user), before_.userSe - usedSe, "SE paid");
-        assertEq(IERC20(se).balanceOf(hook), before_.hookSe + usedSe, "only parent SE intake");
-        _assertResidualUnchanged(before_);
+        uint256 gross = IERC20(hook).totalSupply() - before_.lpSupply;
+        assertEq(IERC20(se).balanceOf(hook) - before_.hookSe, _ceil(gross, before_.hookSe, before_.lpSupply), "ceil share intake");
+        _assertResidualRetained(before_, _ceil(gross, before_.localBook, before_.lpSupply), false);
     }
 
-    /// @notice WithdrawalLib leaves a zero-quoted excess local while paying the previewed basket.
+    /// @notice A zero-quoted ambient donation stays unbooked while the allocated basket is paid.
     function test_residualPreview_withdraw_zeroRetainsExcess() public {
         _prepareZeroQuote();
         Balances memory before_ = _balances();
         (uint256 rawExpected, uint256 seExpected) = single.previewWithdrawSeShares(10 ether);
         assertGt(rawExpected, 0, "positive parent raw minimum");
         assertGt(seExpected, 0, "positive parent SE minimum");
-        _expectSweepQuote(before_.excess);
+        _expectNoSweepQuote(before_.excess);
 
         vm.prank(user);
         (uint256 rawOut, uint256 seOut) =
@@ -87,38 +83,55 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         assertEq(rawToken.balanceOf(user), before_.userRaw + rawOut, "raw payout");
         assertEq(rawToken.balanceOf(hook), before_.hookRaw - rawOut, "raw debit");
         assertEq(IERC20(se).balanceOf(user), before_.userSe + seOut, "SE payout");
-        assertEq(IERC20(se).balanceOf(hook), before_.hookSe - seOut, "only parent SE debit");
-        _assertResidualUnchanged(before_);
+        assertEq(IERC20(se).balanceOf(hook), before_.hookSe - 10 ether * before_.hookSe / before_.lpSupply, "only allocated SE debit");
+        _assertResidualRetained(before_, 10 ether * before_.localBook / before_.lpSupply, true);
     }
 
-    /// @notice DepositCommon propagates the exact quote panic and rolls back token pulls and LP minting.
-    function test_residualPreview_deposit_quoteRevertRollsBack() public {
+    /// @notice An overflowing ambient quote is not evaluated by a caller-funded join.
+    function test_residualPreview_deposit_quoteRevertNotSwept() public {
         _prepareRevertingQuote();
         Balances memory before_ = _balances();
         (uint256 lpExpected,,) = single.previewDepositWithSeShares(10 ether, 10 ether);
         assertGt(lpExpected, 0, "parent quote succeeds");
-        _expectSweepQuote(before_.excess);
+        _expectNoSweepQuote(before_.excess);
 
-        vm.expectRevert(_overflowPanic());
         vm.prank(user);
-        single.depositWithSeShares(10 ether, 10 ether, user, lpExpected, block.timestamp);
+        (uint256 minted,,) = single.depositWithSeShares(10 ether, 10 ether, user, lpExpected, block.timestamp);
 
-        _assertRolledBack(before_);
+        assertEq(minted, lpExpected, "ambient quote cannot block valid join");
+        uint256 gross = IERC20(hook).totalSupply() - before_.lpSupply;
+        _assertResidualRetained(before_, _ceil(gross, before_.localBook, before_.lpSupply), false);
     }
 
-    /// @notice WithdrawalLib propagates the exact quote panic and rolls back payouts and LP burning.
-    function test_residualPreview_withdraw_quoteRevertRollsBack() public {
+    /// @notice An overflowing ambient quote is not evaluated by a proportional exit.
+    function test_residualPreview_withdraw_quoteRevertNotSwept() public {
         _prepareRevertingQuote();
         Balances memory before_ = _balances();
         (uint256 rawExpected, uint256 seExpected) = single.previewWithdrawSeShares(10 ether);
         assertGt(rawExpected, 0, "parent raw quote succeeds");
         assertGt(seExpected, 0, "parent SE quote succeeds");
-        _expectSweepQuote(before_.excess);
+        _expectNoSweepQuote(before_.excess);
 
-        vm.expectRevert(_overflowPanic());
         vm.prank(user);
-        single.withdrawSeShares(10 ether, user, rawExpected, seExpected, block.timestamp);
+        (uint256 rawOut, uint256 seOut) = single.withdrawSeShares(10 ether, user, rawExpected, seExpected, block.timestamp);
 
+        assertEq(rawOut, rawExpected, "raw payout unaffected by ambient quote");
+        assertEq(seOut, seExpected, "share payout unaffected by ambient quote");
+        _assertResidualRetained(before_, 10 ether * before_.localBook / before_.lpSupply, true);
+    }
+
+    function test_residualPreview_failedMinimum_rollsBackWithAmbientInventory() public {
+        _prepareRevertingQuote();
+        Balances memory before_ = _balances();
+        (uint256 lpExpected,,) = single.previewDepositWithSeShares(10 ether, 10 ether);
+        vm.expectRevert(abi.encodeWithSignature("InsufficientLpOut()"));
+        vm.prank(user);
+        single.depositWithSeShares(10 ether, 10 ether, user, lpExpected + 1, block.timestamp);
+        _assertRolledBack(before_);
+        (uint256 rawExpected, uint256 seExpected) = single.previewWithdrawSeShares(10 ether);
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));
+        vm.prank(user);
+        single.withdrawSeShares(10 ether, user, rawExpected + 1, seExpected, block.timestamp);
         _assertRolledBack(before_);
     }
 
@@ -140,8 +153,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         pairProtocolVault.simulateYield(assetsBefore);
         assertEq(pairProtocolVault.totalSupply(), supplyBefore, "yield mints no receipt shares");
         assertEq(pairProtocolVault.totalAssets(), assetsBefore * 2, "yield increases assets");
-        _donatePair(Repo.MAX_DUST_WEI + 1);
-        uint256 excess = pairToken.balanceOf(hook) - Repo.MAX_DUST_WEI;
+        _donatePair(1);
+        uint256 excess = 1;
         assertGt(excess, 0, "nonzero sweep excess");
         vm.prank(hook);
         assertEq(ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(pairToken)), excess, IERC20(se)),
@@ -152,37 +165,37 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
 
     /// @dev The existing receipt computes (assets * supply) / totalAssets with checked arithmetic.
     /// The smallest overflowing input is reachable by donating minted pair tokens to the hook.
-    /// Share-only parent operations leave this amount and the receipt supply unchanged.
+    /// Parent operations may change receipt supply, but never quote the ambient amount.
     function _prepareRevertingQuote() private {
         uint256 excess = type(uint256).max / pairProtocolVault.totalSupply() + 1;
-        _donatePair(Repo.MAX_DUST_WEI + excess);
-        assertEq(pairToken.balanceOf(hook) - Repo.MAX_DUST_WEI, excess, "exact overflowing sweep excess");
+        _donatePair(excess);
         vm.expectRevert(_overflowPanic());
         vm.prank(hook);ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(address(pairToken)), excess, IERC20(se));
     }
 
     function _donatePair(uint256 amount) private {
-        assertEq(pairToken.balanceOf(hook), 0, "share setup leaves no free pair");
+        assertGt(pairToken.balanceOf(hook), 0, "genesis has booked local backing");
         pairToken.mint(user, amount);
         vm.prank(user);
         pairToken.transfer(hook, amount);
     }
 
-    /// @dev Exact call counts prove the parent reaches this quote, including in the revert cases.
-    function _expectSweepQuote(uint256 excess) private {
+    /// @dev No parent operation may evaluate a quote for the unbooked ambient amount.
+    function _expectNoSweepQuote(uint256 excess) private {
         vm.expectCall(
             se,
             abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (IERC20(address(pairToken)), excess, IERC20(se))),
-            uint64(1)
+            uint64(0)
         );
         vm.expectCall(
-            address(pairProtocolVault), abi.encodeWithSignature("convertToShares(uint256)", excess), uint64(1)
+            address(pairProtocolVault), abi.encodeWithSignature("convertToShares(uint256)", excess), uint64(0)
         );
     }
 
     function _balances() private view returns (Balances memory b) {
         b.hookPair = pairToken.balanceOf(hook);
-        b.excess = b.hookPair - Repo.MAX_DUST_WEI;
+        b.localBook = seededLocal;
+        b.excess = b.hookPair - b.localBook;
         b.hookSe = IERC20(se).balanceOf(hook);
         b.hookRaw = rawToken.balanceOf(hook);
         b.userPair = pairToken.balanceOf(user);
@@ -192,13 +205,26 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         b.lpSupply = IERC20(hook).totalSupply();
         b.feeTo = _feeTo(); // Actual hook fee oracle result, including address(0).
         b.feePair = pairToken.balanceOf(b.feeTo);
+        b.feeLp = IERC20(hook).balanceOf(b.feeTo);
     }
 
     function _assertResidualUnchanged(Balances memory b) private view {
         assertEq(pairToken.balanceOf(hook), b.hookPair, "pair retained in hook");
-        assertEq(pairToken.balanceOf(hook) - Repo.MAX_DUST_WEI, b.excess, "same excess retained");
         assertEq(pairToken.balanceOf(user), b.userPair, "no dust payout to caller");
         assertEq(pairToken.balanceOf(b.feeTo), b.feePair, "no dust payout to fee recipient");
+    }
+
+    function _assertResidualRetained(Balances memory b, uint256 localChange, bool exit_) private view {
+        assertEq(pairToken.balanceOf(hook), exit_ ? b.hookPair - localChange : b.hookPair + localChange,
+            "only the operation's native local allocation moves");
+        if (exit_) assertEq(pairToken.balanceOf(user), b.userPair, "share exit pays no ambient pair");
+        else assertGe(pairToken.balanceOf(user), b.userPair, "caller may receive only its unused conversion proceeds");
+        assertEq(pairToken.balanceOf(b.feeTo), b.feePair, "ambient pair not paid as fee");
+    }
+
+    function _ceil(uint256 mint_, uint256 component_, uint256 supply_) private pure returns (uint256) {
+        uint256 product_ = mint_ * component_;
+        return product_ / supply_ + (product_ % supply_ == 0 ? 0 : 1);
     }
 
     function _assertRolledBack(Balances memory b) private view {
@@ -209,6 +235,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ResidualPrevie
         assertEq(rawToken.balanceOf(user), b.userRaw, "caller raw rolled back");
         assertEq(IERC20(hook).balanceOf(user), b.userLp, "caller LP rolled back");
         assertEq(IERC20(hook).totalSupply(), b.lpSupply, "LP supply rolled back");
+        assertEq(IERC20(hook).balanceOf(b.feeTo), b.feeLp, "protocol LP rolled back");
     }
 
     function _overflowPanic() private pure returns (bytes memory) {

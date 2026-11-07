@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 import {IUniswapV4DualStandardExchangeBufferConstantProductHookPackage as IPkg}
     from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.sol";
@@ -31,42 +32,38 @@ contract UniswapV4DualSEBCPHook_SeMatrix_RebasingAwareERC4626 is UniswapV4DualSE
         return f;
     }
     /// @notice An identity leg's local book protects held shares even when its provider rate grows.
-    function test_APEX008_identityLeg_ratedBackingIsNotPretransferCredit() public {
+    function test_APEX008_bufferedLocal_ratedBackingIsNotPretransferCredit() public {
         RateProviderMock provider = new RateProviderMock();
         provider.mockRate(1.5e18);
         IPkg.PkgArgs memory args = IPkg.PkgArgs({
             poolManager: address(pm), feeOracle: address(indexedexManager),
-            standardExchange0: seUT, token0: seUT,
-            standardExchange1: seUT1, token1: seUT1,
+            standardExchange0: seUT, token0: face,
+            standardExchange1: seUT1, token1: other,
             rateProvider0: address(provider), rateProvider1: address(provider)
         });
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = DualFactory.deployHook(hookPkg, args, mineNonce);
-        _ensureProductDoorsAndFinalize(hook, seUT, seUT1);
+        _ensureProductDoorsAndFinalize(hook, face, other);
         dual = IHook(hook);
-
-        vm.startPrank(user);
-        IERC20(face).approve(seUT, 300 ether);IStandardExchangeIn(seUT).exchangeIn(IERC20(face), 300 ether, IERC20(seUT), 0, user, false, block.timestamp);
-        IERC20(other).approve(seUT1, 300 ether);IStandardExchangeIn(seUT1).exchangeIn(IERC20(other), 300 ether, IERC20(seUT1), 0, user, false, block.timestamp);
-        IERC20(seUT).approve(hook, type(uint256).max);
-        IERC20(seUT1).approve(hook, type(uint256).max);
-        dual.deposit(100e28, 100e28, user, 0, block.timestamp + 1 hours);
-        vm.stopPrank();
-
+        faceIsC0 = dual.currency0() == face;
+        _seed();
+        provider.mockRate(3e18);
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(seUT, true);
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
-            (IERC20(seUT), 1e28, IERC20(seUT1), 0, address(rowCaller), true, block.timestamp + 1 hours));
-        uint256 booked = IERC20(seUT).balanceOf(hook);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1e28, 0));
+            (IERC20(face), 1 ether, IERC20(other), 1, address(rowCaller), true, block.timestamp + 1 hours));
+        uint256 booked = IERC20(face).balanceOf(hook);
+        assertGt(booked, 0, "actual locally booked seed");
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
         rowCaller.execute(hook, data);
-        assertEq(IERC20(seUT).balanceOf(hook), booked, "identity backing unchanged");
-        assertEq(IERC20(seUT1).balanceOf(address(rowCaller)), 0, "unfunded caller receives nothing");
-
+        assertEq(IERC20(face).balanceOf(hook), booked, "booked local backing is not credit");
+        assertEq(IERC20(other).balanceOf(address(rowCaller)), 0);
         vm.prank(user);
-        IERC20(seUT).approve(address(rowCaller), 1e28);
-        rowCaller.consumePretransfer(IERC20(seUT), user, hook, 1e28, data);
-        assertGt(IERC20(seUT1).balanceOf(address(rowCaller)), 0, "funded identity credit succeeds");
-        assertEq(IERC20(seUT).balanceOf(hook), booked + 1e28, "funded shares become backing");
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1e28, 0));
+        IERC20(face).approve(address(rowCaller), 1 ether);
+        rowCaller.consumePretransfer(IERC20(face), user, hook, 1 ether, data);
+        assertGt(IERC20(other).balanceOf(address(rowCaller)), 0, "funded local credit succeeds");
+        assertEq(IERC20(face).balanceOf(hook), booked + 1 ether, "disabled input remains booked locally");
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
         rowCaller.execute(hook, data);
     }
 

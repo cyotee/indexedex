@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
@@ -337,6 +339,7 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook_Decimals 
         for (uint256 i; i < n; ++i) {
             amounts[i] = amountEach;
         }
+        if (IERC20(hook).totalSupply() == 0) return _seedAmounts(user, amounts);
         vm.prank(user);
         (shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 days);
     }
@@ -347,6 +350,7 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook_Decimals 
         for (uint256 i; i < n; ++i) {
             amounts[i] = _u(i, human);
         }
+        if (IERC20(hook).totalSupply() == 0) return _seedAmounts(user, amounts);
         vm.prank(user);
         (shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 days);
     }
@@ -357,6 +361,7 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook_Decimals 
         for (uint256 i; i < n; ++i) {
             amounts[i] = _raw(toks[i], human);
         }
+        if (IERC20(hook).totalSupply() == 0) return _seedAmounts(user, amounts);
         vm.prank(user);
         (shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 days);
     }
@@ -437,5 +442,25 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook_Decimals 
 
     function _reserveOf(address token) internal view returns (uint256) {
         return IBasicVault(hook).reserveOfToken(token);
+    }
+    /// @notice Acquire caller-owned SE shares before the hook's first join.
+    function _prepareShareSeed(address actor, uint256[] memory amounts) internal returns (bool[] memory flags) {
+        flags = new bool[](amounts.length);
+        for (uint256 i; i < amounts.length; ++i) {
+            address se = weighted.standardExchange(i);
+            if (se == address(0) || amounts[i] == 0) continue;
+            vm.startPrank(actor);
+            IERC20(weighted.token(i)).approve(se, amounts[i]);
+            (amounts[i],) = IStandardExchangeIn(se).exchangeIn(IERC20(weighted.token(i)), amounts[i], IERC20(se), 1, actor, false, block.timestamp);
+            IERC20(se).approve(hook, type(uint256).max);
+            vm.stopPrank();
+            flags[i] = true;
+        }
+    }
+
+    function _seedAmounts(address actor, uint256[] memory amounts) internal returns (uint256 shares) {
+        bool[] memory flags = _prepareShareSeed(actor, amounts);
+        vm.prank(actor);
+        (shares,) = weighted.joinProportionalFlexible(amounts, flags, actor, 1, block.timestamp + 1 days);
     }
 }

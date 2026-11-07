@@ -11,7 +11,7 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
 import {
     IStandardExchangeMultiAssetLiquidity
 } from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -43,13 +43,14 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt_IFa
     }
 
     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](2);
+        controlInterfaces = new bytes4[](3);
         controlInterfaces[0] = type(IDetfReserveQuote).interfaceId;
         controlInterfaces[1] = type(IStandardizedYield).interfaceId;
+        controlInterfaces[2] = type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](26);
+        controlFuncs = new bytes4[](27);
         controlFuncs[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
         controlFuncs[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
         controlFuncs[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -62,19 +63,20 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt_IFa
         controlFuncs[9] = IDetfReserveQuote.previewSynthetic.selector;
         controlFuncs[10] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
         controlFuncs[11] = IStandardExchangeIn.previewExchangeIn.selector;
-        controlFuncs[12] = IStandardizedYield.exchangeRate.selector;
-        controlFuncs[13] = IStandardizedYield.yieldToken.selector;
-        controlFuncs[14] = IStandardizedYield.assetInfo.selector;
-        controlFuncs[15] = IStandardizedYield.getTokensIn.selector;
-        controlFuncs[16] = IStandardizedYield.getTokensOut.selector;
-        controlFuncs[17] = IStandardizedYield.isValidTokenIn.selector;
-        controlFuncs[18] = IStandardizedYield.isValidTokenOut.selector;
-        controlFuncs[19] = IStandardizedYield.previewDeposit.selector;
-        controlFuncs[20] = IStandardizedYield.previewRedeem.selector;
-        controlFuncs[21] = IStandardizedYield.getRewardTokens.selector;
-        controlFuncs[22] = IStandardizedYield.accruedRewards.selector;
-        controlFuncs[23] = IStandardizedYield.rewardIndexesCurrent.selector;
-        controlFuncs[24] = IStandardizedYield.rewardIndexesStored.selector;
-        controlFuncs[25] = IStandardizedYield.claimRewards.selector;
+        controlFuncs[12] = IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector;
+        controlFuncs[13] = IStandardizedYield.exchangeRate.selector;
+        controlFuncs[14] = IStandardizedYield.yieldToken.selector;
+        controlFuncs[15] = IStandardizedYield.assetInfo.selector;
+        controlFuncs[16] = IStandardizedYield.getTokensIn.selector;
+        controlFuncs[17] = IStandardizedYield.getTokensOut.selector;
+        controlFuncs[18] = IStandardizedYield.isValidTokenIn.selector;
+        controlFuncs[19] = IStandardizedYield.isValidTokenOut.selector;
+        controlFuncs[20] = IStandardizedYield.previewDeposit.selector;
+        controlFuncs[21] = IStandardizedYield.previewRedeem.selector;
+        controlFuncs[22] = IStandardizedYield.getRewardTokens.selector;
+        controlFuncs[23] = IStandardizedYield.accruedRewards.selector;
+        controlFuncs[24] = IStandardizedYield.rewardIndexesCurrent.selector;
+        controlFuncs[25] = IStandardizedYield.rewardIndexesStored.selector;
+        controlFuncs[26] = IStandardizedYield.claimRewards.selector;
     }
 }

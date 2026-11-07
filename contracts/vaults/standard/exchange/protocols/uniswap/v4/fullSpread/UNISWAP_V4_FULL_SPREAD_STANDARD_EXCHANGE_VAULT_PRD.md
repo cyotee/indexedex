@@ -1,26 +1,28 @@
 # Uniswap V4 full-spread Standard Exchange vault PRD
 
-Revision `fullspread-se-prd-rewrite-20261103`. Coordinator merge of the four independent responses in `docs/research/se-fullspread-prd-rewrite-20261103/members/`. The base text is the Grok conclusions. Astra, MiniMax, and Kimi were compared against the same locks. A contradicted sentence from `fullspread-se-prd-weir-align-r1` is replaced. It is not left beside the lock. This text is not an implementation, not a safety clearance, and not a member vote.
+Revision `fullspread-se-prd-hook-fees-bootstrap-20261106`. Owner amendment to `fullspread-se-prd-hook-accounting-20261106`. The latest owner decisions are FS-OWN-36 and FS-OWN-37: protocol fees come out of newly minted Hook LP, and an initial SE-backed liquidity deposit supplies SE shares and redeems 5% of them to seed local pair-token inventory. FS-OWN-34/35 still govern proportional component ownership and paired-token membership, with own-share processing recognized separately. This PRD is the single source of truth for these requirements. This text is not an implementation, not a safety clearance, and not a member vote.
 
-Precedence: a dated 2026-11-04 owner lock in this file, and the same dated override in `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/IMPLEMENTATION_PLAN_BLOCKERS.md`, wins over a 2026-11-03 override, over an earlier sentence in that file, over an undated recap in that file, and over an older sentence here. A dated 2026-11-03 override wins over an earlier sentence where the 2026-11-04 lock does not replace it. The operative withdrawal rule is FS-OWN-30, not a principal-only recap. `docs/vaults/PRETRANSFER_DIRECTIVE.md` is binding for calls that take `pretransferred`. An earlier owner lock remains where a later lock does not replace it. The accepted return ABI is `docs/research/se-interface-refund-bundle-20261030-01a18660/REPORT.md`, except where a later full-spread lock replaces a sentence in it.
+The later 2026-11-06 hook-accounting amendment, FS-OWN-34/35 and FS-HOOK-05 through FS-HOOK-08, wins over conflicting earlier same-day text, the implementation-and-test plan, blocker recaps, and the failing-test council's prior scope exclusions. Those documents are implementation/evidence context, not competing requirements. The amendment replaces the hook-redesign exclusion and the `asset()` wrapper exception; it does not change FullSpread vault issuance, FS-OWN-30 exit apportionment, or the vault's own no-sleeve rule. The subsequent same-day clarification to FS-OWN-35 distinguishes the vault's implicit own-share processing from the hook's paired-token membership check. No vault must list its own share in `vaultTokens()`. The fixture and package requirements below are self-contained; no other named SE family is a prerequisite. The subsequent same-day FS-OWN-36/37 fee and bootstrap decisions supersede the earlier preservation of growth-based protocol LP minting and rate-dependent genesis. FS-HOOK-09/10 are their operative rules. They resolve the fee-policy and initial-denomination alternatives left open in the implementation-plan draft; those alternatives are not competing requirements. FullSpread vault fees and issuance remain FS-OWN-24/27.
+
+Precedence: a dated 2026-11-06 owner lock in this file wins over a 2026-11-05 owner lock, over a 2026-11-04 owner lock, over the same dated override in `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/IMPLEMENTATION_PLAN_BLOCKERS.md`, over a 2026-11-03 override, over an earlier sentence in that file, over an undated recap in that file, and over an older sentence here. The 2026-11-05 FS-OWN-33 lock replaces the greatest-liquidity sentence and the "do not require a 48% swap" sentence, including those sentences in that blockers file at F5 and F6. It does not replace FS-OWN-30. The 2026-11-06 lock sets the FS-OWN-33 swap at 49% of the processed input and replaces the open testing ladder. It names the one-token `amountOut` as the recipient receipt in FS-OWN-30. It does not remove the booked-claim apportionment. It withdraws the FS-A16 exchangeRate test. A dated 2026-11-04 owner lock in this file, and the same dated override in that blockers file, wins over a 2026-11-03 override where the 2026-11-05 lock does not replace it. A dated 2026-11-03 override wins over an earlier sentence where a later lock does not replace it. The operative withdrawal rule is FS-OWN-30, not a principal-only recap. `docs/vaults/PRETRANSFER_DIRECTIVE.md` is binding for calls that take `pretransferred`. An earlier owner lock remains where a later lock does not replace it. The accepted return ABI is `docs/research/se-interface-refund-bundle-20261030-01a18660/REPORT.md`, except where a later full-spread lock replaces a sentence in it.
 
 ## 1. Goal
 
-Build `UniswapV4FullSpreadStandardExchangeVault`.
+Build `UniswapV4FullSpreadStandardExchangeVault` and, as part of the broader failing-test remediation, refactor SE Vault Hooks under FS-OWN-34/35 and section 7.
 
 One registry-deployed Crane diamond owns one Uniswap V4 pool key, one full-range position, and one ERC-20 share supply. The diamond is the position owner. Public shares are claims under the issuance and exit rules in this file. There is no local liquidity sleeve. A staying holder's booked balance is held until `donate()` or `compound()` deploys it. It is not a reserve until then. An exit pays or converts only the exiting holder's claim under FS-OWN-30.
 
 This family adapts the cited money operations of `contracts/protocols/strategy/weir/WeirVaults.sol` only where this file still states them. It has one ERC-20 share, one pool, and one full-range position. It does not copy Weir's manager of many virtual vaults.
 
-It is not a sibling of PairToken and does not inherit PairToken economics by requirement ID. A PairToken economic or package choice stays only where a lock that remains in force already keeps it.
+This family's economics and package requirements are specified here. Do not inherit another SE family's economics, package fields, or test fixtures by reference.
 
 ### 1.1 What this family is not
 
 - Not a source copy of Weir's multi-vault manager, and not a mechanical wrapper around its internal share ledger.
 - Not Upper/Lower Wings. No second range and no rebalance facet.
 - Not a singleton of many pools, a second share ledger, or a shares-of-shares wrapper.
-- Not an ERC-4626 product. Do not install `asset()`. Current hooks treat that selector as wrapper-share inventory. Adding it to turn a rejected identity bind into a pass is forbidden.
-- Not a hook-package redesign. A hook change is FS-HOOK-04, raised only with a cited rejecting function. The preview-return migration in FS-OWN-08 is not that redesign.
+- Not an ERC-4626 product. Do not install `asset()`. Remove hook calls and probes of that selector for SE leg recognition. SE Vaults need not implement it or map naturally to one underlying token. FS-OWN-35.
+- Not an unrestricted hook redesign. The proportional-book, refund, disabled-vault, and membership changes in FS-OWN-34/35 are in scope. Other hook changes remain subject to FS-HOOK-04. The preview-return migration in FS-OWN-08 also remains required.
 - Not a local liquidity sleeve. Do not keep a `liquidReservePercentageOfVault` target, and do not restore `localReserves()`.
 
 ### 1.2 Deltas
@@ -29,7 +31,7 @@ It is not a sibling of PairToken and does not inherit PairToken economics by req
 | --- | --- |
 | FS-X01 | Canonical exact-input `exchangeIn` executes while the bound PoolManager is already unlocked, without a nested `unlock`. Ordinary user entry still opens its own unlock, once per planned manager action. Inclusion in a batch swap with other Uniswap V4 pools is not a revert. |
 | FS-X02 | Withdrawn by FS-OWN-03. Do not install `getRate`. There is no designated `rateAsset`. An external rate-provider instance is FS-OWN-29. This vault does not know it. |
-| FS-X03 | Tests place this share with another SE vault share in the current buffer-hook families, using the fixture in FS-HOOK-02. Those hook packages are not redesigned here. Consumers that still require a 32-byte `previewExchangeIn` success are migrated by FS-OWN-08. |
+| FS-X03 | Tests place this share with another SE vault share in the buffer-hook families, using FS-HOOK-02 and membership-only validation under FS-OWN-35. The hook refactor in FS-OWN-34/35 is in scope. Consumers that still require a 32-byte `previewExchangeIn` success are migrated by FS-OWN-08. |
 | FS-X04 | Single-token entry does not require the selected swap to consume its entire input. There is no `IncompleteConversion` check. Unused declared input is refunded to the payer under FS-OWN-32. It is not booked and it is not minted into shares. The one-sided swap shape is FS-OWN-33. The one-token exit is FS-OWN-30. |
 | FS-OWN-01 | `poolManager()` is not a family query. The Uniswap V4 Protocol Aware facet is a Crane package input. Its getters are externally callable on this vault. |
 | FS-OWN-02 | Pool key, ticks, and salt live in Crane `UniswapV4SinglePositionAware`, not in a full-spread-only getter. |
@@ -39,7 +41,7 @@ It is not a sibling of PairToken and does not inherit PairToken economics by req
 | FS-OWN-06 | `UniswapV4SinglePositionAware` stores `tickLower`, `tickUpper`, and the salt. `positionLiquidity()` wraps `StateLibrary.getPositionInfo`. |
 | FS-OWN-07 | Do not implement `basket()`. `reserves()` and `reserveOfToken` wrap the deployed-reserve reads. There is no local term and no last-committed snapshot. A booked remainder is not in that read. Unpaid fees are. |
 | FS-OWN-08 | `previewExchangeIn` and `exchangeIn` keep their parameters and selectors and return `(amountOut, amountRefunded)`. No `WithRefund` sibling. `exchangeOut` and `previewExchangeOut` do not gain a refund return. |
-| FS-OWN-09 | Do not keep `depositPair`, `previewDepositPair`, `redeemPair`, or `previewRedeemPair`. Map them to the accepted bundle routes. Keep `donate` and `compound`. `donate` is an explicit exception and is not a Weir function. `compound` is owner-or-operator harvest-and-reinvest under the booking rule, not a PairToken ratio swap. |
+| FS-OWN-09 | Do not keep `depositPair`, `previewDepositPair`, `redeemPair`, or `previewRedeemPair`. Map them to the accepted bundle routes. Keep `donate` and `compound`. `donate` is an explicit exception and is not a Weir function. `compound` is owner-or-operator harvest-and-reinvest under the booking rule, not a ratio swap. |
 | FS-OWN-10 | Do not implement `previewWithdrawalMode`, a family `wrappedNative()` getter, or `PkgInit.wrappedNative`. `previewZapCredit`, `maxZapBps`, and `maxZapTickMove` are absent. No replacement view, cap, or tick bound is added. |
 
 ### 1.3 Owner-locked decisions
@@ -110,9 +112,9 @@ Every other one-word reader of `previewExchangeIn` in `docs/research/se-fullspre
 
 `exchangeIn` keeps selector `0xd02d3063` and returns the same tuple. Callers that decode one word from `exchangeIn` must read the tuple. Do not adopt the comment selector `0x05562cc8`.
 
-**FS-OWN-09.** Do not install `depositPair`, `previewDepositPair`, `redeemPair`, or `previewRedeemPair`. Map deposit to `exchangeBundleInForSingleOut` and `previewExchangeBundleInForSingleOut`, with `tokenOut` as the share. Map redeem to `exchangeBundleOut` and `previewExchangeBundleOut`, with `tokenIn` as the share and `tokensOut` as the two ERC-20 faces. Keep `donate` and `compound`. `donate` is an explicit exception. Keeping it does not restore PairToken issuance. `compound()` stays this selector. Its behavior is FS-OWN-14, not a PairToken ratio swap or quarter-cap, and not Weir's treasury performance fee.
+**FS-OWN-09.** Do not install `depositPair`, `previewDepositPair`, `redeemPair`, or `previewRedeemPair`. Map deposit to `exchangeBundleInForSingleOut` and `previewExchangeBundleInForSingleOut`, with `tokenOut` as the share. Map redeem to `exchangeBundleOut` and `previewExchangeBundleOut`, with `tokenIn` as the share and `tokensOut` as the two ERC-20 faces. Keep `donate` and `compound`. `donate` is an explicit exception. `compound()` stays this selector. Its behavior is FS-OWN-14, not a ratio swap or quarter-cap, and not Weir's treasury performance fee.
 
-The mapped redeem is the both-token exit. It pays the caller's claim in both tokens and does not swap. It does not sell one leg to pay the other. The one-token exit is canonical `exchangeIn`, with the share as `tokenIn` and one underlying as `tokenOut`. It is not `exchangeBundleOut` with one output. The amounts are the FS-OWN-30 exiting claim: unwanted withdrawn principal, plus the caller's opposing-token fee and opposing booked claim. A bundle argument combination that is not one of those two mappings is unsupported. It reverts the already-named `ExchangeBundleInForSingleOutNotAvailable` or `ExchangeBundleOutNotAvailable` for that function. Do not add a success path.
+The mapped redeem is the both-token exit. It pays the caller's claim in both tokens and does not swap. It does not sell one leg to pay the other. The one-token exit is canonical `exchangeIn`, with the share as `tokenIn` and one underlying as `tokenOut`. It is not `exchangeBundleOut` with one output. The amounts are the FS-OWN-30 exiting claim: unwanted withdrawn principal, plus the caller's opposing-token fee and opposing booked claim. The one-token payment goes to `recipient`. A bundle argument combination that is not one of those two mappings is unsupported. It reverts the already-named `ExchangeBundleInForSingleOutNotAvailable` or `ExchangeBundleOutNotAvailable` for that function. Do not add a success path.
 
 The accepted bundle signatures, from the accepted return-ABI report, are:
 
@@ -175,7 +177,7 @@ Best-effort means the simplest secure process. Do not invent an extra attempt, a
 
 Emit `Donation()` when `donate()` is called. `Donation()` has no fields. It is a marker event, not an interface and not a field-bearing event. That empty argument list is final. Do not add a `Donation` interface or an ERC-165 id for it. Emit `Compounded()` when a deposit is made from collected fees or from booked tokens. A `compound()` call that deposits emits `Compounded()`. A `donate()` call that deposits collected fees or booked tokens also emits `Compounded()`. Booked tokens are treated as fees, including a donation remainder that was booked. There is no fee-origin store. `Compounded()` has no arguments. That empty argument list is final as of 2026-11-04. A call that deposits nothing does not emit `Compounded()`. A reverting call emits neither event. The vault does not emit its own swap or liquidity-add event. The PoolManager already emits `Swap` and `ModifyLiquidity` with the vault as `sender`. Filter on that sender for the amounts, price, and liquidity. `exchangeIn` emits no new vault event for that correlation. The events are `Transfer` and the PoolManager `Swap` and `ModifyLiquidity` events already named. `PairDeposited` and `PairRedeemed` stay on the bundle routes. This vault does not invent a second amount-bearing event.
 
-**FS-OWN-15.** A one-token redemption withdraws the exiting holder's deployed fraction and swaps only that holder's FS-OWN-30 exiting claim. That claim is the unwanted principal plus the caller's opposing-token fee and opposing booked claim. The swap converts all of that unwanted side or reverts `AmountOutNotMet` and does not burn shares. The purpose of that swap is pool volume. It is a quantity rule, not a new cap. It does not swap the other holders' booked fees, and it does not sell the staying holders' inventory. A both-token exit does not swap. There is no sleeve to take first. The swap limit is FS-MONEY-01.
+**FS-OWN-15.** A one-token redemption withdraws the exiting holder's portion of the deployed reserve, calculates that holder's portion of the accrued fees, and swaps all of the opposing token that holder owns. The payment to `recipient` is the FS-OWN-30 receipt. The swap converts all of that opposing token or reverts `AmountOutNotMet` and does not burn shares. The purpose of that swap is pool volume. It is a quantity rule, not a new cap. It does not swap the other holders' booked fees, and it does not sell the staying holders' inventory. A both-token exit does not swap. There is no sleeve to take first. The swap limit is FS-MONEY-01.
 
 **FS-OWN-16.** `PkgInit.poolManager` stays as the PoolManager binding. The seven architecture addresses are immutables of the package deployment. Instance initialization writes those immutable addresses into the Uniswap V4 Protocol Aware Repo. It does not write only `poolManager`, and it does not write a second per-vault copy. FS-OWN-01.
 
@@ -207,7 +209,7 @@ A test that APEX-2026-044 is absent means this rule: no additional unbacked mint
 
 **FS-OWN-25.** A bundle deposit adds the declared amounts in proportion to the underlying pool. It books the fees `modifyLiquidity` returns. It refunds the remainder of the bundle. That remainder is not booked. It does not run the one-sided balancing swap. `exchangeIn` does support an underlying-to-underlying swap on the bound pool. That route is a pass-through and takes no usage fee. FS-OWN-24.
 
-**FS-OWN-26.** A disabled vault reverts `IVaultRegistryDisableQuery.VaultDisabled(address(this))` on every execution route except a withdrawal, `donate`, and `compound`. The predicate follows the live V2 call site in `UniswapV2StandardExchangeInTarget`: a route whose input is not this vault's share is blocked. That predicate is widened from `exchangeIn` to every execution route. A withdrawal is share in and underlying out. That is canonical `exchangeIn` with the share as `tokenIn`, and `exchangeBundleOut` with the share as `tokenIn` and the two ERC-20 faces as `tokensOut`. A pass-through `exchangeIn` is not a withdrawal and reverts `VaultDisabled`. A bundle deposit reverts `VaultDisabled`. `donate` and `compound` are not in this block. They may run while the vault is disabled, under FS-OWN-14. Views do not revert `VaultDisabled`. FS-OWN-19. A missed deadline still reverts `DeadlineExceeded` before this check. FS-OWN-28. On an enabled vault, `exchangeOut` still reverts `ExchangeOutNotAvailable()`. A disabled `exchangeOut` is not a withdrawal, so it reverts `VaultDisabled`. The same predicate applies on a borrowed unlock. A buffered withdrawal still succeeds. A buffered non-withdrawal reverts `VaultDisabled`. FS-A38.
+**FS-OWN-26.** A disabled vault reverts `IVaultRegistryDisableQuery.VaultDisabled(address(this))` on every execution route except a withdrawal, `donate`, and `compound`. The predicate follows the live V2 call site in `UniswapV2StandardExchangeInTarget`: a route whose input is not this vault's share is blocked. That predicate is widened from `exchangeIn` to every execution route. A withdrawal is share in and underlying out. That is canonical `exchangeIn` with the share as `tokenIn`, and `exchangeBundleOut` with the share as `tokenIn` and the two ERC-20 faces as `tokensOut`. A pass-through `exchangeIn` is not a withdrawal and reverts `VaultDisabled`. A bundle deposit reverts `VaultDisabled`. `donate` and `compound` are not in this block. They may run while the vault is disabled, under FS-OWN-14. Views do not revert `VaultDisabled`. FS-OWN-19. A missed deadline still reverts `DeadlineExceeded` before this check. FS-OWN-28. On an enabled vault, `exchangeOut` still reverts `ExchangeOutNotAvailable()`. A disabled `exchangeOut` is not a withdrawal, so it reverts `VaultDisabled`. The same predicate applies on a borrowed unlock. A buffered withdrawal still succeeds without a cleanup deposit into the disabled vault. A non-withdrawal call into that vault still reverts `VaultDisabled`; a hook operation that retains input locally or spends its local book without making that call is governed by FS-HOOK-06/07, not by a blanket hook-level disable revert. FS-A38.
 
 **FS-OWN-27.** The deployed reserve is accounted as one value, `liquidity`. It is raw V4 liquidity. Share minting and burning use that number. Token amounts stay in their own decimals when they go into `getLiquidityForAmounts`. No amount scaled to a token's decimals, and no use of `decimals()`, enters the share formula. `decimals()` returns 18. That is metadata. It is not a scale, and it is not an input to the mint or burn. Do not multiply the stored share balance, or the floor, by a constant to match `decimals()`. A wallet that divides the balance by `1e18` is formatting the liquidity number. It is not reading a rescaled share.
 
@@ -221,11 +223,11 @@ The rate subject is this vault, used as liquidity in the test pool. There is a s
 
 On a withdrawal, `feesAccrued` is the unpaid fee-owed read already named for `reserves()`. Tokens booked from an earlier `modifyLiquidity` return are only in the booked-balance term. They are not counted again. On a withdrawal, measure before the burn. `totalSupply()` before the burn is the total shares, including the floor. The caller's fee claim is `floor(feesAccrued * sharesBurned / supplyBeforeBurn)` for each token. The caller's booked claim is `floor(bookedBalance * sharesBurned / supplyBeforeBurn)` for each booked balance. Do not divide the share fraction before multiplying by the balance. Include that portion in the exit. Book the rest for the other holders. Principal removal is `liquidity * sharesBurned / supplyBeforeBurn`, rounded down by that same integer division.
 
-A one-token exit converts all unwanted withdrawn principal, plus the caller's opposing-token fee and opposing booked claim, into the selected token, or it reverts `AmountOutNotMet` and does not burn shares. It does not pay, book, or keep that residual. The caller's requested-token fees and requested booked claim are paid to the caller. The other holders' shares are booked, not swapped. The exit swaps only that exiting claim. It does not swap the other holders' booked fees, and it does not sell the staying holders' inventory. The price limit is the unbounded entry limit. There is no new price check.
+A one-token exit withdraws the exiting holder's portion of the deployed reserve and calculates that holder's portion of the Uniswap V4 accrued fees. It swaps all of the opposing token owned by that holder into the requested token, or it reverts `AmountOutNotMet` and does not burn shares. It does not pay, book, or keep that opposing residual. It sends to `recipient` the swap proceeds, the withdrawn requested-token principal, and that holder's portion of the accrued fees in the requested token. The holder's booked claim stays in that exit: the opposing booked claim is part of the opposing token swapped, and the requested booked claim is paid to `recipient` with the requested-token fees. The returned `amountOut` is that payment: swap proceeds, withdrawn requested-token principal, requested-token fee portion, and requested booked claim. `minAmountOut` binds that receipt. It is not the swap proceeds alone, and it is not a stale preview. The other holders' shares of fees and booked balances are booked, not swapped. The exit does not sell the staying holders' inventory. The price limit is the unbounded entry limit. There is no new price check.
 
 A both-token exit pays that same claim in both tokens and does not swap. It books the rest for the other holders.
 
-An exit preview uses the same apportioning as the execution it quotes. A one-token exit preview uses the same swap, so the quoted `amountOut` matches execution. A both-token exit preview does not swap, and its quoted outputs match that execution. That exit quote is the share valuation, and it includes accrued fees. It is not `getRate()`. A mint preview is not that valuation.
+An exit preview uses the same apportioning as the execution it quotes. A one-token exit preview quotes the same recipient receipt, so the quoted `amountOut` matches execution. A both-token exit preview does not swap, and its quoted outputs match that execution. That exit quote is the share valuation, and it includes accrued fees. It is not `getRate()`. A mint preview is not that valuation.
 
 The old no-leftover-shortfall-revert sentence is scoped to the former sleeve. It is not an exit rule. A caller-set one-token minimum still reverts `AmountOutNotMet`. A caller-set bundle minimum reverts `MinAmountNotMetAt(uint256 index, uint256 minAmount, uint256 actualAmount)`. There is no sleeve top-up. Do not declare `MinAmountNotMet`.
 
@@ -243,32 +245,45 @@ These rejects are execution rejects. A view does not revert them. An unsupported
 
 A preview of a refund does not transfer and does not read a balance. It assumes the declaration is available. Execution may refund a different amount. Bit-exact equality of the refund word is not required. The exit quote's output match is FS-OWN-30, and it is not waived by that refund sentence. `minAmountOut` and `minAmountsOut` bind.
 
-**FS-OWN-33.** A one-sided share mint runs the balancing swap. A bundle deposit does not. For a one-sided deposit, and for a one-token `donate` or `compound`, choose the greatest liquidity the following add can take. The swap output is the other token that liquidity consumes. The unswapped input is the processed token that liquidity consumes. Rounding leaves any remainder in the input token. The swap input is not the processed-token amount the add itself consumes. The price limit is `TickMath.MIN_SQRT_PRICE + 1` or `TickMath.MAX_SQRT_PRICE - 1`. That is not `maxZapTickMove`, and no tighter cap is added.
+**FS-OWN-33.** Locked 2026-11-06. A one-sided share mint runs one balancing swap. A bundle deposit does not. For a one-sided deposit, and for a one-token `donate` or `compound`, swap 49% of the processed input, then deposit, when the price is strictly inside the position. That fixed fraction is the adaptation of the Weir process. Do not iterate. Do not solve a closed-form root. Do not walk ticks to find a better split. If the price is not strictly inside the position, including exactly at either boundary, do not swap. The position wants only one token. If the caller provided that token, add it with no swap. A share mint refunds what the add does not take. A donate or compound books that dust and does not refund it. If the caller provided the other token, do not swap it. A share mint refunds it. A donate or compound books it. No new error. Zero active liquidity is not that boundary case. If the 49% swap cannot be formed, or the following add cannot consume its output, return the input and keep no swap. A share mint refunds that input and mints nothing. A donate or compound books that input and does not refund it. The swap output is consumed by the add. Rounding leaves any remainder in the input token. A user-deposit remainder is refunded under FS-OWN-32. A donate or compound remainder is booked. The price limit is `TickMath.MIN_SQRT_PRICE + 1` or `TickMath.MAX_SQRT_PRICE - 1`. That is not `maxZapTickMove`, and no tighter cap is added. This is not an exit rule. The one-token exit is FS-OWN-30.
 
-The 48% remark was a possible starting point for sizing a deposit or donation swap so that a refund, if one is issued, is in the token the caller provided. It is not a required refund, and it is not an exit rule. Do not require a 48% swap. Do not require an "about half" swap. The remainder-in-input-token result is what lets a refund, when one is issued, be paid in the token the caller provided.
+**FS-OWN-34.** Locked 2026-11-06, later hook-accounting decision. Refactor all SE Vault Hooks to keep, for each leg, a book of local `pairToken` separately from the book of SE Vault shares. This includes every family in FS-HOOK-01 and their shared execution, preview, liquidity, and settlement paths. The refactor is part of the broader failing-test remediation, not an out-of-scope hook-economics change. A hook books pool-owned SE refunds and amounts it cannot redeposit because the SE Vault is disabled. For swap calculations only, include the booked local amount alongside the rated SE shares in pair-token units; pay swap output from the local book first and redeem SE shares only for the deficit. Hook LP ownership is not a claim on that rated sum. Mint and burn Hook LP against proportional quantities of the actual SE shares and local pair tokens across all legs under FS-HOOK-07/08. Do not use the rate provider, a spot valuation, NAV, or a change in rated reserve to determine LP entitlement. Conversion to assemble a join or settle an exit uses only that caller's assets and actual results. No existing holder's assets fund another caller's contribution, fees, losses, or shortfall.
+
+This is hook accounting. FullSpread vault issuance remains proportional to its raw deployed liquidity under FS-OWN-24/27, and its booked-claim withdrawal remains FS-OWN-30. Its own unused user input remains refunded under FS-OWN-32. That refund can become the receiving hook's booked property only under the ownership rules in FS-HOOK-05/07. Do not restore a vault sleeve, a target percentage, or a vault `getRate()` under this amendment.
+
+**FS-OWN-35.** Locked 2026-11-06, with the later same-day own-share clarification. Remove `asset()` calls, static probes, and wrapper-share exceptions from SE Vault Hook validation and classification. SE Vaults need not implement ERC-4626 or map naturally to one underlying token. The standard recognizes an SE Vault's own ERC-20 share implicitly: that vault can mint and redeem its share through its supported routes without declaring itself in `vaultTokens()`. Do not require the vault/share address to occur in that list, reject a vault because its own address is absent, or classify its own-share processing as an unsupported identity bind.
+
+The separate hook binding is `(standardExchange, pairToken)`. Validate that the configured `pairToken` occurs in that SE Vault's `vaultTokens()`. Reject that binding when the configured paired token is not a member; a missing or reverting list is not a membership hit. The membership test is on the paired token, not on the separately held SE-share inventory or the share-side input/output of a supported vault operation. In particular, do not populate the `pairToken` field with the vault's share address merely to describe its own-share processing. Own-share recognition does not waive the membership check on the configured paired token.
+
+Keep other independent package, route, funding, and execution checks. Do not substitute an `asset()` answer, a provider result, or an inferred single-underlying relationship for paired-token membership. This clarification does not add a same-token `exchangeIn` route: the existing `tokenIn == tokenOut` rejection remains. Raw transfer legs remain raw; they are not SE-share conversion proofs. These rules apply to every SE Vault Hook and its previews and execution paths.
+
+**FS-OWN-36.** Locked 2026-11-06, later Hook LP mint-fee decision. Replace growth-based protocol LP issuance with a configured percentage taken from the gross LP tokens backed by a new depositor's accepted liquidity contribution. Mint the fee portion to the existing fee recipient and the remainder to the depositor; do not mint the fee on top. This is a liquidity deposit/mint fee, not a fee on withdrawals, rate changes, unrealized SE yield, or measured invariant growth. Ordinary swap trading fees remain in the pool; the protocol's LP participates in them like any other LP holding. Do not additionally retain the former growth-fee mint or introduce separate protocol swap-fee token accumulation, basket conversion, or deferred fee crystallization. Apply the same split through every LP-bearing hook's deposit aliases and previews under FS-HOOK-09. The conversion-only single hook has no Hook LP supply and does not acquire one under this lock.
+
+**FS-OWN-37.** Locked 2026-11-06, later initial-liquidity decision. For the first liquidity deposit into an LP-bearing hook, accept only SE Vault shares as the incoming asset for each funded SE-backed leg. Redeem 5% of the actual supplied shares into that leg's paired token and book the actual redemption proceeds locally; retain the other shares as the SE-share component. This is an actual redemption, not a price sample, not 5% of rated value, and not a continuing local-reserve target. Raw legs still accept their raw token. Preserve each family's supported seed topology, rate-free seed-function shape and locked minimum-liquidity floor; calculate its SE-leg seed coordinate from the retained shares after redemption, not their rated value. Book the complete resulting basket as backing for that initial LP supply, excluding the locked floor from the FS-OWN-36 fee base. Later joins and exits use the existing component proportions, not another automatic 5% redemption. FS-HOOK-10 specifies rounding, actual receipts, minima, and atomic failure. This is not a change to the FullSpread vault's own genesis or 49% one-sided entry rule.
 
 ## 2. Authority and precedence
 
 | Source | Role |
 | --- | --- |
-| `IMPLEMENTATION_PLAN_BLOCKERS.md`, including the 2026-11-03 overrides | Later lock. Wins over an earlier sentence in that file and over an older sentence in this PRD. |
+| This PRD, including FS-OWN-34 through FS-OWN-37 | Single source of truth for the expanded hook remediation. Its latest 2026-11-06 component-accounting, membership, LP mint-fee, and share-funded bootstrap decisions replace conflicting earlier scope and economics in plans, blockers, and council reports. |
+| `IMPLEMENTATION_PLAN_BLOCKERS.md`, including the 2026-11-03 overrides | Historical owner-decision context. Its dated locks apply only where not replaced by a later lock in this PRD. |
 | `docs/vaults/PRETRANSFER_DIRECTIVE.md` | Binding pretransfer rule. Wins over an older pretransfer sentence, including the accepted ABI report's short-declaration revert. |
 | `docs/research/se-interface-refund-bundle-20261030-01a18660/REPORT.md` | Accepted return ABI and bundle interfaces. The owner lock in that report wins over its earlier council text. A later full-spread lock still wins over a sentence there. |
 | `docs/research/se-fullspread-preview-consumers-20261103/REPORT.md` and `INDEX.md` | Consumer enumeration for the 64-byte preview return. F13 is accepted. F14's principal-only withdrawal sentence is not. |
 | `contracts/protocols/strategy/weir/WeirVaults.sol` | Source of the deposit, withdrawal, issuance, and compound rules this PRD still states. Its multi-vault manager, administration surface, treasury performance fee, sleeve, auto-compound, and native caller payout are not inherited. |
-| FS-FACET-01 and FS-PKG-01 | This family's package inputs. No PairToken package field or economic rule is inherited. |
-| `contracts/hooks/uniswap/v4/standardExchange/` | Current hook bindings. Do not redesign them here. Migrate a 32-byte preview gate under FS-OWN-08. |
+| FS-FACET-01 and FS-PKG-01 | This family's self-contained package inputs. No package field or economic rule from another vault family is inherited. |
+| `contracts/hooks/uniswap/v4/standardExchange/` | Current implementation context, not authority over the new requirements. Refactor under FS-OWN-34 through FS-OWN-37 and FS-HOOK-05 through FS-HOOK-10. Migrate a 32-byte preview gate under FS-OWN-08. |
 | `CLAUDE.md`, `docs/agent/INDEXEDEX_AGENT_LAW.md`, `.github/ASSISTANT_CODING.md`, `.github/ASSISTANT_TESTS.md` | Registry, token, compiler, and test law. |
 | Crane architecture, IndexedEx testing, and Uniswap V4 hook-package skills | Packaging and production-first tests. |
 
-PairToken stage one is not an economics authority. Do not inherit S1-ACC-02, S1-ACC-07, S1-D03's dead-share sentence, S1-OP-02's zap caps, S1-OP-05's ratio swap and quarter-cap, S1-P05, S1-P07, S1-EXIT-01's collection-only fallback, S1-X15, or S1-X17. Issuance, entry settlement, compound, and idle are FS-MONEY-01. An unnamed PairToken economic clause does not survive because this file used to inherit by ID.
+Issuance, entry settlement, compound, and idle follow FS-MONEY-01 and the owner locks in this PRD. Do not inherit a different issuance formula, dead-share rule, zap cap, ratio swap, quarter-cap, collection-only fallback, or package dependency from an earlier specification.
 
-These constraints stay, and they are not PairToken economics:
+These constraints stay:
 
 - FS-X01 permits the already-unlocked path only for canonical `exchangeIn`. `exchangeBundleInForSingleOut`, `exchangeBundleOut`, `donate`, and `compound` still revert `ManagerAlreadyUnlocked`. `depositPair` and `redeemPair` are not installed. There are no SY mutators.
 - FS-OWN-05 removes every Standardized Yield selector. Do not replace `exchangeRate` with another denomination.
 - FS-OWN-03 withdraws `getRate`. Do not install `IERC4626`, a transition quote, an external-state quote, or `IStandardExchangeRateQuote`. The external provider in FS-OWN-29 is not this vault's rate.
-- Hook bindings, compiler law, and registry law stay. Do not rewrite them to remove a PairToken filename reference. The FS-OWN-08 return migration is required.
+- Compiler and registry law stay. Hook bindings now follow FS-OWN-35, and hook liquidity/refund accounting follows FS-OWN-34. The FS-OWN-08 return migration is required.
 
 Do not install `IStandardExchangeTransitionQuote`, `IStandardExchangeUnlockContextQuote`, or `IStandardExchangeExactOutputQuantityQuote` unless FS-HOOK-04 cites a consumer that rejects without one. The ordinary exact-input hook path must show the existing ERC-165-gated fallback to standard previews. A stub that returns live values for a projected state is forbidden.
 
@@ -282,7 +297,8 @@ Do not install `IStandardExchangeTransitionQuote`, `IStandardExchangeUnlockConte
 | Locked unlock count | One vault-started unlock per planned manager action. | One unlock per public call. |
 | Recipient | Output may be paid to the hook's `recipient`, including a user on unwrap. Zero and the vault are rejected. | `recipient == msg.sender` as a hard rule. A hook allowlist. |
 | Entry remainder | Unused declared input is refunded to the payer under FS-OWN-32. It is not booked and it is not minted. `feesAccrued` on a share-minting deposit is booked. A donation or compound remainder is booked. | `J_i` booking of unused entry input. `IncompleteConversion`. Every input wei becomes liquidity. Refunding a donation remainder. |
-| Identity `token == share` | Not a passing row. Current hooks reject it unless `asset()` exists. Do not add `asset()`. | Greening FS-A24 by adding `asset()` or editing the hook. |
+| Own-share processing and paired-token binding | An SE Vault implicitly processes its own shares without listing itself in `vaultTokens()`. Separately, the configured hook `pairToken` must occur in that list. FS-OWN-35. | Requiring the vault's own address in its list, probing `asset()`, or using share recognition to waive paired-token membership. |
+| Hook LP ownership | Proportional actual SE-share and local pair-token quantities, FS-OWN-34 and FS-HOOK-07/08. Rated reserves remain swap inputs only. | Rate-valued LP issuance or exits; paying a whole LP exit local-first from the other holders' cash. |
 | Sleeve | Absent. FS-OWN-04. | A local target, a 5% band, or `localReserves()`. |
 | Quote method | The mathematical result of the operation. Section 6. | A 64-step cap, a minimum tick spacing, a partial fill, or `QuoteWorkLimit`. |
 
@@ -290,7 +306,7 @@ Do not install `IStandardExchangeTransitionQuote`, `IStandardExchangeUnlockConte
 
 ### FS-FACET-01 — Package inputs
 
-`PkgInit` uses this family's facet order. PairToken facet order is not inherited economics. FS-OWN-05 removes `syMoneyFacet` and `syQueryFacet`. It is not an open `IFacet[]`. Do not pass a PairToken facet address into this package. Family facets are this family's implementations. `vaultTokens` is `MultiAssetBasicVaultFacet`. `reserveOfToken` and `reserves` are the family custom facet. Those are two facet addresses. `basicVaultFacet` is not one facet that exposes all three. Package validation must not require `getRate`. FS-OWN-03 forbids installing it.
+`PkgInit` uses this family's facet order. FS-OWN-05 removes `syMoneyFacet` and `syQueryFacet`. It is not an open `IFacet[]`. Do not substitute a different vault family's facet implementations into this package. Family facets are this family's implementations. `vaultTokens` is `MultiAssetBasicVaultFacet`. `reserveOfToken` and `reserves` are the family custom facet. Those are two facet addresses. `basicVaultFacet` is not one facet that exposes all three. Package validation must not require `getRate`. FS-OWN-03 forbids installing it.
 
 The Crane Uniswap V4 Protocol Aware facet and the Crane `UniswapV4SinglePositionAware` facet are package inputs. Their getters are externally callable on this vault. This text does not invent the `PkgInit` field names for those two inputs.
 
@@ -316,7 +332,7 @@ Family facets:
 
 `syMoneyFacet` and `syQueryFacet` are not package inputs. FS-OWN-05.
 
-The old 61-selector count included `getRate` and is not the manifest. Recount from the current package when it is built. `linkedComponents()` is facet metadata, not an installed proxy selector. Cite the current package `_expectedSelectors` and S1-ARCH-04 when implementing. Do not invent selector hex in this PRD beyond the accepted selectors already named in FS-OWN-08 and FS-OWN-09.
+The old 61-selector count included `getRate` and is not the manifest. Recount from the current package when it is built. `linkedComponents()` is facet metadata, not an installed proxy selector. Cite the current package `_expectedSelectors` and the factory-owned exclusions in FS-FACET-02 when implementing. Do not invent selector hex in this PRD beyond the accepted selectors already named in FS-OWN-08 and FS-OWN-09.
 
 Family errors, declared on the family interface, with selectors computed later:
 
@@ -339,7 +355,7 @@ Do not put these in `PkgInit`, `facetCuts`, or the package interface aggregation
 - ERC-165 introspection.
 - ERC-8109 introspection.
 - Diamond loupe.
-- The factory-owned temporary-hook facet. The PairToken interface excludes it. This PRD does not invent its filename. Name it only after citing the factory file.
+- The factory-owned temporary-hook facet. Exclude it from this package's inputs and cuts. This PRD does not invent its filename. Name it only after citing the factory file.
 
 The finished proxy still exposes those factory-installed surfaces. Exclusion from `PkgInit` is not removal from the diamond.
 
@@ -347,9 +363,9 @@ The finished proxy still exposes those factory-installed surfaces. Exclusion fro
 
 ### FS-ARCH-01 — Files
 
-Create the family under `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/`. Do not edit PairToken or Wings to host it.
+Create the family under `contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/`. Do not host it in another vault family.
 
-Production files mirror the PairToken split, with `FullSpread` in the name:
+Production files use this family's explicit split:
 
 - `interfaces/IUniswapV4FullSpreadStandardExchangeVault.sol`
 - `interfaces/IUniswapV4FullSpreadStandardExchangeVaultDFPkg.sol`
@@ -366,7 +382,7 @@ Production files mirror the PairToken split, with `FullSpread` in the name:
 
 `TestBase_UniswapV4FullSpreadStandardExchangeVault.sol` goes under the family's `test/bases/`. Specs go under `test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/`.
 
-Storage uses a new namespaced slot, `keccak256(abi.encode(namespace)) - 1`. It must not equal PairToken's slot or Wings' slot.
+Storage uses a new namespaced slot, `keccak256(abi.encode(namespace)) - 1`. It must not collide with any other vault family's storage slot.
 
 The Protocol Aware pair is created under `lib/crane/contracts/protocols/dexes/uniswap/v4/aware`. `UniswapV4SinglePositionAware` is a Crane repo and facet. This text does not assign it a directory beyond that Crane home. Do not put either pair inside the full-spread family directory. Both are part of this directive, including their Crane tests. This text does not write that code.
 
@@ -376,11 +392,9 @@ The new owner and operable modifiers are part of this directive. Their file name
 
 `PkgInit`, in binding order: the facet fields above, including the two Crane facet inputs, then `poolManager`, `registry`, `oracle`, `diamondFactory`, and `linkedLibraries` as `address[6]` for Math, Projection, SwapProjection, Planner, Execution, and ExecutionPreparation. `weth` is a `PkgInit` field. `wrappedNative` is not a field. Initialization writes `weth` with `WETHAwareRepo._setWeth`. The two Standardized Yield facet fields are absent. The `poolManager` field is an address binding, not permission to install a family `poolManager()` selector. The other six architecture addresses are package immutables of the same deployment. They are infrastructure bindings and are covered by `bindingHash`, the same as `poolManager`. This text does not invent their struct field names. FS-OWN-01.
 
-`PkgArgs` is this family's set. It is not the PairToken set. No hook allowlist:
+`PkgArgs` is this family's set. No hook allowlist:
 
-- `PoolKey poolKey`, stored through `UniswapV4SinglePositionAware`, not as proof that `poolKey()` is a family-only selector
-- `string name`
-- `string symbol`
+- `PoolKey poolKey`, stored through `UniswapV4SinglePositionAware`, not as proof that `poolKey()` is a family-only selector. Locked 2026-11-05. `name` and `symbol` are not fields. The salt is this pool key. Initialization generates the name from the two faces and the fee, and hardcodes the symbol `UV4X`. That symbol is 4 characters, inside the 11-character symbol limit. A second deploy of the same pool key returns the existing vault.
 
 `maxZapBps` and `maxZapTickMove` are not fields. No replacement cap or tick bound is added. `rateAsset` is not a field.
 
@@ -390,7 +404,7 @@ The new owner and operable modifiers are part of this directive. Their file name
 
 `processArgs` reverts `NotCalledByRegistry` unless `msg.sender` is the bound registry and `address(this)` is the bound `diamondFactory`. Both conjuncts are required.
 
-The package still lists `SwapProjection` and `ExecutionPreparation`. PairToken economics are not inherited. The slots stay. The engineer assigns already specified operations to them. This PRD does not design those libraries.
+The package still lists `SwapProjection` and `ExecutionPreparation`. No other family's economics are inherited. The slots stay. The engineer assigns already specified operations to them. This PRD does not design those libraries.
 
 ### FS-PKG-02 — Validation
 
@@ -418,8 +432,8 @@ The public selectors stay the accepted Standard Exchange routes, plus locked `do
 - On the first deposit, reject added liquidity less than or equal to `MIN_SHARES` with `MinLiquidityNotMet()`. The first add must exceed `1_000`. Before the fee, the minted shares are `added liquidity - 1,000`. `MIN_SHARES` is `1_000`. The floor is minted to `address(0)` and stays in `totalSupply`. It is not credited to the depositor. The fee is taken from the pre-fee shares under FS-OWN-24. The depositor receives the net. The source's intermediate `totalShares = MIN_SHARES` step is not a second ledger.
 - For an existing supply, `grossShares = added liquidity * totalSupply / existing liquidity`. The denominator is existing liquidity before this deposit is added. Idle balances are not in that denominator. The fee is taken from `grossShares`. A share-minting deposit books `feesAccrued` and does not include it in the share credit or in a swap.
 - A deposit, a withdrawal, and `exchangeIn` do not call `compound()` and do not deploy the staying holders' booked balance. A withdrawal does pay and, on a one-token exit, convert the caller's FS-OWN-30 booked claim.
-- `compound()` is FS-OWN-14. It is not permissionless. Leftover after the simplest deposit is booked. It is not a sleeve. The source's `perfFeeBps` cut to `treasury` is not added. This is not PairToken's no-fee rule. It is the absence of an unauthorized fee.
-- A withdrawal removes `liquidity * sharesBurned / supplyBeforeBurn` and pays the caller's FS-OWN-30 claim. It does not pay another holder's booked balance or an unbooked balance. This family does not install `zapTo`. A one-token exit pays only the selected token or reverts `AmountOutNotMet` without burning. A both-token exit pays the claim in both tokens and does not swap.
+- `compound()` is FS-OWN-14. It is not permissionless. Leftover after the simplest deposit is booked. It is not a sleeve. The source's `perfFeeBps` cut to `treasury` is not added. No additional fee is authorized by that source.
+- A withdrawal removes `liquidity * sharesBurned / supplyBeforeBurn` and pays the caller's FS-OWN-30 claim to `recipient`. It does not pay another holder's booked balance or an unbooked balance. This family does not install `zapTo`. A one-token exit pays only the selected token or reverts `AmountOutNotMet` without burning. A both-token exit pays the claim in both tokens and does not swap.
 - Unused declared input is refunded under FS-OWN-32. `previewExchangeIn` and `exchangeIn` already return the refund word. Do not add a refund return to `exchangeOut` or `previewExchangeOut`.
 
 Callers send and receive WETH only. Native ETH is wrapped or unwrapped only at the pool boundary. A wrapped-native boundary does not make the vault accept or produce native ETH.
@@ -439,7 +453,9 @@ After ordinary route, deadline, amount, and authority checks, `exchangeIn` reads
 
 `exchangeBundleInForSingleOut`, `exchangeBundleOut`, `donate`, and `compound` keep `ManagerAlreadyUnlocked()` on this path. There are no paired selectors and no SY mutators.
 
-### FS-UNLOCK-02 — Borrowed unlock
+### FS-UNLOCK-02 — Already-unlocked execution (borrowed unlock)
+
+"Borrowed unlock" means that a router or other outer caller already opened the bound PoolManager's unlock, and the vault executes within that existing context. It is not a loan, borrowing a token, or borrowing another vault's funds. The vault does not call `unlock()` again. It spends only authorized caller inputs or shares, settles its own per-address deltas, and leaves the outer caller responsible for completing the outer operation.
 
 When `exchangeIn` takes the unlocked path:
 
@@ -462,9 +478,9 @@ Ordinary entry keeps the inherited per-action dispatcher. For each selected mana
 
 | Surface | Meaning | Forbidden substitute |
 | --- | --- | --- |
-| Issuance | FS-MONEY-01 and FS-OWN-24. `previewZapCredit` is absent. A mint preview does not credit existing fees to the new depositor. | S1-ACC-07. `J_i` booking. A replacement zap-credit view. |
+| Issuance | FS-MONEY-01 and FS-OWN-24. `previewZapCredit` is absent. A mint preview does not credit existing fees to the new depositor. | An inherited issuance formula. `J_i` booking. A replacement zap-credit view. |
 | SY `exchangeRate()` | Not installed. FS-OWN-05. | A replacement denomination. NAV. |
-| Exit preview | The same apportioning as execution, including accrued fees. That quote is the share valuation. A one-token quote includes the same swap, so `amountOut` matches execution. A both-token quote does not swap. | `getRate()`. Whole-book value divided by supply. A sleeve-maintenance term. |
+| Exit preview | The same apportioning as execution, including accrued fees. That quote is the share valuation. A one-token quote is the FS-OWN-30 recipient receipt, so `amountOut` matches execution. A both-token quote does not swap. | `getRate()`. Whole-book value divided by supply. A sleeve-maintenance term. |
 | Mint preview | Net shares under the clamped fee. Existing fees are not credited to the new depositor. | A preview that adds `feesAccrued` to the new depositor's shares. |
 | `getRate()` | Not installed. FS-OWN-03. | The withdrawn one-share formula. NAV. The external provider's result called this family's rate. |
 | `previewExchangeOut` | Returns zero. No refund word is added. | A coded vault revert. A refund return. |
@@ -498,10 +514,10 @@ No new hook-package field is authorized. The hook configures an already supporte
 The passing cross-vault proof is:
 
 1. FullSpread is the buffered leg. `standardExchange` is this vault. The hook is configured with an `IStandardExchangeRateProviderDFPkg` instance for this vault and one rate target. The required rows are FS-OWN-29. Do not name a `rateAsset`. Do not bind this vault's `getRate`. Do not invent a provider inside this vault to make the row pass.
-2. The other SE is not asked to mint or redeem inside the outer unlock. Current PairToken rejects that context. Its share may be an identity leg only if the current package accepts `token == se` without `asset()`. If it rejects, that identity bind is FS-HOOK-04, not a pass. The other leg can still be a raw token or a share transfer that the hook accepts without calling that vault.
+2. Use supported SE Vault instances with disjoint backing pool keys. Each SE-backed hook leg binds a `pairToken` contained in that vault's `vaultTokens()` and accounts for that vault's shares as separate reserve inventory. The vault implicitly processes its own shares under FS-OWN-35; its share address need not and must not be added to its token list to make the test work. The fixture may use two independently deployed instances of this FullSpread family. It has no dependency on a different named SE contract.
 3. The two backing pool keys differ. One direction mints FullSpread shares while the manager is unlocked. The reverse burns them. Assert balances, position owner, ticks, salt, and per-address deltas.
-4. An identity-only share trade is a separate case. It does not prove underlying entry or exit.
-5. A both-buffered composition is optional, and only for another family that already supports the same borrowed unlock. It is not the required proof.
+4. A transfer-only share trade is a separate control. It does not prove underlying entry or exit. A valid paired-token binding plus minting or redeeming the vault's own share is not that transfer-only case.
+5. Any vault actually called while the PoolManager is already unlocked must execute the already-unlocked path described in FS-UNLOCK-02 without opening another unlock. Do not inherit an unsupported-context restriction from an out-of-scope vault contract or leave the canonical proof dependent on that contract.
 
 Two buffered legs that share one pair token and overwrite `standardExchangeOf[pair]` are not a required fixture. If the package cannot represent that bind, record it. Do not edit the hook to create it.
 
@@ -509,23 +525,120 @@ Same-backing-pool sequential composition is unverified, not impossible, and not 
 
 ### FS-HOOK-03 — Exact output
 
-`exchangeOut` reverts `ExchangeOutNotAvailable()`. `previewExchangeOut` returns zero and does not gain a refund return. A hook path that calls `exchangeOut` against this vault fails closed. An identity route that never calls `exchangeOut` is not forbidden by that sentence. Exact-input both directions means `zeroForOne` and `oneForZero`. Exact-out is not one of those directions.
+`exchangeOut` reverts `ExchangeOutNotAvailable()`. `previewExchangeOut` returns zero and does not gain a refund return. A hook path that calls `exchangeOut` against this vault fails closed. A transfer-only route that never calls `exchangeOut` is not forbidden by that sentence. Exact-input both directions means `zeroForOne` and `oneForZero`. Exact-out is not one of those directions.
 
-### FS-HOOK-04 — Separate hook-change gate
+### FS-HOOK-04 — Integration records and remaining hook-change gate
 
 If a required route cannot run:
 
 1. A full-spread money, preview, or context defect is fixed in this family.
 2. An intentional exact-output or budget rejection stays a rejection.
-3. A missing quote interface, an `asset()` requirement, a `SameToken` or pair-overlap reject, or an incompatible denomination other than the FS-OWN-29 rows is a separate requirement. Name the consumer, selector, arguments, and revert. Do not implement that change here, and do not stub a transition quote.
+3. Hook local-book, proportional-liquidity, refund, disabled-vault, and membership changes are required by FS-OWN-34/35, not deferred by this gate. Remove an `asset()` dependency rather than adding that interface to an SE Vault. An invalid membership bind remains invalid after removal; do not treat its rejection as permission to bypass FS-OWN-35.
+4. A missing quote interface, a `SameToken` or pair-overlap reject, or an incompatible denomination other than the FS-OWN-29 rows remains a separate requirement unless this amendment explicitly addresses it. Name the consumer, selector, arguments, and revert. Do not invent that change here, and do not stub a transition quote.
 
 A cited reject is an unresolved integration record. It does not close the canonical FS-HOOK-02 proof. It may close a family row only when that family's topology cannot express the canonical fixture, and the record says so. The FS-OWN-29 rows are not that record.
+
+### FS-HOOK-05 — Separate books and ownership
+
+For each SE-backed leg `i`, `S_i` is the hook-owned booked quantity of SE shares and `L_i` is the hook-owned booked quantity of local `pairToken`. These are separate asset quantities, not a summed LP valuation. Raw legs have only their booked token quantity. Do not count one physical holding twice, including an address that appears in multiple roles. Pending caller inputs, amounts owed back to callers, unbooked transfers, and another leg's holdings are not available book credit.
+
+When a hook-owned deposit into an SE Vault returns shares and refunds input, credit the shares to `S_i` and the actual retained refund to `L_i`. Count the refund once, not both as spent input and as local backing. A disabled SE causes pool-owned input or residual that cannot be redeposited to remain booked locally; it is not gifted to the next caller and does not force a cleanup deposit. Accounting follows actual received, spent, and returned quantities and the return tuple in FS-OWN-08. A failed operation rolls back transfers, bookings, share changes, and settlement.
+
+Hook LP joins are different from reinvesting hook-owned inventory: incoming assets and SE refunds stay attributed to that incoming caller until the proportional basket in FS-HOOK-07 is accepted. Book only the accepted portion. Return unaccepted assets to that caller. An SE refund to the hook is not automatically an additional refund to the user, nor automatically existing LP property before the join is settled.
+
+### FS-HOOK-06 — Swap reserves and disabled-vault execution
+
+For swap pricing, each SE-backed leg contributes `L_i + ratedPairTokenUnits(S_i)` using the configured provider and correct token-unit normalization. This rated sum is a swap reserve, never the Hook LP mint/burn denominator or entitlement. Preserve the hook family's swap curve and applicable fees; include the local book consistently in swap execution, previews, reserve updates, and related fee accounting.
+
+For token output, debit and use the booked local pair-token balance first. If it covers the output, do not withdraw from the SE Vault. Otherwise redeem only to cover the deficit using actual execution and the route's existing rounding and minima; book any hook-owned remainder without claiming the rated amount is guaranteed redemption proceeds.
+
+When the bound SE is disabled, do not make a prohibited deposit or pass-through call to buffer incoming tokens or residuals. Keep hook-owned amounts local. Permitted SE withdrawals may still cover output deficits. Thus a hook swap can proceed using local input booking, local output, and permitted redemption even though directly calling a disabled SE's non-withdrawal route would revert. Do not weaken the SE disable predicate, swallow arbitrary execution failures, or claim success where balances, minima, or settlement cannot be satisfied. Re-enabling the SE does not retroactively give a new depositor ownership of the existing local book.
+
+This swap use of a rated reserve is not a claim that price manipulation in swaps or the underlying conversion is solved. The new LP ownership rules specifically remove rate-valued issuance and exits.
+
+### FS-HOOK-07 — Proportional Hook LP deposits
+
+For an existing Hook LP supply `T > 0`, snapshot every booked component and the actual supply before crediting incoming assets or minting any of this join's LP. Do not first mint protocol LP from prior rate/invariant growth; FS-OWN-36 replaces that mechanism. The incoming caller's assets must not enter the incumbent snapshot. Use one common fraction across every leg, not an independently selected fraction for each leg.
+
+For `m` gross new Hook LP tokens before the FS-HOOK-09 fee split, the accepted contribution on every SE-backed leg is:
+
+```text
+requiredSeShares_i = ceil(m * S_i / T)
+requiredLocalPair_i = ceil(m * L_i / T)
+```
+
+For a raw leg, require `ceil(m * bookedRaw_i / T)`. Multiply before division with overflow-safe arithmetic. A zero component requires zero contribution; do not divide by that component or use it to value another component. The depositor and fee recipient split the total backed mint `m` under FS-HOOK-09. Size the contribution for `m`, not just for the depositor's smaller net receipt; fee LP is not an additional mint on top.
+
+LP entitlement depends on these actual quantities only. Do not use `getRate`, spot price, NAV, or the change in a rated reserve to determine `m`. A rate movement without a change in component quantities cannot enlarge the incoming caller's LP entitlement. At acceptance, existing holders' per-LP backing in each component must not decrease through the mint.
+
+To assemble the required basket from pair-token input, keep the incoming assets separate; acquire SE shares with that input; count actual SE refunds toward that caller's local contribution; and, if needed, redeem some of that caller's newly acquired SE shares to obtain the missing local pair tokens. Do not redeem existing holders' SE shares or use their local balances to assemble the new contribution. Retaining incoming pair tokens or using an SE refund can avoid a needless deposit/redemption round trip. Only SE shares remaining after any such redemption count toward `requiredSeShares_i`; count actual local proceeds, not a rated estimate.
+
+Choose a gross LP amount supported by the assembled basket on all legs, accept its required quantities, return unused assets, and split that backed mint under FS-HOOK-09. Conversion fees, losses, and rounding belong to the incoming operation. Use the caller's input/output bounds; obtain no extra input beyond them. If the required basket cannot be assembled within those bounds, revert rather than subsidize it from the existing book. Previews use the same apportionment and fee split and disclose the required components; actual results control settlement.
+
+If an SE is disabled and the existing book requires a nonzero SE-share contribution, fresh pair tokens alone do not justify LP issuance without those shares. Already-owned SE shares may supply that component without calling the disabled mint path. Otherwise the join cannot proceed. An entirely local contribution is sufficient only where the proportional requirements themselves require no SE shares, not because a disabled vault is treated as having a zero rated value.
+
+For initial supply `T == 0`, use the SE-share-funded bootstrap and 5% redemption in FS-HOOK-10, not these existing-supply ratios. The new initial LP denomination is rate-free and follows the retained per-family seed function and locked floor. Do not preserve a legacy rate-valued genesis calculation or accept pair-token input for a funded SE-backed leg on that first join.
+
+### FS-HOOK-08 — Proportional Hook LP withdrawals
+
+For a holder burning `b` Hook LP tokens, snapshot the booked components and applicable supply `T` before the burn. Allocate on each SE-backed leg:
+
+```text
+seSharesOut_i = floor(b * S_i / T)
+localPairOut_i = floor(b * L_i / T)
+```
+
+Allocate each raw leg by the same fraction. Multiply before dividing. Existing locked/minimum LP supply remains in `T`; rounding residue remains in the book for its continuing owners. Do not calculate a rated total and then satisfy the whole LP exit local-first: that is the swap settlement rule, not LP ownership.
+
+For a pair-token payout, redeem only the exiting holder's allocated SE shares and add that holder's allocated local pair tokens. Pay actual proceeds subject to minima. For a requested single-token exit across legs, first allocate the proportional asset basket, then convert only that holder's allocated assets under the family's applicable swap/fee rules. Do not sell remaining holders' inventory or make them absorb conversion loss. A failed conversion or minimum check reverts the whole exit.
+
+A disabled SE does not trigger a post-withdrawal deposit. Keep remaining holders' local book intact and accounted for; execute permitted redemption for the exiting holder. Any residual reinvestment must not make an otherwise permitted disabled withdrawal fail. Previews, all withdrawal entrypoints, and the remaining-holder book use the same allocation. This mirrors the separate principal/booked-claim ownership principle in FS-OWN-30, but does not replace this vault's own liquidity-based issuance or exit formulas.
+
+### FS-HOOK-09 — Protocol fee from the backed LP mint
+
+Let `grossLp` be the Hook LP supported by the accepted contribution before the deposit fee and after any separate genesis-floor allocation. Let `f` be the configured Hook LP mint-fee percentage in WAD precision. Resolve the existing fee recipient through the hook's fee configuration. When the fee is active and the recipient is nonzero:
+
+```text
+feeLp = floor(grossLp * f / 1e18)
+netLp = grossLp - feeLp
+mintedToDepositor + mintedToFeeRecipient = grossLp
+```
+
+Use full-width multiply/divide. Mint `feeLp` to `feeTo` and `netLp` to the depositor's recipient. If the fee is inactive or `feeTo` is zero, the fee portion is zero and the backed mint goes to the depositor. Skip zero-amount mints. Do not charge a fee on the fee LP itself. The configured percentage is applied to new LP issuance, not to swap output, reserve value, or prior growth; this lock does not choose a new numerical percentage or import the FullSpread vault's 30% cap into hooks.
+
+For example, a contribution backing 100 LP at a 2% fee mints 98 to the depositor and 2 to the fee recipient, never 102 in total. Existing holders receive the complete proportional component contribution for those 100 new LP. The protocol's LP remains invested and has the same proportional backing and participation in subsequent trading fees as other LP.
+
+Apply the fee only to caller-funded liquidity issuance, including genesis and supported proportional, single-token, flexible, SE, SY, and Permit2 deposit aliases. Do not charge it on withdrawals, transfers, rate changes, or yield growth without a deposit. Swap trading fees and any conversion costs remain governed by their existing rules; do not also run the replaced growth-based protocol LP mint. Remove growth checkpoints used only for that retired fee calculation, without removing invariants still required for swap pricing or correctness.
+
+Hook deposit previews and minimum-LP checks use `netLp`. Exact-net-LP requests must size a gross contribution whose rounded fee split delivers the requested net amount within the caller's maximum input; preview and execution use identical integer rounding. A requested net output that cannot be satisfied fails atomically. Do not reuse an exact-output path that depends on an unavailable SE operation merely to perform this gross-up.
+
+On genesis, the permanently locked minimum-liquidity floor is a separate allocation included in total supply, not a depositor fee and not part of `grossLp`. Exclude it exactly once. The initial supply increase is the floor plus `grossLp`; on later deposits it is `grossLp` only. Fee mint, depositor mint, component booking, caller refunds, and settlement are atomic. This rule does not change the FullSpread vault's separate FS-OWN-24 usage fee, and it adds no LP fee to a hook that has no LP token.
+
+### FS-HOOK-10 — SE-share-only initial liquidity and 5% local seed
+
+This rule applies only when a liquidity-bearing hook has no prior LP supply. For each funded SE-backed leg, accept the caller's SE Vault shares, not its underlying `pairToken`, as initial input. A pair-input or single-token alias cannot silently bypass this rule by depositing to the SE inside the bootstrap. The caller may acquire shares before the hook call. Raw legs still take their raw token. Keep each family's existing required positive-leg count and supported initial topology; this lock does not require nonexistent SE shares for a raw leg or create an LP product for the conversion-only single hook.
+
+For actual received shares `A_i` on each funded SE-backed leg, compute and execute:
+
+```text
+sharesToRedeem_i = floor(A_i * 5 / 100)
+retainedSeShares_i = A_i - sharesToRedeem_i
+localPairSeed_i = actual pairToken proceeds from redeeming sharesToRedeem_i
+```
+
+Use the supported share-in/pair-out SE redemption route and the configured member `pairToken`. Verify that the selected share amount was actually consumed; a quote or partial share refund is not a completed 5% redemption. Require a nonzero redemption amount and positive actual pair-token proceeds for every funded SE leg, as well as the family's minimum-liquidity condition. Enforce the depositor's minimum outputs and deadline. If any required redemption fails, is incomplete, or cannot seed its component within those bounds, revert the entire initial join without leaving a partial book or LP mint. Permitted redemption can run while the SE is disabled; bootstrap does not require an SE deposit or a cleanup redeposit.
+
+Book the retained SE shares and actual local proceeds separately. The local amount is not calculated from `getRate`, a price sample, or an assumed one-to-one share conversion. SE redemption fees, price impact, and rounding are borne by this incoming bootstrap operation, never by staged or unbooked funds. Ambient token balances do not become the seed contribution.
+
+Determine the initial LP quantity with each family's existing seed-function shape and minimum-liquidity floor, using normalized retained SE-share quantities as its SE-leg inputs and normalized accepted raw quantities for raw legs. Do not feed rated reserves into the seed function. The local redemption proceeds belong to the same initial backing basket; do not add a separate rate-valued mint for them. Allocate the locked floor once, then split the remaining gross LP between the depositor and protocol under FS-HOOK-09. If the seed cannot exceed the required floor, revert.
+
+The 5% is a fraction of supplied SE shares rounded down, not a promise that 5% of economic value is local or that the final value ratio is 95:5. It is only the initial seeding operation. Subsequent swaps may change the mixture, subsequent deposits match the current actual component proportions under FS-HOOK-07, and withdrawals allocate those components under FS-HOOK-08. Do not maintain a 5% target, automatically redeem 5% on later joins, or restore the FullSpread vault's removed sleeve policy.
 
 ## 8. Testing
 
 ### FS-TEST-01 — Harness
 
-Place the TestBase under the family's `test/bases/`. Follow the current PairToken setup: extend `IndexedexTest` and the canonical native-wrapper base, call parent setups in the current order, and deploy the PoolManager through the existing artifact-backed CREATE3 helper. Deploy facets and the package through the current factory and manager paths. The hook under test and this vault bind that same manager. Two managers do not prove FS-UNLOCK-02.
+Place the TestBase under the family's `test/bases/`. Use this family's production-first setup: extend `IndexedexTest` and the canonical native-wrapper base, call parent setups in the current order, and deploy the PoolManager through the existing artifact-backed CREATE3 helper. Deploy facets and the package through the current factory and manager paths. The hook under test and this vault bind that same manager. Two managers do not prove FS-UNLOCK-02.
 
 Bootstrap shares only through the accepted public entry routes. `depositPair` is not installed. Reuse the current non-SUT mintable funding tokens. That is not permission to mock, etch, `vm.mockCall`, or inject storage into this vault or the PoolManager.
 
@@ -545,7 +658,7 @@ Crane tests for the Protocol Aware facet and for `UniswapV4SinglePositionAware` 
 
 `UniswapV4FullSpreadStandardExchangeVaultNative.t.sol` asserts the FS-OWN-17 boundary. It does not assert that a caller may send or receive native ETH. `UniswapV4FullSpreadStandardExchangeVaultQuotesAndRate.t.sol` asserts the previews and the absence of `getRate`. It does not assert a vault rate.
 
-Do not apply an inherited PairToken acceptance row that asserts removed economics. In particular, do not apply S1-A10, S1-A13, S1-A15, S1-A19, S1-A46, S1-A62, S1-A64, or S1-A70 as issuance, zap-cap, remainder, or consumption-check rows. Use the FS-A rows below. S1-A40 is not an inherited pass for `exchangeIn`; FS-A19 through FS-A23 cover that path, and FS-A22 still rejects the other unlocked methods.
+Use the FS-A acceptance rows below rather than inherited tests of removed economics. FS-A19 through FS-A23 cover already-unlocked `exchangeIn`; FS-A22 still rejects the other unlocked methods. Rebuild fixtures around the in-scope family and standard interfaces, not another named vault implementation.
 
 ### FS-TEST-03 — Acceptance rows
 
@@ -554,11 +667,11 @@ Do not apply an inherited PairToken acceptance row that asserts removed economic
 | FS-A01 | Package inputs follow FS-FACET-01. ERC-165, ERC-8109, loupe, and the cited temporary-hook facet are absent from cuts and still callable on the factory-built proxy where the factory installs them. The reviewed selector manifest succeeds through the proxy. Family `poolManager()`, family-only `poolKey()`, `rateAsset()`, `getRate()`, `basket()`, `wrappedNative()`, `localReserves()`, and every Standardized Yield selector are absent. The Crane Protocol Aware getters and `UniswapV4SinglePositionAware` getters are callable. Factory selectors stay disjoint. |
 | FS-A02 | `bindingHash` changes if any facet, library, or infrastructure binding changes. |
 | FS-A03 | Invalid component, uninitialized or hooked pool key, double initialization, wrong `processArgs` caller, and right registry in the wrong account all revert and leave no usable vault. There is no rate-asset argument, no wrapped-native argument, and no zap-limit argument to reject. There is no inherited-domain reject. |
-| FS-A04 | Storage slot is not PairToken's and not Wings'. |
+| FS-A04 | The family storage slot does not collide with another vault family's slot. |
 | FS-A05 | First deposit creates one full-range salt-zero position owned by the diamond. Added liquidity less than or equal to `1_000` is rejected. Genesis issuance follows FS-MONEY-01 and FS-OWN-24. The floor is `MIN_SHARES` of supply, minted to `address(0)` through `_mint`. The depositor receives gross shares minus fee shares. No performance fee is added. |
-| FS-A06 | Paired deposit and redeem follow the mapped bundle routes and FS-MONEY-01. They do not follow S1-ACC-02 or S1-ACC-07. The bundle redeem pays both tokens and does not swap. |
+| FS-A06 | Paired deposit and redeem follow the mapped bundle routes and FS-MONEY-01. The bundle redeem pays both tokens and does not swap. |
 | FS-A07 | Unused declared entry input is refunded to the payer under FS-OWN-32. It is not booked and it is not minted. There is no `IncompleteConversion` revert. `feesAccrued` on a share-minting deposit is booked and is not share credit. The one-token exit is FS-A08. |
-| FS-A08 | A one-token exit pays only the selected token, or reverts `AmountOutNotMet` and does not burn shares. It converts the unwanted withdrawn principal plus the caller's opposing fee and booked claim, and it does not pay, book, or keep that residual. A both-token exit pays the claim in both tokens and does not swap. |
+| FS-A08 | A one-token exit pays `recipient` the FS-OWN-30 receipt, or reverts `AmountOutNotMet` and does not burn shares. That receipt is the swap proceeds, the withdrawn requested-token principal, the holder's requested-token fee portion, and the holder's requested booked claim. It swaps all of the holder's opposing token and does not pay, book, or keep that residual. A both-token exit pays the claim in both tokens and does not swap. |
 | FS-A09 | `previewExchangeOut` returns zero and does not change balances. On an enabled vault, `exchangeOut` reverts `ExchangeOutNotAvailable` with unchanged balances. A disabled `exchangeOut` is FS-A38, not this row. Neither gains a refund return. A zero preview is not a promise that `exchangeOut` succeeds. |
 | FS-A10 | Callers send and receive WETH only. Native wrap or unwrap happens only at the pool boundary. The vault does not accept or produce native ETH. |
 | FS-A11 | A deposit, a withdrawal, and `exchangeIn` do not call `compound()`. A withdrawal pays the FS-OWN-30 claim and books the rest. It does not pay another holder's booked balance. There is no collection-only fallback. |
@@ -566,7 +679,7 @@ Do not apply an inherited PairToken acceptance row that asserts removed economic
 | FS-A13 | Withdrawn. `getRate` is not installed. |
 | FS-A14 | Withdrawn. `InsufficientRateSupply` is not declared. |
 | FS-A15 | Withdrawn. A planner failure is not observed through `getRate`. |
-| FS-A16 | Issuance does not read `exchangeRate`. There is no `getRate` to read. |
+| FS-A16 | Withdrawn 2026-11-06. Do not add a test that issuance does not read `exchangeRate`. `getRate` stays absent under FS-OWN-03. That absence is not this row. |
 | FS-A17 | A multi-action locked deposit and a multi-action locked withdrawal perform one unlock and one consumed callback per planned action. Replay after each callback reverts. The guard stays active between actions. The borrowed equivalent performs zero unlocks. |
 | FS-A18 | `unlockCallback` from any caller but the bound manager reverts and moves no tokens. |
 | FS-A19 | While the manager is unlocked, `exchangeIn` does not call `unlock`. This diamond's touched deltas are zero before return. The global delta count may be nonzero. Position owner, ticks, and salt are unchanged. Liquidity may change. |
@@ -574,7 +687,7 @@ Do not apply an inherited PairToken acceptance row that asserts removed economic
 | FS-A21 | An unlocked caller who does not hold the input or the shares does not mint. The unlocked flag is not authority. |
 | FS-A22 | `exchangeBundleInForSingleOut`, `exchangeBundleOut`, `donate`, and `compound` revert `ManagerAlreadyUnlocked` while the manager is unlocked. `depositPair` and `redeemPair` are absent. There are no SY mutators. |
 | FS-A23 | A reverting borrowed `exchangeIn` restores shares, liquidity, and token balances. |
-| FS-A24 | An identity bind of `token == this vault` is attempted. If the current package rejects it without `asset()`, the row records that reject under FS-HOOK-04 and does not pass. Do not add `asset()`. |
+| FS-A24 | An SE Vault whose `vaultTokens()` omits its own share still supports its own-share mint and redemption through the supported routes. The hook binds a valid member `pairToken` separately from the SE-share inventory. Do not require self-membership, call `asset()`, or leave this positive own-share proof failing solely because the vault does not list itself. Invalid paired-token bindings are the separate negative in FS-A40. |
 | FS-A25 | Buffered configuration mints and burns through `exchangeIn` while unlocked. Recipient may be the hook or the hook's unwrap recipient. Position owner, ticks, and salt hold. Fee handling follows FS-OWN-24 and FS-OWN-30. No performance fee is added. Do not require `token == rateAsset`. The required rate rows use the configured external provider. FS-OWN-29. |
 | FS-A26 | The FS-HOOK-02 fixture completes exact-input `zeroForOne` and `oneForZero` on two different backing pool keys. Exact-out is not part of this row. |
 | FS-A27 | Each family in FS-HOOK-01 has the proof that its topology can express, or a cited FS-HOOK-04 record that says why it cannot. A cited reject does not replace FS-A26. The FS-OWN-29 rows are not closed by an FS-HOOK-04 incompatibility record. |
@@ -588,8 +701,22 @@ Do not apply an inherited PairToken acceptance row that asserts removed economic
 | FS-A35 | Native borrowed settlement syncs native currency immediately before value settle, does not double-count wrapped and native backing, and does not spend another actor's sync credit. Caller-facing amounts stay on the WETH face. |
 | FS-A36 | A propagated outer failure restores the swap. A caller that catches a rejected vault call keeps only its own prior effects, sees the vault restored, and still settles its own deltas. |
 | FS-A37 | A funded non-hook contract that meets FS-UNLOCK-02 succeeds. The missing allowlist is the specified permissionless funding rule. |
-| FS-A38 | A disabled vault reverts `VaultDisabled` on every execution route except a withdrawal, `donate`, and `compound`. A withdrawal is `exchangeIn` with the share as `tokenIn`, or `exchangeBundleOut` with the share as `tokenIn`. A pass-through and a bundle deposit revert `VaultDisabled`. `donate` and `compound` do not. Views do not. A missed deadline reverts `DeadlineExceeded` before the disable check. A buffered withdrawal still succeeds. A buffered non-withdrawal reverts `VaultDisabled` while the manager is unlocked. Run the enabled `exchangeOut` revert on an enabled vault. |
+| FS-A38 | A disabled vault reverts `VaultDisabled` on every execution route except a withdrawal, `donate`, and `compound`. A withdrawal is `exchangeIn` with the share as `tokenIn`, or `exchangeBundleOut` with the share as `tokenIn`. A pass-through and a bundle deposit revert `VaultDisabled`. `donate` and `compound` do not. Views do not. A missed deadline reverts `DeadlineExceeded` before the disable check. A buffered withdrawal succeeds without a forbidden cleanup deposit. A non-withdrawal call into the disabled vault still reverts while the manager is unlocked; hook-local operations instead follow FS-HOOK-06. Run the enabled `exchangeOut` revert on an enabled vault. |
 | FS-A39 | The live `feeTo()` owner may appoint a global operator through `setOperator` and a function operator through `setOperatorFor`. A global operator may call `donate` and `compound`. A function operator may call only the granted selector. A stranger reverts. Appointment is not gated by a stored owner. `feeTo()` is not stored as that owner at initialization. The maintenance modifier is not `OperableModifiers.onlyOwnerOrOperator`. |
+
+The following additional acceptance rows lock the 2026-11-06 hook amendment. They supplement the existing vault rows and do not renumber audit IDs.
+
+| ID | Assertion |
+| --- | --- |
+| FS-A40 | Every FS-HOOK-01 family and shared SE-leg helper validates the configured `pairToken` through `vaultTokens()` without calling or probing `asset()`. A member paired token is not rejected because `asset()` is absent, reverts, or cannot identify a single underlying. A nonmember configured paired token is rejected even if `asset()` answers. Separately, omission of the vault's own share from the list never rejects the vault or its supported own-share processing; those operations are covered by FS-A24. |
+| FS-A41 | Each leg separately books SE shares and local pair tokens. SE refunds and disabled-vault residuals are counted once. Pending inputs, user refunds, unbooked transfers, and other legs' holdings cannot be spent or credited as this leg's LP backing. Verify conservation and rollback across booking, settlement, and failure. |
+| FS-A42 | Swap previews and execution include the local book plus rated SE backing in the same pair-token units. Output below, equal to, and above the local book uses local tokens first; only a deficit triggers permitted SE redemption. A disabled input SE is not called for buffering: accepted hook-owned input remains local. Existing pricing, fees, minima, and manager settlement still apply. |
+| FS-A43 | A join on an existing supply supplies the same LP fraction of every SE-share, local-pair, and raw component, rounding required inputs up. With component quantities held fixed, a changed rate or underlying spot price does not change the component requirements or the gross LP entitlement. Conversion and SE refunds use the incoming caller's assets only; only shares remaining after conversion count. Existing holders' per-LP component backing is not diluted. The new gross mint is split under FS-A47; the net receipt is not the quantity used to size backing. |
+| FS-A44 | A burn receives its fraction of each component, rounding payouts down against pre-burn supply including any locked floor. Redeem or convert only the exiting holder's allocated assets. A minimum-output or conversion failure rolls back. Multiple exits preserve remaining holders' local and SE-share claims; no first exiter receives others' local inventory through rated local-first LP settlement. |
+| FS-A45 | Disabled-vault exits complete without cleanup deposits; direct prohibited SE calls still revert. A join requiring SE shares cannot mint from pair tokens alone when those shares cannot be acquired, but can use already-owned shares without a disabled mint. Cover zero local, zero SE-share, mixed live books, the FS-A48 share-funded bootstrap, rounding dust, and disable/re-enable transitions without treating disabled backing as valueless. |
+| FS-A46 | Reproduce the proposed Hook join, underlying-pool price/liquidity change, Hook exit, and underlying-position unwind sequence. Assert quantity-based LP issuance and proportional claims, with no additional claim on existing holders' SE shares or local pair tokens from a rate change. Separate actual conversion PnL and swap pricing from LP accounting; do not claim the wider swap-manipulation problem solved by this test. Exercise each family's entrypoints and previews using production instances. |
+| FS-A47 | On every LP-bearing hook deposit path, gross LP is fully backed by the accepted component basket and is split into fee LP plus depositor net LP, never supplemented by fee LP on top. Previews/minima use net LP; exact-net requests gross up consistently. Cover zero fee, inactive/zero recipient, integer fee dust, genesis-floor exclusion, and ordinary/share/flexible/SE/SY/Permit2 aliases. Rate or yield growth without a deposit mints no protocol LP. Withdrawals and the fee mint itself incur no mint fee. Existing swap fees still accrue to LP holdings. Verify no legacy growth-fee mint or separate protocol swap-fee accumulation remains active alongside the replacement. |
+| FS-A48 | Initial liquidity accepts only SE shares for each funded SE-backed leg and raw tokens for raw legs. Redeem floor(receivedShares * 5 / 100), verify actual share consumption and positive pair-token receipt, and book retained shares and actual local proceeds separately. Initial pair-token inputs on SE legs, zero/dust redemption, unmet minima, incomplete redemption, or any failing leg revert atomically. Seed LP from rate-free retained-share/raw quantities using the family seed function and floor; apply FS-A47 only after the floor is allocated. Cover permitted bootstrap redemption while disabled, varying redemption proceeds, unbooked transfers, mixed decimals, and first/subsequent joins to prove 5% is not a continuing target. The conversion-only single hook has no LP genesis and is not given one. |
 
 Compare supply, holder balances, both positions, booked and reserved custody, wrapper balances, and per-address deltas. Do not assert only that no tokens moved.
 
@@ -605,7 +732,7 @@ Add this vault to the integration testing matrix and to the integration tests. T
 - `stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBehavior.sol`
 - `stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior.sol`
 
-It adds a row for this vault beside those contracts. It does not edit their assertions for other families. Exact-output success rows cannot pass here. On an enabled vault, `exchangeOut` reverts `ExchangeOutNotAvailable()`, and `previewExchangeOut` returns zero. A user's unused input is refunded. A donation or compound remainder is booked, so those rows stay. This replaces the November 1 report sentence that said booked-remainder rows cannot pass. These are adaptations of this family's rows, not permission to weaken the other families.
+It adds a row for this vault beside those contracts and updates shared hook assertions where FS-OWN-34 through FS-OWN-37 changes the behavior of all SE legs. Preserve unrelated assertions for other families; do not weaken a failing test to claim compatibility. Exact-output success rows cannot pass for a call into this vault. On an enabled vault, `exchangeOut` reverts `ExchangeOutNotAvailable()`, and `previewExchangeOut` returns zero. This vault refunds unused user input; hook receipt and booking follow FS-HOOK-05/07. A vault donation or compound remainder is booked, so those rows stay. This replaces the November 1 report sentence that said booked-remainder rows cannot pass. Run FS-A40 through FS-A48 across the seven named hook families and relevant shared paths; the pre-amendment implementation plan's no-hook-edits instruction is superseded for this scope.
 
 `docs/audits/apex-2026-09-17-evidence/hook-se-matrix.json` has historical V4 FullSpread compatibility rows. Their cited tests are not current proof of this family. The followup-review snapshots are not the current matrix. Preserve the V3 rows. Replace the stale V4 FullSpread rows rather than treating them as passed. Evidence files named for the plan to update, rather than treat as passed, are `hook-se-matrix.json`, `hook-se-matrix-findings.json`, `hook-se-matrix-finding-descriptions.json`, `docs/audits/apex-2026-09-17-evidence.md`, and `docs/audits/apex-2026-09-17-evidence/acceptance.json` item R10.3.
 
@@ -629,11 +756,11 @@ The testing inventory is the 45-ID table in `docs/research/se-fullspread-plan-re
 | 021 | no | Balancer DETF bond pricing. Not this vault. |
 | 022 | yes | Same borrowed-path loop as 011, named against both IDs. |
 | 023 | yes | Permissionless sleeve placement is absent. Do not claim the authorized sandwich is gone. The authorized callers are the current `feeTo()` and an operator that owner appointed, either global or function-level for that selector. A stranger still reverts. |
-| 024 | yes | A one-token exit swaps the FS-OWN-30 exiting claim only. It does not sell the staying holders' inventory. The unbounded limit stays. The absence test is the quantity, not a price check. Do not copy "withdrawn net." |
+| 024 | yes | A one-token exit swaps the FS-OWN-30 exiting claim only and pays that receipt to `recipient`. It does not sell the staying holders' inventory. The unbounded limit stays. The absence test is the quantity, not a price check. Do not copy "withdrawn net." |
 | 025 | no | Wings rebalance and loss cap are absent. |
 | 026 | no separate Wings test | The 512-step liquidation quote is absent. Dust-tick liveness of this vault's own quote is the 041 test. Do not reopen a spacing rule. |
 | 027 | no | Staking withdrawal queues are absent. |
-| 028 | yes | A dual identity-leg attempt must not burn the caller's position and pay zero. |
+| 028 | yes | A dual-hook own-share exit on a valid SE/paired-token binding must not burn the caller's position and pay zero. The vault's own share need not appear in `vaultTokens()`. |
 | 029 | yes, as a negative | This vault exposes no `getRate()` and is not bound to the full-book provider. A pumped external provider is not a vault rate. |
 | 030 | integration only | Balancer quad phantom fee LP is pool code. The quad row must not be counted as a vault fix. |
 | 031 | no | Balancer virtual-TTA join. Not this vault. |
@@ -665,9 +792,9 @@ Operator appointment is FS-A39. It is not a new audit ID. Do not treat a "no" ro
 
 ## 9. Non-goals and limits
 
-This PRD does not authorize implementation, deployment, a registry migration, a hook-economics edit, a Weir copy, a wings range, a second pool, a transition-quote facet, a zap cap, a tick guard, a swap price check, a quote step cap, a minimum tick spacing, a fee-origin store, an exit fee, a fee-increase delay, a new 0% override, a vault rate, a `WithRefund` sibling, a refund return on `exchangeOut` or `previewExchangeOut`, or Weir's treasury performance fee.
+The hook accounting, refund, disabled-vault, membership, LP mint-fee, and initial-liquidity refactor in FS-OWN-34 through FS-OWN-37 is required scope of the broader failing-test fix. This document update records requirements, not execution authorization. It does not itself perform implementation, deployment, or a registry migration. It does not add unrelated hook economics, a Weir copy, a wings range, a second vault pool, a transition-quote facet, a zap cap, a tick guard, a swap price check, a quote step cap, a minimum tick spacing, a fee-origin store, an exit fee, a fee-increase delay, a new 0% override, a vault rate, a `WithRefund` sibling, a refund return on `exchangeOut` or `previewExchangeOut`, or Weir's treasury performance fee.
 
-It does not add a local liquidity sleeve. It does not restore `PkgInit.wrappedNative` or a `wrappedNative()` getter. The WETH address is the `PkgInit.weth` field written through `WETHAwareRepo`. It does not invent paired-event arguments. `Donation()` and `Compounded()` have no arguments. Both empty lists are owner locks, not invented field lists. `Donation()` is a marker event, not an interface.
+It does not add a local liquidity sleeve to the FullSpread vault. The hook-local books required by FS-OWN-34 are distinct from that vault's booked balances and do not restore a target percentage. It does not restore `PkgInit.wrappedNative` or a `wrappedNative()` getter. The WETH address is the `PkgInit.weth` field written through `WETHAwareRepo`. It does not invent paired-event arguments. `Donation()` and `Compounded()` have no arguments. Both empty lists are owner locks, not invented field lists. `Donation()` is a marker event, not an interface.
 
 No audit is claimed. Disjoint-pool hook tests do not prove same-pool sequential safety. Compiler, gas, and fork results are future evidence. The accepted sandwich of an owner or operator `compound()` or `donate()` remains. This PRD does not add a disclosure function for that exposure.
 

@@ -40,6 +40,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_FundingRecurrence is TestBas
     function test_L2_FoT_forbidden_singleAssetJoin() public { _rejectShortZap(2); }
 
     function _rejectShortReceipt(uint8 mode) private {
+        _seedThreeLeg(100 ether);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 bookBefore = taxed.balanceOf(hook);
+        uint256 pairBefore = token0.balanceOf(hook);
+        uint256 rawBefore = token2.balanceOf(hook);
         bytes memory permitData;
         if (mode == 1 || mode == 2) {
             address[3] memory tokens = [address(token0), address(token1), address(token2)];
@@ -55,7 +60,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_FundingRecurrence is TestBas
         vm.prank(user);
         (uint256 shares,,,) = _join(mode, permitData);
         assertGt(shares, 0, "untaxed control must issue funded LP");
-        assertEq(taxed.balanceOf(hook), 100 ether);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        uint256 required = (gross * bookBefore + supplyBefore - 1) / supplyBefore;
+        assertEq(taxed.balanceOf(hook), bookBefore + required);
         assertTrue(vm.revertToState(snapshot));
         taxed.setTaxBps(1000);
         uint256 payerBefore = taxed.balanceOf(user);
@@ -63,10 +70,10 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_FundingRecurrence is TestBas
         vm.prank(user);
         _join(mode, permitData);
         assertEq(taxed.balanceOf(user), payerBefore);
-        assertEq(taxed.balanceOf(hook), 0);
-        assertEq(IERC20(hook).totalSupply(), 0, "short funding cannot issue LP");
-        assertEq(token0.balanceOf(hook), 0, "other transfers roll back");
-        assertEq(token2.balanceOf(hook), 0, "other transfers roll back");
+        assertEq(taxed.balanceOf(hook), bookBefore);
+        assertEq(IERC20(hook).totalSupply(), supplyBefore, "short funding cannot issue LP");
+        assertEq(token0.balanceOf(hook), pairBefore, "other transfers roll back");
+        assertEq(token2.balanceOf(hook), rawBefore, "other transfers roll back");
     }
 
     function _rejectShortZap(uint8 mode) private {
@@ -79,11 +86,16 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_FundingRecurrence is TestBas
             vm.stopPrank();
             data = abi.encode(uint8(1));
         }
-        uint256 snapshot = vm.snapshotState();
+        uint256 untaxedBalance = taxed.balanceOf(user);
+        uint256 untaxedSupply = IERC20(hook).totalSupply();
+        uint256 checkpoint = vm.snapshotState();
         vm.prank(user);
-        uint256 shares = _zap(mode, data);
-        assertGt(shares, 0, "untaxed zap control");
-        assertTrue(vm.revertToState(snapshot));
+        uint256 minted = _zap(mode, data);
+        assertGt(minted, 0, "fully delivered input pays for the missing legs");
+        assertGt(IERC20(hook).totalSupply(), untaxedSupply);
+        assertLt(taxed.balanceOf(user), untaxedBalance);
+        assertLe(untaxedBalance - taxed.balanceOf(user), 5 ether);
+        assertTrue(vm.revertToStateAndDelete(checkpoint));
         taxed.setTaxBps(1000);
         uint256 payerBefore = taxed.balanceOf(user);
         uint256 supplyBefore = IERC20(hook).totalSupply();

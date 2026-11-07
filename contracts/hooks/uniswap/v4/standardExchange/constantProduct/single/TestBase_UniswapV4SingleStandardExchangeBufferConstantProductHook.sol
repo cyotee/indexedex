@@ -267,6 +267,17 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
     }
 
     function _depositBoth(uint256 amtRaw, uint256 amtPair) internal returns (uint256 lp) {
+        if (IERC20(hook).totalSupply() == 0) {
+            vm.startPrank(user);
+            pairToken.approve(se, amtPair);
+            (uint256 shares,) = IStandardExchangeIn(se).exchangeIn(
+                IERC20(address(pairToken)), amtPair, IERC20(se), 1, user, false, block.timestamp
+            );
+            IERC20(se).approve(hook, shares);
+            (lp,,) = single.depositWithSeShares(amtRaw, shares, user, 1, block.timestamp);
+            vm.stopPrank();
+            return lp;
+        }
         uint256 a0 = _amountForCurrency(single.currency0(), amtRaw, amtPair);
         uint256 a1 = _amountForCurrency(single.currency1(), amtRaw, amtPair);
         vm.prank(user);
@@ -290,5 +301,18 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
 
     function _isRawCurrency0() internal view returns (bool) {
         return single.currency0() == address(rawToken);
+    }
+
+    /// @dev Exact custody, component views, issuance and conversion approvals for rollback tests.
+    function _strictJoinState(address actor_) internal view returns (bytes32) {
+        return keccak256(abi.encode(
+            rawToken.balanceOf(actor_), pairToken.balanceOf(actor_), IERC20(se).balanceOf(actor_),
+            rawToken.balanceOf(hook), pairToken.balanceOf(hook), IERC20(se).balanceOf(hook),
+            single.rawReserve(), single.seClaimSupply(), single.reserveCurrency0(), single.reserveCurrency1(),
+            IERC20(hook).totalSupply(), IERC20(hook).balanceOf(actor_), IERC20(hook).balanceOf(_feeTo()),
+            IERC20(se).totalSupply(), pairProtocolVault.totalSupply(), pairToken.balanceOf(address(pairProtocolVault)),
+            rawToken.allowance(actor_, hook), pairToken.allowance(actor_, hook), IERC20(se).allowance(actor_, hook),
+            pairToken.allowance(hook, se), IERC20(se).allowance(hook, se)
+        ));
     }
 }

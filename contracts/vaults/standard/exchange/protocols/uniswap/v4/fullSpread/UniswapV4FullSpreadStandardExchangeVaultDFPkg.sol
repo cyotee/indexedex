@@ -70,7 +70,10 @@ contract UniswapV4FullSpreadStandardExchangeVaultDFPkg is IUniswapV4FullSpreadSt
         if (
             address(init_.poolManager).code.length == 0 || address(init_.registry).code.length == 0
                 || address(init_.oracle).code.length == 0 || address(init_.diamondFactory).code.length == 0
-                || address(init_.weth).code.length == 0
+                || address(init_.weth).code.length == 0 || init_.positionDescriptor.code.length == 0
+                || init_.positionManager.code.length == 0 || init_.quoter.code.length == 0
+                || init_.stateView.code.length == 0 || init_.reservesLens.code.length == 0
+                || init_.universalRouter.code.length == 0
         ) revert InvalidComponent();
         SELF = address(this);
         MANAGER = init_.poolManager;
@@ -181,8 +184,9 @@ contract UniswapV4FullSpreadStandardExchangeVaultDFPkg is IUniswapV4FullSpreadSt
         int24 lower_ = TickMath.minUsableTick(decoded_.poolKey.tickSpacing);
         int24 upper_ = TickMath.maxUsableTick(decoded_.poolKey.tickSpacing);
         UniswapV4SinglePositionAwareRepo._initialize(decoded_.poolKey, lower_, upper_, bytes32(0));
-        ERC20Repo._initialize(decoded_.name, decoded_.symbol, 18);
-        EIP712Repo._initialize(decoded_.name, "1");
+        string memory name_ = _shareName(decoded_.poolKey);
+        ERC20Repo._initialize(name_, "UV4X", 18);
+        EIP712Repo._initialize(name_, "1");
         address[] memory faces_ = _faces(decoded_.poolKey);
         MultiAssetBasicVaultRepo._initialize(faces_);
         StandardVaultRepo._initialize(ORACLE, bytes32(0), facetInterfaces(), keccak256(abi.encode(faces_)));
@@ -209,6 +213,27 @@ contract UniswapV4FullSpreadStandardExchangeVaultDFPkg is IUniswapV4FullSpreadSt
         if (address(args_.poolKey.hooks) != address(0)) revert InvalidPoolKey();
         (uint160 price_,,,) = MANAGER.getSlot0(args_.poolKey.toId());
         if (price_ == 0) revert InvalidPoolKey();
+    }
+
+    function _shareName(PoolKey memory key_) private view returns (string memory) {
+        address[] memory faces_ = _faces(key_);
+        return string.concat(
+            "UniV4 Vault of (",
+            IERC20Metadata(faces_[0]).symbol(),
+            " / ",
+            IERC20Metadata(faces_[1]).symbol(),
+            " ",
+            _feeLabel(key_.fee),
+            ")"
+        );
+    }
+
+    function _feeLabel(uint24 fee_) private pure returns (string memory) {
+        if (fee_ == 100) return "0.01%";
+        if (fee_ == 500) return "0.05%";
+        if (fee_ == 3000) return "0.3%";
+        if (fee_ == 10000) return "1%";
+        return "fee";
     }
 
     function _faces(PoolKey memory key_) private view returns (address[] memory faces_) {

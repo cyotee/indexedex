@@ -70,6 +70,7 @@ contract UniswapV4DualSEBCPHook_SeMatrix_ERC4626StandardExchange is UniswapV4Dua
         IERC20 tin = IERC20(face);
         IERC20 tout = IERC20(other);
         uint256 wantOut = 1 ether;
+        uint256 localBefore = tin.balanceOf(hook);
         uint256 used = IStandardExchangeOut(hook).previewExchangeOut(tin, tout, wantOut);
         assertGt(maxIn, used, "maximum exceeds quoted input");
         fx.fund(address(this), maxIn);
@@ -82,7 +83,7 @@ contract UniswapV4DualSEBCPHook_SeMatrix_ERC4626StandardExchange is UniswapV4Dua
         assertEq(abi.decode(returned, (uint256)), used, "quoted input consumed");
         assertEq(tin.balanceOf(address(rowCaller)), maxIn - used, "all unused credit refunded");
         assertEq(tout.balanceOf(address(rowCaller)), wantOut, "exact output paid");
-        assertEq(tin.balanceOf(hook), 0, "no prepayment stranded");
+        assertEq(tin.balanceOf(hook), localBefore, "existing local backing retained; no prepayment stranded");
     }
 
 }

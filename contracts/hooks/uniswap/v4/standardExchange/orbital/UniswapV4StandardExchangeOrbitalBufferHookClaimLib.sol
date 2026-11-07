@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -30,6 +32,103 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     error NotLive();
     error InvalidPoolToken();
     error InvalidRoute(address tokenIn, address tokenOut);
+
+    struct Contribution {
+        uint256 shares;
+        uint256 local;
+        uint256 convert;
+    }
+
+    /// @dev One forward-sized conversion of caller inventory. Acceptance, not this sizing
+    /// estimate, determines ownership from the actual resulting component quantities.
+    function quoteContribution(
+        address se, address token, uint256 bookedShares, uint256 bookedLocal,
+        uint256 amount, bool asShare, bool genesis, bytes memory state
+    ) public view returns (Contribution memory c) {
+        return quoteHeldContribution(se, token, bookedShares, bookedLocal, amount, asShare, genesis, state, true);
+    }
+
+    function quoteHeldContribution(
+        address se, address token, uint256 bookedShares, uint256 bookedLocal,
+        uint256 amount, bool asShare, bool genesis, bytes memory state, bool received
+    ) internal view returns (Contribution memory c) {
+        if (amount == 0) return c;
+        if (se == address(0)) {
+            if (asShare) revert InvalidRoute(se, token);
+            c.local = amount;
+            return c;
+        }
+        if (genesis) {
+            if (!asShare) {
+                if (state.length == 0) state = ContextQuote.snapshot(se, token, address(this), address(0));
+                (ExchangeInAmount.Result memory acquired, bytes memory next) =
+                    conversionQuote(se, token, amount, false, state, false);
+                c = quoteHeldContribution(se, token, 0, 0, acquired.amountOut, true, true, next, false);
+                c.local += acquired.amountRefunded;
+                return c;
+            }
+            (c.convert,) = LiquidityRoute.bootstrapSplit(amount);
+        } else if (asShare) {
+            if (bookedLocal == 0) {
+                c.shares = amount;
+                return c;
+            }
+            if (bookedShares == 0) c.convert = amount;
+            else {
+                (ExchangeInAmount.Result memory full,) = conversionQuote(se, token, amount, true, state, received);
+                uint256 localNeeded = FullMath.mulDiv(amount, bookedLocal, bookedShares, FullMath.Rounding.Ceil);
+                c.convert = FullMath.mulDiv(amount, localNeeded, full.amountOut + localNeeded, FullMath.Rounding.Ceil);
+            }
+        } else {
+            if (bookedShares == 0 || Repo._isDisabled(se)) {
+                c.local = amount;
+                return c;
+            }
+            c.convert = amount;
+            if (bookedLocal != 0) {
+                (ExchangeInAmount.Result memory full,) = conversionQuote(se, token, amount, false, state, false);
+                uint256 localNeeded = FullMath.mulDiv(full.amountOut, bookedLocal, bookedShares, FullMath.Rounding.Ceil);
+                c.convert = FullMath.mulDiv(amount, amount, amount + localNeeded);
+            }
+        }
+        (ExchangeInAmount.Result memory result,) = conversionQuote(se, token, c.convert, asShare, state, asShare && received);
+        if (asShare) {
+            c.shares = ExchangeInAmount.localCredit(amount, c.convert, result.amountRefunded);
+            c.local = result.amountOut;
+            if (genesis && (result.amountRefunded != 0 || c.local == 0)) revert ExchangeInAmount.InvalidExchangeReceipt();
+        } else {
+            c.shares = result.amountOut;
+            c.local = ExchangeInAmount.localCredit(amount, c.convert, result.amountRefunded);
+        }
+    }
+
+    /// @dev Optional state is opaque. Ordinary SE routes do not require transition support.
+    function conversionQuote(
+        address se, address token, uint256 amount, bool redeem, bytes memory state, bool received
+    ) public view returns (ExchangeInAmount.Result memory result, bytes memory next) {
+        if (amount == 0) return (result, state);
+        if (state.length == 0) {
+            return (ExchangeInAmount.previewResult(
+                IStandardExchangeIn(se), IERC20(redeem ? se : token), amount, IERC20(redeem ? token : se)
+            ), state);
+        }
+        if (received && redeem) {
+            (state,,,) = Transition(se).quoteTransition(state, Transition.Operation.ReceiveShares, amount);
+        }
+        uint256 consumed;
+        uint256 output;
+        (next, consumed, output,) = Transition(se).quoteTransition(
+            state, redeem ? Transition.Operation.RedeemExactIn : Transition.Operation.DepositExactIn, amount
+        );
+        result = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+    }
+
+    function netMint(uint256 gross) public view returns (uint256 net, uint256 fee, address recipient) {
+        IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(Repo._layout().feeOracle);
+        recipient = address(oracle.feeTo());
+        uint256 usage = oracle.usageFeeOfVault(address(this));
+        (net, fee) = LiquidityRoute.splitMintFee(gross, usage, recipient, usage != 0 && usage < 1e18);
+    }
 
     struct SphereLegsWad {
         uint256 R;
@@ -92,20 +191,19 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         if (amountIn == 0) revert ZeroAmount();
     }
 
-    function _faceOutToEffectiveNative(address tokenOut, uint256 amountOut) private view returns (uint256 dOutNative) {
-        dOutNative = amountOut;
-        address se = _seOf(tokenOut);
-        if (se == address(0)) return dOutNative;
-        uint256 shares = invertUnwrapExactTokenOut(se, tokenOut, amountOut);
+    function _faceOutToEffectiveNative(address token, uint256 amount) private view returns (uint256) {
+        address se = _seOf(token);
+        if (se == address(0)) return amount;
+        uint256 local = Repo._layout().reserves[token];
+        if (amount <= local) return amount;
+        uint256 shares = invertUnwrapExactTokenOut(se, token, amount - local);
         if (shares == 0) revert InsufficientTokenOut();
-        if (shares > _spendableSeShares(tokenOut)) revert Math.Drain();
-        address rp = _rpOf(tokenOut);
-        if (rp == address(0)) revert RateProviderRequired();
-        dOutNative = ratedNative(shares, getRateFailClosed(rp), se, tokenOut);
+        if (shares > _spendableSeShares(token)) revert Math.Drain();
+        return local + ratedNative(shares, getRateFailClosed(_rpOf(token)), se, token);
     }
 
     function _effectiveInToFaceIn(address tokenIn, uint256 dInNative) private view returns (uint256 amountIn) {
-        if (_seOf(tokenIn) != address(0)) {
+        if (_seOf(tokenIn) != address(0) && !Repo._isDisabled(_seOf(tokenIn))) {
             address se = _seOf(tokenIn);
             if (se != tokenIn && ContextQuote.supported(se)) {
                 uint256 shares = sharesForNativeUp(dInNative, getRateFailClosed(_rpOf(tokenIn)), se, tokenIn);
@@ -142,19 +240,19 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     function _exactOutputDebit(address token, uint256 amount, address manager) private view returns (uint256) {
         address se = _seOf(token);
         if (se == address(0)) return amount;
+        uint256 local = Repo._layout().reserves[token];
+        if (amount <= local) return amount;
         bytes memory state = ContextQuote.exactOutputState(se, token, manager);
-        uint256 shares = ContextQuote.withdrawFromState(se, token, amount, state);
+        uint256 shares = ContextQuote.withdrawFromState(se, token, amount - local, state);
         if (shares == 0) revert InsufficientTokenOut();
         if (shares > _spendableSeShares(token)) revert Math.Drain();
-        address rp = _rpOf(token);
-        if (rp == address(0)) revert RateProviderRequired();
-        uint256 rate_ = state.length == 0 ? getRateFailClosed(rp) : ContextQuote.rateFromState(se, token, rp, state);
-        return ratedNative(shares, rate_, se, token);
+        uint256 rate = state.length == 0 ? getRateFailClosed(_rpOf(token)) : ContextQuote.rateFromState(se, token, _rpOf(token), state);
+        return local + ratedNative(shares, rate, se, token);
     }
 
     function _exactOutputInput(address token, uint256 needed, address manager) private view returns (uint256) {
         address se = _seOf(token);
-        if (se == address(0)) return needed;
+        if (se == address(0) || Repo._isDisabled(se)) return needed;
         BufferClaimQuote memory quote;
         quote.se = se;
         quote.token = token;
@@ -196,7 +294,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         else {
             (amountOut, sharesOut) = previewOutputWithContext(_seOf(tokenOut), _rpOf(tokenOut), tokenOut, dOutNative, manager);
             if (_seOf(tokenOut) != address(0)) {
-                if (sharesOut == 0) revert InsufficientTokenOut();
+                if (sharesOut == 0 && amountOut == 0) revert InsufficientTokenOut();
                 if (sharesOut > _spendableSeShares(tokenOut)) revert Math.Drain();
             }
         }
@@ -207,13 +305,25 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         address se = _seOf(tokenOut);
         if (se != address(0)) {
             (amountOut, sharesOut) = previewUnwrapForEffectiveOut(se, _rpOf(tokenOut), tokenOut, dOutNative);
-            if (sharesOut == 0) revert InsufficientTokenOut();
+            if (sharesOut == 0 && amountOut == 0) revert InsufficientTokenOut();
             if (sharesOut > _spendableSeShares(tokenOut)) revert Math.Drain();
         } else amountOut = dOutNative;
     }
 
     function _sphereExactIn(SphereLegsWad memory s, uint256 dxNet) private pure returns (uint256) {
         return Math.sphereExactInOutWad(s.R, s.L2, s.xWad, s.yWad, s.zWad, dxNet);
+    }
+
+    /// @dev Liquidity assembly may sell into an initially empty input coordinate.
+    /// Public swap entrypoints retain their live-book gates.
+    function previewLiquiditySwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 feeWad)
+        external view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        SphereLegsWad memory legs = _loadSphereLegs(tokenIn, tokenOut, _witnessAndLegs(tokenIn, tokenOut));
+        uint256 net = Math.applyTradingFeeNet(_toWad(tokenIn, _faceInToEffectiveNative(tokenIn, amountIn)), feeWad);
+        uint256 budget = _fromWadFloor(tokenOut, _sphereExactIn(legs, net));
+        if (budget == 0 || budget >= _effectiveNativeOf(tokenOut)) revert Math.Drain();
+        return _effectiveOutToFaceOut(tokenOut, budget);
     }
 
     function _toWad(address token, uint256 amount) private view returns (uint256) {
@@ -251,13 +361,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         s.L2 = Math.recomputeL2(s.R, s.xWad, s.yWad, s.zWad);
     }
 
-    function _faceInToEffectiveNative(address tokenIn, uint256 amountIn) private view returns (uint256 dInNative) {
-        dInNative = amountIn;
-        address se = _seOf(tokenIn);
-        if (se != address(0) && se != tokenIn) {
-            uint256 claim = previewBufferClaimIn(se, _rpOf(tokenIn), tokenIn, amountIn, address(this));
-            if (claim != 0) dInNative = claim;
-        }
+    function _faceInToEffectiveNative(address token, uint256 amount) private view returns (uint256) {
+        return previewBufferClaimIn(_seOf(token), _rpOf(token), token, amount, address(this));
     }
 
     function _effectiveNativeOf(address token) private view returns (uint256) {
@@ -266,14 +371,14 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         address t = Repo._tokenAt(l, i);
         address se = Repo._seAt(l, i);
         address rp = Repo._rpAt(l, i);
-        uint256 held = se == address(0) ? 0 : IERC20(se).balanceOf(address(this));
+        uint256 held = l.seShares[se];
         return effectiveNative(se, rp, t, l.reserves[t], held);
     }
 
     function _effectiveNativeWithContext(address token, address manager) private view returns (uint256) {
         address se = _seOf(token);
         return effectiveNativeWithContext(se, _rpOf(token), token, Repo._layout().reserves[token],
-            se == address(0) ? 0 : IERC20(se).balanceOf(address(this)), manager);
+            Repo._layout().seShares[se], manager);
     }
 
     function _witnessAndLegs(address tokenIn, address tokenOut) private view returns (address) {
@@ -307,9 +412,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     }
 
     function _spendableSeShares(address token) private view returns (uint256) {
-        address se = _seOf(token);
-        if (se == address(0)) return 0;
-        uint256 held = IERC20(se).balanceOf(address(this));
+        uint256 held = Repo._layout().seShares[_seOf(token)];
         return held > 1 ? held - 1 : 0;
     }
 
@@ -371,16 +474,12 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         hook;
     }
 
-    function previewBufferClaimIn(BufferClaimQuote memory quote, uint256 amountInRaw)
+    function previewBufferClaimIn(BufferClaimQuote memory quote, uint256 amount)
         internal view returns (uint256)
     {
-        if (amountInRaw == 0 || quote.se == address(0)) return 0;
-        if (quote.se == quote.token) return amountInRaw;
-        uint256 sharesOut;if (quote.state.length == 0) (sharesOut,) = IStandardExchangeIn(quote.se).previewExchangeIn(IERC20(quote.token), amountInRaw, IERC20(quote.se));
-        else (,, sharesOut,) = Transition(quote.se).quoteTransition(quote.state, Transition.Operation.DepositExactIn, amountInRaw);
-        if (sharesOut == 0) return amountInRaw;
-        if (quote.rate == 0) revert RateProviderRequired();
-        return ratedNative(sharesOut, quote.rate, quote.se, quote.token);
+        if (amount == 0 || quote.se == address(0) || Repo._isDisabled(quote.se)) return amount;
+        (ExchangeInAmount.Result memory result,) = conversionQuote(quote.se, quote.token, amount, false, quote.state, false);
+        return result.amountRefunded + (result.amountOut == 0 ? 0 : ratedNative(result.amountOut, quote.rate, quote.se, quote.token));
     }
 
 
@@ -409,32 +508,35 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         if (rate == 0) revert RateProviderFailed();
     }
 
-    function effectiveNativeWithContext(address se, address rp, address token, uint256 rawReserve, uint256 held, address manager)
+    function effectiveNativeWithContext(address se, address rp, address token, uint256 local, uint256 held, address manager)
         public view returns (uint256)
     {
-        if (se == address(0) || se == token) return effectiveNative(se, rp, token, rawReserve, held);
-        if (held == 0) return 0;
+        if (se == address(0)) return effectiveNative(se, rp, token, local, held);
+        if (held == 0) return local;
         if (rp == address(0)) revert RateProviderRequired();
-        return ratedNative(held, ContextQuote.rate(se, token, rp, manager), se, token);
+        return local + ratedNative(held, ContextQuote.rate(se, token, rp, manager), se, token);
     }
 
     function previewInputWithContext(address se, address rp, address token, uint256 amount, address manager)
         public view returns (uint256)
     {
-        if (se == address(0) || se == token) return amount;
-        (uint256 shares,) = ContextQuote.deposit(se, token, address(this), amount, manager);
-        if (shares == 0) return amount;
+        if (se == address(0) || Repo._isDisabled(se)) return amount;
+        (ExchangeInAmount.Result memory result,) = ContextQuote.depositResult(se, token, address(this), amount, manager);
+        if (result.amountOut == 0) return result.amountRefunded;
         if (rp == address(0)) revert RateProviderRequired();
-        return ratedNative(shares, ContextQuote.rate(se, token, rp, manager), se, token);
+        return result.amountRefunded + ratedNative(result.amountOut, ContextQuote.rate(se, token, rp, manager), se, token);
     }
 
     function previewOutputWithContext(address se, address rp, address token, uint256 budget, address manager)
         public view returns (uint256 assets, uint256 shares)
     {
         if (se == address(0) || budget == 0) return (budget, 0);
+        uint256 local = Repo._layout().reserves[token];
+        if (budget <= local) return (budget, 0);
         if (rp == address(0)) revert RateProviderRequired();
-        shares = sharesForNativeUp(budget, ContextQuote.rate(se, token, rp, manager), se, token);
-        (assets,) = ContextQuote.redeem(se, token, address(this), shares, manager);
+        shares = sharesForNativeUp(budget - local, ContextQuote.rate(se, token, rp, manager), se, token);
+        (ExchangeInAmount.Result memory result,) = ContextQuote.redeemResult(se, token, address(this), shares, manager);
+        return (local + result.amountOut, shares);
     }
 
     /// @notice SE claim of `seBal` shares → pool token (unwrap preview; fee-inclusive).
@@ -445,20 +547,13 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     }
 
     /// @notice Effective native reserve for a leg: raw face, or shares×rate, or SE claim.
-    function effectiveNative(
-        address se,
-        address rp,
-        address token,
-        uint256 rawReserve,
-        uint256 seBal
-    ) public view returns (uint256) {
-        // D60: raw leg = raw balance, times the rate when a provider is configured; buffered leg = shares x rate.
-        if (se == address(0)) {
-            return rp == address(0) ? rawReserve : (rawReserve * getRateFailClosed(rp)) / 1e18;
-        }
-        if (seBal == 0) return 0;
+    function effectiveNative(address se, address rp, address token, uint256 local, uint256 seBal)
+        public view returns (uint256)
+    {
+        if (se == address(0)) return rp == address(0) ? local : FullMath.mulDiv(local, getRateFailClosed(rp), 1e18);
+        if (seBal == 0) return local;
         if (rp == address(0)) revert RateProviderRequired();
-        return ratedNative(seBal, getRateFailClosed(rp), se, token);
+        return local + ratedNative(seBal, getRateFailClosed(rp), se, token);
     }
 
     /// @notice Shares a face deposit would mint. Zero stays zero — no face-value ownership credit.
@@ -473,34 +568,23 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     }
 
     /// @notice Preview claim-in (effective native) from buffering `amountInRaw` pool tokens into SE.
-    function previewBufferClaimIn(
-        address se,
-        address rp,
-        address token,
-        uint256 amountInRaw,
-        address hook
-    ) public view returns (uint256 dInNative) {
-        if (amountInRaw == 0 || se == address(0)) return 0;
-        if (se == token) return amountInRaw;(uint256 sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
-        if (sharesOut == 0) return amountInRaw;
-        if (rp == address(0)) revert RateProviderRequired();
-        hook;
-        return ratedNative(sharesOut, getRateFailClosed(rp), se, token);
+    function previewBufferClaimIn(address se, address rp, address token, uint256 amount, address hook)
+        public view returns (uint256)
+    {
+        return previewBufferClaimIn(bufferClaimQuote(se, rp, token, hook), amount);
     }
 
     /// @notice Preview pool-token out from unwrapping SE shares that deliver `dOutNative` effective.
-    function previewUnwrapForEffectiveOut(
-        address se,
-        address rp,
-        address token,
-        uint256 dOutNative
-    ) public view returns (uint256 amountOutNative, uint256 sharesOut) {
-        if (dOutNative == 0 || se == address(0)) return (0, 0);
+    function previewUnwrapForEffectiveOut(address se, address rp, address token, uint256 budget)
+        public view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        if (budget == 0 || se == address(0)) return (budget, 0);
+        uint256 local = Repo._layout().reserves[token];
+        if (budget <= local) return (budget, 0);
         if (rp == address(0)) revert RateProviderRequired();
-        uint256 rate = getRateFailClosed(rp);
-        // ceil shares for exact effective out when selling; the unwrap amount is the SE's buffering quote
-        sharesOut = sharesForNativeUp(dOutNative, rate, se, token);(amountOutNative,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
-        return (amountOutNative, sharesOut);
+        sharesOut = sharesForNativeUp(budget - local, getRateFailClosed(rp), se, token);
+        ExchangeInAmount.Result memory result = ExchangeInAmount.previewResult(IStandardExchangeIn(se), IERC20(se), sharesOut, IERC20(token));
+        return (local + result.amountOut, sharesOut);
     }
 
     /// @notice Preview pool-token out from burning `sharesOut` SE shares (pro-rata remove).

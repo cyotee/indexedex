@@ -5,6 +5,7 @@ import {UniswapV4DualStandardExchangeBufferConstantProductHookInExecutionBase} f
 import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib}
     from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
     toBeforeSwapDelta,
@@ -140,23 +141,18 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
             return (lpAmount, used0, used1);
         }
 
-        // SE-bearing path: fee + claim snapshot must be pre-pull (SE is claim-bearing immediately).
+        // Incoming custody does not enter the incumbent component books.
         _requireDeadline(deadline);
-        _requireNonZero(amount0);
-        _requireNonZero(amount1);
-        _mintProtocolFeeIfNeeded(true);
-        uint256 xPre = claimSupplyCurrency0();
-        uint256 yPre = claimSupplyCurrency1();
         _pullFlexible(amount0, amount0IsSeShare, amount1, amount1IsSeShare);
         return _depositFlexibleSe(
-            amount0, amount0IsSeShare, amount1, amount1IsSeShare, to, minLpAmount, xPre, yPre
+            amount0, amount0IsSeShare, amount1, amount1IsSeShare, to, minLpAmount
         );
     }
 
 
     function previewDeposit(uint256 amount0, uint256 amount1)
         external
-        view
+        view unlockedQuery
         returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
         return _previewDeposit(amount0, amount1);
@@ -165,7 +161,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
 
     function previewDepositSingle(address tokenIn, uint256 amountIn)
         external
-        view
+        view unlockedQuery
         returns (uint256 lpAmount)
     {
         return _previewDepositSingle(tokenIn, amountIn);
@@ -174,7 +170,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
 
     function previewZapSplit(address tokenIn, uint256 amountIn)
         external
-        view
+        view unlockedQuery
         returns (uint256 amountToSwap, uint256 amountOtherOut, uint256 amountKeptIn)
     {
         return _previewZapSplit(tokenIn, amountIn);
@@ -186,7 +182,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
         bool amount0IsSeShare,
         uint256 amount1,
         bool amount1IsSeShare
-    ) external view returns (uint256 lpAmount, uint256 used0, uint256 used1) {
+    ) external view unlockedQuery returns (uint256 lpAmount, uint256 used0, uint256 used1) {
         return _previewDepositFlexible(amount0, amount0IsSeShare, amount1, amount1IsSeShare);
     }
 
@@ -206,10 +202,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
         uint256 deadline
     ) external nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
         if (amounts.length != 2) revert InvalidRoute();
-        if (amounts[0] == 0 || amounts[1] == 0) {
-            if (!_isLive()) revert FirstJoinMustBeFullBook();
-            revert InvalidRoute();
-        }
+        if (ERC20Repo._totalSupply() == 0 && (amounts[0] == 0 || amounts[1] == 0))
+            revert FirstJoinMustBeFullBook();
         _pullErc20Dual(amounts[0], amounts[1]);
         uint256 used0;
         uint256 used1;
@@ -221,12 +215,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
 
     function previewJoinProportional(uint256[] calldata amounts)
         external
-        view
+        view unlockedQuery
         returns (uint256 shares, uint256[] memory usedAmounts)
     {
         if (amounts.length != 2) revert InvalidRoute();
         usedAmounts = new uint256[](2);
-        if (amounts[0] == 0 || amounts[1] == 0) return (0, usedAmounts);
         uint256 used0;
         uint256 used1;
         (shares, used0, used1) = _previewDeposit(amounts[0], amounts[1]);
@@ -248,11 +241,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
 
     function previewJoinUnbalanced(address[] calldata tokensIn, uint256[] calldata amounts)
         external
-        view
+        view unlockedQuery
         returns (uint256 shares)
     {
         JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
-        if (!_isLive() && (!acc.saw0 || !acc.saw1)) return 0;
+        if (ERC20Repo._totalSupply() == 0 && (!acc.saw0 || !acc.saw1)) return 0;
         if (acc.saw0 && acc.saw1) {
             if (!acc.isSe0 && !acc.isSe1) {
                 (shares,,) = _previewDeposit(acc.amt0, acc.amt1);
@@ -276,7 +269,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
 
     function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
         external
-        view
+        view unlockedQuery
         returns (uint256 shares)
     {
         return _previewLiquidityJoin(tokenIn, amountIn);
@@ -299,7 +292,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
 
     function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
         external
-        view
+        view unlockedQuery
         returns (uint256)
     {
         tokenIn;
@@ -348,7 +341,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
     }
 
     function _requireFirstJoinFullBook(JoinUnbalancedAcc memory acc) internal view {
-        if (_isLive()) return;
+        if (ERC20Repo._totalSupply() != 0) return;
         if (!acc.saw0 || !acc.saw1) revert FirstJoinMustBeFullBook();
     }
 
@@ -365,14 +358,9 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
                 return shares;
             }
             _requireDeadline(deadline);
-            _requireNonZero(acc.amt0);
-            _requireNonZero(acc.amt1);
-            _mintProtocolFeeIfNeeded(true);
-            uint256 xPre = claimSupplyCurrency0();
-            uint256 yPre = claimSupplyCurrency1();
             _pullFlexible(acc.amt0, acc.isSe0, acc.amt1, acc.isSe1);
             (shares,,) = _depositFlexibleSe(
-                acc.amt0, acc.isSe0, acc.amt1, acc.isSe1, to, sharesMin, xPre, yPre
+                acc.amt0, acc.isSe0, acc.amt1, acc.isSe1, to, sharesMin
             );
             return shares;
         }
@@ -399,11 +387,6 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
             tokenIn = isSe ? l.legs.standardExchangeOf[l.currency1] : l.currency1;
         }
         _pullErc20Single(tokenIn, amountIn);
-        if (isSe) {
-            address pair = l.legs.pairOfStandardExchange[tokenIn];
-            uint256 pairOut = _unwrap(tokenIn, pair, amountIn);
-            return _depositSingle(pair, pairOut, to, sharesMin, deadline);
-        }
         return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline);
     }
 
@@ -421,15 +404,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
             amountIn = acc.amt1;
             tokenIn = isSe ? l.legs.standardExchangeOf[l.currency1] : l.currency1;
         }
-        if (isSe) {
-            (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
-            if (supported) return projected;
-            address pair = l.legs.pairOfStandardExchange[tokenIn];(uint256 pairOut,) = IStandardExchangeIn(tokenIn).previewExchangeIn(IERC20(tokenIn), amountIn, IERC20(pair)
-            );
-            if (pairOut == 0) return 0;
-            return _previewDepositSingle(pair, pairOut);
-        }
-        return _previewDepositSingle(tokenIn, amountIn);
+        (, shares) = DepositQuoteLib.preview(tokenIn, amountIn);
     }
 
 }

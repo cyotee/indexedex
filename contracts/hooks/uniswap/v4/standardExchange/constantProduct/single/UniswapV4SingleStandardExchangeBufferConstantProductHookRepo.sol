@@ -47,8 +47,11 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookRepo {
         address rateProvider;
         /// @dev `IERC20Metadata(standardExchange).decimals()` snapshot for the rated scale.
         uint8 seDecimals;
-        /// @dev Native token book for an identity pair leg, independent of provider rate.
+        /// @dev Booked native pair tokens, separate from SE shares and ambient transfers.
         uint256 localPairReserve;
+        uint256 bookedSeShares;
+        uint256 bookedRaw;
+        address registry;
     }
 
     function _layout() internal pure returns (Layout storage l) {

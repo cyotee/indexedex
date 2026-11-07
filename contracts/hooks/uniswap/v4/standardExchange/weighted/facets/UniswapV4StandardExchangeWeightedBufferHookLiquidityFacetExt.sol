@@ -7,7 +7,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget.sol";
@@ -27,7 +27,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](11);
+        funcs = new bytes4[](12);
         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
         funcs[1] = bytes4(keccak256("previewJoinUnbalanced(uint256[])"));
         funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -39,6 +39,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt is
         funcs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         funcs[9] = this.previewJoinAfterDeposit.selector;
         funcs[10] = IStandardExchangeOut.exchangeOut.selector;
+        funcs[11] = IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector;
     }
 
     function facetMetadata()

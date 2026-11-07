@@ -390,22 +390,23 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, 100 ether, 100 ether, 100 ether);
 
         // Downstream quote failures intentionally bubble through the production hook.
         uint256[5] memory beforeState = [token0.balanceOf(user), token1.balanceOf(user),
             o.rawReserve(0), o.seBalance(1), IERC20(h).totalSupply()];
-        uint256 needed = o.previewSwapExactOut(address(token0), address(token1), 1 ether);
+        uint256 wanted = o.rawReserve(1) + 1 ether;
+        uint256 needed = o.previewSwapExactOut(address(token0), address(token1), wanted);
         assertGt(needed, 0, "funded downstream quote positive control");
         vm.mockCallRevert(se1, IStandardExchangeOut.previewExchangeOut.selector,
             abi.encodeWithSignature("Error(string)", "no invert"));
         vm.expectRevert(abi.encodeWithSignature("Error(string)", "no invert"));
-        o.previewSwapExactOut(address(token0), address(token1), 1 ether);
+        o.previewSwapExactOut(address(token0), address(token1), wanted);
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSignature("Error(string)", "no invert"));
         IStandardExchangeOut(h).exchangeOut(IERC20(address(token0)), needed + 1 ether,
-            IERC20(address(token1)), 1 ether, user, false, block.timestamp + 1 hours);
+            IERC20(address(token1)), wanted, user, false, block.timestamp + 1 hours);
         assertEq(token0.balanceOf(user), beforeState[0], "failed downstream quote preserves payer");
         assertEq(token1.balanceOf(user), beforeState[1], "failed downstream quote cannot pay output");
         assertEq(o.rawReserve(0), beforeState[2], "failed transaction preserves raw book");
@@ -414,9 +415,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         vm.clearMockedCalls();
         vm.prank(user);
         uint256 used = IStandardExchangeOut(h).exchangeOut(IERC20(address(token0)), needed + 1 ether,
-            IERC20(address(token1)), 1 ether, user, false, block.timestamp + 1 hours);
+            IERC20(address(token1)), wanted, user, false, block.timestamp + 1 hours);
         assertEq(beforeState[0] - token0.balanceOf(user), used, "restored downstream route debits exact input");
-        assertEq(token1.balanceOf(user) - beforeState[1], 1 ether, "restored downstream route pays exact output");
+        assertEq(token1.balanceOf(user) - beforeState[1], wanted, "restored downstream route pays exact output");
     }
 
     /// @notice C1: hostile token reenters addLiquidity mid transferFrom → outer fails; no LP mint.
@@ -473,8 +474,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         t0.approve(h, type(uint256).max);
         t1.approve(h, type(uint256).max);
         hostile.approve(h, type(uint256).max);
-        o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, 100 ether, 100 ether, 100 ether);
 
         uint256 sharesBefore = IERC20(h).balanceOf(user);
         bytes memory reentry = abi.encodeWithSelector(

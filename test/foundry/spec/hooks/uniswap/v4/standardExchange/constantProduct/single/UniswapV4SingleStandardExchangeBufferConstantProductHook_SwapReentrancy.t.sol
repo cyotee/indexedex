@@ -69,6 +69,21 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SwapReentrancy
         _checkSwap(false, true);
     }
 
+    function test_joinRefundCallback_observesCompletedLpSupply() public {
+        uint256 beforeSupply = IERC20(hook).totalSupply();
+        callbackToken.arm(hook, address(pairToken), hook, user);
+        uint256 minted = _depositBoth(100 ether, 1 ether);
+        assertGt(minted, 0, "positive proportional join");
+        assertEq(callbackToken.callbackAttempts(), 1, "excess raw refund callback reached");
+        assertGt(IERC20(hook).totalSupply(), beforeSupply, "backed LP issued");
+        assertEq(
+            callbackToken.observedSupply(), IERC20(hook).totalSupply(),
+            "refund callback sees completed component ownership"
+        );
+        assertFalse(callbackToken.nestedSucceeded(), "refund callback cannot reenter");
+        assertEq(callbackToken.nestedRevert(), abi.encodeWithSignature("Reentrancy()"));
+    }
+
     /// @dev Assert the callback is reached, the exact guard rejects it, and outer settlement completes.
     function _checkSwap(bool rawInput, bool exactOutput) internal {
         bool zeroForOne = rawInput == _isRawCurrency0();
@@ -130,6 +145,7 @@ contract CpSwapCallbackToken is SimpleMintableERC20 {
     address internal callbackTo;
     bool internal armed;
     uint256 public callbackAttempts;
+    uint256 public observedSupply;
     bool public nestedSucceeded;
     bytes public nestedRevert;
 
@@ -155,6 +171,7 @@ contract CpSwapCallbackToken is SimpleMintableERC20 {
         if (armed && msg.sender == callbackFrom && to == callbackTo) {
             armed = false;
             ++callbackAttempts;
+            observedSupply = IERC20(targetHook).totalSupply();
             (nestedSucceeded, nestedRevert) = targetHook.call(
                 abi.encodeCall(
                     IStandardExchangeIn.exchangeIn,

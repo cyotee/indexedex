@@ -52,18 +52,25 @@ library UniswapV4FullSpreadStandardExchangeVaultExecution {
         if (tokenIn_ == address(this)) {
             _requireShares(amountIn_);
         } else if (pretransferred_ && amountIn_ > _unbooked(tokenIn_, tokenIn_ == face0_ ? 0 : 1)) {
+            if (tokenOut_ == address(this) && ERC20Repo._totalSupply() == 0) revert IVault.MinLiquidityNotMet();
             amountRefunded_ = _refundUnbooked(tokenIn_, tokenIn_ == face0_ ? 0 : 1);
             _close();
             if (minOut_ != 0) revert IStandardExchangeErrors.AmountOutNotMet(minOut_, 0);
-            if (tokenOut_ == address(this) && ERC20Repo._totalSupply() == 0) revert IVault.MinLiquidityNotMet();
             return (0, amountRefunded_);
         } else {
             _fundOne(tokenIn_, amountIn_, pretransferred_, tokenIn_ == face0_ ? 0 : 1);
         }
         Types.Plan memory plan_ = Planner.planIn(tokenIn_, amountIn_, tokenOut_);
         if (plan_.kind == Types.Kind.Unsupported) revert IVault.TokenNotExchangeable();
+        if (plan_.kind == Types.Kind.OneTokenExit && plan_.failed) {
+            revert IStandardExchangeErrors.AmountOutNotMet(minOut_, 0);
+        }
         if (plan_.failed) revert IVault.MinLiquidityNotMet();
-        if (plan_.amountOut < minOut_) revert IStandardExchangeErrors.AmountOutNotMet(minOut_, plan_.amountOut);
+        if (plan_.kind != Types.Kind.OneTokenExit && plan_.amountOut < minOut_) {
+            revert IStandardExchangeErrors.AmountOutNotMet(minOut_, plan_.amountOut);
+        }
+        uint256 wantedBefore_;
+        if (plan_.kind == Types.Kind.OneTokenExit) wantedBefore_ = IERC20(tokenOut_).balanceOf(address(this));
         _run(plan_);
         if (plan_.kind == Types.Kind.OneSidedMint) {
             _mint(plan_, recipient_);
@@ -72,8 +79,15 @@ library UniswapV4FullSpreadStandardExchangeVaultExecution {
             _pay(tokenOut_, recipient_, plan_.amountOut);
             _pay(tokenIn_, msg.sender, plan_.amountRefunded);
         } else {
+            uint256 grown_ = IERC20(tokenOut_).balanceOf(address(this)) - wantedBefore_;
+            uint256 feeRemainder_ = tokenOut_ == face0_ ? plan_.feeRemainder0 : plan_.feeRemainder1;
+            uint256 bookedClaim_ = tokenOut_ == face0_ ? plan_.bookedClaim0 : plan_.bookedClaim1;
+            if (grown_ < feeRemainder_) revert IStandardExchangeErrors.AmountOutNotMet(minOut_, 0);
+            uint256 receipt_ = grown_ - feeRemainder_ + bookedClaim_;
+            if (receipt_ < minOut_) revert IStandardExchangeErrors.AmountOutNotMet(minOut_, receipt_);
+            plan_.amountOut = receipt_;
             ERC20Repo._burn(msg.sender, plan_.sharesBurned);
-            _pay(tokenOut_, recipient_, plan_.amountOut);
+            _pay(tokenOut_, recipient_, receipt_);
             _bookExit(plan_);
         }
         amountOut_ = plan_.amountOut;

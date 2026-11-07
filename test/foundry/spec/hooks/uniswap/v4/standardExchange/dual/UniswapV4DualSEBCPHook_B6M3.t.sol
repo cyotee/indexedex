@@ -13,6 +13,38 @@ import {TestBase_UniswapV4DualSEBCPHook} from
  * @notice B6 SE-share LP deposit/withdraw + M3 IStandardExchangeIn/Out surface.
  */
 contract UniswapV4DualSEBCPHook_B6M3_Test is TestBase_UniswapV4DualSEBCPHook {
+    function test_B6_genesisEitherPairOrSharesPerLeg() public {
+        uint256 checkpoint = vm.snapshotState();
+        for (uint256 mask; mask < 4; ++mask) {
+            assertTrue(vm.revertToState(checkpoint));
+            checkpoint = vm.snapshotState();
+            bool share0 = mask & 1 != 0;
+            bool share1 = mask & 2 != 0;
+            address pair0 = dual.currency0();
+            address pair1 = dual.currency1();
+            address se0 = _seForCurrency(pair0);
+            address se1 = _seForCurrency(pair1);
+            uint256 shares0 = _userAcquireSeShares(se0, pair0 == address(tokenA) ? tokenA : tokenB, 100 ether);
+            uint256 shares1 = _userAcquireSeShares(se1, pair1 == address(tokenA) ? tokenA : tokenB, 100 ether);
+            uint256 amount0 = share0 ? shares0 : 100 ether;
+            uint256 amount1 = share1 ? shares1 : 100 ether;
+            (uint256 acquired0,) = IStandardExchangeIn(se0).previewExchangeIn(IERC20(pair0), amount0, IERC20(se0));
+            (uint256 acquired1,) = IStandardExchangeIn(se1).previewExchangeIn(IERC20(pair1), amount1, IERC20(se1));
+            if (share0) acquired0 = amount0;
+            if (share1) acquired1 = amount1;
+            (uint256 predicted,,) = dual.previewDepositFlexible(amount0, share0, amount1, share1);
+            vm.prank(user);
+            (uint256 net,,) = dual.depositFlexible(amount0, share0, amount1, share1, user, predicted, block.timestamp);
+            assertGt(net, 0);
+            assertEq(net, predicted);
+            assertEq(IERC20(se0).balanceOf(hook), acquired0 - acquired0 / 20);
+            assertEq(IERC20(se1).balanceOf(hook), acquired1 - acquired1 / 20);
+            assertGt(IERC20(pair0).balanceOf(hook), 0);
+            assertGt(IERC20(pair1).balanceOf(hook), 0);
+            assertEq(IERC20(hook).balanceOf(address(0)), 1000);
+        }
+    }
+
     function test_B6_depositSeSharesBothLegs_mintsLp() public {
         uint256 seAOut = _userAcquireSeShares(seA, tokenA, 100 ether);
         uint256 seBOut = _userAcquireSeShares(seB, tokenB, 100 ether);
@@ -135,6 +167,7 @@ contract UniswapV4DualSEBCPHook_B6M3_Test is TestBase_UniswapV4DualSEBCPHook {
     }
 
     function test_B6_depositFlexible_pairOnly_matchesDeposit() public {
+        _depositBoth(100 ether, 100 ether);
         uint256 a0 = _amountForCurrency(dual.currency0(), 40 ether, 40 ether);
         uint256 a1 = _amountForCurrency(dual.currency1(), 40 ether, 40 ether);
         (uint256 predLp,,) = dual.previewDeposit(a0, a1);

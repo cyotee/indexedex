@@ -9,18 +9,23 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IRebasingAwareERC4626} from "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {TestBase_RebasingAwareDetfComposition} from "./RebasingAwareERC4626_Buffers_Detf.t.sol";
 
-/// @notice Real DETF/buffer composition; only the external rebasing token is a test stub.
+/// @notice Real wrapper/SE/DETF composition over controllable non-SUT token and protocol fixtures.
 contract RebasingDetfHandler is Test {
     IERC4626 public wrapper;
     IUniswapV4Detf public detf;
     RebasingERC20Harness private underlying;
     address private actor;
     address private hook;
+    address private standardExchangeVault;
+    address private feeRecipient;
+    IERC4626 private protocolVault;
     uint256 public backing;
     uint256 public issued;
     uint256[5] public attempts;
@@ -28,11 +33,16 @@ contract RebasingDetfHandler is Test {
     uint256 public expectedReverts;
     uint256 public fundedExpansions;
 
-    constructor(IERC4626 wrapper_, IUniswapV4Detf detf_, address actor_) {
+    constructor(IERC4626 wrapper_, IUniswapV4Detf detf_, address actor_, address feeRecipient_) {
         wrapper = wrapper_;
         detf = detf_;
         actor = actor_;
+        feeRecipient = feeRecipient_;
         hook = detf_.hook();
+        standardExchangeVault = IUniswapV4SeBufferHook(hook).standardExchangeOf(address(wrapper_));
+        protocolVault = IERC4626(IERC4626(standardExchangeVault).asset());
+        assertTrue(standardExchangeVault != address(wrapper_), "pair must differ from bound SE");
+        assertEq(protocolVault.asset(), address(wrapper_));
         underlying = RebasingERC20Harness(wrapper_.asset());
         backing = wrapper_.totalAssets();
         issued = wrapper_.totalSupply();
@@ -40,7 +50,7 @@ contract RebasingDetfHandler is Test {
 
     function wrap(uint96 seed) public {
         attempts[0]++;
-        uint256 amount = bound(seed, 1e16, 5e18);
+        uint256 amount = bound(seed, 1e4, 5e6);
         uint256 expected = amount * (issued + 1e10) / (backing + 1);
         underlying.mint(actor, amount);
         vm.prank(actor);
@@ -54,14 +64,20 @@ contract RebasingDetfHandler is Test {
     function detfCycle(uint96 seed) public {
         attempts[1]++;
         uint256 budget = wrapper.balanceOf(actor) / 100;
-        if (budget < 1e26) return;
-        uint256 amount = bound(seed, 1e26, budget);
+        if (budget < 1e14) return;
+        uint256 amount = bound(seed, 1e14, budget);
         uint256 before = wrapper.balanceOf(actor);
+        uint256 detfBefore = IERC20(address(detf)).balanceOf(actor);
         vm.startPrank(actor);(uint256 minted,) = IStandardExchangeIn(address(detf)).exchangeIn(IERC20(address(wrapper)), amount, IERC20(address(detf)), 0, actor, false, block.timestamp);
         assertGt(minted, 0);
+        assertEq(wrapper.balanceOf(actor), before - amount, "actual pair input");
+        assertEq(IERC20(address(detf)).balanceOf(actor), detfBefore + minted, "actual DETF receipt");
+        uint256 pairAfterMint = wrapper.balanceOf(actor);
         IERC20(address(detf)).approve(address(detf), minted);(uint256 received,) = IStandardExchangeIn(address(detf)).exchangeIn(IERC20(address(detf)), minted, IERC20(address(wrapper)), 0, actor, false, block.timestamp);
         vm.stopPrank();
         assertGt(received, 0);
+        assertEq(wrapper.balanceOf(actor), pairAfterMint + received, "actual pair receipt");
+        assertEq(IERC20(address(detf)).balanceOf(actor), detfBefore, "actual DETF burn");
         assertLe(wrapper.balanceOf(actor), before, "closed DETF cycle extracted wrapper shares");
         successes[1]++;
         assertBook();
@@ -106,9 +122,9 @@ contract RebasingDetfHandler is Test {
         if (exactOut) {
             IStandardExchangeOut(address(wrapper))
                 .exchangeOut(
-                    IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 1, actor, true, block.timestamp
+                    IERC20(address(underlying)), 1e6, IERC20(address(wrapper)), 1, actor, true, block.timestamp
                 );
-        } else {IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, actor, true, block.timestamp
+        } else {IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e6, IERC20(address(wrapper)), 0, actor, true, block.timestamp
                 );
         }
         expectedReverts++;
@@ -119,11 +135,24 @@ contract RebasingDetfHandler is Test {
         assertEq(wrapper.totalAssets(), backing);
         assertEq(underlying.balanceOf(address(wrapper)), backing);
         assertEq(wrapper.totalSupply(), issued);
-        uint256 held = wrapper.balanceOf(actor) + wrapper.balanceOf(hook) + wrapper.balanceOf(address(detf));
+        address[5] memory holders = [actor, hook, address(detf), standardExchangeVault, address(protocolVault)];
+        uint256 held;
+        uint256 claims;
+        for (uint256 i; i < holders.length; ++i) {
+            uint256 shares = wrapper.balanceOf(holders[i]);
+            held += shares;
+            claims += shares * (backing + 1) / (issued + 1e10);
+        }
         assertEq(held, issued, "wrapper shares escaped tracked custody");
-        uint256 claims = wrapper.balanceOf(actor) * (backing + 1) / (issued + 1e10) + wrapper.balanceOf(hook)
-            * (backing + 1) / (issued + 1e10) + wrapper.balanceOf(address(detf)) * (backing + 1) / (issued + 1e10);
         assertLe(claims, backing);
+        assertEq(protocolVault.totalAssets(), wrapper.balanceOf(address(protocolVault)), "protocol backing");
+        assertEq(
+            protocolVault.balanceOf(standardExchangeVault), protocolVault.totalSupply(), "SE owns protocol receipts"
+        );
+        uint256 seHeld = IERC20(standardExchangeVault).balanceOf(hook)
+            + IERC20(standardExchangeVault).balanceOf(address(detf));
+        if (feeRecipient != hook && feeRecipient != address(detf)) seHeld += IERC20(standardExchangeVault).balanceOf(feeRecipient);
+        assertEq(seHeld, IERC20(standardExchangeVault).totalSupply(), "SE shares outside reserve and actual fee custody");
         assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
     }
 }
@@ -141,7 +170,7 @@ contract RebasingAwareERC4626_DetfInvariant is TestBase_RebasingAwareDetfComposi
     function setUp() public override {
         super.setUp();
         IERC4626 wrapped = _deployWrapper(bytes32(uint256(109)));
-        _fundWrap(wrapped, 1_000e18);
+        _fundWrap(wrapped, 1_000e6);
         address composed = _deployCpWrapperDetf(wrapped);
         uint256 bondId = _bondOnly(wrapped, composed);
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK);
@@ -149,11 +178,12 @@ contract RebasingAwareERC4626_DetfInvariant is TestBase_RebasingAwareDetfComposi
         vm.prank(detfUser);
         bondNft.claimBond(bondId, detfUser);
         assertGt(IStakedDETF(IUniswapV4Detf(composed).rebasingClaimToken()).balanceOf(detfUser), 0);
-        handler = new RebasingDetfHandler(wrapped, IUniswapV4Detf(composed), detfUser);
-        handler.wrap(1e18);
-        handler.detfCycle(1e26);
-        handler.rebase(1e18, true);
-        handler.rebase(1e18, false);
+        handler = new RebasingDetfHandler(wrapped, IUniswapV4Detf(composed), detfUser,
+            address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()));
+        handler.wrap(1e6);
+        handler.detfCycle(1e14);
+        handler.rebase(1e6, true);
+        handler.rebase(1e6, false);
         handler.fundAndSettle(1 days);
         handler.rejectedDepositPrepayment(true);
         handler.rejectedDepositPrepayment(false);
@@ -180,7 +210,7 @@ contract RebasingAwareERC4626_DetfInvariant is TestBase_RebasingAwareDetfComposi
         vm.expectRevert(
             abi.encodeWithSelector(bytes4(keccak256("InvalidRoute(address,address)")), address(wrapped), composed)
         );
-        vm.prank(detfUser);IStandardExchangeIn(composed).exchangeIn(IERC20(address(wrapped)), 1e20, IERC20(composed), 0, detfUser, false, block.timestamp);
+        vm.prank(detfUser);IStandardExchangeIn(composed).exchangeIn(IERC20(address(wrapped)), 1, IERC20(composed), 0, detfUser, false, block.timestamp);
         assertEq(wrapped.balanceOf(detfUser), sharesBefore);
         assertEq(IERC20(composed).totalSupply(), supplyBefore);
     }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
@@ -27,18 +28,18 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInExec
     }
 
     function _joinLiquidityExactIn(address tokenIn, uint256 amountIn, address to, uint256 sharesMin, uint256 deadline, address)
-        internal override onlyLiquidityOwner nonReentrant accrueProtocolFee returns (uint256)
+        internal override onlyLiquidityOwner nonReentrant returns (uint256)
     {
-        if (!_isLive()) revert NotLive();
+        if (ERC20Repo._totalSupply() == 0) revert NotLive();
         Repo.Layout storage l = Repo._layout();
         UniswapV4SeBufferHookLegLib.LegKind kind = UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
+        _requireDeadline(deadline);
         PullLib.pullErc20Single(tokenIn, amountIn);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            uint256 pairOut = _unwrapSeShares(amountIn);
-            return _depositSingle(l.pairToken, pairOut, to, sharesMin, deadline);
-        }
-        return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline);
+        uint256 net = ClaimLib.singleComponentJoin(tokenIn, amountIn, to, sharesMin, 0);
+        _syncReserves();
+        emit DepositSingle(msg.sender, to, tokenIn, amountIn, net);
+        return net;
     }
 
     function _exitLiquidityExactIn(address token_, uint256 amount_, address receiver_, uint256 minimum_, uint256 deadline_, address)
@@ -60,12 +61,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInExec
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zfo == _zeroForOneIsRawIn();
         if (rawIn) {
+            l.bookedRaw += amountIn;
             amountOut = ClaimLib.unwrapQuoted(output);
             if (amountOut < minAmountOut) revert InsufficientTokenOut();
             IERC20(l.pairToken).safeTransfer(recipient, amountOut);
         } else {
             Withdrawal.bufferPair(amountIn);
             if (amountOut > Withdrawal.spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
             IERC20(l.rawToken).safeTransfer(recipient, amountOut);
         }
         Withdrawal.syncReserves();
@@ -82,8 +85,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookInExec
         LocalCreditLib.requirePretransferCaller(msg.sender);
         Repo.Layout storage l = Repo._layout();
         uint256 booked;
-        if (address(tokenIn) == l.rawToken) booked = MultiAssetBasicVaultRepo._reserveOfToken(l.rawToken);
-        else if (l.pairToken == l.standardExchange) booked = l.localPairReserve;
+        if (address(tokenIn) == l.rawToken) booked = l.bookedRaw;
+        else if (address(tokenIn) == l.pairToken) booked = l.localPairReserve;
+        else if (address(tokenIn) == l.standardExchange) booked = l.bookedSeShares;
         uint256 available = LocalCreditLib.available(tokenIn.balanceOf(address(this)), booked);
         if (claimed > available) revert ISecurePullErrors.TransferDeltaInsufficient(claimed, available);
         return claimed;

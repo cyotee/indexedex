@@ -19,11 +19,11 @@ import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/Unisw
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
-import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
@@ -138,7 +138,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         returns (bytes4[] memory interfaces)
     {
         // ERC20Permit + vault + product type + M3 SE In/Out + §15.12 hook ABI.
-        interfaces = new bytes4[](12);
+        interfaces = new bytes4[](11);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -149,8 +149,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         interfaces[7] = type(IStandardExchangeOut).interfaceId;
         interfaces[8] = HOOK_VAULT_TYPE;
         interfaces[9] = type(IUniswapV4SeBufferHook).interfaceId;
-        interfaces[10] = type(IDetfReserveQuote).interfaceId;
-        interfaces[11] = type(IStandardizedYield).interfaceId;
+        interfaces[10] = type(IStandardizedYield).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
@@ -336,6 +335,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         );
         // D60: the swap invariant values each SE leg as shares x provider rate.
         Repo.Layout storage l = Repo._layout();
+        l.disableRegistry = address(VAULT_REGISTRY_DEPLOYMENT);
         l.rateProvider0 = a.rateProvider0;
         l.rateProvider1 = a.rateProvider1;
         l.seDecimals0 = _readDecimals(a.standardExchange0);
@@ -381,6 +381,10 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         }
         if (a.standardExchange0 == a.standardExchange1) revert SameStandardExchange();
         if (a.token0 == a.token1) revert SamePairToken();
+        // Foreign/unregistered SE authority is not inferred from a successful fee query.
+        IVaultRegistryDisableQuery registry = IVaultRegistryDisableQuery(address(VAULT_REGISTRY_DEPLOYMENT));
+        if (registry.packageOfVault(a.standardExchange0) == address(0)
+            || registry.packageOfVault(a.standardExchange1) == address(0)) revert TokenNotInVaultTokens();
         _requireTokenInVaultTokens(a.standardExchange0, a.token0);
         _requireTokenInVaultTokens(a.standardExchange1, a.token1);
         // D60: a buffered leg is priced by its rate provider, never by the hook.
@@ -389,12 +393,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     }
 
     function _requireTokenInVaultTokens(address se, address token) private view {
-        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
-        address[] memory tokens = IBasicVault(se).vaultTokens();
-        for (uint256 i; i < tokens.length; i++) {
-            if (tokens[i] == token) return;
-        }
-        revert TokenNotInVaultTokens();
+        if (!UniswapV4SeBufferHookLegLib.pairInVaultTokens(se, token)) revert TokenNotInVaultTokens();
     }
 
     function _readDecimals(address token) private view returns (uint8) {

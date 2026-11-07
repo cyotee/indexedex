@@ -8,6 +8,7 @@ import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandar
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 
 import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
@@ -167,25 +168,25 @@ library UniswapV4SeBufferHookLegLib {
         return LegKind.Unknown;
     }
 
-    /// @notice True when pool inventory is static wrapper shares: pair token is the
-    ///         wrapper diamond and `asset()` is a different non-zero underlying.
-    function isWrapperShareInventory(address pair, address se) internal view returns (bool) {
-        if (pair == address(0) || pair != se) return false;
-        (bool ok, bytes memory data) = pair.staticcall(abi.encodeWithSelector(bytes4(0x38d52e0f)));
-        if (!ok || data.length < 32) return false;
-        address underlying = abi.decode(data, (address));
-        return underlying != address(0) && underlying != pair;
-    }
-
-    function wrapperShareDecimalsOk(uint8 d) internal pure returns (bool) {
-        return d >= 19 && d <= 36;
+    /// @notice A bind is valid only when `pair` is one of `se.vaultTokens()`.
+    ///         The separately held SE share is recognized by the bound SE address.
+    ///         A missing or reverting `vaultTokens()` is not a membership hit.
+    function pairInVaultTokens(address se, address pair) internal view returns (bool) {
+        if (se == address(0) || pair == address(0) || se.code.length == 0) return false;
+        (bool ok, bytes memory data) = se.staticcall(abi.encodeWithSelector(IBasicVault.vaultTokens.selector));
+        if (!ok || data.length < 64) return false;
+        address[] memory tokens = abi.decode(data, (address[]));
+        for (uint256 i; i < tokens.length; ++i) {
+            if (tokens[i] == pair) return true;
+        }
+        return false;
     }
 
     function addPairSe(Layout storage layoutStruct, address pair, address se) internal {
         if (pair == address(0) || se == address(0)) {
             revert ZeroAddress();
         }
-        if (pair == se && !isWrapperShareInventory(pair, se)) {
+        if (pair == se && !pairInVaultTokens(se, pair)) {
             revert PairSeOverlap(pair, se);
         }
         address detfToken_ = layoutStruct.detfToken;

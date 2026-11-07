@@ -53,6 +53,10 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
         uint8 seDecimals1;
         /// @dev Native token book for identity legs; independent of provider rate.
         mapping(address token => uint256 balance) localReserves;
+        /// @dev Accepted SE shares only. Ambient transfers and pending caller baskets are not backing.
+        mapping(address se => uint256 balance) shareReserves;
+        /// @dev Deployment's registry, not the configurable trading-fee oracle.
+        address disableRegistry;
     }
 
     function _layout() internal pure returns (Layout storage l) {

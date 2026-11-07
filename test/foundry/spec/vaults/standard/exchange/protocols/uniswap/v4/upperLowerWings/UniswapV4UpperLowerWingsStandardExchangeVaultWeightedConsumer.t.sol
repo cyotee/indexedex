@@ -5,6 +5,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IUniswapV4HookStagedPairInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -63,6 +64,8 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest is Fi
         }
     }
     function _roundTrip(Weighted hook_) private {
+        _seed(hook_, hook_.tokens());
+        uint256 lpBefore = IERC20(address(hook_)).balanceOf(address(this));
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 100 * 10 ** token0.decimals(); amounts[1] = 100 * 10 ** token1.decimals();
         (uint256 preview,uint256[] memory projectedUsed) = hook_.previewJoinProportional(amounts);
@@ -75,7 +78,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest is Fi
         assertEq(paid, projectedOut);
         assertEq(token0.balanceOf(address(this)) - before0, paid[0]);
         assertEq(token1.balanceOf(address(this)) - before1, paid[1]);
-        assertEq(IERC20(address(hook_)).balanceOf(address(this)), minted - shares);
+        assertEq(IERC20(address(hook_)).balanceOf(address(this)), lpBefore + minted - shares);
     }
     function test_weightedHomogeneousEightWingsBothManagerRelations() public {
         for (uint256 relation; relation < 2; ++relation) {
@@ -132,6 +135,7 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest is Fi
         vault_ = wingsPackage.deployVault(WingsPackage.PkgArgs(pairKey, face_));
     }
     function _largeRoundTrip(Weighted hook_, address[] memory faces_) private {
+        _seed(hook_, faces_);
         uint256[] memory amounts = new uint256[](faces_.length);
         for (uint256 i; i < faces_.length; ++i) amounts[i] = 100 * 10 ** IERC20Metadata(faces_[i]).decimals();
         (uint256 preview,) = hook_.previewJoinProportional(amounts);
@@ -145,6 +149,33 @@ contract UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest is Fi
         uint256[] memory paid = hook_.exitProportional(minted / 5, address(this), expected, block.timestamp);
         assertEq(paid, expected);
         for (uint256 i; i < faces_.length; ++i) assertEq(IERC20(faces_[i]).balanceOf(address(this)) - balances[i], paid[i]);
+    }
+
+    /// @dev FS-HOOK-10: acquire shares before the hook call; raw legs still supply raw tokens.
+    function _seed(Weighted hook_, address[] memory faces_) private {
+        uint256[] memory amounts = new uint256[](faces_.length);
+        bool[] memory sharesIn = new bool[](faces_.length);
+        for (uint256 i; i < faces_.length; ++i) {
+            IERC20 face = IERC20(faces_[i]);
+            uint256 funding = 100 * 10 ** IERC20Metadata(faces_[i]).decimals();
+            address se = hook_.standardExchange(i);
+            if (se == address(0)) amounts[i] = funding;
+            else {
+                face.approve(se, funding);
+                uint256 beforeShares = IERC20(se).balanceOf(address(this));
+                (amounts[i],) = IStandardExchangeIn(se).exchangeIn(
+                    face, funding, IERC20(se), 0, address(this), false, block.timestamp);
+                assertEq(IERC20(se).balanceOf(address(this)) - beforeShares, amounts[i], "share acquisition receipt");
+                sharesIn[i] = true;
+                IERC20(se).approve(address(hook_), amounts[i]);
+            }
+        }
+        (uint256 preview, uint256[] memory projectedUsed) = hook_.previewJoinProportionalFlexible(amounts, sharesIn);
+        (uint256 minted, uint256[] memory used) = hook_.joinProportionalFlexible(
+            amounts, sharesIn, address(this), preview, block.timestamp);
+        assertGt(minted, 0, "share-funded weighted genesis");
+        assertEq(minted, preview, "genesis net LP preview");
+        assertEq(used, projectedUsed, "genesis input receipts");
     }
 
 }

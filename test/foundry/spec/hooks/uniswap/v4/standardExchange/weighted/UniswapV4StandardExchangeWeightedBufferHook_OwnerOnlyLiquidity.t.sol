@@ -43,8 +43,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_OwnerOnlyLiquidity_Test is
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 100 ether;
         amounts[1] = 100 ether;
-        vm.prank(owner);
-        (uint256 shares,) = weighted.joinProportional(amounts, owner, 0, block.timestamp + 1 days);
+        uint256 shares = _seedAmounts(owner, amounts);
         assertGt(shares, 0);
         assertGt(IERC20(hook).balanceOf(owner), 0);
     }
@@ -53,8 +52,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_OwnerOnlyLiquidity_Test is
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 500 ether;
         amounts[1] = 500 ether;
-        vm.prank(owner);
-        weighted.joinProportional(amounts, owner, 0, block.timestamp + 1 days);
+        _seedAmounts(owner, amounts);
         uint256 preview = weighted.previewSwapExactIn(address(token0), address(token1), 1 ether);
         assertGt(preview, 0);
         uint256 before = token1.balanceOf(user);

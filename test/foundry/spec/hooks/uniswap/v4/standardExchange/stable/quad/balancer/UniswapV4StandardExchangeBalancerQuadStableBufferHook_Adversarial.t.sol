@@ -37,8 +37,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         attacker = makeAddr("attacker");
     }
 
-    /// @notice A1: SE share donation dilutes subsequent join (no free LP credit).
-    function test_A1_donation_seShares_dilutesJoin() public {
+    /// @notice A1: ambient shares cannot dilute or fund a caller join.
+    function test_A1_donation_seShares_remainsUnbooked() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 20 ether;
@@ -52,7 +52,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         vm.stopPrank();
 
         (uint256 sharesAfter,) = quad.previewJoinProportional(amounts);
-        assertLt(sharesAfter, sharesBefore, "SE share donation must dilute subsequent join");
+        assertEq(sharesAfter, sharesBefore, "unbooked shares do not affect LP issuance");
     }
 
     /// @notice R10.1: the withdrawn `beforeSwap` guard claim. A direct call from an address that is
@@ -165,15 +165,14 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
 
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 100 ether;
-        vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedFromPairs(amounts);
         assertGt(shares, 0);
         assertTrue(quad.isFullBook());
 
+        for (uint256 i; i < 4; ++i) amounts[i] = 5 ether;
         vm.prank(user);
-        uint256 okShares =
-            quad.depositSingle(address(hostile), 5 ether, user, 0, block.timestamp + 1 hours);
-        assertGt(okShares, 0, "control depositSingle works");
+        (uint256 okShares,) = quad.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(okShares, 0, "complete-basket control works");
 
         bytes memory reentry = abi.encodeWithSelector(
             IUniswapV4StandardExchangeBalancerQuadStableBufferHook.depositSingle.selector,
@@ -186,19 +185,24 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         hostile.arm(hook, reentry);
 
         for (uint256 i; i < 4; ++i) amounts[i] = 10 ether;
+        uint256 lpBefore = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        (uint256 outerShares,) = quad.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(outerShares, 0);
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, outerShares);
         assertGt(hostile.reentryAttempts(), 0, "reentry attempted");
         assertFalse(hostile.nestedCallSucceeded(), "nested mutator must fail reentrancy guard");
+        assertEq(hostile.nestedErrorSelector(), bytes4(keccak256("Reentrancy()")), "nested call reaches the guard");
     }
 
-    /// @notice B1: feeTo growth mint increases feeTo LP balance.
-    function test_B1_feeTo_growthMintIncreasesBalance() public {
+    /// @notice B1: only the new accepted gross mint pays the protocol.
+    function test_B1_feeTo_receivesOnlyTheNewMintSplit() public {
         _ensureFeeTo();
         _setUsageFee(0.05e18);
         _firstMintEqual(100 ether);
         address feeTo_ = address(quad.feeTo());
         uint256 before_ = IERC20(hook).balanceOf(feeTo_);
+        uint256 supplyBefore_ = IERC20(hook).totalSupply();
 
         token0.mint(user, 50 ether);
         vm.startPrank(user);
@@ -210,8 +214,10 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 10 ether;
         vm.prank(user);
-        quad.joinProportional(amounts, user, 0, block.timestamp + 1);
-        assertGt(IERC20(hook).balanceOf(feeTo_), before_, "feeTo got protocol shares");
+        (uint256 net,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore_;
+        assertEq(IERC20(hook).balanceOf(feeTo_) - before_, gross * 0.05e18 / 1e18);
+        assertEq(net + gross * 0.05e18 / 1e18, gross);
     }
 
     /// @notice H1: pre-live swap preview reverts.
@@ -441,7 +447,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
     /// @notice Unfunded pretransfer on SE face reverts (no unbooked face after join).
     function test_pretransfer_unfunded_seFace_reverts() public {
         _firstMintEqual(200 ether);
-        assertEq(token0.balanceOf(hook), 0, "no free SE face after join");
+        assertGt(token0.balanceOf(hook), 0, "booked local backing cannot fund an unfunded caller");
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0)

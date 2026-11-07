@@ -2,7 +2,9 @@
 pragma solidity ^0.8.24;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
-import {Test} from "forge-std/Test.sol";
+import {HookComponentLedger} from "./HookComponentAccountingBehavior.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
@@ -17,6 +19,10 @@ import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexe
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 
 interface IInvariantHookLiquidity {
+    function standardExchangeOf(address token) external view returns (address);
+    function joinProportionalFlexible(
+        uint256[] calldata amounts, bool[] calldata sharesIn, address to, uint256 minShares, uint256 deadline
+    ) external returns (uint256 shares, uint256[] memory used);
     function joinProportional(uint256[] calldata amounts, address to, uint256 minShares, uint256 deadline)
         external
         returns (uint256 shares, uint256[] memory used);
@@ -26,6 +32,11 @@ interface IInvariantHookLiquidity {
 }
 
 interface IInvariantCpLiquidity {
+    function depositWithSeShares(uint256 raw, uint256 shares, address to, uint256 minimum, uint256 deadline)
+        external returns (uint256 minted, uint256 usedRaw, uint256 usedShares);
+    function depositFlexible(
+        uint256 amount0, bool shares0, uint256 amount1, bool shares1, address to, uint256 minimum, uint256 deadline
+    ) external returns (uint256 minted, uint256 used0, uint256 used1);
     function deposit(uint256 a0, uint256 a1, address to, uint256 minShares, uint256 deadline)
         external
         returns (uint256 shares, uint256 used0, uint256 used1);
@@ -35,6 +46,10 @@ interface IInvariantCpLiquidity {
 }
 
 interface IInvariantOrbitalLiquidity {
+    function depositFlexible(
+        uint256 amount0, bool shares0, uint256 amount1, bool shares1, uint256 amount2, bool shares2,
+        address to, uint256 minimum, uint256 deadline
+    ) external returns (uint256 minted, uint256 used0, uint256 used1, uint256 used2);
     function radius() external view returns (uint256);
     function effectiveReserves() external view returns (uint256, uint256, uint256);
     function addLiquidity(
@@ -56,18 +71,20 @@ interface IInvariantOrbitalLiquidity {
 ///      every category and all three honest actors execute during each 64-call campaign. Funding amounts,
 ///      partial burns, share recipients and trade sizes remain randomized. Callback-token reentrancy and
 ///      fee administration are covered by their dedicated hostile-token/governance suites, not this fixture.
-contract HookLiquidityInvariantHandler is Test {
+contract HookLiquidityInvariantHandler is HookComponentLedger {
     using BalanceDeltaLibrary for BalanceDelta;
 
     struct Config {
         address hook;
         SimpleMintableERC20[] tokens;
+        address[] standardExchanges;
         uint8 mode; // 0 proportional, 1 constant product, 2 orbital
         address input;
         address output;
         address inputSE;
         address inputVault;
         address feeRecipient;
+        address feeOracle;
         WrapperExactOutRouter router;
         PoolKey key;
         IERC20[] observedTokens;
@@ -81,6 +98,7 @@ contract HookLiquidityInvariantHandler is Test {
     address internal immutable inputSE;
     address internal immutable inputVault;
     address internal immutable feeRecipient;
+    IVaultFeeOracleQuery internal immutable feeOracle;
     uint256 internal immutable initialSupply;
     uint256 internal immutable initialFeeShares;
     uint256 internal immutable initialLockedShares;
@@ -111,6 +129,7 @@ contract HookLiquidityInvariantHandler is Test {
         inputSE = c.inputSE;
         inputVault = c.inputVault;
         feeRecipient = c.feeRecipient;
+        feeOracle = IVaultFeeOracleQuery(c.feeOracle);
         initialSupply = IERC20(c.hook).totalSupply();
         initialFeeShares = IERC20(c.hook).balanceOf(c.feeRecipient);
         initialLockedShares = IERC20(c.hook).balanceOf(address(0));
@@ -119,6 +138,13 @@ contract HookLiquidityInvariantHandler is Test {
         observedTokens = c.observedTokens;
         observedHolders = c.observedHolders;
         caller = new AtomicPretransferCaller();
+        address[] memory pairs = new address[](c.tokens.length);
+        address[] memory ses = new address[](c.tokens.length);
+        for (uint256 i; i < c.tokens.length; ++i) {
+            pairs[i] = address(c.tokens[i]);
+            ses[i] = c.standardExchanges[i];
+        }
+        _ledgerInit(c.hook, pairs, ses, c.feeRecipient);
     }
 
     function cycle(uint256 amountSeed, uint256 recipientSeed, uint256 exitSeed) public {
@@ -154,34 +180,80 @@ contract HookLiquidityInvariantHandler is Test {
     }
 
     function _join(address actor, uint256 amount) internal returns (uint256 minted) {
+        bool first = IERC20(hook).totalSupply() == 0;
+        // Preserve the Orbital campaign's former 100-token seed radius, now witnessed by
+        // the ledger rather than deposited outside it during fixture setup.
+        if (first && mode == 2) amount = 100 ether;
         uint256[] memory amounts = new uint256[](tokens.length);
         uint256[] memory beforeBalances = new uint256[](tokens.length);
+        IERC20[] memory funded = new IERC20[](tokens.length);
+        bool[] memory sharesIn = new bool[](tokens.length);
         for (uint256 i; i < tokens.length; ++i) {
             tokens[i].mint(actor, amount);
             amounts[i] = amount;
-            beforeBalances[i] = tokens[i].balanceOf(actor);
+            funded[i] = IERC20(address(tokens[i]));
+            if (first) {
+                address se = nativeBooks[i].se;
+                if (se != address(0)) {
+                    vm.startPrank(actor);
+                    tokens[i].approve(se, amount);
+                    (amounts[i],) = IStandardExchangeIn(se).exchangeIn(
+                        IERC20(address(tokens[i])), amount, IERC20(se), 1, actor, false, block.timestamp + 1 hours
+                    );
+                    vm.stopPrank();
+                    funded[i] = IERC20(se);
+                    sharesIn[i] = true;
+                }
+            }
+            beforeBalances[i] = funded[i].balanceOf(actor);
             vm.prank(actor);
-            tokens[i].approve(hook, amount);
+            funded[i].approve(hook, amounts[i]);
         }
         uint256 beforeShares = IERC20(hook).balanceOf(actor);
         uint256[] memory used = new uint256[](tokens.length);
-        vm.prank(actor);
-        if (mode == 0) {
-            (minted, used) =
-                IInvariantHookLiquidity(hook).joinProportional(amounts, actor, 1, block.timestamp + 1 hours);
-        } else if (mode == 1) {
-            (minted, used[0], used[1]) =
-                IInvariantCpLiquidity(hook).deposit(amount, amount, actor, 1, block.timestamp + 1 hours);
+        _ledgerBegin(actor);
+        if (first) {
+            if (mode == 0) {
+                vm.prank(actor);
+                (minted, used) = IInvariantHookLiquidity(hook)
+                    .joinProportionalFlexible(amounts, sharesIn, actor, 1, block.timestamp + 1 hours);
+            } else if (mode == 1) {
+                assertTrue(sharesIn[0] || sharesIn[1], "CP discovers a real SE leg");
+                if (sharesIn[0] && sharesIn[1]) {
+                    vm.prank(actor);
+                    (minted, used[0], used[1]) = IInvariantCpLiquidity(hook)
+                        .depositFlexible(amounts[0], true, amounts[1], true, actor, 1, block.timestamp + 1 hours);
+                } else {
+                    uint256 rawIndex = sharesIn[0] ? 1 : 0;
+                    uint256 shareIndex = 1 - rawIndex;
+                    vm.prank(actor);
+                    (minted, used[rawIndex], used[shareIndex]) = IInvariantCpLiquidity(hook)
+                        .depositWithSeShares(amounts[rawIndex], amounts[shareIndex], actor, 1, block.timestamp + 1 hours);
+                }
+            } else {
+                vm.prank(actor);
+                (minted, used[0], used[1], used[2]) = IInvariantOrbitalLiquidity(hook).depositFlexible(
+                    amounts[0], sharesIn[0], amounts[1], sharesIn[1], amounts[2], sharesIn[2], actor, 1, block.timestamp + 1 hours);
+            }
         } else {
-            (minted, used[0], used[1], used[2]) = IInvariantOrbitalLiquidity(hook)
-                .addLiquidity(amount, amount, amount, actor, 1, block.timestamp + 1 hours, "");
+            vm.prank(actor);
+            if (mode == 0) {
+                (minted, used) = IInvariantHookLiquidity(hook).joinProportional(amounts, actor, 1, block.timestamp + 1 hours);
+            } else if (mode == 1) {
+                (minted, used[0], used[1]) = IInvariantCpLiquidity(hook).deposit(amount, amount, actor, 1, block.timestamp + 1 hours);
+            } else {
+                (minted, used[0], used[1], used[2]) = IInvariantOrbitalLiquidity(hook)
+                    .addLiquidity(amount, amount, amount, actor, 1, block.timestamp + 1 hours, "");
+            }
         }
         assertGt(minted, 0, "funded join mints");
         assertEq(IERC20(hook).balanceOf(actor) - beforeShares, minted, "actual LP issuance");
         for (uint256 i; i < tokens.length; ++i) {
-            assertEq(beforeBalances[i] - tokens[i].balanceOf(actor), used[i], "join input delta");
-            assertLe(used[i], amount, "join budget");
+            assertEq(beforeBalances[i] - funded[i].balanceOf(actor), used[i], "join input delta");
+            assertLe(used[i], amounts[i], "join budget");
         }
+        uint256 fee = mode == 1 ? feeOracle.dexSwapFeeOfVault(hook) : feeOracle.usageFeeOfVault(hook);
+        _ledgerJoin(actor, amounts, sharesIn, minted, fee);
         expectedShares[actor] += minted;
         ghost_minted += minted;
         ++ghost_join;
@@ -194,6 +266,7 @@ contract HookLiquidityInvariantHandler is Test {
         }
         uint256 beforeShares = IERC20(hook).balanceOf(actor);
         uint256[] memory out = new uint256[](tokens.length);
+        _ledgerBegin(actor);
         vm.prank(actor);
         if (mode == 0) {
             out = IInvariantHookLiquidity(hook)
@@ -205,12 +278,13 @@ contract HookLiquidityInvariantHandler is Test {
                 IInvariantOrbitalLiquidity(hook).removeLiquidity(shares, actor, 0, 0, 0, block.timestamp + 1 hours);
         }
         assertEq(beforeShares - IERC20(hook).balanceOf(actor), shares, "exact burn");
-        uint256 totalOut;
+        bool paid;
         for (uint256 i; i < tokens.length; ++i) {
             assertEq(tokens[i].balanceOf(actor) - beforeBalances[i], out[i], "exit delivery");
-            totalOut += out[i];
+            if (out[i] != 0) paid = true;
         }
-        assertGt(totalOut, 0, "partial exit pays");
+        assertTrue(paid, "partial exit pays a native component");
+        _ledgerExit(actor, shares);
         expectedShares[actor] -= shares;
         ghost_burned += shares;
         ++ghost_exit;
@@ -257,6 +331,7 @@ contract HookLiquidityInvariantHandler is Test {
             )
             : _inData(amount, v.quote, actor, v.prepaid);
         bytes memory returned;
+        _ledgerBegin(actor);
         if (v.prepaid) {
             returned = caller.consumePretransfer(input, actor, hook, v.budget, data);
         } else {
@@ -278,6 +353,8 @@ contract HookLiquidityInvariantHandler is Test {
             v.prepaid && v.exactOut ? v.budget - v.quote : 0,
             "bounded refund to caller"
         );
+        _ledgerSwap(actor, address(caller), address(input), address(output),
+            v.exactOut ? v.quote : amount, v.exactOut ? amount : v.quote);
         if (v.prepaid) {
             _expectFailure(
                 address(caller),
@@ -296,6 +373,9 @@ contract HookLiquidityInvariantHandler is Test {
         uint256 bookBefore = IERC20(inputSE).balanceOf(hook);
         IERC20(inputSE).transfer(hook, shares);
         vm.stopPrank();
+        for (uint256 i; i < nativeBooks.length; ++i) {
+            if (nativeBooks[i].se == inputSE) nativeBooks[i].ambientShares += shares;
+        }
         assertEq(IERC20(inputSE).balanceOf(hook) - bookBefore, shares, "donation custody");
         assertEq(IERC20(hook).totalSupply(), supplyBefore, "donation mints no LP");
         uint256 actorIndex = actor == actors[0] ? 0 : actor == actors[1] ? 1 : 2;
@@ -307,13 +387,20 @@ contract HookLiquidityInvariantHandler is Test {
         IERC20(hook).transfer(recipient, transferShares);
         expectedShares[actor] -= transferShares;
         expectedShares[recipient] += transferShares;
+        ledgerLp[actor] -= transferShares;
+        ledgerLp[recipient] += transferShares;
         assertEq(beforeActor - IERC20(hook).balanceOf(actor), transferShares, "share sender debit");
         assertEq(IERC20(hook).balanceOf(recipient) - beforeRecipient, transferShares, "share receiver credit");
         assertEq(IERC20(hook).totalSupply(), supplyBefore, "share transfer supply");
         // External yield changes the real ERC4626 protocol rate; the next production action must
         // account for it without treating buffered face value as local prepaid inventory.
-        SimpleMintableERC20(address(input)).mint(inputVault, amount);
+        uint256 rateBefore = SimpleYieldERC4626(inputVault).convertToAssets(1 ether);
+        SimpleMintableERC20(address(input)).mint(address(this), amount);
+        input.approve(inputVault, amount);
+        SimpleYieldERC4626(inputVault).simulateYield(amount);
+        assertGt(SimpleYieldERC4626(inputVault).convertToAssets(1 ether), rateBefore, "real stored-asset rate move");
         assertEq(IERC20(hook).totalSupply(), supplyBefore, "external yield cannot directly mint LP");
+        _ledgerAssert();
     }
 
     function _unfundedControls(uint256 amount) internal {
@@ -355,6 +442,9 @@ contract HookLiquidityInvariantHandler is Test {
         input.transfer(hook, amount);
         input.approve(address(caller), amount);
         vm.stopPrank();
+        for (uint256 i; i < nativeBooks.length; ++i) {
+            if (nativeBooks[i].pair == address(input)) nativeBooks[i].ambientPair += amount;
+        }
         bytes32 beforeState = _snapshot();(uint256 quote,) = IStandardExchangeIn(hook).previewExchangeIn(input, amount, output);
         bytes memory expected =
             abi.encodeWithSelector(bytes4(keccak256(bytes(mode == 0 ? "Slippage()" : "InsufficientTokenOut()"))));
@@ -371,9 +461,14 @@ contract HookLiquidityInvariantHandler is Test {
         ++expectedReverts[6];
         // Consume the independently resting face once, then reject reuse.
         uint256 beforeOut = output.balanceOf(actor);
+        _ledgerBegin(actor);
         uint256 delivered = abi.decode(caller.execute(hook, _inData(amount, quote, actor, true)), (uint256));
         assertEq(delivered, quote, "resting credit once");
         assertEq(output.balanceOf(actor) - beforeOut, quote, "resting credit delivery");
+        for (uint256 i; i < nativeBooks.length; ++i) {
+            if (nativeBooks[i].pair == address(input)) nativeBooks[i].ambientPair -= amount;
+        }
+        _ledgerSwap(actor, address(caller), address(input), address(output), amount, delivered);
         _expectFailure(
             address(caller),
             _inData(amount, 0, attacker, true),
@@ -389,6 +484,7 @@ contract HookLiquidityInvariantHandler is Test {
         input.approve(address(router), amount);
         uint256 inBefore = input.balanceOf(actor);
         uint256 outBefore = output.balanceOf(actor);
+        _ledgerBegin(actor);
         vm.prank(actor);
         BalanceDelta delta = router.swapExactIn(
             key,
@@ -403,6 +499,7 @@ contract HookLiquidityInvariantHandler is Test {
         assertEq(uint256(-int256(inDelta)), amount, "pool input delta");
         assertGt(outDelta, 0, "pool output positive");
         assertEq(output.balanceOf(actor) - outBefore, uint256(int256(outDelta)), "pool actual delivery");
+        _ledgerSwap(actor, address(router.manager()), address(input), address(output), amount, uint256(int256(outDelta)));
     }
 
     function _snapshot() internal view returns (bytes32 state) {
@@ -439,6 +536,7 @@ contract HookLiquidityInvariantHandler is Test {
     }
 
     function assertAccounting() public view {
+        _ledgerAssert();
         assertEq(ghost_join, attempted, "every randomized join succeeds");
         assertEq(ghost_exit, attempted, "every randomized exit succeeds");
         uint256 shares;

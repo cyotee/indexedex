@@ -136,7 +136,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     }
 
     function rawReserve() public view returns (uint256) {
-        return IERC20(Repo._layout().rawToken).balanceOf(address(this));
+        return Repo._layout().bookedRaw;
     }
 
     function seClaimSupply() public view returns (uint256) {
@@ -192,8 +192,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         n[0] = Repo._layout().pairToken;
     }
 
-    function requiredFirstBondTokens() public view returns (address[] memory) {
-        return tokens();
+    function requiredFirstBondTokens() public view returns (address[] memory required) {
+        required = new address[](2);
+        required[0] = Repo._layout().rawToken;
+        required[1] = Repo._layout().standardExchange;
     }
 
     function firstJoinMustBeFullBook() public pure returns (bool) {
@@ -276,16 +278,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        if (c == l.rawToken) return IERC20(l.rawToken).balanceOf(address(this));
+        if (c == l.rawToken) return l.bookedRaw;
         if (c == l.pairToken) return _seClaim();
         return 0;
     }
 
     function _isLive() internal view returns (bool) {
-        if (reserveCurrency0() > 0 && reserveCurrency1() > 0) return true;
         Repo.Layout storage l = Repo._layout();
-        return IERC20(l.rawToken).balanceOf(address(this)) > 0
-            && IERC20(l.standardExchange).balanceOf(address(this)) > 0;
+        return ERC20Repo._totalSupply() != 0 && l.bookedRaw != 0
+            && (l.bookedSeShares != 0 || l.localPairReserve != 0);
     }
 
     function _isZapEligible() internal view returns (bool) {
@@ -295,10 +296,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     /// @dev Keep MultiAssetBasicVaultRepo reserves aligned with product book (raw face × virtual pair).
     function _syncReserves() internal {
         Repo.Layout storage l = Repo._layout();
-        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), IERC20(l.rawToken).balanceOf(address(this)));
-        if (l.pairToken == l.standardExchange) {
-            l.localPairReserve = IERC20(l.pairToken).balanceOf(address(this));
-        }
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), l.bookedRaw);
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.pairToken), _seClaim());
     }
 
@@ -369,31 +367,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     /*                              SE buffer / unwrap                        */
     /* ---------------------------------------------------------------------- */
 
-    function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
-        if (amount == 0) return 0;
-        Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return amount;(uint256 minOut,) = IStandardExchangeIn(l.standardExchange).previewExchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange)
-        );
-        if (minOut == 0) return 0;
-        IERC20(l.pairToken).forceApprove(l.standardExchange, amount);(seOut,) = IStandardExchangeIn(l.standardExchange).exchangeIn(IERC20(l.pairToken),
-            amount,
-            IERC20(l.standardExchange),
-            minOut,
-            address(this),
-            false,
-            block.timestamp
-        );
+    function _bufferPair(uint256 amount) internal returns (uint256) {
+        return ClaimLib.bufferPoolPair(amount);
     }
 
     function _spendableSeShares() internal view returns (uint256) {
-        uint256 seBal = IERC20(Repo._layout().standardExchange).balanceOf(address(this));
-        // Leave 1 wei so `_isLive` stays true. Proportional exit already retains MAX_DUST_WEI.
-        return seBal > 1 ? seBal - 1 : 0;
+        return Repo._layout().bookedSeShares;
     }
 
     function _spendableRaw() internal view returns (uint256) {
-        uint256 rawBal = IERC20(Repo._layout().rawToken).balanceOf(address(this));
-        return rawBal > 1 ? rawBal - 1 : 0;
+        return Repo._layout().bookedRaw;
     }
 
     function _unwrapSeShares(uint256 seIn) internal returns (uint256 pairOut) {
@@ -440,17 +423,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         require(spent == seIn, "unwrap exact-out");
     }
 
-    function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256 pairGot) {
-        Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) {
-            uint256 cap = _spendableSeShares();
-            if (pairWant == 0 || pairWant > cap) revert InsufficientTokenOut();
-            return pairWant;
-        }
-        uint256 pairBefore = IERC20(l.pairToken).balanceOf(address(this));
-        _unwrapExactPairOut(pairWant);
-        pairGot = IERC20(l.pairToken).balanceOf(address(this)) - pairBefore;
-        if (pairGot == 0) revert InsufficientTokenOut();
+    function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256) {
+        return ClaimLib.takeExactPair(pairWant);
     }
 
     function _take(Currency currency, address to, uint256 amount) internal {
@@ -466,19 +440,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         pm.settle();
     }
 
-    function _refundPairDust(address to) internal {
-        to;
-        Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return;
-        for (uint256 i; i < 3; ++i) {
-            uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
-            if (bal <= Repo.MAX_DUST_WEI) return;
-            uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = ClaimLib.previewResidualBuffer(excess);
-            if (preview == 0) return;
-            ClaimLib.bufferQuotedResidual(excess, preview);
-        }
-    }
 
     /* ---------------------------------------------------------------------- */
     /*                                  IHooks                                */
@@ -649,12 +610,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         }
 
         if (rawIn) {
+            l.bookedRaw += amountIn;
             amountOut = ClaimLib.unwrapQuoted(output);
         } else {
             // pair → raw: buffer pair last after quote; pay raw
             _bufferPair(amountIn);
             IERC20(l.rawToken); // raw inventory already held
             if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
         }
 
         if (viaPm) {
@@ -681,11 +644,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         }
 
         if (rawIn) {
+            l.bookedRaw += amountIn;
             uint256 got = _unwrapPairLeavingDust(amountOut);
             if (got < amountOut) revert InsufficientTokenOut();
         } else {
             _bufferPair(amountIn);
             if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
         }
 
         if (viaPm) {
@@ -772,12 +737,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zfo == _zeroForOneIsRawIn();
         if (rawIn) {
+            l.bookedRaw += amountIn;
             uint256 got = _unwrapPairLeavingDust(amountOut);
             if (got < amountOut) revert InsufficientTokenOut();
             IERC20(l.pairToken).safeTransfer(recipient, amountOut);
         } else {
             _bufferPair(amountIn);
             if (amountOut > _spendableRaw()) revert InsufficientTokenOut();
+            l.bookedRaw -= amountOut;
             IERC20(l.rawToken).safeTransfer(recipient, amountOut);
         }
         _syncReserves();
@@ -801,6 +768,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (amountOut == 0) revert ZeroAmount();
         _securePull(IERC20(tokenIn), amountIn, false);
         if (zfo == _zeroForOneIsRawIn()) {
+            Repo._layout().bookedRaw += amountIn;
             amountOut = ClaimLib.unwrapQuoted(output);
             IERC20(Repo._layout().pairToken).safeTransfer(msg.sender, amountOut);
             _syncReserves();
@@ -843,6 +811,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zfo == _zeroForOneIsRawIn();
         if (rawIn) {
+            l.bookedRaw += amountIn;
             uint256 got = _unwrapPairLeavingDust(amountOut);
             if (got == 0) revert InsufficientTokenOut();
             if (got < amountOut) revert InsufficientTokenOut();
@@ -854,6 +823,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
             if (cap == 0) revert InsufficientTokenOut();
             if (amountOut > cap) revert InsufficientTokenOut();
             paidOut = amountOut;
+            l.bookedRaw -= paidOut;
             IERC20(l.rawToken).safeTransfer(msg.sender, paidOut);
         }
         _syncReserves();
@@ -882,14 +852,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         return claimed;
     }
 
-    /// @dev Raw and identity legs deduct native custody books; buffered face has no local book.
+    /// @dev Pending or ambient inventory is distinct from every native custody book.
     function _unbookedBalance(IERC20 token) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         uint256 booked;
         if (address(token) == l.rawToken) {
-            booked = MultiAssetBasicVaultRepo._reserveOfToken(l.rawToken);
-        } else if (l.pairToken == l.standardExchange) {
+            booked = l.bookedRaw;
+        } else if (address(token) == l.pairToken) {
             booked = l.localPairReserve;
+        } else if (address(token) == l.standardExchange) {
+            booked = l.bookedSeShares;
         }
         return LocalCreditLib.available(token.balanceOf(address(this)), booked);
     }
@@ -916,33 +888,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     /*                              protocol fee                              */
     /* ---------------------------------------------------------------------- */
 
-    function _mintProtocolFeeIfNeeded() internal {
-        (bool feeOn, address feeTo_, uint256 ownerFeeShare) = _feeOnAndShare();
-        Repo.Layout storage l = Repo._layout();
-        if (!feeOn) {
-            l.kLast = 0;
-            return;
-        }
-        uint256 kLast_ = l.kLast;
-        if (kLast_ == 0) return;
-        uint256 protocolLp =
-            Math.calculateProtocolFee(ERC20Repo._totalSupply(), _wadProduct(), kLast_, ownerFeeShare);
-        if (protocolLp > 0) _mintLp(feeTo_, protocolLp);
-    }
 
-    function _setKLastPostOp() internal {
-        (bool feeOn,,) = _feeOnAndShare();
-        Repo._layout().kLast = feeOn ? _wadProduct() : 0;
-    }
 
-    function _supplyAfterProtocolMint() internal view returns (uint256 supplyAdj) {
-        supplyAdj = ERC20Repo._totalSupply();
-        (bool feeOn,, uint256 ownerFeeShare) = _feeOnAndShare();
-        uint256 kLast_ = Repo._layout().kLast;
-        if (feeOn && kLast_ != 0 && supplyAdj > 0) {
-            supplyAdj += Math.calculateProtocolFee(supplyAdj, _wadProduct(), kLast_, ownerFeeShare);
-        }
-    }
+    function _supplyAfterProtocolMint() internal view returns (uint256) { return ERC20Repo._totalSupply(); }
 
     /* ---------------------------------------------------------------------- */
 }

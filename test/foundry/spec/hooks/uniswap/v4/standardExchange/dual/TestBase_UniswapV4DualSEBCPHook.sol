@@ -220,10 +220,19 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
     }
 
     function _depositBoth(uint256 amtA, uint256 amtB) internal returns (uint256 lp) {
-        uint256 a0 = _amountForCurrency(dual.currency0(), amtA, amtB);
-        uint256 a1 = _amountForCurrency(dual.currency1(), amtA, amtB);
-        vm.prank(user);
-        (lp,,) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
+        if (IERC20(hook).totalSupply() == 0) {
+            uint256 sharesA = _userAcquireSeShares(dual.standardExchangeOf(address(tokenA)), tokenA, amtA);
+            uint256 sharesB = _userAcquireSeShares(dual.standardExchangeOf(address(tokenB)), tokenB, amtB);
+            uint256 s0 = dual.currency0() == address(tokenA) ? sharesA : sharesB;
+            uint256 s1 = dual.currency0() == address(tokenA) ? sharesB : sharesA;
+            vm.prank(user);
+            (lp,,) = dual.depositFlexible(s0, true, s1, true, user, 1, block.timestamp + 1 hours);
+        } else {
+            uint256 a0 = _amountForCurrency(dual.currency0(), amtA, amtB);
+            uint256 a1 = _amountForCurrency(dual.currency1(), amtA, amtB);
+            vm.prank(user);
+            (lp,,) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
+        }
     }
 
     /// @dev Mint pair tokens, exchange into SE shares for `user` (B6 LP funding).
@@ -254,5 +263,26 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
     function _assertVaultRegistered() internal view {
         assertTrue(IBasicVault(hook).vaultTokens().length == 2, "vaultTokens");
         IStandardVault(hook).vaultConfig();
+    }
+
+    /// @dev Exact caller, custody, conversion, approval and published-book state for rejected joins.
+    function _joinRollbackState(address actor) internal view returns (bytes memory) {
+        address[6] memory assets = [dual.token0(), dual.token1(), dual.standardExchange0(),
+            dual.standardExchange1(), address(vaultA), address(vaultB)];
+        address[6] memory holders = [actor, hook, assets[2], assets[3], address(vaultA), address(vaultB)];
+        uint256[6][6] memory balances;
+        uint256[4][6] memory allowances;
+        uint256[6] memory supplies;
+        for (uint256 i; i < assets.length; ++i) {
+            IERC20 asset = IERC20(assets[i]);
+            supplies[i] = asset.totalSupply();
+            for (uint256 j; j < holders.length; ++j) balances[i][j] = asset.balanceOf(holders[j]);
+            allowances[i] = [asset.allowance(actor, hook), asset.allowance(actor, PERMIT2_ADDR),
+                asset.allowance(hook, seA), asset.allowance(hook, seB)];
+        }
+        return abi.encode(balances, allowances, supplies, IERC20(hook).totalSupply(),
+            IERC20(hook).balanceOf(actor), IERC20(hook).balanceOf(dual.feeTo()),
+            IERC20(hook).balanceOf(hook), IERC20(hook).balanceOf(address(0)),
+            IBasicVault(hook).reserves(), dual.claimSupply0(), dual.claimSupply1());
     }
 }

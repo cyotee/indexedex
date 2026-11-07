@@ -66,7 +66,9 @@ library FullSpreadSameManagerAmmFixture {
         f.tokens[0] = r.face;
         if (family == Family.Dual) (f.output, f.identityFixture, f.identityAsset) = _identityOutput(r);
         else f.output = _rawToken(r.owner);
-        f.tokens[1] = f.output;
+        // Bind the second SE to its actual member token, not its own share.
+        // Shares remain a supported implicit input through depositFlexible.
+        f.tokens[1] = family == Family.Dual ? f.identityAsset : f.output;
         for (uint256 i = 2; i < n; ++i) f.tokens[i] = _rawToken(r.owner);
         for (uint256 i; i < n; ++i) for (uint256 j = i + 1; j < n; ++j) {
             if (f.tokens[j] < f.tokens[i]) (f.tokens[i], f.tokens[j]) = (f.tokens[j], f.tokens[i]);
@@ -75,8 +77,13 @@ library FullSpreadSameManagerAmmFixture {
         for (uint256 i; i < n; ++i) f.amounts[i] = 10 ** uint256(IERC20Metadata(f.tokens[i]).decimals());
         f.spacing = family == Family.Dual || family == Family.Orbital || family == Family.SingleCp ? int24(60) : int24(1);
         if (family == Family.Dual) {
-            f.hook = _dual(r, f.output);
-            f.seedCall = abi.encodeCall(DualHook.deposit, (f.amounts[0], f.amounts[1], r.owner, 0, block.timestamp));
+            f.hook = _dual(r, f.output, f.identityAsset);
+            uint256 firstShares = 10 ** uint256(IERC20Metadata(r.vault).decimals());
+            uint256 secondShares = 10 ** uint256(IERC20Metadata(f.output).decimals());
+            bool first = f.tokens[0] == r.face;
+            f.seedCall = abi.encodeCall(DualHook.depositFlexible,
+                (first ? firstShares : secondShares, true, first ? secondShares : firstShares, true,
+                    r.owner, 0, block.timestamp));
         } else if (family == Family.Orbital) {
             f.hook = _orbital(r, f.tokens);
             f.seedCall = abi.encodeCall(OrbitalHook.addLiquidity, (f.amounts[0], f.amounts[1], f.amounts[2], r.owner, 0, block.timestamp, bytes("")));
@@ -149,6 +156,9 @@ library FullSpreadSameManagerAmmFixture {
             shareInputs[i] = true;
             f.amounts[i] = shares;
         }
+        if (family == Family.Dual) {
+            for (uint256 i; i < f.tokens.length; ++i) if (f.tokens[i] == f.identityAsset) shareInputs[i] = true;
+        }
         if (family == Family.SingleCp) {
             uint256 raw = f.tokens[0] == face ? f.amounts[1] : f.amounts[0];
             return abi.encodeCall(CpHook.depositWithSeShares, (raw, shares, recipient, 0, block.timestamp));
@@ -183,7 +193,7 @@ library FullSpreadSameManagerAmmFixture {
         return CpFactory.deployHook(pkg, args, CpFactory.findMineNonce(r.factory, pkg, args));
     }
 
-    function _dual(Request memory r, address output) private returns (address) {
+    function _dual(Request memory r, address output, address pairedToken) private returns (address) {
         DualPkg.PkgInit memory init;
         init.vaultRegistryDeployment = IVaultRegistryDeployment(address(r.c.indexedexManager));
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(r.c.indexedexManager));
@@ -197,8 +207,9 @@ library FullSpreadSameManagerAmmFixture {
         DualPkg.PkgArgs memory args;
         args.poolManager = r.manager; args.feeOracle = address(r.c.indexedexManager);
         args.standardExchange0 = r.vault; args.token0 = r.face;
-        args.standardExchange1 = output; args.token1 = output;
+        args.standardExchange1 = output; args.token1 = pairedToken;
         args.rateProvider0 = RateProviderFixtureLib.providerForCp(r.c.create3Factory, r.c.create3Factory.diamondPackageFactory(), r.vault, r.face);
+        args.rateProvider1 = RateProviderFixtureLib.providerForCp(r.c.create3Factory, r.c.create3Factory.diamondPackageFactory(), output, pairedToken);
         return DualFactory.deployHook(pkg, args, DualFactory.findMineNonce(r.factory, pkg, args));
     }
 

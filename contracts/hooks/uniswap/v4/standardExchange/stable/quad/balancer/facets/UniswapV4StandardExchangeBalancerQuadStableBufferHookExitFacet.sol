@@ -16,7 +16,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet is Unisw
         external returns (uint256 amount_)
     {
         if (address(this) == NATIVE_SY_SELF) revert DelegateCallRequired();
-        return _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
+        return _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp, 0);
     }
 
     function facetName() public pure returns (string memory) { return type(UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet).name; }

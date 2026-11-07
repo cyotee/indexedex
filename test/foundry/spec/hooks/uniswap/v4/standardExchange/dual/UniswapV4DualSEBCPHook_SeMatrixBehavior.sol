@@ -179,17 +179,36 @@ abstract contract UniswapV4DualSEBCPHook_SeMatrixBehavior is TestBase_UniswapV4D
     }
 
     function _depositFaces(uint256 faceAmt, uint256 otherAmt)
-        internal
-        returns (uint256 lp, uint256 usedFace, uint256 usedOther)
+        internal returns (uint256 lp, uint256 usedFace, uint256 usedOther)
     {
-        (uint256 a0, uint256 a1) = _c(faceAmt, otherAmt);
-        vm.prank(user);
-        (uint256 lpOut, uint256 u0, uint256 u1) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
-        lp = lpOut;
-        (usedFace, usedOther) = _fo(u0, u1);
+        if (IERC20(hook).totalSupply() == 0) {
+            uint256 beforeFace = IERC20(face).balanceOf(user);
+            uint256 beforeOther = IERC20(other).balanceOf(user);
+            vm.startPrank(user);
+            IERC20(face).approve(seUT, faceAmt);
+            IERC20(other).approve(seUT1, otherAmt);
+            (uint256 shares0,) = IStandardExchangeIn(seUT).exchangeIn(
+                IERC20(face), faceAmt, IERC20(seUT), 1, user, false, block.timestamp);
+            (uint256 shares1,) = IStandardExchangeIn(seUT1).exchangeIn(
+                IERC20(other), otherAmt, IERC20(seUT1), 1, user, false, block.timestamp);
+            IERC20(seUT).approve(hook, shares0);
+            IERC20(seUT1).approve(hook, shares1);
+            (uint256 a0, uint256 a1) = _c(shares0, shares1);
+            (lp,,) = dual.depositFlexible(a0, true, a1, true, user, 1, block.timestamp);
+            vm.stopPrank();
+            usedFace = beforeFace - IERC20(face).balanceOf(user);
+            usedOther = beforeOther - IERC20(other).balanceOf(user);
+        } else {
+            (uint256 a0, uint256 a1) = _c(faceAmt, otherAmt);
+            vm.prank(user);
+            uint256 u0;
+            uint256 u1;
+            (lp, u0, u1) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
+            (usedFace, usedOther) = _fo(u0, u1);
+        }
     }
 
-    function _seed() internal returns (uint256 lp) {
+    function _seed() internal virtual returns (uint256 lp) {
         (lp,,) = _depositFaces(_f(100), _o(100));
     }
 
@@ -277,12 +296,23 @@ abstract contract UniswapV4DualSEBCPHook_SeMatrixBehavior is TestBase_UniswapV4D
         uint256 bookedBefore = fx.seBooked();
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 seBefore = _hookSeShares();
+        vm.recordLogs();
         (, uint256 usedFace,) = _depositFaces(_f(50), _o(50));
+        Vm.Log[] memory receiptLogs = vm.getRecordedLogs();
+        uint256 forwarded;
+        for (uint256 i; i < receiptLogs.length; ++i) {
+            if (receiptLogs[i].emitter == face && receiptLogs[i].topics.length == 3
+                && receiptLogs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                && receiptLogs[i].topics[1] == bytes32(uint256(uint160(hook)))
+                && receiptLogs[i].topics[2] == bytes32(uint256(uint160(seUT))))
+                forwarded += abi.decode(receiptLogs[i].data, (uint256));
+        }
+        assertGt(forwarded, allow, "actual SE intake exceeds dependency capacity");
         assertGt(usedFace, allow, "deposit used more face than the dependency could take");
         assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "no refund of the unconsumed part");
         uint256 booked = fx.seBooked() - bookedBefore;
-        assertGe(booked, usedFace - allow, "SE booked the remainder above capacity");
-        assertLe(booked, usedFace, "booked remainder never exceeds what was used");
+        assertGe(booked, forwarded - allow, "SE books its actual forwarded remainder above capacity");
+        assertLe(booked, forwarded, "SE book never includes pair input retained locally by the hook");
         assertGt(_hookSeShares(), seBefore, "hook still receives SE shares for the booked input");
         fx.openCapacity();
         uint256 bookedAfter = fx.seBooked();
@@ -294,16 +324,17 @@ abstract contract UniswapV4DualSEBCPHook_SeMatrixBehavior is TestBase_UniswapV4D
         }
     }
 
-    /// @dev A zero-rounded deposit previews zero and rejects execution without taking input.
+    /// @dev A one-wei budget cannot fund a positive paid swap and proportional mint.
     function _roundingToZeroControl() internal {
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 hookFace = IERC20(face).balanceOf(hook);
         uint256 bookedBefore = fx.seBooked();
+        bytes memory before_ = _joinRollbackState(user);
         (bool previewOk, bytes memory previewRet) = address(dual).staticcall(
             abi.encodeWithSignature("previewDepositSingle(address,uint256)", face, uint256(1))
         );
         assertTrue(previewOk, "dust preview must succeed");
-        assertEq(abi.decode(previewRet, (uint256)), 0, "dust preview rounds to zero shares");
+        assertEq(abi.decode(previewRet, (uint256)), 0, "impossible swap budget previews no shares");
         vm.prank(user);
         (bool ok, bytes memory ret) = address(dual).call(
             abi.encodeWithSignature(
@@ -316,11 +347,8 @@ abstract contract UniswapV4DualSEBCPHook_SeMatrixBehavior is TestBase_UniswapV4D
             )
         );
         assertFalse(ok, "zero-share deposit must revert");
-        assertTrue(ret.length >= 4, "dust rejection has a selector");
-        bytes4 sel = bytes4(ret);
-        bool named = sel == bytes4(keccak256("InsufficientTokenOut()")) || sel == bytes4(keccak256("ZeroAmount()"));
-        emit log_named_bytes32("dust execution selector", bytes32(sel));
-        assertTrue(named, "dust rejection is ZeroAmount or InsufficientTokenOut");
+        assertEq(ret, abi.encodeWithSignature("InsufficientLpOut()"), "impossible paid-swap budget");
+        assertEq(_joinRollbackState(user), before_, "both legs, supplies, approvals and reserves roll back");
         assertEq(IERC20(face).balanceOf(user), userFace, "rounding rejection leaves the caller untouched");
         assertEq(IERC20(face).balanceOf(hook), hookFace, "rounding rejection leaves the hook untouched");
         assertEq(fx.seBooked(), bookedBefore, "rounding rejection leaves the book untouched");
@@ -354,7 +382,9 @@ abstract contract UniswapV4DualSEBCPHook_SeMatrixBehavior is TestBase_UniswapV4D
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
-        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
+        uint256 localOut = IERC20(face).balanceOf(hook);
+        uint256 expectedDebit = wantOut > localOut
+            ? IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut - localOut) : 0;
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
@@ -409,32 +439,29 @@ abstract contract UniswapV4DualSEBCPHook_SeMatrixBehavior is TestBase_UniswapV4D
 
     function test_row_poolManagerSwap_bothDirections_noFaceResidual() public virtual {
         _seed();
-        uint256 restingFace = IERC20(face).balanceOf(hook);
-        uint256 restingOther = IERC20(other).balanceOf(hook);
-        uint256 uFace = IERC20(face).balanceOf(user);
-        uint256 uOther = IERC20(other).balanceOf(user);
-
-        _swapExactIn(face, _f(1));
-        assertGt(IERC20(other).balanceOf(user), uOther, "exact-in face->other paid");
-        uOther = IERC20(other).balanceOf(user);
-        uFace = IERC20(face).balanceOf(user);
-
-        _swapExactIn(other, _o(1));
-        assertGt(IERC20(face).balanceOf(user), uFace, "exact-in other->face paid");
-        uFace = IERC20(face).balanceOf(user);
-        uOther = IERC20(other).balanceOf(user);
-
+        _assertLocalSwap(face, other, seUT1, _f(1), false);
+        _assertLocalSwap(other, face, seUT, _o(1), false);
         uint256 quoteOut = _previewIn(face, _f(1));
-        _swapExactOut(face, quoteOut / 2);
-        assertEq(IERC20(other).balanceOf(user) - uOther, quoteOut / 2, "exact-out face->other delivers the request");
-        uFace = IERC20(face).balanceOf(user);
-        uOther = IERC20(other).balanceOf(user);
+        _assertLocalSwap(face, other, seUT1, quoteOut / 2, true);
+        _assertLocalSwap(other, face, seUT, _f(1) / 2, true);
+    }
 
-        _swapExactOut(other, _f(1) / 2);
-        assertEq(IERC20(face).balanceOf(user) - uFace, _f(1) / 2, "exact-out other->face delivers the request");
-
-        assertApproxEqAbs(IERC20(face).balanceOf(hook), restingFace, _residualTolerance(), "no operation-created face residual on leg 0");
-        assertApproxEqAbs(IERC20(other).balanceOf(hook), restingOther, _residualTolerance(), "no operation-created face residual on leg 1");
+    function _assertLocalSwap(address input, address output, address outputSe, uint256 amount, bool exactOut) internal {
+        uint256 localBefore = IERC20(output).balanceOf(hook);
+        uint256 sharesBefore = IERC20(outputSe).balanceOf(hook);
+        uint256 userBefore = IERC20(output).balanceOf(user);
+        if (exactOut) _swapExactOut(input, amount);
+        else _swapExactIn(input, amount);
+        uint256 paid = IERC20(output).balanceOf(user) - userBefore;
+        assertGt(paid, 0, "actual output delivered");
+        if (exactOut) assertEq(paid, amount, "exact output request");
+        if (paid <= localBefore) {
+            assertEq(IERC20(output).balanceOf(hook), localBefore - paid, "debit local output first");
+            assertEq(IERC20(outputSe).balanceOf(hook), sharesBefore, "local-only output never redeems shares");
+        } else {
+            assertEq(IERC20(output).balanceOf(hook), 0, "consume local before deficit redemption");
+            assertLt(IERC20(outputSe).balanceOf(hook), sharesBefore, "deficit uses SE shares");
+        }
     }
 
     /// @dev Balances, books and supply captured around the failed operation (struct keeps the row

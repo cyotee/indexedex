@@ -10,7 +10,7 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHook_FactoryService
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol";
@@ -43,7 +43,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt_IFacet_Tes
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](11);
+        controlFuncs = new bytes4[](12);
         controlFuncs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
         controlFuncs[1] = bytes4(keccak256("previewJoinUnbalanced(uint256[])"));
         controlFuncs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -55,5 +55,6 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt_IFacet_Tes
         controlFuncs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
         controlFuncs[9] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
         controlFuncs[10] = IStandardExchangeOut.exchangeOut.selector;
+        controlFuncs[11] = IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector;
     }
 }

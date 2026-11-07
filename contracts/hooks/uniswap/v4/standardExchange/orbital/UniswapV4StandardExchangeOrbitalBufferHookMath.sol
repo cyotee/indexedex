@@ -54,16 +54,34 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         return _recomputeL2(R, xWad, yWad, zWad);
     }
 
-    function sphereExactInOutWad(
+    function sphereExactInOutWad(uint256 R, uint256 L2, uint256 x, uint256 y, uint256 z, uint256 net)
+        external pure returns (uint256)
+    {
+        return _sphereExactInOutWad(R, L2, x, y, z, net, false);
+    }
+
+    /// @dev A valid sub-quantum preparation trade quotes zero, without moving
+    /// caller or incumbent inventory. All geometric domain limits remain strict.
+    function sphereLiquidityExactInOutWad(uint256 R, uint256 L2, uint256 x, uint256 y, uint256 z, uint256 net)
+        external pure returns (uint256)
+    {
+        return _sphereExactInOutWad(R, L2, x, y, z, net, true);
+    }
+
+    function _sphereExactInOutWad(
         uint256 R,
         uint256 L2,
         uint256 xWad,
         uint256 yWad,
         uint256 zWad,
-        uint256 dxNetWad
-    ) external pure returns (uint256 dyWad) {
-        if (R == 0 || dxNetWad == 0) revert MathDomain();
-        if (xWad >= R || yWad >= R || zWad >= R) revert MathDomain();
+        uint256 dxNetWad,
+        bool allowZero
+    ) private pure returns (uint256 dyWad) {
+        if (R == 0 || xWad >= R || yWad == 0 || yWad >= R || zWad >= R) revert MathDomain();
+        if (dxNetWad == 0) {
+            if (allowZero) return 0;
+            revert MathDomain();
+        }
         uint256 xPrime = xWad + dxNetWad;
         if (xPrime >= R) revert MathDomain();
         uint256 rx = R - xPrime;
@@ -74,6 +92,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 sqrtT = T.sqrt();
         if (sqrtT >= R) revert MathDomain();
         uint256 yPrime = R - sqrtT;
+        if (allowZero && yPrime == yWad) return 0;
         if (!(yPrime > 0 && yPrime < yWad)) revert MathDomain();
         dyWad = yWad - yPrime;
         if (dyWad == 0) revert ZeroOut();

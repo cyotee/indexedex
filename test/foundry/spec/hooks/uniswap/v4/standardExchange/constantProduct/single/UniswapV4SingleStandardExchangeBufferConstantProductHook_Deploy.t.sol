@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -31,6 +32,59 @@ import {
  * @notice Phase 0 + A: ERC-4626 SE preview==exec; Option B deploy/flags/registry.
  */
 contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is TestBase {
+    function test_HB48_registryGenesisBooksRetainedSharesAndLocalReceipt() public {
+        address[] memory required = IUniswapV4SeBufferHook(hook).requiredFirstBondTokens();
+        assertEq(required[0], address(rawToken));
+        assertEq(required[1], se);
+        _enableProtocolFee(2e16);
+        (uint256 suppliedShares,) = IStandardExchangeIn(se).previewExchangeIn(
+            IERC20(address(pairToken)), 100 ether, IERC20(se)
+        );
+        uint256 net = _depositBoth(100 ether, 100 ether);
+        assertEq(IERC20(se).balanceOf(hook), suppliedShares - suppliedShares / 20);
+        assertGt(pairToken.balanceOf(hook), 0);
+        assertEq(single.rawReserve(), 100 ether);
+        uint256 supply = IERC20(hook).totalSupply();
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000);
+        uint256 gross = supply - 1000;
+        assertEq(IERC20(hook).balanceOf(_feeTo()), gross * 2e16 / 1e18);
+        assertEq(net + IERC20(hook).balanceOf(_feeTo()), gross);
+        assertEq(IERC20(hook).balanceOf(user), net);
+    }
+
+    function test_binding_memberPairAndImplicitOwnShareRoundTrip() public {
+        address se_ = se;
+        address pair_ = address(pairToken);
+        address[] memory members_ = IBasicVault(se_).vaultTokens();
+        bool found_;
+        for (uint256 i_; i_ < members_.length; ++i_) {
+            assertTrue(members_[i_] != se_, "own share omitted from members");
+            if (members_[i_] == pair_) found_ = true;
+        }
+        assertTrue(found_, "configured pair is a member");
+        uint256 input_ = IERC20(pair_).balanceOf(user) / 100;
+        assertGt(input_, 0);
+        uint256 sharesBefore_ = IERC20(se_).balanceOf(user);
+        vm.startPrank(user);
+        IERC20(pair_).approve(se_, input_);
+        (uint256 minted_, uint256 refund_) = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(pair_), input_, IERC20(se_), 1, user, false, block.timestamp
+        );
+        assertGt(minted_, 0);
+        assertLe(refund_, input_);
+        assertEq(IERC20(se_).balanceOf(user), sharesBefore_ + minted_);
+        IERC20(se_).approve(se_, minted_);
+        uint256 pairBefore_ = IERC20(pair_).balanceOf(user);
+        (uint256 paid_, uint256 sharesRefunded_) = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(se_), minted_, IERC20(pair_), 1, user, false, block.timestamp
+        );
+        vm.stopPrank();
+        assertGt(paid_, 0);
+        assertEq(sharesRefunded_, 0);
+        assertEq(IERC20(se_).balanceOf(user), sharesBefore_);
+        assertEq(IERC20(pair_).balanceOf(user), pairBefore_ + paid_);
+    }
+
     function test_phase0_sePairPreviewEqualsExec() public {
         _assertSePreviewEqualsExec(100 ether);
     }
@@ -74,8 +128,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is
         assertTrue(single.isLive(), "live after deposit");
         assertGt(single.rawReserve(), 0, "raw reserve");
         assertGt(single.seClaimSupply(), 0, "virtual pair reserve");
-        // Free pair is not the book
-        assertLe(pairToken.balanceOf(hook), DUST, "free pair dust only");
+        assertGt(pairToken.balanceOf(hook), 0, "actual local bootstrap proceeds");
     }
 
     function test_D3_idempotentRedeploySameBinding() public {
@@ -215,7 +268,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is
         uint256 shares = IERC20(se).balanceOf(hook);
         uint256 rate = IRateProvider(single.rateProvider(se)).getRate();
         assertGt(rate, 1e18, "yield raised the rate");
-        assertEq(single.seClaimSupply(), shares * rate / 1e18, "reserve = shares x rate");
+        assertEq(single.seClaimSupply(), pairToken.balanceOf(hook) + shares * rate / 1e18, "reserve = local + shares x rate");
         // The BasicVault reserve is the snapshot written at the last operation; it catches up on the next sync.
         _depositBoth(1 ether, 1 ether);
         assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)), "vault reserve view after sync");
@@ -226,15 +279,23 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is
     function test_D60_proportionalJoinFollowsShareRatioAfterRateChange() public {
         _seedLiveLiquidity();
         _accrueYield(50 ether);
+        _enableProtocolFee(2e16);
         uint256 sharesBefore = IERC20(se).balanceOf(hook);
-        uint256 pairIn = 10 ether;(uint256 sharesIn,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), pairIn, IERC20(se));
-        // Over-offer raw so the pair leg binds the clamp.
-        uint256 lp = _depositBoth(1_000 ether, pairIn);
-        // The join accrues the protocol-fee LP for the rate growth first; measure against the supply it joined.
-        uint256 supplyJoined = IERC20(hook).totalSupply() - lp;
-        uint256 expected = sharesIn * supplyJoined / sharesBefore;
-        assertApproxEqRel(lp, expected, 0.0001e18, "LP follows dShares / shares");
-        assertEq(IERC20(se).balanceOf(hook), sharesBefore + sharesIn, "shares buffered");
+        uint256 localBefore = pairToken.balanceOf(hook);
+        uint256 rawBefore = rawToken.balanceOf(hook);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 feeBefore = IERC20(hook).balanceOf(_feeTo());
+        uint256 lp = _depositBoth(1_000 ether, 10 ether);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        uint256 fee = gross * 2e16 / 1e18;
+        assertEq(lp + fee, gross, "backed mint, not prior rate growth");
+        assertEq(IERC20(hook).balanceOf(_feeTo()) - feeBefore, fee);
+        assertEq(IERC20(se).balanceOf(hook) - sharesBefore,
+            (gross * sharesBefore + supplyBefore - 1) / supplyBefore, "ceil native shares");
+        assertEq(pairToken.balanceOf(hook) - localBefore,
+            (gross * localBefore + supplyBefore - 1) / supplyBefore, "ceil native local");
+        assertEq(rawToken.balanceOf(hook) - rawBefore,
+            (gross * rawBefore + supplyBefore - 1) / supplyBefore, "ceil native raw");
     }
 
     function _accrueYield(uint256 assets) private {

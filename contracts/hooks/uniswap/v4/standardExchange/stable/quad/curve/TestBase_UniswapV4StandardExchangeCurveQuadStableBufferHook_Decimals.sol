@@ -345,8 +345,9 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
     ///         wad-balanced. Inventory on 1:1 6/9-dec SE legs is share-count (dust vs 18-dec).
     function _firstMintEqual(uint256 humanEach) internal returns (uint256 shares) {
         uint256[] memory amounts = _balancedAmounts(humanEach);
+        bool[] memory flags = _prepareShareSeed(amounts, user);
         vm.prank(user);
-        (shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 days);
+        (shares,) = quad.joinProportionalFlexible(amounts, flags, user, 0, block.timestamp + 1 days);
     }
 
     /// @notice First mint with invWad-balanced inventory: buffered non-18 legs take `humanEach * 1e18`
@@ -363,8 +364,27 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
                 amounts[i] = _raw(toks[i], humanEach);
             }
         }
+        bool[] memory flags = _prepareShareSeed(amounts, user);
         vm.prank(user);
-        (shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 days);
+        (shares,) = quad.joinProportionalFlexible(amounts, flags, user, 0, block.timestamp + 1 days);
+    }
+
+    /// @notice Acquire native-decimal SE shares outside the hook before genesis.
+    function _prepareShareSeed(uint256[] memory amounts, address payer) internal returns (bool[] memory flags) {
+        flags = new bool[](4);
+        address[] memory pairs = quad.tokens();
+        for (uint256 i; i < 4; ++i) {
+            address se = quad.standardExchange(i);
+            if (se == address(0)) continue;
+            flags[i] = true;
+            vm.startPrank(payer);
+            IERC20(pairs[i]).approve(se, amounts[i]);
+            (amounts[i],) = IStandardExchangeIn(se).exchangeIn(
+                IERC20(pairs[i]), amounts[i], IERC20(se), 1, payer, false, block.timestamp
+            );
+            IERC20(se).approve(hook, type(uint256).max);
+            vm.stopPrank();
+        }
     }
 
     function _seedFullBook(uint256 humanEach) internal returns (uint256 shares) {
@@ -499,17 +519,15 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
         internal
         returns (uint256 shares, uint256 seUsed)
     {
-        uint256 seAmt = _userAcquireSeShares(se0, token0, _u0(pairForSeHuman));
         uint256[] memory amounts = new uint256[](4);
-        amounts[0] = seAmt;
+        amounts[0] = _u0(pairForSeHuman);
         amounts[1] = _u1(rawHuman);
         amounts[2] = _u2(rawHuman);
         amounts[3] = _u3(rawHuman);
-        bool[] memory isSe = new bool[](4);
-        isSe[0] = true;
+        bool[] memory isSe = _prepareShareSeed(amounts, user);
         vm.prank(user);
         (shares,) = quad.joinProportionalFlexible(amounts, isSe, user, 0, block.timestamp + 1 days);
-        seUsed = seAmt;
+        seUsed = amounts[0];
     }
 
     function _sortFour(

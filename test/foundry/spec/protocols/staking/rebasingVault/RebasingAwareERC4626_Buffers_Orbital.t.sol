@@ -30,157 +30,176 @@ import {IStandardExchangeTransitionQuote} from
     "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+
 contract RebasingAwareERC4626_Buffers_Orbital is TestBase {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
-
     IERC4626 internal wrapper;
-    RebasingERC20Harness internal underlying;
+    IERC4626 internal rebasingWrapper;
+    RebasingERC20Harness internal rebasingUnderlying;
 
-    function test_F16_orbitalProcessArgsAcceptsWrapperShareInventory() public {
+    function test_F16_orbitalProcessArgsAcceptsMemberAndRejectsForgedDecimals() public {
         _deployWrapper();
-        IPkg.PkgArgs memory args = _wrapperLeg0Args();
-        bytes memory processed = hookPkg.processArgs(abi.encode(args));
-        assertGt(processed.length, 0);
-        args.decimals0 = 18;
+        IPkg.PkgArgs memory args = _controlArgs();
+        assertGt(hookPkg.processArgs(abi.encode(args)).length, 0);
+        args.decimals0 = 6;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+        args.decimals0 = 19;
         vm.expectRevert(IPkg.InvalidDecimals.selector);
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_F16_orbitalProcessArgsRejectsOrdinaryOverlapAndHighDecimals() public {
-        IPkg.PkgArgs memory overlap = _defaultPkgArgs();
-        overlap.se0 = overlap.token0;
+    function test_F16_orbitalProcessArgsRejectsNonmemberAndIdentity() public {
+        _deployWrapper();
+        IPkg.PkgArgs memory args = _controlArgs();
+        args.se0 = address(rebasingWrapper);
         vm.expectRevert(IPkg.InvalidSE.selector);
-        hookPkg.processArgs(abi.encode(overlap));
-
-        IPkg.PkgArgs memory high = _defaultPkgArgs();
-        high.decimals0 = 19;
-        vm.expectRevert(IPkg.InvalidDecimals.selector);
-        hookPkg.processArgs(abi.encode(high));
+        hookPkg.processArgs(abi.encode(args));
+        args = _controlArgs();
+        args.se0 = args.token0;
+        vm.expectRevert(IPkg.InvalidSE.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_F16_orbitalWrapperShareInventoryJoinExit() public {
-        _deployWrapper();
-        _wrapUser(80e18);
-        IPkg.PkgArgs memory args = _wrapperLeg0Args();
-        address wHook = _deployBootstrapOnly(args);
-        _ensureProductDoorsAndFinalize(wHook, address(wrapper), address(token1), address(token2));
-        hook = wHook;
-        orbital = IHook(wHook);
-        uint256 wAmt = _wadNative(address(wrapper), 50 ether);
-        vm.startPrank(user);
-        IERC20(address(wrapper)).approve(wHook, type(uint256).max);
-        token1.approve(wHook, type(uint256).max);
-        token2.approve(wHook, type(uint256).max);
-        (uint256 lp,,,) = orbital.depositFlexible(
-            wAmt,
-            true,
-            50 ether,
-            false,
-            50 ether,
-            false,
-            user,
-            1,
-            block.timestamp + 1 hours
-        );
-        assertGt(lp, 0);
-        uint256 beforeAssets = wrapper.totalAssets();
-        vm.stopPrank();
-        underlying.rebase(address(wrapper), int256(5e18));
-        assertGt(wrapper.totalAssets(), beforeAssets);
+    function test_F16_orbitalNonRebasingWrapperJoinExit() public {
+        uint256 lp = _seedControl();
         vm.prank(user);
-        (uint256 a0, uint256 a1, uint256 a2) = orbital.withdrawFlexible(
-            lp, user, true, false, false, 0, 0, 0, block.timestamp + 1 hours
-        );
+        (uint256 joined,,,) = orbital.depositFlexible(10 ether, false, 10 ether, false, 10 ether, false, user, 1, block.timestamp);
+        assertGt(joined, 0, "caller funds every incumbent component");
+        vm.prank(user);
+        (uint256 a0, uint256 a1, uint256 a2) = orbital.withdrawFlexible(lp + joined, user, true, false, false, 1, 1, 1, block.timestamp);
         assertGt(a0, 0);
         assertGt(a1, 0);
         assertGt(a2, 0);
     }
 
-    function test_F16_orbitalWrapperShareInventoryQuoteSwap() public {
-        _deployWrapper();
-        _wrapUser(200e18);
-        IPkg.PkgArgs memory args = _wrapperLeg0Args();
-        address wHook = _deployBootstrapOnly(args);
-        _ensureProductDoorsAndFinalize(wHook, address(wrapper), address(token1), address(token2));
-        hook = wHook;
-        orbital = IHook(wHook);
-        uint256 wAmt = _wadNative(address(wrapper), 80 ether);
-        vm.startPrank(user);
-        IERC20(address(wrapper)).approve(wHook, type(uint256).max);
-        IERC20(address(wrapper)).approve(address(swapRouter), type(uint256).max);
-        token1.approve(wHook, type(uint256).max);
-        token2.approve(wHook, type(uint256).max);
-        (uint256 lp,,,) = orbital.depositFlexible(
-            wAmt, true, 80 ether, false, 80 ether, false, user, 1, block.timestamp + 1 hours
-        );
-        assertGt(lp, 0);
-        vm.stopPrank();
-
-        uint256 swapIn = IERC20(address(wrapper)).balanceOf(user) / 8;
-        uint256 pred = orbital.previewSwapExactIn(address(wrapper), address(token1), swapIn);
+    function test_F16_orbitalNonRebasingWrapperQuoteSwap() public {
+        _seedControl();
+        uint256 pred = orbital.previewSwapExactIn(address(token0), address(token1), 1 ether);
+        uint256 beforeOut = token1.balanceOf(user);
+        _swapExactIn(address(token0), address(token1), 1 ether);
         assertGt(pred, 0);
-        uint256 before = token1.balanceOf(user);
-        _swapExactIn(address(wrapper), address(token1), swapIn);
-        assertGt(token1.balanceOf(user) - before, 0);
+        assertEq(token1.balanceOf(user) - beforeOut, pred);
+        pred = orbital.previewSwapExactIn(address(token1), address(token0), 1 ether);
+        beforeOut = token0.balanceOf(user);
+        _swapExactIn(address(token1), address(token0), 1 ether);
+        assertGt(pred, 0);
+        assertEq(token0.balanceOf(user) - beforeOut, pred);
     }
 
-    function test_F16_orbitalAmendmentMatrixLiveHook() public {
-        _deployWrapper();
-        _wrapUser(200e18);
-        IPkg.PkgArgs memory args = _wrapperLeg0Args();
-        address wHook = _deployBootstrapOnly(args);
-        _ensureProductDoorsAndFinalize(wHook, address(wrapper), address(token1), address(token2));
-        hook = wHook;
-        orbital = IHook(wHook);
-        uint256 wAmt = _wadNative(address(wrapper), 80 ether);
-        vm.startPrank(user);
-        IERC20(address(wrapper)).approve(wHook, type(uint256).max);
-        token1.approve(wHook, type(uint256).max);
-        token2.approve(wHook, type(uint256).max);
-        (uint256 lp,,,) = orbital.depositFlexible(
-            wAmt, true, 80 ether, false, 80 ether, false, user, 1, block.timestamp + 1 hours
-        );
-        assertGt(lp, 0);
-        vm.stopPrank();
-
-        (bytes memory qState,) = IStandardExchangeTransitionQuote(address(wrapper)).quoteState(
-            address(underlying), wHook
-        );
-        uint256 sample = IERC20(address(wrapper)).balanceOf(wHook) / 10;
-        uint256 stale = IStandardExchangeTransitionQuote(address(wrapper)).quoteAssets(qState, sample);
-        underlying.rebase(address(wrapper), int256(5e18));
-        assertTrue(wrapper.convertToAssets(sample) != stale);
-        underlying.rebase(address(wrapper), -int256(1e18));
-        underlying.mint(address(wrapper), 2e18);
-
-        vm.prank(owner);
-        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(wHook, 1e16);
-        assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
-
-        vm.prank(user);
-        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);IStandardExchangeIn(address(wrapper)).exchangeIn(IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
-        );
-
-        underlying.setRebaseOnTransfer(int256(1e18), address(wrapper));
-        vm.startPrank(user);
-        underlying.approve(address(wrapper), type(uint256).max);
-        vm.expectRevert();
-        wrapper.deposit(1e18, user);
-        vm.stopPrank();
-        underlying.setRebaseOnTransfer(0, address(0));
-        vm.prank(user);
-        assertGt(wrapper.deposit(1e18, user), 0);
-
+    function test_F16_orbitalDisabledNonRebasingWrapperExit() public {
+        uint256 lp = _seedControl();
         vm.prank(owner);
         IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(wrapper), true);
-        vm.prank(user);
-        vm.expectRevert();
-        wrapper.deposit(1e18, user);
-        vm.prank(user);
-        (uint256 a0, uint256 a1, uint256 a2) = orbital.withdrawFlexible(
-            lp / 2, user, true, false, false, 0, 0, 0, block.timestamp + 1 hours
+        vm.startPrank(user);
+        token0.approve(address(wrapper), type(uint256).max);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(wrapper)));
+        wrapper.deposit(1 ether, user);
+        uint256 lpBefore = IERC20(hook).balanceOf(user);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(wrapper)));
+        orbital.withdrawFlexible(lp / 2, user, true, false, false, 1, 1, 1, block.timestamp);
+        assertEq(IERC20(hook).balanceOf(user), lpBefore, "disabled share conversion cannot burn LP");
+        (uint256 a0, uint256 a1, uint256 a2) = orbital.withdrawFlexible(lp / 2, user, false, false, false, 1, 1, 1, block.timestamp);
+        vm.stopPrank();
+        assertGt(a0, 0);
+        assertGt(a1, 0);
+        assertGt(a2, 0);
+    }
+
+    /// @dev Rebasing subject is not bound; token0 is a non-rebasing member of this control wrapper.
+    function _seedControl() internal returns (uint256 lp) {
+        _deployWrapper();
+        IPkg.PkgArgs memory args = _controlArgs();
+        hook = _deployBootstrapOnly(args);
+        _ensureProductDoorsAndFinalize(hook, args.token0, args.token1, args.token2);
+        orbital = IHook(hook);
+        vm.startPrank(user);
+        token0.approve(hook, type(uint256).max);
+        token1.approve(hook, type(uint256).max);
+        token2.approve(hook, type(uint256).max);
+        vm.stopPrank();
+        (lp,,,) = _seedFor(orbital, user, 80 ether, 80 ether, 80 ether);
+        assertGt(lp, 0);
+        assertEq(wrapper.balanceOf(hook), 76e28);
+        assertEq(orbital.seBalance(0), wrapper.balanceOf(hook));
+        assertEq(orbital.rawReserve(0), token0.balanceOf(hook));
+        assertEq(orbital.rawReserve(0), 4 ether, "actual 5 percent redemption proceeds");
+    }
+
+    function _controlArgs() internal returns (IPkg.PkgArgs memory args) {
+        args = _defaultPkgArgs();
+        args.se0 = address(wrapper);
+        args.rp0 = RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(wrapper), address(token0));
+    }
+
+    /// @notice Rebasing behavior is a standalone wrapper proof, not a lawful hook binding.
+    function test_F16_standaloneOwnShareAndRebaseProcessing() public {
+        _deployWrapper();
+        rebasingUnderlying.mint(user, 400 ether);
+        vm.startPrank(user);
+        rebasingUnderlying.approve(address(rebasingWrapper), type(uint256).max);
+        (uint256 shares,) = IStandardExchangeIn(address(rebasingWrapper)).exchangeIn(
+            IERC20(address(rebasingUnderlying)), 200 ether, IERC20(address(rebasingWrapper)),
+            1, user, false, block.timestamp
         );
-        assertGt(a0 + a1 + a2, 0);
+        vm.stopPrank();
+        assertGt(shares, 0);
+        assertEq(rebasingWrapper.balanceOf(user), shares);
+        (bytes memory state,) = IStandardExchangeTransitionQuote(address(rebasingWrapper)).quoteState(
+            address(rebasingUnderlying), user
+        );
+        assertEq(state.length, 288);
+        uint256 sample = shares / 10;
+        uint256 stale = IStandardExchangeTransitionQuote(address(rebasingWrapper)).quoteAssets(state, sample);
+        uint256 beforeAssets = rebasingWrapper.totalAssets();
+        rebasingUnderlying.rebase(address(rebasingWrapper), int256(5 ether));
+        assertEq(rebasingWrapper.totalAssets(), beforeAssets + 5 ether);
+        assertTrue(rebasingWrapper.convertToAssets(sample) != stale);
+        rebasingUnderlying.rebase(address(rebasingWrapper), -int256(1 ether));
+        assertEq(rebasingWrapper.totalAssets(), beforeAssets + 4 ether);
+        rebasingUnderlying.mint(address(rebasingWrapper), 2 ether);
+        assertEq(rebasingWrapper.totalAssets(), rebasingUnderlying.balanceOf(address(rebasingWrapper)));
+        assertEq(rebasingWrapper.balanceOf(user), shares, "rebase cannot invent wrapper shares");
+
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(rebasingWrapper), 1e16);
+        assertEq(IStandardVault(address(rebasingWrapper)).vaultFeeTypeIds(), bytes32(0));
+        vm.startPrank(user);
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
+        IStandardExchangeIn(address(rebasingWrapper)).exchangeIn(
+            IERC20(address(rebasingUnderlying)), 1 ether, IERC20(address(rebasingWrapper)),
+            0, user, true, block.timestamp
+        );
+        rebasingUnderlying.setRebaseOnTransfer(int256(1 ether), address(rebasingWrapper));
+        uint256 heldBefore = rebasingWrapper.totalAssets();
+        vm.expectRevert();
+        rebasingWrapper.deposit(1 ether, user);
+        assertEq(rebasingWrapper.totalAssets(), heldBefore, "failed transfer rebase rolls back");
+        rebasingUnderlying.setRebaseOnTransfer(0, address(0));
+        assertGt(rebasingWrapper.deposit(1 ether, user), 0);
+        vm.stopPrank();
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(rebasingWrapper), true);
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(rebasingWrapper)));
+        rebasingWrapper.deposit(1 ether, user);
+        IERC20(address(rebasingWrapper)).approve(address(rebasingWrapper), sample);
+        (uint256 quote,) = IStandardExchangeIn(address(rebasingWrapper)).previewExchangeIn(
+            IERC20(address(rebasingWrapper)), sample, IERC20(address(rebasingUnderlying))
+        );
+        uint256 beforeOut = rebasingUnderlying.balanceOf(user);
+        uint256 sharesBeforeRedeem = rebasingWrapper.balanceOf(user);
+        (uint256 out,) = IStandardExchangeIn(address(rebasingWrapper)).exchangeIn(
+            IERC20(address(rebasingWrapper)), sample, IERC20(address(rebasingUnderlying)),
+            quote, user, false, block.timestamp
+        );
+        vm.stopPrank();
+        assertGt(out, 0);
+        assertEq(out, quote);
+        assertEq(rebasingUnderlying.balanceOf(user) - beforeOut, out);
+        assertEq(sharesBeforeRedeem - rebasingWrapper.balanceOf(user), sample);
     }
 
     function _deployWrapper() internal {
@@ -204,29 +223,9 @@ contract RebasingAwareERC4626_Buffers_Orbital is TestBase {
                 vaultRegistry: IVaultRegistryDeployment(address(indexedexManager))
             })
         );
-        underlying = new RebasingERC20Harness("Rebase", "RBS", 18);
-        wrapper = wpkg.deployVault(IERC20Metadata(address(underlying)), 10, bytes32(uint256(12)));
+        rebasingUnderlying = new RebasingERC20Harness("Rebase", "RBS", 18);
+        rebasingWrapper = wpkg.deployVault(IERC20Metadata(address(rebasingUnderlying)), 10, bytes32(uint256(12)));
+        wrapper = wpkg.deployVault(IERC20Metadata(address(token0)), 10, bytes32(uint256(112)));
     }
 
-    function _wrapUser(uint256 assets) internal {
-        underlying.mint(user, assets * 2);
-        vm.startPrank(user);
-        underlying.approve(address(wrapper), type(uint256).max);
-        wrapper.deposit(assets, user);
-        vm.stopPrank();
-    }
-
-    function _wrapperLeg0Args() internal returns (IPkg.PkgArgs memory args) {
-        args = _defaultPkgArgs();
-        args.token0 = address(wrapper);
-        args.se0 = address(wrapper);
-        args.decimals0 = IERC20Metadata(address(wrapper)).decimals();
-    }
-
-    function _wadNative(address token, uint256 wad18) internal view returns (uint256) {
-        uint8 d = IERC20Metadata(token).decimals();
-        if (d == 18) return wad18;
-        if (d > 18) return wad18 * (10 ** (d - 18));
-        return wad18 / (10 ** (18 - d));
-    }
 }

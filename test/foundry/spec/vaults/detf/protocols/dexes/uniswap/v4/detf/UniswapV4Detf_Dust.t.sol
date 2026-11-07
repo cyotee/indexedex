@@ -5,6 +5,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IDetfReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
@@ -31,9 +33,16 @@ contract UniswapV4Detf_Dust is TestBase_UniswapV4Detf {
         pairToken.mint(detf, 5 ether);
         assertGt(IERC20(address(pairToken)).balanceOf(detf), 0, "dust parked");
 
+        uint256 joinable = IDetfReserveDonation(detf).previewJoinDonatedCapital(IERC20(address(pairToken)), 5 ether);
+        assertGt(joinable, 0, "the negative control is real joinable capital");
+        vm.expectRevert(abi.encodeWithSelector(
+            DetfResidualAssertions.JoinableResidual.selector, address(pairToken), 5 ether, joinable,
+            IDetfReserveDonation.previewJoinDonatedCapital.selector
+        ));
+        this.checkResiduals();
         detfInfo.sweepDust();
 
-        assertEq(IERC20(address(pairToken)).balanceOf(detf), 0, "pair dust joined");
+        assertLt(IERC20(address(pairToken)).balanceOf(detf), 5 ether, "joinable capital was swept");
         uint256 nftLpAfter = IERC20(reserveHook).balanceOf(address(nft));
         assertGt(nftLpAfter, nftLpBefore, "NFT LP up");
         assertEq(keccak256(abi.encode(nft.positionOf(tokenId))), positionBefore, "sweep preserves fixed principal and attributed staking");
@@ -43,6 +52,10 @@ contract UniswapV4Detf_Dust is TestBase_UniswapV4Detf {
 
     function test_T7_20_afterBond_noJoinableDust() public {
         _firstBond(50 ether);
+        _assertNoJoinableDust();
+    }
+
+    function checkResiduals() external view {
         _assertNoJoinableDust();
     }
 }

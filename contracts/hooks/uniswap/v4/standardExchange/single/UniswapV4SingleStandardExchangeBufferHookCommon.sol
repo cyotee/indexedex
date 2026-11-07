@@ -5,6 +5,8 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {
@@ -85,6 +87,17 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         return Repo._pairToken();
     }
 
+    function _requireWrapEnabled() internal view {
+        IVaultRegistryDisableQuery registry = IVaultRegistryDisableQuery(Repo._layout().vaultRegistry);
+        require(registry.packageOfVault(_se()) != address(0), "unregistered SE");
+        if (registry.isDisabled(_se())) revert IVaultRegistryDisableQuery.VaultDisabled(_se());
+    }
+
+    function _retain(IERC20 token, uint256 amount) internal {
+        if (address(token) == _pair()) Repo._layout().retainedPair += amount;
+        else Repo._layout().retainedShares += amount;
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                              SE previews                               */
     /* ---------------------------------------------------------------------- */
@@ -92,8 +105,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
     function _previewWrap(uint256 pairIn) internal view returns (uint256 seOut) {
         _requireNonZero(pairIn);
         address se = _se();
-        address pair = _pair();(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), pairIn, IERC20(se));
-        return quotedAmountOut;
+        address pair = _pair();
+        return ExchangeInAmount.previewResult(IStandardExchangeIn(se), IERC20(pair), pairIn, IERC20(se)).amountOut;
     }
 
     function _previewWrapExactOut(uint256 seOut) internal view returns (uint256 pairIn) {
@@ -107,8 +120,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
     function _previewUnwrap(uint256 seIn) internal view returns (uint256 pairOut) {
         _requireNonZero(seIn);
         address se = _se();
-        address pair = _pair();(uint256 quotedAmountOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(pair));
-        return quotedAmountOut;
+        address pair = _pair();
+        return ExchangeInAmount.previewResult(IStandardExchangeIn(se), IERC20(se), seIn, IERC20(pair)).amountOut;
     }
 
     function _previewUnwrapExactOut(uint256 pairOut) internal view returns (uint256 seIn) {
@@ -130,9 +143,19 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         uint256 minOut,
         bool pretransferred
     ) internal returns (uint256 amountOut) {
-        address se = _se();(uint256 quotedAmountOut,) = IStandardExchangeIn(se).exchangeIn(tokenIn, amountIn, tokenOut, minOut, address(this), pretransferred, block.timestamp
+        address se = _se();
+        uint256 inputBefore = tokenIn.balanceOf(address(this));
+        uint256 outputBefore = tokenOut.balanceOf(address(this));
+        ExchangeInAmount.Result memory result = ExchangeInAmount.exchangeResult(
+            IStandardExchangeIn(se), tokenIn, amountIn, tokenOut, minOut, address(this),
+            pretransferred, block.timestamp
         );
-        return quotedAmountOut;
+        ExchangeInAmount.requireReceipt(
+            amountIn, result, inputBefore, tokenIn.balanceOf(address(this)),
+            outputBefore, tokenOut.balanceOf(address(this))
+        );
+        _retain(tokenIn, result.amountRefunded);
+        return result.amountOut;
     }
 
     function _seExchangeOut(
@@ -143,9 +166,20 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         bool pretransferred
     ) internal returns (uint256 amountIn) {
         address se = _se();
-        return IStandardExchangeOut(se).exchangeOut(
+        uint256 inputBefore = tokenIn.balanceOf(address(this));
+        uint256 outputBefore = tokenOut.balanceOf(address(this));
+        amountIn = IStandardExchangeOut(se).exchangeOut(
             tokenIn, maxIn, tokenOut, amountOut, address(this), pretransferred, block.timestamp
         );
+        uint256 got = tokenOut.balanceOf(address(this)) - outputBefore;
+        ExchangeInAmount.Result memory result = ExchangeInAmount.fromConsumedInput(maxIn, amountIn, got);
+        ExchangeInAmount.requireReceipt(
+            maxIn, result, inputBefore, tokenIn.balanceOf(address(this)),
+            outputBefore, tokenOut.balanceOf(address(this))
+        );
+        require(got >= amountOut, "exact-out short");
+        _retain(tokenIn, result.amountRefunded);
+        _retain(tokenOut, got - amountOut);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -158,7 +192,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
 
     function _take(Currency currency, address recipient, uint256 amount) internal {
         if (amount == 0) return;
+        uint256 beforeBalance = IERC20(Currency.unwrap(currency)).balanceOf(recipient);
         IPoolManager(Repo._poolManager()).take(currency, recipient, amount);
+        if (IERC20(Currency.unwrap(currency)).balanceOf(recipient) != beforeBalance + amount) {
+            revert ExchangeInAmount.InvalidExchangeReceipt();
+        }
     }
 
     function _settle(Currency currency, uint256 amount) internal {
@@ -166,7 +204,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         IPoolManager pm = IPoolManager(Repo._poolManager());
         pm.sync(currency);
         _pay(currency, amount);
-        pm.settle();
+        if (pm.settle() != amount) revert ExchangeInAmount.InvalidExchangeReceipt();
     }
 
     function _pay(Currency currency, uint256 amount) internal {

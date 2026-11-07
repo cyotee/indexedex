@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
@@ -416,10 +417,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
     }
 
     function _assertNoJoinableDust() internal view virtual {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertEq(IERC20(address(pairToken)).balanceOf(detf), 0, "no pair on diamond");
-        assertEq(IERC20(se).balanceOf(detf), 0, "no SE share on diamond");
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 
     /// @dev Exercise the actual purchased bond, its funded payout and one-to-one unstaking.

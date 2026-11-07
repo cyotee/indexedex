@@ -34,7 +34,7 @@ import {DETFEpochNaturalExpansionLib} from "contracts/vaults/detf/common/core/DE
 
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4DetfRepo as Repo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
@@ -501,22 +501,145 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         if (!s.isReserveLive) return;
         address[] memory tokens_ = IUniswapV4SeBufferHook(hookAddr_).tokens();
         address[] storage ses_ = s.hookStandardExchanges._values();
+        bool native_ = IERC165(hookAddr_).supportsInterface(type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId);
         // Later residual joins can refund an earlier-cleared pair via conservation.
         // Repeat until diamond leftovers are dust or the round makes no progress.
         for (uint256 round_; round_ < 8; ++round_) {
             bool changed_;
-            for (uint256 i; i < tokens_.length; ++i) {
-                uint256 before_ = IERC20(tokens_[i]).balanceOf(address(this));
-                _tryJoinResidual(tokens_[i]);
-                if (IERC20(tokens_[i]).balanceOf(address(this)) != before_) changed_ = true;
-            }
-            for (uint256 j; j < ses_.length; ++j) {
-                uint256 beforeSe_ = IERC20(ses_[j]).balanceOf(address(this));
-                _tryJoinResidual(ses_[j]);
-                if (IERC20(ses_[j]).balanceOf(address(this)) != beforeSe_) changed_ = true;
+            bool basketDirty_ = true;
+            uint256 baskets_;
+            uint256 count_ = tokens_.length + ses_.length;
+            // Recombine refunds immediately after each consuming join, including
+            // the last token. All re-entries share this round's basket budget.
+            for (uint256 cursor_; cursor_ <= count_; ++cursor_) {
+                if (basketDirty_) {
+                    if (!native_ && _consolidateResidualPairs(tokens_)) changed_ = true;
+                    while (baskets_ < 24) {
+                        bool joined_ = native_ && _tryJoinNativeResidual(tokens_);
+                        if (!joined_ && !_tryJoinResidualBasket(tokens_)) break;
+                        ++baskets_;
+                        changed_ = true;
+                        if (!native_) _consolidateResidualPairs(tokens_);
+                    }
+                    basketDirty_ = false;
+                }
+                if (cursor_ == count_) break;
+                address token_ = cursor_ < tokens_.length ? tokens_[cursor_] : ses_[cursor_ - tokens_.length];
+                uint256 before_ = IERC20(token_).balanceOf(address(this));
+                _tryJoinResidual(token_);
+                if (IERC20(token_).balanceOf(address(this)) != before_) {
+                    changed_ = true;
+                    basketDirty_ = true;
+                }
             }
             if (!changed_) break;
         }
+        // A later basket can refund a token whose individual cleanup ran first.
+        for (uint256 i; i < tokens_.length; ++i) {
+            MultiAssetBasicVaultRepo._updateReserve(IERC20(tokens_[i]), IERC20(tokens_[i]).balanceOf(address(this)));
+        }
+        for (uint256 i; i < ses_.length; ++i) {
+            MultiAssetBasicVaultRepo._updateReserve(IERC20(ses_[i]), IERC20(ses_[i]).balanceOf(address(this)));
+        }
+    }
+
+    /// @dev Preserve both components across retries instead of converting
+    /// refunds solely to fit a single-funding-type entry point.
+    function _tryJoinNativeResidual(address[] memory pairs_) private returns (bool) {
+        address hook_ = Repo._layoutStruct().hook;
+        uint256[] memory local_ = new uint256[](pairs_.length);
+        uint256[] memory shares_ = new uint256[](pairs_.length);
+        address[] memory exchanges_ = new address[](pairs_.length);
+        bool funded_;
+        for (uint256 i; i < pairs_.length; ++i) {
+            local_[i] = IERC20(pairs_[i]).balanceOf(address(this));
+            exchanges_[i] = _hook().standardExchangeOf(pairs_[i]);
+            if (exchanges_[i] != address(0)) shares_[i] = IERC20(exchanges_[i]).balanceOf(address(this));
+            if (local_[i] != 0 || shares_[i] != 0) funded_ = true;
+        }
+        if (!funded_) return false;
+        uint256 quoted_ = IUniswapV4SeBufferHookNativeLiquidity(hook_).previewJoinNativeComponents(local_, shares_);
+        if (quoted_ == 0) return false;
+        for (uint256 i; i < pairs_.length; ++i) {
+            if (local_[i] != 0) IERC20(pairs_[i]).forceApprove(hook_, local_[i]);
+            if (shares_[i] != 0) IERC20(exchanges_[i]).forceApprove(hook_, shares_[i]);
+        }
+        uint256 joined_ = IUniswapV4SeBufferHookNativeLiquidity(hook_).joinNativeComponents(
+            local_, shares_, _bondLpHolder(), quoted_, block.timestamp + 1
+        );
+        if (joined_ != quoted_) revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
+        for (uint256 i; i < pairs_.length; ++i) {
+            if (local_[i] != 0) IERC20(pairs_[i]).forceApprove(hook_, 0);
+            if (shares_[i] != 0) IERC20(exchanges_[i]).forceApprove(hook_, 0);
+        }
+        return true;
+    }
+
+    /// @dev A listed join accepts one funding asset per leg. Consolidate a held
+    /// pair/share mixture before choosing that asset instead of repeatedly
+    /// leaving the other half behind. Disabled vaults are never force-buffered.
+    function _consolidateResidualPairs(address[] memory pairs_) private returns (bool changed_) {
+        IVaultRegistryDisableQuery registry_ = IVaultRegistryDisableQuery(address(StandardVaultRepo._feeOracle()));
+        for (uint256 i; i < pairs_.length; ++i) {
+            uint256 amount_ = IERC20(pairs_[i]).balanceOf(address(this));
+            if (amount_ == 0) continue;
+            address se_ = _hook().standardExchangeOf(pairs_[i]);
+            if (se_ == address(0) || se_ == pairs_[i] || IERC20(se_).balanceOf(address(this)) == 0) continue;
+            if (registry_.isDisabled(se_)) continue;
+            if (ExchangeInAmount.previewOut(IStandardExchangeIn(se_), IERC20(pairs_[i]), amount_, IERC20(se_)) == 0) continue;
+            _sweepPairToShare(se_, pairs_[i], amount_);
+            changed_ = true;
+        }
+    }
+
+    struct ResidualBasket {
+        address[] shares;
+        uint256[] pairAmounts;
+        uint256[] shareAmounts;
+        uint256[] choiceBits;
+        uint256 choices;
+        uint256 fundedLegs;
+    }
+
+    /// @dev Individually sub-quantum remainders may still form a complete basket.
+    /// Try each supported pair/share choice once before single-token cleanup.
+    function _tryJoinResidualBasket(address[] memory pairs_) private returns (bool) {
+        ResidualBasket memory b;
+        b.shares = new address[](pairs_.length);
+        b.pairAmounts = new uint256[](pairs_.length);
+        b.shareAmounts = new uint256[](pairs_.length);
+        b.choiceBits = new uint256[](pairs_.length);
+        for (uint256 i; i < pairs_.length; ++i) {
+            b.pairAmounts[i] = IERC20(pairs_[i]).balanceOf(address(this));
+            b.shares[i] = _hook().standardExchangeOf(pairs_[i]);
+            if (b.shares[i] != address(0)) b.shareAmounts[i] = IERC20(b.shares[i]).balanceOf(address(this));
+            if (b.pairAmounts[i] != 0 || b.shareAmounts[i] != 0) ++b.fundedLegs;
+            if (b.pairAmounts[i] != 0 && b.shareAmounts[i] != 0) b.choiceBits[i] = uint256(1) << b.choices++;
+        }
+        if (b.fundedLegs < 2) return false;
+        address[] memory tokens_ = new address[](b.fundedLegs);
+        uint256[] memory amounts_ = new uint256[](b.fundedLegs);
+        uint256 combinations_ = uint256(1) << b.choices;
+        // Pair/share mixtures were consolidated above. Prefer the acquired
+        // shares before trying any unconvertible pair remainder. Stop at the
+        // first executable basket. The R19 test oracle checks all residual choices.
+        for (uint256 choice_; choice_ < combinations_; ++choice_) {
+            uint256 mask = combinations_ - 1 - choice_;
+            uint256 next_;
+            for (uint256 i; i < pairs_.length; ++i) {
+                if (b.pairAmounts[i] == 0 && b.shareAmounts[i] == 0) continue;
+                bool shares_ = b.shareAmounts[i] != 0
+                    && (b.pairAmounts[i] == 0 || (mask & b.choiceBits[i]) != 0);
+                tokens_[next_] = shares_ ? b.shares[i] : pairs_[i];
+                amounts_[next_++] = shares_ ? b.shareAmounts[i] : b.pairAmounts[i];
+            }
+            uint256 quoted_ = _hook().previewJoinUnbalanced(tokens_, amounts_);
+            if (quoted_ == 0) continue;
+            uint256 joined_ = _joinUnbalanced(tokens_, amounts_);
+            if (joined_ != quoted_) revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
+            return true;
+        }
+        return false;
     }
 
     function _tryJoinResidual(address token_) internal {
@@ -561,6 +684,9 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
             uint256 after_ = IERC20(token_).balanceOf(address(this));
             if (lpOut_ == 0) break;
+            // Let the outer sweep recombine this join's refunds with the other
+            // legs before spending the remainder in another single-token zap.
+            if (after_ < before_) return true;
             if (after_ >= before_) {
                 amt_ = amt_ / 2;
             } else {
@@ -586,6 +712,8 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
             uint256 after_ = IERC20(token_).balanceOf(address(this));
             if (lpOut_ == 0) break;
+            // Recombine cross-leg refunds before repeating this token.
+            if (after_ < before_) return true;
             if (after_ >= before_) {
                 amt_ = amt_ / 2;
             } else {
@@ -644,8 +772,23 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _entrySweepPairToShare(address se_, address pair_, uint256 amount_) internal returns (uint256 shares_) {
         if (msg.sender != address(this)) revert Repo.NotAuthorized(msg.sender);
+        return _sweepPairToShare(se_, pair_, amount_);
+    }
+
+    function _sweepPairToShare(address se_, address pair_, uint256 amount_) private returns (uint256 shares_) {
         if (se_ == pair_) return 0;
-        IERC20(pair_).forceApprove(se_, amount_);(shares_,) = IStandardExchangeIn(se_).exchangeIn(IERC20(pair_), amount_, IERC20(se_), 0, address(this), false, block.timestamp + 1);
+        uint256 pairBefore_ = IERC20(pair_).balanceOf(address(this));
+        uint256 sharesBefore_ = IERC20(se_).balanceOf(address(this));
+        IERC20(pair_).forceApprove(se_, amount_);
+        ExchangeInAmount.Result memory receipt_ = ExchangeInAmount.exchangeResult(
+            IStandardExchangeIn(se_), IERC20(pair_), amount_, IERC20(se_), 0, address(this), false, block.timestamp + 1
+        );
         IERC20(pair_).forceApprove(se_, 0);
+        uint256 consumed_ = ExchangeInAmount.requireReceipt(amount_, receipt_, pairBefore_,
+            IERC20(pair_).balanceOf(address(this)), sharesBefore_, IERC20(se_).balanceOf(address(this)));
+        if (consumed_ == 0 || receipt_.amountOut == 0) revert IUniswapV4DetfSelfCall.ResidualJoinUnavailable();
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(se_), IERC20(se_).balanceOf(address(this)));
+        return receipt_.amountOut;
     }
 }

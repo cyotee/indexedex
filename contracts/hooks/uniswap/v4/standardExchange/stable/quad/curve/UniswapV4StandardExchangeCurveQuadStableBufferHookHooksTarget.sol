@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
@@ -248,25 +249,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSwapCore is
     /// @dev Rated book snapshot for exact-in. Raw `tokenIn` start reserve:
     ///      - no free funding yet → live face (D21)
     ///      - free >= amountIn (post-pull / funded pretransfer) → exclude funding so it is not double-counted
-    function _ratedWadAllForSwapIn(uint8 iIn, uint256 amountInPair)
-        internal
-        view
-        returns (uint256[4] memory scaled)
-    {
-        Repo.Layout storage l = Repo._layout();
-        for (uint8 k; k < Repo.N_TOKENS; ++k) {
-            uint256 pairUnits = _ratedPairUnits(k);
-            if (k == iIn && l.standardExchanges[k] == address(0) && amountInPair > 0) {
-                uint256 face = IERC20(l.tokens[k]).balanceOf(address(this));
-                uint256 book = l.rawReserves[k];
-                uint256 free = face > book ? face - book : 0;
-                if (free >= amountInPair) {
-                    // Funding already on hook; start book excludes this trade's input.
-                    pairUnits = face - amountInPair;
-                }
-            }
-            scaled[k] = Math.scaleTo(pairUnits, l.ratedScales[k]);
-        }
+    function _ratedWadAllForSwapIn(uint8, uint256) internal view returns (uint256[4] memory) {
+        return _ratedWadAll();
     }
 
     function _mapPairInToRatedWad(uint8 i, uint256 pairAmount) internal view returns (uint256) {
@@ -315,18 +299,17 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSwapCore is
         internal returns (uint256 amountOut)
     {
         Repo.Layout storage l = Repo._layout();
-        if (output.sharesOut != 0) {
-            if (output.sharesOut >= _nativeAt(j)) revert WouldZeroReserve();
-            uint256 beforeOut = IERC20(l.tokens[j]).balanceOf(recipient);
-            _unwrapSeShares(j, output.sharesOut, recipient);
-            amountOut = IERC20(l.tokens[j]).balanceOf(recipient) - beforeOut;
-            if (amountOut < output.amountOut) revert UnwrapFailed();
-        } else {
+        if (l.standardExchanges[j] == address(0)) {
             amountOut = output.amountOut;
-            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
-            if (l.standardExchanges[j] == address(0)) _debitRawIntentional(j, amountOut);
-            if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
+            if (amountOut >= l.rawReserves[j]) revert WouldZeroReserve();
+            l.rawReserves[j] -= amountOut;
+        } else {
+            uint256 local = output.sharesOut == 0 ? output.amountOut : l.rawReserves[j];
+            l.rawReserves[j] -= local;
+            amountOut = local + _unwrapSeShares(j, output.sharesOut, address(this));
+            if (amountOut < output.amountOut) revert UnwrapFailed();
         }
+        if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
     }
 
     function _swapExactOutExecute(address tokenIn, address tokenOut, uint256 amountOut, uint256)
@@ -423,9 +406,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookQuoteTarget 
         Repo.Layout storage l = Repo._layout();
         pairValue = q.exchange.quoteAssets(q.state, q.assets);
         if (!_isLive()) return (pairValue, 0, 0);
-        uint256[4] memory inv = _invWadAll();
-        inv[i] = Math.scaleTo(q.heldShares, l.invScales[i]);
-        liquidityDetf = LegLib.matchingLiquidityDetf(q, _nativeAt(j), pairValue, _previewSupplyAfterProtocolMint(inv), 0);
+        uint256 pairClaim = l.rawReserves[i] + q.exchange.quoteAssets(q.state, l.seReserves[i]);
+        liquidityDetf = pairClaim == 0 ? 0 : FullMath.mulDiv(l.rawReserves[j], pairValue, pairClaim);
         q.assets = FullMath.mulDiv(pairValue, multiplier, 1e18);
         purchasedDetf = _swapAtExternalState(q, i, j);
     }
@@ -436,14 +418,21 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookQuoteTarget 
         Repo.Layout storage l = Repo._layout();
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
-        (uint256 minted,) = LegLib.depositAfterExchange(q, Math.applyTradingFeeNet(q.assets, feeWad));
+        uint256 netInput = Math.applyTradingFeeNet(q.assets, feeWad);
+        uint256 minted;
+        uint256 local = netInput;
+        if (!ClaimLib.disabled(i)) {
+            uint256 consumed;
+            (, consumed, minted,) = q.exchange.quoteTransition(q.state, Transition.Operation.DepositExactIn, netInput);
+            local -= consumed;
+        }
         uint256[4] memory rated = _ratedWadAll();
         if (l.rateProviders[i] == address(0)) revert ClaimLib.RateProviderRequired();
         {
             // D60: held reserve and inflow are shares x rate; `minted` carries the rated inflow from here on.
             uint256 rate = LegLib.rateAfterExchange(q, l.tokens[i], l.rateProviders[i]);
-            rated[i] = Math.scaleTo(ClaimLib.ratedWith(i, q.heldShares, rate), l.ratedScales[i]);
-            minted = ClaimLib.ratedWith(i, minted, rate);
+            rated[i] = Math.scaleTo(l.rawReserves[i] + ClaimLib.ratedWith(i, l.seReserves[i], rate), l.ratedScales[i]);
+            minted = local + ClaimLib.ratedWith(i, minted, rate);
         }
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
         return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(minted, l.ratedScales[i]));

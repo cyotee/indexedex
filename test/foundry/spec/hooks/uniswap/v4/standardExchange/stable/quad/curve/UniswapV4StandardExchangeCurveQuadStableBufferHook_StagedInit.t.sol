@@ -28,7 +28,8 @@ import {
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -93,7 +94,10 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test is
         assertEq(prod[7].facetAddress, address(UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg(address(hookPkg)).JOIN_QUERY_FACET()));
 
         bytes4[] memory ifaces = hookPkg.facetInterfaces();
-        assertEq(ifaces.length, 12);
+        assertEq(ifaces.length, 15);
+        assertEq(ifaces[12], type(IUniswapV4SeBufferHook).interfaceId);
+        assertEq(ifaces[13], type(IDetfReserveQuote).interfaceId);
+        assertEq(ifaces[14], type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId);
     }
 
     function test_S43_deployAlone_noProductDoors() public {

@@ -14,6 +14,9 @@ import {UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityCore} from
 /// @notice Liquidity quotes through the shared reserve accounting.
 abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryTarget is UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBase, NativeStandardYieldTarget {
 function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+        if (address(tokenOut) == address(this) && address(tokenIn) != address(this)) {
+            return _previewSingleJoinResult(address(tokenIn), amountIn);
+        }
         return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
@@ -70,9 +73,9 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
     function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
         return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
     }
-    /// @notice Existing Stable invariant per active asset, per LP including pending protocol dilution.
+    /// @notice Existing Stable invariant per active asset, per LP including the floor and protocol LP.
     function exchangeRate() external view override returns (uint256) {
-        uint256 supply_ = _previewSupplyAfterProtocolMint();
+        uint256 supply_ = _totalSupply();
         return supply_ == 0 ? 1e18 : FullMath.mulDiv(_rootKNow(), 1e18, supply_);
     }
     function getTokensIn() public view override returns (address[] memory tokens_) {

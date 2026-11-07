@@ -35,7 +35,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_SimpleYieldERC4626C
     function test_control_bareProtocolVault_rejectedAtPackageInit() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.se0 = address(vault0);
-        vm.expectRevert(bytes(""));
+        vm.expectRevert(IUniswapV4StandardExchangeOrbitalBufferHookPackage.InvalidSE.selector);
         this.deployHookArgs(args);
     }
 

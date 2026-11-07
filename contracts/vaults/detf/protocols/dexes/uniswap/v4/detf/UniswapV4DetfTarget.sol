@@ -138,7 +138,9 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
             address[] memory required_ = IUniswapV4SeBufferHook(s.hook).requiredFirstBondTokens();
             tokens_ = new address[](required_.length);
             uint256 count_;
-            for (uint256 i_; i_ < required_.length; ++i_) if (required_[i_] != address(this)) tokens_[count_++] = required_[i_];
+            for (uint256 i_; i_ < required_.length; ++i_) {
+                if (required_[i_] != address(this)) tokens_[count_++] = _firstBondPair(required_[i_]);
+            }
             assembly ("memory-safe") { mstore(tokens_, count_) }
             return tokens_;
         }
@@ -432,6 +434,20 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         uint256 supply_ = ERC20Repo._totalSupply();
         uint256 lpOut_ = Math.mulDiv(detfIn_, _protocolLp(), supply_);
         if (lpOut_ == 0) revert Repo.ZeroAmount();
+        {
+            IStandardExchange vault_ = s.burnTable.vaultOf[address(tokenOut_)];
+            address pair_ = _hookPairOfVault(vault_);
+            uint256 payable_ = _previewPropPairResidual(lpOut_, pair_);
+            if (address(tokenOut_) != pair_) {
+                (payable_,) = vault_.previewExchangeIn(IERC20(pair_), payable_, tokenOut_);
+            }
+            // A native SE redemption can reject a zero payout before the
+            // recipient-amount guard below. Reject at the DETF boundary first.
+            if (payable_ == 0) {
+                if (minAmountOut_ != 0) revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, 0);
+                revert Repo.ZeroAmount();
+            }
+        }
         _burnDetf(address(this), detfIn_);
         uint256[] memory exitAmts_ = _exitBurnLp(lpOut_, deadline_);
         amountOut_ = _payBurnOut(tokenOut_, recipient_, deadline_, exitAmts_);
@@ -440,8 +456,9 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         }
         // Positive LP can still round to no recipient asset. Preserve the user's input.
         if (amountOut_ == 0) revert Repo.ZeroAmount();
-        _rejoinExitDetf(exitAmts_, deadline_);
         _returnLeftoverLp();
+        // Rejoin the self-token together with all unpaid exit legs. A separate
+        // self-token zap would first buy components already held by this burn.
         _trySweepDust();
         _syncAllExpectedHoldReserves();
     }
@@ -474,24 +491,6 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         IERC20(s.hook).forceApprove(s.hook, 0);
     }
 
-    function _rejoinExitDetf(uint256[] memory amounts_, uint256 deadline_) private {
-        address[] memory tokens_ = _hook().tokens();
-        uint256 n_ = amounts_.length < tokens_.length ? amounts_.length : tokens_.length;
-        for (uint256 i; i < n_; ++i) {
-            if (tokens_[i] == address(this) && amounts_[i] > 0) {
-                uint256 have_ = IERC20(address(this)).balanceOf(address(this));
-                uint256 joinAmt_ = amounts_[i] < have_ ? amounts_[i] : have_;
-                if (joinAmt_ == 0) continue;
-                // An otherwise payable exit must not fail on an unmintable self-leg.
-                // The residual sweep below retains/reinvests this protocol inventory.
-                if (_hook().previewJoinSingleAssetExactIn(address(this), joinAmt_) == 0) continue;
-                IERC20(address(this)).forceApprove(Repo._layoutStruct().hook, joinAmt_);
-                _hook().joinSingleAssetExactIn(address(this), joinAmt_, _bondLpHolder(), 0, deadline_);
-                IERC20(address(this)).forceApprove(Repo._layoutStruct().hook, 0);
-            }
-        }
-    }
-
     function _payBurnOut(IERC20 tokenOut_, address recipient_, uint256 deadline_, uint256[] memory withdrawn_)
         private returns (uint256 amountOut_)
     {
@@ -522,6 +521,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         address pair;
         address capital;
         uint256 amount;
+        uint256 pairPayment;
     }
 
     function _entryBond(
@@ -607,7 +607,14 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
             seat_.pair = _firstBondPair(address(tokenIn_));
             seat_.vault = IStandardExchange(IUniswapV4SeBufferHook(s.hook).standardExchangeOf(seat_.pair));
         }
-        if (address(tokenIn_) == seat_.pair || address(tokenIn_) == address(seat_.vault)) {
+        if (!live_) {
+            seat_.capital = address(seat_.vault);
+            uint256 consumed_;
+            (seat_.amount, consumed_) = _firstBondShares(seat_.vault, tokenIn_, pulled_, deadline_);
+            // Opening issuance prices the actual pair payment, not a second
+            // liquidation quote after the SE has charged its conversion fee.
+            if (address(tokenIn_) == seat_.pair) seat_.pairPayment = consumed_;
+        } else if (address(tokenIn_) == seat_.pair || address(tokenIn_) == address(seat_.vault)) {
             seat_.capital = address(tokenIn_);
             seat_.amount = pulled_;
         } else {
@@ -617,6 +624,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     }
 
     function _bondPairEq(BondSeat memory seat_) private view returns (uint256) {
+        if (seat_.pairPayment != 0) return seat_.pairPayment;
         if (seat_.capital == seat_.pair) return seat_.amount;
         return _pairEq(seat_.vault, IERC20(seat_.capital), seat_.amount);
     }
@@ -636,14 +644,13 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         shares_ = _joinUnbalanced(joinToks_, joinAmts_);
     }
 
-    /// @notice First bond: joinUnbalanced every requiredFirstBondTokens leg (pair or that pair's share).
-    /// @dev Lead capital is already pulled. Other non-DETF legs are pulled from msg.sender at opening-rate size.
+    /// @notice Acquire every buffered genesis leg as shares before hook intake.
+    /// @dev Opening prices and caller payment amounts remain keyed by the canonical pair.
     function _joinFirstBondFullBook(uint256 g_, BondSeat memory seat_) private returns (uint256 shares_) {
         address[] memory required_ = _hook().requiredFirstBondTokens();
         uint256 n_ = required_.length;
         address[] memory joinToks_ = new address[](n_);
         uint256[] memory joinAmts_ = new uint256[](n_);
-        Repo.Storage storage s = Repo._layoutStruct();
         for (uint256 i; i < n_; ++i) {
             address t_ = required_[i];
             if (t_ == address(this)) {
@@ -651,16 +658,40 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
                 joinAmts_[i] = g_;
                 continue;
             }
-            if (t_ == seat_.pair) {
+            address pair_ = _firstBondPair(t_);
+            if (pair_ == seat_.pair) {
                 joinToks_[i] = seat_.capital;
                 joinAmts_[i] = seat_.amount;
                 continue;
             }
-            uint256 need_ = _firstBondOtherPayment(g_, t_);
-            joinToks_[i] = t_;
-            joinAmts_[i] = _pullToken(IERC20(t_), need_, false);
+            uint256 need_ = _firstBondOtherPayment(g_, pair_);
+            IStandardExchange vault_ = IStandardExchange(_hook().standardExchangeOf(pair_));
+            joinToks_[i] = address(vault_);
+            uint256 pulled_ = _pullToken(IERC20(pair_), need_, false);
+            (joinAmts_[i],) = _firstBondShares(vault_, IERC20(pair_), pulled_, block.timestamp + 1);
         }
         shares_ = _joinUnbalanced(joinToks_, joinAmts_);
+    }
+
+    function _firstBondShares(IStandardExchange vault_, IERC20 input_, uint256 amount_, uint256 deadline_)
+        private returns (uint256 shares_, uint256 consumed_)
+    {
+        if (address(input_) == address(vault_)) return (amount_, amount_);
+        IERC20 share_ = IERC20(address(vault_));
+        uint256 inputBefore_ = input_.balanceOf(address(this));
+        uint256 sharesBefore_ = share_.balanceOf(address(this));
+        input_.forceApprove(address(vault_), amount_);
+        ExchangeInAmount.Result memory receipt_ = ExchangeInAmount.exchangeResult(
+            IStandardExchangeIn(address(vault_)), input_, amount_, share_, 0, address(this), false, deadline_
+        );
+        input_.forceApprove(address(vault_), 0);
+        consumed_ = ExchangeInAmount.requireReceipt(
+            amount_, receipt_, inputBefore_, input_.balanceOf(address(this)),
+            sharesBefore_, share_.balanceOf(address(this))
+        );
+        if (receipt_.amountOut == 0) revert Repo.InvalidRoute(address(input_), address(vault_));
+        if (receipt_.amountRefunded != 0) input_.safeTransfer(msg.sender, receipt_.amountRefunded);
+        return (receipt_.amountOut, consumed_);
     }
 
     function _firstBondPair(address tokenIn_) internal view returns (address pair_) {
@@ -839,7 +870,11 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
             tokens_ = new address[](1); amounts_ = new uint256[](1);
             tokens_[0] = pair_; amounts_[0] = amount_; return (tokens_, amounts_);
         }
-        uint256 detf_ = _quoteBondG(pair_, amount_);
+        address vault_ = _hook().standardExchangeOf(pair_);
+        ExchangeInAmount.Result memory receipt_ = ExchangeInAmount.previewResult(
+            IStandardExchangeIn(vault_), tokenIn_, amount_, IERC20(vault_)
+        );
+        uint256 detf_ = _quoteBondG(pair_, ExchangeInAmount.consumedInput(amount_, receipt_.amountRefunded));
         if (detf_ == 0) revert Repo.FirstBondBelowMinimumLiquidity();
         tokens_ = _entryAcceptedBondTokens(); amounts_ = new uint256[](tokens_.length);
         for (uint256 i_; i_ < tokens_.length; ++i_) {

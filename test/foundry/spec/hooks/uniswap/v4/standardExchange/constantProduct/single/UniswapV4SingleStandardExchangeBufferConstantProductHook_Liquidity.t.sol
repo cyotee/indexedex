@@ -21,9 +21,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         assertTrue(single.isLive());
         assertGt(single.rawReserve(), 0);
         assertGt(single.seClaimSupply(), 0);
-        // Free pair is not the book
-        assertLe(pairToken.balanceOf(hook), DUST);
-        // Virtual pair equals seClaim, not free pair (shared BasicVault accounting)
+        // The actual genesis redemption is a separate positive local component.
+        assertGt(pairToken.balanceOf(hook), 0);
+        // The shared reserve view publishes local plus rated booked shares.
         assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)));
         assertTrue(single.seClaimSupply() != pairToken.balanceOf(hook) || pairToken.balanceOf(hook) == 0);
     }
@@ -50,17 +50,26 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         uint256 offer1 = a1;
         (uint256 predLp, uint256 predU0, uint256 predU1) = single.previewDeposit(offer0, offer1);
         uint256 bal0Before = IERC20(single.currency0()).balanceOf(user);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 localBefore = pairToken.balanceOf(hook);
+        uint256 rawBefore = rawToken.balanceOf(hook);
+        uint256 sharesBefore = IERC20(se).balanceOf(hook);
         vm.prank(user);
         (uint256 lp, uint256 u0, uint256 u1) = single.deposit(offer0, offer1, user, 0, block.timestamp + 1);
-        // SE claim-in preview vs exec can drift; used amounts must match clamp
-        assertApproxEqRel(lp, predLp, 0.02e18);
+        assertEq(lp, predLp);
         assertEq(u0, predU0);
         assertEq(u1, predU1);
         // Refund excess currency0 if clamped
         if (offer0 > u0) {
             assertEq(IERC20(single.currency0()).balanceOf(user), bal0Before - u0);
         }
-        assertLe(pairToken.balanceOf(hook), DUST);
+        uint256 product = (IERC20(hook).totalSupply() - supplyBefore) * localBefore;
+        assertEq(pairToken.balanceOf(hook) - localBefore,
+            product / supplyBefore + (product % supplyBefore == 0 ? 0 : 1), "ceil local contribution");
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        assertEq(rawToken.balanceOf(hook) - rawBefore, _ceil(gross, rawBefore, supplyBefore), "ceil raw contribution");
+        assertEq(IERC20(se).balanceOf(hook) - sharesBefore,
+            _ceil(gross, sharesBefore, supplyBefore), "ceil share contribution");
     }
 
     function test_P4_zeroAmount_reverts() public {
@@ -96,7 +105,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         uint256 lp = IERC20(hook).balanceOf(user);
         vm.prank(user);
         single.withdraw(lp, user, 0, 0, block.timestamp + 1);
-        assertEq(IERC20(hook).totalSupply(), 1000);
+        assertEq(IERC20(hook).totalSupply(), 1000 + IERC20(hook).balanceOf(_feeTo()), "treasury remains an LP");
         // Next proportional deposit uses subsequent mint (supply > 0)
         uint256 lp2 = _depositBoth(50 ether, 50 ether);
         assertGt(lp2, 0);
@@ -109,37 +118,74 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         (uint256 pred0, uint256 pred1) = single.previewWithdraw(lp);
         uint256 b0 = IERC20(single.currency0()).balanceOf(user);
         uint256 b1 = IERC20(single.currency1()).balanceOf(user);
+        uint256 supply = IERC20(hook).totalSupply();
+        uint256 localBefore = pairToken.balanceOf(hook);
+        uint256 sharesBefore = IERC20(se).balanceOf(hook);
+        uint256 rawClaim = lp * single.rawReserve() / supply;
+        uint256 shareClaim = lp * sharesBefore / supply;
+        uint256 localClaim = lp * localBefore / supply;
+        (uint256 redeemed,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shareClaim, IERC20(address(pairToken)));
         vm.prank(user);
         (uint256 a0, uint256 a1) = single.withdraw(lp, user, 0, 0, block.timestamp + 1);
-        assertApproxEqAbs(a0, pred0, DUST);
-        assertApproxEqAbs(a1, pred1, DUST);
+        assertEq(a0, pred0);
+        assertEq(a1, pred1);
         assertEq(IERC20(single.currency0()).balanceOf(user) - b0, a0);
         assertEq(IERC20(single.currency1()).balanceOf(user) - b1, a1);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        assertEq(_isRawCurrency0() ? a0 : a1, rawClaim, "independent floor raw claim");
+        assertEq(_isRawCurrency0() ? a1 : a0, localClaim + redeemed, "floor local plus actual SE redemption");
+        assertEq(pairToken.balanceOf(hook), localBefore - localClaim, "other LP local backing retained");
+        assertEq(IERC20(se).balanceOf(hook), sharesBefore - shareClaim, "only allocated shares redeemed");
     }
 
     function test_Zi1_depositSingle_bothDirections() public {
         _seedLiveLiquidity();
-        uint256 predRaw = single.previewDepositSingle(address(rawToken), 20 ether);
-        vm.prank(user);
-        uint256 lpRaw = single.depositSingle(address(rawToken), 20 ether, user, 0, block.timestamp + 1);
-        assertApproxEqRel(lpRaw, predRaw, 0.05e18);
-        assertGt(lpRaw, 0);
-
-        uint256 predPair = single.previewDepositSingle(address(pairToken), 20 ether);
-        vm.prank(user);
-        uint256 lpPair = single.depositSingle(address(pairToken), 20 ether, user, 0, block.timestamp + 1);
-        assertApproxEqRel(lpPair, predPair, 0.05e18);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        for (uint256 i; i < 2; ++i) {
+            address input = i == 0 ? address(rawToken) : address(pairToken);
+            uint256 preview = single.previewDepositSingle(input, 20 ether);
+            uint256 lpBefore = IERC20(hook).balanceOf(user);
+            assertGt(preview, 0, "both paid input directions quote LP");
+            vm.prank(user);
+            uint256 minted = single.depositSingle(input, 20 ether, user, preview, block.timestamp + 1);
+            assertEq(minted, preview, "single input preview equals execution");
+            assertEq(IERC20(hook).balanceOf(user) - lpBefore, minted, "recipient net LP");
+            assertEq(single.rawReserve(), rawToken.balanceOf(hook), "native raw conservation");
+        }
     }
 
     function test_Zi2_previewZapSplit_sumsToAmountIn() public {
         _seedLiveLiquidity();
         (uint256 swapAmt, uint256 otherOut, uint256 kept) =
             single.previewZapSplit(address(rawToken), 20 ether);
-        assertGt(swapAmt, 0);
-        assertGt(otherOut, 0);
+        assertGt(swapAmt, 0, "positive paid preparation");
+        assertLt(swapAmt, 20 ether, "preparation retains caller input");
+        assertGt(otherOut, 0, "positive purchased leg");
         assertEq(kept + swapAmt, 20 ether);
+    }
+
+    /// @notice A genuinely zero local book requires no local contribution or share redemption.
+    function test_zeroLocalBook_shareFundedJoin_preservesRawAndShareFractions() public {
+        _seedLiveLiquidity();
+        uint256 local_ = pairToken.balanceOf(hook);
+        uint256 swapInput_ = single.previewSwapExactOut(address(rawToken), address(pairToken), local_);
+        rawToken.mint(owner, swapInput_);
+        vm.startPrank(owner);
+        rawToken.approve(hook, swapInput_);
+        single.ownerSwapExactOut(address(rawToken), address(pairToken), local_, swapInput_, block.timestamp);
+        vm.stopPrank();
+        assertEq(pairToken.balanceOf(hook), 0, "trade exhausts only the booked local output");
+        uint256 shares_ = _mintSeSharesToUser(20 ether);
+        uint256 rawBefore_ = single.rawReserve();
+        uint256 shareBefore_ = IERC20(se).balanceOf(hook);
+        uint256 supplyBefore_ = IERC20(hook).totalSupply();
+        (uint256 preview_,,) = single.previewDepositWithSeShares(20 ether, shares_);
+        vm.prank(user);
+        (uint256 net_,,) = single.depositWithSeShares(20 ether, shares_, user, 1, block.timestamp);
+        uint256 gross_ = IERC20(hook).totalSupply() - supplyBefore_;
+        assertGt(net_, 0, "zero local component does not disable a complete basket");
+        assertEq(net_, preview_, "zero-local preview parity");
+        assertEq(single.rawReserve() - rawBefore_, _ceil(gross_, rawBefore_, supplyBefore_));
+        assertEq(IERC20(se).balanceOf(hook) - shareBefore_, _ceil(gross_, shareBefore_, supplyBefore_));
+        assertEq(pairToken.balanceOf(hook), 0, "no needless caller share redemption");
     }
 
     function test_Zi3_depositSingle_emptyBook_reverts() public {
@@ -154,6 +200,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         uint256 lp = IERC20(hook).balanceOf(user);
         vm.prank(user);
         single.withdraw(lp, user, 0, 0, block.timestamp + 1);
+        _withdrawTreasury();
         assertEq(IERC20(hook).totalSupply(), 1000);
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
@@ -162,7 +209,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
 
     function test_Zo1_withdrawSingle_bothTokenOut_previewEqualsExec() public {
         _seedLiveLiquidity();
-        // tokenOut = pair (includes residual raw→pair sell quoted pre-buffer)
+        // Allocate the native basket, then sell only the exiting raw claim for pair components.
         uint256 lp = IERC20(hook).balanceOf(user) / 4;
         uint256 predPair = single.previewWithdrawSingle(lp, address(pairToken));
         uint256 bPair = pairToken.balanceOf(user);
@@ -172,27 +219,30 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         assertEq(pairToken.balanceOf(user) - bPair, outPair);
         assertGt(outPair, 0);
 
-        // tokenOut = raw (includes residual pair→raw sell quoted pre-buffer, buffer-last)
+        // Allocate the native basket, then trade only the exiting pair/share claims for raw.
         lp = IERC20(hook).balanceOf(user) / 3;
         uint256 predRaw = single.previewWithdrawSingle(lp, address(rawToken));
         uint256 bRaw = rawToken.balanceOf(user);
         vm.prank(user);
         uint256 outRaw = single.withdrawSingle(lp, address(rawToken), user, 0, block.timestamp + 1);
-        // SE claim-in on residual buffer may differ by few wei from pure preview
-        assertApproxEqAbs(outRaw, predRaw, 1e15, "rawOut preview~=exec");
+        assertEq(outRaw, predRaw, "rawOut preview==exec");
         assertEq(rawToken.balanceOf(user) - bRaw, outRaw);
         assertGt(outRaw, 0);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        assertGt(pairToken.balanceOf(hook), 0, "continuing holders retain local backing");
     }
 
     function test_Zo3_withdrawSingle_notEligible_whenOnlyMinLiquidity() public {
-        // Covered by Zi4 for depositSingle; here assert supply-only dust after full proportional exit.
+        // Both depositor and treasury must exit before only the locked floor remains.
         _seedLiveLiquidity();
         uint256 lp = IERC20(hook).balanceOf(user);
         vm.prank(user);
         single.withdraw(lp, user, 0, 0, block.timestamp + 1);
+        _withdrawTreasury();
         assertEq(IERC20(hook).balanceOf(user), 0);
         assertEq(IERC20(hook).totalSupply(), 1000);
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
+        single.withdrawSingle(1, address(pairToken), user, 0, block.timestamp + 1);
     }
 
     function test_Zo7_withdrawSingle_deadlineAndMinOut() public {
@@ -232,13 +282,17 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         assertEq(predSe, seShares);
 
         uint256 seBefore = IERC20(se).balanceOf(user);
+        (uint256 localExpected,) = IStandardExchangeIn(se).previewExchangeIn(
+            IERC20(se), seShares / 20, IERC20(address(pairToken))
+        );
         uint256 lp = _depositBothSeShares(100 ether, seShares);
         assertEq(lp, predLp);
         assertEq(IERC20(hook).balanceOf(user), lp);
         assertEq(IERC20(se).balanceOf(user), seBefore - seShares);
-        // Free pair not book; SE held on hook
-        assertLe(pairToken.balanceOf(hook), DUST);
-        assertGt(IERC20(se).balanceOf(hook), 0);
+        uint256 redeemedShares = seShares / 20;
+        assertEq(IERC20(se).balanceOf(hook), seShares - redeemedShares, "retained genesis shares");
+        assertEq(pairToken.balanceOf(hook), localExpected, "actual 5% genesis redemption");
+        assertGt(localExpected, 0, "positive actual genesis local receipt");
         assertTrue(single.isLive());
         assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)));
     }
@@ -252,19 +306,25 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         uint256 seBefore = IERC20(se).balanceOf(user);
         uint256 rawBefore = rawToken.balanceOf(user);
         uint256 claimBefore = single.seClaimSupply();
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 rawBook = rawToken.balanceOf(hook);
+        uint256 sharesBook = IERC20(se).balanceOf(hook);
+        uint256 localBook = pairToken.balanceOf(hook);
 
         vm.prank(user);
         (uint256 lp, uint256 usedRaw, uint256 usedSe) =
             single.depositWithSeShares(50 ether, seShares, user, 0, block.timestamp + 1);
 
-        assertApproxEqRel(lp, predLp, 0.02e18);
+        assertEq(lp, predLp);
         assertEq(usedRaw, predRaw);
         assertEq(usedSe, predSe);
         assertEq(rawToken.balanceOf(user), rawBefore - usedRaw);
         assertEq(IERC20(se).balanceOf(user), seBefore - usedSe);
-        // Virtual pair (claim) rose; free pair remains dust
         assertGt(single.seClaimSupply(), claimBefore);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        assertEq(rawToken.balanceOf(hook) - rawBook, _ceil(gross, rawBook, supplyBefore), "ceil raw");
+        assertEq(IERC20(se).balanceOf(hook) - sharesBook, _ceil(gross, sharesBook, supplyBefore), "ceil shares");
+        assertEq(pairToken.balanceOf(hook) - localBook, _ceil(gross, localBook, supplyBefore), "ceil local");
     }
 
     function test_B6_withdrawSeShares_paysSeAndRaw_previewEqualsExec() public {
@@ -280,6 +340,15 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
 
         uint256 rawBefore = rawToken.balanceOf(user);
         uint256 seBefore = IERC20(se).balanceOf(user);
+        uint256 supply = IERC20(hook).totalSupply();
+        uint256 localBook = pairToken.balanceOf(hook);
+        uint256 sharesBook = IERC20(se).balanceOf(hook);
+        uint256 rawClaim = burn * single.rawReserve() / supply;
+        uint256 shareClaim = burn * sharesBook / supply;
+        uint256 localClaim = burn * localBook / supply;
+        (uint256 acquired,) = IStandardExchangeIn(se).previewExchangeIn(
+            IERC20(address(pairToken)), localClaim, IERC20(se)
+        );
         vm.prank(user);
         (uint256 amountRaw, uint256 amountSe) =
             single.withdrawSeShares(burn, user, 0, 0, block.timestamp + 1);
@@ -288,8 +357,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         assertEq(amountSe, predSe);
         assertEq(rawToken.balanceOf(user) - rawBefore, amountRaw);
         assertEq(IERC20(se).balanceOf(user) - seBefore, amountSe);
-        // No forced unwrap — free pair stays dust
-        assertLe(pairToken.balanceOf(hook), DUST);
+        assertEq(amountRaw, rawClaim, "independent floor raw");
+        assertEq(amountSe, shareClaim + acquired, "allocated shares plus converted local claim");
+        assertEq(pairToken.balanceOf(hook), localBook - localClaim, "remaining local backing");
+        assertEq(IERC20(se).balanceOf(hook), sharesBook - shareClaim, "only allocated shares paid");
     }
 
     function test_B6_pairDepositStillWorks_alongsideSeSharePath() public {
@@ -334,7 +405,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         // Anti-skew: SE-share in must not false-reprice vs pair-then-buffer (within dust/fee).
         // Second deposit is slightly different book; allow modest relative drift.
         assertApproxEqRel(lpSe, lpPair, 0.05e18);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        assertGt(pairToken.balanceOf(hook), 0, "both routes fund local backing");
     }
 
     function test_B6_depositWithSeShares_zero_reverts() public {
@@ -359,5 +430,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));
         single.withdrawSeShares(lp / 2, user, type(uint256).max, 0, block.timestamp + 1);
+    }
+
+    function _ceil(uint256 mint_, uint256 component_, uint256 supply_) internal pure returns (uint256) {
+        uint256 product_ = mint_ * component_;
+        return product_ / supply_ + (product_ % supply_ == 0 ? 0 : 1);
+    }
+
+    function _withdrawTreasury() internal {
+        address treasury_ = _feeTo();
+        uint256 lp_ = IERC20(hook).balanceOf(treasury_);
+        if (lp_ != 0) {
+            vm.prank(treasury_);
+            single.withdraw(lp_, treasury_, 0, 0, block.timestamp + 1);
+        }
     }
 }

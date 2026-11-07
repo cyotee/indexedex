@@ -60,7 +60,10 @@ abstract contract FundedThresholdAssertions is Test {
         (bool ok_, bytes memory quote_) = detf_.staticcall(abi.encodeCall(
             IStandardExchangeIn.previewExchangeIn, (input_, amount_, IERC20(detf_))
         ));
-        if (ok_) assertEq(abi.decode(quote_, (uint256)), 0, "inert vault cannot quote issuance");
+        if (ok_) {
+            (uint256 amountOut_,) = abi.decode(quote_, (uint256, uint256));
+            assertEq(amountOut_, 0, "inert vault cannot quote issuance");
+        }
         vm.expectRevert();IStandardExchangeIn(detf_).exchangeIn(input_, amount_, IERC20(detf_), 0, address(this), false, block.timestamp);
         assertEq(input_.balanceOf(address(this)), before_);
         assertEq(IERC20(detf_).totalSupply(), 0);

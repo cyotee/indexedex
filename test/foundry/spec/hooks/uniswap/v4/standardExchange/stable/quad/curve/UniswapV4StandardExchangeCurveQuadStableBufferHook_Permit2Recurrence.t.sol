@@ -35,12 +35,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Permit2Recurrence is
         vm.prank(user);
         (uint256 control,) = quad.joinProportionalFlexible(amounts, asShares, user, controlQuote, block.timestamp);
         assertEq(control, controlQuote);
-        assertEq(IERC20(seUT).balanceOf(hook), amounts[0], "ordinary Permit2 payment delivered");
+        assertEq(IERC20(seUT).balanceOf(hook), amounts[0] - amounts[0] / 20, "Permit2 funding retains shares after the required bootstrap burn");
         assertTrue(vm.revertToState(snapshot));
 
         amounts[0] += uint256(1) << 160;
-        (uint256 inflatedQuote,) = quad.previewJoinProportionalFlexible(amounts, asShares);
-        assertGt(inflatedQuote, controlQuote, "the public quote admits the oversized native share input");
+        assertGt(amounts[0], type(uint160).max, "exercise Permit2's native transfer-width boundary");
         uint256 payerBefore = IERC20(seUT).balanceOf(user);
         vm.expectRevert(bytes4(keccak256("InvalidTransferAmount()")));
         vm.prank(user);

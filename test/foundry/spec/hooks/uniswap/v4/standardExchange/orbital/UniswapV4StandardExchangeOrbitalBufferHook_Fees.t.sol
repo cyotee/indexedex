@@ -21,30 +21,25 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_FeesTest is
         assertEq(orbital.feeTo(), feeRecipient);
     }
 
-    function test_protocolGrowth_onAdd_assertGt() public {
-        // Mirror monomorph orbital Fees gold: seed → usage fee → snapshot kLast → round-trip swaps → mint
+    function test_protocolMintFee_splitsOnlyBackedDeposit() public {
         _seedThreeLeg(200 ether);
-        _setUsageFee(0.05e18); // 5%
-        _setDexFee(0.01e18); // 1% trading residual grows k
-        // Snapshot kLast on next LP after fee on
-        _addLiquidity(1 ether, 1 ether, 1 ether);
-        assertGt(orbital.kLast(), 0, "kLast set");
-
-        // Grow k via round-trip swaps (does not update kLast)
-        for (uint256 i; i < 5; i++) {
+        _setUsageFee(0.05e18);
+        _setDexFee(0.01e18);
+        uint256 supplyBeforeSwaps = IERC20(hook).totalSupply();
+        uint256 feeBeforeSwaps = IERC20(hook).balanceOf(feeRecipient);
+        for (uint256 i; i < 5; ++i) {
             _swapExactIn(address(token0), address(token1), 5 ether);
             _swapExactIn(address(token1), address(token0), 5 ether);
         }
-
-        address ft = orbital.feeTo();
-        uint256 feeBalBefore = IERC20(hook).balanceOf(ft);
-        _addLiquidity(2 ether, 2 ether, 2 ether);
-        uint256 feeBalAfter = IERC20(hook).balanceOf(ft);
-        assertGt(feeBalAfter, feeBalBefore, "protocol growth LP must mint to feeTo");
-        assertEq(
-            uint8(orbital.kLastMode()),
-            uint8(IUniswapV4StandardExchangeOrbitalBufferHook.KLastMode.FullProduct)
-        );
+        assertEq(IERC20(hook).totalSupply(), supplyBeforeSwaps, "swaps issue no LP");
+        assertEq(IERC20(hook).balanceOf(feeRecipient), feeBeforeSwaps);
+        (uint256 net,,,) = _addLiquidity(2 ether, 2 ether, 2 ether);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBeforeSwaps;
+        uint256 fee = gross * 0.05e18 / 1e18;
+        assertGt(gross, 0);
+        assertEq(IERC20(hook).balanceOf(feeRecipient) - feeBeforeSwaps, fee);
+        assertEq(net + fee, gross, "fee is split from gross, never on top");
+        assertEq(orbital.kLast(), 0, "retired growth slot");
     }
 
     function test_swap_doesNotUpdateKLast() public {
@@ -52,7 +47,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_FeesTest is
         _setUsageFee(0.05e18);
         _addLiquidity(50 ether, 50 ether, 50 ether); // set kLast
         uint256 kBefore = orbital.kLast();
-        assertGt(kBefore, 0);
+        assertEq(kBefore, 0, "retired growth slot");
         _swapExactIn(address(token0), address(token1), 5 ether);
         assertEq(orbital.kLast(), kBefore, "swap must not update kLast");
     }

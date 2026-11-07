@@ -7,11 +7,12 @@ import {
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_VaultViews is TestBase {
-    function test_reserveOfToken_isLiveSharesOrFace() public {
+    function test_reserveOfToken_isLocalPlusRatedShares() public {
         _firstMintEqual(100 ether);
-        assertEq(IBasicVault(hook).reserveOfToken(address(token0)), quad.seBalance(0));
+        assertEq(IBasicVault(hook).reserveOfToken(address(token0)), quad.ratedBalance(0));
         assertEq(IBasicVault(hook).reserveOfToken(address(token1)), token1.balanceOf(hook));
-        assertEq(IBasicVault(hook).reserveOfToken(address(token0)), quad.nativeReserve(0));
+        assertEq(quad.nativeReserve(0), quad.seBalance(0));
+        assertGt(quad.ratedBalance(0), quad.nativeReserve(0), "local book included only in swap view");
     }
 
     function test_vaultTokens_four() public view {

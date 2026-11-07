@@ -32,7 +32,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_SimpleYieldERC4626
     function test_control_bareProtocolVault_rejectedAtPackageInit() public {
         IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchanges[0] = address(vault0);
-        vm.expectRevert(bytes(""));
+        vm.expectRevert(IUniswapV4StandardExchangeWeightedBufferHookPackage.InvalidSE.selector);
         DeployLib.deployHookInstance(hookFactory, hookPkg, args);
     }
 }

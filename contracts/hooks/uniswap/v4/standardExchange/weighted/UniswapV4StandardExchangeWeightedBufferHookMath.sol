@@ -72,6 +72,16 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         return (amount * rate + RATE_PRECISION - 1) / RATE_PRECISION;
     }
 
+    /// @dev An upper WAD value bounds in-kind output allocation without first
+    /// rounding the entire SE holding down to a native pair-token unit.
+    function componentValueUp(uint256 inventory, uint256 local, uint256 inventoryScale, uint256 pairScale, uint256 rate)
+        internal pure returns (uint256)
+    {
+        uint256 inventoryWad = FullMath.mulDiv(inventory, inventoryScale, RATE_PRECISION, FullMath.Rounding.Ceil);
+        return FullMath.mulDiv(inventoryWad, rate, RATE_PRECISION, FullMath.Rounding.Ceil)
+            + FullMath.mulDiv(local, pairScale, RATE_PRECISION, FullMath.Rounding.Ceil);
+    }
+
     function descale(uint256 scaled, uint256 rate) internal pure returns (uint256) {
         if (rate == 0) revert MathDomain();
         return (scaled * RATE_PRECISION) / rate;
@@ -204,6 +214,17 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
             WeightedMath.computeOutGivenExactIn(balInScaled, wIn, balOutScaled, wOut, aInScaled);
         amountOutRaw = descale(outScaled, rateOut);
         if (amountOutRaw == 0) revert ZeroAmount();
+    }
+
+    /// @notice Weighted internal liquidity trade; entrypoints enforce their existing
+    /// invariant bounds rather than imposing a new 30% public-swap input limit.
+    function quoteLiquidityExactIn(uint256 balanceIn, uint256 weightIn, uint256 balanceOut, uint256 weightOut, uint256 amountIn)
+        external pure returns (uint256)
+    {
+        if (amountIn == 0 || balanceIn == 0 || balanceOut == 0) revert ZeroAmount();
+        uint256 base = balanceIn.divUp(balanceIn + amountIn);
+        uint256 power = base.powUp(weightIn.divDown(weightOut));
+        return balanceOut.mulDown(power.complement());
     }
 
     /// @dev Exact-out: scale out up, compute in, descales up, gross-up for fee.

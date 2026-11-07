@@ -52,7 +52,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
     }
 
     function _assertRestingUntouched(uint256 face0Before, uint256 feeTo0Before) internal view {
-        assertEq(token0.balanceOf(hook), face0Before, "resting token0 remains");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0Before, "resting token0 remains");
         assertEq(token0.balanceOf(orbital.feeTo()), feeTo0Before, "feeTo got no residual");
     }
 
@@ -62,7 +62,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
 
     function test_R6_addLiquidity_resting500_notRefunded() public {
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 feeTo0 = token0.balanceOf(orbital.feeTo());
         uint256 user0 = token0.balanceOf(user);
 
@@ -77,25 +77,26 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
 
     function test_R6_depositSingle_resting500_notRefunded() public {
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(hook);
-        uint256 se0Before = IERC20(se0).balanceOf(hook);
-        uint256 feeTo0 = token0.balanceOf(orbital.feeTo());
-        uint256 user0 = token0.balanceOf(user);
-
+        uint256 ambient = token0.balanceOf(hook) - orbital.rawReserve(0);
+        uint256 feeBalance = token0.balanceOf(orbital.feeTo());
         _fundAttacker(1 ether, 0, 0);
+        uint256 beforeInput = token0.balanceOf(user);
+        uint256 beforeLp = IERC20(hook).balanceOf(user);
+        uint256 quote = orbital.previewDepositSingle(address(token0), 1 ether);
+        assertGt(quote, 0);
         vm.prank(user);
-        orbital.depositSingle(address(token0), 1 ether, user, 0, block.timestamp + 1 hours, "");
-
-        // Unused of this 1 may refund; resting 500 must not.
-        assertLt(token0.balanceOf(user), user0 + 500 ether, "did not pay resting");
-        assertEq(token0.balanceOf(hook), face0, "resting token0 remains");
-        assertEq(token0.balanceOf(orbital.feeTo()), feeTo0, "feeTo got no residual");
-        se0Before;
+        uint256 minted = orbital.depositSingle(address(token0), 1 ether, user, quote, block.timestamp + 1 hours, "");
+        assertEq(minted, quote);
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
+        assertGt(beforeInput - token0.balanceOf(user), 0);
+        assertLe(beforeInput - token0.balanceOf(user), 1 ether);
+        assertEq(token0.balanceOf(hook) - orbital.rawReserve(0), ambient, "unbooked donation is not caller funding or refund");
+        assertEq(token0.balanceOf(orbital.feeTo()), feeBalance, "fee recipient receives no ambient token");
     }
 
     function test_R6_removeLiquidity_resting500_notRefunded() public {
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 feeTo0 = token0.balanceOf(orbital.feeTo());
         uint256 user0 = token0.balanceOf(user);
         uint256 lp = IERC20(hook).balanceOf(user) / 20;
@@ -106,13 +107,13 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
 
         // Pro-rata unwrap is legitimate; 500 extra is not.
         assertLt(token0.balanceOf(user) - user0, 500 ether, "did not pay resting");
-        assertEq(token0.balanceOf(hook), face0, "resting token0 remains");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "resting token0 remains");
         assertEq(token0.balanceOf(orbital.feeTo()), feeTo0, "feeTo got no residual");
     }
 
     function test_R6_depositFlexible_resting500_notRefunded() public {
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 seAmt = _mintSeSharesToUser(se0, token0, 2 ether);
         uint256 user0 = token0.balanceOf(user);
         _fundAttacker(0, 2 ether, 2 ether);
@@ -123,12 +124,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         );
 
         assertLt(token0.balanceOf(user), user0 + 500 ether, "did not pay resting");
-        assertEq(token0.balanceOf(hook), face0, "resting token0 remains");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "resting token0 remains");
     }
 
     function test_R6_withdrawFlexible_resting500_notRefunded() public {
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 user0 = token0.balanceOf(user);
         uint256 lp = IERC20(hook).balanceOf(user) / 20;
         require(lp > 0, "lp");
@@ -137,7 +138,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         orbital.withdrawFlexible(lp, user, true, false, false, 0, 0, 0, block.timestamp + 1 hours);
 
         assertLt(token0.balanceOf(user) - user0, 500 ether, "did not pay resting");
-        assertEq(token0.balanceOf(hook), face0, "resting token0 remains");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "resting token0 remains");
     }
 
     function test_R6_rawLeg_resting500_notRefunded() public {
@@ -168,18 +169,18 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         token2.approve(h, type(uint256).max);
         orbital = IUniswapV4StandardExchangeOrbitalBufferHook(h);
         hook = h;
-        orbital.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(orbital, user, 100 ether, 100 ether, 100 ether);
 
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(h);
+        uint256 face0 = token0.balanceOf(h) - orbital.rawReserve(0);
         uint256 user0 = token0.balanceOf(user);
 
         vm.prank(user);
         orbital.addLiquidity(1 ether, 1 ether, 1 ether, user, 0, block.timestamp + 1 hours, "");
 
         assertLt(token0.balanceOf(user), user0 + 500 ether, "did not pay resting");
-        assertEq(token0.balanceOf(h), face0, "resting remains on all-buffered");
+        assertEq(token0.balanceOf(h) - orbital.rawReserve(0), face0, "resting remains on all-buffered");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -187,57 +188,58 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
     /* ---------------------------------------------------------------------- */
 
     function test_R6_swapExactIn_noLeftoverFace() public {
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 preview = orbital.previewSwapExactIn(address(token0), address(token1), 1 ether);
         uint256 outBefore = token1.balanceOf(user);
         _swapExactIn(address(token0), address(token1), 1 ether);
         assertEq(token1.balanceOf(user) - outBefore, preview, "quoted out");
-        assertEq(token0.balanceOf(hook), face0, "no new buffered face");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "no new buffered face");
     }
 
     function test_R6_swapExactOut_noLeftoverFace() public {
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 amountOut = 1 ether;
         uint256 amountIn = orbital.previewSwapExactOut(address(token0), address(token1), amountOut);
         uint256 outBefore = token1.balanceOf(user);
         _swapExactOut(address(token0), address(token1), amountOut, amountIn + 1 ether);
         assertEq(token1.balanceOf(user) - outBefore, amountOut, "exact out");
-        assertEq(token0.balanceOf(hook), face0, "no new buffered face");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "no new buffered face");
     }
 
     function test_R6_swapBothDirections_restingUnchanged() public {
         _donate(token0, 500 ether);
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
         uint256 pm0 = token0.balanceOf(address(pm));
 
         _swapExactIn(address(token1), address(token0), 1 ether);
-        assertEq(token0.balanceOf(hook), face0, "exact-in 1->0 leaves resting");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "exact-in 1->0 leaves resting");
 
         uint256 amountOut = 1 ether;
         uint256 amountIn = orbital.previewSwapExactOut(address(token1), address(token0), amountOut);
         _swapExactOut(address(token1), address(token0), amountOut, amountIn + 1 ether);
-        assertEq(token0.balanceOf(hook), face0, "exact-out 1->0 leaves resting");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "exact-out 1->0 leaves resting");
 
         assertEq(token0.balanceOf(address(pm)), pm0, "no raw callback refund to PoolManager");
     }
 
     function test_R6_cappedUnwrap_fundedSuccess() public {
         // Drain toward the 1-wei keep so invert can exceed spendable cap on a later swap.
-        uint256 amountOut = 1 ether;
+        uint256 amountOut = orbital.rawReserve(0) + 1 ether;
         uint256 amountIn = orbital.previewSwapExactOut(address(token1), address(token0), amountOut);
         uint256 outBefore = token0.balanceOf(user);
         uint256 seBefore = IERC20(se0).balanceOf(hook);
         _swapExactOut(address(token1), address(token0), amountOut, amountIn + 1 ether);
         assertEq(token0.balanceOf(user) - outBefore, amountOut, "funded exact-out");
         assertLt(IERC20(se0).balanceOf(hook), seBefore, "SE burned used shares");
-        assertEq(token0.balanceOf(hook), 0, "no leftover buffered face");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), 0, "no leftover buffered face");
     }
 
     function test_recurrence_R6_exactOutputBurnAndAllowanceAreBounded() public {
-        uint256 wanted = 1 ether;
+        uint256 localBefore = orbital.rawReserve(0);
+        uint256 wanted = localBefore + 1 ether;
         uint256 sharesBefore = IERC20(se0).balanceOf(hook);
         uint256 expectedBurn = IStandardExchangeOut(se0).previewExchangeOut(
-            IERC20(se0), IERC20(address(token0)), wanted
+            IERC20(se0), IERC20(address(token0)), wanted - localBefore
         );
         assertGt(expectedBurn, 0);
         assertLt(expectedBurn, sharesBefore, "supported quote leaves retained SE inventory");
@@ -278,7 +280,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         uint256 user0 = token0.balanceOf(user);
         uint256 user1 = token1.balanceOf(user);
         uint256 seBefore = IERC20(se0).balanceOf(hook);
-        uint256 face0 = token0.balanceOf(hook);
+        uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
 
         // R2.4: the named condition is an oversized unwrap that would drain a leg. The direct
         // preview reverts the typed `Drain()` (0xd67a073f, OrbitalBufferHookMath); a bare
@@ -308,7 +310,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         assertEq(token0.balanceOf(user), user0, "rollback out");
         assertEq(token1.balanceOf(user), user1, "rollback in");
         assertEq(IERC20(se0).balanceOf(hook), seBefore, "SE shares rollback");
-        assertEq(token0.balanceOf(hook), face0, "face rollback");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "face rollback");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -320,11 +322,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         for (uint256 i; i < amounts.length; ++i) {
             uint256 rest = amounts[i];
             _donate(token0, rest);
-            uint256 face0 = token0.balanceOf(hook);
+            uint256 face0 = (token0.balanceOf(hook) - orbital.rawReserve(0));
             _fundAttacker(1 ether, 1 ether, 1 ether);
             vm.prank(user);
             orbital.addLiquidity(1 ether, 1 ether, 1 ether, user, 0, block.timestamp + 1 hours, "");
-            assertEq(token0.balanceOf(hook), face0, "dust resting left in place");
+            assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), face0, "dust resting left in place");
         }
     }
 
@@ -445,7 +447,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Apex008Test is
         assertEq(abi.decode(returned, (uint256)), used, "quoted input consumed");
         assertEq(token0.balanceOf(address(caller)), maxIn - used, "all unused credit refunded");
         assertEq(token1.balanceOf(address(caller)), wantOut, "exact output paid");
-        assertEq(token0.balanceOf(hook), 0, "no prepayment stranded");
+        assertEq((token0.balanceOf(hook) - orbital.rawReserve(0)), 0, "no prepayment stranded");
     }
 
 }

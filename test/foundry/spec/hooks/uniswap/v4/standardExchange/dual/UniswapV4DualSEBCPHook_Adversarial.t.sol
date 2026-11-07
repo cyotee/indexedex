@@ -49,31 +49,40 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         _depositBoth(200 ether, 200 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
-
-        uint256 donated_ = 20 ether;
-        _mintAndDonate(c0, address(this), donated_);
-        assertEq(IERC20(c0).balanceOf(hook), donated_, "donation parked");
-
-        uint256 amountIn_ = 5 ether;(uint256 preview_,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), amountIn_, IERC20(c1));
-        assertGt(preview_, 0);
-
-        if (c0 == address(tokenA)) tokenA.mint(user, amountIn_);
-        else tokenB.mint(user, amountIn_);
-
-        uint256 c1Before_ = IERC20(c1).balanceOf(user);
-        uint256 claim0Before_ = dual.claimSupplyCurrency0();
-        uint256 claim1Before_ = dual.claimSupplyCurrency1();
-
-        vm.startPrank(user);
-        IERC20(c0).approve(hook, amountIn_);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(c0), amountIn_, IERC20(c1), 0, user, false, block.timestamp + 1
-        );
-        vm.stopPrank();
-
-        assertEq(out_, preview_, "A1: out == preview (donation not credited)");
-        assertEq(IERC20(c1).balanceOf(user) - c1Before_, preview_, "A1: user out matches preview");
-        assertEq(IERC20(c0).balanceOf(hook), donated_, "A1: donation idle remains");
-        // SE books may grow via honest path but donation must not free-spend without transfer
-        assertGe(dual.claimSupplyCurrency0() + dual.claimSupplyCurrency1(), claim0Before_ + claim1Before_);
+        uint256 donated = 20 ether;
+        uint256 amountIn = 5 ether;
+        SimpleMintableERC20(c0).mint(address(this), donated);
+        SimpleMintableERC20(c0).mint(user, amountIn);
+        vm.prank(user);
+        IERC20(c0).approve(hook, amountIn);
+        uint256 checkpoint = vm.snapshotState();
+        vm.prank(user);
+        (uint256 controlOut,) = IStandardExchangeIn(hook).exchangeIn(
+            IERC20(c0), amountIn, IERC20(c1), 0, user, false, block.timestamp + 1);
+        uint256[6] memory control;
+        control[0] = dual.claimSupplyCurrency0();
+        control[1] = dual.claimSupplyCurrency1();
+        control[2] = IERC20(c0).balanceOf(hook);
+        control[3] = IERC20(c1).balanceOf(hook);
+        control[4] = IERC20(dual.standardExchange0()).balanceOf(hook);
+        control[5] = IERC20(dual.standardExchange1()).balanceOf(hook);
+        assertTrue(vm.revertToState(checkpoint));
+        uint256 localBefore = IERC20(c0).balanceOf(hook);
+        IERC20(c0).transfer(hook, donated);
+        assertEq(IERC20(c0).balanceOf(hook), localBefore + donated, "donation is additional unbooked custody");
+        uint256 userBefore = IERC20(c1).balanceOf(user);
+        vm.prank(user);
+        (uint256 actualOut,) = IStandardExchangeIn(hook).exchangeIn(
+            IERC20(c0), amountIn, IERC20(c1), 0, user, false, block.timestamp + 1);
+        assertGt(actualOut, 0);
+        assertEq(actualOut, controlOut, "donation buys no additional output");
+        assertEq(IERC20(c1).balanceOf(user) - userBefore, controlOut);
+        assertEq(dual.claimSupplyCurrency0(), control[0]);
+        assertEq(dual.claimSupplyCurrency1(), control[1]);
+        assertEq(IERC20(c0).balanceOf(hook), control[2] + donated);
+        assertEq(IERC20(c1).balanceOf(hook), control[3]);
+        assertEq(IERC20(dual.standardExchange0()).balanceOf(hook), control[4]);
+        assertEq(IERC20(dual.standardExchange1()).balanceOf(hook), control[5]);
     }
 
     /// @notice A2: donate SE shares — does not mint free LP to donor; victim LP unchanged.
@@ -129,12 +138,17 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         vm.startPrank(alice);
         hostile.approve(hHook, type(uint256).max);
         other.approve(hHook, type(uint256).max);
-        // Seed live book while disarmed
-        uint256 a0 = h.currency0() == address(hostile) ? 100 ether : 100 ether;
-        uint256 a1 = h.currency1() == address(hostile) ? 100 ether : 100 ether;
-        a0 = 100 ether;
-        a1 = 100 ether;
-        h.deposit(a0, a1, alice, 0, block.timestamp + 1);
+        hostile.approve(seH, 100 ether);
+        other.approve(seO, 100 ether);
+        (uint256 sharesH,) = IStandardExchangeIn(seH).exchangeIn(
+            IERC20(address(hostile)), 100 ether, IERC20(seH), 1, alice, false, block.timestamp);
+        (uint256 sharesO,) = IStandardExchangeIn(seO).exchangeIn(
+            IERC20(address(other)), 100 ether, IERC20(seO), 1, alice, false, block.timestamp);
+        IERC20(seH).approve(hHook, sharesH);
+        IERC20(seO).approve(hHook, sharesO);
+        bool hostileFirst = h.currency0() == address(hostile);
+        h.depositFlexible(hostileFirst ? sharesH : sharesO, true,
+            hostileFirst ? sharesO : sharesH, true, alice, 1, block.timestamp + 1);
         vm.stopPrank();
         assertGt(IERC20(hHook).balanceOf(alice), 0, "seed LP");
 
@@ -146,6 +160,8 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
 
         assertGe(hostile.reentryAttempts(), 1, "C1: nested reentry attempted");
         assertFalse(hostile.nestedSucceeded(), "C1: nested deposit must not succeed while locked");
+        assertFalse(hostile.nestedQuerySucceeded(), "no usable partial-book quote during mutation");
+        assertEq(hostile.nestedQueryError(), bytes4(keccak256("Reentrancy()")));
         // Either outer completed once or fully reverted — no double mint from nested path
         assertLe(IERC20(hHook).balanceOf(alice), lpBefore + type(uint128).max / 2, "sanity");
     }
@@ -454,6 +470,8 @@ contract HostileDualToken is SimpleMintableERC20 {
     address public reenterCaller;
     uint256 public reentryAttempts;
     bool public nestedSucceeded;
+    bool public nestedQuerySucceeded;
+    bytes4 public nestedQueryError;
     bool public armed;
 
     constructor() SimpleMintableERC20("HostileDual", "hDUAL") {}
@@ -472,6 +490,10 @@ contract HostileDualToken is SimpleMintableERC20 {
             unchecked {
                 reentryAttempts += 1;
             }
+            (bool queryOk, bytes memory queryResult) = targetHook.staticcall(
+                abi.encodeWithSelector(IDualHook.previewDeposit.selector, uint256(1 ether), uint256(1 ether)));
+            nestedQuerySucceeded = queryOk;
+            if (!queryOk) nestedQueryError = bytes4(queryResult);
             IDualHook h = IDualHook(targetHook);
             allowance[reenterCaller][targetHook] = type(uint256).max;
             try h.deposit(1 ether, 1 ether, reenterCaller, 0, block.timestamp + 1) {

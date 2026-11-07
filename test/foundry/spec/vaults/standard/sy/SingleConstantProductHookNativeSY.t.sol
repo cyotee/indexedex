@@ -11,6 +11,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
@@ -54,25 +55,32 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
         _enableProtocolFee(0.05e18);
         uint256 before_ = sy_.exchangeRate();
         uint256 shares_ = sy_.balanceOf(user);
+        uint256 supply_ = sy_.totalSupply();
+        uint256 feeBeforeYield_ = sy_.balanceOf(_feeTo());
         vm.startPrank(user);
         pairToken.approve(address(pairProtocolVault), 20 ether);
         pairProtocolVault.simulateYield(20 ether);
         vm.stopPrank();
-        uint256 root_ = Math.sqrt(single.reserveCurrency0() * single.reserveCurrency1());
-        uint256 oldRoot_ = Math.sqrt(single.kLast());
-        // At the configured 5% fee, protocol LP = supply * growth / (19 * current root + old root).
-        uint256 feeLp_ = sy_.totalSupply() * (root_ - oldRoot_) / (19 * root_ + oldRoot_);
-        uint256 expected_ = Math.mulDiv(root_, 1e18, sy_.totalSupply() + feeLp_);
+        uint256 pairBacking_ = pairToken.balanceOf(hook) + Math.mulDiv(IERC20(se).balanceOf(hook),
+            IRateProvider(single.rateProvider(address(pairToken))).getRate(), 1e18);
+        uint256 root_ = Math.sqrt(rawToken.balanceOf(hook) * pairBacking_);
+        uint256 expected_ = Math.mulDiv(root_, 1e18, sy_.totalSupply());
         assertEq(sy_.exchangeRate(), expected_);
         assertGt(expected_, before_);
         assertEq(sy_.balanceOf(user), shares_);
+        assertEq(sy_.totalSupply(), supply_, "passive yield does not mint LP");
+        assertEq(sy_.balanceOf(_feeTo()), feeBeforeYield_, "passive yield is not a mint fee");
         address feeTo_ = _feeTo();
         uint256 feeBefore_ = sy_.balanceOf(feeTo_);
-        _depositBoth(1 ether, 1 ether);
-        assertEq(sy_.balanceOf(feeTo_) - feeBefore_, feeLp_, "quoted fee dilution is actually minted by the next liquidity operation");
+        uint256 supplyBefore_ = sy_.totalSupply();
+        uint256 net_ = _depositBoth(1 ether, 1 ether);
+        uint256 gross_ = sy_.totalSupply() - supplyBefore_;
+        assertGt(net_, 0, "complete caller-funded basket remains feasible after yield");
+        assertEq(sy_.balanceOf(feeTo_) - feeBefore_, gross_ * 0.05e18 / 1e18);
+        assertEq(net_ + sy_.balanceOf(feeTo_) - feeBefore_, gross_, "mint fee is split, not growth dilution");
     }
 
-    function test_hookSYBothBookDirectionsUseSameStandardLiquidityRoutes() public noSelfCalls(hook) {
+    function test_hookSYPaidSingleInputsMintAndRedeem() public noSelfCalls(hook) {
         vm.startPrank(user);
         pairToken.approve(se, 20 ether);IStandardExchangeIn(se).exchangeIn(pairToken, 20 ether, IERC20(se), 0, user, false, block.timestamp);
         IERC20(se).approve(hook, type(uint256).max);
@@ -80,14 +88,21 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
         IERC20[3] memory tokens_ = [IERC20(address(rawToken)), IERC20(address(pairToken)), IERC20(se)];
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             uint256 expected_ = sy_.previewDeposit(address(tokens_[i_]), 5 ether);
-            assertGt(expected_, 0);
+            assertGt(expected_, 0, "paid preparation funds the complete basket");
             (uint256 previewAmountOut1,) = IStandardExchangeIn(hook).previewExchangeIn(tokens_[i_], 5 ether, IERC20(hook));
             assertEq(previewAmountOut1, expected_);
+            uint256 lpBefore_ = sy_.balanceOf(user);
+            uint256 inputBefore_ = tokens_[i_].balanceOf(user);
             vm.prank(user);
             uint256 minted_ = sy_.deposit(user, address(tokens_[i_]), 5 ether, expected_);
             assertEq(minted_, expected_);
+            assertEq(sy_.balanceOf(user) - lpBefore_, minted_);
+            uint256 spent_ = inputBefore_ - tokens_[i_].balanceOf(user);
+            assertGt(spent_, 0);
+            assertLe(spent_, 5 ether);
             address out_ = address(tokens_[i_ == 0 ? 1 : 0]);
             uint256 quoted_ = sy_.previewRedeem(out_, minted_);
+            assertGt(quoted_, 0, "real SY redemption remains feasible");
             uint256 before_ = IERC20(out_).balanceOf(user);
             vm.prank(user);
             uint256 received_ = sy_.redeem(user, minted_, out_, quoted_, false);
@@ -200,13 +215,23 @@ contract SingleConstantProductHookRestrictedSYTest is TestBase_UniswapV4SingleSt
         rawToken.mint(outsider_, 5 ether);
         vm.startPrank(outsider_);
         rawToken.approve(hook, 5 ether);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, outsider_));
         IStandardizedYield(hook).deposit(outsider_, address(rawToken), 5 ether, 0);
         vm.stopPrank();
         assertEq(rawToken.balanceOf(outsider_), 5 ether);
         assertEq(IERC20(hook).balanceOf(outsider_), 0);
+        uint256 depositQuote_ = IStandardizedYield(hook).previewDeposit(address(rawToken), 5 ether);
+        assertGt(depositQuote_, 0);
         vm.prank(user);
-        uint256 minted_ = IStandardizedYield(hook).deposit(user, address(rawToken), 5 ether, 0);
-        assertGt(minted_, 0);
+        assertEq(IStandardizedYield(hook).deposit(user, address(rawToken), 5 ether, depositQuote_), depositQuote_);
+        uint256 lpBefore_ = IERC20(hook).balanceOf(user);
+        uint256 shares_ = lpBefore_ / 100;
+        uint256 quote_ = IStandardizedYield(hook).previewRedeem(address(rawToken), shares_);
+        uint256 before_ = rawToken.balanceOf(user);
+        vm.prank(user);
+        uint256 paid_ = IStandardizedYield(hook).redeem(user, shares_, address(rawToken), quote_, false);
+        assertGt(paid_, 0);
+        assertEq(rawToken.balanceOf(user) - before_, paid_);
+        assertEq(IERC20(hook).balanceOf(user), lpBefore_ - shares_);
     }
 }

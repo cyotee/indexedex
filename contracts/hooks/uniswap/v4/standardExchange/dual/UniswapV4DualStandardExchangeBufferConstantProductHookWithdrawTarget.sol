@@ -10,6 +10,7 @@ import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
     toBeforeSwapDelta,
@@ -63,11 +64,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
     function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
         return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
     }
-    function exchangeRate() external view override returns (uint256) {
-        uint256 supply_ = _supplyAfterProtocolMint();
+    function exchangeRate() external view override unlockedQuery returns (uint256) {
+        uint256 supply_ = ERC20Repo._totalSupply();
         return supply_ == 0 ? 1e18 : FullMath.mulDiv(Math.sqrt(_wadProduct()), 1e18, supply_);
     }
-function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
+function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view unlockedQuery returns (uint256 amountOut, uint256 amountRefunded) {
         return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
     }
 
@@ -101,7 +102,7 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
 
     function previewWithdraw(uint256 lpAmount)
         external
-        view
+        view unlockedQuery
         returns (uint256 amount0, uint256 amount1)
     {
         return _previewWithdraw(lpAmount);
@@ -110,7 +111,7 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
 
     function previewWithdrawFlexible(uint256 lpAmount, bool receiveSeShare0, bool receiveSeShare1)
         external
-        view
+        view unlockedQuery
         returns (uint256 amount0, uint256 amount1)
     {
         return _previewWithdrawFlexible(lpAmount, receiveSeShare0, receiveSeShare1);
@@ -130,7 +131,7 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
         amounts[1] = a1;
     }
 
-    function previewExitProportional(uint256 shares) external view returns (uint256[] memory amounts) {
+    function previewExitProportional(uint256 shares) external view unlockedQuery returns (uint256[] memory amounts) {
         (uint256 a0, uint256 a1) = _previewWithdraw(shares);
         amounts = new uint256[](2);
         amounts[0] = a0;
@@ -149,7 +150,7 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
 
     function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
         external
-        view
+        view unlockedQuery
         returns (uint256 amountOut)
     {
         return _previewLiquidityExit(tokenOut, sharesIn);
@@ -172,7 +173,7 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
 
     function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
         external
-        view
+        view unlockedQuery
         returns (uint256)
     {
         tokenOut;
@@ -181,22 +182,17 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
     }
 
     /// @dev Dual has no DETF self-leg: proportional tokenOut only, no residual swap (H2).
-    function previewBurnToToken(uint256 lpAmount, address tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
-    {
+    function previewBurnToToken(uint256 lpAmount, address tokenOut) external view unlockedQuery returns (uint256 amountOut) {
         if (lpAmount == 0 || !_isLive()) return 0;
         UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
         Repo.Layout storage l = Repo._layout();
-        (uint256 a0, uint256 a1) = _previewWithdraw(lpAmount);
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
-        }
-        if (tokenOut == l.currency0) return a0;
-        if (tokenOut == l.currency1) return a1;
-        return 0;
+        bool asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        address pair = asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
+        // This selector is a proportional leg quote, not a cross-leg single-token exit.
+        (uint256 a0, uint256 a1) = _previewWithdrawFlexible(lpAmount,
+            asShare && pair == l.currency0, asShare && pair == l.currency1);
+        return pair == l.currency0 ? a0 : a1;
     }
 
     function _exitSingleAsset(address tokenOut, uint256 sharesIn, address to, uint256 deadline)

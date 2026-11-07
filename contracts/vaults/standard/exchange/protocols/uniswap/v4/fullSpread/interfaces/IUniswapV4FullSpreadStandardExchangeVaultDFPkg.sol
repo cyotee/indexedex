@@ -41,8 +41,6 @@ interface IUniswapV4FullSpreadStandardExchangeVaultDFPkg is IDiamondFactoryPacka
 
     struct PkgArgs {
         PoolKey poolKey;
-        string name;
-        string symbol;
     }
 
     error InvalidComponent();

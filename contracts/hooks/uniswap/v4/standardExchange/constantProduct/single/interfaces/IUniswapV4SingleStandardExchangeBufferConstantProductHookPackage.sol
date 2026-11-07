@@ -24,6 +24,7 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
     error InvalidDecimals();
     /// @notice D60: a buffered pair leg (`pairToken != standardExchange`) needs a rate provider.
     error RateProviderRequired();
+    error TokenNotInVaultTokens();
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;

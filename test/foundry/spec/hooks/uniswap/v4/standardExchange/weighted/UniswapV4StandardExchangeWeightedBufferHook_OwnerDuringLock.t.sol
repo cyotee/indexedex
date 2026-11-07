@@ -91,8 +91,12 @@ contract UniswapV4StandardExchangeWeightedBufferHook_OwnerDuringLock_Test is
         assertEq(abi.decode(ret, (uint256)), pred);
     }
 
-    function test_D89_ownerDepositSingle_atMin_lpOutGt0() public {
+    function test_D89_ownerAtMinCanFundSingleLegJoin() public {
         _ownerSeedBook();
+        address recipient = weighted.feeTo();
+        uint256 protocolLp = IERC20(hook).balanceOf(recipient);
+        vm.prank(recipient);
+        IERC20(hook).transfer(owner, protocolLp);
         uint256 lp = IERC20(hook).balanceOf(owner);
         uint256[] memory mins = new uint256[](2);
         vm.prank(owner);
@@ -108,17 +112,26 @@ contract UniswapV4StandardExchangeWeightedBufferHook_OwnerDuringLock_Test is
 
         assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
+        uint256 beforeLp = IERC20(hook).balanceOf(owner);
+        uint256 quote = weighted.previewDepositSingle(address(token1), joinAmt);
+        assertGt(quote, 0);
         vm.prank(owner);
-        uint256 lpOut = weighted.depositSingle(address(token1), joinAmt, owner, 0, block.timestamp + 1 days);
-        assertGt(lpOut, 0, "owner MIN depositSingle lpOut > 0");
+        uint256 singleMinted = weighted.depositSingle(address(token1), joinAmt, owner, quote, block.timestamp + 1 days);
+        assertEq(singleMinted, quote);
+        assertEq(IERC20(hook).balanceOf(owner) - beforeLp, singleMinted);
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000, "locked floor is preserved");
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 1 ether; amounts[1] = 1 ether;
+        vm.prank(owner);
+        (uint256 lpOut,) = weighted.joinProportional(amounts, owner, 1, block.timestamp + 1 days);
+        assertGt(lpOut, 0, "owner can supply a complete basket at the locked floor");
     }
 
     function _ownerSeedBook() internal {
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 500 ether;
         amounts[1] = 500 ether;
-        vm.prank(owner);
-        (uint256 shares,) = weighted.joinProportional(amounts, owner, 0, block.timestamp + 1 days);
+        uint256 shares = _seedAmounts(owner, amounts);
         assertGt(shares, 0);
     }
 

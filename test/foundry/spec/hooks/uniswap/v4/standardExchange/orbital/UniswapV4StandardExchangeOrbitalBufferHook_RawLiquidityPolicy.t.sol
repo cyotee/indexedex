@@ -54,24 +54,34 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RawLiquidityPolicyTest is
         assertGt(expected, 0, "reference mint");
         (uint256 preview,,,) = orbital.previewAddLiquidity(face, face, face);
         uint256 b0 = _rawBook(0);
+        uint256 localBefore = orbital.rawReserve(0);
         uint256 b1 = _rawBook(1);
         uint256 b2 = _rawBook(2);
         (uint256 minted, uint256 u0, uint256 u1, uint256 u2) = _addLiquidity(face, face, face);
         assertEq(minted, preview, "preview==exec");
         assertEq(minted, expected, "raw reference");
-        _assertBacks(supply, minted, b0, b1, b2);
+        uint256 gross = IERC20(hook).totalSupply() - supply;
+        _assertBacks(supply, gross, b0, b1, b2);
+        assertEq(orbital.rawReserve(0) - localBefore, (gross * localBefore + supply - 1) / supply, "independent local ceil");
         assertLe(u0, face);
         assertLe(u1, face);
         assertLe(u2, face);
-        assertEq(orbital.effectiveReserve(0), orbital.seBalance(0) * 1.5e18 / 1e18, "rated view preserved");
+        assertEq(orbital.effectiveReserve(0), orbital.rawReserve(0) + orbital.seBalance(0) * 1.5e18 / 1e18, "rated view preserved");
     }
 
     function _expectedMint(uint256 supply, uint256 face) internal view returns (uint256) {
-        return Ref.min3(
-            Ref.floorShares(supply, _faceContribution(0, face), _rawBook(0)),
-            Ref.floorShares(supply, _faceContribution(1, face), _rawBook(1)),
-            Ref.floorShares(supply, _faceContribution(2, face), _rawBook(2))
-        );
+        uint256 held = orbital.seBalance(0);
+        uint256 local = orbital.rawReserve(0);
+        (uint256 full,) = IStandardExchangeIn(se0).previewExchangeIn(IERC20(address(token0)), face, IERC20(se0));
+        uint256 localNeeded = (full * local + held - 1) / held;
+        uint256 deposited = face * face / (face + localNeeded);
+        (uint256 acquired, uint256 refunded) = IStandardExchangeIn(se0).previewExchangeIn(IERC20(address(token0)), deposited, IERC20(se0));
+        uint256 availableLocal = face - deposited + refunded;
+        uint256 gross = Ref.min3(supply * acquired / held, supply * availableLocal / local,
+            Ref.min3(supply * face / _rawBook(1), supply * face / _rawBook(2), type(uint256).max));
+        uint256 fee = orbital.usageFee();
+        if (orbital.feeTo() != address(0) && fee != 0 && fee < 1e18) return gross - gross * fee / 1e18;
+        return gross;
     }
 
     function _assertBacks(uint256 supply, uint256 minted, uint256 b0, uint256 b1, uint256 b2) internal view {
@@ -80,20 +90,27 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RawLiquidityPolicyTest is
         assertTrue(Ref.backs(_delivered(2, b2), supply, minted, b2), "leg2 backs");
     }
 
-    function test_zap_previewEqualsExec() public {
+    function test_zap_paidPreparationPreservesNativeBookCustody() public {
         _seedThreeLeg(200 ether);
         uint256 amount = 30 ether;
         uint256 preview = orbital.previewDepositSingle(address(token1), amount);
         assertGt(preview, 0);
         uint256 beforeLp = IERC20(hook).balanceOf(user);
+        uint256 beforeInput = token1.balanceOf(user);
         vm.prank(user);
-        uint256 minted = orbital.depositSingle(address(token1), amount, user, 0, block.timestamp + 1 hours, "");
-        assertEq(minted, preview, "zap preview==exec");
-        assertEq(IERC20(hook).balanceOf(user), beforeLp + minted);
+        uint256 minted = orbital.depositSingle(address(token1), amount, user, preview, block.timestamp + 1 hours, "");
+        assertEq(minted, preview);
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
+        assertGt(beforeInput - token1.balanceOf(user), 0);
+        assertLe(beforeInput - token1.balanceOf(user), amount);
+        assertEq(orbital.seBalance(0), IERC20(se0).balanceOf(hook));
+        assertEq(orbital.rawReserve(0), token0.balanceOf(hook));
+        assertEq(orbital.rawReserve(1), token1.balanceOf(hook));
+        assertEq(orbital.rawReserve(2), token2.balanceOf(hook));
     }
 
     function _rawBook(uint8 i) internal view returns (uint256) {
-        return orbital.seBalance(i) + orbital.rawReserve(i);
+        return orbital.isBuffered(i) ? orbital.seBalance(i) : orbital.rawReserve(i);
     }
 
     function _delivered(uint8 i, uint256 before) internal view returns (uint256) {

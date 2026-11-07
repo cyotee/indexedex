@@ -307,6 +307,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
             pairDecimals,
             invDecimals
         );
+        Repo._layout().vaultRegistry = address(VAULT_REGISTRY_DEPLOYMENT);
     }
 
     function _lpName(address[] memory toks) private pure returns (string memory) {
@@ -370,20 +371,13 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
             }
 
             uint8 pd = a.tokenDecimals[i];
-            bool wrapperInv = a.standardExchanges[i] != address(0)
-                && UniswapV4SeBufferHookLegLib.isWrapperShareInventory(a.tokens[i], a.standardExchanges[i]);
-            if (wrapperInv) {
-                if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(pd)) revert InvalidDecimals();
-                if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(a.seDecimals[i])) {
-                    revert InvalidDecimals();
-                }
-            } else if (pd < 6 || pd > 18) {
+            if (pd < 6 || pd > 18) {
                 revert InvalidDecimals();
             }
             if (a.tokens[i].code.length != 0 && IERC20Metadata(a.tokens[i]).decimals() != pd) revert InvalidDecimals();
             if (a.standardExchanges[i] == address(0)) {
                 if (a.seDecimals[i] != 0) revert InvalidDecimals();
-            } else if (!wrapperInv) {
+            } else {
                 // D65: SE share decimals may be 6..36 (the rated scale is 10^(36 - decimals)); the live
                 // metadata cross-check below binds the declared value to the SE.
                 uint8 sd = a.seDecimals[i];
@@ -391,6 +385,10 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
             }
 
             if (a.standardExchanges[i] != address(0)) {
+                // One physical token cannot back two independently allocated components.
+                for (uint256 j; j < n; ++j) {
+                    if (a.standardExchanges[i] == a.tokens[j]) revert InvalidSE();
+                }
                 unchecked {
                     ++seCount;
                 }
@@ -404,27 +402,13 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
                 }
                 _requireSeOwnsToken(a.standardExchanges[i], a.tokens[i]);
                 if (IERC20Metadata(a.standardExchanges[i]).decimals() != a.seDecimals[i]) revert InvalidDecimals();
-                for (uint256 j; j < n; ++j) {
-                    if (
-                        a.standardExchanges[i] == a.tokens[j]
-                            && !UniswapV4SeBufferHookLegLib.isWrapperShareInventory(
-                                a.tokens[j], a.standardExchanges[i]
-                            )
-                    ) revert InvalidSE();
-                }
             }
         }
         if (seCount == 0) revert ZeroStandardExchangeRequired();
     }
 
     function _requireSeOwnsToken(address se, address token) private view {
-        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
-        if (se == token || se.code.length == 0) revert InvalidSE();
-        address[] memory toks = IBasicVault(se).vaultTokens();
-        for (uint256 i; i < toks.length; ++i) {
-            if (toks[i] == token) return;
-        }
-        revert InvalidSE();
+        if (!UniswapV4SeBufferHookLegLib.pairInVaultTokens(se, token)) revert InvalidSE();
     }
 
 }

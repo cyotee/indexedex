@@ -5,7 +5,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IStandardExchangeMultiAssetLiquidity
 } from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -27,7 +27,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](9);
+        funcs = new bytes4[](10);
         funcs[0] = IUniswapV4SeBufferHook.joinProportional.selector;
         funcs[1] = IStandardExchangeMultiAssetLiquidity.joinUnbalanced.selector;
         funcs[2] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
@@ -37,6 +37,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet is
         funcs[6] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinSingleAssetExactInFlexible.selector;
         funcs[7] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.depositSingleFlexible.selector;
         funcs[8] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        funcs[9] = IUniswapV4SeBufferHookNativeLiquidity.joinNativeComponents.selector;
     }
 
     function facetMetadata()

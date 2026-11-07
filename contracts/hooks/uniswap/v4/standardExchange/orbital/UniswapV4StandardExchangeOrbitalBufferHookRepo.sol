@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {
     UniswapV4SeBufferHookLegLib
 } from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
@@ -48,7 +49,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         int24 tickSpacing;
         uint160 sqrtPriceX96;
         uint256 R;
-        /// @dev Intentional raw face inventory for raw legs only (buffered legs stay 0).
+        /// @dev Booked raw tokens or local paired tokens, never ambient custody.
         mapping(address => uint256) reserves;
         uint256 L_SQUARED;
         uint256 kLast;
@@ -57,6 +58,9 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
         UniswapV4SeBufferHookLegLib.Layout legs;
+        /// @dev Appended component book; the retired fee slots above stay reserved.
+        mapping(address => uint256) seShares;
+        address vaultRegistry;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -64,6 +68,14 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         assembly {
             l.slot := slot
         }
+    }
+
+    /// @dev The package's deployment registry is the authority, not a caller-selected oracle.
+    function _isDisabled(address se) internal view returns (bool) {
+        if (se == address(0)) return false;
+        IVaultRegistryDisableQuery registry = IVaultRegistryDisableQuery(_layout().vaultRegistry);
+        require(registry.packageOfVault(se) != address(0), "unregistered SE");
+        return registry.isDisabled(se);
     }
 
     /// @dev Packed init bindings (avoids stack-too-deep under legacy codegen without viaIR).

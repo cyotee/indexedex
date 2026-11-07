@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     IStandardExchangeMultiAssetLiquidity
 } from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
@@ -15,6 +16,51 @@ import {
  * @notice B6 SE-share LP deposit/withdraw + firm pair join/exit matrix smoke.
  */
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_B6Firm is TestBase {
+    function test_B6_fourBufferedLegs_allOutputMasksPayOnlyRequestedTokens() public {
+        _deployHookWithArgs(_argsSeCount(4));
+        _fundAndApprove(token0);
+        _fundAndApprove(token1);
+        _fundAndApprove(token2);
+        _fundAndApprove(token3);
+        uint256 minted = _firstMintEqual(500 ether);
+        uint256 burn = minted / 8;
+        address[] memory pairs = quad.tokens();
+        for (uint256 mask; mask < 16; ++mask) {
+            uint256 checkpoint = vm.snapshotState();
+            bool[] memory flags = new bool[](4);
+            uint256[4] memory pairBefore;
+            uint256[4] memory shareBefore;
+            for (uint256 i; i < 4; ++i) {
+                flags[i] = (mask & (1 << i)) != 0;
+                pairBefore[i] = IERC20(pairs[i]).balanceOf(user);
+                shareBefore[i] = IERC20(quad.standardExchange(i)).balanceOf(user);
+            }
+            uint256[] memory predicted = quad.previewExitProportionalFlexible(burn, flags);
+            vm.prank(user);
+            uint256[] memory actual = quad.exitProportionalFlexible(burn, user, flags, predicted, block.timestamp);
+            assertEq(actual, predicted);
+            for (uint256 i; i < 4; ++i) {
+                assertGt(actual[i], 0);
+                assertEq(IERC20(pairs[i]).balanceOf(user) - pairBefore[i], flags[i] ? 0 : actual[i]);
+                assertEq(IERC20(quad.standardExchange(i)).balanceOf(user) - shareBefore[i], flags[i] ? actual[i] : 0);
+            }
+            assertTrue(vm.revertToState(checkpoint));
+        }
+    }
+
+    function test_B6_zeroRefundSwapDoesNotInventLocalCredit() public {
+        _firstMintEqual(500 ether);
+        uint256 localBefore = token0.balanceOf(hook);
+        uint256 sharesBefore = quad.seBalance(0);
+        (uint256 minted, uint256 refund) = IStandardExchangeIn(se0).previewExchangeIn(
+            IERC20(address(token0)), 1 ether, IERC20(se0)
+        );
+        assertEq(refund, 0);
+        _swapExactIn(address(token0), address(token1), 1 ether);
+        assertEq(token0.balanceOf(hook), localBefore);
+        assertEq(quad.seBalance(0), sharesBefore + minted);
+    }
+
     function test_B6_joinProportionalFlexible_seShareFirstMint_previewEqualsExec() public {
         uint256 seAmt = _userAcquireSeShares(se0, token0, 100 ether);
         uint256[] memory amounts = new uint256[](4);
@@ -130,25 +176,28 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_B6Firm is TestBase {
         uint256 seAmt = _userAcquireSeShares(se0, token0, 15 ether);
 
         uint256 pred = quad.previewDepositSingleFlexible(address(token0), seAmt, true);
+        assertGt(pred, 0);
         assertEq(pred, quad.previewJoinSingleAssetExactInFlexible(address(token0), seAmt, true));
 
         uint256 lpBefore = IERC20(hook).balanceOf(user);
         uint256 seBefore = IERC20(se0).balanceOf(user);
         vm.prank(user);
-        uint256 shares = quad.depositSingleFlexible(
-            address(token0), seAmt, true, user, 0, block.timestamp + 1 hours
+        uint256 added = quad.depositSingleFlexible(
+            address(token0), seAmt, true, user, pred, block.timestamp + 1 hours
         );
-        assertEq(shares, pred);
-        assertEq(IERC20(hook).balanceOf(user) - lpBefore, shares);
-        assertEq(seBefore - IERC20(se0).balanceOf(user), seAmt);
+        assertEq(added, pred);
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, added);
+        assertLt(IERC20(se0).balanceOf(user), seBefore);
         assertGt(quad.seBalance(0), 0);
     }
 
     function test_B6_withdrawSingleFlexible_paysSeShares() public {
         _firstMintEqual(100 ether);
-        // top up SE inventory via pair single join first
+        uint256[] memory amounts = new uint256[](4);
+        for (uint256 i; i < 4; ++i) amounts[i] = 20 ether;
         vm.prank(user);
-        quad.depositSingle(address(token0), 20 ether, user, 0, block.timestamp + 1 hours);
+        (uint256 added,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        assertGt(added, 0);
 
         uint256 burn = IERC20(hook).balanceOf(user) / 20;
         uint256 pred = quad.previewWithdrawSingleFlexible(address(token0), burn, true);

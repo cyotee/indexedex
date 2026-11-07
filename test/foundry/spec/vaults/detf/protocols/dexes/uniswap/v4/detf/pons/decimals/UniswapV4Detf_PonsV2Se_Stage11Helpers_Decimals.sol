@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 import {V4FundedPolicyAssertions} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol";
 import {V4FundedFeeBehavior} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol";
 import {V4FundedDonationAssertions} from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol";
@@ -142,10 +143,7 @@ abstract contract UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals is TestBase_Uni
     }
 
     function _assertNoJoinableDust() internal view {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertLe(IERC20(launchToken).balanceOf(detf), 10, "no launch on diamond");
-        assertLe(IERC20(address(ponsSe)).balanceOf(detf), 10, "no SE share on diamond");
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 
     function _fundLaunch(address to_, uint256 amount_) internal {

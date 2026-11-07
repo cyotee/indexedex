@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookInExecutionBase.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookExitQuoteBase} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookExitQuoteBase.sol";
 
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib as ClaimLib} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -40,7 +41,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         view
         returns (uint256 sharesIn)
     {
-        return _quoteExitSingleExactTokenOut(tokenOut, amountOut, _previewSupplyAfterProtocolMint());
+        return _quoteExitSingleExactTokenOut(tokenOut, amountOut, _totalSupply());
     }
 
     function exitSingleAssetExactTokenOut(
@@ -71,151 +72,92 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
     }
 
-    function _exitSingleAssetExactTokenOut(
-        address tokenOut,
-        uint256 amountOut,
-        address to,
-        uint256 sharesInMax,
-        uint256 deadline
-    ) internal returns (uint256 sharesIn) {
+    function _exitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut, address to, uint256 sharesInMax, uint256 deadline)
+        internal returns (uint256 sharesIn)
+    {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-        if (amountOut == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        uint256 protocolShares = _maybeMintProtocolFee();
+        uint256 supply = _totalSupply();
         sharesIn = _quoteExitSingleExactTokenOut(tokenOut, amountOut, _totalSupply());
         if (sharesIn > sharesInMax) revert Slippage();
-        uint8 idx = _tokenIndex(tokenOut);
-        Repo.Layout storage l = Repo._layout();
-        uint256 invOut;
-        if (l.standardExchanges[idx] == address(0)) {
-            invOut = amountOut;
-        } else {
-            invOut = IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
-                IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut
-            );
-        }
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
         _burnLp(msg.sender, sharesIn);
-        if (l.standardExchanges[idx] != address(0)) {
-            _unwrapExactTokenOut(idx, amountOut, to);
-        } else {
-            _debitRawIntentional(idx, invOut);
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
+        ClaimLib.paySingleExitExactTokenOut(_tokenIndex(tokenOut), sharesIn, supply, to, amountOut);
         _syncVaultReserves();
         emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingleExactOut(
-            msg.sender, to, tokenOut, amountOut, sharesIn, protocolShares
+            msg.sender, to, tokenOut, amountOut, sharesIn, 0
         );
     }
 
     function _quoteExitSingleExactTokenOut(address tokenOut, uint256 amountOut, uint256 supply)
-        internal
-        view
-        returns (uint256 sharesIn)
+        internal view returns (uint256 sharesIn)
     {
+        if (amountOut == 0 || supply <= Repo.MINIMUM_LIQUIDITY) revert ZeroAmount();
         uint8 idx = _tokenIndex(tokenOut);
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (feeWad >= Math.WAD) revert InvalidFeeWad();
         Repo.Layout storage l = Repo._layout();
-        uint256 invOut;
-        if (l.standardExchanges[idx] == address(0)) {
-            invOut = amountOut;
-        } else {
-            invOut = IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
-                IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut
-            );
+        if (l.standardExchanges[idx] != address(0) && IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
+            IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut) == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        uint256 low;
+        uint256 cap = supply - Repo.MINIMUM_LIQUIDITY;
+        uint256 high = supply / 100;
+        if (high == 0) high = 1;
+        if (high > cap) high = cap;
+        while (ClaimLib.previewSingleExit(idx, high, supply, false) < amountOut) {
+            low = high;
+            if (high == cap) revert Slippage();
+            high = high > cap / 2 ? cap : high * 2;
         }
-        sharesIn = Math.singleExitExactTokenOutSharesIn(
-            _invWadAll(),
-            idx,
-            Math.scaleToUp(invOut, l.invScales[idx]),
-            _amp(),
-            supply,
-            feeWad
-        );
+        while (high - low > 1) {
+            uint256 mid = low + (high - low) / 2;
+            if (ClaimLib.previewSingleExit(idx, mid, supply, false) >= amountOut) high = mid;
+            else low = mid;
+        }
+        return high;
     }
 
     /* -------------------------- proportional exit --------------------------- */
 
-    function previewBurnToToken(uint256 lpAmount, address tokenOut)
-        public
-        view
-        returns (uint256 amountOut)
-    {
+    function previewBurnToToken(uint256 lpAmount, address tokenOut) public view returns (uint256) {
         if (lpAmount == 0 || _totalSupply() == 0 || !_isLive()) return 0;
         (bool ok, uint8 idx, bool wantSe) = _tryResolveJoinToken(tokenOut);
         if (!ok) return 0;
-        uint256[4] memory invOut =
-            Math.proportionalExitAmounts(lpAmount, _nativeAll(), _previewSupplyAfterProtocolMint());
-        if (wantSe) return invOut[idx];
-        uint256[4] memory pairOut = _invToPairOutPreview(invOut);
-        return pairOut[idx];
+        ClaimLib.Basket memory allocated = ClaimLib.allocatedBasket(lpAmount, _totalSupply());
+        return ClaimLib.previewPayout(idx, allocated.shares[idx], allocated.local[idx], wantSe);
     }
 
-    function previewExitProportional(uint256 shares)
-        public
-        view
-        returns (uint256[] memory amounts)
+    function previewExitProportional(uint256 shares) public view returns (uint256[] memory amounts) {
+        return _previewComponentExit(shares, new bool[](4));
+    }
+
+    function _previewComponentExit(uint256 shares, bool[] memory flags) internal view returns (uint256[] memory amounts) {
+        _validateSeShareFlags(flags);
+        ClaimLib.Basket memory allocated = ClaimLib.allocatedBasket(shares, _totalSupply());
+        amounts = new uint256[](4);
+        for (uint8 i; i < 4; ++i) amounts[i] = ClaimLib.previewPayout(i, allocated.shares[i], allocated.local[i], flags[i]);
+    }
+
+    function _componentExit(uint256 shares, address to, bool[] memory flags, uint256[] memory minima)
+        internal returns (uint256[] memory amounts)
     {
-        uint256[4] memory natives = _nativeAll();
-        uint256[4] memory invOut =
-            Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
-        uint256[4] memory pairOut = _invToPairOutPreview(invOut);
-        amounts = Math.toDynamic(pairOut);
-    }
-
-    function exitProportional(
-        uint256 shares,
-        address to,
-        uint256[] calldata amountsMin,
-        uint256 deadline
-    ) public onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
-        _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (shares == 0) revert ZeroAmount();
-        _requireAmountsLen4(amountsMin);
-        uint256 protocolShares = _maybeMintProtocolFee();
-        Repo.Layout storage l = Repo._layout();
-        uint256[4] memory natives = _nativeAll();
-        uint256[4] memory invOut =
-            Math.proportionalExitAmounts(shares, natives, _totalSupply());
-        // Full-book floor: leave all four native > 0
-        for (uint256 i; i < Repo.N_TOKENS; ++i) {
-            if (invOut[i] >= natives[i]) revert WouldZeroReserve();
-        }
-        uint256[4] memory pairOut = _invToPairOutPreview(invOut);
-        for (uint256 i; i < Repo.N_TOKENS; ++i) {
-            if (pairOut[i] < amountsMin[i]) revert Slippage();
-        }
+        _validateSeShareFlags(flags);
+        _requireAmountsLen4(minima);
+        uint256 supply = _totalSupply();
+        if (shares >= supply) revert WouldZeroReserve();
+        ClaimLib.Basket memory allocated = ClaimLib.allocatedBasket(shares, supply);
         _burnLp(msg.sender, shares);
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (invOut[i] == 0) continue;
-            if (l.standardExchanges[i] != address(0)) {
-                _unwrapSeShares(i, invOut[i], to);
-            } else {
-                _debitRawIntentional(i, invOut[i]);
-                IERC20(l.tokens[i]).safeTransfer(to, invOut[i]);
-            }
-        }
-        // post-state full book
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
+        uint256[4] memory output = ClaimLib.payBasket(allocated, flags, to);
+        for (uint8 i; i < 4; ++i) if (output[i] < minima[i]) revert Slippage();
+        amounts = Math.toDynamic(output);
         _syncVaultReserves();
-        int256[4] memory deltas;
-        for (uint256 i; i < Repo.N_TOKENS; ++i) {
-            deltas[i] = -int256(pairOut[i]);
-        }
-        amounts = Math.toDynamic(pairOut);
-        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.Exit(
-            msg.sender, to, shares, deltas, protocolShares
-        );
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.ExitFlexible(msg.sender, to, shares, flags, amounts, 0);
+    }
+
+    function exitProportional(uint256 shares, address to, uint256[] calldata amountsMin, uint256 deadline)
+        public onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts)
+    {
+        _requireDeadline(deadline);
+        return _componentExit(shares, to, new bool[](4), amountsMin);
     }
 
     /* ----------------------- single-asset exact BPT in ---------------------- */
@@ -257,43 +199,16 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
     }
 
     function previewExitProportionalFlexible(uint256 shares, bool[] calldata receiveSeShare)
-        public
-        view
-        returns (uint256[] memory amounts)
+        public view returns (uint256[] memory amounts)
     {
-        _validateSeShareFlags(receiveSeShare);
-        uint256[4] memory natives = _nativeAll();
-        uint256[4] memory invOut =
-            Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
-        amounts = Math.toDynamic(_invToEdgeOutPreview(invOut, receiveSeShare));
+        return _previewComponentExit(shares, receiveSeShare);
     }
 
-    function exitProportionalFlexible(
-        uint256 shares,
-        address to,
-        bool[] calldata receiveSeShare,
-        uint256[] calldata amountsMin,
-        uint256 deadline
-    ) public onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
+    function exitProportionalFlexible(uint256 shares, address to, bool[] calldata receiveSeShare, uint256[] calldata amountsMin, uint256 deadline)
+        public onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts)
+    {
         _requireDeadline(deadline);
-        if (to == address(0)) revert ZeroAddress();
-        if (shares == 0) revert ZeroAmount();
-        _validateSeShareFlags(receiveSeShare);
-        _requireAmountsLen4(amountsMin);
-        uint256 protocolShares = _maybeMintProtocolFee();
-        uint256[4] memory invOut = Math.proportionalExitAmounts(shares, _nativeAll(), _totalSupply());
-        _requireExitFloors(invOut);
-        uint256[4] memory edgeOut = _invToEdgeOutPreview(invOut, receiveSeShare);
-        _requireEdgeMins(edgeOut, amountsMin);
-        _burnLp(msg.sender, shares);
-        _payExitFlexibleLegs(invOut, receiveSeShare, to);
-        _requirePostFullBook();
-        _snapshotKLastIfFeeOn();
-        _syncVaultReserves();
-        amounts = Math.toDynamic(edgeOut);
-        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.ExitFlexible(
-            msg.sender, to, shares, receiveSeShare, amounts, protocolShares
-        );
+        return _componentExit(shares, to, receiveSeShare, amountsMin);
     }
 
     function _requireExitFloors(uint256[4] memory invOut) internal view {

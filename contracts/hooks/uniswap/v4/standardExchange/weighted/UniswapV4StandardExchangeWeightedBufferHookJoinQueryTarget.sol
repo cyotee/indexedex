@@ -3,23 +3,25 @@ pragma solidity ^0.8.0;
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {UniswapV4StandardExchangeWeightedBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookRepo.sol";
 import {UniswapV4StandardExchangeWeightedBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookLiquidityLib as LiquidityLib} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol";
 
 import {UniswapV4StandardExchangeWeightedBufferHookJoinCore} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinCore.sol";
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget is UniswapV4StandardExchangeWeightedBufferHookJoinCore {
+    function previewJoinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        public view returns (uint256 netLp)
+    {
+        return LiquidityLib.previewJoinNativeComponents(localAmounts, shareAmounts);
+    }
+
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
         external view returns (uint256)
     {
         Repo.Layout storage l = Repo._layout();
         uint8 index = _tokenIndex(pairToken);
         LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(l.standardExchanges[index], pairToken, tokenIn, amountIn, address(this));
-        uint256[] memory inv = _invWadAll();
-        inv[index] = Math.scaleTo(q.heldShares, l.invScales[index]);
-        uint256 supply = _previewSupplyAfterProtocolMint(inv);
-        uint256 fee = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (fee >= Math.WAD) revert InvalidFeeWad();
-        return _singleJoinExactInSharesOwnerAware(inv, l.weights, index, Math.scaleTo(q.assets, l.invScales[index]), supply, fee);
+        return LiquidityLib.previewReceivedShares(index, q.assets, q.state);
     }
 
     function previewJoinProportional(uint256[] calldata amounts)

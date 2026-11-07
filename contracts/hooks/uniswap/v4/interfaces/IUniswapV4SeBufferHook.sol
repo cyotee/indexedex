@@ -157,3 +157,19 @@ interface IUniswapV4SeBufferHookClaimQuote {
 interface IUniswapV4SeBufferHookClaimExitQuote {
     function previewClaimExit(uint256 lpAmount) external view returns (uint256 detfValue);
 }
+
+/// @notice Live liquidity funded by explicit native components in pool-token order.
+/// @dev Paid in-kind preparation precedes component-proportional acceptance.
+///      Unaccepted components are refunded to the caller; this is not a genesis route.
+interface IUniswapV4SeBufferHookNativeLiquidity {
+    function previewJoinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        external view returns (uint256 netLp);
+
+    function joinNativeComponents(
+        uint256[] calldata localAmounts,
+        uint256[] calldata shareAmounts,
+        address to,
+        uint256 minLp,
+        uint256 deadline
+    ) external returns (uint256 netLp);
+}

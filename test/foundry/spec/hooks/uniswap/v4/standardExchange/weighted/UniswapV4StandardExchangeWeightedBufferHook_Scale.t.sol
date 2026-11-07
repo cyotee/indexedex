@@ -29,6 +29,22 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
 {
     LaunchState internal custodyComponents;
 
+    function test_inKindOutputDoesNotOverpayRoundedNativeBook() public pure {
+        uint256 inventory = 100;
+        uint256 rate = 0.019e18;
+        uint256 scale = 1e30; // Six-decimal share and pair units.
+        uint256 budget = 0.0000006e18;
+        uint256 roundedBook = ScaleMath.scaleTo(ScaleMath.ratedPairUnits(inventory, rate, scale, scale), scale);
+        uint256 unsafeOutput = inventory * budget / roundedBook;
+        assertGt(ScaleMath.componentValueUp(unsafeOutput, 0, scale, scale, rate), budget);
+
+        uint256 upperBook = ScaleMath.componentValueUp(inventory, 0, scale, scale, rate);
+        assertEq(upperBook, 0.0000019e18);
+        uint256 output = inventory * budget / upperBook;
+        assertEq(output, 31);
+        assertLe(ScaleMath.componentValueUp(output, 0, scale, scale, rate), budget);
+    }
+
     function _custodyArgs(uint8 offset_) internal returns (WeightedPkg.PkgArgs memory args_, IERC4626 custody_) {
         custodyComponents.create3Factory = create3Factory;
         custodyComponents.diamondPackageFactory = diamondPackageFactory;
@@ -62,13 +78,13 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
         assertEq(weighted.invScale(0), 10 ** uint256(18 - offset_), "actual wrapper share scale");
         assertEq(weighted.nativeReserve(0), custody_.balanceOf(hook), "inventory is actual shares");
         assertEq(weighted.seClaim(0), custody_.previewRedeem(custody_.balanceOf(hook)), "claim is asset units");
-        assertApproxEqAbs(weighted.ratedBalance(0), weighted.seClaim(0), 1, "provider uses whole share units");
+        assertApproxEqAbs(weighted.ratedBalance(0), token0.balanceOf(hook) + weighted.seClaim(0), 1, "local plus whole-share rated backing");
     }
 
     function test_custody28_joinSwapAndExit() public {
         IERC4626 custody_ = _activateCustody(10);
         uint256 beforeShares_ = custody_.balanceOf(hook);
-        _swapExactIn(address(token1), address(token0), 1 ether);
+        _swapExactIn(address(token1), address(token0), 10 ether);
         assertLt(custody_.balanceOf(hook), beforeShares_, "swap redeems custody shares");
         _swapExactOut(address(token0), address(token1), 1 ether);
         assertEq(weighted.nativeReserve(0), custody_.balanceOf(hook));
@@ -134,7 +150,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
             }
             assertEq(weighted.nativeReserve(0), custody_.balanceOf(hook));
             assertEq(weighted.seClaim(0), custody_.previewRedeem(custody_.balanceOf(hook)));
-            assertApproxEqRel(weighted.ratedBalance(0), weighted.seClaim(0), 1e12);
+            assertApproxEqRel(weighted.ratedBalance(0), token0.balanceOf(hook) + weighted.seClaim(0), 1e12);
             assertEq(token0.allowance(hook, address(custody_)), 0);
             assertGt(weighted.nativeReserve(0), 0);
             assertGt(weighted.nativeReserve(1), 0);
@@ -253,15 +269,14 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
         uint256[] memory amounts = new uint256[](2);
         amounts[i6] = 100_000e6;
         amounts[i18] = 100 ether;
-        vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedAmounts(user, amounts);
         assertGt(shares, 0, "first mint mixed decimals");
         assertTrue(weighted.isFullBook());
         assertGt(weighted.nativeReserve(i6), 0);
         assertGt(weighted.nativeReserve(i18), 0);
     }
 
-    function test_liveSeBook_donationDilutes() public {
+    function test_bookedSeInventory_excludesAmbientDonation() public {
         _firstMintEqual(50 ether);
         uint256 bookBefore = weighted.nativeReserve(0);
         uint256 seBalBefore = weighted.seBalance(0);
@@ -279,8 +294,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
 
         uint256 bookAfter = weighted.nativeReserve(0);
         assertEq(bookAfter, weighted.seBalance(0), "book == live SE bal");
-        assertEq(bookAfter, seBalBefore + seOut, "donation increased live book");
-        assertGt(bookAfter, bookBefore, "dilution: book rose without LP mint");
+        assertEq(IERC20(se0).balanceOf(hook), seBalBefore + seOut, "ambient transfer is held separately");
+        assertEq(bookAfter, bookBefore, "ambient transfer does not change booked ownership");
 
         uint256 bookMid = weighted.nativeReserve(0);
         token0.mint(hook, 5);

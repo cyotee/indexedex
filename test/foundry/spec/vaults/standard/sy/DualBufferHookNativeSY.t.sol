@@ -5,6 +5,8 @@ import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {Math as NativeLiquidityMath} from "@crane/contracts/utils/Math.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
@@ -31,11 +33,13 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
     function test_dualSingleAssetExitPreservesPreexistingRawInventory() public {
         tokenA.mint(hook, 7 ether);
         tokenB.mint(hook, 11 ether);
-        uint256 beforeA_ = tokenA.balanceOf(hook);
-        uint256 beforeB_ = tokenB.balanceOf(hook);
+        uint256 beforeA_ = _unbookedRaw(address(tokenA), seA);
+        uint256 beforeB_ = _unbookedRaw(address(tokenB), seB);
+        assertEq(beforeA_, 7 ether);
+        assertEq(beforeB_, 11 ether);
         _assertRawExit(address(tokenA));
-        assertEq(tokenA.balanceOf(hook), beforeA_, "exit consumed unrelated tokenA");
-        assertEq(tokenB.balanceOf(hook), beforeB_, "exit consumed unrelated tokenB");
+        assertEq(_unbookedRaw(address(tokenA), seA), beforeA_, "unbooked tokenA donation survives");
+        assertEq(_unbookedRaw(address(tokenB), seB), beforeB_, "unbooked tokenB donation survives");
     }
 
     function test_dualSingleAssetExitDeliversSelectedSeShareToken() public {
@@ -67,7 +71,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
     }
 
-    function test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout() public noSelfCalls(hook) {
+    function test_dualNativeSYPaidSingleInputsMintAndEveryOutputRedeems() public noSelfCalls(hook) {
         IStandardizedYield sy = IStandardizedYield(hook);
         vm.startPrank(user);
         tokenA.approve(seA, 20 ether);
@@ -76,20 +80,40 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         for (uint256 i; i < inputs.length; ++i) {
             IERC20(inputs[i]).approve(hook, 2 ether);
             uint256 shares = sy.previewDeposit(inputs[i], 2 ether);
-            assertGt(shares, 0);
-            // F9 (2026-09-23, D62): the preview sizes the zap off the same rated book execution uses, so
-            // preview == execution to the wei.
-            assertEq(sy.deposit(user, inputs[i], 2 ether, shares), shares, "SY deposit preview == execution");
+            assertGt(shares, 0, "paid preparation funds both legs");
+            (uint256 sePreview,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(inputs[i]), 2 ether, IERC20(hook));
+            assertEq(sePreview, shares, "SY and SE share the component quote");
+            uint256 lpBefore = sy.balanceOf(user);
+            uint256 inputBefore = IERC20(inputs[i]).balanceOf(user);
+            uint256 minted = sy.deposit(user, inputs[i], 2 ether, shares);
+            assertEq(minted, shares);
+            assertEq(sy.balanceOf(user) - lpBefore, minted);
+            uint256 spent = inputBefore - IERC20(inputs[i]).balanceOf(user);
+            assertGt(spent, 0);
+            assertLe(spent, 2 ether);
             address output = inputs[(i + 1) % inputs.length];
             uint256 quoted = sy.previewRedeem(output, shares);
             uint256 before = IERC20(output).balanceOf(user);
-            // Dual single-asset exit preview is the proportional leg. Execute may
-            // swap the other-leg residual into `output`, so payout is >= preview.
+            assertGt(quoted, 0, "real SY redemption remains feasible");
             uint256 paid = sy.redeem(user, shares, output, quoted, false);
             assertGe(paid, quoted, "SY redeem preview");
             assertEq(IERC20(output).balanceOf(user) - before, paid, "actual payout token");
         }
         vm.stopPrank();
+    }
+
+    function test_dualCompleteComponentJoinStillMintsPositiveLP() public {
+        uint256 supply = IERC20(hook).totalSupply();
+        uint256 balance = IERC20(hook).balanceOf(user);
+        address feeTo = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+        uint256 feeBefore = IERC20(hook).balanceOf(feeTo);
+        (uint256 preview,,) = dual.previewDeposit(10 ether, 10 ether);
+        assertGt(preview, 0);
+        uint256 net = _depositBoth(10 ether, 10 ether);
+        assertEq(net, preview);
+        assertEq(IERC20(hook).balanceOf(user) - balance, net);
+        assertEq(IERC20(hook).totalSupply() - supply,
+            net + IERC20(hook).balanceOf(feeTo) - feeBefore, "backed mint splits without extra LP");
     }
 
     function test_dualNativeSYInternalRedemptionAndLimits() public noSelfCalls(hook) {
@@ -128,14 +152,34 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
     function test_dualNativeSYFundedYieldChangesRateWithoutRebasingShares() public {
         IStandardizedYield sy = IStandardizedYield(hook);
         uint256 rate = sy.exchangeRate();
+        assertEq(rate, _expectedRate(), "rated SE shares plus local backing over actual supply");
         uint256 shares = sy.balanceOf(user);
+        uint256 supply = sy.totalSupply();
         vm.startPrank(user);
         tokenA.approve(address(vaultA), 100 ether);
         vaultA.simulateYield(100 ether);
         vm.stopPrank();
         assertGt(sy.exchangeRate(), rate);
+        assertEq(sy.exchangeRate(), _expectedRate());
         assertEq(sy.balanceOf(user), shares);
+        assertEq(sy.totalSupply(), supply, "passive SE yield mints no Hook LP");
         assertEq(sy.claimRewards(user).length, 0);
+    }
+
+    function _expectedRate() private view returns (uint256) {
+        uint256 backingA_ = tokenA.balanceOf(hook) + NativeLiquidityMath.mulDiv(IERC20(seA).balanceOf(hook),
+            IRateProvider(IUniswapV4SeBufferHook(hook).rateProvider(address(tokenA))).getRate(), 1e18);
+        uint256 backingB_ = tokenB.balanceOf(hook) + NativeLiquidityMath.mulDiv(IERC20(seB).balanceOf(hook),
+            IRateProvider(IUniswapV4SeBufferHook(hook).rateProvider(address(tokenB))).getRate(), 1e18);
+        return NativeLiquidityMath.mulDiv(NativeLiquidityMath.sqrt(backingA_ * backingB_), 1e18, IERC20(hook).totalSupply());
+    }
+
+    function _unbookedRaw(address token_, address se_) private view returns (uint256) {
+        uint256 ratedShares_ = NativeLiquidityMath.mulDiv(IERC20(se_).balanceOf(hook),
+            IRateProvider(IUniswapV4SeBufferHook(hook).rateProvider(token_)).getRate(), 1e18);
+        uint256 reserve_ = token_ == dual.token0() ? dual.claimSupply0() : dual.claimSupply1();
+        uint256 bookedLocal_ = reserve_ - ratedShares_;
+        return IERC20(token_).balanceOf(hook) - bookedLocal_;
     }
 
     function _assertRawExit(address out_) private {
@@ -153,7 +197,8 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         assertGe(received_, quote_, "raw exit preview");
         assertEq(IERC20(out_).balanceOf(user), before_ + received_, "raw exit payout");
         assertEq(IERC20(hook).balanceOf(user), lpBefore_ - shares_, "actual holder burn");
-        assertEq(IERC20(hook).totalSupply(), supply_ - shares_ + IERC20(hook).balanceOf(feeRecipient_) - feeLpBefore_, "burn plus actual protocol-fee LP");
+        assertEq(IERC20(hook).balanceOf(feeRecipient_), feeLpBefore_, "withdrawal charges no LP mint fee");
+        assertEq(IERC20(hook).totalSupply(), supply_ - shares_, "only the requested LP is burned");
     }
 }
 

@@ -40,8 +40,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_APEX_D41 is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        o.addLiquidity(50 ether, 50 ether, 50 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        _seedFor(o, user, 50 ether, 50 ether, 50 ether);
     }
 
     function _projectedQuote(address target) internal view returns (bool, bytes memory) {
@@ -119,7 +119,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_APEX_D41 is
         _seed(o, address(o));
         uint256 seBal = o.seBalance(0);
         assertGt(seBal, 0);
-        assertEq(o.effectiveReserve(0), (seBal * 2e18) / 1e18);
+        assertEq(o.effectiveReserve(0), o.rawReserve(0) + (seBal * 2e18) / 1e18);
     }
 
     function test_APEX_D41_orbital_probeTrue_stillQuotes() public {

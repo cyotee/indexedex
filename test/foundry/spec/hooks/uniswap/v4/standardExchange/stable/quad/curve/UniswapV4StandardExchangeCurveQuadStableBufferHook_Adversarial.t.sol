@@ -35,10 +35,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
 
     function test_retained_buffered_inventory_is_not_new_funding() public {
         _firstMintEqual(1000 ether);
-        uint256 retained = 1e12;
-        token0.mint(hook, retained);
+        uint256 localBefore = token0.balanceOf(hook);
         _swapExactIn(address(token1), address(token0), 1 ether);
-        assertEq(token0.balanceOf(hook), retained, "recorded pair-native inventory");
+        uint256 retained = token0.balanceOf(hook);
+        assertGt(retained, 0, "genesis local book remains");
+        assertLt(retained, localBefore, "swap consumes booked local first");
         assertGt(quad.previewSwapExactIn(address(token0), address(token1), retained), 0);
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, retained, 0));IStandardExchangeIn(hook).exchangeIn(IERC20(address(token0)), retained, IERC20(address(token1)), 0, attacker, true, block.timestamp
         );
@@ -59,8 +60,8 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
         attacker = makeAddr("attacker");
     }
 
-    /// @notice A1: SE share donation dilutes subsequent join (no free LP credit).
-    function test_A1_donation_seShares_dilutesJoin() public {
+    /// @notice A1: Ambient SE shares do not fund or value an incoming join.
+    function test_A1_donation_seShares_doesNotChangeBookedJoin() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 20 ether;
@@ -74,7 +75,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
         vm.stopPrank();
 
         (uint256 sharesAfter,) = quad.previewJoinProportional(amounts);
-        assertLt(sharesAfter, sharesBefore, "SE share donation must dilute subsequent join");
+        assertEq(sharesAfter, sharesBefore, "ambient shares remain outside booked ownership");
     }
 
     function test_rateProvider_failClosed_onSwapPreview() public {
@@ -178,15 +179,16 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
 
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 100 ether;
+        bool[] memory flags = _prepareShareSeed(amounts, user);
         vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        (uint256 shares,) = quad.joinProportionalFlexible(amounts, flags, user, 0, block.timestamp + 1 hours);
         assertGt(shares, 0);
         assertTrue(quad.isFullBook());
 
+        for (uint256 i; i < 4; ++i) amounts[i] = 5 ether;
         vm.prank(user);
-        uint256 okShares =
-            quad.depositSingle(address(hostile), 5 ether, user, 0, block.timestamp + 1 hours);
-        assertGt(okShares, 0, "control depositSingle works");
+        (uint256 okShares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        assertGt(okShares, 0, "caller-funded full-basket control works");
 
         bytes memory reentry = abi.encodeWithSelector(
             IUniswapV4StandardExchangeCurveQuadStableBufferHook.depositSingle.selector,
@@ -453,7 +455,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
     /// @notice Unfunded pretransfer on SE face reverts (no unbooked face after join).
     function test_pretransfer_unfunded_seFace_reverts() public {
         _firstMintEqual(200 ether);
-        assertEq(token0.balanceOf(hook), 0, "no free SE face after join");
+        assertGt(token0.balanceOf(hook), 0, "booked local backing cannot fund an unfunded caller");
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0)

@@ -14,31 +14,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitExecutio
         internal returns (uint256 amountOut)
     {
         _requireDeadline(deadline);
-        if (to == address(0)) revert ZeroAddress();
-        if (sharesIn == 0) revert ZeroAmount();
-        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        uint256 protocolShares = _maybeMintProtocolFee();
-        amountOut = _quoteExitSingleExactBptIn(tokenOut, sharesIn);
-        if (amountOut < amountOutMin) revert Slippage();
-        uint8 idx = _tokenIndex(tokenOut);
-        Repo.Layout storage l = Repo._layout();
-        uint256 invOut = _singleExitInvOut(idx, sharesIn);
-        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
-        _burnLp(msg.sender, sharesIn);
-        if (l.standardExchanges[idx] != address(0)) {
-            _unwrapSeShares(idx, invOut, to);
-        } else {
-            _debitRawIntentional(idx, invOut);
-            IERC20(tokenOut).safeTransfer(to, invOut);
-        }
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (_nativeAt(i) == 0) revert WouldZeroReserve();
-        }
-        _snapshotKLastIfFeeOn();
-        _syncVaultReserves();
-        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingle(
-            msg.sender, to, tokenOut, amountOut, sharesIn, protocolShares
-        );
+        return _exitSingleAssetFrom(msg.sender, tokenOut, sharesIn, false, to, amountOutMin);
     }
 
     function _exitSingleAssetExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare, address to, uint256 amountOutMin, uint256 deadline)

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
@@ -45,7 +46,7 @@ import {
 import {
     IUniswapV4StandardExchangeWeightedBufferHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
@@ -148,7 +149,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeWeightedBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](14);
+        interfaces = new bytes4[](15);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -163,6 +164,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
         interfaces[11] = type(IUniswapV4SeBufferHook).interfaceId;
         interfaces[12] = type(IDetfReserveQuote).interfaceId;
         interfaces[13] = type(IStandardizedYield).interfaceId;
+        interfaces[14] = type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
@@ -328,6 +330,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
             invDecimals
         );
         Repo._layout().ownerOnlyLiquidity = a.ownerOnlyLiquidity;
+        Repo._layout().vaultRegistry = address(VAULT_REGISTRY_DEPLOYMENT);
     }
 
     function _lpName(address[] memory toks) private pure returns (string memory) {
@@ -400,15 +403,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
                 revert RateProviderRequired();
             }
             uint8 pd = a.tokenDecimals[i];
-            if (
-                a.standardExchanges[i] != address(0)
-                    && UniswapV4SeBufferHookLegLib.isWrapperShareInventory(a.tokens[i], a.standardExchanges[i])
-            ) {
-                if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(pd)) revert InvalidDecimals();
-                if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(a.seDecimals[i])) {
-                    revert InvalidDecimals();
-                }
-            } else if (pd < 6 || pd > 18) {
+            if (pd < 6 || pd > 18) {
                 revert InvalidDecimals();
             } else if (a.standardExchanges[i] == address(0)) {
                 if (a.tokens[i].code.length != 0 && IERC20Metadata(a.tokens[i]).decimals() != pd) {
@@ -440,6 +435,8 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
                         revert SameStandardExchange();
                     }
                 }
+                if (IVaultRegistryDisableQuery(address(VAULT_REGISTRY_DEPLOYMENT)).packageOfVault(a.standardExchanges[i]) == address(0)) revert InvalidSE();
+                for (uint8 j; j < a.n; ++j) if (a.tokens[j] == a.standardExchanges[i]) revert InvalidSE();
                 _requireSeOwnsToken(a.standardExchanges[i], a.tokens[i]);
             }
         }
@@ -448,13 +445,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
     }
 
     function _requireSeOwnsToken(address se, address token) private view {
-        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
-        if (se == token) revert InvalidSE();
-        address[] memory toks = IBasicVault(se).vaultTokens();
-        for (uint256 i; i < toks.length; ++i) {
-            if (toks[i] == token) return;
-        }
-        revert InvalidSE();
+        if (!UniswapV4SeBufferHookLegLib.pairInVaultTokens(se, token)) revert InvalidSE();
     }
 
 }

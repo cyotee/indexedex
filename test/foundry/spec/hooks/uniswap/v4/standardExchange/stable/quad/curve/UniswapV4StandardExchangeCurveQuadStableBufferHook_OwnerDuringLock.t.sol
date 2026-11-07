@@ -96,8 +96,12 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock_Test
         assertEq(abi.decode(ret, (uint256)), pred);
     }
 
-    function test_D89_ownerDepositSingle_atMin_lpOutGt0() public {
+    function test_D89_ownerJoinAtMinSupportsPaidSingleLegPreparation() public {
         _ownerSeedBook();
+        address recipient = quad.feeTo();
+        uint256 protocolLp = IERC20(hook).balanceOf(recipient);
+        vm.prank(recipient);
+        IERC20(hook).transfer(owner, protocolLp);
         uint256 lp = IERC20(hook).balanceOf(owner);
         uint256[] memory mins = new uint256[](4);
         vm.prank(owner);
@@ -112,9 +116,20 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock_Test
 
         assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
+        uint256 inputBefore = token1.balanceOf(owner);
+        uint256 predicted = quad.previewDepositSingle(address(token1), joinAmt);
+        assertGt(predicted, 0);
         vm.prank(owner);
-        uint256 lpOut = quad.depositSingle(address(token1), joinAmt, owner, 0, block.timestamp + 1 days);
-        assertGt(lpOut, 0, "owner MIN depositSingle lpOut > 0");
+        uint256 paidLp = quad.depositSingle(address(token1), joinAmt, owner, predicted, block.timestamp + 1 days);
+        assertEq(paidLp, predicted);
+        assertLt(token1.balanceOf(owner), inputBefore);
+        assertGt(IERC20(hook).totalSupply(), 1000);
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000, "locked floor stays locked");
+        uint256[] memory amounts = new uint256[](4);
+        for (uint256 i; i < 4; ++i) amounts[i] = 1 ether;
+        vm.prank(owner);
+        (uint256 lpOut,) = quad.joinProportional(amounts, owner, 1, block.timestamp + 1 days);
+        assertGt(lpOut, 0, "complete owner-funded MIN basket remains supported");
     }
 
     function _ownerSeedBook() internal {
@@ -123,8 +138,9 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock_Test
         amounts[1] = 500 ether;
         amounts[2] = 500 ether;
         amounts[3] = 500 ether;
+        bool[] memory flags = _prepareShareSeed(amounts, owner);
         vm.prank(owner);
-        (uint256 shares,) = quad.joinProportional(amounts, owner, 0, block.timestamp + 1 days);
+        (uint256 shares,) = quad.joinProportionalFlexible(amounts, flags, owner, 0, block.timestamp + 1 days);
         assertGt(shares, 0);
     }
 

@@ -95,12 +95,11 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertEq(IERC20(se).balanceOf(hook), seHookBefore_, "I1: SE shares unchanged");
     }
 
-    /// @notice I1 pair→raw: no unbooked pair face (B_pair==0 ⇒ U=0 under virtual seClaim R); true reverts.
-    /// @dev Pair face is never booked as ERC20 R (R=seClaim virtual). Free face is L-RSRV-DUST push credit;
-    ///      I1 without face inventory still reverts U=0 and cannot free-extract raw.
+    /// @notice I1 pair→raw: existing positive local backing is booked and cannot fund a free pretransfer.
     function test_I1_pretransferred_pairToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
         _seedLiveLiquidity();
         uint256 claimed_ = 5 ether;
+        assertGe(pairToken.balanceOf(hook), claimed_, "positive booked local inventory covers claimed amount");
         // Do not donate pair face — that would be intentional unbooked U (L-RSRV-DUST).
         assertEq(pairToken.balanceOf(attacker), 0);
         assertEq(pairToken.allowance(attacker, hook), 0);
@@ -145,11 +144,11 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         _seedLiveLiquidity();
         uint256 wantOut_ = 1 ether;
 
-        // Book residual free raw so absolute inventory covers quote, then absorb into R.
+        // Back the additional inventory with a real join. An ambient donation
+        // is unbooked credit, not an I1 witness against existing LP inventory.
         uint256 residualSeed_ = 50 ether;
-        rawToken.mint(address(this), residualSeed_);
-        rawToken.transfer(hook, residualSeed_);
-        // Honest !pretransfer path end-syncs hold-set (books residual; L-RSRV-ABSORB).
+        _depositBoth(residualSeed_, residualSeed_);
+        // Complete an honest operation before attempting the free second credit.
         uint256 honestIn_ = 1 ether;
         rawToken.mint(user, honestIn_);
         vm.startPrank(user);
@@ -214,23 +213,27 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
     function test_I3_residualInventory_cannotFundSecondFreePretransfer_rawToPair() public {
         _seedLiveLiquidity();
 
-        // Residual free raw that remains after honest swap (donation not consumed by !pretransfer).
+        // Explicitly fund and consume one complete contract-wallet pretransfer.
+        // The resulting retained raw belongs to the book, not the next caller.
         uint256 residualSeed_ = 4 ether;
+        uint256 rawBookBefore_ = single.rawReserve();
         rawToken.mint(address(this), residualSeed_);
         rawToken.transfer(hook, residualSeed_);
 
-        uint256 honestIn_ = 3 ether;
-        vm.prank(user);(uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
+        uint256 honestIn_ = residualSeed_;
+        (uint256 out_,) = IStandardExchangeIn(hook).exchangeIn(IERC20(address(rawToken)),
             honestIn_,
             IERC20(address(pairToken)),
             0,
             user,
-            false,
+            true,
             block.timestamp + 1
         );
         assertGt(out_, 0, "honest raw->pair ok");
 
         uint256 residual_ = rawToken.balanceOf(hook);
+        assertEq(single.rawReserve(), rawBookBefore_ + honestIn_, "honest pretransfer becomes booked raw");
+        assertEq(residual_, single.rawReserve(), "no unbooked credit remains after exact-input consumption");
         assertGe(residual_, residualSeed_, "residual raw remains");
         uint256 seClaimBefore_ = single.seClaimSupply();
         uint256 pairAttBefore_ = pairToken.balanceOf(attacker);
@@ -264,11 +267,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertEq(pairToken.balanceOf(attacker), pairAttBefore_, "I3 no free pair");
     }
 
-    /// @notice A1: SE share donation does not mint free LP; dilutes claim book (accepted O11).
+    /// @notice A1: an ambient SE-share transfer neither mints LP nor enters the booked claim.
     function test_A1_seDonation_dilutesLps_noFreeMint() public {
         _seedLiveLiquidity();
         uint256 userLp = IERC20(hook).balanceOf(user);
-        uint256 claimBefore = single.seClaimSupply();
         pairToken.mint(user, 50 ether);
         vm.startPrank(user);
         pairToken.approve(se, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)),
@@ -279,10 +281,15 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
             false,
             block.timestamp
         );
+        // Acquiring the caller's SE shares can move its rate through the SE's
+        // separate usage fee. Snapshot after that conversion, before donation.
+        uint256 claimBefore = single.seClaimSupply();
+        uint256 heldBefore = IERC20(se).balanceOf(hook);
         IERC20(se).transfer(hook, seOut);
         vm.stopPrank();
         assertEq(IERC20(hook).balanceOf(user), userLp);
-        assertGe(single.seClaimSupply(), claimBefore);
+        assertEq(IERC20(se).balanceOf(hook), heldBefore + seOut, "ambient shares received");
+        assertEq(single.seClaimSupply(), claimBefore, "donation is not booked LP backing");
     }
 
     /// @notice A2: raw donation idle — honest exchange still previewed; donation not free-spent.
@@ -345,20 +352,14 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
 
         // Seed live book (disarmed)
         {
-            uint256 d0 = h.currency0() == address(hostile) ? 100 ether : 100 ether;
-            uint256 d1 = h.currency1() == address(hostile) ? 100 ether : 100 ether;
-            // map raw/pair correctly into pool order
-            d0 = h.currency0() == address(hostile) ? 100 ether : 100 ether;
-            d1 = h.currency1() == address(hostile) ? 100 ether : 100 ether;
-            if (h.currency0() == address(hostile)) {
-                d0 = 100 ether;
-                d1 = 100 ether; // pair is currency1
-            } else {
-                d0 = 100 ether; // pair is currency0
-                d1 = 100 ether; // hostile is currency1
-            }
-            vm.prank(alice);
-            h.deposit(d0, d1, alice, 0, block.timestamp + 1);
+            vm.startPrank(alice);
+            pairToken.approve(se2, 100 ether);
+            (uint256 shares_,) = IStandardExchangeIn(se2).exchangeIn(
+                IERC20(address(pairToken)), 100 ether, IERC20(se2), 1, alice, false, block.timestamp
+            );
+            IERC20(se2).approve(hHook, shares_);
+            h.depositWithSeShares(100 ether, shares_, alice, 1, block.timestamp + 1);
+            vm.stopPrank();
         }
         assertTrue(h.isLive());
 
@@ -468,9 +469,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         );
     }
 
-    /// @notice B1: protocol growth mint is pure ERC20 storage credit — non-receivable feeTo cannot
+    /// @notice B1: protocol mint fee is pure ERC20 storage credit — non-receivable feeTo cannot
     /// revert the mint. Document product limitation (D75 / ERC20Repo._mint has no receiver callback).
-    /// Equivalent exercised path: fee-on + yield growth + feeTo = contract that reverts on receive ETH
+    /// Equivalent exercised path: fee-on + feeTo = contract that reverts on receive ETH
     /// still completes deposit and credits LP to feeTo balance.
     function test_B1_feeToNonReceivable_erc20MintCannotRevert() public {
         NonReceivableFeeTo badFeeTo = new NonReceivableFeeTo();
@@ -479,15 +480,18 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         _enableProtocolFee(0.05e18);
         _seedLiveLiquidity();
 
-        // Grow k via yield so next deposit mints protocol LP
+        // Yield itself issues no protocol LP.
         pairToken.mint(address(this), 20 ether);
         pairToken.approve(address(pairProtocolVault), 20 ether);
         pairProtocolVault.simulateYield(20 ether);
 
         uint256 feeLpBefore = IERC20(hook).balanceOf(address(badFeeTo));
-        _depositBoth(10 ether, 10 ether);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 net = _depositBoth(10 ether, 10 ether);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
         // Pure ERC20 mint succeeds even though feeTo reverts on native receive
-        assertGt(IERC20(hook).balanceOf(address(badFeeTo)), feeLpBefore, "protocol LP credited via storage mint");
+        assertEq(IERC20(hook).balanceOf(address(badFeeTo)) - feeLpBefore, gross * 0.05e18 / 1e18, "exact fee credited via storage mint");
+        assertEq(net, gross - gross * 0.05e18 / 1e18, "net backed split");
     }
 
     function test_I4_depositWithoutInit_ok() public {

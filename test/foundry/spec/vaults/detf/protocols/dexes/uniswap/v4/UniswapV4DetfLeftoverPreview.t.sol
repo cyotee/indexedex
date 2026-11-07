@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {Vm} from "forge-std/Vm.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -49,8 +50,8 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         assertEq(IBasicVault(detf).reserveOfToken(mintToken), booked_ + 100, "not only the latest residual");
     }
 
-    /// @notice A one-sided proportional quote of zero falls back to a mintable single-asset join.
-    function test_RC06_nonzeroPreview_usesSingleAssetFallback() public {
+    /// @notice A funded one-leg residual uses the restored paid unbalanced route.
+    function test_RC06_nonzeroPreview_usesPaidUnbalancedJoin() public {
         pairToken.mint(detf, 5 ether);
         Balances memory before_ = _balances();
         assertGt(_preview(before_.held), 0, "nonzero actual-amount SE preview");
@@ -59,20 +60,32 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         tokens_[0] = mintToken;
         amounts_[0] = before_.held;
         IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(reserveHook);
-        assertEq(hook_.previewJoinUnbalanced(tokens_, amounts_), 0,
-            "this CP fixture requires both unbalanced-join legs");
-        uint256 expectedLp_ = hook_.previewJoinSingleAssetExactIn(mintToken, before_.held);
-        assertGt(expectedLp_, 0, "single-asset route can deploy this residual");
+        uint256 expectedLp_ = hook_.previewJoinUnbalanced(tokens_, amounts_);
+        assertGt(expectedLp_, 0, "paid route can deploy this residual");
+        assertEq(expectedLp_, hook_.previewJoinSingleAssetExactIn(mintToken, before_.held));
+        uint256 supplyBefore_ = IERC20(reserveHook).totalSupply();
         vm.expectCall(reserveHook, abi.encodeWithSelector(
-            IUniswapV4SeBufferHook.joinUnbalanced.selector
-        ), uint64(0));
-        vm.expectCall(reserveHook, abi.encodeWithSelector(
-            IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector, mintToken, before_.held,
+            IUniswapV4SeBufferHook.joinUnbalanced.selector, tokens_, amounts_,
             detfInfo.bondNftVault(), expectedLp_, block.timestamp + 1
         ));
+        vm.recordLogs();
         detfInfo.sweepDust{gas: 30_000_000}();
-        assertEq(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()) - before_.lp, expectedLp_,
-            "single-asset preview matches LP delivered to NFT custody");
+        Vm.Log[] memory logs_ = vm.getRecordedLogs();
+        uint256 minted_;
+        uint256 custodyMinted_;
+        for (uint256 i_; i_ < logs_.length; ++i_) {
+            if (logs_[i_].emitter != reserveHook || logs_[i_].topics.length != 3
+                || logs_[i_].topics[0] != keccak256("Transfer(address,address,uint256)")) continue;
+            if (logs_[i_].topics[1] == bytes32(0)) {
+                uint256 amount_ = abi.decode(logs_[i_].data, (uint256));
+                minted_ += amount_;
+                if (address(uint160(uint256(logs_[i_].topics[2]))) == detfInfo.bondNftVault()) custodyMinted_ += amount_;
+            }
+            assertTrue(logs_[i_].topics[2] != bytes32(0), "sweep does not unwind existing LP");
+        }
+        assertGe(custodyMinted_, expectedLp_);
+        assertEq(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()) - before_.lp, custodyMinted_);
+        assertEq(IERC20(reserveHook).totalSupply(), supplyBefore_ + minted_);
         assertLt(pairToken.balanceOf(detf), before_.held, "mintable residual deployed");
         assertEq(IBasicVault(detf).reserveOfToken(mintToken), pairToken.balanceOf(detf), "book remaining local custody");
         assertEq(IERC20(detf).totalSupply(), before_.detfSupply, "no new user entitlement");
@@ -81,6 +94,7 @@ contract UniswapV4DetfLeftoverPreview_Test is TestBase_UniswapV4Detf_Cp_Univ3Se 
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "LP belongs in NFT custody");
         assertEq(pairToken.allowance(detf, reserveHook), 0, "join approval cleared");
         assertEq(pairToken.allowance(detf, se), 0, "SE approval cleared");
+        _assertNoJoinableDust();
     }
 
     /// @notice A failure inside the real SE preview propagates and leaves the prior reserve unchanged.

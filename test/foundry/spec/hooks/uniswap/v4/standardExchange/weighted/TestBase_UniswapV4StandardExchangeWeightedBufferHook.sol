@@ -261,12 +261,31 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         for (uint256 i; i < n; ++i) {
             amounts[i] = amountEach;
         }
+        if (IERC20(hook).totalSupply() == 0) return _seedAmounts(user, amounts);
         vm.prank(user);
         (shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 days);
     }
 
     function _seedFullBook(uint256 amountEach) internal returns (uint256 shares) {
         return _firstMintEqual(amountEach);
+    }
+
+    function _componentOwnershipState(address actor_) internal view returns (bytes32 state_) {
+        state_ = keccak256(abi.encode(IERC20(hook).totalSupply(), IERC20(hook).balanceOf(actor_),
+            IERC20(hook).balanceOf(hook), IERC20(hook).balanceOf(address(0)),
+            IERC20(hook).balanceOf(weighted.feeTo()), weighted.nativeReserves()));
+        for (uint256 i; i < weighted.numTokens(); ++i) {
+            address token_ = weighted.token(i);
+            address se_ = weighted.standardExchange(i);
+            state_ = keccak256(abi.encode(state_, token_, IERC20(token_).balanceOf(actor_),
+                IERC20(token_).balanceOf(hook), IERC20(token_).allowance(actor_, hook)));
+            if (se_ != address(0)) {
+                state_ = keccak256(abi.encode(state_, se_, IERC20(se_).totalSupply(),
+                    IERC20(se_).balanceOf(actor_), IERC20(se_).balanceOf(hook),
+                    IERC20(se_).allowance(actor_, hook), IERC20(token_).balanceOf(se_),
+                    IERC20(token_).allowance(hook, se_)));
+            }
+        }
     }
 
     function _assertAllDoorsLive() internal view {
@@ -383,8 +402,18 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         _assertAllDoorsLive();
         _firstMintEqual(100 ether);
         _swapExactIn(address(token0), address(token1), 1 ether);
+        uint256[] memory amounts = new uint256[](weighted.numTokens());
+        for (uint256 j; j < amounts.length; ++j) amounts[j] = 5 ether;
         vm.prank(user);
-        weighted.depositSingle(address(token1), 5 ether, user, 0, block.timestamp + 1 hours);
+        (uint256 minted,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(minted, 0, "complete caller-funded join");
+        uint256 quoted = weighted.previewWithdrawSingle(address(token1), minted / 2);
+        assertGt(quoted, 0, "single-token exit remains executable");
+        uint256 beforeOutput = token1.balanceOf(user);
+        vm.prank(user);
+        uint256 paid = weighted.withdrawSingle(address(token1), minted / 2, user, quoted, block.timestamp + 1 hours);
+        assertEq(paid, quoted);
+        assertEq(token1.balanceOf(user) - beforeOutput, paid);
     }
 
     /// @notice Mint pair, buffer into SE, leave SE shares on `user` (B6 funding helper).
@@ -421,5 +450,25 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         vm.prank(user);
         (shares,) = weighted.joinProportionalFlexible(amounts, isSe, user, 0, block.timestamp + 1 days);
         seUsed = seAmt;
+    }
+    /// @notice Acquire caller-owned SE shares before the hook's first join.
+    function _prepareShareSeed(address actor, uint256[] memory amounts) internal returns (bool[] memory flags) {
+        flags = new bool[](amounts.length);
+        for (uint256 i; i < amounts.length; ++i) {
+            address se = weighted.standardExchange(i);
+            if (se == address(0) || amounts[i] == 0) continue;
+            vm.startPrank(actor);
+            IERC20(weighted.token(i)).approve(se, amounts[i]);
+            (amounts[i],) = IStandardExchangeIn(se).exchangeIn(IERC20(weighted.token(i)), amounts[i], IERC20(se), 1, actor, false, block.timestamp);
+            IERC20(se).approve(hook, type(uint256).max);
+            vm.stopPrank();
+            flags[i] = true;
+        }
+    }
+
+    function _seedAmounts(address actor, uint256[] memory amounts) internal returns (uint256 shares) {
+        bool[] memory flags = _prepareShareSeed(actor, amounts);
+        vm.prank(actor);
+        (shares,) = weighted.joinProportionalFlexible(amounts, flags, actor, 1, block.timestamp + 1 days);
     }
 }

@@ -22,7 +22,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         external
         onlyLiquidityOwner
         nonReentrant
-        accrueProtocolFee
         returns (uint256 shares, uint256[] memory usedAmounts)
     {
         Repo.Layout storage l = Repo._layout();
@@ -45,7 +44,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant accrueProtocolFee returns (uint256 shares) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
         _requireFirstJoinFullBook(acc);
         if (acc.seShare > 0) {
@@ -66,7 +65,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         external
         onlyLiquidityOwner
         nonReentrant
-        accrueProtocolFee
         returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
         PullLib.pullErc20Dual(currency0(), currency1(), amount0, amount1);
@@ -85,7 +83,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         external
         onlyLiquidityOwner
         nonReentrant
-        accrueProtocolFee
         returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
         PullLib.pullPermit2SignatureDual(currency0(), currency1(), amount0, amount1, permit2Data);
@@ -103,7 +100,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         external
         onlyLiquidityOwner
         nonReentrant
-        accrueProtocolFee
         returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
         PullLib.pullPermit2AllowanceDual(currency0(), currency1(), amount0, amount1);
@@ -129,7 +125,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         external
         onlyLiquidityOwner
         nonReentrant
-        accrueProtocolFee
         returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe)
     {
         Repo.Layout storage l = Repo._layout();

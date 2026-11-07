@@ -61,7 +61,14 @@ function exchangeIn(
         uint256 deadline
     ) external returns (uint256 amountOut, uint256 amountRefunded) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
-            return (_exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
+            _requireDeadline(deadline);
+            uint256 beforeInput = tokenIn.balanceOf(msg.sender);
+            amountOut = _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+            if (address(tokenOut) == address(this)) {
+                uint256 afterInput = tokenIn.balanceOf(msg.sender);
+                amountRefunded = amountIn - (beforeInput - afterInput);
+            }
+            return (amountOut, amountRefunded);
         }
         return (_swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
     }
@@ -127,6 +134,15 @@ function exchangeIn(
     ) external returns (uint256 amountIn) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
             if (_liquiditySePair(tokenIn, tokenOut) != address(0)) revert ExchangeOutNotAvailable();
+            if (address(tokenOut) == address(this) && address(tokenIn) != address(this) && !pretransferred) {
+                _requireDeadline(deadline);
+                uint256 quoted = _entryPreviewJoinSingleAssetExactOut(address(tokenIn), amountOut);
+                if (quoted > maxAmountIn
+                    && _entryPreviewJoinSingleAssetExactIn(address(tokenIn), maxAmountIn) < amountOut) {
+                    revert LiquidityRoute.LiquidityMaximumExceeded(maxAmountIn, quoted);
+                }
+                return _entryJoinSingleAssetExactOut(address(tokenIn), amountOut, recipient, maxAmountIn, deadline);
+            }
             return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
         }
         return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);

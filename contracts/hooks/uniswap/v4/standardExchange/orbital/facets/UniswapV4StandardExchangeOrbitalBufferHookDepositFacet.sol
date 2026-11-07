@@ -5,7 +5,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
-import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookClaimQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookDepositTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositTarget.sol";
@@ -27,11 +27,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDepositFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](4);
+        funcs = new bytes4[](5);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.addLiquidity.selector;
         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.depositFlexible.selector;
         funcs[2] = IUniswapV4SeBufferHook.joinProportional.selector;
         funcs[3] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        funcs[4] = IUniswapV4SeBufferHookNativeLiquidity.joinNativeComponents.selector;
     }
 
     function facetMetadata()

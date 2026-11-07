@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {FullSpreadV4MatrixChecks} from "../dual/UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol";
+import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {IStandardExchangeRateProvider} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProvider.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrixFixture.sol";
 import {SeMatrix_FullSpreadV4Fixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrix_FullSpreadV4Fixture.sol";
 import {
@@ -39,7 +44,39 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchang
     function _newFixture() internal override returns (SeMatrixFixture) {
         SeMatrix_FullSpreadV4Fixture f = new SeMatrix_FullSpreadV4Fixture(_ctx(), sharedPkg);
         sharedPkg = f.pkg();
+        pm = f.poolManager();
+        swapRouter = new WrapperExactOutRouter(pm);
         return f;
+    }
+
+    /// @notice K04: actual registered vault, ordered backing faces, and two external providers.
+    function test_row_fixtureProductionBinding() public view {
+        SeMatrix_FullSpreadV4Fixture f_ = SeMatrix_FullSpreadV4Fixture(address(fx));
+        address[] memory faces_ = IBasicVault(seUT).vaultTokens();
+        assertEq(faces_.length, 2);
+        assertEq(faces_[0], Currency.unwrap(f_.key().currency0));
+        assertEq(faces_[1], Currency.unwrap(f_.key().currency1));
+        assertEq(faces_[0], f_.faceToken());
+        assertEq(faces_[1], f_.otherToken());
+        assertNotEq(faces_[0], seUT, "own share is implicit, not a member pair");
+        assertNotEq(faces_[1], seUT, "own share is implicit, not a member pair");
+        FullSpreadV4MatrixChecks.membership(seUT, face);
+        assertLt(uint160(faces_[0]), uint160(faces_[1]));
+        assertEq(address(f_.key().hooks), address(0));
+        assertTrue(keccak256(abi.encode(poolKey)) != keccak256(abi.encode(f_.key())), "product and backing keys differ");
+        assertEq(address(pm), address(f_.poolManager()));
+        assertTrue(_registry().isVault(seUT));
+        assertTrue(indexedexManager.isPackage(f_.pkg()));
+        assertNotEq(f_.currency0Provider(), f_.currency1Provider());
+        for (uint256 i; i < 2; ++i) {
+            address provider_ = i == 0 ? f_.currency0Provider() : f_.currency1Provider();
+            assertNotEq(provider_, seUT);
+            assertGt(provider_.code.length, 0);
+            assertEq(address(IStandardExchangeRateProvider(provider_).reserveVault()), seUT);
+            assertEq(address(IStandardExchangeRateProvider(provider_).rateTarget()), faces_[i]);
+        }
+        assertEq(f_.seBooked(), 0);
+        assertFalse(f_.hasPartialCase());
     }
 
     function test_row_exactOutAbsent() public {
@@ -74,18 +111,18 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchang
     }
 
     function test_row_partialConsumption_bookedNotRefunded() public override {
-        uint256 amount = _f(1);
-        uint256 refund = 1;
-        for (uint256 i; i < 8 && refund != 0; ++i) {
-            (, refund) = IFullSpreadTuple(seUT).previewExchangeIn(face, amount, seUT);
-            if (refund != 0 && amount > refund) amount -= refund;
-        }
-        (, refund) = IFullSpreadTuple(seUT).previewExchangeIn(face, amount, seUT);
-        assertLt(refund, amount / 100, "one-sided remainder stays a rounding residue, not the input");
-        uint256 hookBefore = _faceOf(hook);
-        _wrapExactIn(amount);
-        assertEq(_faceOf(hook) - hookBefore, refund, "unused input is refunded to the hook, not booked");
-
+        uint256 shares_ = _wrapExactIn(_f(1));
+        (, uint256 fullRefund_) = IFullSpreadTuple(seUT).previewExchangeIn(seUT, shares_, face);
+        assertEq(fullRefund_, 0, "fully consumed exit has no input refund");
+        uint256 hookShares_ = _seOf(hook);
+        _unwrapExactIn(shares_);
+        assertEq(_seOf(hook), hookShares_, "fully consumed input leaves no share refund");
+        uint256 amount_ = _f(1);
+        (, uint256 refund_) = IFullSpreadTuple(seUT).previewExchangeIn(face, amount_, seUT);
+        assertGt(refund_, 0, "one-sided mint cannot consume all input");
+        uint256 hookFace_ = _faceOf(hook);
+        _wrapExactIn(amount_);
+        assertEq(_faceOf(hook) - hookFace_, refund_, "unused input is refunded to the calling hook");
     }
 
     function test_row_hookSwap_exactIn_eoaPretransferRejected() public override {
@@ -108,19 +145,26 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchang
     }
 
     function test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed() public override {
-        _expectExactOutSwapReverts(false);
+        fx.fund(address(this), 10 ether);
+        FullSpreadV4MatrixChecks.hookOut(hook, face, seUT, true);
     }
 
     function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public override {
-        _expectExactOutSwapReverts(true);
+        fx.fund(address(this), 10 ether);
+        FullSpreadV4MatrixChecks.hookOut(hook, face, seUT, false);
     }
 
     function test_row_poolManagerSwap_bothDirections_noFaceResidual() public override {
+        uint256 supply_ = IERC20(seUT).totalSupply();
         uint256 seOut = _wrapExactIn(_f(1));
         assertGt(seOut, 0, "exact-in wrap");
+        assertGt(IERC20(seUT).totalSupply(), supply_, "face direction mints FullSpread shares");
+        supply_ = IERC20(seUT).totalSupply();
         uint256 faceOut = _unwrapExactIn(seOut / 2);
         assertGt(faceOut, 0, "exact-in unwrap");
+        assertLt(IERC20(seUT).totalSupply(), supply_, "share direction burns FullSpread shares");
         _expectExactOutSwapReverts(true);
+        _expectExactOutSwapReverts(false);
     }
 
     function test_row_bufferFirst_restingFace_notPaidToJoiner() public override {
@@ -182,9 +226,71 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchang
         (uint256 quoted,) = IFullSpreadTuple(seUT).previewExchangeIn(face, x, seUT);
         assertEq(buffer.previewWrap(x), quoted, "wrap preview is the SE quote");
         uint256 seOut = _wrapExactIn(x);
+        assertEq(seOut, quoted, "mint amountOut parity");
         (uint256 unwrapQuoted,) = IFullSpreadTuple(seUT).previewExchangeIn(seUT, seOut, face);
         assertEq(buffer.previewUnwrap(seOut), unwrapQuoted, "unwrap preview is the SE quote");
-        _unwrapExactIn(seOut);
+        assertEq(_unwrapExactIn(seOut), unwrapQuoted, "exit amountOut parity");
         _expectExactOutSwapReverts(true);
+    }
+
+    /// @notice Cold unwrap consumes the actual SE share token, not its member face.
+    /// forge-config: default.isolate = true
+    function test_composedRouteGasFitsCeiling_currency0_redeem() public {
+        _composedGas(false, true);
+    }
+
+    /// @notice H1 has no provider field; bind the member matching the second provider target.
+    /// forge-config: default.isolate = true
+    function test_composedRouteGasFitsCeiling_currency1_mint() public {
+        _composedGas(true, false);
+    }
+
+    /// @notice Cold unwrap to the second member face must burn primary SE supply.
+    /// forge-config: default.isolate = true
+    function test_composedRouteGasFitsCeiling_currency1_redeem() public {
+        _composedGas(true, true);
+    }
+
+    function _composedGas(bool currency1_, bool redeem_) internal {
+        SeMatrix_FullSpreadV4Fixture f_ = SeMatrix_FullSpreadV4Fixture(address(fx));
+        if (currency1_) {
+            address primaryHook_ = hook;
+            face = fx.otherToken();
+            pairToken = SimpleMintableERC20(face);
+            _deployRowHook(_defaultPkgArgs());
+            assertNotEq(hook, primaryHook_, "separate second-member product pool");
+            assertEq(buffer.pairToken(), face);
+            assertEq(address(IStandardExchangeRateProvider(f_.currency1Provider()).rateTarget()), face);
+            fx.fundOther(user, _f(1_000_000));
+            vm.startPrank(user);
+            IERC20(face).approve(hook, type(uint256).max);
+            IERC20(face).approve(address(swapRouter), type(uint256).max);
+            vm.stopPrank();
+        }
+        // Public share acquisition is setup, outside both measured frames.
+        uint256 amount_ = redeem_ ? f_.acquireShares(seUT, face, user, _f(1)) : _f(1);
+        (SwapParams memory params_,) = _swapParams(!redeem_, -int256(amount_));
+        uint256 preview_ = redeem_ ? buffer.previewUnwrap(amount_) : buffer.previewWrap(amount_);
+        uint256 previewGas_ = vm.lastFrameGas().gasTotalUsed;
+        assertGt(preview_, 0, "measured preview is executable");
+        assertLe(previewGas_, 5_000_000, "cold preview gas ceiling");
+        emit log_named_uint("G03.coldPreviewGas", previewGas_);
+        address tokenOut_ = redeem_ ? face : seUT;
+        uint256 before_ = IERC20(tokenOut_).balanceOf(user);
+        uint256 used_ = FullSpreadV4MatrixChecks.coldSwap(swapRouter, poolKey, params_, user, seUT, !redeem_);
+        assertEq(IERC20(tokenOut_).balanceOf(user) - before_, preview_, "cold route output equals preview");
+        emit log_named_uint("G03.coldWholeTransactionGas", used_);
+    }
+
+    /// forge-config: default.isolate = true
+    function test_composedRouteGasFitsCeiling() public {
+        (SwapParams memory params_,) = _swapParams(true, -int256(_f(1)));
+        uint256 preview_ = buffer.previewWrap(_f(1));
+        uint256 previewGas_ = vm.lastFrameGas().gasTotalUsed;
+        assertGt(preview_, 0, "measured preview is executable");
+        assertLe(previewGas_, 5_000_000, "cold preview gas ceiling");
+        emit log_named_uint("G03.coldPreviewGas", previewGas_);
+        uint256 used_ = FullSpreadV4MatrixChecks.coldSwap(swapRouter, poolKey, params_, user, seUT);
+        emit log_named_uint("G03.coldWholeTransactionGas", used_);
     }
 }

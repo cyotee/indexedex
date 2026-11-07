@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
@@ -181,9 +182,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Decimals is TestBase_UniswapV4D
     }
 
     function _assertNoJoinableDust() internal view virtual override {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertLe(IERC20(address(pair0)).balanceOf(detf), 10, "no pair0");
-        assertLe(IERC20(address(pair1)).balanceOf(detf), 10, "no pair1");
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 }

@@ -270,7 +270,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
 
     function previewSwapExactIn(bool zeroForOne, uint256 amountIn)
         external
-        view
+        view unlockedQuery
         returns (uint256 amountOut)
     {
         return _previewSwapExactIn(zeroForOne, amountIn);
@@ -279,7 +279,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
 
     function previewSwapExactOut(bool zeroForOne, uint256 amountOut)
         external
-        view
+        view unlockedQuery
         returns (uint256 amountIn)
     {
         _requireNonZero(amountOut);
@@ -303,8 +303,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
         n[1] = Repo._layout().currency1;
     }
 
-    function requiredFirstBondTokens() public view returns (address[] memory) {
-        return tokens();
+    function requiredFirstBondTokens() public view returns (address[] memory required) {
+        Repo.Layout storage l = Repo._layout();
+        required = new address[](2);
+        required[0] = _seFor(l.currency0);
+        required[1] = _seFor(l.currency1);
     }
 
     function firstJoinMustBeFullBook() public pure returns (bool) {
@@ -321,7 +324,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
 
     function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
         public
-        view
+        view unlockedQuery
         returns (uint256 amountOut)
     {
         if (!_isLive() || amountIn == 0) return 0;
@@ -332,7 +335,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
 
     function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
         public
-        view
+        view unlockedQuery
         returns (uint256 amountIn)
     {
         if (!_isLive() || amountOut == 0) return 0;

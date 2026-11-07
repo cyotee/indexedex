@@ -2,9 +2,23 @@
 pragma solidity ^0.8.0;
 
 import {UniswapV4StandardExchangeWeightedBufferHookJoinCore} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinCore.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookLiquidityLib as LiqLib} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol";
 
 /// @notice Liquidity execution entrypoints. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is UniswapV4StandardExchangeWeightedBufferHookJoinCore {
+    function joinNativeComponents(
+        uint256[] calldata localAmounts,
+        uint256[] calldata shareAmounts,
+        address to,
+        uint256 minLp,
+        uint256 deadline
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 netLp) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        netLp = LiqLib.joinNativeComponents(localAmounts, shareAmounts, to, minLp);
+        _syncVaultReserves();
+    }
+
     function joinProportional(
         uint256[] calldata amounts,
         address to,

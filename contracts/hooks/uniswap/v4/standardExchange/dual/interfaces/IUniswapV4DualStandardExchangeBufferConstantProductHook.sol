@@ -9,7 +9,9 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
  * @notice Dual SE buffer + constant-product pricing hook (pair-token pool).
  * @dev LP ERC-20 is the same contract. Liquidity amount0/amount1 = pool currency0/currency1.
  *      Product law: UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md v3.12.
- *      DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote. Dual is not a DETF reserve
+ *      Dual advertises IUniswapV4SeBufferHook, not the complete IDetfReserveQuote interface.
+ *      Legacy inherited quote declarations remain for source compatibility; only
+ *      previewSynthetic and previewBurnToToken are installed. Dual is not a DETF reserve
  *      (detfToken == address(0); tokens() has no self-leg). Family deposit/withdraw names remain
  *      as wrappers of join/exit internals. B6: depositFlexible / withdrawFlexible accept pair
  *      token and/or SE vault share per leg. M3: diamond also cuts IStandardExchangeIn / Out.

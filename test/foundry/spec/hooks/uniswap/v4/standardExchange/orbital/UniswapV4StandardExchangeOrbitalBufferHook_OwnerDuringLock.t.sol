@@ -91,8 +91,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock_Test is
         assertEq(abi.decode(ret, (uint256)), pred);
     }
 
-    function test_D89_ownerDepositSingle_atMin_lpOutGt0() public {
+    function test_D89_ownerAtMinCanFundSingleLegJoin() public {
         _ownerSeedBook();
+        uint256 protocolLp = IERC20(hook).balanceOf(feeRecipient);
+        vm.prank(feeRecipient);
+        IERC20(hook).transfer(owner, protocolLp);
         uint256 lp = IERC20(hook).balanceOf(owner);
         vm.prank(owner);
         orbital.removeLiquidity(lp, owner, 0, 0, 0, block.timestamp + 1 hours);
@@ -105,15 +108,32 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock_Test is
 
         assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
+        uint256 beforeInput = token1.balanceOf(owner);
+        uint256 amount = orbital.rawReserve(1) / 4;
+        assertGt(amount, 0, "remaining native book supports a bounded owner trade");
         vm.prank(owner);
-        uint256 lpOut = orbital.depositSingle(address(token1), 50 ether, owner, 0, block.timestamp + 1 hours, "");
-        assertGt(lpOut, 0, "owner MIN depositSingle lpOut > 0");
+        uint256 quote = orbital.previewDepositSingle(address(token1), amount);
+        assertGt(quote, 0);
+        vm.prank(owner);
+        uint256 singleMinted = orbital.depositSingle(address(token1), amount, owner, quote, block.timestamp + 1 hours, "");
+        assertEq(singleMinted, quote);
+        assertGt(beforeInput - token1.balanceOf(owner), 0);
+        assertLe(beforeInput - token1.balanceOf(owner), amount);
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000, "locked floor remains");
+
+        uint256 beforeLocal = orbital.rawReserve(0);
+        uint256 beforeShares = orbital.seBalance(0);
+        uint256 beforeSupply = IERC20(hook).totalSupply();
+        vm.prank(owner);
+        (uint256 lpOut,,,) = orbital.addLiquidity(1 ether, 1 ether, 1 ether, owner, 1, block.timestamp, "");
+        assertGt(lpOut, 0, "caller-funded complete basket still rejoins the locked floor");
+        uint256 gross = IERC20(hook).totalSupply() - beforeSupply;
+        assertEq(orbital.rawReserve(0) - beforeLocal, (gross * beforeLocal + beforeSupply - 1) / beforeSupply);
+        assertEq(orbital.seBalance(0) - beforeShares, (gross * beforeShares + beforeSupply - 1) / beforeSupply);
     }
 
     function _ownerSeedBook() internal {
-        vm.prank(owner);
-        (uint256 shares,,,) =
-            orbital.addLiquidity(500 ether, 500 ether, 500 ether, owner, 0, block.timestamp + 1 hours, "");
+        (uint256 shares,,,) = _seedFor(orbital, owner, 500 ether, 500 ether, 500 ether);
         assertGt(shares, 0);
     }
 

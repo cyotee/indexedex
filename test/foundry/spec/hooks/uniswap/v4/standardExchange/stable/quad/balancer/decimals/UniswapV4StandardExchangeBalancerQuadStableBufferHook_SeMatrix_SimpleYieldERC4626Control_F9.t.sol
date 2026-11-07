@@ -12,8 +12,8 @@ import {UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior} 
 ///         2026-09-23 record). Same ten row controls as the 18-decimal row.
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_SimpleYieldERC4626Control_F9 is UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior {
     function _oneUnitDepositControl() internal override {
-        // One 9-decimal face unit is 1e9 WAD units, enough to mint LP.
-        _positiveOneUnitDepositControl(240384613);
+        // A positive native budget must supply all component legs after conversion.
+        _positiveSmallDepositControl(64);
     }
 
     function _newFixture() internal override returns (SeMatrixFixture) {

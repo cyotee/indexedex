@@ -6,11 +6,9 @@ pragma solidity ^0.8.0;
  * @notice Diamond storage: 2–5 token binding, optional SE/RP per leg, dual scales, kLast, lock.
  * @dev Slot: indexedex.hooks.uv4.se.balancer.stable.quad.buffer.storage.v2
  *      LP ERC-20 uses shared ERC20Repo; vaultTokens use MultiAssetBasicVaultRepo.
- *      Live inventory (D21): raw = face balanceOf(hook) (donations dilute LP);
- *      SE legs = SE share balanceOf(hook). Free pair on SE legs is never book.
- *      rawReserves[i] = intentional raw book for free-pretransfer gate only
- *      (free_raw = bal - rawReserves; inventory cannot fund pretransfer).
- *      kLast = SE-valued StableMath invariant / active token count, with native inventory fee checkpoints.
+ *      rawReserves holds booked raw/local pair tokens; seReserves holds booked SE shares.
+ *      Ambient custody never enters either book through synchronization.
+ *      Retired growth-fee fields remain reserved; newly accepted gross LP is split for fees.
  */
 library UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256(
@@ -50,11 +48,15 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo {
         uint256[] rawReserves;
         /// @dev Appended: true after finalizeInitialization (I8). Defaults false.
         bool initializationFinalized;
-        /// @dev Native inventory at the last fee checkpoint, revalued at current SE rates when charging growth.
+        /// @dev Reserved former growth-fee checkpoint. Not custody or spendable credit.
         uint256[] feeReserves;
         uint256 liquidityValueBefore;
         uint256 liquiditySupplyBefore;
         uint256[] liquidityValuesBefore;
+        /// @dev FS-HOOK-05: booked shares; rawReserves holds local pair/raw tokens.
+        ///      Retired fee fields above remain reserved to preserve storage positions.
+        uint256[] seReserves;
+        address vaultRegistry;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -89,6 +91,7 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo {
         l.pairDecimals = pairDecimals_;
         l.invDecimals = invDecimals_;
         l.rawReserves = new uint256[](tokens_.length);
+        l.seReserves = new uint256[](tokens_.length);
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
     }

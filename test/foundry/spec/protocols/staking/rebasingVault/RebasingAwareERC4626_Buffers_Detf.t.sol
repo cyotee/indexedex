@@ -35,6 +35,14 @@ import {RebasingAwareERC4626_Component_FactoryService} from
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IStandardExchangeRateProvider} from
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProvider.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
 abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Detf {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
@@ -48,6 +56,8 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
     }
 
     function _deployCpWrapperDetf(IERC4626 w) internal returns (address wDetf) {
+        SimpleYieldERC4626 protocolVault = new SimpleYieldERC4626(MintableERC20Decimals(address(w)));
+        address standardExchangeVault = _deployERC4626SE(address(protocolVault));
         IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
         args.name = "Wrap CP DETF";
         args.symbol = "wCPDETF";
@@ -56,14 +66,16 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: address(pm),
                 feeOracle: address(indexedexManager),
-                standardExchange: address(w),
+                standardExchange: standardExchangeVault,
                 pairToken: address(w),
                 rawToken: predicted,
                 pairTokenDecimals: IERC20Metadata(address(w)).decimals(),
                 rawTokenDecimals: 9,
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted,
-                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(w), address(w)) // D60
+                rateProvider: RateProviderFixtureLib.providerForCp(
+                    create3Factory, diamondPackageFactory, standardExchangeVault, address(w)
+                )
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         address wHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
@@ -74,6 +86,20 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
         vm.prank(owner);
         wDetf = detfPkg.deployVault(args);
         require(wDetf == predicted, "detf != predicted");
+        assertEq(IERC20Metadata(w.asset()).decimals(), 6);
+        assertEq(IERC20Metadata(address(w)).decimals(), 16);
+        assertTrue(standardExchangeVault != address(w), "pair must differ from bound SE");
+        assertEq(IERC4626(standardExchangeVault).asset(), address(protocolVault));
+        assertEq(protocolVault.asset(), address(w));
+        address[] memory members = IBasicVault(standardExchangeVault).vaultTokens();
+        assertEq(members.length, 2);
+        assertEq(members[0], address(protocolVault));
+        assertEq(members[1], address(w), "pair must be a declared SE member");
+        IUniswapV4SeBufferHook reserve = IUniswapV4SeBufferHook(wHook);
+        assertEq(reserve.standardExchangeOf(address(w)), standardExchangeVault);
+        IStandardExchangeRateProvider provider = IStandardExchangeRateProvider(reserve.rateProvider(address(w)));
+        assertEq(address(provider.reserveVault()), standardExchangeVault);
+        assertEq(address(provider.rateTarget()), address(w));
     }
 
     function _bondOnly(IERC4626 w, address wDetf) internal returns (uint256 bondId) {
@@ -88,17 +114,30 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
         assertGt(tokenId, 0, "bond id");
         assertGt(shares, 0, "bond lp");
         assertTrue(info.isReserveLive(), "reserve live");
+        address standardExchangeVault =
+            IUniswapV4SeBufferHook(info.hook()).standardExchangeOf(address(w));
+        address protocolVault = IERC4626(standardExchangeVault).asset();
+        assertGt(IERC20(standardExchangeVault).balanceOf(info.hook()), 0, "real SE receipts");
+        assertGt(IERC20(protocolVault).balanceOf(standardExchangeVault), 0, "real protocol receipts");
+        assertGt(w.balanceOf(protocolVault), 0, "protocol holds wrapper backing");
     }
 
     function _mintRedeem(IERC4626 w, address wDetf) internal {
         uint8 d = IERC20Metadata(address(w)).decimals();
+        uint256 sharesBefore = IERC20(wDetf).balanceOf(detfUser);
+        uint256 pairBefore = w.balanceOf(detfUser);
         vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(address(w)), 10 * (10 ** d), IERC20(wDetf), 0, detfUser, false, block.timestamp + 1 hours
         );
         assertGt(minted, 0, "minted");
+        assertEq(IERC20(wDetf).balanceOf(detfUser), sharesBefore + minted, "actual DETF receipt");
+        assertEq(w.balanceOf(detfUser), pairBefore - 10 * (10 ** d), "actual pair input");
+        uint256 pairAfterMint = w.balanceOf(detfUser);
         IERC20(wDetf).approve(wDetf, minted);(uint256 redeemed,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(wDetf), minted, IERC20(address(w)), 0, detfUser, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(redeemed, 0, "redeemed");
+        assertEq(w.balanceOf(detfUser), pairAfterMint + redeemed, "actual pair receipt");
+        assertEq(IERC20(wDetf).balanceOf(detfUser), sharesBefore, "actual DETF burn");
     }
 
     function _deployWrapper(bytes32 salt) internal returns (IERC4626) {
@@ -122,7 +161,7 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
                 vaultRegistry: IVaultRegistryDeployment(address(indexedexManager))
             })
         );
-        RebasingERC20Harness underlying = new RebasingERC20Harness("Rebase", "RBS", 18);
+        RebasingERC20Harness underlying = new RebasingERC20Harness("Rebase", "RBS", 6);
         return wpkg.deployVault(IERC20Metadata(address(underlying)), 10, salt);
     }
 }
@@ -130,10 +169,32 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
 contract RebasingAwareERC4626_Buffers_Detf is TestBase_RebasingAwareDetfComposition {
     function test_F16_cpDetfMintRedeemWrapperShareReserve() public {
         IERC4626 w = _deployWrapper(bytes32(uint256(41)));
-        _fundWrap(w, 1_000e18);
+        _fundWrap(w, 1_000e6);
         address wDetf = _deployCpWrapperDetf(w);
         _bondOnly(w, wDetf);
         _mintRedeem(w, wDetf);
+        uint256 supply = w.totalSupply();
+        uint256 claim = w.previewRedeem(1e16);
+        RebasingERC20Harness(w.asset()).rebase(address(w), 100e6);
+        assertGt(w.previewRedeem(1e16), claim);
+        assertEq(w.totalSupply(), supply);
+        _mintRedeem(w, wDetf);
+        RebasingERC20Harness(w.asset()).rebase(address(w), -200e6);
+        assertLt(w.previewRedeem(1e16), claim);
+        assertEq(w.totalSupply(), supply);
+        _mintRedeem(w, wDetf);
+
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(w), true);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(w)));
+        vm.prank(detfUser);
+        w.deposit(1e6, detfUser);
+        _mintRedeem(w, wDetf);
+        uint256 assetsBefore = IERC20(w.asset()).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256 assets = w.redeem(1e16, detfUser, detfUser);
+        assertGt(assets, 0);
+        assertEq(IERC20(w.asset()).balanceOf(detfUser), assetsBefore + assets, "disabled wrapper exit receipt");
     }
 
 }
@@ -145,6 +206,28 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
         IERC4626 w = _deployWeightedWrapper();
         address wDetf = _deployWeightedWrapperDetf(w);
         _weightedBondMintRedeem(w, wDetf);
+        uint256 supply = w.totalSupply();
+        uint256 claim = w.previewRedeem(1e16);
+        RebasingERC20Harness(w.asset()).rebase(address(w), 100e6);
+        assertGt(w.previewRedeem(1e16), claim);
+        assertEq(w.totalSupply(), supply);
+        _weightedMintRedeem(w, wDetf);
+        RebasingERC20Harness(w.asset()).rebase(address(w), -200e6);
+        assertLt(w.previewRedeem(1e16), claim);
+        assertEq(w.totalSupply(), supply);
+        _weightedMintRedeem(w, wDetf);
+
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(w), true);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(w)));
+        vm.prank(detfUser);
+        w.deposit(1e6, detfUser);
+        _weightedMintRedeem(w, wDetf);
+        uint256 assetsBefore = IERC20(w.asset()).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256 assets = w.redeem(1e16, detfUser, detfUser);
+        assertGt(assets, 0);
+        assertEq(IERC20(w.asset()).balanceOf(detfUser), assetsBefore + assets, "disabled wrapper exit receipt");
     }
 
     function _deployWeightedWrapper() internal returns (IERC4626 w) {
@@ -168,16 +251,18 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
                 vaultRegistry: IVaultRegistryDeployment(address(indexedexManager))
             })
         );
-        RebasingERC20Harness underlying = new RebasingERC20Harness("Rebase", "RBS", 18);
+        RebasingERC20Harness underlying = new RebasingERC20Harness("Rebase", "RBS", 6);
         w = wpkg.deployVault(IERC20Metadata(address(underlying)), 10, bytes32(uint256(42)));
-        underlying.mint(detfUser, 2_000e18);
+        underlying.mint(detfUser, 2_000e6);
         vm.startPrank(detfUser);
         underlying.approve(address(w), type(uint256).max);
-        w.deposit(1_000e18, detfUser);
+        w.deposit(1_000e6, detfUser);
         vm.stopPrank();
     }
 
     function _deployWeightedWrapperDetf(IERC4626 w) internal returns (address wDetf) {
+        SimpleYieldERC4626 protocolVault = new SimpleYieldERC4626(MintableERC20Decimals(address(w)));
+        address standardExchangeVault = _deployERC4626SE(address(protocolVault));
         IUniswapV4Detf.PkgArgs memory args = _nLegDetfArgs(2);
         args.name = "Wrap W DETF";
         args.symbol = "wWDETF";
@@ -192,10 +277,9 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
         weights[1] = 3e17;
         weights[2] = 3e17;
         address[] memory ses = new address[](3);
-        address[] memory rps = new address[](3);
         for (uint256 i; i < 3; ++i) {
             if (toks[i] == predicted) ses[i] = address(0);
-            else if (toks[i] == address(w)) ses[i] = address(w);
+            else if (toks[i] == address(w)) ses[i] = standardExchangeVault;
             else ses[i] = se1;
         }
         IWeightedPkg.PkgArgs memory hArgs = IWeightedPkg.PkgArgs({
@@ -222,6 +306,20 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
         vm.prank(owner);
         wDetf = detfPkg.deployVault(args);
         require(wDetf == predicted, "detf != predicted");
+        assertEq(IERC20Metadata(w.asset()).decimals(), 6);
+        assertEq(IERC20Metadata(address(w)).decimals(), 16);
+        assertTrue(standardExchangeVault != address(w), "pair must differ from bound SE");
+        assertEq(IERC4626(standardExchangeVault).asset(), address(protocolVault));
+        assertEq(protocolVault.asset(), address(w));
+        address[] memory members = IBasicVault(standardExchangeVault).vaultTokens();
+        assertEq(members.length, 2);
+        assertEq(members[0], address(protocolVault));
+        assertEq(members[1], address(w), "pair must be a declared SE member");
+        IUniswapV4SeBufferHook reserve = IUniswapV4SeBufferHook(wHook);
+        assertEq(reserve.standardExchangeOf(address(w)), standardExchangeVault);
+        IStandardExchangeRateProvider provider = IStandardExchangeRateProvider(reserve.rateProvider(address(w)));
+        assertEq(address(provider.reserveVault()), standardExchangeVault);
+        assertEq(address(provider.rateTarget()), address(w));
     }
 
     function _weightedBondMintRedeem(IERC4626 w, address wDetf) internal {
@@ -237,13 +335,31 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
         assertGt(tokenId, 0);
         assertGt(lp, 0);
         assertTrue(info.isReserveLive());
+        address standardExchangeVault =
+            IUniswapV4SeBufferHook(info.hook()).standardExchangeOf(address(w));
+        address protocolVault = IERC4626(standardExchangeVault).asset();
+        assertGt(IERC20(standardExchangeVault).balanceOf(info.hook()), 0, "real SE receipts");
+        assertGt(IERC20(protocolVault).balanceOf(standardExchangeVault), 0, "real protocol receipts");
+        assertGt(w.balanceOf(protocolVault), 0, "protocol holds wrapper backing");
 
+        _weightedMintRedeem(w, wDetf);
+    }
+
+    function _weightedMintRedeem(IERC4626 w, address wDetf) internal {
+        uint8 d = IERC20Metadata(address(w)).decimals();
+        uint256 sharesBefore = IERC20(wDetf).balanceOf(detfUser);
+        uint256 pairBefore = w.balanceOf(detfUser);
         vm.startPrank(detfUser);(uint256 minted,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(address(w)), 10 * (10 ** d), IERC20(wDetf), 0, detfUser, false, block.timestamp + 1 hours
         );
         assertGt(minted, 0);
+        assertEq(IERC20(wDetf).balanceOf(detfUser), sharesBefore + minted, "actual DETF receipt");
+        assertEq(w.balanceOf(detfUser), pairBefore - 10 * (10 ** d), "actual pair input");
+        uint256 pairAfterMint = w.balanceOf(detfUser);
         IERC20(wDetf).approve(wDetf, minted);(uint256 redeemed,) = IStandardExchangeIn(wDetf).exchangeIn(IERC20(wDetf), minted, IERC20(address(w)), 0, detfUser, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(redeemed, 0);
+        assertEq(w.balanceOf(detfUser), pairAfterMint + redeemed, "actual pair receipt");
+        assertEq(IERC20(wDetf).balanceOf(detfUser), sharesBefore, "actual DETF burn");
     }
 }

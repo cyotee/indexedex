@@ -142,7 +142,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     }
 
     function rawReserve() public view returns (uint256) {
-        return IERC20(Repo._layout().rawToken).balanceOf(address(this));
+        return Repo._layout().bookedRaw;
     }
 
     function seClaimSupply() public view returns (uint256) {
@@ -190,16 +190,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        if (c == l.rawToken) return IERC20(l.rawToken).balanceOf(address(this));
+        if (c == l.rawToken) return l.bookedRaw;
         if (c == l.pairToken) return _seClaim();
         return 0;
     }
 
     function _isLive() internal view returns (bool) {
-        if (reserveCurrency0() > 0 && reserveCurrency1() > 0) return true;
         Repo.Layout storage l = Repo._layout();
-        return IERC20(l.rawToken).balanceOf(address(this)) > 0
-            && IERC20(l.standardExchange).balanceOf(address(this)) > 0;
+        return ERC20Repo._totalSupply() != 0 && l.bookedRaw != 0
+            && (l.bookedSeShares != 0 || l.localPairReserve != 0);
     }
 
     function _isZapEligible() internal view returns (bool) {
@@ -335,10 +334,6 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         if (pairGot == 0) revert InsufficientTokenOut();
     }
 
-    function _refundPairDust(address to) internal {
-        to;
-        Withdrawal.refundPairDust();
-    }
 
     /* ---------------------------------------------------------------------- */
     /*                              swap core                                 */
@@ -504,36 +499,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         return _withdrawSeShares(lpAmount, to, minAmountRaw, minAmountSe, deadline);
     }
 
-    function _withdraw(
-        uint256 lpAmount,
-        address to,
-        uint256 minAmount0,
-        uint256 minAmount1,
-        uint256 deadline
-    ) internal returns (uint256 amount0, uint256 amount1) {
+    function _withdraw(uint256 lpAmount, address to, uint256 minAmount0, uint256 minAmount1, uint256 deadline)
+        internal returns (uint256 amount0, uint256 amount1)
+    {
         _requireDeadline(deadline);
-        _requireNonZero(lpAmount);
-        _mintProtocolFeeIfNeeded();
-
-        Repo.Layout storage l = Repo._layout();
-        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
-
-        (uint256 rawOut, uint256 seOut) = _proRataRawAndSe(lpAmount);
-        _burnLp(msg.sender, lpAmount);
-        uint256 pairOut = seOut > 0 ? _unwrapSeShares(seOut) : 0;
-
-        if (rawOut > 0) {
-            uint256 cap = _spendableRaw();
-            if (rawOut > cap) rawOut = cap;
-            if (rawOut > 0) IERC20(l.rawToken).safeTransfer(to, rawOut);
-        }
-        if (pairOut > 0) IERC20(l.pairToken).safeTransfer(to, pairOut);
+        bool rawFirst = Repo._layout().currency0 == Repo._layout().rawToken;
+        (uint256 rawOut, uint256 pairOut) = ClaimLib.withdrawComponents(
+            msg.sender, lpAmount, to, rawFirst ? minAmount0 : minAmount1, rawFirst ? minAmount1 : minAmount0, false
+        );
         (amount0, amount1) = _orderAmounts(rawOut, pairOut);
-
-        if (amount0 < minAmount0 || amount1 < minAmount1) revert InsufficientTokenOut();
         _syncReserves();
-        _setKLastPostOp();
-        _refundPairDust(msg.sender);
         emit Withdraw(msg.sender, to, lpAmount, amount0, amount1);
     }
 
@@ -541,38 +516,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         return Withdrawal.proRata(lpAmount);
     }
 
-    function _withdrawSeShares(
-        uint256 lpAmount,
-        address to,
-        uint256 minAmountRaw,
-        uint256 minAmountSe,
-        uint256 deadline
-    ) internal returns (uint256 amountRaw, uint256 amountSe) {
+    function _withdrawSeShares(uint256 lpAmount, address to, uint256 minAmountRaw, uint256 minAmountSe, uint256 deadline)
+        internal returns (uint256 amountRaw, uint256 amountSe)
+    {
         _requireDeadline(deadline);
-        _requireNonZero(lpAmount);
-        _mintProtocolFeeIfNeeded();
-
-        Repo.Layout storage l = Repo._layout();
-        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
-
-        (amountRaw, amountSe) = _proRataRawAndSe(lpAmount);
-        _burnLp(msg.sender, lpAmount);
-
-        if (amountRaw > 0) {
-            uint256 capRaw = _spendableRaw();
-            if (amountRaw > capRaw) amountRaw = capRaw;
-            if (amountRaw > 0) IERC20(l.rawToken).safeTransfer(to, amountRaw);
-        }
-        if (amountSe > 0) {
-            uint256 capSe = _spendableSeShares();
-            if (amountSe > capSe) amountSe = capSe;
-            if (amountSe > 0) IERC20(l.standardExchange).safeTransfer(to, amountSe);
-        }
-
-        if (amountRaw < minAmountRaw || amountSe < minAmountSe) revert InsufficientTokenOut();
+        (amountRaw, amountSe) = ClaimLib.withdrawComponents(msg.sender, lpAmount, to, minAmountRaw, minAmountSe, true);
         _syncReserves();
-        _setKLastPostOp();
-        _refundPairDust(msg.sender);
         emit WithdrawSeShares(msg.sender, to, lpAmount, amountRaw, amountSe);
     }
 
@@ -619,63 +568,19 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     /*                              protocol fee                              */
     /* ---------------------------------------------------------------------- */
 
-    function _mintProtocolFeeIfNeeded() internal {
-        Withdrawal.mintProtocolFee();
-    }
 
-    function _setKLastPostOp() internal {
-        Withdrawal.setKLast();
-    }
 
-    function _supplyAfterProtocolMint() internal view returns (uint256 supplyAdj) {
-        supplyAdj = ERC20Repo._totalSupply();
-        (bool feeOn,, uint256 ownerFeeShare) = _feeOnAndShare();
-        uint256 kLast_ = Repo._layout().kLast;
-        if (feeOn && kLast_ != 0 && supplyAdj > 0) {
-            supplyAdj += Math.calculateProtocolFee(supplyAdj, _wadProduct(), kLast_, ownerFeeShare);
-        }
-    }
+    function _supplyAfterProtocolMint() internal view returns (uint256) { return ERC20Repo._totalSupply(); }
 
     /* ---------------------------------------------------------------------- */
-    function previewWithdraw(uint256 lpAmount)
-        external
-        view
-        returns (uint256 amount0, uint256 amount1)
-    {
-        uint256 supply = _supplyAfterProtocolMint();
-        if (lpAmount == 0 || supply == 0) return (0, 0);
-        // Preview uses post-protocol-mint supply; inventory split uses current balances.
-        if (ERC20Repo._totalSupply() == 0) return (0, 0);
-        uint256 rawBal = IERC20(Repo._layout().rawToken).balanceOf(address(this));
-        uint256 seBal = IERC20(Repo._layout().standardExchange).balanceOf(address(this));
-        uint256 rawOut = (rawBal * lpAmount) / supply;
-        uint256 seOut = (seBal * lpAmount) / supply;
-        uint256 dust = Repo.MAX_DUST_WEI;
-        if (rawBal <= dust) rawOut = 0;
-        else if (rawOut > rawBal - dust) rawOut = rawBal - dust;
-        if (seBal <= dust) seOut = 0;
-        else if (seOut > seBal - dust) seOut = seBal - dust;
-        return _orderAmounts(rawOut, seOut == 0 ? 0 : _previewUnwrapSe(seOut));
+    function previewWithdraw(uint256 lpAmount) external view returns (uint256 amount0, uint256 amount1) {
+        (uint256 rawOut, uint256 pairOut) = ClaimLib.previewComponentExit(lpAmount, false);
+        return _orderAmounts(rawOut, pairOut);
     }
 
     /// @notice B6 preview: pro-rata raw + SE shares (no unwrap).
-    function previewWithdrawSeShares(uint256 lpAmount)
-        external
-        view
-        returns (uint256 amountRaw, uint256 amountSe)
-    {
-        uint256 supply = _supplyAfterProtocolMint();
-        if (lpAmount == 0 || supply == 0) return (0, 0);
-        if (ERC20Repo._totalSupply() == 0) return (0, 0);
-        uint256 rawBal = IERC20(Repo._layout().rawToken).balanceOf(address(this));
-        uint256 seBal = IERC20(Repo._layout().standardExchange).balanceOf(address(this));
-        amountRaw = (rawBal * lpAmount) / supply;
-        amountSe = (seBal * lpAmount) / supply;
-        uint256 dust = Repo.MAX_DUST_WEI;
-        if (rawBal <= dust) amountRaw = 0;
-        else if (amountRaw > rawBal - dust) amountRaw = rawBal - dust;
-        if (seBal <= dust) amountSe = 0;
-        else if (amountSe > seBal - dust) amountSe = seBal - dust;
+    function previewWithdrawSeShares(uint256 lpAmount) external view returns (uint256 amountRaw, uint256 amountSe) {
+        return ClaimLib.previewComponentExit(lpAmount, true);
     }
 
     function previewWithdrawSingle(uint256 lpAmount, address tokenOut)

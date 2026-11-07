@@ -47,19 +47,24 @@ contract UniswapV4StandardExchangeWeightedBufferHook_SeBufferAbi is TestBase {
         weighted.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
     }
 
-    function test_T3_3_afterLive_joinSingleAsset_pairAndShare() public {
+    function test_T3_3_afterLive_singlePairAndShareBuyOtherLegs() public {
         _joinFullBook(80 ether, 80 ether);
         assertTrue(weighted.isLive(), "live");
+        uint256 quote = weighted.previewJoinSingleAssetExactIn(address(token0), 5 ether);
+        assertGt(quote, 0);
+        uint256 beforeLp = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        uint256 lpPair = weighted.joinSingleAssetExactIn(
-            address(token0), 5 ether, user, 0, block.timestamp + 1 hours
-        );
-        assertGt(lpPair, 0, "T3.3 pair");
-
-        uint256 seShares = _userAcquireSeShares(se0, token0, 20 ether);
+        uint256 net = weighted.joinSingleAssetExactIn(address(token0), 5 ether, user, quote, block.timestamp + 1 hours);
+        assertEq(net, quote);
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, net);
+        uint256 shares = _userAcquireSeShares(se0, token0, 20 ether);
+        quote = weighted.previewJoinSingleAssetExactIn(se0, shares);
+        assertGt(quote, 0);
+        beforeLp = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        uint256 lpSe = weighted.joinSingleAssetExactIn(se0, seShares, user, 0, block.timestamp + 1 hours);
-        assertGt(lpSe, 0, "T3.3 share");
+        net = weighted.joinSingleAssetExactIn(se0, shares, user, quote, block.timestamp + 1 hours);
+        assertEq(net, quote);
+        assertEq(IERC20(hook).balanceOf(user) - beforeLp, net);
     }
 
     function test_T3_4_joinUnbalanced_pairAndShare_reverts() public {
@@ -169,8 +174,9 @@ contract UniswapV4StandardExchangeWeightedBufferHook_SeBufferAbi is TestBase {
         ts[0] = address(token0);
         ts[1] = address(token1);
         uint256[] memory am = new uint256[](2);
-        am[0] = pairAmt;
+        am[0] = _userAcquireSeShares(se0, token0, pairAmt);
         am[1] = detfAmt;
+        ts[0] = se0;
         vm.prank(user);
         lp = weighted.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
     }

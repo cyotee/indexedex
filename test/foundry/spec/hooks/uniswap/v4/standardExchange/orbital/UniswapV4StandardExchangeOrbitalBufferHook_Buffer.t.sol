@@ -30,9 +30,10 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_BufferTest is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
-        assertEq(o.rawReserve(0), 0, "buffered raw book 0");
+        _seedFor(o, user, 100 ether, 100 ether, 100 ether);
+        assertEq(o.rawReserve(0), token0.balanceOf(h), "local receipt booked");
+        assertGt(o.rawReserve(0), 0);
         assertGt(o.seBalance(0), 0, "SE shares");
         assertGt(o.effectiveReserve(0), 0, "effective > 0");
         assertEq(o.rawReserve(1), 100 ether, "raw leg face");

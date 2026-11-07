@@ -67,7 +67,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RatedReserve_Test is
         assertGt(seBal, 0, "buffered leg has SE shares");
         uint256 expected = (seBal * 1.2e18) / 1e18;
 
-        assertEq(o.effectiveReserve(0), expected, "rated buffered leg = shares * rate / 1e18");
+        assertEq(o.effectiveReserve(0), o.rawReserve(0) + expected, "rated buffered leg = shares * rate / 1e18");
         assertEq(o.seClaim(0), expected, "seClaim == ratedNative(seBal, rate)");
         assertTrue(o.effectiveReserve(0) != seBal, "rated effective differs from raw SE-share face");
         assertEq(o.rateProvider(0), address(rp), "rate provider bound to leg0");
@@ -187,7 +187,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RatedReserve_Test is
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        (shares, u0, u1, u2) = o.addLiquidity(amount, amount, amount, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
+        (shares, u0, u1, u2) = _seedFor(o, user, amount, amount, amount);
     }
 }

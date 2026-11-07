@@ -42,7 +42,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
     function _redeemVaultHeld(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_)
         internal override nonReentrant returns (uint256)
     {
-        return _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp);
+        return _exitSingleAssetFrom(address(this), tokenOut_, shares_, receiver_, minimum_, block.timestamp, 0);
     }
 
 function exchangeIn(
@@ -54,7 +54,13 @@ function exchangeIn(
         bool pretransferred,
         uint256 deadline
     ) external returns (uint256 amountOut, uint256 amountRefunded) {
-        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return (_exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            uint256 beforeInput = tokenIn.balanceOf(msg.sender);
+            amountOut = _exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+            uint256 consumed = beforeInput - tokenIn.balanceOf(msg.sender);
+            amountRefunded = amountIn - consumed;
+            return (amountOut, amountRefunded);
+        }
         return (_swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline), 0);
     }
 

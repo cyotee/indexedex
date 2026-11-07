@@ -72,16 +72,26 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeBufferAbi is TestB
 
     function test_T4_3_afterLive_joinSingleAsset_pairAndShare() public {
         _joinFullBook(80 ether);
+        uint256 supply = IERC20(hook).totalSupply();
+        uint256 pairBefore = token1.balanceOf(user);
+        uint256 pairQuote = quad.previewJoinSingleAssetExactIn(address(token1), 5 ether);
+        assertGt(pairQuote, 0);
         vm.prank(user);
-        uint256 lpPair = quad.joinSingleAssetExactIn(
-            address(token1), 5 ether, user, 0, block.timestamp + 1 hours
+        uint256 pairLp = quad.joinSingleAssetExactIn(
+            address(token1), 5 ether, user, pairQuote, block.timestamp + 1 hours
         );
-        assertGt(lpPair, 0, "T4.3 pair");
+        assertEq(pairLp, pairQuote);
+        assertLt(token1.balanceOf(user), pairBefore);
 
         uint256 seShares = _userAcquireSeShares(se0, token0, 20 ether);
+        uint256 shareBefore = IERC20(se0).balanceOf(user);
+        uint256 shareQuote = quad.previewJoinSingleAssetExactIn(se0, seShares);
+        assertGt(shareQuote, 0);
         vm.prank(user);
-        uint256 lpSe = quad.joinSingleAssetExactIn(se0, seShares, user, 0, block.timestamp + 1 hours);
-        assertGt(lpSe, 0, "T4.3 share");
+        uint256 shareLp = quad.joinSingleAssetExactIn(se0, seShares, user, shareQuote, block.timestamp + 1 hours);
+        assertEq(shareLp, shareQuote);
+        assertLt(IERC20(se0).balanceOf(user), shareBefore);
+        assertGt(IERC20(hook).totalSupply(), supply);
     }
 
     function test_T4_4_previewBurnToToken_propExit_notSingleAsset() public {
@@ -151,6 +161,8 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeBufferAbi is TestB
         am[1] = amtEach;
         am[2] = amtEach;
         am[3] = amtEach;
+        bool[] memory flags = _prepareShareSeed(am, user);
+        for (uint256 i; i < 4; ++i) if (flags[i]) ts[i] = quad.standardExchange(i);
         vm.prank(user);
         lp = quad.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
     }

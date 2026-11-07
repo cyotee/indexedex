@@ -63,6 +63,7 @@ library UniswapV4FullSpreadStandardExchangeVaultTypes {
     struct SwapQuote {
         uint256 spent;
         uint256 received;
+        uint256 applied;
         uint160 sqrtPriceX96;
         int24 tick;
         uint128 liquidity;

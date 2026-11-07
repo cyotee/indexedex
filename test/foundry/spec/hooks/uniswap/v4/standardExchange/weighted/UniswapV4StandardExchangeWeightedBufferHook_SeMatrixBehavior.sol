@@ -133,9 +133,15 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
     }
 
     function _joinBoth(uint256 faceAmt, uint256 otherAmt) internal returns (uint256 shares, uint256 usedFace) {
+        uint256[] memory amounts = _amounts(faceAmt, otherAmt);
+        if (IERC20(hook).totalSupply() == 0) {
+            uint256 beforeFace = IERC20(face).balanceOf(user);
+            shares = _seedAmounts(user, amounts);
+            return (shares, beforeFace - IERC20(face).balanceOf(user));
+        }
         uint256[] memory used;
         vm.prank(user);
-        (shares, used) = weighted.joinProportional(_amounts(faceAmt, otherAmt), user, 0, block.timestamp + 1 hours);
+        (shares, used) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
         usedFace = used[faceIdx];
     }
 
@@ -188,17 +194,25 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         uint256 bookedBefore = fx.seBooked();
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 seBefore = _hookSeShares();
+        uint256 localBefore = IERC20(face).balanceOf(hook);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
         (, uint256 usedFace) = _joinBoth(_f(50), 50 ether);
         assertGt(usedFace, allow, "join used more face than the dependency could take");
         assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "no refund of the unconsumed part");
         uint256 booked = fx.seBooked() - bookedBefore;
         uint256 credited = _hookSeShares() - seBefore;
+        uint256 localAdded = IERC20(face).balanceOf(hook) - localBefore;
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        uint256 requiredShares = gross * seBefore / supplyBefore + (gross * seBefore % supplyBefore == 0 ? 0 : 1);
+        uint256 requiredLocal = gross * localBefore / supplyBefore + (gross * localBefore % supplyBefore == 0 ? 0 : 1);
+        assertEq(credited, requiredShares, "accepted SE shares back the common mint");
+        assertEq(localAdded, requiredLocal, "accepted local tokens back the common mint");
         (, uint256 deployedAfter) = fx.partialDeploymentBalance();
         uint256 consumed = measured ? deployedAfter - deployedBefore : allow;
         assertLe(consumed, allow, "dependency consumption respects the requested upper bound");
-        assertEq(booked, usedFace - consumed, "book change is the input the dependency did not take");
+        assertEq(booked + localAdded, usedFace - consumed, "SE and hook local books split unconsumed input");
         assertGt(credited, 0, "hook receives shares for the booked input");
-        assertEq(usedFace, consumed + booked, "protocol custody, book change and caller debit reconcile");
+        assertEq(usedFace, consumed + booked + localAdded, "protocol, SE and hook custody reconcile with caller debit");
         fx.openCapacity();
         uint256 bookedAfter = fx.seBooked();
         _joinBoth(_f(1), 1 ether);
@@ -256,7 +270,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
-        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
+        uint256 local = IERC20(face).balanceOf(hook);
+        uint256 deficit = wantOut > local ? wantOut - local : 0;
+        uint256 expectedDebit = deficit == 0 ? 0 : IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), deficit);
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
@@ -311,7 +327,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
 
     function test_row_poolManagerSwap_bothDirections_noFaceResidual() public virtual {
         _seed();
-        uint256 restingFace = IERC20(face).balanceOf(hook);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
         uint256 uFace = IERC20(face).balanceOf(user);
         uint256 uOther = IERC20(other).balanceOf(user);
 
@@ -333,7 +349,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior i
         _swapExactOut(other, face, _f(1) / 2);
         assertEq(IERC20(face).balanceOf(user) - uFace, _f(1) / 2, "exact-out other->face delivers the request");
 
-        assertApproxEqAbs(IERC20(face).balanceOf(hook), restingFace, _residualTolerance(), "no operation-created face residual on the buffered leg");
+        assertEq(IERC20(hook).totalSupply(), supplyBefore, "swaps do not issue LP");
+        uint256 redeemable = ExchangeInAmount.previewOut(IStandardExchangeIn(seUT), IERC20(seUT), weighted.seBalance(faceIdx), IERC20(face));
+        assertGt(redeemable + IERC20(face).balanceOf(hook), 0, "remaining share and local components stay live");
     }
 
     function test_row_seFailure_rollsBack() public virtual {

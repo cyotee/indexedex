@@ -8,6 +8,9 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {Test} from "forge-std/Test.sol";
+import {IRebasingAwareERC4626} from "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 import {
     TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook
@@ -33,6 +36,8 @@ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol"
 contract RebasingBufferDetfHandler is Test {
     IHook public hook;
     IERC4626 public wrapper;
+    IERC4626 public controlWrapper;
+    SimpleMintableERC20 public pair;
     RebasingERC20Harness public underlying;
     SimpleMintableERC20 public raw;
     address public actor;
@@ -46,12 +51,16 @@ contract RebasingBufferDetfHandler is Test {
     constructor(
         IHook hook_,
         IERC4626 wrapper_,
+        IERC4626 controlWrapper_,
+        SimpleMintableERC20 pair_,
         RebasingERC20Harness underlying_,
         SimpleMintableERC20 raw_,
         address actor_
     ) {
         hook = hook_;
         wrapper = wrapper_;
+        controlWrapper = controlWrapper_;
+        pair = pair_;
         underlying = underlying_;
         raw = raw_;
         actor = actor_;
@@ -70,7 +79,7 @@ contract RebasingBufferDetfHandler is Test {
 
     function join(uint256 rawAmt, uint256 shareAmt) external {
         attempts[1]++;
-        uint256 shares = IERC20(address(wrapper)).balanceOf(actor);
+        uint256 shares = IERC20(address(controlWrapper)).balanceOf(actor);
         if (shares < 2e22) {
             skips[1]++;
             return;
@@ -82,25 +91,25 @@ contract RebasingBufferDetfHandler is Test {
         raw.mint(actor, rawAmt);
         vm.startPrank(actor);
         raw.approve(address(hook), type(uint256).max);
-        IERC20(address(wrapper)).approve(address(hook), type(uint256).max);
+        IERC20(address(controlWrapper)).approve(address(hook), type(uint256).max);
         hook.depositWithSeShares(rawAmt, shareAmt, actor, 0, block.timestamp + 1 hours);
         joinOk++;
         successes[1]++;
         vm.stopPrank();
     }
 
-    function swapRawForShares(uint256 amount) external {
+    function swapRawForPair(uint256 amount) external {
         attempts[2]++;
         amount = bound(amount, 1e15, 2 ether);
         if (raw.balanceOf(actor) < amount) {
             raw.mint(actor, amount);
-        }(uint256 pred,) = IStandardExchangeIn(address(hook)).previewExchangeIn(IERC20(address(raw)), amount, IERC20(address(wrapper)));
+        }(uint256 pred,) = IStandardExchangeIn(address(hook)).previewExchangeIn(IERC20(address(raw)), amount, IERC20(address(pair)));
         if (pred == 0) {
             skips[2]++;
             return;
         }
         vm.startPrank(actor);
-        raw.approve(address(hook), type(uint256).max);IStandardExchangeIn(address(hook)).exchangeIn(IERC20(address(raw)), amount, IERC20(address(wrapper)), 0, actor, false, block.timestamp + 1 hours
+        raw.approve(address(hook), type(uint256).max);IStandardExchangeIn(address(hook)).exchangeIn(IERC20(address(raw)), amount, IERC20(address(pair)), 0, actor, false, block.timestamp + 1 hours
             );
         swapOk++;
         successes[2]++;
@@ -150,16 +159,19 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
 
     IERC4626 internal wrapper;
-    RebasingERC20Harness internal underlying;
+    IERC4626 internal rebasingWrapper;
+    RebasingERC20Harness internal rebasingUnderlying;
     IHook internal wrapperHook;
     RebasingBufferDetfHandler internal handler;
 
     function setUp() public override {
         TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.setUp();
         _deployWrapper();
-        underlying.mint(user, 400e18);
+        rebasingUnderlying.mint(user, 400e18);
         vm.startPrank(user);
-        underlying.approve(address(wrapper), type(uint256).max);
+        rebasingUnderlying.approve(address(rebasingWrapper), type(uint256).max);
+        rebasingWrapper.deposit(200e18, user);
+        pairToken.approve(address(wrapper), type(uint256).max);
         wrapper.deposit(200e18, user);
         vm.stopPrank();
         _deployWrapperHook();
@@ -171,10 +183,10 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
             40 ether, IERC20(address(wrapper)).balanceOf(user) / 2, user, 0, block.timestamp + 1 hours
         );
         vm.stopPrank();
-        handler = new RebasingBufferDetfHandler(wrapperHook, wrapper, underlying, rawToken, user);
+        handler = new RebasingBufferDetfHandler(wrapperHook, rebasingWrapper, wrapper, pairToken, rebasingUnderlying, rawToken, user);
         handler.wrap(2e18);
         handler.join(1e18, 1e28);
-        handler.swapRawForShares(1e16);
+        handler.swapRawForPair(1e16);
         handler.exit(1e12);
         handler.rebase(-1e18);
         handler.donateUnderlying(1e18);
@@ -182,7 +194,7 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
         bytes4[] memory selectors = new bytes4[](6);
         selectors[0] = handler.wrap.selector;
         selectors[1] = handler.join.selector;
-        selectors[2] = handler.swapRawForShares.selector;
+        selectors[2] = handler.swapRawForPair.selector;
         selectors[3] = handler.exit.selector;
         selectors[4] = handler.rebase.selector;
         selectors[5] = handler.donateUnderlying.selector;
@@ -203,7 +215,7 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
         uint256 rawBefore = rawToken.balanceOf(user);
         uint256 sharesBefore = wrapper.balanceOf(user);
         uint256 lpBefore = IERC20(address(wrapperHook)).totalSupply();
-        vm.expectRevert(bytes4(keccak256("ZeroAmount()")));
+        vm.expectRevert(IRebasingAwareERC4626.ZeroOperationOutput.selector);
         vm.prank(user);
         wrapperHook.depositWithSeShares(1e18, 5803, user, 0, block.timestamp);
         assertEq(rawToken.balanceOf(user), rawBefore);
@@ -213,14 +225,16 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
 
     function invariant_INV12_wrapperFeeTypeRemainsZero() public view {
         assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
+        assertEq(IStandardVault(address(rebasingWrapper)).vaultFeeTypeIds(), bytes32(0));
         assertEq(IStandardVault(address(wrapperHook)).vaultFeeTypeIds(), bytes32(0));
     }
 
     function invariant_wrapperBackingEqualsHeldAsset() public view {
-        assertEq(wrapper.totalAssets(), underlying.balanceOf(address(wrapper)));
+        assertEq(rebasingWrapper.totalAssets(), rebasingUnderlying.balanceOf(address(rebasingWrapper)));
+        assertEq(wrapper.totalAssets(), pairToken.balanceOf(address(wrapper)));
     }
 
-    function invariant_hookPairCustodyIsWrapperShares() public view {
+    function invariant_hookCustodyHasSeparateSharesAndLocalPair() public view {
         uint256 lp = IERC20(address(wrapperHook)).totalSupply();
         if (lp <= 1000) return;
         uint256 hookShares = IERC20(address(wrapper)).balanceOf(address(wrapperHook));
@@ -232,10 +246,16 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
         assertEq(known, IERC20(address(wrapper)).totalSupply());
     }
 
-    function invariant_identitySeEqualsPair() public view {
-        assertEq(wrapperHook.standardExchangeOf(address(wrapper)), address(wrapper));
-        assertEq(wrapper.asset(), address(underlying));
-        assertTrue(address(wrapper) != address(underlying));
+    /// @notice The SE binds its non-rebasing member; its own share is separate inventory.
+    function invariant_memberBindingAndIndependentRebaseSubject() public view {
+        assertEq(wrapperHook.standardExchangeOf(address(pairToken)), address(wrapper));
+        assertEq(wrapperHook.pairToken(), address(pairToken));
+        address[] memory members = IBasicVault(address(wrapper)).vaultTokens();
+        assertEq(members.length, 1);
+        assertEq(members[0], address(pairToken));
+        assertTrue(address(wrapper) != address(pairToken));
+        assertEq(rebasingWrapper.balanceOf(address(wrapperHook)), 0);
+        assertEq(rebasingUnderlying.balanceOf(address(wrapperHook)), 0);
     }
 
     function _deployWrapper() internal {
@@ -258,18 +278,18 @@ contract RebasingAwareERC4626_BufferInvariant is TestBase_UniswapV4SingleStandar
                 vaultRegistry: IVaultRegistryDeployment(address(indexedexManager))
             })
         );
-        underlying = new RebasingERC20Harness("Rebase", "RBS", 18);
-        wrapper = wpkg.deployVault(IERC20Metadata(address(underlying)), 10, bytes32(uint256(88)));
+        rebasingUnderlying = new RebasingERC20Harness("Rebase", "RBS", 18);
+        rebasingWrapper = wpkg.deployVault(IERC20Metadata(address(rebasingUnderlying)), 10, bytes32(uint256(88)));
+        wrapper = wpkg.deployVault(IERC20Metadata(address(pairToken)), 10, bytes32(uint256(188)));
     }
 
     function _deployWrapperHook() internal {
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchange = address(wrapper);
-        args.pairToken = address(wrapper);
-        args.pairTokenDecimals = IERC20Metadata(address(wrapper)).decimals();
+        args.rateProvider = RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(wrapper), address(pairToken));
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address wHook = PkgFactory.deployHook(hookPkg, args, mineNonce);
-        _ensureProductDoorsAndFinalize(wHook, address(rawToken), address(wrapper));
+        _ensureProductDoorsAndFinalize(wHook, address(rawToken), address(pairToken));
         wrapperHook = IHook(wHook);
     }
 }

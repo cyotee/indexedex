@@ -59,6 +59,7 @@ contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCu
         assertEq(abi.encode(tokens_), abi.encode(sy_.getTokensOut()));
         assertEq(sy_.getRewardTokens().length, 0);
         assertFalse(sy_.isValidTokenIn(hook));
+        // Curve preserves its native-inventory denomination, not a rated swap mark.
         uint256 left_ = Math.sqrt(IERC20(se0).balanceOf(hook) * token1.balanceOf(hook));
         uint256 right_ = Math.sqrt(token2.balanceOf(hook) * token3.balanceOf(hook));
         assertEq(sy_.exchangeRate(), Math.mulDiv(Math.sqrt(left_ * right_), 1e18, sy_.totalSupply()));
@@ -80,21 +81,27 @@ contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCu
         }
     }
 
-    function test_curveQuadSYAllPairAndShareInputsAndOutputs() public noSelfCalls(hook) {
+    function test_curveQuadSYPaidSingleInputsMintAndAllOutputsRedeem() public noSelfCalls(hook) {
         address[5] memory tokens_ = [address(token0), address(token1), address(token2), address(token3), se0];
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             address in_ = tokens_[i_];
             address out_ = tokens_[(i_ + 1) % tokens_.length];
             uint256 amount_ = 5 ether;
             uint256 expected_ = sy_.previewDeposit(in_, amount_);
-            uint256 paidBefore_ = IERC20(in_).balanceOf(user);
+            assertGt(expected_, 0, "paid preparation funds the complete basket");
             (uint256 previewAmountOut1,) = IStandardExchangeIn(hook).previewExchangeIn(IERC20(in_), amount_, IERC20(hook));
             assertEq(previewAmountOut1, expected_);
+            uint256 lpBefore_ = sy_.balanceOf(user);
+            uint256 inputBefore_ = IERC20(in_).balanceOf(user);
             vm.prank(user);
             uint256 minted_ = sy_.deposit(user, in_, amount_, expected_);
             assertEq(minted_, expected_);
-            assertEq(IERC20(in_).balanceOf(user), paidBefore_ - amount_);
+            assertEq(sy_.balanceOf(user) - lpBefore_, minted_);
+            uint256 spent_ = inputBefore_ - IERC20(in_).balanceOf(user);
+            assertGt(spent_, 0);
+            assertLe(spent_, amount_);
             uint256 quote_ = sy_.previewRedeem(out_, minted_);
+            assertGt(quote_, 0, "real SY redemption remains feasible");
             uint256 receivedBefore_ = IERC20(out_).balanceOf(user);
             vm.prank(user);
             uint256 received_ = sy_.redeem(user, minted_, out_, quote_, false);
@@ -103,26 +110,64 @@ contract CurveQuadBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeCu
         }
     }
 
-    function test_curveQuadStandardExactOutputLiquidityUsesRequiredAmountOnly() public {
+    function test_curveQuadStandardExactOutputPaidJoinAndRedemptionRespectBudgets() public {
         uint256 wanted_ = 1 ether;
-        uint256 required_ = IStandardExchangeOut(hook).previewExchangeOut(token1, IERC20(hook), wanted_);
-        uint256 before_ = token1.balanceOf(user);
+        uint256 requiredIn_ = IStandardExchangeOut(hook).previewExchangeOut(token1, IERC20(hook), wanted_);
+        assertGt(requiredIn_, 0);
+        bytes32 state_ = _componentOwnershipState(user);
+        vm.prank(user);
+        vm.expectRevert();
+        IStandardExchangeOut(hook).exchangeOut(token1, 0, IERC20(hook), wanted_, user, false, block.timestamp);
+        assertEq(_componentOwnershipState(user), state_, "insufficient input budget restores all custody");
+        uint256 inputBefore_ = token1.balanceOf(user);
         uint256 lpBefore_ = sy_.balanceOf(user);
         vm.prank(user);
-        uint256 spent_ = IStandardExchangeOut(hook).exchangeOut(token1, required_ + 100 ether, IERC20(hook), wanted_, user, false, block.timestamp);
-        assertEq(spent_, required_);
-        assertEq(token1.balanceOf(user), before_ - required_);
-        assertEq(sy_.balanceOf(user), lpBefore_ + wanted_);
-        required_ = IStandardExchangeOut(hook).previewExchangeOut(IERC20(hook), token1, wanted_);
+        uint256 used_ = IStandardExchangeOut(hook).exchangeOut(token1, requiredIn_ + 100 ether, IERC20(hook), wanted_, user, false, block.timestamp);
+        assertGt(used_, 0);
+        assertLe(used_, requiredIn_, "forward quote bounds actual input, not caller fat maximum");
+        assertEq(inputBefore_ - token1.balanceOf(user), used_);
+        assertEq(sy_.balanceOf(user) - lpBefore_, wanted_, "exact net LP delivered after mint fee");
+        uint256 before_ = token1.balanceOf(user);
         lpBefore_ = sy_.balanceOf(user);
-        before_ = token1.balanceOf(user);
+        uint256 required_ = IStandardExchangeOut(hook).previewExchangeOut(IERC20(hook), token1, wanted_);
+        assertGt(required_, 0);
         vm.prank(user);
-        spent_ = IStandardExchangeOut(hook).exchangeOut(IERC20(hook), required_ + 100 ether, token1, wanted_, user, false, block.timestamp);
+        uint256 spent_ = IStandardExchangeOut(hook).exchangeOut(IERC20(hook), required_ + 100 ether, token1, wanted_, user, false, block.timestamp);
         assertEq(spent_, required_);
         assertEq(sy_.balanceOf(user), lpBefore_ - required_);
         assertEq(token1.balanceOf(user), before_ + wanted_);
         vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
         IStandardExchangeOut(hook).previewExchangeOut(IERC20(se0), IERC20(hook), wanted_);
+    }
+
+    function test_curveQuadCompleteComponentJoinStillMintsPositiveLP() public {
+        uint256[] memory amounts_ = new uint256[](4);
+        for (uint256 i_; i_ < 4; ++i_) amounts_[i_] = 5 ether;
+        (uint256 preview_,) = quad.previewJoinProportional(amounts_);
+        assertGt(preview_, 0);
+        uint256 before_ = sy_.balanceOf(user);
+        vm.prank(user);
+        (uint256 net_,) = quad.joinProportional(amounts_, user, preview_, block.timestamp);
+        assertEq(net_, preview_);
+        assertEq(sy_.balanceOf(user) - before_, net_);
+    }
+
+    function _componentOwnershipState(address actor_) private view returns (bytes32 state_) {
+        state_ = keccak256(abi.encode(sy_.totalSupply(), sy_.balanceOf(actor_),
+            sy_.balanceOf(hook), sy_.balanceOf(address(0)), sy_.balanceOf(quad.feeTo()),
+            quad.nativeReserves(), quad.ratedBalances()));
+        for (uint256 i_; i_ < 4; ++i_) {
+            address token_ = quad.token(i_);
+            address se_ = quad.standardExchange(i_);
+            state_ = keccak256(abi.encode(state_, IERC20(token_).balanceOf(actor_),
+                IERC20(token_).balanceOf(hook), IERC20(token_).allowance(actor_, hook)));
+            if (se_ != address(0)) {
+                state_ = keccak256(abi.encode(state_, IERC20(se_).totalSupply(),
+                    IERC20(se_).balanceOf(actor_), IERC20(se_).balanceOf(hook),
+                    IERC20(se_).allowance(actor_, hook), IERC20(token_).balanceOf(se_),
+                    IERC20(token_).allowance(hook, se_)));
+            }
+        }
     }
 
     function test_curveQuadSYInternalSharesBurnOnlyRequestedAmountAndPaySeShares() public noSelfCalls(hook) {
@@ -214,12 +259,23 @@ contract CurveQuadBufferHookRestrictedSYTest is TestBase_UniswapV4StandardExchan
         token1.mint(outsider_, 5 ether);
         vm.startPrank(outsider_);
         token1.approve(hook, 5 ether);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, outsider_));
         IStandardizedYield(hook).deposit(outsider_, address(token1), 5 ether, 0);
         vm.stopPrank();
         assertEq(token1.balanceOf(outsider_), 5 ether);
         assertEq(IERC20(hook).balanceOf(outsider_), 0);
+        uint256 depositQuote_ = IStandardizedYield(hook).previewDeposit(address(token1), 5 ether);
+        assertGt(depositQuote_, 0);
         vm.prank(user);
-        assertGt(IStandardizedYield(hook).deposit(user, address(token1), 5 ether, 0), 0);
+        assertEq(IStandardizedYield(hook).deposit(user, address(token1), 5 ether, depositQuote_), depositQuote_);
+        uint256 lpBefore_ = IERC20(hook).balanceOf(user);
+        uint256 shares_ = lpBefore_ / 100;
+        uint256 quote_ = IStandardizedYield(hook).previewRedeem(address(token1), shares_);
+        uint256 before_ = token1.balanceOf(user);
+        vm.prank(user);
+        uint256 paid_ = IStandardizedYield(hook).redeem(user, shares_, address(token1), quote_, false);
+        assertGt(paid_, 0);
+        assertEq(token1.balanceOf(user) - before_, paid_);
+        assertEq(IERC20(hook).balanceOf(user), lpBefore_ - shares_);
     }
 }

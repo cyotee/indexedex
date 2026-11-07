@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
@@ -34,6 +36,54 @@ import {
 abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decimals is TestBase {
     WrapperExactOutRouter internal swapRouter;
 
+    struct DecimalBook {
+        uint256 supply;
+        uint256 raw;
+        uint256 shares;
+        uint256 local;
+        uint256 userLp;
+        uint256 feeLp;
+    }
+
+    function _captureBook() internal view returns (DecimalBook memory b) {
+        return DecimalBook(IERC20(hook).totalSupply(), rawToken.balanceOf(hook), IERC20(se).balanceOf(hook),
+            pairToken.balanceOf(hook), IERC20(hook).balanceOf(user), IERC20(hook).balanceOf(_feeTo()));
+    }
+
+    function _ceilNative(uint256 mint, uint256 component, uint256 supply) internal pure returns (uint256) {
+        uint256 product = mint * component;
+        return product / supply + (product % supply == 0 ? 0 : 1);
+    }
+
+    function _assertAdded(DecimalBook memory b, uint256 net) internal view {
+        uint256 gross = IERC20(hook).totalSupply() - b.supply;
+        assertEq(rawToken.balanceOf(hook) - b.raw, _ceilNative(gross, b.raw, b.supply));
+        assertEq(IERC20(se).balanceOf(hook) - b.shares, _ceilNative(gross, b.shares, b.supply));
+        assertEq(pairToken.balanceOf(hook) - b.local, _ceilNative(gross, b.local, b.supply));
+        assertEq(IERC20(hook).balanceOf(user) - b.userLp, net);
+        assertEq(net + IERC20(hook).balanceOf(_feeTo()) - b.feeLp, gross);
+        _assertNativeBook();
+    }
+
+    function _assertAllocated(DecimalBook memory b, uint256 burned) internal view {
+        assertEq(rawToken.balanceOf(hook), b.raw - burned * b.raw / b.supply);
+        assertEq(IERC20(se).balanceOf(hook), b.shares - burned * b.shares / b.supply);
+        assertEq(pairToken.balanceOf(hook), b.local - burned * b.local / b.supply);
+        assertEq(IERC20(hook).totalSupply(), b.supply - burned);
+        assertEq(IERC20(hook).balanceOf(_feeTo()), b.feeLp);
+        _assertNativeBook();
+    }
+
+    function _assertNativeBook() internal view {
+        uint256 rate = IRateProvider(single.rateProvider(address(pairToken))).getRate();
+        uint256 rated = IERC20(se).balanceOf(hook) * rate * (10 ** uint256(IERC20Metadata(address(pairToken)).decimals()))
+            / ((10 ** uint256(IERC20Metadata(se).decimals())) * 1e18);
+        assertEq(single.seClaimSupply(), pairToken.balanceOf(hook) + rated);
+        assertEq(IBasicVault(hook).reserveOfToken(address(pairToken)), single.seClaimSupply());
+        assertEq(single.rawReserve(), rawToken.balanceOf(hook));
+    }
+
+
     function setUp() public virtual override {
         super.setUp();
         swapRouter = new WrapperExactOutRouter(pm);
@@ -60,7 +110,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         assertTrue(single.isLive());
         assertGt(single.rawReserve(), 0);
         assertGt(single.seClaimSupply(), 0);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        _assertNativeBook();
+        assertGt(pairToken.balanceOf(hook), 0);
         assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)));
         assertTrue(single.seClaimSupply() != pairToken.balanceOf(hook) || pairToken.balanceOf(hook) == 0);
     }
@@ -73,15 +124,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         uint256 offer1 = a1;
         (uint256 predLp, uint256 predU0, uint256 predU1) = single.previewDeposit(offer0, offer1);
         uint256 bal0Before = IERC20(single.currency0()).balanceOf(user);
+        DecimalBook memory before_ = _captureBook();
         vm.prank(user);
         (uint256 lp, uint256 u0, uint256 u1) = single.deposit(offer0, offer1, user, 0, block.timestamp + 1);
-        assertApproxEqRel(lp, predLp, 0.02e18);
+        assertEq(lp, predLp);
         assertEq(u0, predU0);
         assertEq(u1, predU1);
         if (offer0 > u0) {
             assertEq(IERC20(single.currency0()).balanceOf(user), bal0Before - u0);
         }
-        assertLe(pairToken.balanceOf(hook), DUST);
+        _assertAdded(before_, lp);
     }
 
     function test_W1_withdraw_previewEqualsExec() public {
@@ -90,13 +142,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         (uint256 pred0, uint256 pred1) = single.previewWithdraw(lp);
         uint256 b0 = IERC20(single.currency0()).balanceOf(user);
         uint256 b1 = IERC20(single.currency1()).balanceOf(user);
+        DecimalBook memory before_ = _captureBook();
         vm.prank(user);
         (uint256 a0, uint256 a1) = single.withdraw(lp, user, 0, 0, block.timestamp + 1);
         assertApproxEqAbs(a0, pred0, DUST);
         assertApproxEqAbs(a1, pred1, DUST);
         assertEq(IERC20(single.currency0()).balanceOf(user) - b0, a0);
         assertEq(IERC20(single.currency1()).balanceOf(user) - b1, a1);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        _assertAllocated(before_, lp);
     }
 
     function test_B6_depositWithSeShares_firstMint_mintsLp() public {
@@ -115,8 +168,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         assertEq(lp, predLp);
         assertEq(IERC20(hook).balanceOf(user), lp);
         assertEq(IERC20(se).balanceOf(user), seBefore - seShares);
-        assertLe(pairToken.balanceOf(hook), DUST);
-        assertGt(IERC20(se).balanceOf(hook), 0);
+        _assertNativeBook();
+        assertEq(IERC20(se).balanceOf(hook), seShares - seShares / 20);
+        assertGt(pairToken.balanceOf(hook), 0);
         assertTrue(single.isLive());
         assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)));
     }
@@ -131,17 +185,18 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         uint256 rawBefore = rawToken.balanceOf(user);
         uint256 claimBefore = single.seClaimSupply();
 
+        DecimalBook memory before_ = _captureBook();
         vm.prank(user);
         (uint256 lp, uint256 usedRaw, uint256 usedSe) =
             single.depositWithSeShares(_uRaw(50), seShares, user, 0, block.timestamp + 1);
 
-        assertApproxEqRel(lp, predLp, 0.02e18);
+        assertEq(lp, predLp);
         assertEq(usedRaw, predRaw);
         assertEq(usedSe, predSe);
         assertEq(rawToken.balanceOf(user), rawBefore - usedRaw);
         assertEq(IERC20(se).balanceOf(user), seBefore - usedSe);
         assertGt(single.seClaimSupply(), claimBefore);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        _assertAdded(before_, lp);
     }
 
     function test_B6_withdrawSeShares_paysSeAndRaw_previewEqualsExec() public {
@@ -157,6 +212,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
 
         uint256 rawBefore = rawToken.balanceOf(user);
         uint256 seBefore = IERC20(se).balanceOf(user);
+        DecimalBook memory before_ = _captureBook();
         vm.prank(user);
         (uint256 amountRaw, uint256 amountSe) =
             single.withdrawSeShares(burn, user, 0, 0, block.timestamp + 1);
@@ -165,41 +221,23 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         assertEq(amountSe, predSe);
         assertEq(rawToken.balanceOf(user) - rawBefore, amountRaw);
         assertEq(IERC20(se).balanceOf(user) - seBefore, amountSe);
-        assertLe(pairToken.balanceOf(hook), DUST);
-    }
-
-    /// @dev Mixed books: preview may be 18-dec WAD while exec is reserve-scaled. Both must be > 0.
-    function _assertZapLp(uint256 exec, uint256 pred) internal pure {
-        assertGt(exec, 0, "zap lp");
-        assertGt(pred, 0, "zap preview");
-        uint256 hi = exec > pred ? exec : pred;
-        uint256 lo = exec > pred ? pred : exec;
-        if (lo == 0 || hi / lo >= 100) return;
-        assertApproxEqRel(exec, pred, 0.05e18);
+        _assertAllocated(before_, burn);
     }
 
     function test_Zi1_depositSingle_bothDirections() public {
         _seedLiveLiquidity();
-        uint256 amtRaw = _uRaw(1);
-        uint256 predRaw = single.previewDepositSingle(address(rawToken), amtRaw);
-        vm.prank(user);
-        try single.depositSingle(address(rawToken), amtRaw, user, 0, block.timestamp + 1) returns (uint256 lpRaw)
-        {
-            _assertZapLp(lpRaw, predRaw);
-        } catch {
-            assertGt(predRaw, 0, "raw zap preview");
+        for (uint256 i; i < 2; ++i) {
+            address input = i == 0 ? address(rawToken) : address(pairToken);
+            uint256 amount = i == 0 ? _uRaw(1) : _uPair(1);
+            uint256 preview = single.previewDepositSingle(input, amount);
+            uint256 lpBefore = IERC20(hook).balanceOf(user);
+            assertGt(preview, 0, "native decimal input quotes backed LP");
+            vm.prank(user);
+            uint256 minted = single.depositSingle(input, amount, user, preview, block.timestamp + 1);
+            assertEq(minted, preview, "native decimal single preview");
+            assertEq(IERC20(hook).balanceOf(user) - lpBefore, minted, "native decimal net LP");
+            _assertNativeBook();
         }
-
-        uint256 amtPair = _uPair(1);
-        uint256 predPair = single.previewDepositSingle(address(pairToken), amtPair);
-        vm.prank(user);
-        try single.depositSingle(address(pairToken), amtPair, user, 0, block.timestamp + 1) returns (uint256 lpPair)
-        {
-            _assertZapLp(lpPair, predPair);
-        } catch {
-            assertGt(predPair, 0, "pair zap preview");
-        }
-        assertLe(pairToken.balanceOf(hook), DUST);
     }
 
     function test_Zo1_withdrawSingle_bothTokenOut_previewEqualsExec() public {
@@ -221,7 +259,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         assertApproxEqAbs(outRaw, predRaw, _invSlack(predRaw), "rawOut preview~=exec");
         assertEq(rawToken.balanceOf(user) - bRaw, outRaw);
         assertGt(outRaw, 0);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        _assertNativeBook();
     }
 
     function test_S1_exactIn_bothDirections_previewEqualsExec() public {
@@ -293,7 +331,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         );
         assertEq(outRaw, predRaw);
         assertEq(rawToken.balanceOf(user) - bRaw, outRaw);
-        assertLe(pairToken.balanceOf(hook), DUST);
+        _assertNativeBook();
     }
 
     function test_SE2_exchangeOut_bothDirections() public {
@@ -368,10 +406,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         assertApproxEqAbs(amountIn, predIn, DUST, "owner exact-out == preview");
     }
 
-    function test_A1_seDonation_dilutesLps_noFreeMint() public {
+    function test_A1_seDonation_isNotPoolCredit() public {
         _seedLiveLiquidity();
         uint256 userLp = IERC20(hook).balanceOf(user);
-        uint256 claimBefore = single.seClaimSupply();
         uint256 pairAmt = _uPair(50);
         pairToken.mint(user, pairAmt);
         vm.startPrank(user);
@@ -383,10 +420,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
             false,
             block.timestamp
         );
-        IERC20(se).transfer(hook, seOut);
         vm.stopPrank();
+        uint256 claimBefore = single.seClaimSupply();
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        vm.prank(user);
+        IERC20(se).transfer(hook, seOut);
         assertEq(IERC20(hook).balanceOf(user), userLp);
-        assertGe(single.seClaimSupply(), claimBefore);
+        assertEq(single.seClaimSupply(), claimBefore, "ambient shares do not become booked reserves");
+        assertEq(IERC20(hook).totalSupply(), supplyBefore);
     }
 
     function test_A2_rawDonation_doesNotFreeExtract() public {
@@ -446,38 +487,44 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
         pairC1.approve(hHook, type(uint256).max);
         vm.stopPrank();
 
-        {
-            uint256 d0 = 100 ether;
-            uint256 d1 = 100 ether;
-            vm.prank(alice);
-            h.deposit(d0, d1, alice, 0, block.timestamp + 1);
-        }
+        vm.startPrank(alice);
+        pairC1.approve(se2, 100 ether);
+        (uint256 shares,) = IStandardExchangeIn(se2).exchangeIn(
+            IERC20(address(pairC1)), 100 ether, IERC20(se2), 1, alice, false, block.timestamp);
+        IERC20(se2).approve(hHook, shares);
+        h.depositWithSeShares(100 ether, shares, alice, 1, block.timestamp + 1);
+        vm.stopPrank();
         assertTrue(h.isLive());
 
         hostile.arm(hHook, alice);
         assertTrue(hostile.armed());
 
         vm.prank(alice);
-        try h.deposit(5 ether, 5 ether, alice, 0, block.timestamp + 1) {} catch {}
+        h.deposit(5 ether, 5 ether, alice, 0, block.timestamp + 1);
 
         assertGe(hostile.reentryAttempts(), 1, "nested reentry must be attempted");
         assertFalse(hostile.nestedSucceeded(), "nested deposit must not succeed while locked");
+        assertEq(hostile.nestedError(), bytes4(keccak256("Reentrancy()")));
     }
 
-    function test_F2_protocolFee_mintsToFeeTo_onGrowth() public {
+    function test_F2_protocolFee_splitsMintAndIgnoresGrowth() public {
         _enableProtocolFee(0.05e18);
         _seedLiveLiquidity();
-        assertGt(single.kLast(), 0);
-
+        uint256 grossSeed = IERC20(hook).totalSupply() - 1000;
+        assertEq(IERC20(hook).balanceOf(_feeTo()), grossSeed * 0.05e18 / 1e18);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 feeBefore = IERC20(hook).balanceOf(_feeTo());
         pairToken.mint(address(this), _uPair(20));
         pairToken.approve(address(pairProtocolVault), _uPair(20));
         pairProtocolVault.simulateYield(_uPair(20));
-
-        address feeTo_ = _feeTo();
-        uint256 feeLpBefore = IERC20(hook).balanceOf(feeTo_);
-        _depositBoth(_uRaw(10), _uPair(10));
-        assertGt(IERC20(hook).balanceOf(feeTo_), feeLpBefore);
-        assertGt(single.kLast(), 0);
+        assertEq(IERC20(hook).totalSupply(), supplyBefore, "rate growth mints no LP");
+        assertEq(IERC20(hook).balanceOf(_feeTo()), feeBefore);
+        DecimalBook memory before_ = _captureBook();
+        uint256 net = _depositBoth(_uRaw(10), _uPair(10));
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        assertEq(IERC20(hook).balanceOf(_feeTo()) - feeBefore, gross * 0.05e18 / 1e18);
+        _assertAdded(before_, net);
+        assertEq(single.kLast(), 0, "retired checkpoint remains unused");
     }
 
     function test_F3_feeOff_kLastZero() public {
@@ -496,6 +543,7 @@ contract HostileRawTokenC1 is SimpleMintableERC20 {
     address public reenterCaller;
     uint256 public reentryAttempts;
     bool public nestedSucceeded;
+    bytes4 public nestedError;
     bool public armed;
 
     constructor() SimpleMintableERC20("HostileRaw", "hRAW") {}
@@ -505,6 +553,7 @@ contract HostileRawTokenC1 is SimpleMintableERC20 {
         reenterCaller = caller_;
         armed = true;
         nestedSucceeded = false;
+        nestedError = bytes4(0);
         reentryAttempts = 0;
     }
 
@@ -518,7 +567,8 @@ contract HostileRawTokenC1 is SimpleMintableERC20 {
             allowance[reenterCaller][targetHook] = type(uint256).max;
             try h.deposit(1 ether, 1 ether, reenterCaller, 0, block.timestamp + 1) {
                 nestedSucceeded = true;
-            } catch {
+            } catch (bytes memory reason) {
+                nestedError = bytes4(reason);
                 nestedSucceeded = false;
             }
         }

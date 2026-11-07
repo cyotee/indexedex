@@ -7,6 +7,16 @@ import {UniswapV4StandardExchangeOrbitalBufferHookDepositCore} from "contracts/h
 /// @dev Unused offered amounts and SE receipts from this call are refunded to `msg.sender`.
 ///      Resting face is unrecorded pretransfer credit (D12), never this caller's refund.
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore {
+    function joinNativeComponents(
+        uint256[] calldata localAmounts,
+        uint256[] calldata shareAmounts,
+        address to,
+        uint256 minLp,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 netLp) {
+        return _joinNativeComponents(localAmounts, shareAmounts, to, minLp, deadline);
+    }
+
     function addLiquidity(
         uint256 a0Max,
         uint256 a1Max,

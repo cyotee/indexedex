@@ -8,44 +8,37 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 /**
- * @notice H11 dual-channel: usageFee growth mint; dexSwapFee residual on swaps.
+ * @notice H11 dual-channel: usageFee backed mint split; dexSwapFee residual on swaps.
  */
 contract UniswapV4StandardExchangeWeightedBufferHook_Fees is
     TestBase_UniswapV4StandardExchangeWeightedBufferHook
 {
-    /// @notice Force rootK > kLast via SE donation, then join → feeTo LP strictly increases.
-    function test_usageFee_growthMint_onJoin() public {
+    /// @notice Ambient donations mint no fee; a later join splits only its own backed gross.
+    function test_usageFee_splitsOnlyBackedMint_onJoin() public {
         _ensureFeeTo();
-        _setUsageFee(0.05e18); // 5%
-
+        _setUsageFee(0.05e18);
         uint256 first = _firstMintEqual(100 ether);
-        assertGt(first, 0);
-        assertGt(weighted.kLast(), 0, "kLast set when fee-on");
-
-        address feeTo_ = address(weighted.feeTo());
-        assertTrue(feeTo_ != address(0));
-        uint256 feeLpBefore = IERC20(hook).balanceOf(feeTo_);
-
-        // Donation of SE shares increases inventory V without minting LP → rootK > kLast
-        uint256 amountIn = 20 ether;
-        token0.mint(user, amountIn);
-        vm.startPrank(user);
-        token0.approve(se0, type(uint256).max);(uint256 seOut,) = IStandardExchangeIn(se0).exchangeIn(IERC20(address(token0)), amountIn, IERC20(se0), 0, user, false, block.timestamp + 1 hours
-        );
-        require(seOut > 0, "se mint");
-        IERC20(se0).transfer(hook, seOut);
-        vm.stopPrank();
-        assertGt(weighted.nativeReserve(0), 0);
-
-        // Next join mints protocol growth from pre-intake k rise
-        uint256[] memory amounts = new uint256[](2);
-        amounts[0] = 10 ether;
-        amounts[1] = 10 ether;
+        uint256 grossFirst = IERC20(hook).totalSupply() - 1000;
+        address recipient = weighted.feeTo();
+        assertEq(IERC20(hook).balanceOf(recipient), grossFirst * 0.05e18 / 1e18);
+        assertEq(first + IERC20(hook).balanceOf(recipient), grossFirst);
+        assertEq(weighted.kLast(), 0, "retired growth checkpoint remains reserved");
+        uint256 feeBefore = IERC20(hook).balanceOf(recipient);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
+        uint256 bookBefore = weighted.seBalance(0);
+        uint256 donated = _userAcquireSeShares(se0, token0, 20 ether);
         vm.prank(user);
-        weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
-
-        uint256 feeLpAfter = IERC20(hook).balanceOf(feeTo_);
-        assertGt(feeLpAfter, feeLpBefore, "feeTo LP strictly increases after growth mint");
+        IERC20(se0).transfer(hook, donated);
+        assertEq(weighted.seBalance(0), bookBefore, "ambient shares remain unbooked");
+        assertEq(IERC20(hook).totalSupply(), supplyBefore);
+        assertEq(IERC20(hook).balanceOf(recipient), feeBefore);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 10 ether; amounts[1] = 10 ether;
+        vm.prank(user);
+        (uint256 net,) = weighted.joinProportional(amounts, user, 1, block.timestamp);
+        uint256 gross = IERC20(hook).totalSupply() - supplyBefore;
+        assertEq(IERC20(hook).balanceOf(recipient) - feeBefore, gross * 0.05e18 / 1e18);
+        assertEq(net + gross * 0.05e18 / 1e18, gross);
     }
 
     function test_dexSwapFee_affectsExactInOut() public {

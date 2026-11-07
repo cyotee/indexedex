@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as Repo} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol";
@@ -37,13 +38,13 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
         address rp = l.rateProviders[i];
         // D60: raw leg = raw balance (times the rate when a provider is configured); buffered leg = shares x rate.
         if (se == address(0)) {
-            uint256 raw = IERC20(l.tokens[i]).balanceOf(address(this));
+            uint256 raw = l.rawReserves[i];
             return rp == address(0) ? raw : Math.ratedPairUnits(raw, _readRate(rp), l.invScales[i], l.ratedScales[i]);
         }
-        uint256 seBal = IERC20(se).balanceOf(address(this));
-        if (seBal == 0) return 0;
+        uint256 seBal = l.seReserves[i];
+        if (seBal == 0) return l.rawReserves[i];
         if (rp == address(0)) revert RateProviderRequired();
-        return Math.ratedPairUnits(seBal, _readRate(rp), shareScale(se), l.ratedScales[i]);
+        return l.rawReserves[i] + Math.ratedPairUnits(seBal, _readRate(rp), shareScale(se), l.ratedScales[i]);
     }
 
 
@@ -71,7 +72,7 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
 
     function _nativeAt(uint8 i) private view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        return IERC20(l.standardExchanges[i] == address(0) ? l.tokens[i] : l.standardExchanges[i]).balanceOf(address(this));
+        return l.standardExchanges[i] == address(0) ? l.rawReserves[i] : l.seReserves[i];
     }
 
     function quoteSwapExactIn(uint8 i, uint8 j, uint256[] memory rated, uint256 inflow, uint256 amp)
@@ -93,15 +94,25 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
     function _outputBudget(uint8 j, uint256 budget, address manager) private view returns (uint256 amountOut, uint256 sharesOut) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[j];
-        if (se != address(0) && se != l.tokens[j]) {
-            if (manager == address(0)) sharesOut = nativeForRatedWad(j, budget, false);
-            else sharesOut = FullMath.mulDiv(FullMath.mulDiv(budget, 1e18,
+        uint256 pairBudget = Math.descale(budget, l.ratedScales[j]);
+        if (pairBudget == 0) revert Math.ZeroAmount();
+        if (se == address(0)) {
+            if (pairBudget >= l.rawReserves[j]) revert Math.WouldZeroReserve();
+            return (pairBudget, 0);
+        }
+        uint256 local = pairBudget < l.rawReserves[j] ? pairBudget : l.rawReserves[j];
+        amountOut = local;
+        if (local == pairBudget) return (local, 0);
+        uint256 remaining = budget - Math.scaleTo(local, l.ratedScales[j]);
+        if (remaining != 0) {
+            if (manager == address(0)) sharesOut = nativeForRatedWad(j, remaining, false);
+            else sharesOut = FullMath.mulDiv(FullMath.mulDiv(remaining, 1e18,
                 ContextQuote.rate(se, l.tokens[j], l.rateProviders[j], manager)), 1e18, shareScale(se));
-            if (sharesOut >= _nativeAt(j)) revert Math.WouldZeroReserve();if (manager == address(0)) amountOut = sharesOut == 0 ? 0 : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), sharesOut, IERC20(l.tokens[j]));
-            else (amountOut,) = ContextQuote.redeem(se, l.tokens[j], address(this), sharesOut, manager);
-        } else {
-            amountOut = Math.descale(budget, l.ratedScales[j]);
-            if (amountOut >= _nativeAt(j)) revert Math.WouldZeroReserve();
+            if (sharesOut > l.seReserves[j]) revert Math.WouldZeroReserve();
+            if (sharesOut != 0) {
+                (uint256 redemption,) = ContextQuote.redeem(se, l.tokens[j], address(this), sharesOut, manager);
+                amountOut += redemption;
+            }
         }
         if (amountOut == 0) revert Math.ZeroAmount();
     }
@@ -115,19 +126,26 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
             if (se == address(0) || se == l.tokens[i]) units = ratedPairUnits(i);
             else {
                 if (l.rateProviders[i] == address(0)) revert RateProviderRequired();
-                units = Math.ratedPairUnits(IERC20(se).balanceOf(address(this)), ContextQuote.rate(se, l.tokens[i], l.rateProviders[i], manager), shareScale(se), l.ratedScales[i]);
+                units = l.rawReserves[i] + Math.ratedPairUnits(l.seReserves[i], ContextQuote.rate(se, l.tokens[i], l.rateProviders[i], manager), shareScale(se), l.ratedScales[i]);
             }
             values[i] = Math.scaleTo(units, l.ratedScales[i]);
         }
     }
 
-    function pairInWithContext(uint8 i, uint256 amount, address manager) external view returns (uint256) {
+    function pairInWithContext(uint8 i, uint256 amount, address manager) public view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
-        (uint256 shares,) = ContextQuote.deposit(se, l.tokens[i], address(this), amount, manager);
-        if (shares == 0) return 0;
-        if (l.rateProviders[i] == address(0)) revert RateProviderRequired();
-        return Math.scaleTo(Math.ratedPairUnits(shares, ContextQuote.rate(se, l.tokens[i], l.rateProviders[i], manager), shareScale(se), l.ratedScales[i]), l.ratedScales[i]);
+        if (se == address(0)) {
+            uint256 units = l.rateProviders[i] == address(0) ? amount
+                : Math.ratedPairUnits(amount, _readRate(l.rateProviders[i]), l.invScales[i], l.ratedScales[i]);
+            return Math.scaleTo(units, l.ratedScales[i]);
+        }
+        if (disabled(i)) return Math.scaleTo(amount, l.ratedScales[i]);
+        (ExchangeInAmount.Result memory result,) = ContextQuote.depositResult(se, l.tokens[i], address(this), amount, manager);
+        uint256 units = result.amountRefunded;
+        if (result.amountOut != 0) units += Math.ratedPairUnits(result.amountOut,
+            ContextQuote.rate(se, l.tokens[i], l.rateProviders[i], manager), shareScale(se), l.ratedScales[i]);
+        return Math.scaleTo(units, l.ratedScales[i]);
     }
 
     function quoteSwapExactOut(uint8 i, uint8 j, uint256[] memory rated, uint256 amountOut, uint256 feeWad, uint256 amp)
@@ -147,22 +165,24 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
 
     function _exactOutputDebit(uint8 j, uint256 amountOut, address manager) private view returns (uint256 debit) {
         Repo.Layout storage l = Repo._layout();
-        debit = Math.scaleToUp(amountOut, l.ratedScales[j]);
+        uint256 local = amountOut < l.rawReserves[j] ? amountOut : l.rawReserves[j];
+        debit = Math.scaleToUp(local, l.ratedScales[j]);
+        if (amountOut == local) return debit;
         address se = l.standardExchanges[j];
-        if (se != address(0) && se != l.tokens[j]) {
-            bytes memory state = ContextQuote.exactOutputState(se, l.tokens[j], manager);
-            uint256 shares = ContextQuote.withdrawFromState(se, l.tokens[j], amountOut, state);
-            if (shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
-            if (shares >= _nativeAt(j)) revert Math.WouldZeroReserve();
-            if (state.length == 0) return ratedWadForNativeUp(j, shares);
-            uint256 wad = FullMath.mulDiv(shares, shareScale(se), 1e18, FullMath.Rounding.Ceil);
-            debit = FullMath.mulDiv(wad, ContextQuote.rateFromState(se, l.tokens[j], l.rateProviders[j], state), 1e18, FullMath.Rounding.Ceil);
-        } else if (amountOut >= _nativeAt(j)) revert Math.WouldZeroReserve();
+        if (se == address(0)) revert Math.WouldZeroReserve();
+        bytes memory state = ContextQuote.exactOutputState(se, l.tokens[j], manager);
+        uint256 shares = ContextQuote.withdrawFromState(se, l.tokens[j], amountOut - local, state);
+        if (shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        if (shares > l.seReserves[j]) revert Math.WouldZeroReserve();
+        if (state.length == 0) return debit + ratedWadForNativeUp(j, shares);
+        uint256 wad = FullMath.mulDiv(shares, shareScale(se), 1e18, FullMath.Rounding.Ceil);
+        return debit + FullMath.mulDiv(wad, ContextQuote.rateFromState(se, l.tokens[j], l.rateProviders[j], state), 1e18, FullMath.Rounding.Ceil);
     }
 
     function _inputForRatedContext(uint8 i, uint256 needed, address manager) private view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
+        if (se == address(0) || disabled(i)) return pairInputForRated(i, needed);
         bytes memory state = ContextQuote.exactOutputState(se, l.tokens[i], manager);
         if (state.length == 0) return pairInputForRated(i, needed);
         uint256 shares = _sharesForRatedContext(i, needed, state);
@@ -190,8 +210,34 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
             address rp = l.rateProviders[i];
             return rp == address(0) ? pair : Math.sharesForPairUnitsUp(pair, _readRate(rp), l.invScales[i], l.ratedScales[i]);
         }
-        if (se == l.tokens[i]) return pair;
+        if (disabled(i)) return pair;
         return bufferInputForShares(se, l.tokens[i], nativeForRatedWad(i, ratedWad, true));
+    }
+
+    /// @dev Registry provenance comes from the package deployment authority, not a caller-selected oracle.
+    function disabled(uint8 i) public view returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        if (se == address(0)) return false;
+        IVaultRegistryDisableQuery registry = IVaultRegistryDisableQuery(l.vaultRegistry);
+        if (registry.packageOfVault(se) == address(0)) revert BufferFailed();
+        return registry.isDisabled(se);
+    }
+
+    /// @notice Reconcile a caller- or pool-owned conversion without assigning its ownership.
+    function convert(uint8 i, bool redeem, uint256 amount) public returns (ExchangeInAmount.Result memory result) {
+        if (amount == 0) return result;
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        if (!redeem && disabled(i)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+        IERC20 input = IERC20(redeem ? se : l.tokens[i]);
+        IERC20 output = IERC20(redeem ? l.tokens[i] : se);
+        uint256 beforeIn = input.balanceOf(address(this));
+        uint256 beforeOut = output.balanceOf(address(this));
+        input.forceApprove(se, amount);
+        result = ExchangeInAmount.exchangeResult(IStandardExchangeIn(se), input, amount, output, 0, address(this), false, block.timestamp);
+        input.forceApprove(se, 0);
+        ExchangeInAmount.requireReceipt(amount, result, beforeIn, input.balanceOf(address(this)), beforeOut, output.balanceOf(address(this)));
     }
 
     function getRateFailClosed(address rp) external view returns (uint256 rate) {

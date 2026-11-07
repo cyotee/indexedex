@@ -30,12 +30,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_NLeg_Decimals is
         amounts[1] = _u(1, 100);
         amounts[2] = 0;
 
-        (uint256 preview,) = weighted.previewJoinProportional(amounts);
+        bool[] memory flags = _prepareShareSeed(user, amounts);
+        (uint256 preview,) = weighted.previewJoinProportionalFlexible(amounts, flags);
         vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        (uint256 shares,) = weighted.joinProportionalFlexible(amounts, flags, user, 0, block.timestamp + 1 hours);
         assertEq(shares, preview);
         assertGt(shares, 0);
-        assertEq(IERC20(hook).totalSupply(), shares + 1000);
+        uint256 gross = IERC20(hook).totalSupply() - 1000;
+        assertEq(gross, shares + (weighted.feeTo() == address(0) ? 0 : gross * weighted.usageFee() / 1e18));
         assertFalse(weighted.isFullBook(), "partial");
         assertGt(weighted.nativeReserve(0), 0);
         assertGt(weighted.nativeReserve(1), 0);
@@ -74,19 +76,26 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_NLeg_Decimals is
         amounts[1] = _raw(toks[1], 100);
         amounts[2] = _raw(toks[2], 100);
 
-        (uint256 previewShares, uint256[] memory previewUsed) = weighted.previewJoinProportional(amounts);
+        bool[] memory flags = _prepareShareSeed(user, amounts);
+        (uint256 previewShares, uint256[] memory previewUsed) = weighted.previewJoinProportionalFlexible(amounts, flags);
         vm.prank(user);
         (uint256 shares, uint256[] memory used) =
-            weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+            weighted.joinProportionalFlexible(amounts, flags, user, 0, block.timestamp + 1 hours);
 
         assertEq(shares, previewShares, "preview==exec shares");
         for (uint256 i; i < 3; ++i) assertEq(used[i], previewUsed[i]);
         assertGt(shares, 0);
         assertEq(IERC20(hook).balanceOf(user), shares);
-        assertEq(IERC20(hook).totalSupply(), shares + 1000);
-        assertEq(weighted.nativeReserve(0), weighted.seBalance(0), "live SE shares");
-        assertEq(weighted.nativeReserve(1), amounts[1], "raw face book 1");
-        assertEq(weighted.nativeReserve(2), amounts[2], "raw face book 2");
+        uint256 gross = IERC20(hook).totalSupply() - 1000;
+        assertEq(gross, shares + (weighted.feeTo() == address(0) ? 0 : gross * weighted.usageFee() / 1e18));
+        for (uint256 i; i < 3; ++i) {
+            uint256 expected = flags[i] ? amounts[i] - amounts[i] / 20 : amounts[i];
+            assertEq(weighted.nativeReserve(i), expected, "native retained-share or raw genesis book");
+            if (flags[i]) {
+                assertEq(weighted.seBalance(i), expected);
+                assertGt(IERC20(weighted.token(i)).balanceOf(hook), 0, "bootstrap redemption supplies local backing");
+            }
+        }
         assertTrue(weighted.isFullBook());
     }
 
@@ -257,7 +266,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_NLeg_Decimals is
         for (uint256 i; i < 3; ++i) assertGt(weighted.nativeReserve(i), 0);
     }
 
-    function test_liveSeBook_donationDilutes() public {
+    function test_bookedSeInventory_excludesAmbientDonation() public {
         _deployNn(3);
         _firstMintEqualHuman(50);
         uint256 bookBefore = weighted.nativeReserve(0);
@@ -276,8 +285,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_NLeg_Decimals is
 
         uint256 bookAfter = weighted.nativeReserve(0);
         assertEq(bookAfter, weighted.seBalance(0), "book == live SE bal");
-        assertEq(bookAfter, seBalBefore + seOut, "donation increased live book");
-        assertGt(bookAfter, bookBefore, "dilution: book rose without LP mint");
+        assertEq(IERC20(se0).balanceOf(hook), seBalBefore + seOut, "ambient donation remains separately held");
+        assertEq(bookAfter, bookBefore, "ambient donation leaves booked ownership unchanged");
 
         uint256 bookMid = weighted.nativeReserve(0);
         token0.mint(hook, 5);
@@ -378,9 +387,13 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_NLeg_Decimals is
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 100 ether;
         amounts[1] = 100 ether;
-        vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        uint256 shares = _seedAmounts(user, amounts);
         assertGt(shares, 0);
+
+        for (uint256 i; i < 2; ++i) amounts[i] = 5 ether;
+        vm.prank(user);
+        (uint256 okShares,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(okShares, 0, "complete-basket control works");
 
         bytes memory reentry = abi.encodeWithSelector(
             IUniswapV4StandardExchangeWeightedBufferHook.depositSingle.selector,
@@ -392,11 +405,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_NLeg_Decimals is
         );
         hostile.arm(hook, reentry);
 
+        for (uint256 i; i < 2; ++i) amounts[i] = 10 ether;
         uint256 lpBefore = IERC20(hook).balanceOf(user);
         vm.prank(user);
-        weighted.depositSingle(address(hostile), 10 ether, user, 0, block.timestamp + 1 hours);
+        (uint256 outerShares,) = weighted.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(outerShares, 0);
         assertEq(hostile.reentryAttempts(), 1, "nested reentry attempted once");
         assertFalse(hostile.nestedCallSucceeded(), "nested depositSingle must not succeed");
-        assertGe(IERC20(hook).balanceOf(user), lpBefore, "outer path continued after blocked reentry");
+        assertEq(IERC20(hook).balanceOf(user) - lpBefore, outerShares, "outer complete basket minted its receipt");
+        assertEq(hostile.nestedErrorSelector(), bytes4(keccak256("Reentrancy()")), "nested call reaches the guard");
     }
 }

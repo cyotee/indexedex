@@ -5,7 +5,7 @@ import {TestBase_UniswapV4DualSEBCPHook as TestBase} from "test/foundry/spec/hoo
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
-import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+import {HookLiquidityInvariantHandler, IInvariantHookLiquidity} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
 
 /// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
 contract Handler_DualBufferHook is HookLiquidityInvariantHandler {
@@ -28,11 +28,16 @@ contract UniswapV4DualSEBCPHook_Invariant is TestBase {
         c.tokens = new SimpleMintableERC20[](2);
         c.tokens[0] = SimpleMintableERC20(dual.currency0());
         c.tokens[1] = SimpleMintableERC20(dual.currency1());
+        c.standardExchanges = new address[](c.tokens.length);
+        for (uint256 i; i < c.tokens.length; ++i) {
+            c.standardExchanges[i] = IInvariantHookLiquidity(hook).standardExchangeOf(address(c.tokens[i]));
+        }
         c.input = address(tokenA);
         c.output = address(tokenB);
         c.inputSE = seA;
         c.inputVault = address(vaultA);
         c.feeRecipient = address(feeCollector);
+        c.feeOracle = address(indexedexManager);
         c.router = route_;
         c.key = poolKey;
         c.observedTokens = new IERC20[](7);

@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IVaultRegistryVaultManager} from "contracts/interfaces/IVaultRegistryVaultManager.sol";
 import {IVaultMain} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVaultMain.sol";
 import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrixFixture.sol";
 
@@ -103,6 +105,14 @@ abstract contract SeMatrix_BalancerBufferPoolFixtureBase is SeMatrixFixture {
         poolDiamond = h.matrixPool();
         legShare = h.matrixLegSe();
         poolPkg = h.matrixPkg();
+        // Protocol TestBases deploy these real pools outside the outer manager.
+        // Register the actual instance and package through its owner-only API
+        // before binding a hook; unknown registry entries are never "enabled".
+        IStandardVault.VaultConfig memory config_ = IStandardVault(poolDiamond).vaultConfig();
+        vm.prank(ctx.owner);
+        IVaultRegistryVaultManager(address(ctx.indexedexManager)).registerVault(
+            poolDiamond, poolPkg, config_
+        );
         balancerVault = h.matrixBalancerVault();
         balancerRouter = h.matrixBalancerRouter();
     }

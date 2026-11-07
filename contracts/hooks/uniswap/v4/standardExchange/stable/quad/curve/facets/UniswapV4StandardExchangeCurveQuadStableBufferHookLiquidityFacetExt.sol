@@ -10,7 +10,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IStandardExchangeMultiAssetLiquidity
 } from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -29,13 +29,14 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](2);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IDetfReserveQuote).interfaceId;
         interfaces[1] = type(IStandardizedYield).interfaceId;
+        interfaces[2] = type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](12);
+        funcs = new bytes4[](13);
         funcs[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
         funcs[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
         funcs[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
@@ -48,6 +49,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt is
         funcs[9] = IDetfReserveQuote.previewSynthetic.selector;
         funcs[10] = this.previewJoinAfterDeposit.selector;
         funcs[11] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs[12] = IUniswapV4SeBufferHookNativeLiquidity.previewJoinNativeComponents.selector;
         funcs = NativeStandardYieldSelectors._appendQuery(funcs);
         funcs = NativeStandardYieldSelectors._appendRewards(funcs);
     }

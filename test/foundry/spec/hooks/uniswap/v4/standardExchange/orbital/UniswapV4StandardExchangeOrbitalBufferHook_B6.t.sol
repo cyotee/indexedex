@@ -47,7 +47,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_B6_Test is
         assertEq(u1, predU1);
         assertEq(u2, predU2);
         assertGt(IERC20(se0).balanceOf(hook), seBalBefore, "SE inventory grew");
-        assertEq(orbital.rawReserve(0), 0, "buffered leg raw book 0");
+        assertEq(orbital.rawReserve(0), token0.balanceOf(hook), "local component booked");
     }
 
     function test_B6_depositAllSeShares_threeLegs() public {

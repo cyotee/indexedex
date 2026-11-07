@@ -5,6 +5,7 @@ import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 import {Vm} from "forge-std/Vm.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
@@ -178,9 +179,16 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBeh
     }
 
     function _joinAll(uint256 faceAmt, uint256 otherHuman) internal returns (uint256 shares, uint256 usedFace) {
+        uint256[] memory amounts = _amounts(faceAmt, otherHuman);
+        if (IERC20(hook).totalSupply() == 0) {
+            bool[] memory flags = _prepareShareSeed(amounts, user);
+            vm.prank(user);
+            (shares,) = quad.joinProportionalFlexible(amounts, flags, user, 0, block.timestamp + 1 hours);
+            return (shares, faceAmt);
+        }
         uint256[] memory used;
         vm.prank(user);
-        (shares, used) = quad.joinProportional(_amounts(faceAmt, otherHuman), user, 0, block.timestamp + 1 hours);
+        (shares, used) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
         usedFace = used[faceIdx];
     }
 
@@ -246,13 +254,14 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBeh
         uint256 allow = _f(10);
         fx.limitCapacity(allow);
         uint256 bookedBefore = fx.seBooked();
+        uint256 localBefore = IERC20(face).balanceOf(hook);
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 seBefore = _hookSeShares();
         (, uint256 usedFace) = _joinAll(_f(50), 50);
         assertGt(usedFace, allow, "join used more face than the dependency could take");
         assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "no refund of the unconsumed part");
         uint256 booked = fx.seBooked() - bookedBefore;
-        assertGe(booked, usedFace - allow, "SE booked the remainder above capacity");
+        assertGe(booked + IERC20(face).balanceOf(hook) - localBefore, usedFace - allow, "SE and hook local books retain the remainder above capacity");
         assertLe(booked, usedFace, "booked remainder never exceeds what was used");
         assertGt(_hookSeShares(), seBefore, "hook still receives SE shares for the booked input");
         fx.openCapacity();
@@ -320,7 +329,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBeh
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
-        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
+        uint256 local = IERC20(face).balanceOf(hook);
+        uint256 expectedDebit = wantOut > local
+            ? IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut - local) : 0;
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
@@ -375,10 +386,6 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBeh
 
     function test_row_poolManagerSwap_bothDirections_noFaceResidual() public virtual {
         _seed();
-        uint256[4] memory resting;
-        for (uint256 i; i < 4; ++i) {
-            resting[i] = IERC20(fxs[i].faceToken()).balanceOf(hook);
-        }
         uint256 uFace = IERC20(face).balanceOf(user);
         uint256 uOther = IERC20(other).balanceOf(user);
 
@@ -401,12 +408,13 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBeh
         assertEq(IERC20(face).balanceOf(user) - uFace, _f(1) / 2, "exact-out other->face delivers the request");
 
         for (uint256 i; i < 4; ++i) {
-            assertApproxEqAbs(
-                IERC20(fxs[i].faceToken()).balanceOf(hook),
-                resting[i],
-                _residualTolerance(),
-                "no operation-created face residual on a buffered leg (rounding dust retained, D6)"
-            );
+            uint256 inventoryScale = quad.invScale(i);
+            uint256 pairScale = quad.ratedScale(i);
+            uint256 denominator = inventoryScale <= pairScale
+                ? 1e18 * (pairScale / inventoryScale) : 1e18 / (inventoryScale / pairScale);
+            uint256 ratedShares = _hookSeSharesOf(i) * IRateProvider(quad.rateProvider(i)).getRate() / denominator;
+            assertEq(quad.ratedBalance(i), IERC20(fxs[i].faceToken()).balanceOf(hook) + ratedShares,
+                "all operation-owned local and SE backing appears in swap reserves");
         }
     }
 
@@ -467,9 +475,14 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBeh
     function _assertDepositSinglePreview() internal {
         uint256 amountIn = _f(5);
         uint256 pShares = quad.previewDepositSingle(face, amountIn);
+        assertGt(pShares, 0, "caller-funded preparation supplies the other legs");
+        uint256 supply = IERC20(hook).totalSupply();
+        uint256 userFace = IERC20(face).balanceOf(user);
         vm.prank(user);
-        uint256 gotShares = quad.depositSingle(face, amountIn, user, 0, block.timestamp + 1 hours);
-        assertEq(gotShares, pShares, "depositSingle preview == execution");
+        uint256 minted = quad.depositSingle(face, amountIn, user, 0, block.timestamp + 1 hours);
+        assertEq(minted, pShares, "depositSingle preview == execution");
+        assertGt(IERC20(hook).totalSupply(), supply);
+        assertLt(IERC20(face).balanceOf(user), userFace);
     }
 
     function _assertWithdrawSinglePreview(uint256 burn) internal {

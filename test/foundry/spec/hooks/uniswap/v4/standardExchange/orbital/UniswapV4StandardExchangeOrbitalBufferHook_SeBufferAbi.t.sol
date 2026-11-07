@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {Vm} from "forge-std/Vm.sol";
 import {NativeSYExecutionAssertions} from "contracts/vaults/standard/sy/Behavior_NativeStandardYieldExecution.sol";
 
 import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
@@ -7,6 +8,7 @@ import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCal
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {StandardExchangeRateProvider_FactoryService} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
@@ -78,8 +80,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, Nat
         address[] memory req = orbital.requiredFirstBondTokens();
         assertEq(req.length, 3, "T2.2 required length");
         assertEq(req[0], address(token0));
-        assertEq(req[1], address(token1));
-        assertEq(req[2], address(token2));
+        assertEq(req[1], se1);
+        assertEq(req[2], se2);
     }
 
     function test_T2_3_joinSingleAssetExactIn_beforeLive_reverts() public {
@@ -96,29 +98,81 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, Nat
         assertEq(IERC20(hook).balanceOf(user), lp, "T2.4 to");
     }
 
-    function test_T2_5_afterLive_joinSingleAsset_pairsAndShares() public {
+    function test_T2_firstJoin_mixedPairAndShareInputsRedeemFivePercent() public {
+        uint256 amount = 50 ether;
+        uint256 shares2 = _mintSeSharesToUser(se2, token2, amount);
+        (uint256 shares1,) = IStandardExchangeIn(se1).previewExchangeIn(token1, amount, IERC20(se1));
+        uint256 supply1 = IERC20(se1).totalSupply();
+        uint256 supply2 = IERC20(se2).totalSupply();
+        address[] memory inputs = new address[](3);
+        inputs[0] = address(token0);
+        inputs[1] = address(token1);
+        inputs[2] = se2;
+        uint256[] memory amounts = new uint256[](3);
+        amounts[0] = amount;
+        amounts[1] = amount;
+        amounts[2] = shares2;
+        vm.recordLogs();
+        vm.prank(user);
+        uint256 minted = orbital.joinUnbalanced(inputs, amounts, user, 1, block.timestamp);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        uint256 totalMinted1;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter == se1 && logs[i].topics.length == 3
+                && logs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                && logs[i].topics[1] == bytes32(0)) totalMinted1 += abi.decode(logs[i].data, (uint256));
+        }
+        assertGt(minted, 0);
+        assertTrue(orbital.isLive());
+        assertEq(orbital.seBalance(1), shares1 - shares1 * 5 / 100);
+        assertEq(orbital.seBalance(2), shares2 - shares2 * 5 / 100);
+        assertEq(IERC20(se1).totalSupply(), supply1 + totalMinted1 - shares1 / 20, "include SE fee shares without counting them as caller input");
+        assertEq(IERC20(se2).totalSupply(), supply2 - shares2 * 5 / 100);
+        assertGt(orbital.rawReserve(1), 0);
+        assertGt(orbital.rawReserve(2), 0);
+    }
+
+    function test_T2_5_afterLive_singlePairsAndSharesBuyMissingBasket() public {
         _joinFullBook(80 ether, 80 ether, 80 ether);
-        vm.prank(user);
-        uint256 lpPair0 = orbital.joinSingleAssetExactIn(
-            address(token1), 5 ether, user, 0, block.timestamp + 1 hours
-        );
-        assertGt(lpPair0, 0, "T2.5 pair0");
+        uint256 shares1 = _mintSeSharesToUser(se1, token1, 20 ether);
+        uint256 shares2 = _mintSeSharesToUser(se2, token2, 20 ether);
+        address[4] memory inputs = [address(token1), address(token2), se1, se2];
+        uint256[4] memory amounts = [uint256(5 ether), uint256(5 ether), shares1, shares2];
+        for (uint256 i; i < inputs.length; ++i) {
+            uint256 beforeLp = IERC20(hook).balanceOf(user);
+            uint256 quote = orbital.previewJoinSingleAssetExactIn(inputs[i], amounts[i]);
+            assertGt(quote, 0);
+            vm.prank(user);
+            uint256 minted = orbital.joinSingleAssetExactIn(inputs[i], amounts[i], user, quote, block.timestamp + 1 hours);
+            assertEq(minted, quote);
+            assertEq(IERC20(hook).balanceOf(user) - beforeLp, minted);
+        }
+    }
 
-        vm.prank(user);
-        uint256 lpPair1 = orbital.joinSingleAssetExactIn(
-            address(token2), 5 ether, user, 0, block.timestamp + 1 hours
-        );
-        assertGt(lpPair1, 0, "T2.5 pair1");
-
-        uint256 seShares0 = _mintSeSharesToUser(se1, token1, 20 ether);
-        vm.prank(user);
-        uint256 lpSe0 = orbital.joinSingleAssetExactIn(se1, seShares0, user, 0, block.timestamp + 1 hours);
-        assertGt(lpSe0, 0, "T2.5 share0");
-
-        uint256 seShares1 = _mintSeSharesToUser(se2, token2, 20 ether);
-        vm.prank(user);
-        uint256 lpSe1 = orbital.joinSingleAssetExactIn(se2, seShares1, user, 0, block.timestamp + 1 hours);
-        assertGt(lpSe1, 0, "T2.5 share1");
+    function _strictSingleState() private view returns (bytes memory) {
+        uint256[3] memory local;
+        uint256[3] memory shares;
+        uint256[3] memory balances;
+        uint256[3] memory custody;
+        uint256[3] memory heldShares;
+        uint256[3] memory userShares;
+        uint256[3] memory seSupply;
+        address[3] memory tokens = [address(token0), address(token1), address(token2)];
+        for (uint8 i; i < 3; ++i) {
+            local[i] = orbital.rawReserve(i);
+            shares[i] = orbital.seBalance(i);
+            balances[i] = IERC20(tokens[i]).balanceOf(user);
+            custody[i] = IERC20(tokens[i]).balanceOf(hook);
+            address se = orbital.standardExchange(i);
+            if (se != address(0)) {
+                heldShares[i] = IERC20(se).balanceOf(hook);
+                userShares[i] = IERC20(se).balanceOf(user);
+                seSupply[i] = IERC20(se).totalSupply();
+            }
+        }
+        return abi.encode(local, shares, balances, custody, heldShares, userShares, seSupply,
+            IERC20(hook).totalSupply(), IERC20(hook).balanceOf(user), IERC20(hook).balanceOf(feeRecipient),
+            orbital.radius(), orbital.lSquared());
     }
 
     function test_T2_6_joinUnbalanced_pairAndShare_sameLeg_reverts() public {
@@ -232,8 +286,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, Nat
         for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
     }
 
-    function test_nativeSYEveryDeclaredRoutePaysItsPreview() public noSelfCalls(hook) {
-        _joinFullBook(300 ether, 300 ether, 300 ether);
+    function test_nativeSYSingleJoinsAndEveryExitPayTheirPreview() public noSelfCalls(hook) {
+        uint256 seed = _joinFullBook(300 ether, 300 ether, 300 ether);
         _mintSeSharesToUser(se1, token1, 20 ether);
         _mintSeSharesToUser(se2, token2, 20 ether);
         IStandardizedYield sy = IStandardizedYield(hook);
@@ -241,11 +295,15 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, Nat
         vm.startPrank(user);
         for (uint256 i; i < tokens.length; ++i) {
             IERC20(tokens[i]).approve(hook, 2 ether);
-            uint256 shares = sy.previewDeposit(tokens[i], 2 ether);
-            assertGt(shares, 0);
-            assertEq(sy.deposit(user, tokens[i], 2 ether, shares), shares, "deposit preview");
+            uint256 depositQuote = sy.previewDeposit(tokens[i], 2 ether);
+            assertGt(depositQuote, 0, "declared token funds paid preparation");
+            uint256 beforeLp = sy.balanceOf(user);
+            assertEq(sy.deposit(user, tokens[i], 2 ether, depositQuote), depositQuote);
+            assertEq(sy.balanceOf(user) - beforeLp, depositQuote);
             address out = tokens[(i + 1) % tokens.length];
+            uint256 shares = seed / 100;
             uint256 quoted = sy.previewRedeem(out, shares);
+            assertGt(quoted, 0, "share-funded incumbent LP still redeems through every declared route");
             uint256 before = IERC20(out).balanceOf(user);
             assertEq(sy.redeem(user, shares, out, quoted, false), quoted, "redemption preview");
             assertEq(IERC20(out).balanceOf(user) - before, quoted, "actual payout");
@@ -302,8 +360,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, Nat
         assertEq(sy.balanceOf(hook), 2 * amount, "only requested internal shares burned");
         vm.stopPrank();
         assertEq(token0.balanceOf(hook) - orbital.rawReserve(0), 7 ether);
-        assertEq(token1.balanceOf(hook), 11 ether);
-        assertEq(token2.balanceOf(hook), 13 ether);
+        assertEq(token1.balanceOf(hook) - orbital.rawReserve(1), 11 ether);
+        assertEq(token2.balanceOf(hook) - orbital.rawReserve(2), 13 ether);
     }
 
     function test_nativeSYFundedYieldRepricesWithoutRebasingAndStillRedeems() public {
@@ -334,6 +392,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase, Nat
         am[0] = detfAmt;
         am[1] = pair0Amt;
         am[2] = pair1Amt;
+        if (IERC20(hook).totalSupply() == 0) {
+            ts[1] = se1;
+            ts[2] = se2;
+            am[1] = _mintSeSharesToUser(se1, token1, pair0Amt);
+            am[2] = _mintSeSharesToUser(se2, token2, pair1Amt);
+        }
         vm.prank(user);
         lp = orbital.joinUnbalanced(ts, am, user, 0, block.timestamp + 1 hours);
     }

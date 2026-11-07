@@ -8,9 +8,11 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {ERC2535Repo} from "@crane/contracts/introspection/ERC2535/ERC2535Repo.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
@@ -208,6 +210,7 @@ contract UniswapV4SingleStandardExchangeBufferHookDFPkg is
 
         // Product bindings (wrapZeroForOne + currency order in Repo).
         Repo._initialize(a.poolManager, a.standardExchange, a.pairToken);
+        Repo._layout().vaultRegistry = address(VAULT_REGISTRY_DEPLOYMENT);
 
         // MultiAsset BasicVault: address-sorted [currency0, currency1] (O8).
         address c0 = a.pairToken < a.standardExchange ? a.pairToken : a.standardExchange;
@@ -263,17 +266,15 @@ contract UniswapV4SingleStandardExchangeBufferHookDFPkg is
         }
         if (a.pairToken == a.standardExchange) revert SameToken();
         _requirePairInVaultTokens(a.standardExchange, a.pairToken);
+        // A foreign/unknown SE has no evidenced disable authority in this package.
+        require(
+            IVaultRegistryDisableQuery(address(VAULT_REGISTRY_DEPLOYMENT)).packageOfVault(a.standardExchange)
+                != address(0),
+            "unregistered SE"
+        );
     }
 
     function _requirePairInVaultTokens(address se, address pair) private view {
-        address[] memory tokens = IBasicVault(se).vaultTokens();
-        bool found;
-        for (uint256 i; i < tokens.length; i++) {
-            if (tokens[i] == pair) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) revert InvalidPairToken();
+        if (!UniswapV4SeBufferHookLegLib.pairInVaultTokens(se, pair)) revert InvalidPairToken();
     }
 }

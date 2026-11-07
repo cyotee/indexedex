@@ -16,7 +16,7 @@ Do not start the work this plan describes until a later owner instruction author
 ## 2. Adopted readings
 
 - A pass-through is an exact-input swap of the declared input on the bound hookless pool. The price limit is `TickMath.MIN_SQRT_PRICE + 1` or `TickMath.MAX_SQRT_PRICE - 1`. It mints no shares, takes no usage fee, and does not call `modifyLiquidity`.
-- FS-OWN-33 applies only to a one-sided share mint and to a one-token `donate` or `compound`. The required result is the greatest liquidity the following add can take. The swap output is entirely the other token that liquidity consumes. The unswapped processed input is the processed token that liquidity consumes. Rounding leaves any remainder in the original input token. The swap input is not the processed-token amount the add itself consumes. Do not use an about-half or 48% approximation.
+- FS-OWN-33 applies only to a one-sided share mint and to a one-token `donate` or `compound`. Owner instruction 2026-11-06: swap 49% of the processed input when the price is strictly inside the position. Do not iterate. Do not solve a closed-form root. Do not walk ticks to find a better split. If the price is not strictly inside the position, including exactly at either boundary, do not swap. A share mint refunds what the add does not take. A donate or compound books that dust and does not refund it. The swap output is consumed by the add. Rounding leaves any remainder in the original input token. The swap input is not the processed-token amount the add itself consumes.
 - A planned manager action is one `swap` or one `modifyLiquidity`, not one public call.
 - `Donation()` and `Compounded()` have no arguments. They are marker events. Do not add a Donation interface.
 - The live `feeTo()` address is the owner. That owner appoints global operators with `setOperator(address,bool)` and function operators with `setOperatorFor(bytes4,address,bool)`.
@@ -64,11 +64,13 @@ Tests use the seven filenames in FS-TEST-02, under `test/foundry/spec/vaults/sta
 
 No `syMoneyFacet`, `syQueryFacet`, `wrappedNative`, `operableFacet`, or `rateAsset`.
 
-`PkgArgs` is `PoolKey poolKey`, `string name`, `string symbol`. `bindingHash` covers every `PkgInit` field. `deployVault` goes through the bound IndexedEx vault registry. `processArgs` reverts `NotCalledByRegistry` unless `msg.sender` is the bound registry and `address(this)` is the bound `diamondFactory`.
+`PkgArgs` is `PoolKey poolKey`. Name and symbol are not arguments. Initialization generates the name and hardcodes the symbol `UV4X`. `bindingHash` covers every `PkgInit` field. `deployVault` goes through the bound IndexedEx vault registry. `processArgs` reverts `NotCalledByRegistry` unless `msg.sender` is the bound registry and `address(this)` is the bound `diamondFactory`.
 
 Reject, with no partial diamond: a missing or code-empty component, a linked-component hash mismatch, or a cut that installs `getRate` or `rateAsset` (`InvalidComponent`); a pool key that is not initialized on the bound manager or whose hook is not `address(0)` (`InvalidPoolKey`); a second initialization (`AlreadyInitialized`); a proxy initialization that does not match the bound package (`InvalidInitializationContext`). Do not reject tick spacing.
 
-Initialization writes the seven architecture addresses into the Protocol Aware repo, writes `weth` through `WETHAwareRepo._setWeth`, stores the pool key, full-range ticks, and salt `bytes32(0)` in `UniswapV4SinglePositionAware`, and sets name, symbol, 18 decimals, and the EIP-712 domain. The domain name is `PkgArgs.name`. The version is `"1"`. `vaultTokens()` is the PoolKey's two ERC-20 faces in currency0, currency1 order, with WETH substituted for native at the boundary. That order does not change after initialization. Initialization does not mint the floor and does not store `feeTo()` as an ownable owner.
+Owner instruction 2026-11-05: `positionDescriptor`, `positionManager`, `quoter`, `stateView`, `reservesLens`, and `universalRouter` are components. Each must have code. A missing or code-empty value reverts `InvalidComponent` with no partial diamond. The owner called these the Uniswap V3 infrastructure and said the vault will not work if they are absent.
+
+Initialization writes the seven architecture addresses into the Protocol Aware repo, writes `weth` through `WETHAwareRepo._setWeth`, stores the pool key, full-range ticks, and salt `bytes32(0)` in `UniswapV4SinglePositionAware`, generates the name, hardcodes the symbol `UV4X`, sets 18 decimals, and sets the EIP-712 domain to that generated name. The version is `"1"`. `vaultTokens()` is the PoolKey's two ERC-20 faces in currency0, currency1 order, with WETH substituted for native at the boundary. That order does not change after initialization. Initialization does not mint the floor and does not store `feeTo()` as an ownable owner.
 
 Family slot: `keccak256(abi.encode("indexedex.vaults.standard.exchange.uniswap.v4.fullSpread")) - 1`. It must not equal the PairToken slot or the Wings slot.
 
@@ -118,7 +120,7 @@ Disable, after that deadline check, reverts `VaultDisabled(address(this))` unles
 5. A `pretransferred` caller with no bytecode reverts `EOAPretransferNotAllowed`.
 6. Read `TransientStateLibrary.isUnlocked`. Locked follows section 8. Unlocked follows the borrowed path. `isUnlocked` is not authority.
 7. Fund under section 7. Output goes to `recipient`. Refunds go to `msg.sender`.
-8. Enforce the caller's minimum on the final output. A share mint uses the recipient's net shares. A pass-through or one-token exit uses the actual token output. A miss reverts `AmountOutNotMet`.
+8. Enforce the caller's minimum on the final output. A share mint uses the recipient's net shares. A pass-through uses the actual swap output. A one-token exit uses the recipient receipt: the swap proceeds plus the withdrawn amount sent to the recipient. That receipt is not the swap proceeds alone and it is not the pre-execution quote. A miss reverts `AmountOutNotMet`.
 
 `exchangeBundleInForSingleOut`, after deadline and disable:
 
@@ -175,7 +177,7 @@ One-sided deposit. `Planner` computes the FS-OWN-33 amounts through `Math`, then
 
 Bundle deposit. Add the proportional subset with the existing position-amount helper. Refund the unused declared input. Do not run the one-sided swap. Fee, floor, and fee booking follow the one-sided rules. Emit `PairDeposited(address indexed caller)`.
 
-One-token exit. Measure before the burn. Remove `liquidity * sharesBurned / supplyBeforeBurn`. The fee claim is `floor(feesOwed * sharesBurned / supplyBeforeBurn)` and the booked claim is `floor(booked[i] * sharesBurned / supplyBeforeBurn)`, multiplied before dividing. Pay the requested-token fee and booked claim to `recipient`. Swap all unwanted withdrawn principal plus the opposing fee and opposing booked claim, or revert `AmountOutNotMet` and do not burn. Do not pay, book, or keep that residual. Book the other holders' remainder. Do not swap their inventory. Do not count a fee both as the pre-burn unpaid read and as an already booked balance.
+One-token exit. Measure before the burn. Remove `liquidity * sharesBurned / supplyBeforeBurn`. The fee claim is `floor(feesOwed * sharesBurned / supplyBeforeBurn)` and the booked claim is `floor(booked[i] * sharesBurned / supplyBeforeBurn)`, multiplied before dividing. Pay the requested-token fee and booked claim to `recipient`. Swap all unwanted withdrawn principal plus the opposing fee and opposing booked claim, or revert `AmountOutNotMet` and do not burn. Do not pay, book, or keep that residual. Book the other holders' remainder. Do not swap their inventory. Do not count a fee both as the pre-burn unpaid read and as an already booked balance. Owner instruction 2026-11-05: the caller minimum and the returned `amountOut` are the recipient receipt. That receipt is the swap proceeds plus the withdrawn amount sent to the recipient.
 
 Both-token exit. Pay the same claim in both tokens. Do not swap. Emit `PairRedeemed(address indexed caller)`. The preview matches both outputs.
 
@@ -187,7 +189,7 @@ Pass-through. Exact-input swap through `Planner` and `SwapProjection` at the unb
 
 ## 10. Quotes
 
-`UniswapV4FullSpreadStandardExchangeVaultPlanner` is the one engine. Preview and execution both call the same Planner function. Planner calls `Math` for FS-OWN-33 amounts and `SwapProjection` for the unbounded exact-input projection. It reads pool state. It does not call the stored Quoter, State View, or Reserves Lens for the quote. It has no step cap and no `QuoteWorkLimit`.
+`UniswapV4FullSpreadStandardExchangeVaultPlanner` is the one engine. Preview and execution both call the same Planner function. Planner calls `Math` for FS-OWN-33 amounts and `SwapProjection` for the unbounded exact-input projection. It reads pool state. It does not call the stored Quoter, State View, or Reserves Lens for the quote. It has no step cap and no `QuoteWorkLimit`. Owner instruction 2026-11-06: sizing is 49% of the processed input, as section 2 defines it. Do not iterate. Do not solve a closed-form root.
 
 A mint preview returns the depositor's net shares and does not credit existing fees. A one-token exit preview uses the post-removal state and the same pre-burn apportionment, so `amountOut` matches execution from the same state. A bundle-in preview returns net shares and a positional refund array in `vaultTokens()` order. A bundle-out preview returns the two caller-ordered outputs and a zero refund, matching execution. Refund-word inequality does not waive an output minimum or exit-output equality. An unsupported view returns zero and does not revert.
 
@@ -318,7 +320,7 @@ Behavior: `test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV
 
 2-leg row: `test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol`
 
-This file does not override `setUp`. After ascending sort, the face index is this vault and is buffered. The other index is raw, `standardExchange == address(0)`, and is not buffered. Weights stay `0.5e18` and `0.5e18`, traveling with the sorted records. The primary provider is the `currency0` instance. `test_row_rateTarget_currency1` in this file keeps the same vault, uses a second hook pool, binds pair token `currency1`, uses the `currency1` provider, and leaves the raw leg unchanged. The two index cases apply to this pair.
+Owner instruction 2026-11-05: this file overrides `setUp`. It calls the weighted test base, then `_initializeWeighted(2)`. Do not delete that override to satisfy the older sentence that this file does not override `setUp`. The three-leg file remains the file that overrides `setUp` for `n == 3`. After ascending sort, the face index is this vault and is buffered. The other index is raw, `standardExchange == address(0)`, and is not buffered. Weights stay `0.5e18` and `0.5e18`, traveling with the sorted records. The primary provider is the `currency0` instance. `test_row_rateTarget_currency1` in this file keeps the same vault, uses a second hook pool, binds pair token `currency1`, uses the `currency1` provider, and leaves the raw leg unchanged. The two index cases apply to this pair.
 
 3-leg row: `test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_N3.t.sol`
 
@@ -369,7 +371,7 @@ Extend `IndexedexTest` and the current native-wrapper base. Deploy facets and th
 | Assertion | File |
 | --- | --- |
 | FS-A01 to FS-A04, FS-A16, package cut, permit domain | `Package.t.sol` |
-| FS-A05 to FS-A08, FS-A11, FS-A39, standalone gas for the six money and maintenance routes | `Money.t.sol` |
+| FS-A05 to FS-A08, FS-A11, FS-A39, standalone gas for the seven economic money and maintenance routes | `Money.t.sol` |
 | FS-A09, FS-A12 to FS-A15 as withdrawn rows, FS-A32, preview gas | `QuotesAndRate.t.sol` |
 | FS-A10, FS-A35, native boundary | `Native.t.sol` |
 | FS-A17, FS-A18 | `Callbacks.t.sol` |
@@ -381,6 +383,10 @@ Extend `IndexedexTest` and the current native-wrapper base. Deploy facets and th
 | FS-A31 composed transaction | `BufferHookIntegration.t.sol` |
 
 FS-A12 through FS-A15 stay withdrawn. They are not ordinary rate tests. FS-A38 and inventory row 045 use the same files: `Money.t.sol` for the vault-level disable matrix, and `BufferHookIntegration.t.sol` for the buffered hook cases.
+
+Owner instruction 2026-11-05: `getRate` and `exchangeRate` are not components of this vault. They were left over from an earlier design. Do not add or keep an `exchangeRate` test. Do not add a test whose only point is that issuance does not read `exchangeRate`. Rate rows use `IStandardExchangeRateProvider` from `contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/`. FS-A16's `exchangeRate` half is not a test requirement. `getRate` stays uninstalled. That absence is not a new `exchangeRate` test.
+
+Owner instruction 2026-11-05, amended when the gas list was named: every supported economic money and maintenance route has a gas test. A sampled route is not coverage. The count of six is withdrawn. The standalone routes are `exchangeIn` one-sided share mint, `exchangeIn` one-token exit, `exchangeIn` pass-through, `exchangeBundleInForSingleOut`, `exchangeBundleOut`, `donate`, and `compound`. `setOperator` and `setOperatorFor` are not in this set. Each section 12 row this plan names is a supported composed route and has its own composed measurement. The ceilings in section 2 stay. The measurement shows whether that route can be included in a mainnet transaction under that ceiling. An oversized route is unresolved, not passed.
 
 Audit inventory. A `no` row is an exclusion record. Do not reproduce the excluded mechanism.
 
@@ -477,3 +483,14 @@ Each line is a name, not a new requirement.
 | FS-MONEY-01, FS-UNLOCK-01, FS-UNLOCK-02, FS-UNLOCK-03 | 8, 9 |
 | FS-HOOK-01 through FS-HOOK-04 | 12 |
 | FS-TEST-01 through FS-TEST-04, FS-A01 through FS-A39 | 13 |
+
+## 16. Owner answers, 2026-11-05
+
+These sentences resolve council questions on `docs/reviews/se-fullspread-plan-execution-20261104/REMEDIATION_PRD.md`. They do not, by themselves, authorize implementation.
+
+1. The six infrastructure bindings in section 4 are components. Check each for code. Revert `InvalidComponent` if none is present.
+2. The weighted two-leg row overrides `setUp`, as section 12 now says. The older prohibition is withdrawn.
+3. The one-token exit minimum is the recipient receipt: swap proceeds, withdrawn requested-token principal, requested-token fee portion, and requested booked claim.
+4. The one-sided swap is 49% of the processed input when the price is strictly inside the position. Do not iterate. Do not solve a closed-form root. If the price is not strictly inside the position, do not swap. A donate or compound books the dust and does not refund it.
+5. Do not test `exchangeRate`. Rate tests use `IStandardExchangeRateProvider`.
+6. Gas tests cover the seven standalone economic routes named in section 13, plus each section 12 row, so a later reader can see whether the route fits a mainnet transaction under the section 2 ceilings.

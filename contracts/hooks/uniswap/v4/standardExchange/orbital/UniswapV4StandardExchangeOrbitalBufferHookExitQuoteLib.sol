@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
@@ -18,9 +23,11 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         address asset;
         address rateProvider;
         bytes state;
+        bool unprojected;
         uint8 decimals;
         uint256 rate;
         uint256 shares;
+        uint256 local;
         uint256 effective;
         uint256 withdrawn;
         /// @dev Shares redeemed to pay this leg's last simulated swap output. Zero for a raw leg.
@@ -41,99 +48,98 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
             if (i != outIndex && legs[i].withdrawn != 0) amountOut += _swap(legs, i, outIndex);
         }
         if (asShare && amountOut > 0) {
-            (,, amountOut,) = Transition(tokenOut).quoteTransition(
-                legs[outIndex].state, Transition.Operation.DepositExactIn, amountOut
-            );
+            if (Repo._isDisabled(tokenOut)) revert IVaultRegistryDisableQuery.VaultDisabled(tokenOut);
+            (ExchangeInAmount.Result memory result,) = ClaimLib.conversionQuote(tokenOut, pair, amountOut, false, legs[outIndex].state, false);
+            if (result.amountRefunded != 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+            amountOut = result.amountOut;
         }
     }
 
     function _withdraw(uint8 index, uint256 lp, uint256 supply) private view returns (Leg memory leg) {
         Repo.Layout storage l = Repo._layout();
-        address token = Repo._tokenAt(l, index);
-        leg.asset = token;
+        leg.asset = Repo._tokenAt(l, index);
         leg.se = Repo._seAt(l, index);
+        leg.rateProvider = Repo._rpAt(l, index);
         leg.decimals = Repo._decimalsAt(l, index);
-        if (leg.se == address(0)) {
-            leg.effective = l.reserves[token];
-            leg.withdrawn = leg.effective * lp / supply;
-            leg.effective -= leg.withdrawn;
-        } else {
-            leg.rateProvider = Repo._rpAt(l, index);
-            (leg.state,) = Transition(leg.se).quoteState(token, address(this));
-            leg.shares = Transition(leg.se).quoteShareBalance(leg.state);
-            uint256 removed = leg.shares * lp / supply;
+        leg.local = l.reserves[leg.asset];
+        uint256 localOut = LiquidityRoute.componentAllocation(lp, leg.local, supply);
+        leg.local -= localOut;
+        leg.withdrawn = localOut;
+        if (leg.se != address(0)) {
+            leg.state = ContextQuote.snapshot(leg.se, leg.asset, address(this), address(0));
+            leg.shares = l.seShares[leg.se];
+            uint256 removed = LiquidityRoute.componentAllocation(lp, leg.shares, supply);
+            leg.shares -= removed;
             if (removed != 0) {
-                (leg.state,, leg.withdrawn,) = Transition(leg.se).quoteTransition(
-                    leg.state, Transition.Operation.RedeemExactIn, removed
-                );
+                ExchangeInAmount.Result memory result;
+                (result, leg.state) = ClaimLib.conversionQuote(leg.se, leg.asset, removed, true, leg.state, false);
+                if (result.amountRefunded != 0) revert ExchangeInAmount.InvalidExchangeReceipt();
+                if (leg.state.length == 0 && removed != result.amountRefunded) leg.unprojected = true;
+                leg.withdrawn += result.amountOut;
             }
-            _refresh(leg);
         }
+        _refresh(leg);
     }
 
     function _refresh(Leg memory leg) private view {
-        leg.shares = Transition(leg.se).quoteShareBalance(leg.state);
-        // D60: a buffered leg always carries a rate provider; the held reserve is shares x rate, never the
-        // SE's own valuation. `rateAfterExchange` fails closed on a missing or zero rate.
+        if (leg.se == address(0)) {
+            leg.effective = ClaimLib.effectiveNative(address(0), leg.rateProvider, leg.asset, leg.local, 0);
+            return;
+        }
         if (leg.rateProvider == address(0)) revert ClaimLib.RateProviderRequired();
-        LegLib.ExternalQuote memory q;
-        q.exchange = Transition(leg.se);
-        q.state = leg.state;
-        leg.rate = LegLib.rateAfterExchange(q, leg.asset, leg.rateProvider);
-        leg.effective = ClaimLib.ratedNative(leg.shares, leg.rate, leg.se, leg.asset);
+        if (leg.unprojected) revert Transition.InvalidQuoteState();
+        leg.rate = leg.state.length == 0 ? ClaimLib.getRateFailClosed(leg.rateProvider)
+            : ContextQuote.rateFromState(leg.se, leg.asset, leg.rateProvider, leg.state);
+        leg.effective = leg.local + ClaimLib.ratedNative(leg.shares, leg.rate, leg.se, leg.asset);
     }
 
     function _swap(Leg[3] memory legs, uint8 from, uint8 to) private view returns (uint256 received) {
         Leg memory input = legs[from];
-        Leg memory output = legs[to];
+        ExchangeInAmount.Result memory result;
+        bytes memory next;
         uint256 added = input.withdrawn;
-        bytes memory nextInput;
-        if (input.se != address(0)) {
-            uint256 minted;
-            (nextInput,, minted,) = Transition(input.se).quoteTransition(
-                input.state, Transition.Operation.DepositExactIn, input.withdrawn
-            );
-            // Mirror the family's retained face-to-effective conversion at the
-            // post-withdrawal state, before buffering this residual input.
-            added = ClaimLib.ratedNative(minted, input.rate, input.se, input.asset);
-            if (added == 0) added = input.withdrawn;
+        bool buffer = input.se != address(0) && !Repo._isDisabled(input.se);
+        if (buffer) {
+            (result, next) = ClaimLib.conversionQuote(input.se, input.asset, input.withdrawn, false, input.state, false);
+            added = result.amountRefunded + ClaimLib.ratedNative(result.amountOut, input.rate, input.se, input.asset);
         }
-        uint256 effectiveOut = _saleBudget(legs, from, to, added);
-        received = _receiveOutput(output, effectiveOut);
-        legs[to].redeemShares = output.redeemShares;
-        if (input.se == address(0)) input.effective += input.withdrawn;
-        else {
-            input.state = nextInput;
-            _refresh(input);
-        }
+        received = _receiveOutput(legs[to], _saleBudget(legs, from, to, added, true));
+        if (buffer) {
+            input.shares += result.amountOut;
+            input.local += result.amountRefunded;
+            input.state = next;
+            if (next.length == 0 && input.withdrawn != result.amountRefunded) input.unprojected = true;
+        } else input.local += input.withdrawn;
+        _refresh(input);
     }
 
-    function _receiveOutput(Leg memory output, uint256 effectiveOut) private view returns (uint256 received) {
-        if (output.se == address(0)) {
-            output.effective -= effectiveOut;
-            received = effectiveOut;
-        } else {
-            uint256 shares = ClaimLib.sharesForNativeUp(effectiveOut, output.rate, output.se, output.asset);
-            uint256 cap = output.shares > 1 ? output.shares - 1 : 0;
-            if (shares == 0 || shares > cap) revert Math.Drain();
+    function _receiveOutput(Leg memory output, uint256 budget) private view returns (uint256 received) {
+        uint256 local = FullMath.min(output.local, budget);
+        output.local -= local;
+        received = local;
+        output.redeemShares = 0;
+        if (budget > local) {
+            if (output.se == address(0)) revert Math.Drain();
+            uint256 shares = ClaimLib.sharesForNativeUp(budget - local, output.rate, output.se, output.asset);
+            if (shares == 0 || shares >= output.shares) revert Math.Drain();
             output.redeemShares = shares;
-            (bytes memory next,, uint256 paid,) = Transition(output.se).quoteTransition(
-                output.state, Transition.Operation.RedeemExactIn, shares
-            );
-            if (paid == 0) revert Math.Drain();
-            output.state = next;
-            received = paid;
-            _refresh(output);
+            ExchangeInAmount.Result memory result;
+            (result, output.state) = ClaimLib.conversionQuote(output.se, output.asset, shares, true, output.state, false);
+            output.shares -= ExchangeInAmount.consumedInput(shares, result.amountRefunded);
+            if (output.state.length == 0 && shares != result.amountRefunded) output.unprojected = true;
+            received += result.amountOut;
         }
+        if (received == 0) revert Math.Drain();
+        _refresh(output);
     }
 
     function _sale(Leg[3] memory legs, uint8 from, uint8 to, uint256 added) private view returns (uint256 out) {
-        out = _saleBudget(legs, from, to, added);
+        out = _saleBudget(legs, from, to, added, true);
         if (legs[to].se != address(0)) out = _unwrapPayout(legs[to], out);
         if (out == 0) revert Math.Drain();
     }
 
-    function _saleBudget(Leg[3] memory legs, uint8 from, uint8 to, uint256 added) private view returns (uint256 out) {
+    function _saleBudget(Leg[3] memory legs, uint8 from, uint8 to, uint256 added, bool capped) private view returns (uint256 out) {
         Repo.Layout storage l = Repo._layout();
         uint256 x = _toWad(legs[from].effective, legs[from].decimals);
         uint256 y = _toWad(legs[to].effective, legs[to].decimals);
@@ -141,14 +147,20 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         uint256 net = Math.applyTradingFeeNet(
             _toWad(added, legs[from].decimals), IVaultFeeOracleQuery(l.feeOracle).dexSwapFeeOfVault(address(this))
         );
-        out = Math.fromWadFloor(_cappedSphereOut(l.R, x, y, z, net), legs[to].decimals);
+        uint256 output = capped ? _cappedSphereOut(l.R, x, y, z, net)
+            : Math.sphereExactInOutWad(l.R, Math.recomputeL2(l.R, x, y, z), x, y, z, net);
+        out = Math.fromWadFloor(output, legs[to].decimals);
         if (out == 0 || out >= legs[to].effective) revert Math.Drain();
     }
 
     /// @dev Rated units back to native shares through the leg's rate, then the SE's own unwrap quote for
     ///      the payout (a buffering-operation quote, not a reserve valuation). Separate frame for stack depth.
-    function _unwrapPayout(Leg memory leg, uint256 out) private view returns (uint256) {
-        return Transition(leg.se).quoteAssets(leg.state, ClaimLib.sharesForNativeUp(out, leg.rate, leg.se, leg.asset));
+    function _unwrapPayout(Leg memory leg, uint256 budget) private view returns (uint256) {
+        uint256 local = FullMath.min(leg.local, budget);
+        if (budget == local) return local;
+        uint256 shares = ClaimLib.sharesForNativeUp(budget - local, leg.rate, leg.se, leg.asset);
+        (ExchangeInAmount.Result memory result,) = ClaimLib.conversionQuote(leg.se, leg.asset, shares, true, leg.state, false);
+        return local + result.amountOut;
     }
 
     /// @dev Clamp inflow so xPrime stays strictly inside the sphere. Wrap-sized
@@ -167,36 +179,204 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     function _toWad(uint256 amount, uint8 decimals) private pure returns (uint256) {
         return decimals <= 18 ? amount * (10 ** (18 - decimals)) : amount / (10 ** (decimals - 18));
     }
-    /// @notice Quote the retained zap after receiving and redeeming an SE-share payment.
-    /// @dev Project redemption and both zap swaps before pricing the final deposit.
-    function previewShareDeposit(address tokenIn, uint256 amountIn) external view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        uint8 index = Repo._indexOf(l, l.legs.pairOfStandardExchange[tokenIn]);
-        Leg[3] memory legs;
-        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
-        Leg memory input = legs[index];
-        (input.state,,,) = Transition(tokenIn).quoteTransition(
-            input.state, Transition.Operation.ReceiveShares, amountIn
-        );
-        (input.state,, amountIn,) = Transition(tokenIn).quoteTransition(
-            input.state, Transition.Operation.RedeemExactIn, amountIn
-        );
-        _refresh(input);
-        return _depositAtState(legs, index, amountIn);
+    struct JoinQuote {
+        uint256[3] shares;
+        uint256[3] local;
+        uint256[3] bookShares;
+        uint256[3] bookLocal;
+        uint256[3] purchased;
+        uint256[3] rates;
     }
 
-    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
-        external view returns (uint256)
+    /// @dev Simulate the same sequential paid sales as execution, then freeze the
+    /// incumbent component book. Opaque SE state is optional, never fabricated.
+    function quotePreparedJoin(uint256[3] memory amounts, bool[3] memory flags)
+        public view returns (JoinQuote memory q)
     {
-        uint8 index = Repo._indexOf(Repo._layout(), pairToken);
-        Leg[3] memory legs;
-        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
-        Leg memory input = legs[index];
-        LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(input.se, pairToken, tokenIn, amountIn, address(this));
-        (input.state,,,) = Transition(input.se).quoteTransition(q.state, Transition.Operation.ReceiveShares, q.assets);
-        (input.state,, amountIn,) = Transition(input.se).quoteTransition(input.state, Transition.Operation.RedeemExactIn, q.assets);
-        _refresh(input);
-        return _depositAtState(legs, index, amountIn);
+        return _quotePreparedJoin(amounts, flags, 3, bytes(""));
+    }
+
+    function _quotePreparedJoin(uint256[3] memory amounts, bool[3] memory flags, uint8 stateIndex, bytes memory state)
+        private view returns (JoinQuote memory q)
+    {
+        Repo.Layout storage l = Repo._layout();
+        if (stateIndex < 3 && flags[stateIndex] && state.length != 0) {
+            (state,,,) = Transition(Repo._seAt(l, stateIndex)).quoteTransition(
+                state, Transition.Operation.ReceiveShares, amounts[stateIndex]
+            );
+        }
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            q.bookShares[i] = l.seShares[se];
+            q.bookLocal[i] = l.reserves[Repo._tokenAt(l, i)];
+            if (flags[i]) q.shares[i] = amounts[i];
+            else q.local[i] = amounts[i];
+            if (se != address(0) && (q.bookShares[i] != 0 || q.shares[i] != 0)) {
+                q.rates[i] = i == stateIndex && state.length != 0
+                    ? ContextQuote.rateFromState(se, Repo._tokenAt(l, i), Repo._rpAt(l, i), state)
+                    : ClaimLib.getRateFailClosed(Repo._rpAt(l, i));
+            }
+        }
+        q = prepareInKind(q, amounts);
+        for (uint8 i; i < 3; ++i) {
+            if ((q.bookShares[i] != 0 || q.bookLocal[i] != 0) && q.shares[i] == 0 && q.local[i] == 0) return q;
+        }
+        // Paid trades precede caller-only SE conversion; no later trade prices an unprojected state.
+        for (uint8 i; i < 3; ++i) {
+            address se = Repo._seAt(l, i);
+            if (se == address(0) || amounts[i] == 0) continue;
+            uint256 remaining = flags[i] ? q.shares[i] : q.local[i];
+            ClaimLib.Contribution memory c = ClaimLib.quoteHeldContribution(se, Repo._tokenAt(l, i),
+                q.bookShares[i], q.bookLocal[i], remaining, flags[i], false,
+                i == stateIndex ? state : bytes(""), i != stateIndex);
+            q.shares[i] = c.shares;
+            q.local[i] = c.local;
+        }
+    }
+
+    /// @dev Paid output stays in its native share/local components. Rates price the
+    /// trade only; LP entitlement is computed later from the six native components.
+    function prepareInKind(JoinQuote memory q, uint256[3] memory amounts)
+        public view returns (JoinQuote memory)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256[3] memory weights;
+        uint256 total;
+        for (uint8 i; i < 3; ++i) {
+            weights[i] = Math.toWad(_joinValue(q, i, q.bookShares[i], q.bookLocal[i]), Repo._decimalsAt(l, i));
+            total += weights[i];
+        }
+        uint256 emptyWeight = total / 3;
+        for (uint8 i; i < 3; ++i) {
+            if (amounts[i] != 0 && weights[i] == 0) {
+                weights[i] = emptyWeight;
+                total += emptyWeight;
+            }
+        }
+        for (uint8 i; i < 3; ++i) {
+            if (amounts[i] == 0) continue;
+            uint256 shares = q.shares[i];
+            uint256 local = q.local[i];
+            for (uint8 j; j < 3; ++j) {
+                if (amounts[j] != 0 || weights[j] == 0) continue;
+                uint256 saleShares = FullMath.mulDiv(shares, weights[j], total);
+                uint256 saleLocal = FullMath.mulDiv(local, weights[j], total);
+                uint256 paid = _joinValue(q, i, saleShares, saleLocal);
+                if (paid == 0) continue;
+                uint256 output = _joinSaleBudget(q, i, j, paid);
+                if (output == 0) continue;
+                uint256 outputValue = _joinValue(q, j, q.bookShares[j], q.bookLocal[j]);
+                uint256 boughtShares = FullMath.mulDiv(q.bookShares[j], output, outputValue);
+                uint256 boughtLocal = FullMath.mulDiv(q.bookLocal[j], output, outputValue);
+                if (boughtShares == 0 && boughtLocal == 0) continue;
+                q.shares[i] -= saleShares;
+                q.local[i] -= saleLocal;
+                q.bookShares[i] += saleShares;
+                q.bookLocal[i] += saleLocal;
+                q.bookShares[j] -= boughtShares;
+                q.bookLocal[j] -= boughtLocal;
+                q.shares[j] += boughtShares;
+                q.local[j] += boughtLocal;
+                q.purchased[j] += boughtLocal;
+            }
+        }
+        return q;
+    }
+
+    /// @dev One ordered excess-to-deficit pass, including nonempty deficient legs.
+    /// Sales are fractions of the caller's original native components, not rated LP credit.
+    function prepareNativeInKind(JoinQuote memory q) public view returns (JoinQuote memory) {
+        Repo.Layout storage l = Repo._layout();
+        uint256[3] memory weights;
+        uint256[3] memory offered;
+        uint256[3] memory deficits;
+        uint256 totalBook;
+        uint256 totalOffered;
+        for (uint8 i; i < 3; ++i) {
+            weights[i] = Math.toWad(_joinValue(q, i, q.bookShares[i], q.bookLocal[i]), Repo._decimalsAt(l, i));
+            offered[i] = Math.toWad(_joinValue(q, i, q.shares[i], q.local[i]), Repo._decimalsAt(l, i));
+            totalBook += weights[i];
+            totalOffered += offered[i];
+        }
+        if (totalBook == 0 || totalOffered == 0) return q;
+        uint256[3] memory excess;
+        uint256 totalDeficit;
+        for (uint8 i; i < 3; ++i) {
+            uint256 target = FullMath.mulDiv(totalOffered, weights[i], totalBook);
+            if (offered[i] > target) excess[i] = offered[i] - target;
+            else {
+                deficits[i] = target - offered[i];
+                totalDeficit += deficits[i];
+            }
+        }
+        if (totalDeficit == 0) return q;
+        for (uint8 i; i < 3; ++i) {
+            if (excess[i] == 0) continue;
+            uint256 shares = q.shares[i];
+            uint256 local = q.local[i];
+            for (uint8 j; j < 3; ++j) {
+                if (deficits[j] == 0) continue;
+                uint256 sale = FullMath.mulDiv(excess[i], deficits[j], totalDeficit);
+                uint256 saleShares = FullMath.mulDiv(shares, sale, offered[i]);
+                uint256 saleLocal = FullMath.mulDiv(local, sale, offered[i]);
+                uint256 paid = _joinValue(q, i, saleShares, saleLocal);
+                if (paid == 0) continue;
+                uint256 output = _joinSaleBudget(q, i, j, paid);
+                uint256 outputValue = _joinValue(q, j, q.bookShares[j], q.bookLocal[j]);
+                uint256 boughtShares = FullMath.mulDiv(q.bookShares[j], output, outputValue);
+                uint256 boughtLocal = FullMath.mulDiv(q.bookLocal[j], output, outputValue);
+                if (boughtShares == 0 && boughtLocal == 0) continue;
+                q.shares[i] -= saleShares;
+                q.local[i] -= saleLocal;
+                q.bookShares[i] += saleShares;
+                q.bookLocal[i] += saleLocal;
+                q.bookShares[j] -= boughtShares;
+                q.bookLocal[j] -= boughtLocal;
+                q.shares[j] += boughtShares;
+                q.local[j] += boughtLocal;
+                q.purchased[j] += boughtLocal;
+            }
+        }
+        return q;
+    }
+
+    function _joinValue(JoinQuote memory q, uint8 i, uint256 shares, uint256 local)
+        private view returns (uint256)
+    {
+        Repo.Layout storage l = Repo._layout();
+        address se = Repo._seAt(l, i);
+        if (se == address(0)) return ClaimLib.effectiveNative(se, Repo._rpAt(l, i), Repo._tokenAt(l, i), local, 0);
+        return local + ClaimLib.ratedNative(shares, q.rates[i], se, Repo._tokenAt(l, i));
+    }
+
+    function _joinSaleBudget(JoinQuote memory q, uint8 from, uint8 to, uint256 paid)
+        private view returns (uint256 output)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256[3] memory e;
+        for (uint8 i; i < 3; ++i) {
+            e[i] = Math.toWad(_joinValue(q, i, q.bookShares[i], q.bookLocal[i]), Repo._decimalsAt(l, i));
+        }
+        uint256 net = Math.applyTradingFeeNet(Math.toWad(paid, Repo._decimalsAt(l, from)),
+            IVaultFeeOracleQuery(l.feeOracle).dexSwapFeeOfVault(address(this)));
+        output = Math.fromWadFloor(Math.sphereLiquidityExactInOutWad(l.R,
+            Math.recomputeL2(l.R, e[from], e[to], e[3 - from - to]), e[from], e[to], e[3 - from - to], net),
+            Repo._decimalsAt(l, to));
+        if (Math.toWad(output, Repo._decimalsAt(l, to)) >= e[to]) revert Math.Drain();
+    }
+
+    /// @notice Caller-owned SE shares buy the missing legs before mint acceptance.
+    function previewShareDeposit(address tokenIn, uint256 amountIn) external view returns (uint256 net) {
+        Repo.Layout storage l = Repo._layout();
+        uint8 index = Repo._indexOf(l, l.legs.pairOfStandardExchange[tokenIn]);
+        (net,) = _singleDeposit(index, amountIn, true, bytes(""));
+    }
+
+    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn) external view returns (uint256 net) {
+        Repo.Layout storage l = Repo._layout();
+        uint8 index = Repo._indexOf(l, pairToken);
+        LegLib.ExternalQuote memory q = _externalDeposit(Repo._seAt(l, index), pairToken, tokenIn, amountIn);
+        (net,) = _singleDeposit(index, q.assets, true, q.state);
     }
 
     function previewBondAfterDeposit(address tokenIn, address pairToken, address detfToken, uint256 amountIn, uint256 multiplier)
@@ -206,251 +386,87 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         uint8 index = Repo._indexOf(l, pairToken);
         uint8 rawIndex = Repo._indexOf(l, detfToken);
         if (index == rawIndex || Repo._seAt(l, rawIndex) != address(0)) revert Math.MathDomain();
-        LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(Repo._seAt(l, index), pairToken, tokenIn, amountIn, address(this));
+        LegLib.ExternalQuote memory q = _externalDeposit(Repo._seAt(l, index), pairToken, tokenIn, amountIn);
         return _bondAtExternalState(q, index, rawIndex, multiplier);
+    }
+
+    function _externalDeposit(address se, address pair, address tokenIn, uint256 amountIn)
+        private view returns (LegLib.ExternalQuote memory q)
+    {
+        if (tokenIn != se && Repo._isDisabled(se)) revert IVaultRegistryDisableQuery.VaultDisabled(se);
+        if (tokenIn == se) {
+            // Transferring already-owned shares does not change the SE's global state.
+            q.exchange = Transition(se);
+            q.pair = pair;
+            q.assets = amountIn;
+        } else {
+            // Ordinary external-deposit projection does not require the separate
+            // PoolManager-unlock extension. Never substitute live state here.
+            q = LegLib.afterExternalDeposit(se, pair, tokenIn, amountIn, address(this));
+        }
+        q.heldShares = Repo._layout().seShares[se];
     }
 
     function _bondAtExternalState(LegLib.ExternalQuote memory q, uint8 index, uint8 rawIndex, uint256 multiplier)
         private view returns (uint256 pairValue, uint256 purchasedDetf, uint256 liquidityDetf)
     {
-        pairValue = q.exchange.quoteAssets(q.state, q.assets);
+        (ExchangeInAmount.Result memory value,) = ClaimLib.conversionQuote(address(q.exchange), q.pair, q.assets, true, q.state, true);
+        pairValue = value.amountOut;
         if (ERC20Repo._totalSupply() == 0) return (pairValue, 0, 0);
         Leg[3] memory legs;
         for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
         legs[index].state = q.state;
         _refresh(legs[index]);
-        liquidityDetf = LegLib.matchingLiquidityDetf(q, legs[rawIndex].effective, pairValue, _depositSupply(legs), 0);
-        uint256 boosted = FullMath.mulDiv(pairValue, multiplier, 1e18);
-        purchasedDetf = _sale(legs, index, rawIndex, _claimIn(legs[index], boosted));
+        (ExchangeInAmount.Result memory backing,) = ClaimLib.conversionQuote(address(q.exchange), q.pair, legs[index].shares, true, q.state, false);
+        uint256 totalPair = legs[index].local + backing.amountOut;
+        if (totalPair != 0) liquidityDetf = FullMath.mulDiv(legs[rawIndex].local, pairValue, totalPair);
+        purchasedDetf = _saleBudget(legs, index, rawIndex,
+            _claimIn(legs[index], FullMath.mulDiv(pairValue, multiplier, 1e18)), false);
     }
 
-    struct DepositQuote {
-        uint8 input;
-        uint8 j;
-        uint8 k;
-        uint256 supply;
-        uint256 saleJ;
-        uint256 saleK;
-        uint256 shares;
-        uint256[3] offered;
-        uint256[3] used;
-        uint256 sharesJ;
-        uint256 sharesK;
+    /// @notice Quote caller-paid preparation and the proportional component mint.
+    function previewDepositReceipt(address tokenIn, uint256 amount)
+        external view returns (uint256 net, uint256 refund)
+    {
+        Repo.Layout storage l = Repo._layout();
+        address pair = l.legs.pairOfStandardExchange[tokenIn];
+        bool asShare = pair != address(0);
+        return _singleDeposit(Repo._indexOf(l, asShare ? pair : tokenIn), amount, asShare, bytes(""));
     }
 
-    /// @notice Plan a ratio zap against the SE state produced by each preceding swap.
-    function planDeposit(address tokenIn, uint256 amount) external view returns (DepositQuote memory q) {
-        Leg[3] memory legs;
-        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
-        q = _depositQuote(legs, Repo._indexOf(Repo._layout(), tokenIn));
-        _planDeposit(legs, q, amount);
-    }
-
-    function _depositAtState(Leg[3] memory legs, uint8 index, uint256 amount) private view returns (uint256) {
-        DepositQuote memory q = _depositQuote(legs, index);
-        uint256 radius = Repo._layout().R;
-        uint256 e0 = Math.toWad(legs[0].effective, legs[0].decimals);
-        uint256 e1 = Math.toWad(legs[1].effective, legs[1].decimals);
-        uint256 e2 = Math.toWad(legs[2].effective, legs[2].decimals);
-        if (radius == 0 || e0 == 0 || e1 == 0 || e2 == 0
-            || e0 + 1 >= radius || e1 + 1 >= radius || e2 + 1 >= radius
-            || (legs[index].effective > 0 && amount > legs[index].effective
-                && (legs[q.j].effective < amount / 4 || legs[q.k].effective < amount / 4)))
-        {
-            return _partialDepositAtState(legs, q, amount);
+    function _singleDeposit(uint8 index, uint256 amount, bool asShare, bytes memory state)
+        private view returns (uint256 net, uint256 refund)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 supply = ERC20Repo._totalSupply();
+        if (supply == 0 || amount == 0) return (0, amount);
+        uint256[3] memory amounts;
+        bool[3] memory flags;
+        amounts[index] = amount;
+        flags[index] = asShare;
+        JoinQuote memory q = _quotePreparedJoin(amounts, flags, state.length == 0 ? 3 : index, state);
+        uint256[] memory available = new uint256[](6);
+        uint256[] memory booked = new uint256[](6);
+        for (uint8 i; i < 3; ++i) {
+            booked[2 * i] = q.bookShares[i];
+            booked[2 * i + 1] = q.bookLocal[i];
+            available[2 * i] = q.shares[i];
+            available[2 * i + 1] = q.local[i];
         }
-        _planDeposit(legs, q, amount);
-        return q.shares;
-    }
-
-    function _depositQuote(Leg[3] memory legs, uint8 index) private view returns (DepositQuote memory q) {
-        q.input = index;
-        q.j = index == 0 ? 1 : 0;
-        q.k = 3 - index - q.j;
-        q.supply = _depositSupply(legs);
-    }
-
-    function _planDeposit(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
-        _depositSales(legs, q, amount);
-        _depositOutputs(legs, q);
-        _planRawTerminal(legs, q);
-    }
-
-    /// @dev Terminal admission after rated swaps. Inventory is the projected post-swap
-    ///      raw book, not live balances and not rated `effective`.
-    function _planRawTerminal(Leg[3] memory legs, DepositQuote memory q) private view {
-        if (q.supply == 0) return;
-        uint256 b0 = _rawHeld(legs[0]);
-        uint256 b1 = _rawHeld(legs[1]);
-        uint256 b2 = _rawHeld(legs[2]);
-        if (b0 == 0 || b1 == 0 || b2 == 0) return;
-        uint256 c0 = _rawOffer(legs[0], q.offered[0]);
-        uint256 c1 = _rawOffer(legs[1], q.offered[1]);
-        uint256 c2 = _rawOffer(legs[2], q.offered[2]);
-        q.shares = Math.rawFullBookShares(q.supply, c0, b0, c1, b1, c2, b2);
-        if (q.shares == 0) return;
-        q.used[0] = _faceForRawOffer(legs[0], _bufferedRequired(q.shares, b0, q.supply, legs[0], q.offered[0]), q.offered[0]);
-        q.used[1] = _faceForRawOffer(legs[1], _bufferedRequired(q.shares, b1, q.supply, legs[1], q.offered[1]), q.offered[1]);
-        q.used[2] = _faceForRawOffer(legs[2], _bufferedRequired(q.shares, b2, q.supply, legs[2], q.offered[2]), q.offered[2]);
-    }
-
-    function _rawHeld(Leg memory leg) private pure returns (uint256) {
-        if (leg.se == address(0)) return leg.effective;
-        return leg.shares;
-    }
-
-    /// @dev Projected share mint for a terminal face offer. Zero mint is zero credit.
-    function _rawOffer(Leg memory leg, uint256 face) private view returns (uint256 minted) {
-        if (face == 0 || leg.se == address(0) || leg.se == leg.asset) return face;
-        (,, minted,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.DepositExactIn, face);
-    }
-
-    /// @dev Live fee-bearing pools can mint a few share wei under the quote. Ask for that
-    ///      cushion only when the offered face already quotes it, so the search cannot revert.
-    function _bufferedRequired(
-        uint256 shares,
-        uint256 incumbent,
-        uint256 supply,
-        Leg memory leg,
-        uint256 offered
-    ) private view returns (uint256) {
-        uint256 required = Math.rawRequiredInventory(shares, incumbent, supply);
-        if (required == 0 || leg.se == address(0) || leg.se == leg.asset) return required;
-        uint256 cushion = 1024;
-        if (required > type(uint256).max - cushion) return required;
-        if (_rawOffer(leg, offered) < required + cushion) return required;
-        return required + cushion;
-    }
-
-    function _faceForRawOffer(Leg memory leg, uint256 required, uint256 available) private view returns (uint256) {
-        if (required == 0) return 0;
-        if (leg.se == address(0) || leg.se == leg.asset) {
-            if (required > available) revert Math.MathDomain();
-            return required;
-        }
-        uint256 above = _rawOffer(leg, available);
-        if (above < required || available == 0) revert Math.MathDomain();
-        uint256 low = 1;
-        uint256 high = available;
-        uint256 below;
-        uint256 probes;
-        while (low < high) {
-            uint256 mid = low + (high - low) / 2;
-            if (above > below && probes < 8) {
-                mid = low - 1 + FullMath.mulDiv(required - below, high - low + 1, above - below);
-                mid = FullMath.max(low, FullMath.min(mid, high - 1));
-                unchecked { ++probes; }
-            }
-            uint256 got = _rawOffer(leg, mid);
-            if (got >= required) {
-                high = mid;
-                above = got;
-            } else {
-                low = mid + 1;
-                below = got;
-            }
-        }
-        if (_rawOffer(leg, low) < required) revert Math.MathDomain();
-        return low;
-    }
-
-    function _depositSales(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
-        Math.ZapSplitArgs memory a;
-        a.e0 = Math.toWad(legs[0].effective, legs[0].decimals);
-        a.e1 = Math.toWad(legs[1].effective, legs[1].decimals);
-        a.e2 = Math.toWad(legs[2].effective, legs[2].decimals);
-        a.R = Repo._layout().R;
-        uint8 decimals = legs[q.input].decimals;
-        a.amountInWad = Math.toWad(amount, decimals);
-        if (a.R == 0 || a.e0 == 0 || a.e1 == 0 || a.e2 == 0 || a.amountInWad < 3
-            || a.e0 + 1 >= a.R || a.e1 + 1 >= a.R || a.e2 + 1 >= a.R)
-        {
-            q.offered[q.input] = amount;
-            return;
-        }
-        a.L2 = Math.recomputeL2(a.R, a.e0, a.e1, a.e2);
-        a.feeWad = IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this));
-        a.inIdx = q.input;
-        Math.ZapSplitResult memory z = Math.zapSplitWad(a);
-        if (z.sJWad == 0 || z.sKWad == 0) {
-            q.offered[q.input] = amount;
-            return;
-        }
-        q.saleJ = Math.fromWadCeil(z.sJWad, decimals);
-        q.saleK = Math.fromWadCeil(z.sKWad, decimals);
-        if (q.saleJ + q.saleK > amount) {
-            q.saleJ = Math.fromWadFloor(z.sJWad, decimals);
-            q.saleK = Math.fromWadFloor(z.sKWad, decimals);
-            if (q.saleJ + q.saleK > amount) {
-                if (q.saleJ >= amount) q.saleJ = amount / 2;
-                q.saleK = amount - q.saleJ;
-            }
-        }
-        q.offered[q.input] = amount - q.saleJ - q.saleK;
-    }
-
-    function _depositOutputs(Leg[3] memory legs, DepositQuote memory q) private view {
-        if (q.saleJ > 0) {
-            legs[q.input].withdrawn = q.saleJ;
-            q.offered[q.j] = _swap(legs, q.input, q.j);
-            q.sharesJ = legs[q.j].redeemShares;
-        }
-        if (q.saleK > 0) {
-            legs[q.input].withdrawn = q.saleK;
-            q.offered[q.k] = _swap(legs, q.input, q.k);
-            q.sharesK = legs[q.k].redeemShares;
-        }
+        uint256 gross = LiquidityRoute.maxComponentMint(available, booked, supply);
+        (net,,) = ClaimLib.netMint(gross);
+        refund = (asShare ? q.shares[index] : q.local[index]) - LiquidityRoute.componentContribution(
+            gross, booked[2 * index + (asShare ? 0 : 1)], supply
+        );
     }
 
     function _claimIn(Leg memory leg, uint256 amount) private view returns (uint256) {
-        if (amount == 0 || leg.se == address(0)) return amount;
-        (,, uint256 minted,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.DepositExactIn, amount);
-        if (minted == 0) return amount;
-        uint256 rated = ClaimLib.ratedNative(minted, leg.rate, leg.se, leg.asset);
-        return rated == 0 ? amount : rated;
+        if (amount == 0 || leg.se == address(0) || Repo._isDisabled(leg.se)) return amount;
+        (ExchangeInAmount.Result memory result,) = ClaimLib.conversionQuote(leg.se, leg.asset, amount, false, leg.state, false);
+        return result.amountRefunded + ClaimLib.ratedNative(result.amountOut, leg.rate, leg.se, leg.asset);
     }
 
-    function _depositSupply(Leg[3] memory legs) private view returns (uint256 supply) {
-        supply = ERC20Repo._totalSupply();
-        Repo.Layout storage l = Repo._layout();
-        IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(l.feeOracle);
-        uint256 usage = oracle.usageFeeOfVault(address(this));
-        uint256 ownerShare = usage * Repo.FEE_DENOMINATOR / 1e18;
-        if (address(oracle.feeTo()) == address(0) || usage == 0 || usage >= 1e18 || ownerShare == 0 || l.kLast == 0) return supply;
-        uint256 a = Math.toWad(legs[0].effective, legs[0].decimals);
-        uint256 b = Math.toWad(legs[1].effective, legs[1].decimals);
-        uint256 c = Math.toWad(legs[2].effective, legs[2].decimals);
-        uint8 mode = a > 0 && b > 0 && c > 0 ? 0 : 1;
-        if (mode != l.kLastMode) return supply;
-        uint256 root = mode == 0 ? Math.cbrt(a * b * c) : a + b + c;
-        uint256 previous = mode == 0 ? Math.cbrt(l.kLast) : l.kLast;
-        supply += Math.protocolLpShares(supply, root, previous, ownerShare);
-    }
 
-    function _partialDepositAtState(Leg[3] memory legs, DepositQuote memory q, uint256 amount)
-        private view returns (uint256)
-    {
-        Leg memory leg = legs[q.input];
-        uint256 radius = Repo._layout().R;
-        uint256 effectiveWad = Math.toWad(leg.effective, leg.decimals);
-        if (radius == 0 || effectiveWad == 0 || effectiveWad + 1 >= radius) return 0;
-        uint256 room = Math.fromWadFloor(radius - effectiveWad - 1, leg.decimals);
-        if (amount > room) amount = room;
-        uint256 proRata = Math.toWad(amount, leg.decimals) * q.supply / effectiveWad;
-        uint256 used = Math.fromWadFloor(Math.fullBookUsedWad(proRata, effectiveWad, q.supply), leg.decimals);
-        if (used == 0) return 0;
-        uint256[3] memory usedWad;
-        usedWad[q.input] = Math.toWad(used, leg.decimals);
-        Math.SphereNavArgs memory nav;
-        nav.supply = q.supply;
-        nav.R = radius;
-        nav.r0Wad = Math.toWad(legs[0].effective, legs[0].decimals);
-        nav.r1Wad = Math.toWad(legs[1].effective, legs[1].decimals);
-        nav.r2Wad = Math.toWad(legs[2].effective, legs[2].decimals);
-        nav.used0Wad = usedWad[0];
-        nav.used1Wad = usedWad[1];
-        nav.used2Wad = usedWad[2];
-        return Math.sphereNavShares(nav);
-    }
+
 
 }

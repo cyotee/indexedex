@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4BalancerStableLiquidityUnits as IUnits} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4BalancerStableLiquidityUnits.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
@@ -13,6 +14,7 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Ti
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 
@@ -253,12 +255,57 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
     function _firstMintEqual(uint256 amountEach) internal returns (uint256 shares) {
         uint256[] memory amounts = new uint256[](quad.numTokens());
         for (uint256 i; i < amounts.length; ++i) amounts[i] = amountEach;
+        return _seedFromPairs(amounts);
+    }
+
+    /// @dev Acquire shares outside the hook, then exercise the installed units bootstrap.
+    function _prepareShareSeed(uint256[] memory budgets) internal returns (uint256[] memory amounts, bool[] memory flags) {
+        amounts = new uint256[](budgets.length); flags = new bool[](budgets.length);
+        vm.startPrank(user);
+        for (uint256 i; i < budgets.length; ++i) {
+            address se = quad.standardExchange(i);
+            if (se == address(0)) { amounts[i] = budgets[i]; continue; }
+            flags[i] = true;
+            IERC20(quad.token(i)).approve(se, budgets[i]);
+            (amounts[i],) = IStandardExchangeIn(se).exchangeIn(IERC20(quad.token(i)), budgets[i], IERC20(se), 1, user, false, block.timestamp);
+            IERC20(se).approve(hook, type(uint256).max);
+        }
+        vm.stopPrank();
+    }
+
+    function _seedFromPairs(uint256[] memory budgets) internal returns (uint256 shares) {
+        (uint256[] memory amounts, bool[] memory flags) = _prepareShareSeed(budgets);
+        (uint256 quote,) = IUnits(hook).previewJoinProportionalFlexible(amounts, flags);
         vm.prank(user);
-        (shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 days);
+        (shares,) = IUnits(hook).joinProportionalFlexible(amounts, flags, user, quote, block.timestamp);
+        assertEq(shares, quote, "share-funded bootstrap preview");
+        for (uint256 i; i < amounts.length; ++i) {
+            if (!flags[i]) continue;
+            assertEq(quad.seBalance(i), amounts[i] - amounts[i] / 20, "retained actual caller shares");
+            assertGt(IERC20(quad.token(i)).balanceOf(hook), 0, "actual 5% redemption receipt");
+        }
     }
 
     function _seedFullBook(uint256 amountEach) internal returns (uint256 shares) {
         return _firstMintEqual(amountEach);
+    }
+
+    function _componentOwnershipState(address actor_) internal view returns (bytes32 state_) {
+        state_ = keccak256(abi.encode(IERC20(hook).totalSupply(), IERC20(hook).balanceOf(actor_),
+            IERC20(hook).balanceOf(hook), IERC20(hook).balanceOf(address(0)),
+            IERC20(hook).balanceOf(quad.feeTo()), quad.nativeReserves()));
+        for (uint256 i; i < quad.numTokens(); ++i) {
+            address token_ = quad.token(i);
+            address se_ = quad.standardExchange(i);
+            state_ = keccak256(abi.encode(state_, token_, IERC20(token_).balanceOf(actor_),
+                IERC20(token_).balanceOf(hook), IERC20(token_).allowance(actor_, hook)));
+            if (se_ != address(0)) {
+                state_ = keccak256(abi.encode(state_, se_, IERC20(se_).totalSupply(),
+                    IERC20(se_).balanceOf(actor_), IERC20(se_).balanceOf(hook),
+                    IERC20(se_).allowance(actor_, hook), IERC20(token_).balanceOf(se_),
+                    IERC20(token_).allowance(hook, se_)));
+            }
+        }
     }
 
     function _assertAllDoorsLive() internal view {
@@ -369,8 +416,18 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         _assertAllDoorsLive();
         _firstMintEqual(100 ether);
         _swapExactIn(address(token0), address(token1), 1 ether);
+        uint256[] memory amounts = new uint256[](quad.numTokens());
+        for (uint256 j; j < amounts.length; ++j) amounts[j] = 5 ether;
         vm.prank(user);
-        quad.depositSingle(address(token1), 5 ether, user, 0, block.timestamp + 1 hours);
+        (uint256 minted,) = quad.joinProportional(amounts, user, 1, block.timestamp + 1 hours);
+        assertGt(minted, 0, "complete caller-funded join");
+        uint256 quoted = quad.previewWithdrawSingle(address(token1), minted / 2);
+        assertGt(quoted, 0, "single-token exit remains executable");
+        uint256 beforeOutput = token1.balanceOf(user);
+        vm.prank(user);
+        uint256 paid = quad.withdrawSingle(address(token1), minted / 2, user, quoted, block.timestamp + 1 hours);
+        assertEq(paid, quoted);
+        assertEq(token1.balanceOf(user) - beforeOutput, paid);
     }
     function _dynamic(address[4] memory fixedTokens) internal pure returns (address[] memory out) {
         out = new address[](4);

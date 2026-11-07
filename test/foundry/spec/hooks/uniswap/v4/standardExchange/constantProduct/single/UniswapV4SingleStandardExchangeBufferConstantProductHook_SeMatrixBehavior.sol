@@ -166,8 +166,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         usedFace = faceIsCurrency0 ? used0 : used1;
     }
 
-    function _seed() internal returns (uint256 lp) {
-        (lp,) = _joinBoth(_f(seedUnits), seedUnits * 1 ether);
+    function _seed() internal virtual returns (uint256 lp) {
+        vm.startPrank(user);
+        IERC20(face).approve(seUT, _f(seedUnits));
+        (uint256 shares,) = IStandardExchangeIn(seUT).exchangeIn(
+            IERC20(face), _f(seedUnits), IERC20(seUT), 1, user, false, block.timestamp
+        );
+        IERC20(seUT).approve(hook, shares);
+        (lp,,) = single.depositWithSeShares(seedUnits * 1 ether, shares, user, 1, block.timestamp);
+        vm.stopPrank();
     }
 
     function _hookSeShares() internal view returns (uint256) {
@@ -223,6 +230,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
 
     function test_row_bufferFirst_restingFace_notPaidToJoiner() public virtual {
         _seed();
+        uint256 localBefore = IERC20(face).balanceOf(hook);
+        uint256 supplyBefore = IERC20(hook).totalSupply();
         address donor = makeAddr("donor");
         uint256 donation = _f(500);
         fx.fund(donor, donation);
@@ -234,7 +243,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         assertGt(usedFace, 0, "join used face");
         assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "joiner pays used face; resting face is not the joiner's refund");
         assertGt(_hookSeShares(), seBefore, "buffer-first: SE shares owned by the hook");
-        assertLe(IERC20(face).balanceOf(hook), DUST, "resting face is rebuffered, never paid to the joiner");
+        assertEq(IERC20(face).balanceOf(hook),
+            localBefore + _f(500) + _ceilComponent(IERC20(hook).totalSupply() - supplyBefore, localBefore, supplyBefore),
+            "ambient face remains separate from the accepted local contribution");
     }
 
     function test_row_partialConsumption_bookedNotRefunded() public virtual {
@@ -248,12 +259,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         uint256 bookedBefore = fx.seBooked();
         uint256 userFace = IERC20(face).balanceOf(user);
         uint256 seBefore = _hookSeShares();
+        vm.recordLogs();
         (, uint256 usedFace) = _joinBoth(_f(50), 50 ether);
-        assertGt(usedFace, allow, "join used more face than the dependency could take");
-        assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "no refund of the unconsumed part");
+        uint256 forwarded = _faceTransferred(vm.getRecordedLogs(), hook, seUT);
+        assertGt(forwarded, allow, "conversion exceeded the dependency capacity");
+        assertEq(userFace - IERC20(face).balanceOf(user), usedFace, "caller pays its actual accepted conversion budget");
         uint256 booked = fx.seBooked() - bookedBefore;
-        assertGe(booked, usedFace - allow, "SE booked the remainder above capacity");
-        assertLe(booked, usedFace, "booked remainder never exceeds what was used");
+        assertGe(booked, forwarded - allow, "SE booked its own unconsumed input");
+        assertLe(booked, forwarded, "SE credit cannot exceed actual forwarded input");
         assertGt(_hookSeShares(), seBefore, "hook still receives SE shares for the booked input");
         fx.openCapacity();
         uint256 bookedAfter = fx.seBooked();
@@ -321,7 +334,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         tin.approve(address(rowCaller), fatMax);
         uint256 callerOutBefore = tout.balanceOf(address(rowCaller));
         uint256 seBefore = _hookSeShares();
-        uint256 expectedDebit = IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut);
+        uint256 localBefore = tout.balanceOf(hook);
+        uint256 expectedDebit = wantOut <= localBefore ? 0
+            : IStandardExchangeOut(seUT).previewExchangeOut(IERC20(seUT), IERC20(face), wantOut - localBefore);
         bytes memory data = abi.encodeCall(
             IStandardExchangeOut.exchangeOut,
             (tin, fatMax, tout, wantOut, address(rowCaller), true, block.timestamp + 1 hours)
@@ -335,8 +350,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         assertEq(tin.balanceOf(address(this)), 0, "payer spent fatMax");
         assertEq(
             seBefore + _faceSharesMintedToHook(), _hookSeShares() + expectedDebit,
-            "SE share debit matches the exact-output quote including minted-back shares"
+            "only the output deficit can debit SE shares"
         );
+        assertEq(tout.balanceOf(hook), localBefore > wantOut ? localBefore - wantOut : 0);
     }
 
     /// @dev Count only face-leg SE mints to this hook during the recorded settlement call.
@@ -350,6 +366,22 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
                     && logs[i].topics[2] == bytes32(uint256(uint160(hook)))
             ) {
                 minted += abi.decode(logs[i].data, (uint256));
+            }
+        }
+    }
+
+    function _ceilComponent(uint256 minted, uint256 component, uint256 supply) internal pure returns (uint256) {
+        uint256 product = minted * component;
+        return product / supply + (product % supply == 0 ? 0 : 1);
+    }
+
+    function _faceTransferred(Vm.Log[] memory logs, address from, address to) internal view returns (uint256 amount) {
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter == face && logs[i].topics.length == 3
+                && logs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                && logs[i].topics[1] == bytes32(uint256(uint160(from)))
+                && logs[i].topics[2] == bytes32(uint256(uint160(to)))) {
+                amount += abi.decode(logs[i].data, (uint256));
             }
         }
     }
@@ -376,8 +408,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
 
     function test_row_poolManagerSwap_bothDirections_noFaceResidual() public virtual {
         _seed();
-        // Free face on this hook is refund dust only (PRD D86); the seed leaves at most MAX_DUST_WEI.
-        assertLe(IERC20(face).balanceOf(hook), DUST, "opening resting face is dust only");
+        assertGt(IERC20(face).balanceOf(hook), 0, "genesis owns actual local proceeds");
         uint256 uFace = IERC20(face).balanceOf(user);
         uint256 uRaw = IERC20(raw).balanceOf(user);
 
@@ -397,12 +428,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMat
         uFace = IERC20(face).balanceOf(user);
         uRaw = IERC20(raw).balanceOf(user);
 
+        uint256 localBeforeFinal = IERC20(face).balanceOf(hook);
+        uint256 sharesBeforeFinal = _hookSeShares();
         _swapExactOut(raw, face, _f(1) / 2);
         assertEq(IERC20(face).balanceOf(user) - uFace, _f(1) / 2, "exact-out raw->face delivers the request");
 
-        assertLe(
-            IERC20(face).balanceOf(hook), DUST, "no operation-created face residual on the buffered leg beyond MAX_DUST_WEI"
-        );
+        assertEq(IERC20(face).balanceOf(hook),
+            localBeforeFinal > _f(1) / 2 ? localBeforeFinal - _f(1) / 2 : 0, "fixed output consumes its local claim first");
+        if (localBeforeFinal >= _f(1) / 2) assertEq(_hookSeShares(), sharesBeforeFinal, "no SE call for local output");
     }
 
     function test_row_seFailure_rollsBack() public virtual {

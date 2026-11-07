@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
@@ -48,19 +49,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerOnlyLiqui
     }
 
     function test_ownerOnlyLiquidity_ownerAddSucceeds() public {
-        uint256 a0 = _amountForCurrency(single.currency0(), 100 ether, 100 ether);
-        uint256 a1 = _amountForCurrency(single.currency1(), 100 ether, 100 ether);
-        vm.prank(owner);
-        (uint256 lp,,) = single.deposit(a0, a1, owner, 0, block.timestamp + 1 hours);
+        uint256 lp = _ownerSeed(100 ether);
         assertGt(lp, 0);
         assertGt(IERC20(hook).balanceOf(owner), 0);
     }
 
     function test_ownerOnlyLiquidity_publicSwapStillWorks() public {
-        uint256 a0 = _amountForCurrency(single.currency0(), 200 ether, 200 ether);
-        uint256 a1 = _amountForCurrency(single.currency1(), 200 ether, 200 ether);
-        vm.prank(owner);
-        single.deposit(a0, a1, owner, 0, block.timestamp + 1 hours);
+        _ownerSeed(200 ether);
 
         uint256 amountIn = 1 ether;
         uint256 pred = single.previewSwapExactIn(true, amountIn);
@@ -78,5 +73,16 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerOnlyLiqui
             ""
         );
         assertGt(IERC20(c1).balanceOf(user), before1);
+    }
+
+    function _ownerSeed(uint256 amount_) internal returns (uint256 lp_) {
+        vm.startPrank(owner);
+        pairToken.approve(se, amount_);
+        (uint256 shares_,) = IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(pairToken)), amount_, IERC20(se), 1, owner, false, block.timestamp
+        );
+        IERC20(se).approve(hook, shares_);
+        (lp_,,) = single.depositWithSeShares(amount_, shares_, owner, 1, block.timestamp + 1 hours);
+        vm.stopPrank();
     }
 }

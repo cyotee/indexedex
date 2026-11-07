@@ -256,18 +256,13 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSwapCore 
 
     function _payExactInOutput(uint8 j, ExactInOutput memory output, address recipient) internal returns (uint256 amountOut) {
         Repo.Layout storage l = Repo._layout();
-        if (output.sharesOut != 0) {
-            if (output.sharesOut >= _nativeAt(j)) revert WouldZeroReserve();
-            uint256 beforeOut = IERC20(l.tokens[j]).balanceOf(recipient);
-            _unwrapSeShares(j, output.sharesOut, recipient);
-            amountOut = IERC20(l.tokens[j]).balanceOf(recipient) - beforeOut;
-            if (amountOut < output.amountOut) revert UnwrapFailed();
-        } else {
-            amountOut = output.amountOut;
-            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
-            if (l.standardExchanges[j] == address(0)) _debitRawIntentional(j, amountOut);
-            if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
-        }
+        uint256 local = output.amountOut < l.rawReserves[j] ? output.amountOut : l.rawReserves[j];
+        // A share spend is quoted only after the entire local budget has been exhausted.
+        if (output.sharesOut != 0) local = l.rawReserves[j];
+        l.rawReserves[j] -= local;
+        amountOut = local + _unwrapSeShares(j, output.sharesOut, address(this));
+        if (amountOut < output.amountOut) revert UnwrapFailed();
+        if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
     }
 
     function _swapExactOutExecute(address tokenIn, address tokenOut, uint256 amountOut, uint256)

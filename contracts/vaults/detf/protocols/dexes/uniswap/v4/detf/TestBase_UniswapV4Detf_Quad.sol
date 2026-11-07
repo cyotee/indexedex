@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
@@ -190,13 +191,6 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
     }
 
     function _assertNoJoinableDust() internal view virtual override {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP");
-        assertEq(IERC20(address(pair0)).balanceOf(detf), 0, "no pair0");
-        assertEq(IERC20(address(pair1)).balanceOf(detf), 0, "no pair1");
-        assertEq(IERC20(address(pair2)).balanceOf(detf), 0, "no pair2");
-        assertEq(IERC20(se0).balanceOf(detf), 0, "no se0");
-        assertEq(IERC20(se1).balanceOf(detf), 0, "no se1");
-        assertEq(IERC20(se2).balanceOf(detf), 0, "no se2");
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 }

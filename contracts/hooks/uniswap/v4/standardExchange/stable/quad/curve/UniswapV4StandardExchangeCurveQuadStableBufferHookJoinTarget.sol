@@ -5,6 +5,13 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore} from "contra
 
 /// @notice Liquidity execution entrypoints. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget is UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore {
+    function joinNativeComponents(
+        uint256[] calldata localAmounts, uint256[] calldata shareAmounts,
+        address to, uint256 minLp, uint256 deadline
+    ) public returns (uint256 netLp) {
+        return _entryJoinNativeComponents(localAmounts, shareAmounts, to, minLp, deadline);
+    }
+
     function joinProportional(
         uint256[] calldata amounts,
         address to,

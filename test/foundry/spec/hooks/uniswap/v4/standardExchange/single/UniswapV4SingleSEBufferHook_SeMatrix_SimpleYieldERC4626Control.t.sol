@@ -29,7 +29,7 @@ contract UniswapV4SingleSEBufferHook_SeMatrix_SimpleYieldERC4626Control is Unisw
     function test_control_bareProtocolVault_rejectedAtPackageInit() public {
         IUniswapV4SingleStandardExchangeBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.standardExchange = address(SeMatrix_SimpleYieldERC4626ControlFixture(address(fx)).protocolVault());
-        vm.expectRevert(bytes(""));
+        vm.expectRevert(IUniswapV4SingleStandardExchangeBufferHookPackage.InvalidPairToken.selector);
         hookPkg.processArgs(abi.encode(args));
     }
 }

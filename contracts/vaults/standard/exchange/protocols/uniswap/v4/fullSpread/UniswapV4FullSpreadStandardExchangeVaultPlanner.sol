@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {WETHAwareRepo} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETHAwareRepo.sol";
@@ -10,6 +11,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {UniswapV4ProtocolAwareRepo} from "@crane/contracts/protocols/dexes/uniswap/v4/aware/UniswapV4ProtocolAwareRepo.sol";
 import {UniswapV4SinglePositionAwareRepo} from "@crane/contracts/protocols/dexes/uniswap/v4/aware/UniswapV4SinglePositionAwareRepo.sol";
+import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultTypes as Types} from "./UniswapV4FullSpreadStandardExchangeVaultTypes.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultMath as Math} from "./UniswapV4FullSpreadStandardExchangeVaultMath.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultProjection as Projection} from "./UniswapV4FullSpreadStandardExchangeVaultProjection.sol";
@@ -172,38 +174,55 @@ library UniswapV4FullSpreadStandardExchangeVaultPlanner {
         else plan_.out1 = plan_.amountOut;
     }
 
+    /// @dev Owner lock 2026-11-06: one exact-input 49% swap, not a search.
     function _size(uint256 amount_, bool zeroForOne_, Projection.PositionRead memory read_)
         private
         view
         returns (Math.Sized memory best_)
     {
         if (amount_ == 0) return best_;
+        if (read_.sqrtPriceX96 <= read_.sqrtA || read_.sqrtPriceX96 >= read_.sqrtB) {
+            bool wantsProvided_ = read_.sqrtPriceX96 <= read_.sqrtA ? zeroForOne_ : !zeroForOne_;
+            if (!wantsProvided_) {
+                best_.remainder = amount_;
+                return best_;
+            }
+            return Math.singleTokenAdd(amount_, zeroForOne_, read_.sqrtPriceX96, read_.sqrtA, read_.sqrtB);
+        }
         IPoolManager manager_ = UniswapV4ProtocolAwareRepo._poolManager();
         PoolKey memory key_ = UniswapV4SinglePositionAwareRepo._poolKey();
-        uint256 low_ = 0;
-        uint256 high_ = amount_;
-        for (uint256 i_; i_ < 96 && low_ <= high_; ++i_) {
-            uint256 mid_ = (low_ + high_) / 2;
-            Types.SwapQuote memory quote_ = SwapProjection.exactInput(manager_, key_, zeroForOne_, mid_);
-            if (quote_.received == 0) {
-                if (mid_ == 0) break;
-                high_ = mid_ - 1;
-                continue;
-            }
-            Math.Sized memory sized_ = Math.sizeOneSided(
-                amount_, zeroForOne_, quote_.spent, quote_.received, quote_.sqrtPriceX96, read_.sqrtA, read_.sqrtB
-            );
-            if (sized_.liquidity >= best_.liquidity) best_ = sized_;
-            if (quote_.spent + sized_.unswapped < amount_) low_ = mid_ + 1;
-            else if (mid_ == 0) break;
-            else high_ = mid_ - 1;
+        uint128 active_ = StateLibrary.getLiquidity(manager_, key_.toId());
+        if (active_ == 0) {
+            best_.remainder = amount_;
+            return best_;
         }
-        return best_;
+        // FS-OWN-33, 2026-11-06: the whole fixed 49% input must be spent.
+        // mulDiv keeps a uint256 token amount from overflowing the product. The quote casts the
+        // swap to int256, so an amount that cannot be quoted is refunded whole.
+        uint256 swapIn_ = FullMath.mulDiv(amount_, 49, 100);
+        if (swapIn_ == 0 || swapIn_ > uint256(type(int256).max)) {
+            best_.remainder = amount_;
+            return best_;
+        }
+        Types.SwapQuote memory quote_ = SwapProjection.exactInput(manager_, key_, zeroForOne_, swapIn_);
+        if (quote_.received == 0 || quote_.spent != swapIn_) {
+            best_.remainder = amount_;
+            return best_;
+        }
+        best_ = Math.sizeOneSided(
+            amount_, zeroForOne_, quote_.spent, quote_.received, quote_.sqrtPriceX96, read_.sqrtA, read_.sqrtB
+        );
+        if (best_.liquidity == 0 || best_.swapIn == 0) {
+            best_.swapIn = 0;
+            best_.swapOut = 0;
+            best_.unswapped = 0;
+            best_.liquidity = 0;
+            best_.remainder = amount_;
+        }
     }
 
     function _shares(Types.Plan memory plan_, uint128 liquidityBefore_) private view {
         uint256 supply_ = ERC20Repo._totalSupply();
-        if (plan_.liquidityAdded == 0) return;
         if (supply_ == 0) {
             if (plan_.liquidityAdded <= Types.MIN_SHARES) {
                 plan_.failed = true;
@@ -212,6 +231,7 @@ library UniswapV4FullSpreadStandardExchangeVaultPlanner {
             plan_.mintFloor = true;
             plan_.grossShares = uint256(plan_.liquidityAdded) - Types.MIN_SHARES;
         } else {
+            if (plan_.liquidityAdded == 0) return;
             plan_.grossShares = Math.claim(plan_.liquidityAdded, supply_, liquidityBefore_);
         }
         (uint256 fee_, address feeTo_) = _fee();

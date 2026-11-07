@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -25,45 +26,124 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
     struct OutputQuote {
         uint256 shares;
         uint256 amount;
-    }
-
-    struct ExactOutputLeg {
-        address se;
-        Leg leg;
-        bytes state;
-        uint256 rate;
-        uint256 reserve;
-    }
-
-    function _exactOutputLeg(address token, address manager) private view returns (ExactOutputLeg memory q) {
-        Repo.Layout storage l = Repo._layout();
-        q.se = token == l.token0 ? l.se0 : l.se1;
-        q.leg = _leg(l, q.se);
-        q.state = ContextQuote.exactOutputState(q.se, token, manager);
-        q.rate = q.state.length == 0 ? _rate(q.leg, q.se) : _rateForState(q.leg, q.se, q.state);
-        uint256 held = IERC20(q.se).balanceOf(address(this));
-        q.reserve = _ratedWith(q.leg, q.se, held, q.rate);
+        uint256 local;
+        uint256 refundedShares;
     }
 
     /// @dev PM preview only; actual-context execution continues through Common's existing plan.
     function quoteExactOutContext(bool zeroForOne, uint256 amountOut, address manager) external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        ExactOutputLeg memory input = _exactOutputLeg(zeroForOne ? l.currency0 : l.currency1, manager);
-        ExactOutputLeg memory output = _exactOutputLeg(zeroForOne ? l.currency1 : l.currency0, manager);
-        uint256 shares = ContextQuote.withdrawFromState(output.se, output.leg.pair, amountOut, output.state);
-        if (shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
-        if (shares >= IERC20(output.se).balanceOf(address(this))) revert InsufficientTokenOut();
-        uint256 debit = RatedMath.ratedPairUnitsUp(shares, output.rate,
-            10 ** (36 - uint256(output.leg.seDec)), 10 ** (36 - uint256(output.leg.pairDec)));
-        uint256 needed = Math.fromWadCeil(Math.purchaseQuote(Math.toWad(debit, output.leg.pairDec),
-            Math.toWad(input.reserve, input.leg.pairDec), Math.toWad(output.reserve, output.leg.pairDec)), input.leg.pairDec);
-        if (input.se != input.leg.pair && ContextQuote.supported(input.se)) {
-            shares = RatedMath.sharesForPairUnitsUp(needed, input.rate,
-                10 ** (36 - uint256(input.leg.seDec)), 10 ** (36 - uint256(input.leg.pairDec)));
-            if (ContextQuote.inputForSharesFromState(input.se, input.leg.pair, shares, input.state) == 0)
-                revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        address pairIn = zeroForOne ? l.currency0 : l.currency1;
+        address pairOut = zeroForOne ? l.currency1 : l.currency0;
+        address seIn = l.legs.standardExchangeOf[pairIn];
+        address seOut = l.legs.standardExchangeOf[pairOut];
+        (, uint256 debit) = _outputExactOut(seOut, amountOut, manager);
+        Leg memory input = _leg(l, seIn);
+        Leg memory output = _leg(l, seOut);
+        bytes memory stateIn = snapshotState(seIn, manager);
+        uint256 reserveIn = l.localReserves[pairIn] + ratedAt(seIn, l.shareReserves[seIn], stateIn);
+        uint256 reserveOut = l.localReserves[pairOut] + ratedAt(seOut, l.shareReserves[seOut], snapshotState(seOut, manager));
+        uint256 needed = Math.fromWadCeil(Math.purchaseQuote(Math.toWad(debit, output.pairDec),
+            Math.toWad(reserveIn, input.pairDec), Math.toWad(reserveOut, output.pairDec)), input.pairDec);
+        _requireInputInverse(seIn, needed, stateIn);
+        return _invertBufferClaimIn(seIn, pairIn, needed, stateIn);
+    }
+
+    /// @dev Unknown registrations and failed authority queries fail closed.
+    function disabled(address se) public view returns (bool) {
+        IVaultRegistryDisableQuery registry = IVaultRegistryDisableQuery(Repo._layout().disableRegistry);
+        if (registry.packageOfVault(se) == address(0)) revert UnknownLeg(se);
+        return registry.isDisabled(se);
+    }
+
+    function snapshotState(address se, address manager) public view returns (bytes memory state) {
+        Leg memory leg = _leg(Repo._layout(), se);
+        if (se == leg.pair) return state;
+        state = ContextQuote.snapshot(se, leg.pair, address(this), manager);
+        if (state.length == 0 && BufferClaim.supportsTransitionQuote(se, leg.pair, address(this))) {
+            (state,) = IStandardExchangeTransitionQuote(se).quoteState(leg.pair, address(this));
         }
-        return _invertBufferClaimIn(input.se, input.leg.pair, needed, input.state);
+    }
+
+    function ratedAt(address se, uint256 shares, bytes memory state) public view returns (uint256) {
+        if (shares == 0) return 0;
+        Leg memory leg = _leg(Repo._layout(), se);
+        return _ratedWith(leg, se, shares, state.length == 0 ? _rate(leg, se) : _rateForState(leg, se, state));
+    }
+
+    function conversion(address se, uint256 amount, bool deposit, bytes memory state)
+        public view returns (ExchangeInAmount.Result memory result, bytes memory next)
+    {
+        Leg memory leg = _leg(Repo._layout(), se);
+        if (amount == 0 || se == leg.pair) return (ExchangeInAmount.Result(amount, 0), state);
+        if (deposit && disabled(se)) return (ExchangeInAmount.Result(0, amount), state);
+        if (state.length == 0) {
+            return (ExchangeInAmount.previewResult(IStandardExchangeIn(se),
+                IERC20(deposit ? leg.pair : se), amount, IERC20(deposit ? se : leg.pair)), state);
+        }
+        uint256 consumed;
+        uint256 output;
+        (next, consumed, output,) = IStandardExchangeTransitionQuote(se).quoteTransition(state,
+            deposit ? IStandardExchangeTransitionQuote.Operation.DepositExactIn
+                : IStandardExchangeTransitionQuote.Operation.RedeemExactIn, amount);
+        result = ExchangeInAmount.fromConsumedInput(amount, consumed, output);
+    }
+
+    function inputGain(address se, uint256 bookedShares, uint256 amount, bytes memory state)
+        public view returns (uint256)
+    {
+        if (amount == 0) return 0;
+        if (disabled(se)) return amount;
+        (ExchangeInAmount.Result memory result, bytes memory next) = conversion(se, amount, true, state);
+        uint256 beforeValue = ratedAt(se, bookedShares, state);
+        uint256 afterValue = ratedAt(se, bookedShares + result.amountOut, next) + result.amountRefunded;
+        return afterValue > beforeValue ? afterValue - beforeValue : 0;
+    }
+
+    function outputAt(address se, uint256 budget, uint256 bookedShares, uint256 local, bytes memory state)
+        public view returns (OutputQuote memory q, bytes memory next)
+    {
+        q.local = budget < local ? budget : local;
+        q.amount = q.local;
+        next = state;
+        if (budget == q.local) return (q, next);
+        Leg memory leg = _leg(Repo._layout(), se);
+        q.shares = _budgetShares(leg, budget - q.local,
+            state.length == 0 ? _rate(leg, se) : _rateForState(leg, se, state));
+        if (q.shares == 0) return (q, next);
+        if (q.shares >= bookedShares) revert InsufficientTokenOut();
+        ExchangeInAmount.Result memory result;
+        (result, next) = conversion(se, q.shares, false, state);
+        q.amount += result.amountOut;
+        q.refundedShares = result.amountRefunded;
+    }
+
+    function _outputExactOut(address se, uint256 amount, address manager)
+        private view returns (OutputQuote memory q, uint256 debit)
+    {
+        Repo.Layout storage l = Repo._layout();
+        Leg memory leg = _leg(l, se);
+        q.amount = amount;
+        uint256 local = l.localReserves[leg.pair];
+        q.local = amount < local ? amount : local;
+        debit = q.local;
+        if (q.local == amount) return (q, debit);
+        bytes memory state = ContextQuote.exactOutputState(se, leg.pair, manager);
+        q.shares = ContextQuote.withdrawFromState(se, leg.pair, amount - q.local, state);
+        if (q.shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        if (q.shares >= l.shareReserves[se]) revert InsufficientTokenOut();
+        debit += RatedMath.ratedPairUnitsUp(q.shares, state.length == 0 ? _rate(leg, se) : _rateForState(leg, se, state),
+            10 ** (36 - uint256(leg.seDec)), 10 ** (36 - uint256(leg.pairDec)));
+    }
+
+    function _requireInputInverse(address se, uint256 ratedInput, bytes memory state) private view {
+        Leg memory leg = _leg(Repo._layout(), se);
+        if (se == leg.pair || disabled(se) || !ContextQuote.supported(se)) return;
+        uint256 shares = RatedMath.sharesForPairUnitsUp(ratedInput,
+            state.length == 0 ? _rate(leg, se) : _rateForState(leg, se, state),
+            10 ** (36 - uint256(leg.seDec)), 10 ** (36 - uint256(leg.pairDec)));
+        if (ContextQuote.inputForSharesFromState(se, leg.pair, shares, state) == 0)
+            revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
     function _budgetShares(Leg memory leg, uint256 budget, uint256 rate_) private pure returns (uint256) {
@@ -71,64 +151,31 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
     }
 
     function previewOutputExactIn(address se, uint256 budget) public view returns (OutputQuote memory q) {
-        Leg memory leg = _leg(Repo._layout(), se);
-        q.shares = _budgetShares(leg, budget, _rate(leg, se));
-        if (q.shares == 0) return q;
-        if (q.shares >= IERC20(se).balanceOf(address(this))) revert InsufficientTokenOut();q.amount = se == leg.pair ? q.shares
-            : ExchangeInAmount.previewOut(IStandardExchangeIn(address(IStandardExchangeIn(se))), IERC20(se), q.shares, IERC20(leg.pair));
-    }
-
-    function projectOutputExactIn(address se, bytes memory state, uint256 budget)
-        public view returns (OutputQuote memory q, bytes memory next)
-    {
-        Leg memory leg = _leg(Repo._layout(), se);
-        q.shares = _budgetShares(leg, budget, _rateForState(leg, se, state));
-        if (q.shares == 0) return (q, state);
-        if (q.shares >= IStandardExchangeTransitionQuote(se).quoteShareBalance(state)) revert InsufficientTokenOut();
-        (next,, q.amount,) = IStandardExchangeTransitionQuote(se).quoteTransition(
-            state, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, q.shares);
+        Repo.Layout storage l = Repo._layout();
+        (q,) = outputAt(se, budget, l.shareReserves[se], l.localReserves[_leg(l, se).pair], bytes(""));
     }
 
     function previewOutputWithContext(address se, uint256 budget, address manager) external view returns (OutputQuote memory q) {
-        Leg memory leg = _leg(Repo._layout(), se);
-        bytes memory state = ContextQuote.snapshot(se, leg.pair, address(this), manager);
-        if (state.length == 0) return previewOutputExactIn(se, budget);
-        (q,) = projectOutputExactIn(se, state, budget);
+        Repo.Layout storage l = Repo._layout();
+        (q,) = outputAt(se, budget, l.shareReserves[se], l.localReserves[_leg(l, se).pair], snapshotState(se, manager));
     }
 
     function ratedReserveWithContext(address se, address manager) external view returns (uint256) {
-        Leg memory leg = _leg(Repo._layout(), se);
-        bytes memory state = ContextQuote.snapshot(se, leg.pair, address(this), manager);
-        uint256 held = IERC20(se).balanceOf(address(this));
-        return state.length == 0 ? _ratedOf(Repo._layout(), se, held) : _ratedWith(leg, se, held, _rateForState(leg, se, state));
+        Repo.Layout storage l = Repo._layout();
+        Leg memory leg = _leg(l, se);
+        return l.localReserves[leg.pair] + ratedAt(se, l.shareReserves[se], snapshotState(se, manager));
     }
 
     function previewInputWithContext(address se, uint256 amount, address manager) external view returns (uint256) {
-        Leg memory leg = _leg(Repo._layout(), se);
-        bytes memory state = ContextQuote.snapshot(se, leg.pair, address(this), manager);
-        if (state.length == 0) return _claimIn(Repo._layout(), se, leg.pair, amount);
-        if (amount == 0) return 0;
-        return _projectedGainFromState(leg, se, state, amount);
+        return inputGain(se, Repo._layout().shareReserves[se], amount, snapshotState(se, manager));
     }
 
     function previewOutputExactOut(address se, uint256 amount) external view returns (OutputQuote memory q, uint256 debit) {
-        Leg memory leg = _leg(Repo._layout(), se);
-        q.amount = amount;
-        q.shares = se == leg.pair ? amount
-            : IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(leg.pair), amount);
-        if (q.shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
-        if (q.shares >= IERC20(se).balanceOf(address(this))) revert InsufficientTokenOut();
-        debit = RatedMath.ratedPairUnitsUp(q.shares, _rate(leg, se),
-            10 ** (36 - uint256(leg.seDec)), 10 ** (36 - uint256(leg.pairDec)));
+        return _outputExactOut(se, amount, address(0));
     }
 
     function requireInputInverse(address se, uint256 ratedInput) external view {
-        Leg memory leg = _leg(Repo._layout(), se);
-        if (se == leg.pair || !ContextQuote.supported(se)) return;
-        uint256 shares = RatedMath.sharesForPairUnitsUp(ratedInput, _rate(leg, se),
-            10 ** (36 - uint256(leg.seDec)), 10 ** (36 - uint256(leg.pairDec)));
-        if (IStandardExchangeOut(se).previewExchangeOut(IERC20(leg.pair), IERC20(se), shares) == 0)
-            revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        _requireInputInverse(se, ratedInput, bytes(""));
     }
     error InsufficientTokenOut();
     error RateProviderFailed();
@@ -148,21 +195,15 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
 
     /// @notice The hook's `se` balance valued at the provider rate.
     function ratedReserve(address se) external view returns (uint256) {
-        uint256 seBal = IERC20(se).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        return _ratedOf(Repo._layout(), se, seBal);
+        Repo.Layout storage l = Repo._layout();
+        Leg memory leg = _leg(l, se);
+        return l.localReserves[leg.pair] + _ratedOf(l, se, l.shareReserves[se]);
     }
 
     /// @notice D60/F9: the rated reserve a projected SE `state` would hold — the holder's projected share
     ///         balance valued at the provider's rate for that state. Lets a preview size its swap and clamp
     ///         off the same rated book execution reads live, so preview and execution agree to the wei.
-    function ratedReserveOfState(address se, bytes memory state) external view returns (uint256) {
-        Leg memory leg = _leg(Repo._layout(), se);
-        uint256 shares = IStandardExchangeTransitionQuote(se).quoteShareBalance(state);
-        if (shares == 0) return 0;
-        uint256 r = _ratedWith(leg, se, shares, _rateForState(leg, se, state));
-        return r == 0 ? 1 : r;
-    }
+
 
     /// @notice D60 getter helper: the provider configured for `token_` (pair token or its SE).
     function rateProviderOf(address token_) external view returns (address) {
@@ -238,32 +279,13 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
     function _claimIn(Repo.Layout storage l, address se, address pairToken, uint256 amountInRaw)
         private view returns (uint256)
     {
-        if (amountInRaw == 0) return 0;
-        if (se == pairToken) return _ratedOf(l, se, amountInRaw);(uint256 sharesOut,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
-        if (sharesOut == 0) return 0;
-        Leg memory leg = _leg(l, se);
-        if (!BufferClaim.supportsTransitionQuote(se, pairToken, address(this))) {
-            return _ratedWith(leg, se, sharesOut, _rate(leg, se));
-        }
-        return _projectedGain(leg, se, pairToken, amountInRaw);
+        pairToken;
+        return inputGain(se, l.shareReserves[se], amountInRaw, snapshotState(se, address(0)));
     }
 
     /// @dev Rated book after the buffer minus the rated book before it: the provider's projected rate for the
     ///      post-buffer state is what execution will read (an SE usage fee moves the rate).
-    function _projectedGain(Leg memory leg, address se, address pairToken, uint256 amountInRaw)
-        private view returns (uint256)
-    {
-        (bytes memory state_,) = IStandardExchangeTransitionQuote(se).quoteState(pairToken, address(this));
-        uint256 held_ = IStandardExchangeTransitionQuote(se).quoteShareBalance(state_);
-        uint256 before_ = _ratedWith(leg, se, held_, _rate(leg, se));
-        uint256 after_;
-        {
-            (bytes memory next_,, uint256 minted_,) = IStandardExchangeTransitionQuote(se)
-                .quoteTransition(state_, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amountInRaw);
-            after_ = _ratedWith(leg, se, held_ + minted_, _rateForState(leg, se, next_));
-        }
-        return after_ > before_ ? after_ - before_ : 0;
-    }
+
 
     function previewBufferClaimIn(address se, address pairToken, uint256 amountInRaw) external view returns (uint256) {
         return _claimIn(Repo._layout(), se, pairToken, amountInRaw);
@@ -289,16 +311,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib {
     function _projectedGainFromState(Leg memory leg, address se, bytes memory state, uint256 amountInRaw)
         private view returns (uint256)
     {
-        uint256 held_ = IStandardExchangeTransitionQuote(se).quoteShareBalance(state);
-        uint256 before_ = _ratedWith(leg, se, held_, _rateForState(leg, se, state));
-        uint256 after_;
-        {
-            (bytes memory next_,, uint256 minted_,) = IStandardExchangeTransitionQuote(se)
-                .quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amountInRaw);
-            if (minted_ == 0) return 0;
-            after_ = _ratedWith(leg, se, held_ + minted_, _rateForState(leg, se, next_));
-        }
-        return after_ > before_ ? after_ - before_ : 0;
+        leg;
+        return inputGain(se, Repo._layout().shareReserves[se], amountInRaw, state);
     }
 
     function invertBufferClaimIn(address se, address pairToken, uint256 claimInNeeded)

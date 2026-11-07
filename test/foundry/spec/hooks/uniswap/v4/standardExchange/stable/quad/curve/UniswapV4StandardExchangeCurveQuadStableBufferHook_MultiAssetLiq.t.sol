@@ -10,6 +10,7 @@ import {
 
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_MultiAssetLiq is TestBase {
     function test_multiAssetLiquidity_propJoin_facade() public {
+        _firstMintEqual(500 ether);
         IStandardExchangeMultiAssetLiquidity mal = IStandardExchangeMultiAssetLiquidity(hook);
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 100 ether;

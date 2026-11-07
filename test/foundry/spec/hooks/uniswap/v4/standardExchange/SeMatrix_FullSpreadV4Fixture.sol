@@ -27,6 +27,8 @@ import {IUniswapV4FullSpreadStandardExchangeVaultDFPkg as IPackage} from "contra
 import {UniswapV4FullSpreadStandardExchangeVaultComponent_FactoryService as Components} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/UniswapV4FullSpreadStandardExchangeVaultComponent_FactoryService.sol";
 import {IUniswapV4FullSpreadStandardExchangeVaultComponentBindings as IBindings} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/UniswapV4FullSpreadStandardExchangeVaultComponentBindings.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrixFixture.sol";
 
 interface IFullSpreadBundleIn {
@@ -61,6 +63,8 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
     address internal seVault;
     address public currency0Provider;
     address public currency1Provider;
+    mapping(address => bool) public fixtureVault;
+    SimpleMintableERC20[12] internal fundingTokens;
 
     constructor(Ctx memory c, address existingPkg) SeMatrixFixture(c) {
         weth = IWETH(address(new WETH9()));
@@ -68,7 +72,8 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         pkg_ = existingPkg == address(0) ? _deployPkg(c) : IPackage(existingPkg);
         _createMarket();
         vm.prank(c.owner);
-        seVault = pkg_.deployVault(IPackage.PkgArgs(key(), "Full spread shares", "FS"));
+        seVault = pkg_.deployVault(IPackage.PkgArgs(key()));
+        fixtureVault[seVault] = true;
         _seedExternal();
         _bootstrap();
         _deployProviders(c);
@@ -102,12 +107,15 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         return false;
     }
 
+    /// @dev Parent requires the override. This family has no sleeve capacity gate.
     function limitCapacity(uint256) external override {}
 
+    /// @dev Parent requires the override. This family has no sleeve capacity gate.
     function openCapacity() external override {}
 
-    function seBooked() external view override returns (uint256) {
-        return token0.balanceOf(seVault);
+    /// @dev Parent requires the override. This family does not report a booked balance.
+    function seBooked() external pure override returns (uint256) {
+        return 0;
     }
 
     function operativeRevertReachable() external pure override returns (bool) {
@@ -157,12 +165,13 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         init_.linkedLibraries = IBindings(address(money_)).linkedComponents();
         vm.stopPrank();
         init_.poolManager = poolManager;
-        init_.positionDescriptor = address(0xD1);
-        init_.positionManager = address(0xD2);
-        init_.quoter = address(0xD3);
-        init_.stateView = address(0xD4);
-        init_.reservesLens = address(0xD5);
-        init_.universalRouter = address(0xD6);
+        address infra_ = address(new FullSpreadV4InfrastructureStub());
+        init_.positionDescriptor = infra_;
+        init_.positionManager = infra_;
+        init_.quoter = infra_;
+        init_.stateView = infra_;
+        init_.reservesLens = infra_;
+        init_.universalRouter = infra_;
         init_.registry = IVaultRegistryDeployment(address(c.indexedexManager));
         init_.oracle = IVaultFeeOracleQuery(address(c.indexedexManager));
         init_.weth = weth;
@@ -174,15 +183,96 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
     }
 
     function _createMarket() internal {
-        SimpleMintableERC20 a_ = new SimpleMintableERC20("FullSpread V4 Face", "FS4A");
-        SimpleMintableERC20 b_ = new SimpleMintableERC20("FullSpread V4 Pair", "FS4B");
-        (token0, token1) = address(a_) < address(b_) ? (a_, b_) : (b_, a_);
+        // Deploy once, then sort and assign complete records. No address or salt is searched.
+        // The middle two are primary members, the outer pairs back either sibling orientation,
+        // and the remaining three tokens per side are raw controls.
+        for (uint256 i_; i_ < fundingTokens.length; ++i_) {
+            fundingTokens[i_] = new SimpleMintableERC20(string.concat("FullSpread Face ", vm.toString(i_)), "FS4");
+        }
+        for (uint256 i_; i_ < fundingTokens.length; ++i_) {
+            for (uint256 j_ = i_ + 1; j_ < fundingTokens.length; ++j_) {
+                if (address(fundingTokens[j_]) < address(fundingTokens[i_])) {
+                    (fundingTokens[i_], fundingTokens[j_]) = (fundingTokens[j_], fundingTokens[i_]);
+                }
+            }
+        }
+        token0 = fundingTokens[5];
+        token1 = fundingTokens[6];
         poolManager.initialize(key(), uint160(uint256(1) << 96));
+    }
+
+    /// @notice Raw controls already deployed on either side of both primary members.
+    function rawToken(bool above_, uint256 index_) external view returns (address) {
+        require(index_ < 3, "raw control index");
+        return address(fundingTokens[(above_ ? 7 : 2) + index_]);
     }
 
     /// @dev Independent full-range liquidity, the V3 fixture's external LP. A full-book one-token
     ///      exit removes this vault's position and must still swap the unwanted face through the pool.
+    struct Sibling {
+        address share;
+        address provider;
+        address otherProvider;
+        address face0;
+        address face1;
+        PoolKey poolKey;
+    }
+
+    /// @notice Deploy a second genuine FullSpread vault using the same package and manager.
+    /// @dev Select member-token placement, never the vault address. The backing keys are disjoint.
+    function deploySibling(address face_, bool faceAtZero_)
+        external
+        returns (Sibling memory sib_)
+    {
+        SimpleMintableERC20 c0_ = fundingTokens[faceAtZero_ ? 10 : 0];
+        SimpleMintableERC20 c1_ = fundingTokens[faceAtZero_ ? 11 : 1];
+        require((face_ < address(c0_)) == faceAtZero_, "member product orientation");
+        sib_.face0 = address(c0_);
+        sib_.face1 = address(c1_);
+        sib_.poolKey = PoolKey(Currency.wrap(sib_.face0), Currency.wrap(sib_.face1), FEE, SPACING, IHooks(address(0)));
+        poolManager.initialize(sib_.poolKey, uint160(uint256(1) << 96));
+        _seedExternalOn(c0_, c1_, sib_.poolKey);
+        vm.prank(ctx.owner);
+        sib_.share = pkg_.deployVault(IPackage.PkgArgs(sib_.poolKey));
+        fixtureVault[sib_.share] = true;
+        uint256 seed_ = BOOTSTRAP;
+        c0_.mint(address(this), seed_);
+        c1_.mint(address(this), seed_);
+        c0_.approve(sib_.share, seed_);
+        c1_.approve(sib_.share, seed_);
+        uint256[] memory amounts_ = new uint256[](2);
+        amounts_[0] = seed_;
+        amounts_[1] = seed_;
+        IFullSpreadBundleIn(sib_.share).exchangeBundleInForSingleOut(
+            amounts_, sib_.share, 1, msg.sender, false, block.timestamp
+        );
+        sib_.provider = _rateProvider(sib_.share, sib_.face0);
+        sib_.otherProvider = _rateProvider(sib_.share, sib_.face1);
+    }
+
+    /// @notice Acquire caller-owned SE shares before a Hook LP bootstrap.
+    /// @dev Only funding tokens are minted. The real vault executes its supported public route.
+    function acquireShares(address vault_, address member_, address to_, uint256 amount_)
+        external
+        returns (uint256 shares_)
+    {
+        require(fixtureVault[vault_], "not a fixture vault");
+        address[] memory members_ = IBasicVault(vault_).vaultTokens();
+        require(member_ == members_[0] || member_ == members_[1], "not a member");
+        SimpleMintableERC20(member_).mint(address(this), amount_);
+        IERC20(member_).approve(vault_, amount_);
+        uint256 before_ = IERC20(vault_).balanceOf(to_);
+        (shares_,) = IStandardExchangeIn(vault_).exchangeIn(
+            IERC20(member_), amount_, IERC20(vault_), 1, to_, false, block.timestamp
+        );
+        require(shares_ > 0 && IERC20(vault_).balanceOf(to_) - before_ == shares_, "share receipt");
+    }
+
     function _seedExternal() internal {
+        _seedExternalOn(token0, token1, key());
+    }
+
+    function _seedExternalOn(SimpleMintableERC20 token0_, SimpleMintableERC20 token1_, PoolKey memory key_) internal {
         int24 lower_ = TickMath.minUsableTick(SPACING);
         int24 upper_ = TickMath.maxUsableTick(SPACING);
         uint128 liquidity_ = LiquidityAmounts.getLiquidityForAmounts(
@@ -193,9 +283,20 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
             EXTERNAL
         );
         FullSpreadV4ExternalLp lp_ = new FullSpreadV4ExternalLp(poolManager);
-        token0.mint(address(lp_), EXTERNAL * 2);
-        token1.mint(address(lp_), EXTERNAL * 2);
-        lp_.add(key(), lower_, upper_, liquidity_);
+        token0_.mint(address(lp_), EXTERNAL * 2);
+        token1_.mint(address(lp_), EXTERNAL * 2);
+        lp_.add(key_, lower_, upper_, liquidity_);
+    }
+
+    function _rateProvider(address share_, address face_) internal returns (address) {
+        address factoryOwner_ = IMultiStepOwnable(address(ctx.create3Factory)).owner();
+        IDiamondPackageCallBackFactory diamond_ = ctx.create3Factory.diamondPackageFactory();
+        vm.startPrank(factoryOwner_);
+        IFacet facet_ = ctx.create3Factory.deployStandardExchangeRateProviderFacet();
+        IStandardExchangeRateProviderDFPkg providerPkg_ =
+            ctx.create3Factory.deployStandardExchangeRateProviderDFPkg(facet_, diamond_);
+        vm.stopPrank();
+        return address(providerPkg_.deployRateProvider(IStandardExchange(share_), IERC20(face_)));
     }
 
     function _bootstrap() internal {
@@ -268,3 +369,5 @@ contract FullSpreadV4ExternalLp is IUnlockCallback {
         }
     }
 }
+
+contract FullSpreadV4InfrastructureStub {}

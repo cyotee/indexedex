@@ -23,6 +23,7 @@ import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/Unisw
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
@@ -38,7 +39,7 @@ import {
 import {
     IUniswapV4StandardExchangeOrbitalBufferHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
@@ -139,7 +140,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeOrbitalBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](13);
+        interfaces = new bytes4[](14);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -153,6 +154,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         interfaces[10] = type(IUniswapV4SeBufferHook).interfaceId;
         interfaces[11] = type(IDetfReserveQuote).interfaceId;
         interfaces[12] = type(IStandardizedYield).interfaceId;
+        interfaces[13] = type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
@@ -316,6 +318,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         b.ownerOnlyLiquidity = a.ownerOnlyLiquidity;
         MultiStepOwnableRepo._initialize(a.owner, 1 days);
         Repo._initializeBindings(b);
+        Repo._layout().vaultRegistry = address(VAULT_REGISTRY_DEPLOYMENT);
     }
 
     function _lpName(address t0, address t1, address t2) private pure returns (string memory) {
@@ -387,19 +390,23 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         if (a.se0 != address(0) && a.se0 == a.se1) revert SameStandardExchange();
         if (a.se0 != address(0) && a.se0 == a.se2) revert SameStandardExchange();
         if (a.se1 != address(0) && a.se1 == a.se2) revert SameStandardExchange();
+        // One physical token cannot back two component coordinates.
+        if (
+            (a.se0 != address(0) && (a.se0 == a.token0 || a.se0 == a.token1 || a.se0 == a.token2))
+                || (a.se1 != address(0) && (a.se1 == a.token0 || a.se1 == a.token1 || a.se1 == a.token2))
+                || (a.se2 != address(0) && (a.se2 == a.token0 || a.se2 == a.token1 || a.se2 == a.token2))
+        ) revert InvalidSE();
         // SE must list token in vaultTokens when non-zero
         _requireSeOwnsToken(a.se0, a.token0);
         _requireSeOwnsToken(a.se1, a.token1);
         _requireSeOwnsToken(a.se2, a.token2);
-        _requireTokenDecimals(a.decimals0, a.token0, a.se0);
-        _requireTokenDecimals(a.decimals1, a.token1, a.se1);
-        _requireTokenDecimals(a.decimals2, a.token2, a.se2);
+        _requireTokenDecimals(a.decimals0, a.token0);
+        _requireTokenDecimals(a.decimals1, a.token1);
+        _requireTokenDecimals(a.decimals2, a.token2);
     }
 
-    function _requireTokenDecimals(uint8 d, address token, address se) private view {
-        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) {
-            if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(d)) revert InvalidDecimals();
-        } else if (d < 6 || d > 18) {
+    function _requireTokenDecimals(uint8 d, address token) private view {
+        if (d < 6 || d > 18) {
             revert InvalidDecimals();
         }
         if (token.code.length != 0 && IERC20Metadata(token).decimals() != d) revert InvalidDecimals();
@@ -407,13 +414,10 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
 
     function _requireSeOwnsToken(address se, address token) private view {
         if (se == address(0)) return;
-        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
-        if (se == token) revert InvalidSE();
-        address[] memory tokens = IBasicVault(se).vaultTokens();
-        for (uint256 i; i < tokens.length; ++i) {
-            if (tokens[i] == token) return;
+        if (!UniswapV4SeBufferHookLegLib.pairInVaultTokens(se, token)) revert InvalidSE();
+        if (IVaultRegistryDisableQuery(address(VAULT_REGISTRY_DEPLOYMENT)).packageOfVault(se) == address(0)) {
+            revert InvalidSE();
         }
-        revert InvalidSE();
     }
 
 }

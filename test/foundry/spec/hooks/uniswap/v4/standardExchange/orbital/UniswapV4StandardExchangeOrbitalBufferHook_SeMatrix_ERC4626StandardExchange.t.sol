@@ -48,7 +48,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_ERC4626StandardExch
         token0.approve(h, type(uint256).max);
         token1.approve(h, type(uint256).max);
         token2.approve(h, type(uint256).max);
-        orbital.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
+        vm.stopPrank();
+        _seedFor(orbital, user, 100 ether, 100 ether, 100 ether);
+        vm.startPrank(user);
         uint256 user0 = token0.balanceOf(user);
         orbital.addLiquidity(10 ether, 10 ether, 10 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();

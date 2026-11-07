@@ -65,7 +65,6 @@ function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, 
         external
         onlyLiquidityOwner
         nonReentrant
-        accrueProtocolFee
         returns (uint256 lpAmount)
     {
         PullLib.pullErc20Single(tokenIn, amountIn);
@@ -80,7 +79,7 @@ function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, 
         uint256 minLpAmount,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external onlyLiquidityOwner nonReentrant accrueProtocolFee returns (uint256 lpAmount) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount) {
         PullLib.pullPermit2SignatureSingle(tokenIn, amountIn, permit2Data);
         return _depositSingle(tokenIn, amountIn, to, minLpAmount, deadline);
     }
@@ -92,7 +91,7 @@ function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, 
         address to,
         uint256 minLpAmount,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant accrueProtocolFee returns (uint256 lpAmount) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount) {
         PullLib.pullPermit2AllowanceSingle(tokenIn, amountIn);
         return _depositSingle(tokenIn, amountIn, to, minLpAmount, deadline);
     }

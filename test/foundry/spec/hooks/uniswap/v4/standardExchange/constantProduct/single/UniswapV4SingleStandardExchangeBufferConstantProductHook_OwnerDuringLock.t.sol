@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IUnlockCallback} from
@@ -101,6 +102,29 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         assertEq(amountIn, predIn, "owner exact-out == preview");
     }
 
+    function test_ownerSwapsBookRawInputsAndOutputs() public {
+        _ownerSeedBook();
+        for (uint256 i; i < 4; ++i) {
+            bool rawIn = i % 2 == 0;
+            address tokenIn = rawIn ? address(rawToken) : address(pairToken);
+            address tokenOut = rawIn ? address(pairToken) : address(rawToken);
+            uint256 beforeRaw = single.rawReserve();
+            uint256 supply = IERC20(hook).totalSupply();
+            uint256 amountIn = 1 ether;
+            uint256 amountOut = 0.4 ether;
+            vm.prank(owner);
+            if (i < 2) {
+                amountOut = single.ownerSwapExactIn(tokenIn, tokenOut, amountIn, 1, block.timestamp);
+            } else {
+                amountIn = single.ownerSwapExactOut(tokenIn, tokenOut, amountOut, 10 ether, block.timestamp);
+            }
+            assertEq(single.rawReserve(), rawIn ? beforeRaw + amountIn : beforeRaw - amountOut,
+                "owner swap updates native raw book exactly once");
+            assertEq(single.rawReserve(), rawToken.balanceOf(hook), "raw book matches nonambient custody");
+            assertEq(IERC20(hook).totalSupply(), supply, "conversion-only owner swap mints no LP");
+        }
+    }
+
     function test_D30_thirdPartyCannotOwnerSwap() public {
         _ownerSeedBook();
         address attacker = makeAddr("d30attacker");
@@ -167,12 +191,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         assertEq(IERC20(tokenOut).balanceOf(address(harness)), amountOut, "harness received out");
     }
 
-    function test_D89_ownerDepositSingle_atMin_lpOutGt0() public {
+    function test_D89_ownerDepositSingle_atMin_paidPreparation() public {
         _ownerSeedBook();
         uint256 lp = IERC20(hook).balanceOf(owner);
         assertGt(lp, 0, "owner LP");
         vm.prank(owner);
         single.withdraw(lp, owner, 0, 0, block.timestamp + 1 hours);
+        _withdrawTreasury();
         assertEq(IERC20(hook).totalSupply(), 1000, "MIN remains");
         assertFalse(single.isZapEligible(), "public zap closed at MIN");
 
@@ -182,10 +207,22 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
 
         assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
+        uint256 pairBefore = pairToken.balanceOf(owner);
         vm.prank(owner);
-        uint256 lpOut = single.depositSingle(address(pairToken), 50 ether, owner, 0, block.timestamp + 1 hours);
-        assertGt(lpOut, 0, "owner MIN depositSingle lpOut > 0");
-        assertGt(IERC20(hook).balanceOf(owner), 0, "owner received LP");
+        uint256 singleLp = single.depositSingle(address(pairToken), 50 ether, owner, 1, block.timestamp + 1 hours);
+        assertGt(singleLp, 0, "owner paid preparation works at MIN");
+        assertEq(IERC20(hook).balanceOf(owner), singleLp, "owner receives net LP");
+        assertGt(pairBefore - pairToken.balanceOf(owner), 0, "owner funds preparation and join");
+        assertLe(pairBefore - pairToken.balanceOf(owner), 50 ether, "owner input bounded");
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000, "locked minimum is not spent");
+        uint256 shares_ = _mintSeSharesToUser(50 ether);
+        vm.prank(user);
+        IERC20(se).transfer(owner, shares_);
+        vm.prank(owner);
+        IERC20(se).approve(hook, shares_);
+        vm.prank(owner);
+        (uint256 lpOut,,) = single.depositWithSeShares(50 ether, shares_, owner, 1, block.timestamp + 1 hours);
+        assertGt(lpOut, 0, "owner can still rejoin with a complete caller-funded basket");
     }
 
     function test_D89_ownerDepositSingle_atMin_whileUnlocked() public {
@@ -193,6 +230,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         uint256 lp = IERC20(hook).balanceOf(owner);
         vm.prank(owner);
         single.withdraw(lp, owner, 0, 0, vm.getBlockTimestamp() + 1 hours);
+        _withdrawTreasury();
         assertEq(IERC20(hook).totalSupply(), 1000, "MIN remains");
 
         CpOwnerDuringLockHarness harness = new CpOwnerDuringLockHarness(pm);
@@ -201,6 +239,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         vm.prank(address(harness));
         pairToken.approve(hook, type(uint256).max);
 
+        uint256 pairBefore = pairToken.balanceOf(address(harness));
         bytes memory ret = harness.run(
             hook,
             abi.encodeWithSelector(
@@ -208,20 +247,38 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
                 address(pairToken),
                 50 ether,
                 address(harness),
-                uint256(0),
+                uint256(1),
                 vm.getBlockTimestamp() + 1 hours
             )
         );
-        uint256 lpOut = abi.decode(ret, (uint256));
-        assertGt(lpOut, 0, "owner MIN depositSingle during unlock lpOut > 0");
+        uint256 minted = abi.decode(ret, (uint256));
+        assertGt(minted, 0, "owner paid join during unlock");
+        assertEq(IERC20(hook).balanceOf(address(harness)), minted, "unlocked owner receives LP");
+        assertGt(pairBefore - pairToken.balanceOf(address(harness)), 0, "unlocked owner pays input");
+        assertLe(pairBefore - pairToken.balanceOf(address(harness)), 50 ether, "unlocked input bounded");
+        assertEq(IERC20(hook).balanceOf(address(0)), 1000, "unlocked join retains MIN");
+        assertEq(single.rawReserve(), rawToken.balanceOf(hook), "unlocked join conserves native raw");
     }
 
     function _ownerSeedBook() internal {
-        uint256 a0 = _amountForCurrency(single.currency0(), 200 ether, 200 ether);
-        uint256 a1 = _amountForCurrency(single.currency1(), 200 ether, 200 ether);
-        vm.prank(owner);
-        (uint256 lp,,) = single.deposit(a0, a1, owner, 0, block.timestamp + 1 hours);
+        vm.startPrank(owner);
+        pairToken.approve(se, 200 ether);
+        (uint256 shares_,) = IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(pairToken)), 200 ether, IERC20(se), 1, owner, false, block.timestamp
+        );
+        IERC20(se).approve(hook, shares_);
+        (uint256 lp,,) = single.depositWithSeShares(200 ether, shares_, owner, 1, block.timestamp + 1 hours);
+        vm.stopPrank();
         assertGt(lp, 0, "seed LP");
+    }
+
+    function _withdrawTreasury() internal {
+        address treasury_ = _feeTo();
+        uint256 lp_ = IERC20(hook).balanceOf(treasury_);
+        if (lp_ != 0) {
+            vm.prank(treasury_);
+            single.withdraw(lp_, treasury_, 0, 0, block.timestamp + 1 hours);
+        }
     }
 
     function _transferHookOwner(address newOwner_) internal {

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
@@ -13,7 +13,11 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
  *      Family joinUnbalanced(uint256[]) / depositSingle / *Flexible remain as wrappers.
  *      LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
  */
-interface IUniswapV4StandardExchangeWeightedBufferHook is IUniswapV4SeBufferHook, IDetfReserveQuote {
+interface IUniswapV4StandardExchangeWeightedBufferHook is
+    IUniswapV4SeBufferHook,
+    IUniswapV4SeBufferHookNativeLiquidity,
+    IDetfReserveQuote
+{
     enum KLastMode {
         FullProduct,
         PartialInterim

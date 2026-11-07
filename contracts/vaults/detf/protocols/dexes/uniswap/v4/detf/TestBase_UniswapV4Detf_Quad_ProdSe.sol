@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
@@ -342,33 +343,9 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
         }
     }
 
-    function _assertR19() internal {
-        address hook_ = detfInfo.hook();
-        address[] memory toks = IUniswapV4SeBufferHook(hook_).tokens();
-        bool needSweep = IERC20(hook_).balanceOf(detf) > 0;
-        for (uint256 i; i < toks.length; ++i) {
-            if (IERC20(toks[i]).balanceOf(detf) > 0) needSweep = true;
-            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
-            if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
-        }
-        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
-        for (uint256 i; i < toks.length; ++i) {
-            uint256 bal = IERC20(toks[i]).balanceOf(detf);
-            if (bal > 10) {
-                _logR19JoinFailure(hook_, toks[i], bal);
-                assertLe(bal, 10, string.concat("R19 token after sweep ", vm.toString(toks[i])));
-            }
-            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
-            if (se_ != address(0)) {
-                uint256 seBal = IERC20(se_).balanceOf(detf);
-                if (seBal > 10) {
-                    emit log_named_address("R19 leftover SE", se_);
-                    emit log_named_uint("R19 leftover SE bal", seBal);
-                }
-                assertLe(seBal, 10, "R19 SE share");
-            }
-        }
+    function _assertR19() internal view {
+        // Assert the post-transaction state; never repair it with a hidden second sweep.
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 
     function _logR19JoinFailure(address hook_, address token_, uint256 bal_) internal {
@@ -389,17 +366,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
     }
 
     function _assertNoJoinableDust() internal view virtual override {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        address[] memory toks = IUniswapV4SeBufferHook(hook_).tokens();
-        for (uint256 i; i < toks.length; ++i) {
-            if (toks[i] == detf) continue;
-            assertLe(IERC20(toks[i]).balanceOf(detf), 10, "no token on diamond");
-            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
-            if (se_ != address(0)) {
-                assertLe(IERC20(se_).balanceOf(detf), 10, "no SE share on diamond");
-            }
-        }
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
     function _assertClaimAfterMatureClose() internal {
         (uint256 bondId,) = _firstBond(100 ether);

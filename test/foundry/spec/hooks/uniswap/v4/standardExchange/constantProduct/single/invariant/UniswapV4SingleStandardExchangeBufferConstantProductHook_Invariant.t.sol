@@ -5,7 +5,7 @@ import {TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook as Tes
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
-import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+import {HookLiquidityInvariantHandler, IInvariantHookLiquidity} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
 
 /// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
 contract Handler_SingleCpHook is HookLiquidityInvariantHandler {
@@ -28,11 +28,16 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant is T
         c.tokens = new SimpleMintableERC20[](2);
         c.tokens[0] = SimpleMintableERC20(single.currency0());
         c.tokens[1] = SimpleMintableERC20(single.currency1());
+        c.standardExchanges = new address[](c.tokens.length);
+        for (uint256 i; i < c.tokens.length; ++i) {
+            c.standardExchanges[i] = IInvariantHookLiquidity(hook).standardExchangeOf(address(c.tokens[i]));
+        }
         c.input = address(pairToken);
         c.output = address(rawToken);
         c.inputSE = se;
         c.inputVault = address(pairProtocolVault);
         c.feeRecipient = address(feeCollector);
+        c.feeOracle = address(indexedexManager);
         c.router = route_;
         c.key = poolKey;
         c.observedTokens = new IERC20[](5);
@@ -58,7 +63,18 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant is T
     }
 
     function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
-    function afterInvariant() public view { handler.assertCampaign(); }
+    function afterInvariant() public {
+        handler.assertAccounting();
+        // Preserve short persisted counterexamples and complete the actor/action prefix.
+        for (uint256 i = handler.attempted(); i < 24; ++i) handler.cycle(10 ether, i, i);
+        handler.assertCampaign();
+    }
+
+    function test_shortReplayCompletesActorActionCoverage() public {
+        handler.cycle(1 ether, 0, 0);
+        afterInvariant();
+        assertEq(handler.attempted(), 24);
+    }
 
     function test_deterministicLifecycle() public {
         for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);

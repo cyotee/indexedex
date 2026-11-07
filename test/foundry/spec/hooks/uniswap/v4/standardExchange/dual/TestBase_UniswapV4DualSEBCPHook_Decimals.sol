@@ -236,10 +236,19 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
     }
 
     function _depositBoth(uint256 amtA, uint256 amtB) internal returns (uint256 lp) {
-        uint256 a0 = _amountForCurrency(dual.currency0(), amtA, amtB);
-        uint256 a1 = _amountForCurrency(dual.currency1(), amtA, amtB);
-        vm.prank(user);
-        (lp,,) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
+        if (IERC20(hook).totalSupply() == 0) {
+            uint256 sharesA = _userAcquireSeShares(dual.standardExchangeOf(address(tokenA)), tokenA, amtA);
+            uint256 sharesB = _userAcquireSeShares(dual.standardExchangeOf(address(tokenB)), tokenB, amtB);
+            uint256 s0 = dual.currency0() == address(tokenA) ? sharesA : sharesB;
+            uint256 s1 = dual.currency0() == address(tokenA) ? sharesB : sharesA;
+            vm.prank(user);
+            (lp,,) = dual.depositFlexible(s0, true, s1, true, user, 1, block.timestamp + 1 hours);
+        } else {
+            uint256 a0 = _amountForCurrency(dual.currency0(), amtA, amtB);
+            uint256 a1 = _amountForCurrency(dual.currency1(), amtA, amtB);
+            vm.prank(user);
+            (lp,,) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
+        }
     }
 
     /// @dev Mint pair tokens, exchange into SE shares for `user` (B6 LP funding).

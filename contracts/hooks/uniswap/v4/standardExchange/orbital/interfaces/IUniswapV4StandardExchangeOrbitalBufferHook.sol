@@ -103,7 +103,9 @@ interface IUniswapV4StandardExchangeOrbitalBufferHook is IUniswapV4SeBufferHook,
     function isBuffered(uint8 i) external view returns (bool);
     function permit2() external view returns (address);
 
+    /// @notice Booked local pair tokens on an SE leg, or booked raw tokens on a raw leg.
     function rawReserve(uint8 i) external view returns (uint256);
+    /// @notice Booked SE shares; excludes pending input and ambient transfers.
     function seBalance(uint8 i) external view returns (uint256);
     function seClaim(uint8 i) external view returns (uint256);
     function effectiveReserve(uint8 i) external view returns (uint256);
@@ -114,6 +116,7 @@ interface IUniswapV4StandardExchangeOrbitalBufferHook is IUniswapV4SeBufferHook,
     function dexSwapFee() external view returns (uint256);
     function usageFee() external view returns (uint256);
     function feeTo() external view returns (address);
+    /// @notice Reserved legacy growth-fee checkpoint; new instances leave it zero.
     function kLast() external view returns (uint256);
     function kLastMode() external view returns (KLastMode);
 

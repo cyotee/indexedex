@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf} from
@@ -24,6 +25,35 @@ contract UniswapV4Detf_Quad_Adversarial_A0Crops is
         override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf_Adversarial)
     {
         TestBase_UniswapV4Detf_Quad_Adversarial.setUp();
+    }
+
+    function test_firstBondMapsShareRequirementsToPairPayments() public {
+        address[] memory accepted_ = detfInfo.acceptedBondTokens();
+        assertEq(accepted_.length, 3);
+        (address[] memory payments_, uint256[] memory amounts_) =
+            detfInfo.previewFirstBondPayments(IERC20(address(pair0)), 100 ether);
+        assertEq(payments_.length, 3);
+        for (uint256 i_; i_ < payments_.length; ++i_) {
+            assertEq(payments_[i_], accepted_[i_]);
+            assertTrue(
+                payments_[i_] == address(pair0) || payments_[i_] == address(pair1)
+                    || payments_[i_] == address(pair2)
+            );
+            assertGt(amounts_[i_], 0);
+        }
+        uint256 leadBefore_ = pair0.balanceOf(detfUser);
+        (, uint256 lp_) = _firstBond(100 ether);
+        assertGt(lp_, 0);
+        assertTrue(detfInfo.isReserveLive());
+        assertEq(leadBefore_ - pair0.balanceOf(detfUser), 100 ether, "lead payment pulled once");
+        address[3] memory pairs_ = [address(pair0), address(pair1), address(pair2)];
+        address[3] memory shares_ = [se0, se1, se2];
+        for (uint256 i_; i_ < 3; ++i_) {
+            assertGt(IERC20(shares_[i_]).balanceOf(reserveHook), 0, "retained genesis shares");
+            assertGt(IERC20(pairs_[i_]).balanceOf(reserveHook), 0, "actual genesis redemption");
+            assertEq(IERC20(shares_[i_]).balanceOf(detf), 0, "no stranded caller shares");
+            assertEq(IERC20(pairs_[i_]).balanceOf(detf), 0, "no stranded caller payment");
+        }
     }
 
     function _firstBond(uint256 pairAmount_)

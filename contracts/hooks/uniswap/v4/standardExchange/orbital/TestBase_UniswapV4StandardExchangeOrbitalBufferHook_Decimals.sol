@@ -317,29 +317,36 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
         vm.stopPrank();
     }
 
-    function _addLiquidity(uint256 a0, uint256 a1, uint256 a2)
-        internal
-        returns (uint256 shares, uint256 u0, uint256 u1, uint256 u2)
+    /// @notice Acquire shares before entering the hook; each funded SE leg redeems 5% during genesis.
+    function _seedFor(IUniswapV4StandardExchangeOrbitalBufferHook target, address actor,
+        uint256 a0, uint256 a1, uint256 a2)
+        internal returns (uint256 shares, uint256 u0, uint256 u1, uint256 u2)
     {
-        // All-non-18 books are fully SE-buffered. Face addLiquidity preview of empty
-        // 6/9-dec SE claim is 0 wad (ERC-4626 1:1 shares). B6 share deposit is the live path.
-        if (
-            IERC20(hook).totalSupply() == 0 && orbital.isBuffered(0) && orbital.isBuffered(1)
-                && orbital.isBuffered(2) && a0 > 0 && a1 > 0 && a2 > 0
-        ) {
-            uint256 s0 = _mintSeSharesToUser(se0, token0, a0);
-            uint256 s1 = _mintSeSharesToUser(se1, token1, a1);
-            uint256 s2 = _mintSeSharesToUser(se2, token2, a2);
-            vm.startPrank(user);
-            IERC20(se0).approve(hook, type(uint256).max);
-            IERC20(se1).approve(hook, type(uint256).max);
-            IERC20(se2).approve(hook, type(uint256).max);
-            (shares, u0, u1, u2) = orbital.depositFlexible(
-                s0, true, s1, true, s2, true, user, 0, block.timestamp + 1 hours
-            );
+        uint256[3] memory amounts = [a0, a1, a2];
+        address[3] memory tokens = [target.token0(), target.token1(), target.token2()];
+        bool[3] memory flags;
+        for (uint8 i; i < 3; ++i) {
+            address se = target.standardExchange(i);
+            flags[i] = se != address(0);
+            if (amounts[i] == 0) continue;
+            vm.startPrank(actor);
+            if (flags[i]) {
+                IERC20(tokens[i]).approve(se, amounts[i]);
+                (amounts[i],) = IStandardExchangeIn(se).exchangeIn(IERC20(tokens[i]), amounts[i], IERC20(se),
+                    0, actor, false, block.timestamp + 1 hours);
+                IERC20(se).approve(address(target), type(uint256).max);
+            } else IERC20(tokens[i]).approve(address(target), type(uint256).max);
             vm.stopPrank();
-            return (shares, u0, u1, u2);
         }
+        vm.prank(actor);
+        return target.depositFlexible(amounts[0], flags[0], amounts[1], flags[1], amounts[2], flags[2],
+            actor, 0, block.timestamp + 1 hours);
+    }
+
+    function _addLiquidity(uint256 a0, uint256 a1, uint256 a2)
+        internal returns (uint256 shares, uint256 u0, uint256 u1, uint256 u2)
+    {
+        if (IERC20(hook).totalSupply() == 0) return _seedFor(orbital, user, a0, a1, a2);
         vm.prank(user);
         return orbital.addLiquidity(a0, a1, a2, user, 0, block.timestamp + 1 hours, "");
     }

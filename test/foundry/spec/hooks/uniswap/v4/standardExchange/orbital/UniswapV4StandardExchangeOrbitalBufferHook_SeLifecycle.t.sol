@@ -46,32 +46,32 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeLifecycleTest is
     }
 
     function _seed1SeFull(uint256 amt) internal returns (uint256 shares) {
-        vm.prank(user);
-        (shares,,,) =
-            seHook.addLiquidity(amt, amt, amt, user, 0, block.timestamp + 1 hours, "");
-        assertGt(seHook.seBalance(0), 0, "buffered SE shares");
-        assertEq(seHook.rawReserve(0), 0, "raw book 0 on SE leg");
+        (shares,,,) = _seedFor(seHook, user, amt, amt, amt);
+        assertGt(seHook.seBalance(0), 0, "retained SE shares");
+        assertEq(seHook.rawReserve(0), token0.balanceOf(seH), "local redemption is booked");
+        assertGt(seHook.rawReserve(0), 0);
         assertGt(seHook.radius(), 0);
     }
 
-    function test_1se_zap_previewEqualsExec_and_noLeftoverFreeFace() public {
+    function test_1se_singleJoinPaysForBasket_and_noLeftoverFreeFace() public {
         _seed1SeFull(300 ether);
         _setDexFeeOn(seH, 0.003e18);
 
         uint256 amountIn = 30 ether;
         uint256 preview = seHook.previewDepositSingle(address(token1), amountIn);
-        assertGt(preview, 0, "preview shares");
+        assertGt(preview, 0, "one input buys the other legs");
 
         uint256 lpBefore = IERC20(seH).balanceOf(user);
+        uint256 pairBefore = token1.balanceOf(user);
         vm.prank(user);
-        uint256 shares = seHook.depositSingle(
-            address(token1), amountIn, user, 0, block.timestamp + 1 hours, ""
+        uint256 minted = seHook.depositSingle(
+            address(token1), amountIn, user, preview, block.timestamp + 1 hours, ""
         );
-        assertEq(shares, preview, "1-SE zap preview==exec");
-        assertEq(IERC20(seH).balanceOf(user) - lpBefore, shares);
+        assertEq(minted, preview);
+        assertEq(IERC20(seH).balanceOf(user), lpBefore + minted);
+        assertLt(token1.balanceOf(user), pairBefore);
 
-        // Leftover free face on hook should be zero (unused refunded; buffered dust ≤ 10)
-        assertLe(token0.balanceOf(seH), 10, "token0 free dust");
+        assertEq(token0.balanceOf(seH), seHook.rawReserve(0), "local pair custody equals book");
         // token1 residual free should be refunded (raw leg)
         assertEq(token1.balanceOf(seH), seHook.rawReserve(1), "token1 free==book");
         assertEq(token2.balanceOf(seH), seHook.rawReserve(2), "token2 free==book");
@@ -136,7 +136,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeLifecycleTest is
         _setDexFeeOn(seH, 0.01e18);
         vm.prank(user);
         seHook.addLiquidity(1 ether, 1 ether, 1 ether, user, 0, block.timestamp + 1 hours, "");
-        assertGt(seHook.kLast(), 0, "kLast set");
+        assertEq(seHook.kLast(), 0, "growth checkpoint retired");
 
         // Round-trip on raw legs 1↔2 via SE In/Out surface (same book as V4)
         for (uint256 i; i < 5; i++) {
@@ -159,8 +159,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeLifecycleTest is
         }
 
         uint256 feeToBefore = IERC20(seH).balanceOf(feeRecipient);
+        uint256 supplyBefore = IERC20(seH).totalSupply();
         vm.prank(user);
-        seHook.addLiquidity(2 ether, 2 ether, 2 ether, user, 0, block.timestamp + 1 hours, "");
-        assertGt(IERC20(seH).balanceOf(feeRecipient), feeToBefore, "growth mint");
+        (uint256 net,,,) = seHook.addLiquidity(2 ether, 2 ether, 2 ether, user, 0, block.timestamp + 1 hours, "");
+        uint256 gross = IERC20(seH).totalSupply() - supplyBefore;
+        assertEq(IERC20(seH).balanceOf(feeRecipient) - feeToBefore, gross * 0.05e18 / 1e18);
+        assertEq(net, gross - gross * 0.05e18 / 1e18);
     }
 }

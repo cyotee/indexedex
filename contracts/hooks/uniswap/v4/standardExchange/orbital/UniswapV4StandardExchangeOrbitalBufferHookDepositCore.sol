@@ -63,7 +63,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositCore is Nativ
 
     function _previewLiquidityExit(address tokenOut, uint256 shares) internal view returns (uint256) {
         if (!_isLive() || _resolveBurnTokenOut(tokenOut) == address(0)) return 0;
-        (, uint256 supply) = _previewProtocolMintShares();
+        uint256 supply = _totalSupply();
         return ExitQuoteLib.preview(shares, supply, tokenOut);
     }
 
@@ -242,21 +242,22 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositCore is Nativ
         uint256 sharesMin,
         uint256 deadline
     ) internal onlyLiquidityOwner nonReentrant returns (uint256 shares) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        if (to == address(0)) revert ZeroAddress();
         if (!_isLive()) revert NotLive();
+        _requireZapEligibleOrOwnerMin();
         Repo.Layout storage l = Repo._layout();
         UniswapV4SeBufferHookLegLib.LegKind kind_ =
             UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
         if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
             revert InvalidRoute(tokenIn, address(0));
         }
-        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            _pullDirectExact(tokenIn, amountIn);
-            address pair_ = l.legs.pairOfStandardExchange[tokenIn];
-            uint256 pairOut_ = _unwrapSeShares(pair_, amountIn);
-            return _depositSingleFromBalance(pair_, pairOut_, to, sharesMin, deadline);
-        }
+        bool asShare = kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        address pair_ = asShare ? l.legs.pairOfStandardExchange[tokenIn] : tokenIn;
+        JoinBook memory book = _joinBook();
         _pullDirectExact(tokenIn, amountIn);
-        return _depositSingleFromBalance(tokenIn, amountIn, to, sharesMin, deadline);
+        return _acceptSingle(pair_, amountIn, asShare, to, sharesMin, book);
     }
 
     function _entryPreviewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)

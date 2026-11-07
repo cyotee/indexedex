@@ -45,6 +45,31 @@ contract UniswapV4SeBufferHookLegLibHarness {
     function pairOfStandardExchange(address se) external view returns (address) {
         return layoutStruct.pairOfStandardExchange[se];
     }
+
+    function pairInVaultTokens(address se_, address pair_) external view returns (bool) {
+        return UniswapV4SeBufferHookLegLib.pairInVaultTokens(se_, pair_);
+    }
+}
+
+/// @notice Membership dependency for the classification library, not a vault SUT.
+contract SeLegMembershipFixture {
+    address internal immutable pair;
+    bool internal immutable rejectList;
+
+    constructor(address pair_, bool rejectList_) {
+        pair = pair_;
+        rejectList = rejectList_;
+    }
+
+    function vaultTokens() external view returns (address[] memory tokens_) {
+        require(!rejectList);
+        tokens_ = new address[](1);
+        tokens_[0] = pair;
+    }
+
+    function asset() external pure returns (address) {
+        revert("asset must not be required");
+    }
 }
 
 /// @notice Pure unit tests for UniswapV4SeBufferHookLegLib (Stage 00). Not a hook SUT.
@@ -120,17 +145,38 @@ contract UniswapV4SeBufferHookLegLibTest is Test {
         harness.addPairSe(pair1, pair1);
     }
 
-    function test_addPairSe_wrapperShareInventory_allowsOverlap() public {
+    function test_addPairSe_assetAnswerDoesNotWaiveMembership() public {
         SimpleMintableERC20 underlying = new SimpleMintableERC20("U", "U");
         SimpleYieldERC4626 wrapper = new SimpleYieldERC4626(underlying);
-        harness.addPairSe(address(wrapper), address(wrapper));
-        assertTrue(harness.pairContains(address(wrapper)));
-        assertTrue(harness.seContains(address(wrapper)));
-        assertEq(harness.standardExchangeOf(address(wrapper)), address(wrapper));
-        assertEq(
-            uint256(harness.classify(address(wrapper))),
-            uint256(UniswapV4SeBufferHookLegLib.LegKind.Pair)
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                UniswapV4SeBufferHookLegLib.PairSeOverlap.selector, address(wrapper), address(wrapper)
+            )
         );
+        harness.addPairSe(address(wrapper), address(wrapper));
+        assertFalse(harness.pairInVaultTokens(address(wrapper), address(wrapper)));
+    }
+
+    function test_pairMembership_ownShareIsImplicitAndSeparate() public {
+        SeLegMembershipFixture membership = new SeLegMembershipFixture(pair1, false);
+        assertTrue(harness.pairInVaultTokens(address(membership), pair1));
+        assertFalse(harness.pairInVaultTokens(address(membership), address(membership)));
+        harness.addPairSe(pair1, address(membership));
+        assertEq(
+            uint256(harness.classify(address(membership))),
+            uint256(UniswapV4SeBufferHookLegLib.LegKind.StandardExchange)
+        );
+        assertEq(harness.standardExchangeOf(pair1), address(membership));
+    }
+
+    function test_pairMembership_nonmemberAndUnavailableListReject() public {
+        SeLegMembershipFixture membership = new SeLegMembershipFixture(pair1, false);
+        SeLegMembershipFixture revertingList = new SeLegMembershipFixture(pair1, true);
+        assertFalse(harness.pairInVaultTokens(address(membership), unknown));
+        assertFalse(harness.pairInVaultTokens(address(revertingList), pair1));
+        assertFalse(harness.pairInVaultTokens(unknown, pair1));
+        assertFalse(harness.pairInVaultTokens(address(0), pair1));
+        assertFalse(harness.pairInVaultTokens(address(membership), address(0)));
     }
 
     function test_addPairSe_secondLeg_ok() public {

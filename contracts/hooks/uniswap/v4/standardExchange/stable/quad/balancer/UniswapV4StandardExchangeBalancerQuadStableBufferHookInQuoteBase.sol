@@ -51,39 +51,11 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookInQuoteBa
     }
 
     /// @dev Exclude funded raw input from the pre-swap book.
-    function _ratedWadAllForSwapIn(uint8 iIn, uint256 amountInPair)
-        internal view returns (uint256[] memory scaled)
-    {
-        scaled = new uint256[](Repo._numTokens());
-        Repo.Layout storage l = Repo._layout();
-        for (uint8 k; k < Repo._numTokens(); ++k) {
-            uint256 pairUnits = _ratedPairUnits(k);
-            if (k == iIn && l.standardExchanges[k] == address(0) && amountInPair > 0) {
-                uint256 face = IERC20(l.tokens[k]).balanceOf(address(this));
-                uint256 book = l.rawReserves[k];
-                uint256 free = face > book ? face - book : 0;
-                if (free >= amountInPair) {
-                    pairUnits = face - amountInPair;
-                }
-            }
-            scaled[k] = Math.scaleTo(pairUnits, l.ratedScales[k]);
-        }
+    function _ratedWadAllForSwapIn(uint8, uint256) internal view returns (uint256[] memory) {
+        return _ratedWadAll();
     }
 
     function _mapPairInToRatedWad(uint8 i, uint256 pairAmount) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address se = l.standardExchanges[i];
-        if (se == address(0) || se == l.tokens[i]) {
-            address rpRaw = l.rateProviders[i];
-            uint256 units = rpRaw == address(0)
-                ? pairAmount
-                : Math.ratedPairUnits(pairAmount, _getRateFailClosed(rpRaw), l.invScales[i], l.ratedScales[i]);
-            return Math.scaleTo(units, l.ratedScales[i]);
-        }(uint256 shares,) = IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
-        if (shares == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
-        uint256 pairUnits = Math.ratedPairUnits(shares, _getRateFailClosed(rp), ClaimLib.shareScale(se), l.ratedScales[i]);
-        return Math.scaleTo(pairUnits, l.ratedScales[i]);
+        return ClaimLib.pairInWithContext(i, pairAmount, address(0));
     }
 }

@@ -95,7 +95,7 @@ function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 m
 
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
         external
-        view
+        view unlockedQuery
         returns (uint256 amountIn)
     {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);

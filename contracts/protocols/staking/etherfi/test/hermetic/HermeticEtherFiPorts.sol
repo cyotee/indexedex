@@ -358,6 +358,11 @@ contract HermeticRedemptionManager {
         return (units, units, block.timestamp, 0, 0, exitFeeBps, 0);
     }
 
+    /// @dev This fixture retains redemption fees on the manager itself.
+    function treasury() external view returns (address) {
+        return address(this);
+    }
+
     function canRedeem(
         uint256 amount,
         address /*token*/

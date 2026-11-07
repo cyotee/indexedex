@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {DetfResidualAssertions} from "contracts/test/libs/DetfResidualAssertions.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
@@ -103,19 +104,6 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals is TestBase_Uniswap
     }
 
     function _assertNoJoinableDust() internal view virtual override {
-        address hook_ = detfInfo.hook();
-        assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        uint256 residual = IERC20(mintToken).balanceOf(detf);
-        assertLe(residual, 10, "R19 native-token rounding dust");
-        if (residual != 0) {
-            try IUniswapV4SeBufferHook(hook_).previewJoinSingleAssetExactIn(mintToken, residual)
-                returns (uint256 joinable)
-            {
-                assertEq(joinable, 0, "remaining dust cannot mint hook LP");
-            } catch {
-                // A below-minimum SE deposit cannot fund a hook join.
-            }
-        }
-        assertEq(IERC20(se).balanceOf(detf), 0, "no SE share on diamond");
+        DetfResidualAssertions.assertNoJoinableDust(detf, detfInfo.hook());
     }
 }

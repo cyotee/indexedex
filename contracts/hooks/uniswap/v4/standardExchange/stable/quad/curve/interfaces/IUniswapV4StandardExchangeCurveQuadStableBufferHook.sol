@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookNativeLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
@@ -15,9 +15,19 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
  */
 interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
     IUniswapV4SeBufferHook,
+    IUniswapV4SeBufferHookNativeLiquidity,
     IDetfReserveQuote
 {
     error InvalidRoute();
+
+    event JoinNativeComponents(
+        address indexed sender,
+        address indexed to,
+        uint256 netLp,
+        uint256[] localAmounts,
+        uint256[] shareAmounts,
+        uint256 protocolSharesMinted
+    );
 
     event Join(
         address indexed sender,
@@ -58,6 +68,11 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
         uint256 protocolSharesMinted
     );
     event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
+    /// @notice Retired join-trade event; caller-only component assembly does not emit it.
+    event JoinComponentTrade(
+        uint8 indexed tokenIn, uint8 indexed tokenOut,
+        uint256 sharesIn, uint256 localIn, uint256 sharesOut, uint256 localOut
+    );
     event PairPoolsEnsured(address indexed hook, uint256 doorsEnsured);
 
     /// @notice B6 proportional join with per-leg pair vs SE-share units (`amountIsSeShare`).
@@ -120,8 +135,10 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
 
     /* --------------------------- Inventory / rated -------------------------- */
 
+    /// @notice Booked native SE shares on buffered legs, booked raw tokens otherwise; excludes unsolicited custody.
     function nativeReserve(uint256 index) external view returns (uint256);
     function nativeReserves() external view returns (uint256[] memory);
+    /// @notice Swap reserve: local pair tokens plus rated booked SE shares, in pair-native units.
     function ratedBalance(uint256 index) external view returns (uint256);
     function ratedBalances() external view returns (uint256[] memory);
     function seBalance(uint256 index) external view returns (uint256);
@@ -132,8 +149,10 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
     /* -------------------------------- Fees ---------------------------------- */
 
     function dexSwapFee() external view returns (uint256);
+    /// @notice Resolved WAD percentage split from newly backed LP, not a prior-growth fee.
     function usageFee() external view returns (uint256);
     function feeTo() external view returns (address);
+    /// @notice Compatibility getter for the retired growth checkpoint; zero on new deployments.
     function kLast() external view returns (uint256);
     function isFullBook() external view returns (bool);
 
@@ -162,7 +181,8 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
         view
         returns (uint256 sharesIn);
 
-    /// @notice B6: proportional join preview; `amountIsSeShare[i]` selects SE vault share vs pair for leg i.
+    /// @notice Net LP and accepted input debit after caller-only conversion; SE legs require shares at genesis.
+    /// @dev Excess converted shares and pair tokens are refunded separately in their native token.
     function previewJoinProportionalFlexible(uint256[] calldata amounts, bool[] calldata amountIsSeShare)
         external
         view

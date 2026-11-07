@@ -18,8 +18,14 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore} from "contra
 
 /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget is UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore, NativeStandardYieldTarget {
+    function previewJoinNativeComponents(uint256[] calldata localAmounts, uint256[] calldata shareAmounts)
+        public view returns (uint256 netLp)
+    {
+        return _entryPreviewJoinNativeComponents(localAmounts, shareAmounts);
+    }
+
 function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) external view returns (uint256 amountOut, uint256 amountRefunded) {
-        return (_previewExchangeIn(tokenIn, amountIn, tokenOut), 0);
+        return _previewExchangeInResult(tokenIn, amountIn, tokenOut);
     }
 
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
@@ -28,12 +34,11 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
         Repo.Layout storage l = Repo._layout();
         uint8 index = _tokenIndex(pairToken);
         LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(l.standardExchanges[index], pairToken, tokenIn, amountIn, address(this));
-        uint256[4] memory inv = _invWadAll();
-        inv[index] = Math.scaleTo(q.heldShares, l.invScales[index]);
-        uint256 supply = _previewSupplyAfterProtocolMint(inv);
-        uint256 fee = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (fee >= Math.WAD) revert InvalidFeeWad();
-        return Math.singleJoinExactInShares(inv, Math.scaleTo(q.assets, l.invScales[index]), index, _amp(), supply, fee);
+        uint256 gross = ClaimLib.projectedShareJoin(
+            index, q.assets, q.state, _totalSupply()
+        );
+        (uint256 net,) = _splitMintFee(gross);
+        return net;
     }
 
     function previewJoinProportional(uint256[] calldata amounts)
@@ -122,9 +127,9 @@ function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut) ex
         return ClaimLib.syntheticValue(ctx, out_);
     }
 
-    /// @notice Geometric native-inventory unit used for initial LP issuance and protocol LP fees.
+    /// @notice Geometric native-inventory denomination; no projected protocol growth mint.
     function exchangeRate() external view override returns (uint256) {
-        uint256 supply_ = _previewSupplyAfterProtocolMint();
+        uint256 supply_ = _totalSupply();
         if (supply_ == 0) return 1e18;
         return FullMath.mulDiv(_rootKNow(), 1e18, supply_);
     }
