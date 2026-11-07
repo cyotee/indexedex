@@ -1,0 +1,623 @@
+{
+  "date": "2026-11-06",
+  "status": "BLOCKED",
+  "compiler": "Solar via installed Foundry nightly",
+  "command": "PATH=\"$HOME/.foundry/bin:$PATH\" python3 scripts/forge-artifacts.py test contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/UniswapV4FullSpreadStandardExchangeVaultPlanner.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_5.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_N3.t.sol --test-root test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol -- -vv",
+  "passed": 261,
+  "failed": 36,
+  "skipped": 0,
+  "suites": [
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_SingleUnwrap_Test",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_fixtureProductionBinding",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_seFailure_rollsBack",
+        "test_singleUnwrapApprovesAndCompletesExit"
+      ],
+      "failures": [],
+      "gas": 609320,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4SingleSEBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_fixtureProductionBinding",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [],
+      "gas": 609320,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_WeightedUnwrap_Test",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack",
+        "test_weightedUnwrapApprovesAndCompletesExit"
+      ],
+      "failures": [],
+      "gas": 796307,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_BufferHookIntegration_Test",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_disabledBufferedMintRevertsWhileUnlockedAndRollsBack",
+        "test_exactOutHookPaysNeitherToken",
+        "test_getRateAbsentAndProviderReadsTuple",
+        "test_identityAttemptDoesNotBurnCallerPosition",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_faceProductIndex0",
+        "test_row_faceProductIndex1",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_primaryProvider_currency0",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack",
+        "test_stagedPretransferIsNotCreditedToLaterCaller",
+        "test_stagedVaultPretransferDoesNotIncreaseLaterHookOutput"
+      ],
+      "failures": [
+        {
+          "test": "test_disabledBufferedWithdrawalApprovesAndCompletesExit",
+          "reason": "VaultDisabled(0x55A8BCB67Bc9F37B585A47f76552de0597D5c493)"
+        }
+      ],
+      "gas": 825112,
+      "passed": 22,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [],
+      "gas": 799058,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_faceProductIndex0",
+        "test_row_faceProductIndex1",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_primaryProvider_currency0",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [],
+      "gas": 825112,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [],
+      "gas": 796307,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_BalancerUnwrap_Test",
+      "tests": [
+        "test_balancerUnwrapApprovesAndCompletesExit",
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [],
+      "gas": 799058,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_5.t.sol",
+      "suite": "UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_5",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 1323427,
+      "passed": 15,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4DualSEBCPHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_row_ammCallerFundSeparation",
+        "test_row_exactOutAbsent",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_composedRouteGasFitsCeiling",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_bind_deploysThroughPackage",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_bufferFirst_restingFace_notPaidToJoiner",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_hookSwap_exactIn_eoaPretransferRejected",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_identity_thisVault",
+          "reason": "FS-HOOK-04: this-vault identity rejected; FS-A24 OPEN"
+        },
+        {
+          "test": "test_row_index0",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_index1",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_partialConsumption_bookedNotRefunded",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_previewMatchesExecution",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_rateTarget_currency1",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "passed": 3,
+      "failed": 13,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_N3.t.sol",
+      "suite": "UniswapV4StandardExchangeWeightedBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault_N3",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 1259254,
+      "passed": 14,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_BalancerFiveUnwrap_Test",
+      "tests": [
+        "test_balancerFiveUnwrapApprovesAndCompletesExit",
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 1323427,
+      "passed": 16,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_DualUnwrap_Test",
+      "tests": [
+        "test_row_ammCallerFundSeparation",
+        "test_row_exactOutAbsent",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_composedRouteGasFitsCeiling",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_dualUnwrapApprovesAndCompletesExit",
+          "reason": "FS-HOOK-04: required PairToken identity rejected"
+        },
+        {
+          "test": "test_row_bind_deploysThroughPackage",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_bufferFirst_restingFace_notPaidToJoiner",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_hookSwap_exactIn_eoaPretransferRejected",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_identity_thisVault",
+          "reason": "FS-HOOK-04: this-vault identity rejected; FS-A24 OPEN"
+        },
+        {
+          "test": "test_row_index0",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_index1",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_partialConsumption_bookedNotRefunded",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_previewMatchesExecution",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        },
+        {
+          "test": "test_row_rateTarget_currency1",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "passed": 3,
+      "failed": 14,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_CurveUnwrap_Test",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_curveUnwrapApprovesAndCompletesExit",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_rateTarget_currency1_index1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 1263731,
+      "passed": 17,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_WeightedThreeUnwrap_Test",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_seFailure_rollsBack",
+        "test_weightedThreeUnwrapApprovesAndCompletesExit"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 1259254,
+      "passed": 15,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/BufferHookIntegration.t.sol",
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_OrbitalUnwrap_Test",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_orbitalUnwrapApprovesAndCompletesExit",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_pair12_transferControl",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_rateTarget_currency1_index1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 2446999,
+      "passed": 18,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_pair12_transferControl",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_rateTarget_currency1_index1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 2446999,
+      "passed": 17,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault.t.sol",
+      "suite": "UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix_UniswapV4FullSpreadStandardExchangeVault",
+      "tests": [
+        "test_composedRouteGasFitsCeiling",
+        "test_row_ammCallerFundSeparation",
+        "test_row_bind_deploysThroughPackage",
+        "test_row_bufferFirst_restingFace_notPaidToJoiner",
+        "test_row_exactOutAbsent",
+        "test_row_hookSwap_exactIn_eoaPretransferRejected",
+        "test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly",
+        "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_row_index0",
+        "test_row_index1",
+        "test_row_partialConsumption_bookedNotRefunded",
+        "test_row_poolManagerSwap_bothDirections_noFaceResidual",
+        "test_row_previewMatchesExecution",
+        "test_row_rateTarget_currency1",
+        "test_row_rateTarget_currency1_index1",
+        "test_row_seFailure_rollsBack"
+      ],
+      "failures": [
+        {
+          "test": "test_row_identity_pairToken",
+          "reason": "FS-HOOK-04: required PairToken identity rejected; FS-A26 OPEN"
+        }
+      ],
+      "gas": 1263731,
+      "passed": 16,
+      "failed": 1,
+      "skipped": 0
+    }
+  ]
+}

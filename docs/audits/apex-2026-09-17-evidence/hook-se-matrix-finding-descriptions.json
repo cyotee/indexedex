@@ -81,12 +81,12 @@
     "ruling": "Closed by D62. ERC4626 sequential quote rounding and dual-hook projected pre-unwrap sizing now match execution. Exact preview assertions are restored in DualBufferHookNativeSY and dual Core. Independently rebuilt full follow-up suite passes."
   },
   "FS-HOOK-04": {
-    "title": "PairToken identity bind is rejected without asset()",
+    "title": "Historical PairToken identity rejection; current member bindings execute",
     "severity": "record",
     "site": "UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.processArgs",
-    "detail": "2026-11-04 forge test --use solar. token == PairToken share is not in vaultTokens and the share has no asset(), so isWrapperShareInventory is false and processArgs reverts. Recorded on dual, orbital, weighted N3, curve, and balancer 5-leg V4 full-spread rows. FS-A26 stays open. asset() was not added. This is not historical F6.",
+    "detail": "Historical failure receipt, retained for provenance: 2026-11-06 Solar execution with genuine production PairToken shares: UniswapV4SeBufferHookLegLib.sol:174-194 rejects token == se when asset() is absent and the share is not in vaultTokens(). The five named mixed topologies retain failing identity acceptance tests. The canonical dual row has 3 passing and 13 failing tests; its required composed gas route cannot execute. FS-A24 and FS-A26 remain open. Source and per-test results: docs/research/se-fullspread-remediation-plan-20261106/EXECUTION_REPORT.md and EXECUTION_RESULTS.json. This is not historical F6.",
     "rows": "dual, orbital, weighted N3, curve-quad, balancer-quad 5-leg against UniswapV4FullSpreadStandardExchangeVault",
-    "control": "The row records the processArgs revert and does not treat the rejected bind as a conversion pass. Face/raw exact-input directions still run.",
-    "ruling": "FS-A26 stays open. Do not add asset(). Do not relabel the rejected bind as compatible conversion."
+    "control": "Current exact-suite evidence: nine real disjoint-sibling V4 configurations execute 179 passing tests, zero failures/skips, in .omo/evidence/fullspread-se-hooks-20261106/54-final-default.log. Nine inherited suites add 194 passes (373 total subset cases). All 36 original failure identities and 103 named controls for 42 active acceptance rows match PASS. Pair membership is required; implicit own-share processing needs no asset() probe. See .omo/evidence/fullspread-se-hooks-20261106/56-final-summary.md.",
+    "ruling": "Resolved as a current identity blocker by valid-member/implicit-share positives. The user clarified per-required-leg pair-or-share genesis and ongoing caller-funded paid single-input preparation, followed by native-component acceptance. Final default: 28411 passed, zero failed/skipped; source-review blockers closed and final delta approved. Sequential views requiring unavailable post-conversion state reject explicitly while tested actual execution and ordinary one-conversion quotes remain positive. No FullSpread projection/provider interface or unsupported inverse is invented. All 77 affected product entries fit size limits; global --sizes still exits 1 on 13 classified test/vendor artifacts. No deployment or live migration authority."
   }
 }

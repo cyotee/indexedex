@@ -3,22 +3,111 @@
 Decision date: 2026-10-22. Source report:
 `IndexedEx_DiffReview_aca16198-2ba07631.md`.
 
+Progress updated: **2026-11-07**, after completion of the current FullSpread
+SE-hook implementation and verification plan.
+
 This file records owner decisions, implementation evidence, and outstanding work.
 Audit balances and deployment state describe the audit snapshot, not necessarily
-the state at execution time.
+the state at execution time. This progress update made no live RPC checks or
+transactions. The containment and recovery probes below retain their original
+block numbers; they are not November 7 balance or deployment attestations.
 
 ## Status
 
 | Finding | Owner decision | Execution status |
 | --- | --- | --- |
-| APEX-2026-010 | Disable the retired SE package and the separately registered vulnerable vault; keep the previously disabled vault disabled. | Owner reports execution. All seven effective disables independently confirmed at Robinhood block 95,154,306. No live transaction submitted by the assistant. |
-| APEX-2026-054 | Existing deployments cannot be upgraded. Disable the vulnerable underlying vaults now; plan user-assisted recovery. | Containment shares the 010 disable targets. Recovery contract and batches are not implemented. |
+| APEX-2026-010 | Disable the retired SE package and the separately registered vulnerable vault; keep the previously disabled vault disabled. | Containment executed according to the owner and independently confirmed for all seven vaults at Robinhood block 95,154,306. No new live verification or transaction in this update. |
+| APEX-2026-054 | Existing deployments cannot be upgraded. Disable the vulnerable underlying vaults; plan user-assisted recovery. | Fresh-instance hook approval/exit controls pass in the completed FullSpread work. Existing immutable positions are not repaired by those tests. Recovery contracts and atomic batches remain unimplemented/unvalidated in this tracker. |
 | APEX-2026-037 | Keep the deprecated WETH-leg vault disabled; plan recovery through a user-deposit contract. | No re-enable, withdrawal, or migration authorized for execution by this work. |
-| APEX-2026-011 | Deprecate both V4 FullSpread families instead of repairing blocked-mode pricing. | Closed in source. Latent at the audit snapshot. No deployed instance. |
-| APEX-2026-041 | Closed by the same V4 FullSpread deletion. | Closed in source. Latent at the audit snapshot. |
-| APEX-2026-042 | Closed by the same V4 FullSpread deletion. | Closed in source. Latent at the audit snapshot. |
-| APEX-2026-051 | Closed by the same V4 FullSpread deletion. | Closed in source. Latent at the audit snapshot. |
-| APEX-2026-012 | Same apportioned-reserve accounting on both Uniswap V3 and Uniswap V4 Upper Lower Wings vaults. Build the missing V3 family. Other token converts only on the acting holder's entry or exit. `getRate` is the last settled target balance per share. | Design recorded. V3 Wings must be built. V3 FullSpread stays. Implementation is not authorized. Deployed vaults are not upgraded. |
+| APEX-2026-011 | Historical October 23 retirement of the audited families; the subsequent current FullSpread implementation follows its own PRD. | Historical retirement closure retained. Current replacement source/regression verification is complete, including borrowed/own-unlock parity controls; see the November 7 evidence below. No deployment performed. |
+| APEX-2026-041 | Historical retirement closure; current FullSpread must independently prove dust-tick liveness. | Current deposit/redemption and quote-parity dust-tick regressions pass. The old deletion is not used as proof of the new vault. |
+| APEX-2026-042 | Historical retirement closure; current package must support no-return approval tokens. | Current `test_noReturnApproveTokenCanDepositThroughPackage` passes. This is fresh-instance evidence, not an upgrade of an audited deployment. |
+| APEX-2026-051 | Historical retirement closure; current preview/execution behavior needs independent evidence. | Current shared-engine preview/execution and dust-tick controls pass under the current PRD. No fresh audit of unrelated families is claimed. |
+| APEX-2026-012 | October 23 apportioned-reserve draft, followed by the October 24 entry-process correction and design pause. V3/V4 Wings remain a separate scope. | Design decision remains open. No V3 Wings implementation was found; V4 Wings `getRate` still uses the liquidation quote. The checkpoint does not authorize implementation or deployed-vault upgrades. |
+| APEX-2026-022, 023 | V3 FullSpread remains; it is not covered by the V4 retirement or current V4 implementation. | Finding-specific V3 remediation/closure remains open in this tracker. New V4 regressions do not establish V3 closure. |
+| APEX-2026-024, 025, 026, 040 | Wings exit sizing, rebalance loss cap, quote-work liveness and bootstrap/donation accounting remain separate findings. | No closure inherited from the FullSpread or hook work. Each needs its own Wings implementation/review evidence. |
+| APEX-2026-036, 038, 039 | Existing-deployment pretransfer and standing-weight problems are not fixed by changing current source. | Deployment-level remediation/recovery remains separate. Passing current-source tests does not establish closure for immutable legacy contracts. |
+
+## Completed implementation and verification - 2026-11-07
+
+The current source under
+`contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/`
+is present and has completed its current implementation/testing plan. The
+October retirement discussion below is historical; its deletion-based closure
+does not certify this replacement, restore the old Pons family, or authorize
+deployment.
+
+Completed plan:
+`docs/research/se-fullspread-remediation-plan-20261106/IMPLEMENTATION_AND_TEST_PLAN.md`
+(**24/24 tasks**).
+
+Final evidence directory: `.omo/evidence/fullspread-se-hooks-20261106/`.
+
+- `54-final-build.log`: plain Solar build passed, exit 0.
+- `54-final-default.log` and `54-final-gates.log`: **2,660 suites,
+  28,411 passed, zero failed/skipped, exit 0**.
+- All **36 original failing identities** and **103 named controls for 42
+  active acceptance rows** match passing tests. Five rows remain withdrawn;
+  the remaining row records the disjoint-backing evidence boundary.
+- The nine standalone and nine inherited FullSpread configurations contribute
+  **373 passing cases** within that default total.
+- All **36 cold composed routes** pass unchanged gas limits. The four formerly
+  failing DETF burn/close calls pass their unchanged 30-million-gas call limits.
+- Source-review blockers were repaired, including sequential-preview
+  unknown-state propagation. `55-final-delta-gate-review.md` is **APPROVE**.
+- All **77 affected product artifacts** fit runtime/initcode limits. The
+  global `--sizes` command still exits 1 on **13 classified test/vendor
+  artifacts**; see `49-size-classification.md`. This is not a green global
+  size gate or a claim that those exceptions predate every task change.
+- `56-final-summary.md`, `F1-compliance.md` through `F4-fidelity.md`, and
+  `57-source-identity.json` record the final scope, review, receipts and source.
+
+Delivered behavior includes paired-token membership and implicit SE shares,
+native-component LP ownership and refunds, backed gross/net fee splitting,
+per-required-leg pair-or-share genesis, continuing caller-funded single-leg
+preparation, and the necessary DETF/Native SY integration. Explicit native
+component joins on three families eliminate repeated residual conversions.
+Unsupported sequential views fail closed while supported ordinary quotes
+and actual execution remain positive.
+
+Selected current regressions for the formerly retirement-closed findings:
+
+| Finding | Current implementation evidence, passing in receipt 54 |
+| --- | --- |
+| 011 | `AlreadyUnlocked.t.sol`: `test_borrowedMintBothFacesMatchesLockedFromSameState`, both `test_borrowedExitToken*ReceiptMatchesLockedFromSameState` controls, and the current raw-liquidity/fee ownership controls. |
+| 041 | `Money.t.sol`: `test_P08_dustTicksDepositAndRedeemComplete`; `QuotesAndRate.t.sol`: `test_dustTicksPreviewMatchesDepositAndRedeem`. |
+| 042 | `Package.t.sol`: `test_noReturnApproveTokenCanDepositThroughPackage`. |
+| 051 | The same P08/quote-parity controls exercise the current shared quote/execution engine; historical analytic-planner deletion is not the evidence. |
+
+Those test files are under
+`test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/`.
+The current PRD's FS-TEST-04 yes/no/integration-only inventory remains the
+scope boundary. This is verified implementation and regression evidence, not
+a new audit of every second-review finding. V3, Wings and immutable-deployment
+findings do not inherit closure from it. The PRD's accepted authorized
+`compound`/`donate` sandwich exposure is not claimed removed, and disjoint-pool
+tests do not prove same-backing-pool sequential safety.
+
+## Remaining work
+
+| Workstream | Findings | What remains |
+| --- | --- | --- |
+| User-assisted recovery and migration | 037, 054; deployment aspects of 010 | Finish the paused two-contract design: receipt/liability accounting, user rights, NFT reward attribution, compensation principal/ratio and new DETF backing, registry-owner authority, and atomic enable/withdraw/re-disable batches. Then authorize implementation and prove each supported route on a fork. |
+| Other immutable-deployment exposure | 036, 038, 039 | Establish the applicable deployment-specific containment, recovery or replacement path and its evidence. Current-source fixes cannot upgrade these deployments. Keep actual principal recovery distinct from compensation issuance. |
+| Wings accounting and associated findings | 012, 024, 025, 026, 040 | Resolve the paused design recommendation and the corrected entry-process premise. Once the design is accepted and implementation authorized, build the missing V3 Wings family, implement the agreed V4 behavior, and establish separate closure for exit sizing, rebalance, dust-tick liveness and bootstrap/donation accounting. |
+| V3 FullSpread | 022, 023 | Resolve and verify the V3 borrowed/blocked-mode and maintenance findings. Preserve V3 FullSpread; the completed V4 program is not a V3 remediation receipt. |
+| Repository-wide size gate | No new audit ID | Separately triage the 13 documented test/vendor size exceptions if a clean global `--sizes` gate is required. The affected product-size gate already passes; this is not unfinished FullSpread implementation. |
+
+The next Wings decision is the recommendation recorded in
+`docs/reviews/apex-012-design-recommendation-20261024/REPORT.md`, not automatic
+implementation of the October 23 draft or automatic acceptance of its entry
+swap. `APEX-2026-012-OPEN-QUESTIONS.md` records that pause and the rejected
+question-1 premise. The migration decisions remain in the checkpoint at the
+end of this file. Neither design is settled by a green regression suite.
+
+No recovery contract, new compensation DETF, registry authority change,
+re-enable, deployment or live recovery transaction is authorized by this
+progress update.
 
 ## APEX-2026-054: immutable deployments and user-assisted recovery
 
@@ -174,7 +263,10 @@ that live transactions were submitted or confirmed.
   shadowing, contract-comparison deprecation, and unreachable-code warnings in
   unrelated sources. Those sources were not changed.
 
-Live execution receipts remain outstanding until the owner broadcasts.
+The initial dry-run evidence above did not establish live execution. The
+subsequent owner-reported execution and independent block-95,154,306 checks
+recorded below supersede that initial pending-broadcast status. This update
+does not add transaction receipts or a new live-state check.
 
 ### Signer-convention correction
 
@@ -316,7 +408,12 @@ above were localhost-only. The tests did not implement an atomic recovery batch.
 Final independent live RPC reads confirmed all seven vaults remain disabled.
 The probe WebSocket was closed and the isolated Anvil process was stopped.
 
-## APEX-2026-011: V4 FullSpread retirement
+## APEX-2026-011: historical V4 FullSpread retirement
+
+This section records the October 23 action against the then-audited source.
+The current FullSpread implementation and its independent regression evidence
+are recorded in the November 7 section above. Do not read the historical
+deletion statements as a claim that the current source tree is absent.
 
 Owner ruling 2026-10-23: do not repair the blocked-mode pricing mismatch. Deprecate
 both V4 FullSpread families (hookless and Pons). UpperLowerWings is the comparable
@@ -332,7 +429,7 @@ replacement, but this change does not wire Wings into the retired launch stages.
 - APEX-2026-012 in UpperLowerWings remains open. Retiring FullSpread does not
   clear that finding.
 
-### Audit results closed by this retirement
+### Audit results closed by this retirement (historical scope)
 
 Source: `IndexedEx_DiffReview_aca16198-2ba07631.md`. These four results name only
 the deleted V4 FullSpread families. None was deployed on Robinhood 4663.
@@ -356,9 +453,15 @@ Owner ruling 2026-10-23: do not repair the live liquidation quote. Replace it.
 
 PRD: `docs/security/audit/second_review/APEX-2026-012-APPORTIONED-RESERVE-PRD.md`.
 
+Later checkpoint, 2026-10-24: the owner rejected the premise that the existing
+deposit sells target for the other token, and paused the design while
+reconsidering the vault. The draft is not a decision-complete implementation
+contract. The recommendation must be accepted or rejected before resuming its
+open questions; see `APEX-2026-012-OPEN-QUESTIONS.md`.
+
 - The same rule applies to both the Uniswap V3 and Uniswap V4 Upper Lower Wings SE vaults. One family does not close the other.
 - A share is a fraction of every position the vault holds, core and both wings, not a quoted pile of target.
-- Each vault still accepts and pays only the target token. A one-token deposit into a two-sided position swaps into the current mix against the same pool. An exit sells only that holder's other token through the same pool.
+- Both proposed families accept and pay only the target token. The draft's entry-swap sentence is not a settled instruction: the October 24 correction rejected that premise for the existing deposit process. The exact entry/mint design remains open.
 - Other token is sold only inside the acting holder's entry or exit. Harvest credits collected target fees and does not sell the other token.
 - No V3 Upper Lower Wings source exists. This PRD requires that family to be built. V3 FullSpread stays in place.
 - The remaining position taking that sale is intended. Tests must prove share fraction, not a constant target balance.
@@ -366,6 +469,13 @@ PRD: `docs/security/audit/second_review/APEX-2026-012-APPORTIONED-RESERVE-PRD.md
 - This does not upgrade deployed vaults and does not close 024, 025, 026, or 040 by itself.
 - Implementation is not authorized.
 - Open questions, to be answered one by one: `docs/security/audit/second_review/APEX-2026-012-OPEN-QUESTIONS.md`.
+
+Current-source check, 2026-11-07: no V3 Wings implementation was found in the
+V3 source tree or the repository's Wings Solidity filenames. V4
+`UniswapV4UpperLowerWingsStandardExchangeVaultEconomicTarget.getRate()` still
+uses `Quote.quote(Common.quoteRequest()).value / supply`, not the proposed
+settled counter. Passing the completed FullSpread regressions does not
+implement this different Wings design.
 
 ## Migration design checkpoint - 2026-10-23
 

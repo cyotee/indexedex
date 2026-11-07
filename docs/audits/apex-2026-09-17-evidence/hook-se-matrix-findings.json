@@ -69,11 +69,9 @@
     "blockedTests": []
   },
   "orbital:UniswapV4FullSpreadStandardExchangeVault": {
-    "findings": [
-      "F1",
-      "FS-HOOK-04"
-    ],
-    "blockedTests": []
+    "findings": [],
+    "blockedTests": [],
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   },
   "single-cp:AaveCrossVersionLoop": {
     "findings": [
@@ -90,7 +88,9 @@
   },
   "single-cp:UniswapV4FullSpreadStandardExchangeVault": {
     "findings": [],
-    "blockedTests": []
+    "blockedTests": [],
+    "currentLimitation": "The former disabled-withdrawal cleanup-mint blocker is superseded: test_disabledBufferedWithdrawalApprovesAndCompletesExit and test_disabledBufferedInputBooksLocallyWithoutVaultMint pass in the current integrated receipt. Direct disabled vault mint still rejects; local-only hook input booking remains supported. Other capability limits: .omo/evidence/fullspread-se-hooks-20261106/17-capabilities.md.",
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   },
   "single-noncp:CamelotV2StandardExchange": {
     "findings": [
@@ -153,31 +153,28 @@
     "blockedTests": []
   },
   "dual:UniswapV4FullSpreadStandardExchangeVault": {
-    "findings": [
-      "FS-HOOK-04"
-    ],
-    "blockedTests": []
+    "findings": [],
+    "blockedTests": [],
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   },
   "single-noncp:UniswapV4FullSpreadStandardExchangeVault": {
     "findings": [],
-    "blockedTests": []
+    "blockedTests": [],
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   },
   "weighted:UniswapV4FullSpreadStandardExchangeVault": {
-    "findings": [
-      "FS-HOOK-04"
-    ],
-    "blockedTests": []
+    "findings": [],
+    "blockedTests": [],
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   },
   "curve-quad:UniswapV4FullSpreadStandardExchangeVault": {
-    "findings": [
-      "FS-HOOK-04"
-    ],
-    "blockedTests": []
+    "findings": [],
+    "blockedTests": [],
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   },
   "balancer-quad:UniswapV4FullSpreadStandardExchangeVault": {
-    "findings": [
-      "FS-HOOK-04"
-    ],
-    "blockedTests": []
+    "findings": [],
+    "blockedTests": [],
+    "evidence": ".omo/evidence/fullspread-se-hooks-20261106/54-final-default.log"
   }
 }
