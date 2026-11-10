@@ -177,10 +177,16 @@ function exchangeIn(
         address feeRecipient_ = IERC721(s_.bondNftVault).ownerOf(DETF_FEE_TO_BOND_NFT_ID);
         address creatorRecipient_ = IERC721(s_.bondNftVault).ownerOf(DETF_CREATOR_BOND_NFT_ID);
         DETFFundedStakingMath.RewardAllocation memory allocation_;
-        (allocation_, stakingGrowth_) = Repo._distribute(s_, amount_, feeRecipient_, creatorRecipient_);
+        (allocation_, stakingGrowth_) = _distributeRewards(s_, amount_, feeRecipient_, creatorRecipient_);
         _topUpWeights(s_);
         emit RewardsFunded(amount_, stakingGrowth_, allocation_.fee, allocation_.creator, s_.gonsPerUnit);
         return (stakingGrowth_, allocation_.fee, allocation_.creator);
+    }
+
+    function _distributeRewards(
+        Repo.Storage storage s_, uint256 amount_, address feeRecipient_, address creatorRecipient_
+    ) internal virtual returns (DETFFundedStakingMath.RewardAllocation memory allocation_, uint256 stakingGrowth_) {
+        return Repo._distribute(s_, amount_, feeRecipient_, creatorRecipient_);
     }
 
     /// @inheritdoc IStakedDETF

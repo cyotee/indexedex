@@ -94,6 +94,12 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
     function createFundedPosition(uint256 principal_, uint256 duration_, address recipient_)
         external onlyDetf synchronized nonReentrant returns (uint256 tokenId_)
     {
+        return _createFundedPosition(principal_, duration_, recipient_);
+    }
+
+    function _createFundedPosition(uint256 principal_, uint256 duration_, address recipient_)
+        internal returns (uint256 tokenId_)
+    {
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (!s_.reservedIdsWired) revert RolesNotInitialized();
         if (principal_ == 0) revert ZeroAmount();
@@ -134,9 +140,13 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
     function previewClaim(uint256 tokenId_) public view returns (StakingMath.BondClaim memory claim_) {
         _requireExists(tokenId_);
         if (tokenId_ < 3) return claim_;
-        return StakingMath._claim(
-            Repo._layoutStruct().positions[tokenId_], block.timestamp, _staking().stakingState().gonsPerUnit
-        );
+        return _calculateClaim(tokenId_, _staking().stakingState().gonsPerUnit);
+    }
+
+    function _calculateClaim(uint256 tokenId_, uint256 gonsPerUnit_)
+        internal view virtual returns (StakingMath.BondClaim memory)
+    {
+        return StakingMath._claim(Repo._layoutStruct().positions[tokenId_], block.timestamp, gonsPerUnit_);
     }
 
     /// @notice Claim vested principal as sDETF without claiming its separate staking rewards.
@@ -161,7 +171,7 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
     }
 
     function _claim(uint256 tokenId_, address recipient_, bool principalClaim_, bool rewardClaim_)
-        internal returns (uint256 principal_, uint256 rewards_)
+        internal virtual returns (uint256 principal_, uint256 rewards_)
     {
         if (tokenId_ < 3) revert ReservedBond(tokenId_);
         address owner_ = _requireExists(tokenId_);
@@ -173,7 +183,7 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
         StakingMath.BondPosition storage position_ = s_.positions[tokenId_];
         IStakedDETF staking_ = _staking();
         uint256 k_ = staking_.stakingState().gonsPerUnit;
-        StakingMath.BondClaim memory claim_ = StakingMath._claim(position_, block.timestamp, k_);
+        StakingMath.BondClaim memory claim_ = _calculateClaim(tokenId_, k_);
         principal_ = principalClaim_ ? claim_.principalDue : 0;
         rewards_ = rewardClaim_ ? claim_.rewardsDue : 0;
         uint256 amount_ = principal_ + rewards_;
