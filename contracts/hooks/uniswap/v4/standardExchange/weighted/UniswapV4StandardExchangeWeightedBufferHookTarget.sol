@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ExchangeInAmount} from "contracts/utils/ExchangeInAmount.sol";
+import {IUniswapV4StandardExchangeWeightedBufferHookCapture as Capture} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol";
+import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
@@ -119,6 +125,55 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
     /// @notice Fixed direct-liquidity policy selected at deployment.
     function ownerOnlyLiquidity() external view returns (bool) {
         return Repo._layout().ownerOnlyLiquidity;
+    }
+
+    /// @dev Acquisition records failures without rejecting a branch that a quote never uses.
+    function _captureWeightedMintBook() internal view returns (Capture.Book memory b) {
+        Repo.Layout storage l = Repo._layout();
+        b.hook = address(this);
+        b.registry = l.vaultRegistry;
+        b.feeOracle = l.feeOracle;
+        (b.fee.success, b.fee.data) = l.feeOracle.staticcall(
+            abi.encodeCall(IVaultFeeOracleQuery.dexSwapFeeOfVault, (address(this)))
+        );
+        b.legs = new Capture.Leg[](l.numTokens);
+        for (uint8 i; i < l.numTokens; ++i) {
+            Capture.Leg memory leg;
+            leg.token = l.tokens[i];
+            leg.standardExchange = l.standardExchanges[i];
+            leg.provider = l.rateProviders[i];
+            leg.weight = l.weights[i];
+            leg.invScale = l.invScales[i];
+            leg.ratedScale = l.ratedScales[i];
+            leg.rawReserve = l.rawReserves[i];
+            leg.seReserve = l.seReserves[i];
+            if (leg.provider != address(0)) {
+                (leg.rate.success, leg.rate.data) = leg.provider.staticcall(abi.encodeCall(IRateProvider.getRate, ()));
+            }
+            address se = leg.standardExchange;
+            if (se != address(0)) {
+                (leg.registration.success, leg.registration.data) = l.vaultRegistry.staticcall(
+                    abi.encodeCall(IVaultRegistryDisableQuery.packageOfVault, (se))
+                );
+                (leg.disabled.success, leg.disabled.data) = l.vaultRegistry.staticcall(
+                    abi.encodeCall(IVaultRegistryDisableQuery.isDisabled, (se))
+                );
+                Frozen.Request memory request = Frozen.Request(
+                    leg.token, se, address(this), Frozen.Mode.OrdinaryDeposit
+                );
+                try Frozen(se).captureFrozenQuoteInputs(request) returns (Frozen.Inputs memory inputs) {
+                    leg.depositSupported = true;
+                    leg.deposit = inputs;
+                    leg.captureFacet = IDiamondLoupe(se).facetAddress(Frozen.captureFrozenQuoteInputs.selector);
+                    leg.captureCodeHash = leg.captureFacet.codehash;
+                    leg.previewFacet = IDiamondLoupe(se).facetAddress(IStandardExchangeIn.previewExchangeIn.selector);
+                    leg.previewCodeHash = leg.previewFacet.codehash;
+                } catch (bytes memory reason) {
+                    leg.depositError = reason;
+                }
+            }
+            b.legs[i] = leg;
+        }
     }
 
     function _bindingPoolManager() internal view returns (IPoolManager) {

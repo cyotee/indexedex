@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4StandardExchangeWeightedBufferHookCapture as Capture} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -149,7 +151,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeWeightedBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](15);
+        interfaces = new bytes4[](16);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -165,6 +167,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
         interfaces[12] = type(IDetfReserveQuote).interfaceId;
         interfaces[13] = type(IStandardizedYield).interfaceId;
         interfaces[14] = type(IUniswapV4SeBufferHookNativeLiquidity).interfaceId;
+        interfaces[15] = type(Capture).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {

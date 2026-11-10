@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -32,13 +33,14 @@ contract UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test is Cra
     }
 
     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](2);
+        controlInterfaces = new bytes4[](3);
         controlInterfaces[0] = type(IStandardExchangeTransitionQuote).interfaceId;
         controlInterfaces[1] = type(IStandardExchangeExternalQuote).interfaceId;
+        controlInterfaces[2] = type(Frozen).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](7);
+        controlFuncs = new bytes4[](8);
         controlFuncs[0] = IStandardExchangeTransitionQuote.quoteState.selector;
         controlFuncs[1] = IStandardExchangeTransitionQuote.quoteAssets.selector;
         controlFuncs[2] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
@@ -46,5 +48,6 @@ contract UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test is Cra
         controlFuncs[4] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
         controlFuncs[5] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
         controlFuncs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        controlFuncs[7] = Frozen.captureFrozenQuoteInputs.selector;
     }
 }

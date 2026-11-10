@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4StandardExchangeWeightedBufferHookCapture as Capture} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
@@ -328,6 +330,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSwapCore is
 }
 
 abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is UniswapV4StandardExchangeWeightedBufferHookSwapCore, IHooks {
+    function captureWeightedMintBook() external view returns (Capture.Book memory) { return _captureWeightedMintBook(); }
     function poolManager() public view returns (IPoolManager) { return _bindingPoolManager(); }
     function permit2() public pure returns (address) { return _bindingPermit2(); }
     function numTokens() public view returns (uint8) { return _bindingNumTokens(); }

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
 
 import {IUniswapV3FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol";
 
@@ -122,7 +123,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](15);
+        interfaces = new bytes4[](16);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20).interfaceId ^ type(IERC20Metadata).interfaceId;
@@ -138,6 +139,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
         interfaces[12] = type(IStandardExchangeTransitionQuote).interfaceId;
         interfaces[13] = type(IStandardizedYield).interfaceId;
         interfaces[14] = type(IStandardExchangeExternalQuote).interfaceId;
+        interfaces[15] = type(Frozen).interfaceId;
     }
 
     function packageName() public pure override returns (string memory) {

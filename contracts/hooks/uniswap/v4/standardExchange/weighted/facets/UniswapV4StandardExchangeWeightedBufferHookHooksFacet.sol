@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4StandardExchangeWeightedBufferHookCapture as Capture} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookCapture.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
@@ -20,14 +22,15 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](3);
+        interfaces = new bytes4[](4);
         interfaces[0] = type(IHooks).interfaceId;
         interfaces[1] = type(IUniswapV4StandardExchangeWeightedBufferHook).interfaceId;
         interfaces[2] = type(IUniswapV4SeBufferHook).interfaceId;
+        interfaces[3] = type(Capture).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](48);
+        funcs = new bytes4[](49);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -76,6 +79,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
         funcs[45] = this.ownerOnlyLiquidity.selector;
         funcs[46] = this.previewSwapAfterExchange.selector;
         funcs[47] = this.previewBondAfterDeposit.selector;
+        funcs[48] = Capture.captureWeightedMintBook.selector;
     }
 
     function facetMetadata()

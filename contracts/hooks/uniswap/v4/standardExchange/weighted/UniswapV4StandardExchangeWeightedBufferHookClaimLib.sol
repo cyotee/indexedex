@@ -94,6 +94,12 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         if (rp == address(0)) return 0;
         (bool ok, bytes memory data) =
             rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
+        return readCapturedRate(rp, ok, data);
+    }
+
+    /// @notice The ordinary rate result's exact validation, reusable without another source read.
+    function readCapturedRate(address rp, bool ok, bytes memory data) internal pure returns (uint256 rate) {
+        if (rp == address(0)) return 0;
         if (!ok || data.length != 32) revert RateProviderFailed();
         rate = abi.decode(data, (uint256));
         if (rate == 0) revert RateProviderFailed();
@@ -137,10 +143,23 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         public view returns (uint256 amountOut, uint256 sharesOut)
     {
         Repo.Layout storage l = Repo._layout();
-        if (inflow > rated[i] * Math.MAX_IN_RATIO / Math.WAD) revert Math.MaxInRatio();
-        uint256 budget = Math.quoteExactIn(rated[i], l.weights[i], rated[j], l.weights[j], inflow, Math.RATE_PRECISION, Math.RATE_PRECISION, 0);
-        if (budget >= rated[j]) revert Math.WouldZeroReserve();
+        uint256 budget = exactInputBudget(rated[i], l.weights[i], rated[j], l.weights[j], inflow);
         return _outputBudget(j, budget, manager);
+    }
+
+    /// @notice Weighted exact-input budget after input mapping; no second trading fee.
+    function exactInputBudget(uint256 ratedIn, uint256 weightIn, uint256 ratedOut, uint256 weightOut, uint256 inflow)
+        internal pure returns (uint256 budget)
+    {
+        if (inflow > ratedIn * Math.MAX_IN_RATIO / Math.WAD) revert Math.MaxInRatio();
+        budget = Math.quoteExactIn(ratedIn, weightIn, ratedOut, weightOut, inflow, Math.RATE_PRECISION, Math.RATE_PRECISION, 0);
+        if (budget >= ratedOut) revert Math.WouldZeroReserve();
+    }
+
+    function rawOutput(uint256 budget, uint256 scale, uint256 reserve) internal pure returns (uint256 amountOut) {
+        amountOut = Math.descale(budget, scale);
+        if (amountOut >= reserve) revert Math.WouldZeroReserve();
+        if (amountOut == 0) revert Math.ZeroAmount();
     }
 
     function _outputBudget(uint8 j, uint256 budget, address manager) private view returns (uint256 amountOut, uint256 sharesOut) {
@@ -148,8 +167,7 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
         uint256 nativeBudget = Math.descale(budget, l.ratedScales[j]);
         uint256 local = FullMath.min(l.rawReserves[j], nativeBudget);
         if (l.standardExchanges[j] == address(0)) {
-            amountOut = Math.descale(budget, l.ratedScales[j]);
-            if (amountOut >= l.rawReserves[j]) revert Math.WouldZeroReserve();
+            amountOut = rawOutput(budget, l.ratedScales[j], l.rawReserves[j]);
         } else {
             uint256 deficit = nativeBudget > local ? budget - Math.scaleTo(local, l.ratedScales[j]) : 0;
             if (deficit != 0) {

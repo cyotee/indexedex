@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
 
 import {StandardExchangeConstantProduct} from "../StandardExchangeConstantProduct.sol";
 
@@ -23,6 +24,23 @@ import {
  * @notice Sequential inventory-transition quotes; standard previews reside on InMultiQueryFacet.
  */
 abstract contract UniswapV3FullSpreadStandardExchangeVaultInQueryTarget is UniswapV3FullSpreadStandardExchangeVaultInBase {
+    /// @notice Ordinary pair deposit backing, including positions and unpoked fees.
+    /// @dev Does not invoke holder redemption, transitions, or a hypothetical rebalance.
+    function captureFrozenQuoteInputs(Frozen.Request calldata request) external view returns (Frozen.Inputs memory q) {
+        q.exchange = address(this);
+        q.request = request;
+        q.token0 = _token0();
+        q.token1 = _token1();
+        if (request.mode != Frozen.Mode.OrdinaryDeposit || request.tokenOut != address(this)
+            || (request.tokenIn != q.token0 && request.tokenIn != q.token1)) {
+            revert Frozen.UnsupportedFrozenQuote(address(this), request.tokenIn, request.tokenOut, request.mode);
+        }
+        q.model = Frozen.Model.UniswapV3PairDeposit;
+        q.supply = IERC20(address(this)).totalSupply();
+        (q.reserve0, q.reserve1) = _totalVaultReservesForShareMath();
+        if (q.supply == 0) q.minimumLiquidity = _minimumLiquidity();
+    }
+
     struct InventoryQuote {
         address vault;
         bool token0;

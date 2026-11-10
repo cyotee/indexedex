@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeFrozenQuoteInputs as Frozen} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
 
 import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
@@ -19,13 +20,14 @@ contract UniswapV3FullSpreadStandardExchangeVaultInQueryFacet is UniswapV3FullSp
     }
 
     function facetInterfaces() public pure override returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](2);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IStandardExchangeTransitionQuote).interfaceId;
         interfaces[1] = type(IStandardExchangeExternalQuote).interfaceId;
+        interfaces[2] = type(Frozen).interfaceId;
     }
 
     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](7);
+        funcs = new bytes4[](8);
         funcs[0] = IStandardExchangeTransitionQuote.quoteState.selector;
         funcs[1] = IStandardExchangeTransitionQuote.quoteAssets.selector;
         funcs[2] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
@@ -33,6 +35,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultInQueryFacet is UniswapV3FullSp
         funcs[4] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
         funcs[5] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
         funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        funcs[7] = Frozen.captureFrozenQuoteInputs.selector;
     }
 
     function facetMetadata()
