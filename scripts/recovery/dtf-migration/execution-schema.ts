@@ -2,7 +2,7 @@ import { z } from "zod";
 import { address, binding, hash, hex, identity, positive, sha256, source, uint } from "./schema.js";
 
 export const stages = ["deploy", "fund", "capture", "configure", "independent-issue",
-  "verify", "activate", "harvest"] as const;
+  "owner-bond", "verify", "activate", "harvest"] as const;
 export const stage = z.enum(stages);
 export type Stage = z.infer<typeof stage>;
 export const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);
@@ -43,6 +43,9 @@ export const funding = z.object({
 }).strict().readonly();
 // Pre-capture work has no fabricated snapshot. Post-capture work references the
 // preparation manifest, which is reconstructed through validateManifest.
+export const ownerBond = z.object({
+  token: address, amount: positive, duration: positive, deadline: positive,
+}).strict().readonly();
 export const executionManifest = z.object({
   version: z.literal("dtf-operator-execution-v1"),
   purpose: z.enum(["synthetic-local", "operational-review"]),
@@ -59,6 +62,7 @@ export const executionManifest = z.object({
   preparedManifest: z.string().min(1).nullable(),
   deployment: packageArguments.nullable(),
   funding,
+  ownerBond: ownerBond.nullable().default(null),
 }).strict().readonly();
 export type ExecutionManifest = z.infer<typeof executionManifest>;
 export type Mode =

@@ -152,19 +152,73 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         _fundAndCapture();
         vm.expectRevert(Accounting.MigrationRewardsClosed.selector);
         detfExchangeIn.exchangeIn(IERC20(pairA), 1 ether, IERC20(detf), 0, address(this), false, block.timestamp);
-        vm.expectRevert(Accounting.MigrationRewardsClosed.selector);
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
         migration.bond(IERC20(pairA), 1 ether, 90 days, address(this), false, block.timestamp);
         (uint256 quote_,) = detfExchangeIn.previewExchangeIn(IERC20(pairA), 1 ether, IERC20(detf));
         assertEq(quote_, 0);
     }
 
+    function test_ordinaryDepositOpensWithFundedIndependentParticipation() public {
+        _fundAndCapture();
+        _configure(address(this), 1 ether, bytes32("ordinary activation participant"));
+        uint256 id_ = _issue(address(this));
+        uint256 started_ = bonds.positionOf(id_).startTimestamp;
+        vm.expectRevert(Accounting.MigrationRewardsClosed.selector);
+        detfExchangeIn.exchangeIn(IERC20(pairA), 1 ether, IERC20(detf), 1, address(this), false, block.timestamp);
+        vm.prank(migrationOwner);
+        vm.expectRevert(Migration.MigrationOwnerFirstBondRequired.selector);
+        allocation.activateMigration();
+        assertFalse(migration.migrationActivated());
+        assertEq(migration.migrationOwnerFirstBondTokenId(), 0);
+        _buyOwnerFirstBond();
+        vm.prank(migrationOwner);
+        allocation.activateMigration();
+        uint256 before_ = IERC20(detf).balanceOf(address(this));
+        (uint256 out_,) = detfExchangeIn.exchangeIn(
+            IERC20(pairA), 1 ether, IERC20(detf), 1, address(this), false, block.timestamp
+        );
+        assertGt(out_, 0);
+        assertEq(IERC20(detf).balanceOf(address(this)) - before_, out_);
+        assertEq(bonds.positionOf(id_).startTimestamp, started_);
+    }
+
     function test_activationRemovesEntireAdministrationAndKeepsQueries() public {
         _fundAndCapture();
-        bytes4[6] memory selectors_ = [
+        bytes4[7] memory selectors_ = [
             Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
-            Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector
+            Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
+            Allocation.configureWeightedLiquidEntitlements.selector
         ];
+        address[] memory facets_ = new address[](selectors_.length);
+        for (uint256 i_; i_ < selectors_.length; ++i_) {
+            facets_[i_] = IDiamondLoupe(detf).facetAddress(selectors_[i_]);
+            assertNotEq(facets_[i_], address(0));
+        }
+        vm.prank(migrationOwner);
+        vm.expectRevert(Migration.MigrationOwnerFirstBondRequired.selector);
+        allocation.activateMigration();
+        assertFalse(migration.migrationActivated());
+        for (uint256 i_; i_ < selectors_.length; ++i_) {
+            assertEq(IDiamondLoupe(detf).facetAddress(selectors_[i_]), facets_[i_]);
+        }
+        _buyOwnerFirstBond();
+        // Exhaust execution gas inside the actual cut, not a mocked or storage-corrupted proxy.
+        vm.prank(migrationOwner);
+        (bool cut_, bytes memory reason_) = detf.call{gas: 150000}(abi.encodeCall(Allocation.activateMigration, ()));
+        assertFalse(cut_);
+        assertEq(reason_.length, 0);
+        assertFalse(migration.migrationActivated());
+        assertTrue(IERC165(detf).supportsInterface(type(Allocation).interfaceId));
+        for (uint256 i_; i_ < selectors_.length; ++i_) {
+            assertEq(IDiamondLoupe(detf).facetAddress(selectors_[i_]), facets_[i_]);
+        }
+        vm.expectRevert(Accounting.MigrationRewardsClosed.selector);
+        detfExchangeIn.exchangeIn(IERC20(pairA), 1 ether, IERC20(detf), 0, address(this), false, block.timestamp);
+        vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
+        migration.surrenderMigrationNft(address(0), 3, 0, block.timestamp);
+        vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
+        migration.surrenderMigrationWeightedLiquid(bytes32(0), 1, 0, block.timestamp);
         vm.prank(migrationOwner);
         allocation.activateMigration();
         assertTrue(migration.migrationActivated());
@@ -173,5 +227,11 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
         assertEq(migration.owner(), migrationOwner);
         assertNotEq(migration.migrationSnapshot().id, bytes32(0));
         assertGt(migration.previewOriginalCredit(1 ether, 0), 0);
+        uint256 before_ = IERC20(detf).balanceOf(address(this));
+        (uint256 out_,) = detfExchangeIn.exchangeIn(
+            IERC20(pairA), 1 ether, IERC20(detf), 1, address(this), false, block.timestamp
+        );
+        assertGt(out_, 0);
+        assertEq(IERC20(detf).balanceOf(address(this)) - before_, out_);
     }
 }

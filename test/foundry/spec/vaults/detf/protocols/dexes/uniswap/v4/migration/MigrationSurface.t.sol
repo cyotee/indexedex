@@ -40,16 +40,18 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
     }
 
     function test_adminDeclarationMatchesInterfaceAndCannotBeRestored() public {
-        bytes4[] memory expected_ = new bytes4[](6);
+        bytes4[] memory expected_ = new bytes4[](7);
         expected_[0] = Allocation.bootstrapMigrationReserve.selector;
         expected_[1] = Allocation.captureMigrationSnapshot.selector;
         expected_[2] = Allocation.configureIndependentAllocations.selector;
         expected_[3] = Allocation.issueIndependentAllocations.selector;
         expected_[4] = Allocation.activateMigration.selector;
         expected_[5] = Allocation.configureNftEntitlements.selector;
+        expected_[6] = Allocation.configureWeightedLiquidEntitlements.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
         _fundAndCapture();
+        _buyOwnerFirstBond();
         vm.prank(migrationOwner);
         allocation.activateMigration();
         (bool init_,) = detf.call(abi.encodeCall(IDiamondFactoryPackage.initAccount, (bytes(""))));

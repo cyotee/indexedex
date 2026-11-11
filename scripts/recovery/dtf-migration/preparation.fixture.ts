@@ -9,7 +9,7 @@ import { once } from "node:events";
 import { text } from "node:stream/consumers";
 import { z } from "zod";
 import { canonical, fingerprint } from "./provenance.js";
-import { earlierCollection, nftOrigin, weightedCollection } from "./payloads.js";
+import { earlierCollection, nftOrigin, weightedCollection, weightedLiquidSource } from "./payloads.js";
 import { domain as domainSchema, nftOriginal, preparationInput } from "./schema.js";
 
 export const h = (n: number): string => `0x${n.toString(16).padStart(64, "0")}`;
@@ -102,6 +102,8 @@ export async function fixture() {
   const nft = { collection: weightedCollection, tokenId: "3", originalWallet: a(21), originalUnits: "100",
     originalEth: "100", originalDtf: "22", evidenceId: h(202), contributionsKnown: true };
   const earlier = { ...nft, collection: earlierCollection, originalUnits: "2281854312954086546", evidenceId: h(204) };
+  const liquid = { originalId: h(205), originalWallet: a(22), source: weightedLiquidSource,
+    originalUnits: "3", originalEth: "100", originalDtf: "22", evidenceId: h(206), contributionsKnown: true };
   const nftId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(nft));
   const earlierId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(earlier));
   const exposures = [
@@ -111,8 +113,10 @@ export async function fixture() {
       recoveredUnits: "0", excludedUnits: "0" },
     { originId: earlierId, category: "earlier-nft", originalUnits: earlier.originalUnits,
       descendants: [{ id: h(212), units: earlier.originalUnits }], recoveredUnits: "0", excludedUnits: "0" },
+    { originId: liquid.originalId, category: "weighted-liquid", originalUnits: liquid.originalUnits,
+      descendants: [{ id: h(213), units: liquid.originalUnits }], recoveredUnits: "0", excludedUnits: "0" },
   ];
-  const evidence = { originals: [original, nft, earlier], exposures };
+  const evidence = { originals: [original, nft, earlier, liquid], exposures };
   const evidencePath = join(root, "evidence.json");
   const raw = canonical(evidence);
   await writeFile(evidencePath, raw);
@@ -131,6 +135,7 @@ export async function fixture() {
       { original: nft, proof: { sourceId: "proof", pointer: "/originals/1" } },
       { original: earlier, proof: { sourceId: "proof", pointer: "/originals/2" } },
     ],
+    weightedLiquid: [{ original: liquid, proof: { sourceId: "proof", pointer: "/originals/3" } }],
     issueRecipients: [a(20)], harvest: { steps: [], deadline: "0" },
   });
   return { root, input, changes, methods, evidencePath, async close() {

@@ -6,7 +6,8 @@ import { join } from "node:path";
 import { Wallet, keccak256 } from "ethers";
 import { Journal } from "./journal.js";
 import { canonical, fingerprint } from "./provenance.js";
-import { intent, funding } from "./execution-schema.js";
+import { intent, funding, ownerBond } from "./execution-schema.js";
+import { interfaceFile } from "./rehearsal-data.js";
 import { main } from "./cli.js";
 
 const roots: string[] = [];
@@ -70,6 +71,32 @@ test("funding rejects arbitrary calldata and unknown native values", () => {
   assert.equal(funding.safeParse({ donations: [{
     id: `0x${"1".repeat(64)}`, tokens: [], amounts: [], nativeAmount: null, minimum: "0", deadline: "100",
   }], genesis: null }).success, false);
+});
+
+test("paid owner purchase requires explicit positive payment and ordinary duration", async () => {
+  const terms = { token: "0x1111111111111111111111111111111111111111",
+    amount: "1000000000000000000", duration: "7776000", deadline: "2000000000" };
+  for (const key of ["token", "amount", "duration", "deadline"] as const) {
+    const { [key]: _missing, ...omitted } = terms;
+    assert.equal(ownerBond.safeParse(omitted).success, false);
+  }
+  for (const changed of [{ amount: "0" }, { duration: "0" }, { deadline: "0" },
+    { pretransferred: true }, { syntheticPrincipal: "1" }]) {
+    assert.equal(ownerBond.safeParse({ ...terms, ...changed }).success, false);
+  }
+  const parsed = ownerBond.parse(terms);
+  const parent = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
+  const stageAbi = await interfaceFile("out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json");
+  const args = [parsed.token, parsed.amount, parsed.duration, terms.token, false, parsed.deadline];
+  const decoded = parent.decodeFunctionData("bond", parent.encodeFunctionData("bond", args));
+  assert.equal(decoded[1], BigInt(terms.amount));
+  assert.equal(decoded[2], BigInt(terms.duration));
+  assert.equal(decoded[4], false);
+  const stage = stageAbi.decodeFunctionData("ownerFirstBond", stageAbi.encodeFunctionData("ownerFirstBond",
+    [terms.token, parsed.token, parsed.amount, parsed.duration, parsed.deadline]));
+  assert.equal(stage[2], decoded[1]);
+  assert.equal(stage[3], decoded[2]);
+  assert.equal(stage[4], decoded[5]);
 });
 
 for (const { args, reason } of [

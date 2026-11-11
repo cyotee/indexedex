@@ -120,8 +120,7 @@ contract MigrationRecoveryDonationTest is MigrationRecoveryDonationForkBase {
         assertEq(IERC20(Legacy.DTF).allowance(detf, reserveHook), 0);
         assertEq(IERC20(Legacy.DTF).allowance(detf, se1), 0);
         assertEq(_protected(bond_), protected_);
-        vm.prank(migrationOwner);
-        allocation.activateMigration();
+        assertTrue(migration.migrationActivated());
         _run(Recovery.Stage.Donate, 0, 1 ether, 1);
         assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_ - 2 ether);
         assertEq(_protected(bond_), protected_);
@@ -174,8 +173,11 @@ contract MigrationRecoveryDonationTest is MigrationRecoveryDonationForkBase {
         hostileRate.arm(detf, calls_);
         hostileRate.execute(detf, steps_, block.timestamp);
         assertEq(hostileRate.attempts(), 4);
-        for (uint256 i_; i_ < 4; ++i_) assertEq(hostileRate.errors(i_), bytes4(keccak256("IsLocked()")));
-        assertFalse(migration.migrationActivated());
+        for (uint256 i_; i_ < 4; ++i_) {
+            assertEq(hostileRate.errors(i_), i_ == 1
+                ? bytes4(keccak256("NoTargetFor(bytes4)")) : bytes4(keccak256("IsLocked()")));
+        }
+        assertTrue(migration.migrationActivated());
         assertEq(_protected(bond_), protected_);
     }
 

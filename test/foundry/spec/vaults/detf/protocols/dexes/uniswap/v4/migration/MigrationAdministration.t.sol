@@ -44,6 +44,7 @@ contract MigrationAdministrationTest is TestBase_UniswapV4DetfMigration {
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, migrationOwner));
         allocation.activateMigration();
+        _buyOwnerFirstBond();
         vm.prank(next_);
         allocation.activateMigration();
         assertTrue(migration.migrationActivated());
@@ -119,6 +120,7 @@ contract MigrationAdministrationTest is TestBase_UniswapV4DetfMigration {
 
     function test_callbackOwnerCannotActivateOrReenterAnotherChild() public {
         _fundAndCapture();
+        _buyOwnerFirstBond();
         _configure(address(this), 1 ether, bytes32("callback"));
         uint256 id_ = _issue(address(this));
         MigrationOwnerReceiver receiver_ = new MigrationOwnerReceiver(migration);

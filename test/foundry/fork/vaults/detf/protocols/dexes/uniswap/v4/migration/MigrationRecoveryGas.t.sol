@@ -14,13 +14,18 @@ import {MigrationRecoveryForkBase} from "./MigrationRecoveryForkBase.sol";
 /// @notice Selected-work measurements, not a claim that Foundry's permissive gas cap is a chain limit.
 contract MigrationRecoveryGasTest is MigrationRecoveryForkBase {
     function test_selectedWorkIndependentOfTwentyFourUnrelatedSurrenders() public {
+        Migration.NftEntitlementInput[] memory rows_ = _populationInputs();
+        vm.prank(migrationOwner);
+        allocation.configureNftEntitlements(rows_);
+        _configureNft(EARLIER, 4);
         _take(WEIGHTED, 4);
         _take(EARLIER, 4);
         Recovery.Step[] memory selected_ = _step(Recovery.Stage.WeightedClaim, 4, 0, 0);
         uint256 small_ = _measure(selected_, 2);
         selected_ = _step(Recovery.Stage.EarlierClaim, 4, 0, 0);
         uint256 earlierSmall_ = _measure(selected_, 2);
-        _populate();
+        _returnToOriginal(WEIGHTED, 26);
+        for (uint256 i_; i_ < rows_.length; ++i_) _surrender(WEIGHTED, rows_[i_].tokenId);
         selected_ = _step(Recovery.Stage.WeightedClaim, 4, 0, 0);
         uint256 large_ = _measure(selected_, 26);
         selected_ = _step(Recovery.Stage.EarlierClaim, 4, 0, 0);
@@ -57,8 +62,8 @@ contract MigrationRecoveryGasTest is MigrationRecoveryForkBase {
 
     /// @dev Original purchase receipt joins from phase01 weighted/probe.historical-receipts.json.
     /// Only direct authenticated nonzero ETH/WETH or DTF inputs; no missing value is treated as zero.
-    function _populate() private {
-        Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](24);
+    function _populationInputs() private pure returns (Migration.NftEntitlementInput[] memory rows_) {
+        rows_ = new Migration.NftEntitlementInput[](24);
         rows_[0] = Migration.NftEntitlementInput(WEIGHTED, 5, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 462445599, 50000000000000000, 0, 0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293, true);
         rows_[1] = Migration.NftEntitlementInput(WEIGHTED, 6, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 740825635, 80000000000000000, 0, 0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917, true);
         rows_[2] = Migration.NftEntitlementInput(WEIGHTED, 7, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 1200103129, 130000000000000000, 0, 0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296, true);
@@ -83,9 +88,5 @@ contract MigrationRecoveryGasTest is MigrationRecoveryForkBase {
         rows_[21] = Migration.NftEntitlementInput(WEIGHTED, 30, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 457125470, 0, 500000000000000000000000, 0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9, true);
         rows_[22] = Migration.NftEntitlementInput(WEIGHTED, 31, address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8")), 4031493805, 6190000000000000000, 0, 0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04, true);
         rows_[23] = Migration.NftEntitlementInput(WEIGHTED, 32, address(bytes20(hex"4dfebb21d855115d4019819393e514977e490e5d")), 54436459, 0, 56017714220190058289217, 0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914, true);
-        vm.prank(migrationOwner);
-        allocation.configureNftEntitlements(rows_);
-        _returnToOriginal(WEIGHTED, 26);
-        for (uint256 i_; i_ < rows_.length; ++i_) _surrender(WEIGHTED, rows_[i_].tokenId);
     }
 }

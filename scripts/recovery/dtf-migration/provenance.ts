@@ -61,6 +61,7 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
   };
   for (const row of input.independent) for (const item of row.entitlements) check(item.proof, item.original);
   for (const row of input.nfts) check(row.proof, row.original);
+  for (const row of input.weightedLiquid) check(row.proof, row.original);
   const descendants = new Set<string>();
   for (const row of input.exposures) {
     const { proof, ...record } = row;

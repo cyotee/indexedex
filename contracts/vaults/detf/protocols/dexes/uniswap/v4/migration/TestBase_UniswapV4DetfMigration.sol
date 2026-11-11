@@ -335,6 +335,20 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         return migration.independentAllocation(recipient_).totalCredit;
     }
 
+    /// @dev Explicit synthetic paid capital, separate from compensation and booked donations.
+    function _buyOwnerFirstBond() internal returns (uint256 id_) {
+        return _buyOwnerFirstBond(1 ether);
+    }
+
+    function _buyOwnerFirstBond(uint256 amount_) internal returns (uint256 id_) {
+        address buyer_ = migration.owner();
+        IERC20(pairA).transfer(buyer_, amount_);
+        vm.startPrank(buyer_);
+        IERC20(pairA).approve(detf, amount_);
+        (id_,) = migration.bond(IERC20(pairA), amount_, 90 days, buyer_, false, block.timestamp);
+        vm.stopPrank();
+    }
+
     function _issue(address recipient_) internal returns (uint256) {
         Migration.IndependentIssuanceRequest[] memory requests_ = new Migration.IndependentIssuanceRequest[](1);
         requests_[0] = Migration.IndependentIssuanceRequest(recipient_, migration.independentAllocation(recipient_).configurationId);

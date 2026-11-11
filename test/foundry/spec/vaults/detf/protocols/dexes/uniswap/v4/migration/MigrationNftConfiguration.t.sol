@@ -155,6 +155,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
             vm.expectRevert(Migration.UnexpectedNftCallback.selector);
             IERC721Receiver(detf).onERC721Received(detf, address(this), 3, "");
             if (stage_ == 0) {
+                _buyOwnerFirstBond();
                 vm.prank(migrationOwner);
                 allocation.activateMigration();
             }
@@ -163,7 +164,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
     }
 
     function test_retainedDeclarationIncludesEveryProductSelector() public {
-        bytes4[] memory expected_ = new bytes4[](17);
+        bytes4[] memory expected_ = new bytes4[](22);
         expected_[0] = Migration.migrationActivated.selector;
         expected_[1] = Migration.migrationSyRewardToken.selector;
         expected_[2] = Migration.migrationSnapshotSource.selector;
@@ -181,8 +182,14 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         expected_[14] = Migration.previewNftSurrender.selector;
         expected_[15] = Migration.surrenderMigrationNft.selector;
         expected_[16] = IERC721Receiver.onERC721Received.selector;
+        expected_[17] = Migration.weightedLiquidEntitlement.selector;
+        expected_[18] = Migration.weightedLiquidSurrender.selector;
+        expected_[19] = Migration.previewWeightedLiquidSurrender.selector;
+        expected_[20] = Migration.surrenderMigrationWeightedLiquid.selector;
+        expected_[21] = Migration.migrationOwnerFirstBondTokenId.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
+        _buyOwnerFirstBond();
         vm.prank(migrationOwner);
         allocation.activateMigration();
         for (uint256 i_; i_ < expected_.length; ++i_) {

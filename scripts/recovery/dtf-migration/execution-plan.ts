@@ -57,6 +57,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
       const p = requirePrepared(domain);
       for (const row of p.payloads.configure.independent) add("configureIndependentAllocations", [[row.input]]);
       for (const row of p.payloads.configure.nfts) add("configureNftEntitlements", [[row.input]]);
+      for (const row of p.payloads.configure.weightedLiquid) add("configureWeightedLiquidEntitlements", [[row.input]]);
       if (!operations.length) throw new ExecutionError("DOMAIN", "no supported configuration selected");
       break;
     }
@@ -64,6 +65,14 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
       for (const row of requirePrepared(domain).payloads.independentIssue.requests) add("issueIndependentAllocations", [[row]]);
       if (!operations.length) throw new ExecutionError("DOMAIN", "no independent issuance selected");
       break;
+    case "owner-bond": {
+      requirePrepared(domain);
+      const purchase = m.ownerBond;
+      if (!purchase) throw new ExecutionError("DOMAIN", "owner-bond requires explicit payment, duration and deadline");
+      add("approve", [m.proxy, purchase.amount], erc20Abi, purchase.token);
+      add("bond", [purchase.token, purchase.amount, purchase.duration, m.signer, false, purchase.deadline], abis.migration);
+      break;
+    }
     case "activate": requirePrepared(domain); add("activateMigration", []); break;
     case "harvest": {
       const h = requirePrepared(domain).payloads.harvest;

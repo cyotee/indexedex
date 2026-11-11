@@ -65,6 +65,7 @@ contract MigrationRetainedAccountingTest is TestBase_UniswapV4DetfMigration {
         _fundAndCapture();
         _configure(address(this), 1 ether, bytes32("roles"));
         _issue(address(this));
+        _buyOwnerFirstBond();
         _donate(100 ether);
         vm.warp(vm.getBlockTimestamp() + 8 hours);
         migration.synchronizeRewards();
@@ -92,6 +93,7 @@ contract MigrationRetainedAccountingTest is TestBase_UniswapV4DetfMigration {
         _fundAndCapture();
         uint256 principal_ = _configure(address(this), 1e7, bytes32("quantum"));
         uint256 id_ = _issue(address(this));
+        _buyOwnerFirstBond(1e7);
         _donate(100 ether);
         // Exercise the admitted uint64 timestamp/index domain through actual funded expansion,
         // rather than injecting a small index or pretending sub-RT gons are always native dust.

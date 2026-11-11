@@ -19,7 +19,9 @@ validate rereads evidence, code identities, snapshot and independent ETH/DTF quo
 RPC comes only from the manifest's rpcEnv environment variable. No signer is loaded.
 All integers are decimal strings. Inputs are full replacements, not deltas.
 Unsupported categories fail closed. Synthetic datasets are loopback-only.
-Stages: deploy, fund, capture, configure, independent-issue, verify, activate, harvest.
+Stages: deploy, fund, capture, configure, independent-issue, owner-bond, verify, activate, harvest.
+owner-bond requires explicit token, amount, ordinary duration and deadline in the manifest.
+Activation requires the confirmed paid owner purchase; resume reconciles its original receipt.
 Every stage and resume defaults to read-only validation; no signer is loaded.
 Local execution: --execute-local --instance-id <exact observed Anvil instance ID>.
 Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
@@ -27,7 +29,9 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
 --reverse reorders only independent unsettled configuration/issuance rows.
 --fault-after-mined is restricted to synthetic-local interruption rehearsal.
   bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
-    --fork-block 108944663 --port 18562 --checkpoint <directory> --evidence <directory>
+    --fork-block 108944663 --port 18563
+    --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid
 `;
 
 export async function main(args: readonly string[]): Promise<void> {

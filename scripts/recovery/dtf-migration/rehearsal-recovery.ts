@@ -16,7 +16,7 @@ type Context = {
 export async function exerciseRecovery(context: Context) {
   const { chain, manifest, input, evidence, runtime, cli, local } = context;
   const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
-  await exerciseAdmission({ chain, manifest, input, evidence, activated: false });
+  await exerciseAdmission({ chain, manifest, input, evidence, activated: true });
   let sequence = 0;
   const harvest = async (step: RecoveryStep) => {
     const name = `harvest-${String(++sequence).padStart(2, "0")}-${step.stage}`;

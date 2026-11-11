@@ -117,9 +117,9 @@ contract MigrationRecoveryWeightedTest is MigrationRecoveryForkBase {
         _run(Recovery.Stage.WeightedConvert, 0, amount_, 1);
     }
 
-    function test_currentOwnerBeforeAfterAcceptanceAndActivation() public {
-        _take(WEIGHTED, 4);
+    function test_currentOwnerBeforeAfterAcceptanceInStageTwo() public {
         _configureNft(WEIGHTED, 26);
+        _take(WEIGHTED, 4);
         address next_ = makeAddr("next recovery owner");
         vm.prank(migrationOwner);
         IMultiStepOwnable(detf).initiateOwnershipTransfer(next_);
@@ -136,8 +136,6 @@ contract MigrationRecoveryWeightedTest is MigrationRecoveryForkBase {
         recovery.recoverMigrationNfts(steps_, block.timestamp);
         migrationOwner = next_;
         _run(Recovery.Stage.WeightedRewards, 4, 0, 0);
-        vm.prank(next_);
-        allocation.activateMigration();
         _returnToOriginal(WEIGHTED, 26);
         _surrender(WEIGHTED, 26);
         _run(Recovery.Stage.WeightedClaim, 26, 0, 0);

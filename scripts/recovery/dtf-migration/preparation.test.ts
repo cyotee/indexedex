@@ -46,7 +46,8 @@ test("emits full separate replacements and independently quoted native credits",
   assert.deepEqual(result.payloads.independentIssue.requests, [{
     recipient: a(20), configurationId: result.payloads.configure.independent[0]?.configurationId,
   }]);
-  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 10);
+  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 9);
+  assert.deepEqual(result.payloads.configure.weightedLiquid[0]?.input, f.input.weightedLiquid[0]?.original);
   assert.equal(f.methods.every((m) => ["eth_chainId", "eth_getBlockByNumber", "eth_getCode", "eth_call"].includes(m)), true);
 });
 test("normalization is stable under reordered records and source bindings", async () => {
@@ -67,7 +68,7 @@ for (const kind of ["chain", "block", "snapshot", "proxy", "package"] as const) 
   test(`rejects wrong ${kind} domain before accepting payloads`, async () => {
     const f = await setup();
     const input = {
-      ...f.input, nfts: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
+      ...f.input, nfts: [], weightedLiquid: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
         ...f.input.domain,
         chainId: kind === "chain" ? "1" : f.input.domain.chainId,
         blockHash: kind === "block" ? h(3) : f.input.domain.blockHash,
@@ -152,7 +153,7 @@ test("rejects overlapping originals and missing origin partitions", async () => 
   assert.throws(() => buildPayloads({ ...f.input, independent: [row, { ...row, recipient: a(25) }] }), /overlapping original/);
   assert.throws(() => buildPayloads({ ...f.input, nfts: [] }), /unassigned origin/);
 });
-for (const category of ["weighted-liquid", "earlier-liquid", "weighted-receipt", "earlier-receipt",
+for (const category of ["earlier-liquid", "weighted-receipt", "earlier-receipt",
   "weighted-sy", "token-staking", "claim-vault", "underlying-se", "fungible-lp", "earlier-liquidation"] as const) {
   test(`blocks ${category} without forging executable config`, async () => {
     const f = await setup();
@@ -165,7 +166,7 @@ test("rejects a nonconserving origin partition", async () => {
   const f = await setup();
   const exposures = f.input.exposures.map(({ proof, ...e }, i) => i === 0 ? { ...e, recoveredUnits: "11" } : e);
   const body = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
-    ...f.input.nfts.map((n) => n.original)], exposures });
+    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original)], exposures });
   await writeFile(f.evidencePath, body);
   const input = preparationInput.parse({ ...f.input,
     sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(body), bytes: Buffer.byteLength(body).toString() } : s),
@@ -238,7 +239,7 @@ test("preserves all category dispositions but emits no manifest for blocked expo
   const f = await setup();
   const exposures = f.input.exposures.map(({ proof, ...e }) => ({ ...e, category: "token-staking" }));
   const raw = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
-    ...f.input.nfts.map((n) => n.original)], exposures });
+    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original)], exposures });
   await writeFile(f.evidencePath, raw);
   const input = preparationInput.parse({ ...f.input,
     sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(raw), bytes: Buffer.byteLength(raw).toString() } : s),

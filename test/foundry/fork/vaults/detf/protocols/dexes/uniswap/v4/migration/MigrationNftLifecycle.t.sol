@@ -55,8 +55,9 @@ contract MigrationNftHolder is IERC721Receiver {
 }
 
 contract MigrationNftLifecycleTest is MigrationNftForkBase {
-    function test_replacementAfterConsumptionCannotResizeReopenOrCreateDescendantCredit() public {
+    function test_removedLoadersCannotResizeReopenOrCreateDescendantCredit() public {
         uint256 c0_ = _configureNft(WEIGHTED, 32);
+        _activate();
         (uint256 id_, uint256 paid_) = _surrender(WEIGHTED, 32);
         assertLt(paid_, c0_);
         bytes memory history_ = abi.encode(migration.nftSurrender(WEIGHTED, 32));
@@ -66,10 +67,15 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         a_[0] = _original(WEIGHTED, 32);
         a_[0].originalDtf *= 2;
         a_[0].originalWallet = makeAddr("corrected consumed wallet");
-        vm.startPrank(migrationOwner);
-        allocation.configureNftEntitlements(a_);
-        allocation.configureNftEntitlements(a_);
-        vm.stopPrank();
+        bytes32 configuration_ = migration.nftEntitlement(WEIGHTED, 32).configurationId;
+        vm.prank(migrationOwner);
+        (bool corrected_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_)));
+        assertFalse(corrected_);
+        a_[0] = _original(WEIGHTED, 32);
+        vm.prank(migrationOwner);
+        (bool replayed_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_)));
+        assertFalse(replayed_);
+        assertEq(migration.nftEntitlement(WEIGHTED, 32).configurationId, configuration_);
         assertEq(abi.encode(migration.nftSurrender(WEIGHTED, 32)), history_);
         assertEq(abi.encode(migration.nftCustody(WEIGHTED, 32)), custody_);
         assertEq(abi.encode(bonds.positionOf(id_)), bond_);
@@ -77,8 +83,13 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         vm.expectRevert(abi.encodeWithSelector(Migration.NftAlreadyConsumed.selector, WEIGHTED, 32));
         migration.surrenderMigrationNft(WEIGHTED, 32, 0, block.timestamp);
         bytes32 origin_ = migration.migrationNftOriginalId(WEIGHTED, 32);
-        vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, origin_));
-        _configure(address(this), 1 ether, origin_);
+        Migration.IndependentAllocationInput[] memory independent_ = new Migration.IndependentAllocationInput[](1);
+        independent_[0].recipient = address(this);
+        independent_[0].entitlements = new Migration.OriginalEntitlement[](1);
+        independent_[0].entitlements[0] = Migration.OriginalEntitlement(origin_, 1 ether, 0, bytes32("duplicate"));
+        vm.prank(migrationOwner);
+        (bool independentOk_,) = detf.call(abi.encodeCall(Allocation.configureIndependentAllocations, (independent_)));
+        assertFalse(independentOk_);
         assertFalse(migration.independentIssuance(address(this)).issued);
     }
 
@@ -87,12 +98,13 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         _configureNft(EARLIER, 4);
         _configureNft(WEIGHTED, 26);
         _configureNft(EARLIER, 3);
+        _configure(address(this), 1 ether, bytes32("independent clock"));
+        uint256 independent_ = _issue(address(this));
         uint256 firstStart_ = vm.getBlockTimestamp();
+        _activate();
         (uint256 first_,) = _surrender(WEIGHTED, 4);
         (uint256 second_,) = _surrender(EARLIER, 4);
         vm.warp(firstStart_ + 120 days);
-        vm.prank(migrationOwner);
-        allocation.activateMigration();
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureNftEntitlements.selector), address(0));
         _returnToOriginal(WEIGHTED, 26);
         (uint256 third_,) = _surrender(WEIGHTED, 26);
@@ -100,6 +112,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         assertNotEq(first_, second_); assertNotEq(second_, third_); assertNotEq(third_, fourth_);
         assertEq(bonds.positionOf(first_).startTimestamp, firstStart_);
         assertEq(bonds.positionOf(second_).startTimestamp, firstStart_);
+        assertEq(bonds.positionOf(independent_).startTimestamp, firstStart_);
         assertEq(bonds.positionOf(third_).startTimestamp, firstStart_ + 120 days);
         assertEq(bonds.positionOf(fourth_).startTimestamp, firstStart_ + 120 days);
         assertEq(bonds.previewClaim(third_).principalDue, 0);
@@ -122,6 +135,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
     function _receiverRollback(address collection_) private {
         MigrationNftHolder holder_ = new MigrationNftHolder(migration);
         _configureReceiver(collection_, 4, address(holder_));
+        _activate();
         address old_ = IERC721(collection_).ownerOf(4);
         vm.prank(old_);
         IERC721(collection_).safeTransferFrom(old_, address(holder_), 4);
@@ -131,12 +145,12 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(holder_)));
         holder_.surrender(collection_, 4);
         _assertNotConsumed(collection_, 4, address(holder_), supply_);
-        assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
+        assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));
         assertEq(abi.encode(migration.nftEntitlement(collection_, 4)), config_);
         assertEq(IERC721(collection_).getApproved(4), address(0));
         holder_.reject(false);
         (uint256 id_, uint256 paid_) = holder_.surrender(collection_, 4);
-        assertEq(id_, 3);
+        assertEq(id_, migration.migrationOwnerFirstBondTokenId() + 1);
         assertEq(bonds.positionOf(id_).principal, paid_);
         assertTrue(holder_.observedFunded());
         assertEq(IERC721(collection_).ownerOf(4), detf);
@@ -154,6 +168,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
 
     function test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender() public {
         uint256 c0_ = _configureNft(EARLIER, 4);
+        _activate();
         address holder_ = IERC721(EARLIER).ownerOf(4);
         vm.prank(holder_);
         IERC721(EARLIER).approve(detf, 4);
@@ -169,7 +184,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         ));
         assertFalse(ok_);
         _assertNotConsumed(EARLIER, 4, holder_, supply_);
-        assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
+        assertEq(IERC721(address(bonds)).ownerOf(migration.migrationOwnerFirstBondTokenId() + 1), address(0));
         assertEq(IERC20(detf).balanceOf(address(bonds)), 0);
         assertEq(IERC721(EARLIER).getApproved(4), detf);
         _surrender(EARLIER, 4);
@@ -178,6 +193,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
     function test_earlierContractHolderCallbackCannotReenterReplayOrActivate() public {
         MigrationNftHolder holder_ = new MigrationNftHolder(migration);
         _configureReceiver(EARLIER, 3, address(holder_));
+        _activate();
         address old_ = IERC721(EARLIER).ownerOf(3);
         vm.prank(old_);
         IERC721(EARLIER).safeTransferFrom(old_, address(holder_), 3);
@@ -189,7 +205,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         assertFalse(holder_.reentrySucceeded());
         assertFalse(holder_.activationSucceeded());
         assertFalse(holder_.replaySucceeded());
-        assertFalse(migration.migrationActivated());
+        assertTrue(migration.migrationActivated());
         assertEq(IERC721(address(bonds)).ownerOf(id_), address(holder_));
         assertEq(bonds.positionOf(id_).principal, paid_);
         assertEq(migration.nftSurrender(EARLIER, 3).holder, address(holder_));
@@ -200,6 +216,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         Migration first_ = migration;
         address holder_ = IERC721(EARLIER).ownerOf(3);
         bytes32 firstOrigin_ = migration.migrationNftOriginalId(EARLIER, 3);
+        _activate();
         _surrender(EARLIER, 3);
         address secondOwner_ = makeAddr("second migration owner");
         address second_ = _deployMigration(_migrationArgs(secondOwner_));
@@ -209,6 +226,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         bonds = Bonds(migration.bondNftVault());
         _fundHistoricalBook();
         _configureNft(EARLIER, 3);
+        _activate();
         assertNotEq(migration.migrationNftOriginalId(EARLIER, 3), firstOrigin_);
         assertFalse(migration.nftSurrender(EARLIER, 3).consumed);
         vm.prank(holder_);
@@ -217,6 +235,6 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         assertEq(IERC721(EARLIER).ownerOf(3), address(first_));
         assertTrue(first_.nftSurrender(EARLIER, 3).consumed);
         assertFalse(migration.nftSurrender(EARLIER, 3).consumed);
-        assertEq(receipt.stakingState().totalGons, 0);
+        assertEq(receipt.stakingState().totalGons, initialTotalGons);
     }
 }

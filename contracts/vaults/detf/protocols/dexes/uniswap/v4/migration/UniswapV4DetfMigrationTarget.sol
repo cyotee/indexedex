@@ -16,6 +16,9 @@ import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswap
 import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
 import {IMigrationLegacyNft} from "./legacy/IMigrationLegacyNft.sol";
 import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
+import {UniswapV4DetfMigrationRecoveryRepo as RecoveryRepo} from "./UniswapV4DetfMigrationRecoveryRepo.sol";
 
 /// @notice Permanent lifecycle reads and permissionless measured capital contributions.
 contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
@@ -23,6 +26,9 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
     using AddressSetRepo for AddressSet;
 
     function migrationActivated() external view returns (bool) { return Repo._layoutStruct().activated; }
+    function migrationOwnerFirstBondTokenId() external view returns (uint256) {
+        return Repo._layoutStruct().ownerFirstBondTokenId;
+    }
     function migrationSyRewardToken() external view returns (address) { return Repo._layoutStruct().rewardToken; }
     function migrationBootstrapSelfMinted() external view returns (uint256) {
         return Repo._layoutStruct().bootstrapSelfMinted;
@@ -45,6 +51,71 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
         return Repo._layoutStruct().issuances[recipient_];
     }
 
+    function weightedLiquidEntitlement(bytes32 originalId_)
+        external view returns (Migration.WeightedLiquidEntitlement memory)
+    { return Repo._layoutStruct().weightedLiquidEntitlements[originalId_]; }
+
+    function weightedLiquidSurrender(bytes32 originalId_)
+        external view returns (Migration.WeightedLiquidSurrender memory)
+    { return Repo._layoutStruct().weightedLiquidSurrenders[originalId_]; }
+
+    function previewWeightedLiquidSurrender(bytes32 originalId_, uint256 amount_)
+        public view returns (uint256 credit_)
+    {
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Migration.WeightedLiquidEntitlement storage config_ = m_.weightedLiquidEntitlements[originalId_];
+        if (!config_.configured) revert Migration.InvalidWeightedLiquidEntitlement(originalId_);
+        if (block.chainid != 4663 || config_.original.source != Legacy.WEIGHTED_DETF) {
+            revert Migration.UnsupportedWeightedLiquidSource(block.chainid, config_.original.source);
+        }
+        Migration.WeightedLiquidSurrender storage s_ = m_.weightedLiquidSurrenders[originalId_];
+        if (amount_ == 0 || amount_ > s_.remainingUnits) {
+            revert Migration.InvalidWeightedLiquidQuantity(amount_, s_.remainingUnits);
+        }
+        credit_ = amount_ == s_.remainingUnits
+            ? s_.remainingCredit : Math.mulDiv(s_.remainingCredit, amount_, s_.remainingUnits);
+        if (credit_ == 0) revert Migration.InvalidWeightedLiquidEntitlement(originalId_);
+    }
+
+    function surrenderMigrationWeightedLiquid(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external nonReentrant returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        if (!Repo._layoutStruct().activated) revert Migration.MigrationSurrenderClosed();
+        _requireIdleChildren();
+        _requireNotDisabled();
+        _requireReserveLive();
+        if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
+        credit_ = previewWeightedLiquidSurrender(originalId_, amount_);
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Migration.WeightedLiquidEntitlement storage config_ = m_.weightedLiquidEntitlements[originalId_];
+        if (msg.sender != config_.original.originalWallet) {
+            revert Migration.NotOriginalWeightedLiquidWallet(msg.sender, config_.original.originalWallet);
+        }
+        if (credit_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, credit_);
+        IERC20 token_ = IERC20(Legacy.WEIGHTED_DETF);
+        uint256 walletBefore_ = token_.balanceOf(msg.sender);
+        uint256 custodyBefore_ = token_.balanceOf(address(this));
+        token_.safeTransferFrom(msg.sender, address(this), amount_);
+        uint256 walletAfter_ = token_.balanceOf(msg.sender);
+        uint256 custodyAfter_ = token_.balanceOf(address(this));
+        if (walletAfter_ > walletBefore_ || walletBefore_ - walletAfter_ != amount_
+            || custodyAfter_ < custodyBefore_ || custodyAfter_ - custodyBefore_ != amount_) {
+            revert Migration.WeightedLiquidCustodyFailed();
+        }
+        Migration.WeightedLiquidSurrender storage s_ = m_.weightedLiquidSurrenders[originalId_];
+        s_.consumedUnits += amount_;
+        s_.deliveredCredit += credit_;
+        s_.remainingUnits -= amount_;
+        s_.remainingCredit -= credit_;
+        RecoveryRepo._layoutStruct().inventory[Legacy.WEIGHTED_DETF] += amount_;
+        _realizeExpansionIfNeeded();
+        bondTokenId_ = Repo._fundBond(credit_, msg.sender);
+        _syncAllExpectedHoldReserves();
+        emit Migration.MigrationWeightedLiquidSurrendered(
+            originalId_, config_.configurationId, msg.sender, amount_, credit_, bondTokenId_
+        );
+    }
+
     function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32) {
         return NftLib.originalId(collection_, tokenId_);
     }
@@ -64,6 +135,7 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
     function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
         external nonReentrant returns (uint256 bondTokenId_, uint256 credit_)
     {
+        if (!Repo._layoutStruct().activated) revert Migration.MigrationSurrenderClosed();
         _requireIdleChildren();
         _requireNotDisabled();
         _requireReserveLive();

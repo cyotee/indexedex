@@ -7,6 +7,7 @@ import type { Rpc } from "./execution-rpc.js";
 import { ExecutionError } from "./execution-schema.js";
 import type { Completion, Intent, Receipt } from "./execution-schema.js";
 import { canonical, fingerprint } from "./provenance.js";
+import { captureOwnerBond } from "./execution-owner-bond.js";
 
 function tuple(value: unknown): Result {
   if (!(value instanceof Result)) throw new ExecutionError("STATE", "invalid contract tuple");
@@ -122,6 +123,33 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       }
       break;
     }
+    case "configureWeightedLiquidEntitlements": {
+      requireEvent("WeightedLiquidEntitlementConfigured");
+      const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
+      if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid weighted liquid configuration array");
+      for (const row of rows) {
+        const originalId = String(tuple(row).getValue("originalId"));
+        const expected = requirePrepared(domain).payloads.configure.weightedLiquid.find((r) => r.input.originalId === originalId);
+        if (!expected) throw new ExecutionError("STATE", "unbound weighted liquid configuration");
+        const actual = tuple((await query("weightedLiquidEntitlement", [originalId]))[0]);
+        if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== expected.configurationId
+          || String(actual.getValue("credit")) !== expected.quotedCredit
+          || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== expected.input.originalWallet
+          || !events.some((e) => e.name === "WeightedLiquidEntitlementConfigured"
+            && e.values[0] === originalId && e.values[1] === expected.configurationId
+            && e.values[2]?.toLowerCase() === expected.input.originalWallet
+            && e.values[3] === expected.input.originalUnits && e.values[4] === expected.quotedCredit)) {
+          throw new ExecutionError("STATE", "weighted liquid payload, storage or event differs");
+        }
+        const unspent = tuple((await query("weightedLiquidSurrender", [originalId]))[0]);
+        if (unspent.getValue("consumedUnits") !== 0n || unspent.getValue("deliveredCredit") !== 0n
+          || String(unspent.getValue("remainingUnits")) !== expected.input.originalUnits
+          || String(unspent.getValue("remainingCredit")) !== expected.quotedCredit) {
+          throw new ExecutionError("STATE", "Stage1 weighted liquid loading did not initialize the full Q/C baseline");
+        }
+      }
+      break;
+    }
     case "issueIndependentAllocations": {
       requireEvent("IndependentAllocationIssued");
       for (const event of events.filter((e) => e.name === "IndependentAllocationIssued")) {
@@ -150,9 +178,16 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       }
       break;
     }
+    case "bond":
+      requireEvent("MigrationOwnerFirstBondPurchased");
+      Object.assign(state, await captureOwnerBond(rpc, domain, item, mined));
+      break;
     case "activateMigration":
       requireEvent("MigrationActivated");
       if ((await query("migrationActivated"))[0] !== true) throw new ExecutionError("STATE", "activation state mismatch");
+      if (z.bigint().parse((await query("migrationOwnerFirstBondTokenId"))[0]) < 3n) {
+        throw new ExecutionError("STATE", "activation lacks completed paid owner purchase");
+      }
       for (const fragment of abis.allocation.fragments) {
         if (fragment.type !== "function") continue;
         const fn = abis.allocation.getFunction(fragment.format("sighash"));
@@ -209,6 +244,15 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
       || String(actual.getValue("credit")) !== row.quotedCredit
       || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
       throw new ExecutionError("STATE", "NFT configuration mismatch");
+    }
+  }
+  for (const row of prepared.payloads.configure.weightedLiquid) {
+    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "weightedLiquidEntitlement",
+      [row.input.originalId]))[0]);
+    if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== row.configurationId
+      || String(actual.getValue("credit")) !== row.quotedCredit
+      || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
+      throw new ExecutionError("STATE", "weighted liquid configuration mismatch");
     }
   }
   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };

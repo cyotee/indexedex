@@ -23,6 +23,7 @@ contract MigrationEgressTest is TestBase_UniswapV4DetfMigration {
     function setUp() public override {
         super.setUp();
         _fundAndCapture();
+        _buyOwnerFirstBond();
         principal = _configure(address(this), 1 ether, bytes32("egress-original"));
         bondId = _issue(address(this));
         _donateCapital();

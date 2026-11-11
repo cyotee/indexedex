@@ -20,7 +20,7 @@ Preparation requires an actual funded and captured snapshot. It verifies raw
 source SHA-256 and byte lengths, full original proof objects, origin
 partitions, code/domain identities, the complete immutable snapshot and
 separate ETH/DTF frozen quotes. It writes full `independent.json` and
-`nfts.json` review mirrors plus the accepted `manifest.json`. These contain
+`nfts.json` and `weighted-liquid.json` review mirrors plus the accepted `manifest.json`. These contain
 configuration, not issued bonds. Every write is exclusive; retain a failed
 directory as failed evidence and select a fresh output directory.
 
@@ -38,8 +38,28 @@ The configuration ABI and hash include it immediately after `tokenId`.
 The wallet-independent economic-origin key does not change. Existing payloads
 without this field must be regenerated, not filled from live `ownerOf`.
 The retained surrender caller must equal this wallet and the live owner;
-approval alone is insufficient. A transfer back permits surrender without
-transfer-history proof. Configuration correction never resets consumption.
+approval alone is insufficient. Stage 1 rejects surrender before custody;
+Stage 2 permits transfer-back surrender without transfer-history proof.
+All configuration is removed before any surrender can consume credit.
+
+Weighted liquid inputs use `weightedLiquid`, with full `original` and `proof`
+objects. Required original fields are `originalId`, `originalWallet`, `source`,
+`originalUnits`, `originalEth`, `originalDtf`, `evidenceId` and
+`contributionsKnown: true`. The source is only WD
+`0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7` on chain 4663, in native
+nine-decimal units. A verified zero contribution is valid; unknown is not zero.
+The wallet-independent canonical economic origin must be shared with any
+overlapping independent or NFT allocation, not replaced by a fresh alias.
+No global alias proof or approved real-user Q0 allocation is supplied here.
+Current balances establish custody only, never original quantity or price.
+
+The W-L rehearsal first loads a labeled synthetic original record, Q0
+21,225,531, original ETH 10,000,000,000,000,000 wei and original DTF zero.
+Its Stage 1 full replacement sets Q0 to 21,225,530 and original ETH to
+6,000,000,000,000,000 wei before activation. Neither is an approved historical
+allocation. The final correction report is `weighted-liquid/stage2-correction/report.md`.
+The sealed incomplete `implementation/report.md` and needs-fix
+`verification/report.md` remain historical evidence, not passing acceptance.
 
 Local script checks:
 
@@ -54,7 +74,7 @@ execution, real pricing evidence, approved allocation or public loader input.
 ## Execution and recovery
 
 The fixed stage names remain `deploy`, `fund`, `capture`, `configure`,
-`independent-issue`, `verify`, `activate`, `harvest`, `resume`, and `rehearse`.
+`independent-issue`, `owner-bond`, `verify`, `activate`, `harvest`, `resume`, and `rehearse`.
 The execution schema is `scripts/recovery/dtf-migration/execution-schema.ts`.
 An execution manifest is a strict `dtf-operator-execution-v1` object. It binds
 chain, RPC environment-variable name, signer, proxy, registry, package, every
@@ -73,6 +93,34 @@ unique identities and complete token/amount/native/minimum/deadline values.
 capture, create the preparation input from the actual snapshot, run `prepare`,
 and bind its path and snapshot ID in a new execution manifest. The execution
 lane always calls `validateManifest`; it never trusts a payload hash alone.
+
+Before `activate`, execute the current proxy owner's first genuine paid
+ordinary bond using `owner-bond`. Supply `ownerBond` with explicit decimal
+`amount`, ordinary `duration`, `deadline`, and the payment `token`; no public
+amount or duration is approved by this runbook. The operator approves that
+exact payment and calls the existing `bond` with the signer as recipient and
+`pretransferred=false`. It reconciles the canonical receipt, completed
+instance bond ID, actual payment debit, funded principal/gons, ordinary
+position marker, funded rewards, backing and retained fee/creator rewards.
+Independent compensation does not satisfy activation. An absent completed
+purchase rejects on-chain before any selector removal.
+
+The purchase's journal is separate from compensation issuance. Resume that
+same checkpoint after interruption: a mined purchase is reconciled from its
+original transaction and receipt, not purchased again. Ownership or NFT
+transfer does not erase the instance's completed purchase. No second Stage1
+purchase or other acquisition route is opened; Stage1 rewards stay retained.
+The fixed18563 rehearsal uses a clearly synthetic 1 ETH-unit payment and
+90-day ordinary linear bond, tests a mined-before-checkpoint purchase and
+fresh-process resumes, then activates and performs an actual nonowner
+ordinary deposit. This is not a compensation cliff or a public execution
+recommendation.
+
+Current owner-bond evidence is written under
+`weighted-liquid/owner-bond-correction/`; previous Stage2 producer/verifier
+reports and receipts remain immutable history. Runtime manifests bind the
+current main plan r5, PRD r22 and owner-first-bond directive, not stale
+worktree requirement copies.
 
 ```text
 bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
@@ -128,9 +176,9 @@ The fixed rehearsal invocation is:
 bun scripts/recovery/dtf-migration/cli.ts rehearse \
   --rpc-alias robinhood_mainnet_alchemy \
   --fork-block 108944663 \
-  --port 18562 \
-  --checkpoint .omo-runtime/dtf-migration-wallet-admission/checkpoints \
-  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission
+  --port 18563 \
+  --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints \
+  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid
 ```
 
 The source pin is chain4663, L2 block108944663, hash
@@ -157,16 +205,16 @@ Every local command and receipt is retained under an exclusive rehearsal
 evidence directory. Journals are copied there before the owned node exits
 and its temporary checkpoint root is removed.
 
-Run from the wallet-admission worktree on
-`work/dtf-migration-phase-12-wallet-admission`, based on
-`3f577eeca049c1bd70a812d130941c8a38dd4781`. The existing archive alias is
+Run from the weighted-liquid worktree on
+`work/dtf-migration-phase-13-weighted-liquid`, based on
+`2c2b3370ded30cae1662329025d4fb58f7197330`. The existing archive alias is
 resolved through `forge config --json`. On this workstation its credential
 is in the existing interactive login environment; `/bin/zsh -lic` can wrap
 the exact command above. Do not print the resolved endpoint. The wrapper
 uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
 and the existing warm `out/`, `cache_forge/` and dependency links.
 
-Port 18562 must be unused and the chosen checkpoint directory absent before
+Port 18563 must be unused and the chosen checkpoint directory absent before
 starting. The command creates its own node and checkpoint directory; it
 does not adopt an existing node or overwrite an old checkpoint. EIP-170
 remains enabled. The local 100-million block gas cap, one-billion Forge
@@ -190,15 +238,18 @@ feasibility issue for the separately authorized production/package lane.
 | `prepare`, `validate` | Pinned source originals and actual captured snapshot | Separate whole independent/NFT replacements, native quotes and fingerprints |
 | `configure` | Validated post-capture manifest | Actual replacement IDs/credits; unchanged supply |
 | `independent-issue` | Explicit selected recipients | Actual new funded bond IDs, principal, recipient and fresh cliff |
-| Original-wallet surrender | Explicit configured original wallet, actual ownership, approval and `surrenderMigrationNft` | Actual old NFT custody/consumption and a separate exactly funded fresh bond |
 | `verify`, `activate` | Final replacement manifest and completed selected issuance | Effective configurations, atomic selector removal and postactivation verification |
+| Original-wallet surrender | Finalized activation, configured original wallet, actual ownership and approval | Actual NFT/W-L custody/consumption and a separate exactly funded fresh bond |
 | `harvest` | Consumed custody or attributed inventory; bounded typed selection | Measured claim/conversion/sale/donation and separate revaluation events |
 
-The rehearsal performs bounded recovery before activation, then verifies
-activation and both generations' late original-wallet surrender. Each phase
-executes approved-but-unconfigured, wrong-holder, approved-operator, and
-original-wallet-without-ownership rejections, checks unchanged custody,
-consumption and funding, and proves transfer-back success. Weighted ID26
+The rehearsal completes Stage 1 configuration/correction and independent
+issuance, proves NFT/W-L surrender rejection without custody, allowance,
+consumption or funding changes, and then activates. Only afterward does it
+execute partial/final W-L surrender, both NFT generations and bounded recovery.
+Postactivation negatives cover unconfigured, wrong-holder, approved-operator
+and original-wallet-without-ownership calls. Removed W-L loaders reject both
+identical and changed inputs after partial surrender without changing Q/C.
+Transfer-back succeeds only for the configured original wallet. Weighted ID26
 starts with its real transferred holder and is returned by an actual local
 source transaction to the explicitly recorded purchaser. No live owner is
 substituted into configuration. Recovery remains a separate retained API.
@@ -246,7 +297,7 @@ Default resumes are separately checked to leave the nonce unchanged.
 
 ### Reading receipts and cleanup
 
-Each `wallet-admission/implementation/rehearsal-<run>/` retains the redacted Anvil argv, Solar
+Each `weighted-liquid/stage2-correction/rehearsal-<run>/` retains the redacted Anvil argv, Solar
 environment command, numbered CLI command/exit records and logs, actual
 infrastructure/fixture receipts, deterministic data and `journal-*`
 directories. `.intent.json` contains signed local-development transaction
@@ -274,7 +325,7 @@ artifacts and dependency links.
 
 | Category | Unclosed gate |
 | --- | --- |
-| Weighted liquid DETF | H3/H4 original native-unit configuration and fungible surrender ledger absent |
+| Weighted liquid DETF | Approved original-wallet Q0/component allocation required; Stage2 correction report records bounded synthetic-input integration |
 | Earlier liquid DETF | H3/H6 original native-unit configuration/surrender absent; ED liquidation unproved |
 | Weighted receipt | H3/H4 original gon/credit mapping and synchronized fungible surrender absent |
 | Earlier receipt | H3/H6 original share denominator/fractional attribution unproved; earlier SE exits disabled |

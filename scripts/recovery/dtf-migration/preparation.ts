@@ -19,6 +19,7 @@ export function normalize(input: PreparationInput): PreparationInput {
     nfts: [...input.nfts].sort((a, b) => a.original.collection.localeCompare(b.original.collection)
       || (BigInt(a.original.tokenId) < BigInt(b.original.tokenId) ? -1 : BigInt(a.original.tokenId) > BigInt(b.original.tokenId) ? 1 : 0)),
     issueRecipients: [...input.issueRecipients].sort(),
+    weightedLiquid: [...input.weightedLiquid].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
     domain: { ...input.domain, bindings: [...input.domain.bindings]
       .sort((a, b) => a.role.localeCompare(b.role) || a.address.localeCompare(b.address)) },
   });
@@ -43,6 +44,9 @@ export async function prepareDomain(input: PreparationInput) {
     input: r, configurationId: configurationId(normalized.domain, r), originalId: nftOrigin(normalized.domain, r),
     quotedCredit: creditOf(r).toString(),
   }));
+  const weightedLiquid = payloads.weightedLiquid.map((r) => ({
+    input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
+  }));
   const requests = normalized.issueRecipients.map((recipient) => {
     const config = independent.find((r) => r.input.recipient === recipient);
     if (!config) throw new PreparationError("INPUT", "missing selected recipient");
@@ -54,11 +58,11 @@ export async function prepareDomain(input: PreparationInput) {
     input: normalized,
     normalizedHash: fingerprint(canonical(normalized)),
     payloads: {
-      configure: { independent, nfts },
+      configure: { independent, nfts, weightedLiquid },
       independentIssue: { requests },
       harvest: normalized.harvest,
     },
-    payloadHash: fingerprint(canonical({ independent, nfts, requests, harvest: normalized.harvest })),
+    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, requests, harvest: normalized.harvest })),
     quoteEvidence: quotes,
     dispositions: dispositions(normalized),
     fullTask9: "open" as const,
@@ -97,6 +101,8 @@ export async function prepareFile(inputPath: string, outputDirectory: string): P
     `${canonical(prepared.payloads.configure.independent.map((r) => r.input))}\n`, { flag: "wx" });
   await writeFile(resolve(outputDirectory, "nfts.json"),
     `${canonical(prepared.payloads.configure.nfts.map((r) => r.input))}\n`, { flag: "wx" });
+  await writeFile(resolve(outputDirectory, "weighted-liquid.json"),
+    `${canonical(prepared.payloads.configure.weightedLiquid.map((r) => r.input))}\n`, { flag: "wx" });
   // Exclusive creation protects a prior accepted dataset from accidental overwrite.
   // Manifest is the acceptance marker, written only after all review mirrors.
   await writeFile(resolve(outputDirectory, "manifest.json"), `${canonical(prepared)}\n`, { flag: "wx" });

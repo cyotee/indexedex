@@ -14,6 +14,7 @@ export const LEGACY = {
 } as const;
 export const legacyAbi = new Interface([
   "function ownerOf(uint256) view returns(address)",
+  "function getApproved(uint256) view returns(address)",
   "function approve(address,uint256)",
   "function transferFrom(address,address,uint256)",
   "function setApprovalForAll(address,bool)",

@@ -1,10 +1,12 @@
 import { AbiCoder, keccak256 } from "ethers";
 import { categories, PreparationError } from "./schema.js";
-import type { Domain, NftOriginal, Original, PreparationInput } from "./schema.js";
+import type { Domain, NftOriginal, Original, PreparationInput, WeightedLiquidOriginal } from "./schema.js";
 
 const coder = AbiCoder.defaultAbiCoder();
 const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
 const nftTuple = "tuple(address collection,uint256 tokenId,address originalWallet,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
+const weightedLiquidTuple = "tuple(bytes32 originalId,address originalWallet,address source,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
+export const weightedLiquidSource = "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7";
 export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
 export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
 export type IndependentPayload = {
@@ -15,10 +17,11 @@ export type IndependentPayload = {
 export type ConfigurationPayload = {
   readonly independent: readonly IndependentPayload[];
   readonly nfts: readonly NftOriginal[];
+  readonly weightedLiquid: readonly WeightedLiquidOriginal[];
 };
 
-export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal): string {
-  const tuple = "recipient" in input ? independentTuple : nftTuple;
+export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal): string {
+  const tuple = "recipient" in input ? independentTuple : "collection" in input ? nftTuple : weightedLiquidTuple;
   return keccak256(coder.encode(["uint256", "address", "bytes32", tuple],
     [domain.chainId, domain.proxy, domain.snapshotId, input]));
 }
@@ -29,7 +32,6 @@ export function nftOrigin(domain: Domain, input: NftOriginal): string {
 }
 
 const blockedGate = {
-  "weighted-liquid": "H3/H4: original native-unit configuration and fungible surrender ledger not implemented",
   "earlier-liquid": "H3/H6: original native-unit configuration and surrender not implemented; ED liquidation unproved",
   "weighted-receipt": "H3/H4: original gon/credit mapping and synchronized fungible surrender not implemented",
   "earlier-receipt": "H3/H6: original share denominator and fractional attribution unproved; earlier SE exits disabled",
@@ -47,6 +49,7 @@ export function dispositions(input: PreparationInput) {
       case "independent": return { category, disposition: "bounded", gate: "verified disjoint originals only" };
       case "weighted-nft":
       case "earlier-nft": return { category, disposition: "bounded", gate: "explicit original-wallet configuration and actual same-wallet NFT surrender required" };
+      case "weighted-liquid": return { category, disposition: "bounded", gate: "explicit original-wallet WD quantity/component allocation and measured surrender; operational allocations remain unapproved" };
       default: return { category, disposition: "blocked", gate: blockedGate[category] };
     }
   }).map((row) => ({ ...row, records: input.exposures.filter((e) => e.category === row.category).length.toString() }));
@@ -86,6 +89,16 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
     return original;
   }).sort((a, b) => a.collection.localeCompare(b.collection)
     || (BigInt(a.tokenId) < BigInt(b.tokenId) ? -1 : BigInt(a.tokenId) > BigInt(b.tokenId) ? 1 : 0));
+  const weightedLiquid = input.weightedLiquid.map(({ original }) => {
+    if (input.domain.chainId !== "4663" || original.source !== weightedLiquidSource) {
+      throw new PreparationError("DOMAIN", "weighted liquid source requires fixed WD on chain 4663");
+    }
+    claimOrigin(original.originalId, "weighted-liquid");
+    if (origins.get(original.originalId)?.originalUnits !== original.originalUnits) {
+      throw new PreparationError("PROVENANCE", "weighted liquid original units differ from reconciled origin");
+    }
+    return original;
+  }).sort((a, b) => a.originalId.localeCompare(b.originalId));
   if (used.size !== origins.size) throw new PreparationError("PROVENANCE", "unassigned origin; no silent omission");
   if (new Set(input.issueRecipients).size !== input.issueRecipients.length) {
     throw new PreparationError("INPUT", "duplicate issuance recipient");
@@ -123,5 +136,5 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
   if (input.harvest.steps.length > 0 && (input.domain.chainId !== "4663" || input.harvest.deadline === "0")) {
     throw new PreparationError("DOMAIN", "recovery requires chain 4663 and deadline");
   }
-  return { independent, nfts };
+  return { independent, nfts, weightedLiquid };
 }

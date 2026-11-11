@@ -13,6 +13,7 @@ contract MigrationPermitAndRetirementTest is TestBase_UniswapV4DetfMigration {
     function setUp() public override {
         super.setUp();
         _fundAndCapture();
+        _buyOwnerFirstBond();
         principal = _configure(address(this), 1 ether, bytes32("permit"));
         id = _issue(address(this));
         vm.warp(block.timestamp + 90 days);

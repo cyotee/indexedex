@@ -36,6 +36,9 @@ library UniswapV4DetfMigrationRepo {
         mapping(address => mapping(uint256 => Migration.NftCustody)) nftCustodies;
         mapping(bytes32 => bool) nftOriginal;
         NftReceipt expectedNft;
+        mapping(bytes32 => Migration.WeightedLiquidEntitlement) weightedLiquidEntitlements;
+        mapping(bytes32 => Migration.WeightedLiquidSurrender) weightedLiquidSurrenders;
+        uint256 ownerFirstBondTokenId;
     }
 
     struct NftReceipt {

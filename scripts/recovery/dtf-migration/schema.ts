@@ -40,6 +40,17 @@ export const nftOriginal = z.object({
   contributionsKnown: z.literal(true),
 }).strict().readonly();
 export const nft = z.object({ original: nftOriginal, proof }).strict().readonly();
+export const weightedLiquidOriginal = z.object({
+  originalId: identity,
+  originalWallet: address,
+  source: address,
+  originalUnits: positive,
+  originalEth: uint,
+  originalDtf: uint,
+  evidenceId: identity,
+  contributionsKnown: z.literal(true),
+}).strict().readonly();
+export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
 export const binding = z.object({
   role: z.enum(["proxy", "registry", "package", "facet"]),
   address,
@@ -95,6 +106,7 @@ export const preparationInput = z.object({
   exposures: z.array(exposure).readonly(),
   independent: z.array(independent).readonly(),
   nfts: z.array(nft).readonly(),
+  weightedLiquid: z.array(weightedLiquid).readonly(),
   issueRecipients: z.array(address).readonly(),
   harvest: z.object({
     steps: z.array(recoveryStep).max(8).readonly(),
@@ -107,6 +119,7 @@ export type Domain = z.infer<typeof domain>;
 export type Proof = z.infer<typeof proof>;
 export type Original = z.infer<typeof original>;
 export type NftOriginal = z.infer<typeof nftOriginal>;
+export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
 export type RecoveryStep = z.infer<typeof recoveryStep>;
 
 export class PreparationError extends Error {

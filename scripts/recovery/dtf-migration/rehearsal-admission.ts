@@ -23,7 +23,7 @@ const tokenAbi = new Interface([
 
 export async function exerciseAdmission(context: {
   readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
-  readonly evidence: string; readonly activated: boolean;
+  readonly evidence: string; readonly activated: boolean; readonly late?: boolean;
 }) {
   const { chain, manifest, input, evidence, activated } = context;
   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
@@ -38,6 +38,7 @@ export async function exerciseAdmission(context: {
   };
   const state = async (collection: string, tokenId: string, who: string) => [
     (await chain.call(collection, legacyAbi, "ownerOf", [tokenId])).toString(),
+    (await chain.call(collection, legacyAbi, "getApproved", [tokenId])).toString(),
     (await chain.call(manifest.proxy, migration, "nftEntitlement", [collection, tokenId])).toString(),
     (await chain.call(manifest.proxy, migration, "nftSurrender", [collection, tokenId])).toString(),
     (await chain.call(manifest.proxy, migration, "nftCustody", [collection, tokenId])).toString(),
@@ -78,14 +79,22 @@ export async function exerciseAdmission(context: {
     await wallet(holder, async () => {
       await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
     });
-    await reject(collection, tokenId, holder, "InvalidNftEntitlement", [collection, tokenId]);
+    await reject(collection, tokenId, holder, activated ? "InvalidNftEntitlement" : "MigrationSurrenderClosed",
+      activated ? [collection, tokenId] : []);
   }
   for (const { original } of input.nfts) {
     const { collection, tokenId, originalWallet } = original;
     const late = (collection === LEGACY.weighted && tokenId === "6")
       || (collection === LEGACY.earlier && tokenId === "9");
-    if (late !== activated) continue;
+    if (activated && late !== (context.late ?? false)) continue;
     const holder = address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]);
+    if (!activated) {
+      await wallet(holder, async () => {
+        await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
+      });
+      await reject(collection, tokenId, holder, "MigrationSurrenderClosed", []);
+      continue;
+    }
     if (holder !== originalWallet) {
       // Historical weighted ID26 is already transferred. Return by an actual source transaction.
       await wallet(holder, async () => {
@@ -151,5 +160,6 @@ export async function exerciseAdmission(context: {
     });
     await reject(collection, tokenId, originalWallet, "NftAlreadyConsumed", [collection, tokenId]);
   }
-  await save(join(evidence, `admission-${activated ? "after" : "before"}-activation.json`), { activated, observations });
+  await save(join(evidence, `admission-${activated ? context.late ? "late" : "after" : "before"}-activation.json`),
+    { activated, observations });
 }

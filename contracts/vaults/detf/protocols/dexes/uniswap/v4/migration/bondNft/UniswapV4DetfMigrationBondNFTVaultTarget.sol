@@ -17,11 +17,11 @@ import {UniswapV4DetfMigrationBondNFTRepo as MigrationRepo} from "./UniswapV4Det
 /// @notice Real funded bond custody with fresh Migration cliffs and gated reward delivery.
 /// @dev Inherited claims and all three ERC721 transfers consume the synchronization overrides.
 contract UniswapV4DetfMigrationBondNFTVaultTarget is DETFFundedBondTarget {
-    /// @notice Ordinary active purchases retain linear terms and never acquire a Migration marker.
+    /// @notice Paid purchases retain linear terms and never acquire a Migration marker.
+    /// @dev Only the fixed parent can create one; its bond entry enforces the Stage1 owner exception.
     function createFundedPosition(uint256 principal_, uint256 duration_, address recipient_)
         external override onlyDetf synchronized nonReentrant returns (uint256 tokenId_)
     {
-        _requireActivated();
         return _createFundedPosition(principal_, duration_, recipient_);
     }
 

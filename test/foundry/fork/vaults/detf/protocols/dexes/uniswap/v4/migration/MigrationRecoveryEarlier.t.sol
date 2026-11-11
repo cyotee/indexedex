@@ -77,6 +77,7 @@ contract MigrationRecoveryEarlierTest is MigrationRecoveryForkBase {
     }
 
     function test_middleLockedSaleRollsBackEarlierClaimAndPermitsSmallerRetry() public {
+        _configureNft(EARLIER, 3);
         _take(EARLIER, 4);
         _take(EARLIER, 3);
         bytes32 before_ = keccak256(abi.encode(IMigrationEarlierNft(EARLIER).getPosition(4)));
@@ -108,8 +109,7 @@ contract MigrationRecoveryEarlierTest is MigrationRecoveryForkBase {
     function test_earlierClaimAndSaleRemainAvailableAfterActivation() public {
         uint256 bond_ = _take(EARLIER, 4);
         bytes32 before_ = _protected(bond_);
-        vm.prank(migrationOwner);
-        allocation.activateMigration();
+        assertTrue(migration.migrationActivated());
         _run(Recovery.Stage.EarlierClaim, 4, 0, 0);
         _run(Recovery.Stage.EarlierSale, 4, 0, 1);
         assertEq(_protected(bond_), before_);

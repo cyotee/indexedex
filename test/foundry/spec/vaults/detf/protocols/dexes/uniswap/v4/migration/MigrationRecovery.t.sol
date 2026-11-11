@@ -31,6 +31,7 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
         assertTrue(Behavior_IFacet.areValid_IFacet_facetInterfaces(facet_, interfaces_, facet_.facetInterfaces()));
         assertLe(address(facet_).code.length, 24576);
         _fundAndCapture();
+        _buyOwnerFirstBond();
         vm.prank(migrationOwner);
         allocation.activateMigration();
         for (uint256 i_; i_ < selectors_.length; ++i_) {

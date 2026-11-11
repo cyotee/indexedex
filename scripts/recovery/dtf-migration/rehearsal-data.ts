@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { resolve, join } from "node:path";
+import { resolve, join, dirname } from "node:path";
 import { AbiCoder, Interface, Result, keccak256 } from "ethers";
 import type { ParamType } from "ethers";
 import { z } from "zod";
@@ -57,6 +57,9 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
     sourceFile("environment", environmentPath),
+    sourceFile("owner-first-bond-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md"),
+    sourceFile("current-main-plan", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"),
+    sourceFile("current-main-prd", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md"),
   ]);
   const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
   const parameter = pkg.getFunction("deployVault")?.inputs[0];
@@ -70,11 +73,14 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
   const allBindings = [...bindings];
   // Runtime boundary is parsed by executionManifest below.
   const otherBindings = [];
+  const runtimeCode = [];
   for (const binding of bound) {
     const code = hex.parse(await chain.send("eth_getCode", [binding.address, "latest"]));
     if (code === "0x") throw new ExecutionError("DOMAIN", `environment did not deploy ${binding.role}`);
     otherBindings.push({ ...binding, codeHash: keccak256(code) });
+    runtimeCode.push({ ...binding, code, codeHash: keccak256(code) });
   }
+  await save(join(dirname(environmentPath), "runtime-code.json"), runtimeCode);
   const metadata = z.object({
     instanceId: z.string(), forkedNetwork: z.object({ forkBlockNumber: z.number().int().safe(), forkBlockHash: hash }).passthrough(),
   }).passthrough().parse(await chain.send("anvil_metadata", []));
@@ -85,6 +91,7 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
       forkBlockHash: metadata.forkedNetwork.forkBlockHash }, proxy: environment.proxy, registry: environment.registry,
     package: environment.package, snapshotId: null, preparedManifest: null, deployment, sources,
     bindings: [...allBindings, ...otherBindings],
+    ownerBond: { token: environment.weth, amount: "1000000000000000000", duration: "7776000", deadline },
     funding: { donations: [{ id: `0x${fingerprint("synthetic donation one")}`, tokens: [environment.weth, LEGACY.dtf],
       amounts: ["900000000000000000000", "1000000000000000000000"], nativeAmount: "100000000000000000000", minimum: "0", deadline }],
     genesis: { legs: [
@@ -126,12 +133,20 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
       originalUnits: "26355776123062198039", originalEth: "100000000000000", originalDtf: "0",
       evidenceId: "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55", contributionsKnown: true as const },
   ];
+  const weightedLiquid = [{
+    originalId: `0x${fingerprint("synthetic W-L original allocation")}`,
+    originalWallet: "0x082cb14f04d9c485473dedc00d604d7e9abca303",
+    source: LEGACY.detf, originalUnits: "21225531", originalEth: "10000000000000000",
+    originalDtf: "0", evidenceId: `0x${fingerprint("synthetic W-L Q0 and components; not an approved user allocation")}`,
+    contributionsKnown: true as const,
+  }];
   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
-    ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" }))];
+    ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" })),
+    ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" }))];
   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
   const evidencePath = join(directory, "synthetic-originals.json");
-  await save(evidencePath, { originals, nfts, exposures });
+  await save(evidencePath, { originals, nfts, weightedLiquid, exposures });
   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
   const input = preparationInput.parse({
     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
@@ -140,6 +155,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     independent: recipients.map((recipient, i) => ({ recipient, evidenceId: `0x${fingerprint(`synthetic group ${i}`)}`,
       entitlements: [{ original: originals[i], proof: proof(`/originals/${i}`) }] })),
     nfts: nfts.map((original, i) => ({ original, proof: proof(`/nfts/${i}`) })),
+    weightedLiquid: weightedLiquid.map((original, i) => ({ original, proof: proof(`/weightedLiquid/${i}`) })),
     issueRecipients: recipients.slice(0, 3),
     harvest: { steps: [{ stage: "WeightedClaim", tokenId: "4", amount: "0", minimum: "0" }],
       deadline: (await chain.timestamp() + 365n * 86400n).toString() },
@@ -154,13 +170,25 @@ export async function replacementFixture(input: PreparationInput, directory: str
       ...e, original: { ...e.original, originalEth: (BigInt(e.original.originalEth) * 2n).toString() },
     })),
   });
+  const weightedLiquid = input.weightedLiquid.map((row) => ({
+    ...row, original: { ...row.original,
+      originalEth: (BigInt(row.original.originalEth) * 3n / 5n).toString(),
+      originalUnits: (BigInt(row.original.originalUnits) - 1n).toString(),
+    },
+  }));
+  const exposures = input.exposures.map((row) => {
+    const liquid = weightedLiquid.find((entry) => entry.original.originalId === row.originId);
+    return liquid ? { ...row, originalUnits: liquid.original.originalUnits,
+      descendants: row.descendants.map((entry) => ({ ...entry, units: liquid.original.originalUnits })) } : row;
+  });
   const evidencePath = join(directory, "synthetic-replacement-originals.json");
   await save(evidencePath, {
     originals: independent.flatMap((row) => row.entitlements.map((e) => e.original)),
     nfts: input.nfts.map((row) => row.original),
-    exposures: input.exposures.map(({ proof: _proof, ...exposure }) => exposure),
+    weightedLiquid: weightedLiquid.map((row) => row.original),
+    exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
   });
-  const replacement = preparationInput.parse({ ...input, independent,
+  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, exposures,
     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
   await save(join(directory, "replacement-input.json"), replacement);
   return replacement;

@@ -38,6 +38,9 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
     address internal constant EARLIER_PARENT = 0xaf0E1967c8F755c747615c5427108Bc549CA1122;
     uint256 internal constant PIN = 108944663;
     bytes32 internal constant PIN_HASH = 0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733;
+    uint256 internal initialBacking;
+    uint256 internal initialTotalGons;
+    uint256 internal initialBondGons;
 
     function setUp() public virtual override {
         vm.createSelectFork("robinhood_mainnet_alchemy", PIN);
@@ -53,6 +56,7 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         _bindSources();
         super.setUp();
         _fundHistoricalBook();
+        _purchaseForActivation();
     }
 
     function _bindSources() private view {
@@ -184,6 +188,20 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);
     }
 
+    function _activate() internal {
+        if (migration.migrationOwnerFirstBondTokenId() == 0) _purchaseForActivation();
+        vm.prank(migrationOwner);
+        allocation.activateMigration();
+        assertTrue(migration.migrationActivated());
+    }
+
+    function _purchaseForActivation() private {
+        _buyOwnerFirstBond();
+        initialBacking = receipt.stakingState().accountedBacking;
+        initialTotalGons = receipt.stakingState().totalGons;
+        initialBondGons = receipt.gonsOf(address(bonds));
+    }
+
     /// @dev A real holder transaction returns a transferred fixture; it does not rewrite its entitlement.
     function _returnToOriginal(address collection_, uint256 id_) internal {
         address holder_ = IERC721(collection_).ownerOf(id_);
@@ -197,8 +215,8 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         assertFalse(migration.nftSurrender(collection_, id_).consumed);
         assertEq(migration.nftCustody(collection_, id_).collection, address(0));
         assertEq(IERC20(detf).totalSupply(), supply_);
-        assertEq(receipt.stakingState().totalGons, 0);
-        assertEq(IERC20(detf).balanceOf(address(receipt)), 0);
+        assertEq(receipt.stakingState().totalGons, initialTotalGons);
+        assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking);
         assertEq(IERC20(detf).allowance(detf, address(bonds)), 0);
     }
 }

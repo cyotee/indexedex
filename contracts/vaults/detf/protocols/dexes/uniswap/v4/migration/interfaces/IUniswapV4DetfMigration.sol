@@ -130,6 +130,36 @@ interface IUniswapV4DetfMigration is
         bytes32 configurationId;
     }
 
+    /// @notice One original allocation in native nine-decimal weighted liquid DETF units.
+    /// @dev originalId is the wallet-independent canonical economic-origin collision key,
+    /// shared with independent/NFT allocations of that origin, not a new representation alias.
+    /// Both contribution components must be known; originalUnits must never be inferred from holdings.
+    struct WeightedLiquidEntitlementInput {
+        bytes32 originalId;
+        address originalWallet;
+        address source;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct WeightedLiquidEntitlement {
+        bool configured;
+        WeightedLiquidEntitlementInput original;
+        bytes32 configurationId;
+        uint256 credit;
+    }
+
+    /// @notice Execution facts and the unconsumed quote; no replacement can change past delivery.
+    struct WeightedLiquidSurrender {
+        uint256 consumedUnits;
+        uint256 deliveredCredit;
+        uint256 remainingUnits;
+        uint256 remainingCredit;
+    }
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -140,6 +170,8 @@ interface IUniswapV4DetfMigration is
     }
 
     error MigrationAlreadyActivated();
+    error MigrationSurrenderClosed();
+    error MigrationOwnerFirstBondRequired();
     error InvalidIndependentAllocation(address recipient);
     error IndependentAllocationAlreadyIssued(address recipient);
     error IndependentConfigurationMismatch(address recipient, bytes32 expected, bytes32 actual);
@@ -154,6 +186,12 @@ interface IUniswapV4DetfMigration is
     error NotNftHolder(address caller, address holder);
     error NftCustodyFailed(address collection, uint256 tokenId);
     error UnexpectedNftCallback();
+    error UnsupportedWeightedLiquidSource(uint256 chainId, address source);
+    error InvalidWeightedLiquidEntitlement(bytes32 originalId);
+    error NotOriginalWeightedLiquidWallet(address caller, address originalWallet);
+    error InvalidWeightedLiquidQuantity(uint256 requested, uint256 remaining);
+    error WeightedLiquidCustodyFailed();
+    error WeightedLiquidIdentityConsumed(bytes32 originalId);
 
     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
@@ -168,6 +206,7 @@ interface IUniswapV4DetfMigration is
         uint256 credit, uint256 issuedAt
     );
     event MigrationActivated(address indexed owner);
+    event MigrationOwnerFirstBondPurchased(address indexed owner, uint256 indexed bondTokenId);
     event MigrationSyRewardTokenWired(address indexed rewardToken, address indexed receipt);
     event NftEntitlementConfigured(
         address indexed collection, uint256 indexed tokenId, bytes32 indexed configurationId,
@@ -177,6 +216,24 @@ interface IUniswapV4DetfMigration is
         address indexed collection, uint256 indexed tokenId, address indexed holder,
         bytes32 configurationId, uint256 remainingUnits, uint256 credit, uint256 bondTokenId
     );
+    event WeightedLiquidEntitlementConfigured(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 originalUnits, uint256 credit
+    );
+    event MigrationWeightedLiquidSurrendered(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 units, uint256 credit, uint256 bondTokenId
+    );
+
+    function weightedLiquidEntitlement(bytes32 originalId_)
+        external view returns (WeightedLiquidEntitlement memory);
+    function weightedLiquidSurrender(bytes32 originalId_)
+        external view returns (WeightedLiquidSurrender memory);
+    function previewWeightedLiquidSurrender(bytes32 originalId_, uint256 amount_)
+        external view returns (uint256 credit_);
+    /// @notice After activation, only the configured original wallet may surrender WD for its own fresh bond.
+    function surrenderMigrationWeightedLiquid(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external returns (uint256 bondTokenId_, uint256 credit_);
 
     /// @notice Canonical known-origin collision key, bound to chain, instance and frozen snapshot.
     /// @dev Independent allocation IDs must use this key for this origin. Opaque aliases do not
@@ -189,13 +246,17 @@ interface IUniswapV4DetfMigration is
     function previewNftSurrender(address collection_, uint256 tokenId_)
         external view returns (uint256 remainingUnits_, uint256 credit_);
 
-    /// @notice Configured original wallet and current holder only; one exactly funded fresh 90-day bond.
+    /// @notice Stage 2, configured original wallet and current holder only; one funded fresh 90-day bond.
     /// @dev No beneficiary, historical quantity, arbitrary target or credit argument.
     function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
         external returns (uint256 bondTokenId_, uint256 credit_);
 
-    /// @notice Sole finalized reward/new-money gate. Activation does not reset clocks or indices.
+    /// @notice Sole finalized reward/new-money/surrender gate. Activation does not reset clocks or indices.
     function migrationActivated() external view returns (bool);
+
+    /// @notice Completed paid Stage1 owner purchase; persists across owner/NFT transfers and retirement.
+    /// @dev Zero until the ordinary purchase, principal funding and reward settlement all succeed.
+    function migrationOwnerFirstBondTokenId() external view returns (uint256);
 
     /// @notice Once-wired RT child; receipt must reject RT caller admission while this is zero.
     function migrationSyRewardToken() external view returns (address);
@@ -234,9 +295,14 @@ interface IUniswapV4DetfMigration is
 }
 
 /// @notice Entire current-core administration surface; current-owner-only and removed at activation.
-/// @dev Only the two admitted NFT sources are configurable; no fungible attribution shortcut or price setter.
+/// @dev Only the two admitted NFT sources and weighted liquid source; no attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Stage 1 full replacement initializes Q/C from original units and the frozen quote without issuance.
+    /// @dev Surrender is closed while this selector exists; execution facts are never cleared.
+    function configureWeightedLiquidEntitlements(
+        IUniswapV4DetfMigration.WeightedLiquidEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Replace complete original NFT inputs on the frozen book without minting.
     /// @dev Consumed identities and recovery custody cannot be reset or redirected by replacement.
     function configureNftEntitlements(IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_) external;

@@ -59,7 +59,10 @@ abstract contract MigrationRecoveryForkBase is MigrationNftForkBase {
     }
 
     function _take(address collection_, uint256 id_) internal returns (uint256 bond_) {
-        _configureNft(collection_, id_);
+        if (!migration.migrationActivated()) {
+            _configureNft(collection_, id_);
+            _activate();
+        }
         (bond_,) = _surrender(collection_, id_);
     }
 

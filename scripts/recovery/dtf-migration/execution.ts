@@ -163,7 +163,7 @@ export async function execute(run: Run) {
           const sent = hash.parse(await rpc.send("eth_sendRawTransaction", [record.signedTransaction]));
           if (sent !== record.transactionHash) throw new ExecutionError("INTENT", "node returned another transaction hash");
           const mined = await watch.mined();
-          if (run.faultAfterMined && ["donateMigrationCapital", "issueIndependentAllocations"].includes(record.method)) {
+          if (run.faultAfterMined && ["donateMigrationCapital", "issueIndependentAllocations", "bond"].includes(record.method)) {
             console.log(JSON.stringify({ fault: "mined-before-checkpoint", transactionHash: mined.transactionHash, nonce: record.nonce }));
             process.kill(process.pid, "SIGKILL");
           }
