@@ -134,7 +134,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.NftEntitlementInput calldata input_ = inputs_[i_];
             bytes32 original_ = NftLib.originalId(input_.collection, input_.tokenId);
-            if (input_.tokenId < 3 || input_.originalUnits == 0 || !input_.contributionsKnown
+            if (input_.tokenId < 3 || input_.originalWallet == address(0)
+                || input_.originalUnits == 0 || !input_.contributionsKnown
                 || input_.evidenceId == bytes32(0)) {
                 revert Migration.InvalidNftEntitlement(input_.collection, input_.tokenId);
             }
@@ -146,7 +147,9 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             m_.nftEntitlements[input_.collection][input_.tokenId] =
                 Migration.NftEntitlement(input_, config_, original_, credit_);
             m_.nftOriginal[original_] = true;
-            emit Migration.NftEntitlementConfigured(input_.collection, input_.tokenId, config_, original_, credit_);
+            emit Migration.NftEntitlementConfigured(
+                input_.collection, input_.tokenId, config_, input_.originalWallet, original_, credit_
+            );
         }
     }
 

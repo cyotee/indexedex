@@ -1,16 +1,18 @@
 import { afterEach, test } from "node:test";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
+import { AbiCoder, keccak256 } from "ethers";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { text } from "node:stream/consumers";
 import { join } from "node:path";
 import { fixture, h, a } from "./preparation.fixture.js";
 import { canonical, fingerprint } from "./provenance.js";
-import { buildPayloads, configurationId, dispositions } from "./payloads.js";
+import { buildPayloads, configurationId, dispositions, nftOrigin } from "./payloads.js";
 import { normalize, prepareDomain, prepareFile, validateManifest } from "./preparation.js";
 import { preparationInput, uint } from "./schema.js";
 import { main } from "./cli.js";
+import { interfaceFile } from "./rehearsal-data.js";
 
 const fixtures: Awaited<ReturnType<typeof fixture>>[] = [];
 async function setup() {
@@ -90,6 +92,52 @@ test("rejects originals that do not match their raw proof", async () => {
   assert.ok(row);
   await assert.rejects(prepareDomain({ ...f.input, nfts: [{ ...row, original: { ...row.original, originalEth: "101" } }] }),
     /proof does not match/);
+});
+test("rejects missing or zero NFT original wallets at preparation boundary", async () => {
+  const f = await setup();
+  const row = f.input.nfts[0];
+  assert.ok(row);
+  const { originalWallet: _wallet, ...withoutWallet } = row.original;
+  for (const original of [withoutWallet, { ...row.original, originalWallet: a(0) }]) {
+    const parsed = preparationInput.safeParse({ ...f.input, nfts: [{ ...row, original }] });
+    assert.equal(parsed.success, false);
+    if (!parsed.success) assert.ok(parsed.error.issues.some((issue) => issue.path.includes("originalWallet")));
+  }
+});
+test("rejects a wallet differing from the full recorded NFT original", async () => {
+  const f = await setup();
+  const row = f.input.nfts[0];
+  assert.ok(row);
+  await assert.rejects(prepareDomain({ ...f.input,
+    nfts: [{ ...row, original: { ...row.original, originalWallet: a(99) } }] }),
+  { name: "PreparationError", code: "PROVENANCE" });
+});
+test("wallet correction changes full configuration but not economic origin", async () => {
+  const f = await setup();
+  for (const row of f.input.nfts) {
+    const corrected = { ...row.original, originalWallet: a(99) };
+    assert.notEqual(configurationId(f.input.domain, corrected), configurationId(f.input.domain, row.original));
+    assert.equal(nftOrigin(f.input.domain, corrected), nftOrigin(f.input.domain, row.original));
+  }
+});
+test("NFT payload and configuration identity agree with final Solidity and typed stage ABIs", async () => {
+  const f = await setup();
+  const allocation = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json");
+  const stage = await interfaceFile("out/Phase_08_Stage_01_MigrationExecution.s.sol/Phase_08_Stage_01_MigrationExecution.json");
+  const array = allocation.getFunction("configureNftEntitlements")?.inputs[0];
+  const stageArray = stage.getFunction("configureNfts")?.inputs[1];
+  assert.ok(array?.arrayChildren);
+  assert.ok(stageArray?.arrayChildren);
+  assert.equal(array.format("full"), stageArray.format("full"));
+  for (const { original } of f.input.nfts) {
+    const call = allocation.encodeFunctionData("configureNftEntitlements", [[original]]);
+    const decoded = allocation.decodeFunctionData("configureNftEntitlements", call)[0][0];
+    assert.equal(decoded.originalWallet.toLowerCase(), original.originalWallet);
+    const fromAbi: string = keccak256(AbiCoder.defaultAbiCoder().encode(
+      ["uint256", "address", "bytes32", array.arrayChildren],
+      [f.input.domain.chainId, f.input.domain.proxy, f.input.domain.snapshotId, original]));
+    assert.equal(configurationId(f.input.domain, original), fromAbi);
+  }
 });
 test("rejects unknown contributions and arbitrary credit fields at the schema boundary", async () => {
   const f = await setup();

@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { address } from "./schema.js";
 import type { PreparationInput, RecoveryStep } from "./schema.js";
 import type { ExecutionManifest } from "./execution-schema.js";
 import { ExecutionError } from "./execution-schema.js";
@@ -7,6 +6,7 @@ import { LEGACY, legacyAbi } from "./rehearsal-chain.js";
 import type { RehearsalChain } from "./rehearsal-chain.js";
 import { interfaceFile, save } from "./rehearsal-data.js";
 import { DEV } from "./execution-rpc.js";
+import { exerciseAdmission } from "./rehearsal-admission.js";
 
 type Context = {
   readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
@@ -15,21 +15,8 @@ type Context = {
 };
 export async function exerciseRecovery(context: Context) {
   const { chain, manifest, input, evidence, runtime, cli, local } = context;
-  const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
   const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
-  for (const nft of input.nfts) {
-    const { collection, tokenId } = nft.original;
-    const holder = address.parse((await chain.call(collection, legacyAbi, "ownerOf", [tokenId]))[0]);
-    await chain.send("anvil_setBalance", [holder, "0x3635c9adc5dea00000"]);
-    await chain.send("anvil_impersonateAccount", [holder]);
-    try {
-      await chain.transact(collection, { from: holder, data: legacyAbi.encodeFunctionData("approve", [manifest.proxy, tokenId]) });
-      await chain.transact(manifest.proxy, { from: holder, data: migration.encodeFunctionData("surrenderMigrationNft",
-        [collection, tokenId, "1", (await chain.timestamp() + 3600n).toString()]) });
-      const consumed = (await chain.call(manifest.proxy, migration, "nftSurrender", [collection, tokenId]))[0];
-      if (!consumed.consumed || consumed.holder.toLowerCase() !== holder) throw new ExecutionError("STATE", "real caller surrender not consumed");
-    } finally { await chain.send("anvil_stopImpersonatingAccount", [holder]); }
-  }
+  await exerciseAdmission({ chain, manifest, input, evidence, activated: false });
   let sequence = 0;
   const harvest = async (step: RecoveryStep) => {
     const name = `harvest-${String(++sequence).padStart(2, "0")}-${step.stage}`;

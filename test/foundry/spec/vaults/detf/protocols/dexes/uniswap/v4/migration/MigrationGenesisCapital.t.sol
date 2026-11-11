@@ -93,6 +93,9 @@ abstract contract MigrationGenesisCapitalBase is TestBase_UniswapV4DetfMigration
         assertGt(lp_, 0);
         assertTrue(migration.isReserveLive());
         assertEq(receipt.totalSupply(), 0);
+        assertEq(migration.independentAllocation(address(this)).configurationId, bytes32(0));
+        assertFalse(migration.independentIssuance(address(this)).issued);
+        assertEq(migration.independentIssuance(address(this)).credit, 0);
         assertEq(IERC20(pairA).allowance(detf, se0), 0);
         assertEq(IERC20(pairB).allowance(detf, se1), 0);
         assertEq(migration.migrationDonationInventory(IERC20(pairA)), IERC20(pairA).balanceOf(detf));

@@ -92,9 +92,11 @@ interface IUniswapV4DetfMigration is
     /// @notice Verified original purchase inputs, never a caller-supplied output award.
     /// @dev contributionsKnown attests that BOTH components are known (a known zero is valid).
     /// originalUnits are weighted fixed principal or earlier NewLock accounting shares.
+    /// originalWallet is the recorded acquiring wallet, never inferred from current ownership.
     struct NftEntitlementInput {
         address collection;
         uint256 tokenId;
+        address originalWallet;
         uint256 originalUnits;
         uint256 originalEth;
         uint256 originalDtf;
@@ -148,6 +150,7 @@ interface IUniswapV4DetfMigration is
     error UnsupportedMigrationNft(uint256 chainId, address collection);
     error InvalidNftEntitlement(address collection, uint256 tokenId);
     error NftAlreadyConsumed(address collection, uint256 tokenId);
+    error NotOriginalNftWallet(address caller, address originalWallet);
     error NotNftHolder(address caller, address holder);
     error NftCustodyFailed(address collection, uint256 tokenId);
     error UnexpectedNftCallback();
@@ -168,7 +171,7 @@ interface IUniswapV4DetfMigration is
     event MigrationSyRewardTokenWired(address indexed rewardToken, address indexed receipt);
     event NftEntitlementConfigured(
         address indexed collection, uint256 indexed tokenId, bytes32 indexed configurationId,
-        bytes32 originalId, uint256 credit
+        address originalWallet, bytes32 originalId, uint256 credit
     );
     event MigrationNftSurrendered(
         address indexed collection, uint256 indexed tokenId, address indexed holder,
@@ -177,7 +180,8 @@ interface IUniswapV4DetfMigration is
 
     /// @notice Canonical known-origin collision key, bound to chain, instance and frozen snapshot.
     /// @dev Independent allocation IDs must use this key for this origin. Opaque aliases do not
-    /// prove disjoint exposure; operational ancestry reconciliation remains required.
+    /// prove disjoint exposure; original economic exposure reconciliation remains required.
+    /// The key excludes the original wallet so corrections cannot create another economic origin.
     function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32);
     function nftEntitlement(address collection_, uint256 tokenId_) external view returns (NftEntitlement memory);
     function nftSurrender(address collection_, uint256 tokenId_) external view returns (NftSurrender memory);
@@ -185,7 +189,7 @@ interface IUniswapV4DetfMigration is
     function previewNftSurrender(address collection_, uint256 tokenId_)
         external view returns (uint256 remainingUnits_, uint256 credit_);
 
-    /// @notice Current holder only; whole identity custody and one exactly funded fresh 90-day bond.
+    /// @notice Configured original wallet and current holder only; one exactly funded fresh 90-day bond.
     /// @dev No beneficiary, historical quantity, arbitrary target or credit argument.
     function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
         external returns (uint256 bondTokenId_, uint256 credit_);

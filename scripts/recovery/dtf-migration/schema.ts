@@ -32,6 +32,7 @@ export const independent = z.object({
 export const nftOriginal = z.object({
   collection: address,
   tokenId: uint.refine((v) => BigInt(v) >= 3n, "reserved NFT ID"),
+  originalWallet: address,
   originalUnits: positive,
   originalEth: uint,
   originalDtf: uint,

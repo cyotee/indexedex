@@ -138,6 +138,7 @@ contract MigrationRecoveryWeightedTest is MigrationRecoveryForkBase {
         _run(Recovery.Stage.WeightedRewards, 4, 0, 0);
         vm.prank(next_);
         allocation.activateMigration();
+        _returnToOriginal(WEIGHTED, 26);
         _surrender(WEIGHTED, 26);
         _run(Recovery.Stage.WeightedClaim, 26, 0, 0);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, old_));

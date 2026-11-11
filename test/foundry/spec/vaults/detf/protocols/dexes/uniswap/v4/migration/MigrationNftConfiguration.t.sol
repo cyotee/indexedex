@@ -27,7 +27,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         a_ = new Migration.NftEntitlementInput[](1);
         // Deliberately bounded quote fixtures, not operational historical allocations.
         a_[0] = Migration.NftEntitlementInput(
-            collection_, 3, collection_ == WEIGHTED ? 3772281649 : 562524912595035608166,
+            collection_, 3, address(0xBEEF), collection_ == WEIGHTED ? 3772281649 : 562524912595035608166,
             1 ether, 0, bytes32("configuration fixture"), true
         );
     }
@@ -60,6 +60,34 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         assertEq(migration.nftEntitlement(EARLIER, 3).original.originalUnits, 562524912595035608166);
         assertEq(migration.migrationNftOriginalId(WEIGHTED, 3),
             keccak256(abi.encode("migration.nft", uint256(4663), detf, migration.migrationSnapshot().id, WEIGHTED, uint256(3))));
+    }
+
+    function test_zeroWalletRejectsBothSourcesAndWalletCorrectionPreservesEconomicOrigin() public {
+        address[2] memory collections_ = [WEIGHTED, EARLIER];
+        for (uint256 i_; i_ < collections_.length; ++i_) {
+            Migration.NftEntitlementInput[] memory a_ = _input(collections_[i_]);
+            a_[0].originalWallet = address(0);
+            vm.prank(migrationOwner);
+            vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, collections_[i_], 3));
+            allocation.configureNftEntitlements(a_);
+            assertEq(migration.nftEntitlement(collections_[i_], 3).configurationId, bytes32(0));
+            a_[0].originalWallet = address(0xBEEF);
+            vm.prank(migrationOwner);
+            allocation.configureNftEntitlements(a_);
+            Migration.NftEntitlement memory before_ = migration.nftEntitlement(collections_[i_], 3);
+            a_[0].originalWallet = address(0xCAFE);
+            vm.prank(migrationOwner);
+            allocation.configureNftEntitlements(a_);
+            Migration.NftEntitlement memory after_ = migration.nftEntitlement(collections_[i_], 3);
+            assertEq(after_.original.originalWallet, address(0xCAFE));
+            assertNotEq(before_.configurationId, after_.configurationId);
+            assertEq(after_.configurationId,
+                keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0])));
+            assertEq(before_.originalId, after_.originalId);
+            assertEq(before_.credit, after_.credit);
+            vm.expectRevert(abi.encodeWithSelector(Migration.DuplicateOriginalEntitlement.selector, before_.originalId));
+            _configure(address(this), 1 ether, before_.originalId);
+        }
     }
 
     function test_unknownComponentsAndReservedUnitsRejectWholeBatch() public {

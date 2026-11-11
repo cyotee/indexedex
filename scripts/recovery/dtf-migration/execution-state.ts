@@ -111,6 +111,14 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
           || String(actual.getValue(independent ? "totalCredit" : "credit")) !== expected.quotedCredit) {
           throw new ExecutionError("STATE", "configuration state differs from full payload");
         }
+        if (!independent) {
+          const wallet = String(r.getValue("originalWallet")).toLowerCase();
+          if (String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== wallet
+            || !events.some((e) => e.name === "NftEntitlementConfigured"
+              && e.values[2] === expected.configurationId && e.values[3]?.toLowerCase() === wallet)) {
+            throw new ExecutionError("STATE", "NFT original wallet differs between payload, storage and event");
+          }
+        }
       }
       break;
     }
@@ -198,7 +206,10 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
     const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "nftEntitlement",
       [row.input.collection, row.input.tokenId]))[0]);
     if (actual.getValue("configurationId") !== row.configurationId || actual.getValue("originalId") !== row.originalId
-      || String(actual.getValue("credit")) !== row.quotedCredit) throw new ExecutionError("STATE", "NFT configuration mismatch");
+      || String(actual.getValue("credit")) !== row.quotedCredit
+      || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
+      throw new ExecutionError("STATE", "NFT configuration mismatch");
+    }
   }
   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };
 }

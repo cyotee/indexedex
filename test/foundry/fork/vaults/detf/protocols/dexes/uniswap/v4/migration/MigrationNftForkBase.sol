@@ -117,32 +117,40 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         a_.collection = collection_; a_.tokenId = id_; a_.contributionsKnown = true;
         if (collection_ == WEIGHTED) {
             if (id_ == 3) {
+                a_.originalWallet = address(bytes20(hex"72bea6fa3e68ef18c87d045aac7c4aa5249d933b"));
                 a_.originalUnits = 3772281649;
                 a_.originalEth = 999999000000000;
                 a_.originalDtf = 362893857600000000000;
                 a_.evidenceId = 0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624;
             } else if (id_ == 4) {
+                a_.originalWallet = address(bytes20(hex"ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"));
                 a_.originalUnits = 281387179;
                 a_.originalEth = 30000000000000000;
                 a_.evidenceId = 0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe;
             } else if (id_ == 26) {
+                a_.originalWallet = address(bytes20(hex"c379feb4182211abe71a34858265e4bf5ff35e06"));
                 a_.originalUnits = 56299; a_.originalDtf = 50 ether;
                 a_.evidenceId = 0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d;
             } else if (id_ == 32) {
+                a_.originalWallet = address(bytes20(hex"4dfebb21d855115d4019819393e514977e490e5d"));
                 a_.originalUnits = 54436459; a_.originalDtf = 56017714220190058289217;
                 a_.evidenceId = 0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914;
             } else if (id_ == 25) {
+                a_.originalWallet = address(bytes20(hex"f0f80dd7e46ee7c3e7bd68f806bab1875f069530"));
                 a_.originalUnits = 53274997; a_.originalDtf = 50000 ether;
                 a_.evidenceId = 0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970;
             } else revert("unlisted weighted fixture");
         } else if (collection_ == EARLIER) {
             if (id_ == 3) {
+                a_.originalWallet = address(bytes20(hex"495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed"));
                 a_.originalUnits = 562524912595035608166; a_.originalEth = 2 ether;
                 a_.evidenceId = 0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75;
             } else if (id_ == 4) {
+                a_.originalWallet = address(bytes20(hex"230f95db9644c5b3608ba676d18426d03e435b1d"));
                 a_.originalUnits = 2281854312954086546; a_.originalDtf = 7215852540309913726431;
                 a_.evidenceId = 0x0fc1a71638d581251317d0d83a248e1cc3317af73b07205120083ab32eaf8fc4;
             } else if (id_ == 12) {
+                a_.originalWallet = address(bytes20(hex"52f5e84f5ef47a9a0ee998856ec2ee5c27ea8497"));
                 a_.originalUnits = 47848240999749918187208884; a_.originalDtf = 75081277576132719227716;
                 a_.evidenceId = 0x75555879247aa52ce308f86f50f9f3330ccdef438072726a63d55d5ca915ab24;
             } else revert("unlisted earlier fixture");
@@ -159,6 +167,7 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
 
     function _surrender(address collection_, uint256 id_) internal returns (uint256 newId_, uint256 credit_) {
         address holder_ = IERC721(collection_).ownerOf(id_);
+        assertEq(holder_, migration.nftEntitlement(collection_, id_).original.originalWallet);
         vm.startPrank(holder_);
         IERC721(collection_).approve(detf, id_);
         (newId_, credit_) = migration.surrenderMigrationNft(collection_, id_, 1, block.timestamp);
@@ -173,6 +182,14 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         assertTrue(bonds.isMigrationPosition(newId_));
         assertEq(IERC20(detf).allowance(detf, address(bonds)), 0);
         assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);
+    }
+
+    /// @dev A real holder transaction returns a transferred fixture; it does not rewrite its entitlement.
+    function _returnToOriginal(address collection_, uint256 id_) internal {
+        address holder_ = IERC721(collection_).ownerOf(id_);
+        address original_ = migration.nftEntitlement(collection_, id_).original.originalWallet;
+        vm.prank(holder_);
+        IERC721(collection_).transferFrom(holder_, original_, id_);
     }
 
     function _assertNotConsumed(address collection_, uint256 id_, address holder_, uint256 supply_) internal view {

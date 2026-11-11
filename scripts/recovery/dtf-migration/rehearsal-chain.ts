@@ -15,6 +15,8 @@ export const LEGACY = {
 export const legacyAbi = new Interface([
   "function ownerOf(uint256) view returns(address)",
   "function approve(address,uint256)",
+  "function transferFrom(address,address,uint256)",
+  "function setApprovalForAll(address,bool)",
   "function transfer(address,uint256) returns(bool)",
   "function balanceOf(address) view returns(uint256)",
   "function claimBond(uint256,address) returns(uint256,uint256)",
@@ -43,7 +45,7 @@ export class RehearsalChain {
     if (block.hash !== mined.blockHash) throw new ExecutionError("AMBIGUOUS", "fixture receipt is not canonical");
     return mined;
   }
-  async transact(target: string, request: { readonly from: string; readonly data: string; readonly value?: string }) {
+  async transact(target: string, request: { readonly from: string; readonly data: string; readonly value?: string }, expectedStatus = 1n) {
     // This fixture-only path uses unlocked holders, never a production key.
     // Subscribe before submitting; a pending event triggers the exact receipt read.
     let selected: string | undefined;
@@ -53,7 +55,7 @@ export class RehearsalChain {
       const gasPrice = quantity.parse(await this.send("eth_gasPrice", []));
       selected = hash.parse(await this.send("eth_sendTransaction", [{ ...request, to: target, gas: "0x5f5e100", gasPrice, type: "0x0" }]));
       const mined = await watch.mined();
-      if (BigInt(mined.status) !== 1n) throw new ExecutionError("REVERT", `fixture transaction reverted: ${selected}`);
+      if (BigInt(mined.status) !== expectedStatus) throw new ExecutionError("REVERT", `fixture transaction status differs: ${selected}`);
       this.receipts.push(mined);
       return mined;
     } finally { watch.close(); }

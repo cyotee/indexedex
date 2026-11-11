@@ -110,12 +110,21 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
   const originals = recipients.map((_, i) => ({ entitlementId: `0x${fingerprint(`synthetic independent ${i}`)}`,
     originalEth: "1000000000000", originalDtf: "0", evidenceId: `0x${fingerprint(`synthetic proof ${i}`)}` }));
   const nfts = [
-    { collection: LEGACY.weighted, tokenId: "4", originalUnits: "281387179", originalEth: "30000000000000000",
+    { collection: LEGACY.weighted, tokenId: "4", originalWallet: "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      originalUnits: "281387179", originalEth: "30000000000000000",
       originalDtf: "0", evidenceId: "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe", contributionsKnown: true as const },
-    { collection: LEGACY.weighted, tokenId: "26", originalUnits: "56299", originalEth: "0",
+    { collection: LEGACY.weighted, tokenId: "26", originalWallet: "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      originalUnits: "56299", originalEth: "0",
       originalDtf: "50000000000000000000", evidenceId: "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d", contributionsKnown: true as const },
-    { collection: LEGACY.earlier, tokenId: "3", originalUnits: "562524912595035608166", originalEth: "2000000000000000000",
+    { collection: LEGACY.earlier, tokenId: "3", originalWallet: "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed",
+      originalUnits: "562524912595035608166", originalEth: "2000000000000000000",
       originalDtf: "0", evidenceId: "0xc0a74f69a4a58540168c070968bb8f2d13759195e4ccabfe469ba3ad3d3d1c75", contributionsKnown: true as const },
+    { collection: LEGACY.weighted, tokenId: "6", originalWallet: "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      originalUnits: "740825635", originalEth: "80000000000000000", originalDtf: "0",
+      evidenceId: "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917", contributionsKnown: true as const },
+    { collection: LEGACY.earlier, tokenId: "9", originalWallet: "0x76b60dcf71da2294f8aa034432d925d1eed8cf68",
+      originalUnits: "26355776123062198039", originalEth: "100000000000000", originalDtf: "0",
+      evidenceId: "0xf504bc3b5ec0452769f18c7c53f759dd4579afe9622ea72db6736bddb83d6e55", contributionsKnown: true as const },
   ];
   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
     ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" }))];

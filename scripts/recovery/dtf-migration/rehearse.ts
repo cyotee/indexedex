@@ -11,6 +11,7 @@ import { DEV } from "./execution-rpc.js";
 import { ExecutionError, rpcLog } from "./execution-schema.js";
 import { hash } from "./schema.js";
 import { exerciseRecovery } from "./rehearsal-recovery.js";
+import { exerciseAdmission } from "./rehearsal-admission.js";
 import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt } from "./rehearsal-proof.js";
 
 const PIN_HASH = "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733";
@@ -32,10 +33,10 @@ export async function rehearse(options: {
   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
   readonly checkpoint: string; readonly evidence: string;
 }) {
-  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18560") {
+  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18562") {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
   }
-  const evidence = resolve(options.evidence, "execution", `rehearsal-${Date.now()}`);
+  const evidence = resolve(options.evidence, "implementation", `rehearsal-${Date.now()}`);
   const runtime = resolve(options.checkpoint);
   await mkdir(evidence, { recursive: true });
   const upstream = await resolveAlias();
@@ -196,6 +197,7 @@ export async function rehearse(options: {
       issuedAfterReplacement: (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() });
     await exerciseRecovery({ chain, manifest: post, input, evidence, runtime, cli, local });
     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
+    await exerciseAdmission({ chain, manifest: post, input, evidence, activated: true });
     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
   } catch (error) {

@@ -70,10 +70,13 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
         if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
         (address holder_, uint256 remaining_, uint256 quoted_, bytes32 before_) =
             NftLib.preview(collection_, tokenId_);
-        if (msg.sender != holder_) revert Migration.NotNftHolder(msg.sender, holder_);
-        if (quoted_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, quoted_);
         Repo.Storage storage m_ = Repo._layoutStruct();
         Migration.NftEntitlement memory config_ = m_.nftEntitlements[collection_][tokenId_];
+        if (msg.sender != config_.original.originalWallet) {
+            revert Migration.NotOriginalNftWallet(msg.sender, config_.original.originalWallet);
+        }
+        if (msg.sender != holder_) revert Migration.NotNftHolder(msg.sender, holder_);
+        if (quoted_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, quoted_);
         // Keep the guard over legacy synchronization as well as its pre-transfer receiver call.
         m_.expectedNft = Repo.NftReceipt(collection_, holder_, tokenId_, false);
         IMigrationLegacyNft(collection_).safeTransferFrom(holder_, address(this), tokenId_);

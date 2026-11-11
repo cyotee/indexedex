@@ -27,7 +27,7 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
 --reverse reorders only independent unsettled configuration/issuance rows.
 --fault-after-mined is restricted to synthetic-local interruption rehearsal.
   bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
-    --fork-block 108944663 --port 18560 --checkpoint <directory> --evidence <directory>
+    --fork-block 108944663 --port 18562 --checkpoint <directory> --evidence <directory>
 `;
 
 export async function main(args: readonly string[]): Promise<void> {

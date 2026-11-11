@@ -13,6 +13,20 @@ import {IMigrationWeightedNft, IMigrationEarlierNft} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
 
 contract MigrationLegacySourcesTest is MigrationNftForkBase {
+    function test_wrongCurrentHolderCannotUseRecordedPurchaserEntitlement() public {
+        _configureNft(WEIGHTED, 26);
+        address holder_ = IERC721(WEIGHTED).ownerOf(26);
+        address purchaser_ = address(bytes20(hex"c379feb4182211abe71a34858265e4bf5ff35e06"));
+        assertNotEq(holder_, purchaser_);
+        uint256 supply_ = IERC20(detf).totalSupply();
+        vm.startPrank(holder_);
+        IERC721(WEIGHTED).approve(detf, 26);
+        vm.expectRevert(abi.encodeWithSignature("NotOriginalNftWallet(address,address)", holder_, purchaser_));
+        migration.surrenderMigrationNft(WEIGHTED, 26, 1, block.timestamp);
+        vm.stopPrank();
+        _assertNotConsumed(WEIGHTED, 26, holder_, supply_);
+    }
+
     function test_weightedPartialUsesWholeRemainingPrincipalAndFrozenOriginalQuote() public {
         IMigrationWeightedNft.Position memory before_ = IMigrationWeightedNft(WEIGHTED).positionOf(32);
         assertEq(before_.principal, 54436459);
@@ -36,7 +50,7 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
         assertEq(s_.credit, expected_); assertTrue(s_.consumed);
     }
 
-    function test_transferredWeightedHolderNotPurchaserOrApprovedOperatorReceivesBond() public {
+    function test_transferredWeightedHolderMustReturnToPurchaserBeforeSurrender() public {
         _configureNft(WEIGHTED, 26);
         address holder_ = IERC721(WEIGHTED).ownerOf(26);
         assertEq(holder_, 0x2e69E40C4a4Ab5CA6826850F347acf8076a8063e);
@@ -45,11 +59,13 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
         IERC721(WEIGHTED).transferFrom(holder_, next_, 26);
         vm.prank(next_);
         IERC721(WEIGHTED).setApprovalForAll(holder_, true);
+        address original_ = _original(WEIGHTED, 26).originalWallet;
         vm.prank(holder_);
-        vm.expectRevert(abi.encodeWithSelector(Migration.NotNftHolder.selector, holder_, next_));
+        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalNftWallet.selector, holder_, original_));
         migration.surrenderMigrationNft(WEIGHTED, 26, 0, block.timestamp);
+        _returnToOriginal(WEIGHTED, 26);
         (uint256 id_,) = _surrender(WEIGHTED, 26);
-        assertEq(IERC721(address(bonds)).ownerOf(id_), next_);
+        assertEq(IERC721(address(bonds)).ownerOf(id_), original_);
         assertFalse(IERC721(WEIGHTED).isApprovedForAll(detf, holder_));
     }
 
@@ -68,9 +84,13 @@ contract MigrationLegacySourcesTest is MigrationNftForkBase {
         vm.prank(next_);
         vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)", 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7));
         IEarlierParent(EARLIER_PARENT).closeBondMature(4, new uint256[](2), next_, block.timestamp);
+        vm.prank(next_);
+        vm.expectRevert(abi.encodeWithSelector(Migration.NotOriginalNftWallet.selector, next_, holder_));
+        migration.surrenderMigrationNft(EARLIER, 4, 1, block.timestamp);
+        _returnToOriginal(EARLIER, 4);
         (uint256 id_, uint256 credit_) = _surrender(EARLIER, 4);
         assertEq(credit_, c0_);
-        assertEq(IERC721(address(bonds)).ownerOf(id_), next_);
+        assertEq(IERC721(address(bonds)).ownerOf(id_), holder_);
         assertEq(migration.nftSurrender(EARLIER, 4).remainingUnits, 2281854312954086546);
         assertEq(IERC20(EARLIER_PARENT).balanceOf(detf), 0);
     }

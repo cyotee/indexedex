@@ -65,6 +65,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         Migration.NftEntitlementInput[] memory a_ = new Migration.NftEntitlementInput[](1);
         a_[0] = _original(WEIGHTED, 32);
         a_[0].originalDtf *= 2;
+        a_[0].originalWallet = makeAddr("corrected consumed wallet");
         vm.startPrank(migrationOwner);
         allocation.configureNftEntitlements(a_);
         allocation.configureNftEntitlements(a_);
@@ -93,6 +94,7 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
         vm.prank(migrationOwner);
         allocation.activateMigration();
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureNftEntitlements.selector), address(0));
+        _returnToOriginal(WEIGHTED, 26);
         (uint256 third_,) = _surrender(WEIGHTED, 26);
         (uint256 fourth_,) = _surrender(EARLIER, 3);
         assertNotEq(first_, second_); assertNotEq(second_, third_); assertNotEq(third_, fourth_);
@@ -110,26 +112,44 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
     }
 
     function test_contractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() public {
-        _configureNft(WEIGHTED, 4);
+        _receiverRollback(WEIGHTED);
+    }
+
+    function test_earlierContractReceiverFailureRollsBackCustodySupplyFundingAndConsumption() public {
+        _receiverRollback(EARLIER);
+    }
+
+    function _receiverRollback(address collection_) private {
         MigrationNftHolder holder_ = new MigrationNftHolder(migration);
-        address old_ = IERC721(WEIGHTED).ownerOf(4);
+        _configureReceiver(collection_, 4, address(holder_));
+        address old_ = IERC721(collection_).ownerOf(4);
         vm.prank(old_);
-        IERC721(WEIGHTED).safeTransferFrom(old_, address(holder_), 4);
+        IERC721(collection_).safeTransferFrom(old_, address(holder_), 4);
         holder_.reject(true);
         uint256 supply_ = IERC20(detf).totalSupply();
-        bytes memory config_ = abi.encode(migration.nftEntitlement(WEIGHTED, 4));
+        bytes memory config_ = abi.encode(migration.nftEntitlement(collection_, 4));
         vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(holder_)));
-        holder_.surrender(WEIGHTED, 4);
-        _assertNotConsumed(WEIGHTED, 4, address(holder_), supply_);
+        holder_.surrender(collection_, 4);
+        _assertNotConsumed(collection_, 4, address(holder_), supply_);
         assertEq(IERC721(address(bonds)).ownerOf(3), address(0));
-        assertEq(abi.encode(migration.nftEntitlement(WEIGHTED, 4)), config_);
-        assertEq(IERC721(WEIGHTED).getApproved(4), address(0));
+        assertEq(abi.encode(migration.nftEntitlement(collection_, 4)), config_);
+        assertEq(IERC721(collection_).getApproved(4), address(0));
         holder_.reject(false);
-        (uint256 id_, uint256 paid_) = holder_.surrender(WEIGHTED, 4);
+        (uint256 id_, uint256 paid_) = holder_.surrender(collection_, 4);
         assertEq(id_, 3);
         assertEq(bonds.positionOf(id_).principal, paid_);
         assertTrue(holder_.observedFunded());
-        assertEq(IERC721(WEIGHTED).ownerOf(4), detf);
+        assertEq(IERC721(collection_).ownerOf(4), detf);
+    }
+
+    /// @dev Explicit synthetic receiver entitlement exercises callbacks, not historical purchaser provenance.
+    function _configureReceiver(address collection_, uint256 id_, address wallet_) private {
+        Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
+        rows_[0] = _original(collection_, id_);
+        rows_[0].originalWallet = wallet_;
+        rows_[0].evidenceId = keccak256("synthetic contract-wallet callback fixture");
+        vm.prank(migrationOwner);
+        allocation.configureNftEntitlements(rows_);
     }
 
     function test_insufficientExecutionGasInsideRealFundingRollsBackWholeSurrender() public {
@@ -156,8 +176,8 @@ contract MigrationNftLifecycleTest is MigrationNftForkBase {
     }
 
     function test_earlierContractHolderCallbackCannotReenterReplayOrActivate() public {
-        _configureNft(EARLIER, 3);
         MigrationNftHolder holder_ = new MigrationNftHolder(migration);
+        _configureReceiver(EARLIER, 3, address(holder_));
         address old_ = IERC721(EARLIER).ownerOf(3);
         vm.prank(old_);
         IERC721(EARLIER).safeTransferFrom(old_, address(holder_), 3);

@@ -99,7 +99,7 @@ export async function fixture() {
   };
   const original = { entitlementId: h(200), originalEth: "90071992547409931234",
     originalDtf: "110", evidenceId: h(201) };
-  const nft = { collection: weightedCollection, tokenId: "3", originalUnits: "100",
+  const nft = { collection: weightedCollection, tokenId: "3", originalWallet: a(21), originalUnits: "100",
     originalEth: "100", originalDtf: "22", evidenceId: h(202), contributionsKnown: true };
   const earlier = { ...nft, collection: earlierCollection, originalUnits: "2281854312954086546", evidenceId: h(204) };
   const nftId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(nft));

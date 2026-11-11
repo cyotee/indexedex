@@ -55,6 +55,7 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
+    /// @notice Complete interface-owned inputs include the explicit original wallet; no ownerOf fallback.
     function configureNfts(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
         proxy_.configureNftEntitlements(inputs_);

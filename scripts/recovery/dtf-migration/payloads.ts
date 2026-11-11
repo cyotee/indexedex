@@ -4,7 +4,7 @@ import type { Domain, NftOriginal, Original, PreparationInput } from "./schema.j
 
 const coder = AbiCoder.defaultAbiCoder();
 const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
-const nftTuple = "tuple(address collection,uint256 tokenId,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
+const nftTuple = "tuple(address collection,uint256 tokenId,address originalWallet,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
 export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
 export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
 export type IndependentPayload = {
@@ -29,15 +29,15 @@ export function nftOrigin(domain: Domain, input: NftOriginal): string {
 }
 
 const blockedGate = {
-  "weighted-liquid": "E2: ordinary-transfer contribution ancestry and consumption unproved",
-  "earlier-liquid": "E2: ordinary-transfer contribution ancestry and consumption unproved",
-  "weighted-receipt": "E2: gon ancestry and proportional consumption unproved",
-  "earlier-receipt": "E2: receipt ancestry/supply discrepancy and disabled exits",
-  "weighted-sy": "E2: wrapper look-through ancestry and nonduplication unproved",
-  "token-staking": "E1/E2: nontransferable claim composition and attribution unproved",
-  "claim-vault": "E1/E2: remaining claim ancestry and custody path unproved",
-  "underlying-se": "E1/E2: complete source discovery and contribution attribution unproved",
-  "fungible-lp": "E1/E2: complete source discovery and contribution attribution unproved",
+  "weighted-liquid": "H3/H4: original native-unit configuration and fungible surrender ledger not implemented",
+  "earlier-liquid": "H3/H6: original native-unit configuration and surrender not implemented; ED liquidation unproved",
+  "weighted-receipt": "H3/H4: original gon/credit mapping and synchronized fungible surrender not implemented",
+  "earlier-receipt": "H3/H6: original share denominator and fractional attribution unproved; earlier SE exits disabled",
+  "weighted-sy": "H3/H5: original share/credit mapping and SY surrender/recovery composition not implemented",
+  "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
+  "claim-vault": "H3/H5: original direct-user 19-decimal share records and surrender integration absent; infrastructure ownership is not user authority",
+  "underlying-se": "H3/H5/H6: direct-user records and surrender absent; earlier and weighted WETH SE disabled; 28-decimal DTF SE composition not implemented",
+  "fungible-lp": "H3/H6: original records and surrender absent; legacy exits are owner-restricted, earlier exact-in unsupported",
   "earlier-liquidation": "SB-E1/E2/E3 disabled earlier SE exits; SB-E4 liquid conversion unproved",
 } as const;
 
@@ -46,7 +46,7 @@ export function dispositions(input: PreparationInput) {
     switch (category) {
       case "independent": return { category, disposition: "bounded", gate: "verified disjoint originals only" };
       case "weighted-nft":
-      case "earlier-nft": return { category, disposition: "bounded", gate: "configuration only; real holder surrender required" };
+      case "earlier-nft": return { category, disposition: "bounded", gate: "explicit original-wallet configuration and actual same-wallet NFT surrender required" };
       default: return { category, disposition: "blocked", gate: blockedGate[category] };
     }
   }).map((row) => ({ ...row, records: input.exposures.filter((e) => e.category === row.category).length.toString() }));
