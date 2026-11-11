@@ -96,7 +96,7 @@ contract MigrationCoreLocalQA is TestBase_UniswapV4DetfMigration {
     event CorePrincipalPaid(address indexed parent, uint256 amount, uint256 deferredBondRewards);
     event CoreRewardsPaid(address indexed parent, uint256 bondRewards, uint256 nativeRT, uint256 redeemed, uint256 remainder);
     function setUp() public override {}
-    function _localInfrastructure() private {
+    function _localInfrastructure() internal {
         (create3Factory, diamondPackageFactory) = InitDevService.initEnv(DEV);
         diamondFactory = diamondPackageFactory;
         owner = DEV;

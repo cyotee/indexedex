@@ -1,0 +1,204 @@
+import { Interface, Result } from "ethers";
+import { z } from "zod";
+import { requirePrepared, checkRelationships, loupeAbi } from "./execution-domain.js";
+import type { ExecutionDomain } from "./execution-domain.js";
+import { erc20Abi } from "./execution-plan.js";
+import type { Rpc } from "./execution-rpc.js";
+import { ExecutionError } from "./execution-schema.js";
+import type { Completion, Intent, Receipt } from "./execution-schema.js";
+import { canonical, fingerprint } from "./provenance.js";
+
+function tuple(value: unknown): Result {
+  if (!(value instanceof Result)) throw new ExecutionError("STATE", "invalid contract tuple");
+  return value;
+}
+function valueString(value: unknown): string {
+  if (typeof value === "bigint" || typeof value === "boolean" || typeof value === "string") return String(value);
+  if (value instanceof Result) return canonical(value.toArray(true).map(valueString));
+  if (Array.isArray(value)) return canonical(value.map(valueString));
+  throw new ExecutionError("STATE", "unsupported contract result");
+}
+
+export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item: Intent, mined: Receipt): Promise<Completion> {
+  if (BigInt(mined.status) !== 1n) throw new ExecutionError("REVERT", `canonical transaction reverted: ${item.transactionHash}`);
+  if (mined.from !== item.transaction.from || mined.to !== item.transaction.to) {
+    throw new ExecutionError("INTENT", "receipt target or signer mismatch");
+  }
+  const { manifest: m, abis } = domain;
+  const events: { name: string; values: string[] }[] = [];
+  for (const log of mined.logs) {
+    if (log.address !== m.proxy) continue;
+    for (const abi of [abis.migration, abis.allocation, abis.recovery]) {
+      const parsed = abi.parseLog({ topics: [...log.topics], data: log.data });
+      if (parsed) { events.push({ name: parsed.name, values: [...parsed.args].map(valueString) }); break; }
+    }
+  }
+  const state: Record<string, string> = {};
+  const at = mined.blockNumber;
+  const query = async (method: string, args: readonly unknown[] = []) => {
+    const result = await rpc.call(m.proxy, abis.migration, method, args, at);
+    state[`${method}:${canonical(args.map(valueString))}`] = canonical([...result].map(valueString));
+    return result;
+  };
+  const requireEvent = (name: string) => {
+    if (!events.some((e) => e.name === name)) throw new ExecutionError("STATE", `missing actual ${name} event`);
+  };
+  switch (item.method) {
+    case "deployVault":
+      await checkRelationships(rpc, domain, false);
+      state["owner"] = String((await query("owner"))[0]).toLowerCase();
+      if (state["owner"] !== m.deployment?.owner) throw new ExecutionError("STATE", "deployed owner mismatch");
+      break;
+    case "approve": {
+      const allowance = await rpc.call(item.transaction.to, erc20Abi, "allowance", [m.signer, m.proxy], at);
+      const args = erc20Abi.decodeFunctionData("approve", item.transaction.data);
+      if (allowance[0] !== args[1]) throw new ExecutionError("STATE", "approval state mismatch");
+      state["allowance"] = valueString(allowance[0]);
+      break;
+    }
+    case "donateMigrationCapital": {
+      requireEvent("MigrationCapitalReceived");
+      const args = abis.migration.decodeFunctionData(item.method, item.transaction.data);
+      const tokens = z.array(z.string()).parse(args[0]);
+      const amounts = z.array(z.bigint()).parse(args[1]);
+      const expected = new Map(tokens.map((token, i) => [token.toLowerCase(), z.bigint().parse(amounts[i])] as const));
+      const native = z.bigint().parse(args[2]);
+      if (native > 0n) {
+        const source = tuple((await query("migrationSnapshotSource"))[0]);
+        const weth = String(source.getValue("weth")).toLowerCase();
+        expected.set(weth, (expected.get(weth) ?? 0n) + native);
+      }
+      for (const [token, amount] of expected) {
+        const received = events.filter((e) => e.name === "MigrationCapitalReceived"
+          && e.values[0]?.toLowerCase() === m.signer && e.values[1]?.toLowerCase() === token.toLowerCase())
+          .reduce((sum, e) => sum + BigInt(z.string().parse(e.values[2])), 0n);
+        if (received !== amount) throw new ExecutionError("STATE", "donation receipt amount mismatch");
+        await query("migrationDonationInventory", [token]);
+      }
+      state["nativeAmount"] = valueString(args[2]);
+      break;
+    }
+    case "bootstrapMigrationReserve":
+      requireEvent("MigrationReserveBootstrapped");
+      await query("migrationBootstrapSelfMinted");
+      break;
+    case "captureMigrationSnapshot": {
+      requireEvent("MigrationSnapshotCaptured");
+      const snapshot = tuple((await query("migrationSnapshot"))[0]);
+      if (!events.some((e) => e.name === "MigrationSnapshotCaptured" && e.values[0] === snapshot.getValue("id"))) {
+        throw new ExecutionError("STATE", "captured snapshot event/state mismatch");
+      }
+      break;
+    }
+    case "configureIndependentAllocations":
+    case "configureNftEntitlements": {
+      const p = requirePrepared(domain);
+      const independent = item.method === "configureIndependentAllocations";
+      requireEvent(independent ? "IndependentAllocationConfigured" : "NftEntitlementConfigured");
+      const args = abis.allocation.decodeFunctionData(item.method, item.transaction.data);
+      const rows: unknown = args[0];
+      if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid configuration tuple array");
+      for (const row of rows) {
+        const r = tuple(row);
+        const expected = independent
+          ? p.payloads.configure.independent.find((x) => x.input.recipient === String(r.getValue("recipient")).toLowerCase())
+          : p.payloads.configure.nfts.find((x) => x.input.collection === String(r.getValue("collection")).toLowerCase()
+            && x.input.tokenId === String(r.getValue("tokenId")));
+        if (!expected) throw new ExecutionError("STATE", "unbound configuration");
+        const actual = tuple((await query(independent ? "independentAllocation" : "nftEntitlement",
+          independent ? [r.getValue("recipient")] : [r.getValue("collection"), r.getValue("tokenId")]))[0]);
+        if (actual.getValue("configurationId") !== expected.configurationId
+          || String(actual.getValue(independent ? "totalCredit" : "credit")) !== expected.quotedCredit) {
+          throw new ExecutionError("STATE", "configuration state differs from full payload");
+        }
+      }
+      break;
+    }
+    case "issueIndependentAllocations": {
+      requireEvent("IndependentAllocationIssued");
+      for (const event of events.filter((e) => e.name === "IndependentAllocationIssued")) {
+        const recipient = event.values[0];
+        if (!recipient) throw new ExecutionError("STATE", "missing issued recipient");
+        const issued = tuple((await query("independentIssuance", [recipient]))[0]);
+        if (issued.getValue("issued") !== true || String(issued.getValue("bondTokenId")) !== event.values[2]
+          || issued.getValue("configurationId") !== event.values[1]
+          || String(issued.getValue("credit")) !== event.values[3]) throw new ExecutionError("STATE", "issuance receipt/state mismatch");
+        const bond = String((await query("bondNftVault"))[0]);
+        const bondAbi = new Interface([
+          "function ownerOf(uint256) view returns(address)",
+          "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+          "function isMigrationPosition(uint256) view returns(bool)",
+        ]);
+        const bondId = issued.getValue("bondTokenId");
+        const position = tuple((await rpc.call(bond, bondAbi, "positionOf", [bondId], at))[0]);
+        if (position.getValue("principal") !== issued.getValue("credit")
+          || position.getValue("startTimestamp") !== issued.getValue("issuedAt")
+          || position.getValue("vestingDuration") !== 7776000n
+          || String((await rpc.call(bond, bondAbi, "ownerOf", [bondId], at))[0]).toLowerCase() !== recipient.toLowerCase()
+          || (await rpc.call(bond, bondAbi, "isMigrationPosition", [bondId], at))[0] !== true) {
+          throw new ExecutionError("STATE", "actual bond identity, principal, owner or fresh cliff differs");
+        }
+        state[`bond:${bondId}`] = valueString(position);
+      }
+      break;
+    }
+    case "activateMigration":
+      requireEvent("MigrationActivated");
+      if ((await query("migrationActivated"))[0] !== true) throw new ExecutionError("STATE", "activation state mismatch");
+      for (const fragment of abis.allocation.fragments) {
+        if (fragment.type !== "function") continue;
+        const fn = abis.allocation.getFunction(fragment.format("sighash"));
+        if (!fn || String((await rpc.call(m.proxy, loupeAbi, "facetAddress", [fn.selector], at))[0])
+          !== "0x0000000000000000000000000000000000000000") throw new ExecutionError("STATE", "administration selector survived activation");
+      }
+      break;
+    case "recoverMigrationNfts": {
+      if (!events.some((e) => ["MigrationRecoveryClaimed", "MigrationRecoverySold", "MigrationRecoveryConverted",
+        "MigrationRecoveryDonated"].includes(e.name))) throw new ExecutionError("STATE", "recovery has no economic event");
+      const gons = await rpc.call(m.proxy, abis.recovery, "migrationRecoveryGons", [], at);
+      state["attributedGons"] = valueString(gons[0]);
+      for (const token of ["0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+        "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "0xee5576fa1bcaa380e591d01245f406f3f384eb01"]) {
+        state[`inventory:${token}`] = valueString((await rpc.call(m.proxy, abis.recovery, "migrationRecoveryInventory", [token], at))[0]);
+      }
+      const steps: unknown = abis.recovery.decodeFunctionData(item.method, item.transaction.data)[0];
+      if (!Array.isArray(steps)) throw new ExecutionError("STATE", "invalid recovery selection");
+      for (const raw of steps) {
+        const step = tuple(raw);
+        const stage = z.bigint().parse(step.getValue("stage"));
+        const tokenId = z.bigint().parse(step.getValue("tokenId"));
+        if (tokenId === 0n) continue;
+        const collection = stage <= 2n ? "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e"
+          : "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
+        const surrender = tuple((await query("nftSurrender", [collection, tokenId]))[0]);
+        if (surrender.getValue("consumed") !== true) throw new ExecutionError("STATE", "recovery lacks consumed custody");
+        state[`recovery:${collection}:${tokenId}`] = valueString(
+          (await rpc.call(m.proxy, abis.recovery, "migrationNftRecovery", [collection, tokenId], at))[0]);
+      }
+      break;
+    }
+    default: throw new ExecutionError("INTENT", "method outside fixed stage plan");
+  }
+  return { intentHash: fingerprint(canonical(item)), receipt: mined, state, events };
+}
+
+export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
+  const prepared = requirePrepared(domain);
+  const rows = [];
+  for (const row of prepared.payloads.configure.independent) {
+    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "independentAllocation", [row.input.recipient]))[0]);
+    const issuance = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "independentIssuance", [row.input.recipient]))[0]);
+    if (actual.getValue("configurationId") !== row.configurationId || String(actual.getValue("totalCredit")) !== row.quotedCredit) {
+      throw new ExecutionError("STATE", "independent configuration mismatch");
+    }
+    rows.push({ recipient: row.input.recipient, issued: issuance.getValue("issued") === true,
+      bondTokenId: String(issuance.getValue("bondTokenId")) });
+  }
+  for (const row of prepared.payloads.configure.nfts) {
+    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "nftEntitlement",
+      [row.input.collection, row.input.tokenId]))[0]);
+    if (actual.getValue("configurationId") !== row.configurationId || actual.getValue("originalId") !== row.originalId
+      || String(actual.getValue("credit")) !== row.quotedCredit) throw new ExecutionError("STATE", "NFT configuration mismatch");
+  }
+  return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };
+}
