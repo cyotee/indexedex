@@ -21,6 +21,7 @@ interface IUniswapV4DetfMigrationDFPkg is IDiamondFactoryPackage, IStandardVault
         IFacet ownableFacet;
         IFacet migrationFacet;
         IFacet allocationFacet;
+        IFacet recoveryFacet;
         IUniswapV4DetfMigrationRewardTokenDFPkg rewardTokenPkg;
     }
 

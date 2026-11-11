@@ -75,7 +75,7 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         assertEq(IDiamondLoupe(EARLIER).facetAddress(IERC721.approve.selector), ownerFacet_);
     }
 
-    function _seedMigrationPool(IUniswapV3Pool pool_, bytes32 salt_) internal override {
+    function _seedMigrationPool(IUniswapV3Pool pool_, bytes32 salt_) internal virtual override {
         vm.deal(address(this), 1e15 ether);
         address[2] memory tokens_ = [pool_.token0(), pool_.token1()];
         Univ3LiquiditySeeder seeder_ = Univ3LiquiditySeeder(create3Factory.create3WithArgs(
@@ -90,7 +90,7 @@ abstract contract MigrationNftForkBase is TestBase_UniswapV4DetfMigration {
         seeder_.seedFullRange(pool_, uint128(1e12 ether));
     }
 
-    function _fundHistoricalBook() internal {
+    function _fundHistoricalBook() internal virtual {
         IWETH(pairA).deposit{value: 1e8 ether}();
         SimpleMintableERC20(pairB).mint(address(this), 1e8 ether);
         IERC20(pairA).approve(address(migration), type(uint256).max);

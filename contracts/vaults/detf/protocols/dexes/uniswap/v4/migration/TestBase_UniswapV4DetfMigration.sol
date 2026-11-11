@@ -94,12 +94,9 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
             ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol:WETH9"), "", keccak256("migration.weth")
         );
         pairB = _deployContributionFixture();
-        address rate_ = create3Factory.create3WithArgs(
-            ArtifactCreationCode.creationCode(create3Factory, "SimpleMintableERC20.sol:SimpleMintableERC20"),
-            abi.encode("External rate fixture", "RATE"), keccak256("migration.rate")
-        );
+        address rate_ = _deployRateFixture();
         IWETH(pairA).deposit{value: 10000 ether}();
-        SimpleMintableERC20(pairB).mint(payer, 10000 ether);
+        _fundContribution(payer, 10000 ether);
         SimpleMintableERC20(rate_).mint(payer, 20000 ether);
         pm = IPoolManager(create3Factory.create3WithArgs(
             ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
@@ -137,6 +134,18 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         return create3Factory.create3WithArgs(
             ArtifactCreationCode.creationCode(create3Factory, "SimpleMintableERC20.sol:SimpleMintableERC20"),
             abi.encode("External contribution fixture", "CONTRIB"), keccak256("migration.contribution")
+        );
+    }
+
+    /// @dev Fork fixtures may supply actual holder-funded contribution tokens instead of minting.
+    function _fundContribution(address recipient_, uint256 amount_) internal virtual {
+        SimpleMintableERC20(pairB).mint(recipient_, amount_);
+    }
+
+    function _deployRateFixture() internal virtual returns (address) {
+        return create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "SimpleMintableERC20.sol:SimpleMintableERC20"),
+            abi.encode("External rate fixture", "RATE"), keccak256("migration.rate")
         );
     }
 
@@ -238,6 +247,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         IFacet[5] memory products_ = Components.deployParentFacets(create3Factory);
         IFacet permanent_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationFacet");
         IFacet admin_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationAllocationFacet");
+        IFacet recovery_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationRecoveryFacet");
         _ownerStart();
         bondNftVaultPkg = IUniswapV4DetfBondNFTVaultDFPkg(address(Packages.deployBond(
             IVaultRegistryDeployment(address(indexedexManager)), IDETFNFTVaultDFPkg.PkgInit(
@@ -253,7 +263,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
                 erc20Facet, erc5267Facet, erc2612Facet, multiAssetBasicVaultFacet, multiAssetStandardVaultFacet,
                 products_, IVaultFeeOracleQuery(address(indexedexManager)),
                 IVaultRegistryDeployment(address(indexedexManager)), bondNftVaultPkg, rebasingClaimTokenPkg, syPkg
-            ), multiStepOwnableFacet, permanent_, admin_, reward_));
+            ), multiStepOwnableFacet, permanent_, admin_, recovery_, reward_));
         _ownerStop();
     }
 

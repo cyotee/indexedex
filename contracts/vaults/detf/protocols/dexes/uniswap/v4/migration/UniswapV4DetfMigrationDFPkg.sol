@@ -38,6 +38,7 @@ import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/d
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 
 import {IUniswapV4DetfMigrationDFPkg} from "./interfaces/IUniswapV4DetfMigrationDFPkg.sol";
+import {IUniswapV4DetfMigrationRecovery} from "./interfaces/IUniswapV4DetfMigrationRecovery.sol";
 import {IUniswapV4DetfMigration, IUniswapV4DetfMigrationAllocation, IUniswapV4DetfMigrationAccounting} from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationRewardTokenDFPkg, IUniswapV4DetfMigrationRewardToken} from "./sy/rewards/IUniswapV4DetfMigrationRewardToken.sol";
 import {UniswapV4DetfMigrationRepo as MigrationRepo} from "./UniswapV4DetfMigrationRepo.sol";
@@ -70,6 +71,7 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     IFacet immutable OWNABLE_FACET;
     IFacet immutable MIGRATION_FACET;
     IFacet immutable ALLOCATION_FACET;
+    IFacet immutable RECOVERY_FACET;
     IUniswapV4DetfMigrationRewardTokenDFPkg immutable REWARD_TOKEN_PKG;
     address immutable SELF;
     constructor(PkgInit memory migrationInit_) {
@@ -77,10 +79,12 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         OWNABLE_FACET = migrationInit_.ownableFacet;
         MIGRATION_FACET = migrationInit_.migrationFacet;
         ALLOCATION_FACET = migrationInit_.allocationFacet;
+        RECOVERY_FACET = migrationInit_.recoveryFacet;
         REWARD_TOKEN_PKG = migrationInit_.rewardTokenPkg;
         SELF = address(this);
         if (address(OWNABLE_FACET) == address(0) || address(MIGRATION_FACET) == address(0)
-            || address(ALLOCATION_FACET) == address(0) || address(REWARD_TOKEN_PKG) == address(0)) revert InvalidMigrationPackageArguments();
+            || address(ALLOCATION_FACET) == address(0) || address(RECOVERY_FACET) == address(0)
+            || address(REWARD_TOKEN_PKG) == address(0)) revert InvalidMigrationPackageArguments();
         if (
             address(pkgInit.erc20Facet) == address(0)
                 || address(pkgInit.feeOracle) == address(0)
@@ -142,7 +146,8 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](13);
+        facetAddresses_ = new address[](14);
+        facetAddresses_[13] = address(RECOVERY_FACET);
         facetAddresses_[10] = address(OWNABLE_FACET);
         facetAddresses_[11] = address(MIGRATION_FACET);
         facetAddresses_[12] = address(ALLOCATION_FACET);
@@ -156,7 +161,8 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](16);
+        interfaces_ = new bytes4[](17);
+        interfaces_[16] = type(IUniswapV4DetfMigrationRecovery).interfaceId;
         interfaces_[15] = type(IERC721Receiver).interfaceId;
         interfaces_[12] = type(IMultiStepOwnable).interfaceId;
         interfaces_[13] = type(IUniswapV4DetfMigration).interfaceId;
