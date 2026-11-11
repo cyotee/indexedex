@@ -29,6 +29,12 @@ interface IMigrationWeightedReceipt is IMigrationLegacyExchange {
     function stakingState() external view returns (StakingState memory);
 }
 
+/// @notice Authenticated historical staking SY route; shares and returned receipt units are native nine decimals.
+interface IMigrationWeightedSy {
+    function redeem(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_, bool internalBalance_)
+        external returns (uint256 amountOut_);
+}
+
 interface IMigrationEarlierClaims {
     function claimRewards(uint256 tokenId_, address recipient_) external returns (uint256);
 }

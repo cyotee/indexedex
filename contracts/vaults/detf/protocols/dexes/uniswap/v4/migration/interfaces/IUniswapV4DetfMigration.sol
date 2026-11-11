@@ -160,6 +160,34 @@ interface IUniswapV4DetfMigration is
         uint256 remainingCredit;
     }
 
+    /// @notice Original weighted SY exposure in native nine-decimal static shares, not receipt units.
+    /// @dev originalId is the same wallet-independent economic origin used across representations.
+    /// Holdings establish custody only; originalUnits and BOTH known contribution components are inputs.
+    struct WeightedSyEntitlementInput {
+        bytes32 originalId;
+        address originalWallet;
+        address source;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct WeightedSyEntitlement {
+        bool configured;
+        WeightedSyEntitlementInput original;
+        bytes32 configurationId;
+        uint256 credit;
+    }
+
+    struct WeightedSySurrender {
+        uint256 consumedUnits;
+        uint256 deliveredCredit;
+        uint256 remainingUnits;
+        uint256 remainingCredit;
+    }
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -192,6 +220,12 @@ interface IUniswapV4DetfMigration is
     error InvalidWeightedLiquidQuantity(uint256 requested, uint256 remaining);
     error WeightedLiquidCustodyFailed();
     error WeightedLiquidIdentityConsumed(bytes32 originalId);
+    error UnsupportedWeightedSySource(uint256 chainId, address source);
+    error InvalidWeightedSyEntitlement(bytes32 originalId);
+    error NotOriginalWeightedSyWallet(address caller, address originalWallet);
+    error InvalidWeightedSyQuantity(uint256 requested, uint256 remaining);
+    error WeightedSyCustodyFailed();
+    error WeightedSyIdentityConsumed(bytes32 originalId);
 
     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
@@ -224,6 +258,21 @@ interface IUniswapV4DetfMigration is
         bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
         uint256 units, uint256 credit, uint256 bondTokenId
     );
+    event WeightedSyEntitlementConfigured(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 originalUnits, uint256 credit
+    );
+    event MigrationWeightedSySurrendered(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 units, uint256 credit, uint256 bondTokenId
+    );
+
+    function weightedSyEntitlement(bytes32 originalId_) external view returns (WeightedSyEntitlement memory);
+    function weightedSySurrender(bytes32 originalId_) external view returns (WeightedSySurrender memory);
+    function previewWeightedSySurrender(bytes32 originalId_, uint256 amount_) external view returns (uint256 credit_);
+    /// @notice Stage2 only: pull configured original-wallet WY shares for one fresh exactly funded cliff bond.
+    function surrenderMigrationWeightedSy(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external returns (uint256 bondTokenId_, uint256 credit_);
 
     function weightedLiquidEntitlement(bytes32 originalId_)
         external view returns (WeightedLiquidEntitlement memory);
@@ -295,9 +344,13 @@ interface IUniswapV4DetfMigration is
 }
 
 /// @notice Entire current-core administration surface; current-owner-only and removed at activation.
-/// @dev Only the two admitted NFT sources and weighted liquid source; no attribution shortcut or price setter.
+/// @dev Only the two admitted NFT sources, weighted liquid and weighted SY; no attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Stage1 full replacement on the frozen book; static WY shares, no issuance or live valuation.
+    function configureWeightedSyEntitlements(
+        IUniswapV4DetfMigration.WeightedSyEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Stage 1 full replacement initializes Q/C from original units and the frozen quote without issuance.
     /// @dev Surrender is closed while this selector exists; execution facts are never cleared.
     function configureWeightedLiquidEntitlements(

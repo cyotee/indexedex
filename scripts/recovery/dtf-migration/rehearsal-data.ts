@@ -57,6 +57,7 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
     sourceFile("environment", environmentPath),
+    sourceFile("weighted-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md"),
     sourceFile("owner-first-bond-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md"),
     sourceFile("current-main-plan", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"),
     sourceFile("current-main-prd", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md"),
@@ -140,13 +141,21 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     originalDtf: "0", evidenceId: `0x${fingerprint("synthetic W-L Q0 and components; not an approved user allocation")}`,
     contributionsKnown: true as const,
   }];
+  const weightedSy = [{
+    originalId: `0x${fingerprint("synthetic W-Y original allocation")}`,
+    originalWallet: "0x11c17f25e958e4637dd26ca362adeae12e24ed5b",
+    source: LEGACY.sy, originalUnits: "8094", originalEth: "10000000000000000",
+    originalDtf: "0", evidenceId: `0x${fingerprint("synthetic WY Q0 and components; not an approved allocation")}`,
+    contributionsKnown: true as const,
+  }];
   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
     ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" })),
-    ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" }))];
+    ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" })),
+    ...weightedSy.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-sy" }))];
   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
   const evidencePath = join(directory, "synthetic-originals.json");
-  await save(evidencePath, { originals, nfts, weightedLiquid, exposures });
+  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, exposures });
   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
   const input = preparationInput.parse({
     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
@@ -156,6 +165,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
       entitlements: [{ original: originals[i], proof: proof(`/originals/${i}`) }] })),
     nfts: nfts.map((original, i) => ({ original, proof: proof(`/nfts/${i}`) })),
     weightedLiquid: weightedLiquid.map((original, i) => ({ original, proof: proof(`/weightedLiquid/${i}`) })),
+    weightedSy: weightedSy.map((original, i) => ({ original, proof: proof(`/weightedSy/${i}`) })),
     issueRecipients: recipients.slice(0, 3),
     harvest: { steps: [{ stage: "WeightedClaim", tokenId: "4", amount: "0", minimum: "0" }],
       deadline: (await chain.timestamp() + 365n * 86400n).toString() },
@@ -176,8 +186,11 @@ export async function replacementFixture(input: PreparationInput, directory: str
       originalUnits: (BigInt(row.original.originalUnits) - 1n).toString(),
     },
   }));
+  const weightedSy = input.weightedSy.map((row) => ({
+    ...row, original: { ...row.original, originalEth: "6000000000000000", originalUnits: "8087" },
+  }));
   const exposures = input.exposures.map((row) => {
-    const liquid = weightedLiquid.find((entry) => entry.original.originalId === row.originId);
+    const liquid = [...weightedLiquid, ...weightedSy].find((entry) => entry.original.originalId === row.originId);
     return liquid ? { ...row, originalUnits: liquid.original.originalUnits,
       descendants: row.descendants.map((entry) => ({ ...entry, units: liquid.original.originalUnits })) } : row;
   });
@@ -186,9 +199,10 @@ export async function replacementFixture(input: PreparationInput, directory: str
     originals: independent.flatMap((row) => row.entitlements.map((e) => e.original)),
     nfts: input.nfts.map((row) => row.original),
     weightedLiquid: weightedLiquid.map((row) => row.original),
+    weightedSy: weightedSy.map((row) => row.original),
     exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
   });
-  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, exposures,
+  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, exposures,
     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
   await save(join(directory, "replacement-input.json"), replacement);
   return replacement;

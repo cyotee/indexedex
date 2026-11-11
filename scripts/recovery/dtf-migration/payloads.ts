@@ -6,6 +6,7 @@ const coder = AbiCoder.defaultAbiCoder();
 const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
 const nftTuple = "tuple(address collection,uint256 tokenId,address originalWallet,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
 const weightedLiquidTuple = "tuple(bytes32 originalId,address originalWallet,address source,uint256 originalUnits,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId,bool contributionsKnown)";
+export const weightedSySource = "0xb55604cf4dcdabb362078e106d20f98512391edf";
 export const weightedLiquidSource = "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7";
 export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
 export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
@@ -18,6 +19,7 @@ export type ConfigurationPayload = {
   readonly independent: readonly IndependentPayload[];
   readonly nfts: readonly NftOriginal[];
   readonly weightedLiquid: readonly WeightedLiquidOriginal[];
+  readonly weightedSy: readonly WeightedLiquidOriginal[];
 };
 
 export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal): string {
@@ -35,7 +37,6 @@ const blockedGate = {
   "earlier-liquid": "H3/H6: original native-unit configuration and surrender not implemented; ED liquidation unproved",
   "weighted-receipt": "H3/H4: original gon/credit mapping and synchronized fungible surrender not implemented",
   "earlier-receipt": "H3/H6: original share denominator and fractional attribution unproved; earlier SE exits disabled",
-  "weighted-sy": "H3/H5: original share/credit mapping and SY surrender/recovery composition not implemented",
   "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
   "claim-vault": "H3/H5: original direct-user 19-decimal share records and surrender integration absent; infrastructure ownership is not user authority",
   "underlying-se": "H3/H5/H6: direct-user records and surrender absent; earlier and weighted WETH SE disabled; 28-decimal DTF SE composition not implemented",
@@ -49,6 +50,7 @@ export function dispositions(input: PreparationInput) {
       case "independent": return { category, disposition: "bounded", gate: "verified disjoint originals only" };
       case "weighted-nft":
       case "earlier-nft": return { category, disposition: "bounded", gate: "explicit original-wallet configuration and actual same-wallet NFT surrender required" };
+      case "weighted-sy": return { category, disposition: "bounded", gate: "fixed WY original-wallet static-share/component inputs and measured custody; operational allocations remain unapproved" };
       case "weighted-liquid": return { category, disposition: "bounded", gate: "explicit original-wallet WD quantity/component allocation and measured surrender; operational allocations remain unapproved" };
       default: return { category, disposition: "blocked", gate: blockedGate[category] };
     }
@@ -99,6 +101,16 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
     }
     return original;
   }).sort((a, b) => a.originalId.localeCompare(b.originalId));
+  const weightedSy = input.weightedSy.map(({ original }) => {
+    if (input.domain.chainId !== "4663" || original.source !== weightedSySource) {
+      throw new PreparationError("DOMAIN", "weighted SY source requires fixed WY on chain 4663");
+    }
+    claimOrigin(original.originalId, "weighted-sy");
+    if (origins.get(original.originalId)?.originalUnits !== original.originalUnits) {
+      throw new PreparationError("PROVENANCE", "weighted SY original units differ from reconciled origin");
+    }
+    return original;
+  }).sort((a, b) => a.originalId.localeCompare(b.originalId));
   if (used.size !== origins.size) throw new PreparationError("PROVENANCE", "unassigned origin; no silent omission");
   if (new Set(input.issueRecipients).size !== input.issueRecipients.length) {
     throw new PreparationError("INPUT", "duplicate issuance recipient");
@@ -123,6 +135,7 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
         }
         break;
       case "WeightedUnstake":
+      case "WeightedSyRedeem":
       case "WeightedConvert":
       case "Donate":
         if (step.tokenId !== "0" || step.amount === "0"
@@ -136,5 +149,5 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
   if (input.harvest.steps.length > 0 && (input.domain.chainId !== "4663" || input.harvest.deadline === "0")) {
     throw new PreparationError("DOMAIN", "recovery requires chain 4663 and deadline");
   }
-  return { independent, nfts, weightedLiquid };
+  return { independent, nfts, weightedLiquid, weightedSy };
 }

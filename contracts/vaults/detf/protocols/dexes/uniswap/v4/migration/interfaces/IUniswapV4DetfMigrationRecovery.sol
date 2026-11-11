@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-/// @notice Retained, current-owner recovery of the two admitted chain-4663 NFT sources.
+/// @notice Retained current-owner recovery of admitted chain-4663 NFTs, weighted liquid and SY.
 interface IUniswapV4DetfMigrationRecovery {
     enum Stage {
         WeightedClaim,
@@ -11,11 +11,12 @@ interface IUniswapV4DetfMigrationRecovery {
         WeightedConvert,
         EarlierClaim,
         EarlierSale,
-        Donate
+        Donate,
+        WeightedSyRedeem
     }
 
     /// @dev NFT stages use tokenId; conversions/donation use amount. minimum is native DTF
-    /// output, external earlier receipt shares, or reserve LP respectively. Unused fields must
+    /// output, external earlier receipt shares, reserve LP, or native WS output for SY redemption. Unused fields must
     /// be zero. No target, selector, recipient, pretransfer flag or route can be supplied.
     struct Step {
         Stage stage;
@@ -44,6 +45,11 @@ interface IUniswapV4DetfMigrationRecovery {
     );
     event MigrationRecoverySold(uint256 indexed tokenId, uint256 originalShares, uint256 receiptShares, uint256 rewards);
     event MigrationRecoveryConverted(address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
+    /// @notice Actual WS gons received from selected WY; conversion dust stays at the legacy wrapper.
+    /// @dev The synchronized divisor values recovery only, never configured compensation.
+    event MigrationWeightedSyRedeemed(
+        uint256 shares, uint256 receiptUnits, uint256 receivedGons, uint256 divisor, uint256 conversionDustGons
+    );
     /// @notice Native representation of existing attributed gons at a synchronized divisor.
     /// @dev Not a claim, receipt transfer, principal issuance or compensation.
     event MigrationRecoveryRevalued(

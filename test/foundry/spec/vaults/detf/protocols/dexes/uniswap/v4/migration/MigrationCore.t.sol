@@ -184,11 +184,11 @@ contract MigrationCoreTest is TestBase_UniswapV4DetfMigration {
 
     function test_activationRemovesEntireAdministrationAndKeepsQueries() public {
         _fundAndCapture();
-        bytes4[7] memory selectors_ = [
+        bytes4[8] memory selectors_ = [
             Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
-            Allocation.configureWeightedLiquidEntitlements.selector
+            Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureWeightedSyEntitlements.selector
         ];
         address[] memory facets_ = new address[](selectors_.length);
         for (uint256 i_; i_ < selectors_.length; ++i_) {

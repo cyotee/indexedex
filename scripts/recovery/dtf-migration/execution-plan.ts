@@ -58,6 +58,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
       for (const row of p.payloads.configure.independent) add("configureIndependentAllocations", [[row.input]]);
       for (const row of p.payloads.configure.nfts) add("configureNftEntitlements", [[row.input]]);
       for (const row of p.payloads.configure.weightedLiquid) add("configureWeightedLiquidEntitlements", [[row.input]]);
+      for (const row of p.payloads.configure.weightedSy) add("configureWeightedSyEntitlements", [[row.input]]);
       if (!operations.length) throw new ExecutionError("DOMAIN", "no supported configuration selected");
       break;
     }
@@ -78,7 +79,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
       const h = requirePrepared(domain).payloads.harvest;
       if (!h.steps.length) throw new ExecutionError("DOMAIN", "no admitted recovery step selected");
       const names = ["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
-        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate"] as const;
+        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem"] as const;
       add("recoverMigrationNfts", [h.steps.map((s) => ({ ...s, stage: names.indexOf(s.stage) })), h.deadline], abis.recovery);
       break;
     }

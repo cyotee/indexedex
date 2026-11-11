@@ -7,7 +7,7 @@ import {UniswapV4DetfMigrationTarget} from "./UniswapV4DetfMigrationTarget.sol";
 contract UniswapV4DetfMigrationFacet is UniswapV4DetfMigrationTarget, IFacet {
 function facetName() public pure returns(string memory) { return "UniswapV4DetfMigrationFacet"; }
 function facetInterfaces() public pure returns(bytes4[] memory ids_) { ids_ = new bytes4[](2); ids_[0] = type(Migration).interfaceId; ids_[1] = type(IERC721Receiver).interfaceId; }
-function facetFuncs() public pure returns(bytes4[] memory funcs_) { funcs_ = new bytes4[](22);
+function facetFuncs() public pure returns(bytes4[] memory funcs_) { funcs_ = new bytes4[](26);
 funcs_[0] = Migration.migrationActivated.selector;
 funcs_[1] = Migration.migrationSyRewardToken.selector;
 funcs_[2] = Migration.migrationSnapshotSource.selector;
@@ -29,6 +29,10 @@ funcs_[17] = Migration.weightedLiquidEntitlement.selector;
 funcs_[18] = Migration.weightedLiquidSurrender.selector;
 funcs_[19] = Migration.previewWeightedLiquidSurrender.selector;
 funcs_[20] = Migration.surrenderMigrationWeightedLiquid.selector;
-funcs_[21] = Migration.migrationOwnerFirstBondTokenId.selector; }
+funcs_[21] = Migration.migrationOwnerFirstBondTokenId.selector;
+funcs_[22] = Migration.weightedSyEntitlement.selector;
+funcs_[23] = Migration.weightedSySurrender.selector;
+funcs_[24] = Migration.previewWeightedSySurrender.selector;
+funcs_[25] = Migration.surrenderMigrationWeightedSy.selector; }
 function facetMetadata() external pure returns(string memory,bytes4[] memory,bytes4[] memory) { return (facetName(),facetInterfaces(),facetFuncs()); }
 }

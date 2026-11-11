@@ -10,6 +10,7 @@ export const LEGACY = {
   earlier: "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391",
   receipt: "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
   detf: "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7",
+  sy: "0xb55604cf4dcdabb362078e106d20f98512391edf",
   dtf: "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
 } as const;
 export const legacyAbi = new Interface([
@@ -20,6 +21,7 @@ export const legacyAbi = new Interface([
   "function setApprovalForAll(address,bool)",
   "function transfer(address,uint256) returns(bool)",
   "function balanceOf(address) view returns(uint256)",
+  "function gonsOf(address) view returns(uint256)",
   "function claimBond(uint256,address) returns(uint256,uint256)",
   "function stakingState() view returns((uint256 totalGons,uint256 gonsPerUnit,uint256 accountedBacking,uint256 allocationDust,uint256 stakingDust,uint256 feeWeight,uint256 creatorWeight))",
   "function exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns(uint256)",

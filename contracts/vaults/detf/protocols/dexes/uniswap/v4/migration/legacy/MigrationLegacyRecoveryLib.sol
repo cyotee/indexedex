@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IUniswapV4DetfMigration as Migration} from "../interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationRecovery as Recovery} from "../interfaces/IUniswapV4DetfMigrationRecovery.sol";
 import {UniswapV4DetfMigrationRepo as MigrationRepo} from "../UniswapV4DetfMigrationRepo.sol";
@@ -10,7 +11,7 @@ import {UniswapV4DetfMigrationRecoveryRepo as Repo} from "../UniswapV4DetfMigrat
 import {IMigrationLegacyNft, IMigrationWeightedNft, IMigrationEarlierNft} from "./IMigrationLegacyNft.sol";
 import {MigrationLegacyNftLib as NftLib} from "./MigrationLegacyNftLib.sol";
 import {
-    IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationLegacyExchange,
+    IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationWeightedSy, IMigrationLegacyExchange,
     IMigrationEarlierClaims, IMigrationEarlierSale, IMigrationEarlierReceipt
 } from "./IMigrationLegacyRecovery.sol";
 
@@ -20,6 +21,7 @@ library MigrationLegacyRecoveryLib {
 
     address internal constant WEIGHTED_RECEIPT = 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c;
     address internal constant WEIGHTED_DETF = 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7;
+    address internal constant WEIGHTED_SY = 0xB55604CF4dcdABB362078e106D20F98512391EdF;
     address internal constant EARLIER_DETF = 0xaf0E1967c8F755c747615c5427108Bc549CA1122;
     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
@@ -68,6 +70,40 @@ library MigrationLegacyRecoveryLib {
         r_.positions[NftLib.WEIGHTED][id_].rewardsClaimed += rewards_;
         // A final source claim may burn. Surrender history and its delivered bond remain untouched.
         emit Recovery.MigrationRecoveryClaimed(NftLib.WEIGHTED, id_, principal_, rewards_);
+    }
+
+    function redeemWeightedSy(uint256 shares_, uint256 minimum_) internal {
+        Repo.Storage storage r_ = Repo._layoutStruct();
+        Repo._debit(r_, WEIGHTED_SY, shares_);
+        IERC20 sy_ = IERC20(WEIGHTED_SY);
+        IMigrationWeightedReceipt receipt_ = IMigrationWeightedReceipt(WEIGHTED_RECEIPT);
+        uint256 sharesBefore_ = sy_.balanceOf(address(this));
+        uint256 gonsBefore_ = receipt_.gonsOf(address(this));
+        uint256 wrapperBefore_ = receipt_.gonsOf(WEIGHTED_SY);
+        uint256 out_ = IMigrationWeightedSy(WEIGHTED_SY).redeem(
+            address(this), shares_, WEIGHTED_RECEIPT, minimum_, false
+        );
+        uint256 sharesAfter_ = sy_.balanceOf(address(this));
+        uint256 gonsAfter_ = receipt_.gonsOf(address(this));
+        uint256 wrapperAfter_ = receipt_.gonsOf(WEIGHTED_SY);
+        uint256 k_ = receipt_.stakingState().gonsPerUnit;
+        if (k_ == 0 || sharesAfter_ > sharesBefore_ || sharesBefore_ - sharesAfter_ != shares_
+            || gonsAfter_ < gonsBefore_ || wrapperAfter_ > wrapperBefore_ || out_ == 0 || out_ < minimum_) {
+            revert Recovery.RecoveryDeltaMismatch(WEIGHTED_SY);
+        }
+        uint256 received_ = gonsAfter_ - gonsBefore_;
+        // Reproduce the archived source's two floors at its synchronized divisor, not a live
+        // pre-call balance/rate or a simplified shares*1e36/k quote.
+        uint256 expected_ = Math.mulDiv(shares_, Math.mulDiv(1e36, 1e18, k_), 1e18);
+        if (out_ != expected_ || received_ != out_ * k_ || wrapperBefore_ - wrapperAfter_ != received_
+            || gonsAfter_ / k_ - gonsBefore_ / k_ != out_) {
+            revert Recovery.RecoveryDeltaMismatch(WEIGHTED_RECEIPT);
+        }
+        Repo._reconcileWeighted(r_, WEIGHTED_RECEIPT, k_);
+        r_.weightedGons += received_;
+        r_.inventory[WEIGHTED_RECEIPT] += out_;
+        emit Recovery.MigrationRecoveryConverted(WEIGHTED_SY, WEIGHTED_RECEIPT, shares_, out_);
+        emit Recovery.MigrationWeightedSyRedeemed(shares_, out_, received_, k_, shares_ * 1e36 - received_);
     }
 
     function unstakeWeighted(uint256 amount_, uint256 deadline_) internal {

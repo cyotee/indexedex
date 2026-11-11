@@ -20,7 +20,7 @@ Preparation requires an actual funded and captured snapshot. It verifies raw
 source SHA-256 and byte lengths, full original proof objects, origin
 partitions, code/domain identities, the complete immutable snapshot and
 separate ETH/DTF frozen quotes. It writes full `independent.json` and
-`nfts.json` and `weighted-liquid.json` review mirrors plus the accepted `manifest.json`. These contain
+`nfts.json`, `weighted-liquid.json` and `weighted-sy.json` review mirrors plus the accepted `manifest.json`. These contain
 configuration, not issued bonds. Every write is exclusive; retain a failed
 directory as failed evidence and select a fresh output directory.
 
@@ -110,14 +110,15 @@ same checkpoint after interruption: a mined purchase is reconciled from its
 original transaction and receipt, not purchased again. Ownership or NFT
 transfer does not erase the instance's completed purchase. No second Stage1
 purchase or other acquisition route is opened; Stage1 rewards stay retained.
-The fixed18563 rehearsal uses a clearly synthetic 1 ETH-unit payment and
+The fixed18564 rehearsal uses a clearly synthetic 1 ETH-unit payment and
 90-day ordinary linear bond, tests a mined-before-checkpoint purchase and
 fresh-process resumes, then activates and performs an actual nonowner
 ordinary deposit. This is not a compensation cliff or a public execution
 recommendation.
 
-Current owner-bond evidence is written under
-`weighted-liquid/owner-bond-correction/`; previous Stage2 producer/verifier
+Historical owner-bond evidence is retained under
+`weighted-liquid/owner-bond-correction/`; new bounded WY evidence is under
+`weighted-sy/implementation/`; previous Stage2 producer/verifier
 reports and receipts remain immutable history. Runtime manifests bind the
 current main plan r5, PRD r22 and owner-first-bond directive, not stale
 worktree requirement copies.
@@ -176,15 +177,15 @@ The fixed rehearsal invocation is:
 bun scripts/recovery/dtf-migration/cli.ts rehearse \
   --rpc-alias robinhood_mainnet_alchemy \
   --fork-block 108944663 \
-  --port 18563 \
-  --checkpoint .omo-runtime/dtf-migration-weighted-liquid/checkpoints \
-  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-liquid
+  --port 18564 \
+  --checkpoint .omo-runtime/dtf-migration-weighted-sy/checkpoints \
+  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-sy/implementation
 ```
 
 The source pin is chain4663, L2 block108944663, hash
 `0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733`,
 not the post-funding snapshot. Rehearsal retains actual registry
-deployment and mined receipts, both mined-before-checkpoint interruptions,
+deployment and mined receipts, all three mined-before-checkpoint interruptions,
 fresh-process resume, no duplicate funding/issuance, unchanged unclaimed
 supply, reordered remaining work, domain rejections, accrued attributed-gon
 recovery and owned runtime cleanup. Current original-wallet implementation
@@ -205,16 +206,16 @@ Every local command and receipt is retained under an exclusive rehearsal
 evidence directory. Journals are copied there before the owned node exits
 and its temporary checkpoint root is removed.
 
-Run from the weighted-liquid worktree on
-`work/dtf-migration-phase-13-weighted-liquid`, based on
-`2c2b3370ded30cae1662329025d4fb58f7197330`. The existing archive alias is
+Run from the weighted-sy worktree on
+`work/dtf-migration-phase-14-weighted-sy`, based on audited
+`75d513cb8b36e53f14c8aa3a352f21703ad91ba1`. The existing archive alias is
 resolved through `forge config --json`. On this workstation its credential
 is in the existing interactive login environment; `/bin/zsh -lic` can wrap
 the exact command above. Do not print the resolved endpoint. The wrapper
 uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
 and the existing warm `out/`, `cache_forge/` and dependency links.
 
-Port 18563 must be unused and the chosen checkpoint directory absent before
+Port 18564 must be unused and the chosen checkpoint directory absent before
 starting. The command creates its own node and checkpoint directory; it
 does not adopt an existing node or overwrite an old checkpoint. EIP-170
 remains enabled. The local 100-million block gas cap, one-billion Forge
@@ -297,7 +298,7 @@ Default resumes are separately checked to leave the nonce unchanged.
 
 ### Reading receipts and cleanup
 
-Each `weighted-liquid/stage2-correction/rehearsal-<run>/` retains the redacted Anvil argv, Solar
+Each `weighted-sy/implementation/rehearsal-<run>/` retains the redacted Anvil argv, Solar
 environment command, numbered CLI command/exit records and logs, actual
 infrastructure/fixture receipts, deterministic data and `journal-*`
 directories. `.intent.json` contains signed local-development transaction
@@ -329,7 +330,7 @@ artifacts and dependency links.
 | Earlier liquid DETF | H3/H6 original native-unit configuration/surrender absent; ED liquidation unproved |
 | Weighted receipt | H3/H4 original gon/credit mapping and synchronized fungible surrender absent |
 | Earlier receipt | H3/H6 original share denominator/fractional attribution unproved; earlier SE exits disabled |
-| Weighted SY | H3/H5 original share mapping and proxy surrender/recovery composition absent |
+| Weighted SY | Fixed WY integration is bounded to synthetic original-wallet/static-share/component inputs; approved operational allocations remain absent |
 | TokenStaking raw weight | `reassign` debits caller, with no approved pull or recipient callback; ordinary Migration atomic surrender unsupported |
 | Claim-vault rights | Direct-user 19-decimal share records/integration absent; infrastructure ownership does not prove user authority |
 | Underlying SE shares | Direct-user records/integration absent; earlier and weighted WETH SE disabled; working 28-decimal DTF SE needs its own composition |
@@ -341,3 +342,41 @@ rows. None obtains invented credit, an executable substitute or a no-op
 success. Synthetic originals, external liquidity and local funding are
 operational test data, not approved allocations. Full original task 9 and
 release remain open.
+
+## Weighted SY increment
+
+The required `weightedSy` input array uses the same original fields as
+`weightedLiquid`, but only WY `0xB55604CF4dcdABB362078e106D20F98512391EdF`
+on chain4663 is accepted. Q0/Q/q are native nine-decimal **static shares**.
+The canonical origin must be shared across WY, WD, either NFT and independent
+compensation for the same exposure. No wrapper/backing second award is allowed.
+Both ETH and DTF components must be explicitly known. C0 uses the frozen quote;
+partial credit floors C*q/Q and final surrender receives all remaining credit.
+
+Stage1 loading is full-value replacement without issuance. Stage1 surrender
+rejects. The owner-paid first ordinary bond still precedes activation, whose
+atomic cut now removes all eight administration selectors. Only the configured
+original wallet with actual WY allowance and shares can surrender in Stage2;
+each successful pull creates one fresh exactly funded 90-day cliff bond.
+
+Append-only recovery enum `WeightedSyRedeem` is ordinal8. Select `tokenId=0`,
+`amount` in WY shares and `minimum` in native WS units. The fixed legacy
+`redeem(MIG,shares,WS,minimum,false)` call burns only booked WY. Actual WS gons,
+source synchronization and conversion dust are reconciled before existing
+`WeightedUnstake`, `WeightedConvert` and fixed-destination `Donate` stages.
+Unsolicited WY/WS and preexisting attributed NFT gons never create compensation.
+A failed selected batch rolls back its burn and all downstream changes.
+
+The fixed18564 rehearsal preserves the prior NFT/W-L sequence and donation,
+independent-issuance and owner-purchase interruption resumes. It adds synthetic
+WY Q0=8094, then replaces Q0 with8087 and ETH with6000000000000000 wei in
+Stage1, leaving seven shares for an unsolicited-custody witness. Actual
+partial/final surrenders and selected redemption/unstake/conversion/donation
+receipts are recorded in `weighted-sy-{stage1,partial,final}.json`; final
+bond IDs and outputs come from receipts, not the historical8094-to9245 quote.
+The final surrender occurs one simulated day later. Source bindings and failed
+whole-batch rollback receipts are retained beside those observations.
+
+Other categories remain required with their recorded source/input limitations.
+This increment supplies neither an operational allocation dataset nor a
+full-category, target-gas or public-execution acceptance.

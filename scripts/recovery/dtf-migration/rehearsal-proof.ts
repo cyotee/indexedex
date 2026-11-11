@@ -67,11 +67,12 @@ export async function checkPreparation(context: {
   await save(path, { ...input, sources: [...input.sources].reverse(), exposures: [...input.exposures].reverse(),
     independent: [...input.independent].reverse(), nfts: [...input.nfts].reverse(),
     weightedLiquid: [...input.weightedLiquid].reverse(),
+    weightedSy: [...input.weightedSy].reverse(),
     issueRecipients: [...input.issueRecipients].reverse(),
     domain: { ...input.domain, bindings: [...input.domain.bindings].reverse() } });
   await cli(["prepare", "--input", path, "--output", join(evidence, "prepared-reordered")]);
   const outputs = [];
-  for (const name of ["manifest.json", "independent.json", "nfts.json", "weighted-liquid.json"]) {
+  for (const name of ["manifest.json", "independent.json", "nfts.json", "weighted-liquid.json", "weighted-sy.json"]) {
     const original = await readFile(join(evidence, "prepared", name));
     const reordered = await readFile(join(evidence, "prepared-reordered", name));
     if (!original.equals(reordered)) throw new ExecutionError("STATE", "preparation depends on input order");

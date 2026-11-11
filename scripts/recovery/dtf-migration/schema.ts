@@ -51,6 +51,8 @@ export const weightedLiquidOriginal = z.object({
   contributionsKnown: z.literal(true),
 }).strict().readonly();
 export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
+export const weightedSyOriginal = weightedLiquidOriginal;
+export const weightedSy = z.object({ original: weightedSyOriginal, proof }).strict().readonly();
 export const binding = z.object({
   role: z.enum(["proxy", "registry", "package", "facet"]),
   address,
@@ -93,7 +95,7 @@ export const exposure = z.object({
 }).strict().readonly();
 export const recoveryStep = z.object({
   stage: z.enum(["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
-    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate"]),
+    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem"]),
   tokenId: uint,
   amount: uint,
   minimum: uint,
@@ -107,6 +109,7 @@ export const preparationInput = z.object({
   independent: z.array(independent).readonly(),
   nfts: z.array(nft).readonly(),
   weightedLiquid: z.array(weightedLiquid).readonly(),
+  weightedSy: z.array(weightedSy).readonly(),
   issueRecipients: z.array(address).readonly(),
   harvest: z.object({
     steps: z.array(recoveryStep).max(8).readonly(),
@@ -120,6 +123,7 @@ export type Proof = z.infer<typeof proof>;
 export type Original = z.infer<typeof original>;
 export type NftOriginal = z.infer<typeof nftOriginal>;
 export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
+export type WeightedSyOriginal = z.infer<typeof weightedSyOriginal>;
 export type RecoveryStep = z.infer<typeof recoveryStep>;
 
 export class PreparationError extends Error {
