@@ -52,13 +52,13 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
     }
 
     /// @notice Settle due expansion before transferring static ownership units.
-    function transfer(address to_, uint256 amount_) external synchronized nonReentrant returns (bool) {
+    function transfer(address to_, uint256 amount_) external virtual synchronized nonReentrant returns (bool) {
         ERC20Repo._transfer(msg.sender, to_, amount_);
         return true;
     }
 
     function transferFrom(address from_, address to_, uint256 amount_)
-        external synchronized nonReentrant returns (bool)
+        external virtual synchronized nonReentrant returns (bool)
     {
         ERC20Repo._transferFrom(from_, to_, amount_);
         return true;
@@ -66,7 +66,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
 
     /// @inheritdoc IStandardizedYield
     function deposit(address receiver_, address tokenIn_, uint256 amount_, uint256 minimum_)
-        external payable synchronized nonReentrant returns (uint256 shares_)
+        external payable virtual synchronized nonReentrant returns (uint256 shares_)
     {
         if (msg.value != 0) revert UnexpectedNativeValue();
         if (amount_ == 0) revert ZeroAmount();
@@ -92,7 +92,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
 
     /// @inheritdoc IStandardizedYield
     function redeem(address receiver_, uint256 shares_, address tokenOut_, uint256 minimum_, bool internalBalance_)
-        external synchronized nonReentrant returns (uint256 amountOut_)
+        external virtual synchronized nonReentrant returns (uint256 amountOut_)
     {
         if (shares_ == 0) revert ZeroAmount();
         if (receiver_ == address(0)) revert InvalidReceiver(receiver_);
@@ -122,7 +122,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
     }
 
     /// @inheritdoc IStandardizedYield
-    function exchangeRate() public view returns (uint256) {
+    function exchangeRate() public view virtual returns (uint256) {
         Repo.Storage storage s_ = Repo._layoutStruct();
         return s_.isStaking ? StakingMath._syExchangeRate(s_.staking.stakingState().gonsPerUnit) : 1e18;
     }
@@ -144,7 +144,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
     function isValidTokenOut(address token_) public view returns (bool) { return Repo._layoutStruct().tokensOut._contains(token_); }
 
     /// @inheritdoc IStandardizedYield
-    function previewDeposit(address tokenIn_, uint256 amount_) external view returns (uint256) {
+    function previewDeposit(address tokenIn_, uint256 amount_) external view virtual returns (uint256) {
         if (!isValidTokenIn(tokenIn_)) return 0;
         Repo.Storage storage s_ = Repo._layoutStruct();
         uint256 detfAmount_ = amount_;
@@ -157,7 +157,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
     }
 
     /// @inheritdoc IStandardizedYield
-    function previewRedeem(address tokenOut_, uint256 shares_) external view returns (uint256) {
+    function previewRedeem(address tokenOut_, uint256 shares_) external view virtual returns (uint256) {
         if (!isValidTokenOut(tokenOut_)) return 0;
         Repo.Storage storage s_ = Repo._layoutStruct();
         uint256 detfAmount_ = shares_;
@@ -171,11 +171,11 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
     }
 
     /// @notice DETF yield is already funded into the backing index; it cannot be claimed twice.
-    function getRewardTokens() external pure returns (address[] memory) { return new address[](0); }
-    function accruedRewards(address) external pure returns (uint256[] memory) { return new uint256[](0); }
-    function rewardIndexesCurrent() external pure returns (uint256[] memory) { return new uint256[](0); }
-    function rewardIndexesStored() external pure returns (uint256[] memory) { return new uint256[](0); }
-    function claimRewards(address user_) external returns (uint256[] memory amounts_) {
+    function getRewardTokens() external view virtual returns (address[] memory) { return new address[](0); }
+    function accruedRewards(address) external view virtual returns (uint256[] memory) { return new uint256[](0); }
+    function rewardIndexesCurrent() external virtual returns (uint256[] memory) { return new uint256[](0); }
+    function rewardIndexesStored() external view virtual returns (uint256[] memory) { return new uint256[](0); }
+    function claimRewards(address user_) external virtual returns (uint256[] memory amounts_) {
         amounts_ = new uint256[](0);
         emit ClaimRewards(user_, new address[](0), amounts_);
     }
@@ -207,7 +207,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
         return s_.staking.gonsOf(address(this)) - before_;
     }
 
-    function _acquireDetf(Repo.Storage storage s_, IERC20 tokenIn_, uint256 amount_) internal returns (uint256) {
+    function _acquireDetf(Repo.Storage storage s_, IERC20 tokenIn_, uint256 amount_) internal virtual returns (uint256) {
         uint256 received_ = _pull(tokenIn_, amount_);
         if (address(tokenIn_) == address(s_.detf)) return received_;
         uint256 before_ = s_.detf.balanceOf(address(this));

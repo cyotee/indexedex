@@ -110,14 +110,14 @@ contract StakedDETFTarget is IStakedDETF, ReentrancyLockModifiers {
     }
 
     /// @notice Settle due expansion before transferring the funded position.
-    function transfer(address to_, uint256 amount_) external synchronized nonReentrant returns (bool) {
+    function transfer(address to_, uint256 amount_) external virtual synchronized nonReentrant returns (bool) {
         Repo._transfer(msg.sender, to_, amount_);
         return true;
     }
 
     /// @notice Transfer using the shared permit-compatible native-unit allowance ledger.
     function transferFrom(address from_, address to_, uint256 amount_)
-        external synchronized nonReentrant returns (bool)
+        external virtual synchronized nonReentrant returns (bool)
     {
         ERC20Repo._spendAllowance(from_, msg.sender, amount_);
         Repo._transfer(from_, to_, amount_);
@@ -168,7 +168,7 @@ function exchangeIn(
 
     /// @inheritdoc IStakedDETF
     function fundRewards(uint256 amount_)
-        external nonReentrant returns (uint256 stakingGrowth_, uint256 feeReceipt_, uint256 creatorReceipt_)
+        external virtual nonReentrant returns (uint256 stakingGrowth_, uint256 feeReceipt_, uint256 creatorReceipt_)
     {
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (msg.sender != address(s_.detf)) revert Unauthorized(msg.sender);
@@ -190,7 +190,7 @@ function exchangeIn(
     }
 
     /// @inheritdoc IStakedDETF
-    function retireEscrowDust(uint256 gons_) external synchronized nonReentrant {
+    function retireEscrowDust(uint256 gons_) external virtual synchronized nonReentrant {
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (msg.sender != s_.bondNftVault) revert Unauthorized(msg.sender);
         Repo._retireFraction(s_, msg.sender, gons_);
@@ -199,7 +199,7 @@ function exchangeIn(
 
     function _exchange(
         IERC20 tokenIn_, IERC20 tokenOut_, uint256 amount_, address recipient_, bool pretransferred_, uint256 deadline_
-    ) internal {
+    ) internal virtual {
         if (block.timestamp > deadline_) revert DeadlineExpired(deadline_);
         if (amount_ == 0) revert ZeroAmount();
         // Public pretransfer of backing is not a D32 credit surface. Reject EOA first, then
@@ -244,7 +244,7 @@ function exchangeIn(
         Repo._topUpWeights(s_, fee_, creator_);
     }
 
-    function _synchronize() internal {
+    function _synchronize() internal virtual {
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (s_.synchronizing) revert RewardSynchronizationInProgress();
         s_.synchronizing = true;

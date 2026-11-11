@@ -63,14 +63,29 @@ contract DETFSYDFPkg is IDETFSYDFPkg, IStandardVaultPkg {
     }
 
     /// @inheritdoc IDiamondFactoryPackage
-    function facetInterfaces() public pure returns (bytes4[] memory ids_) {
-        ids_ = new bytes4[](6);
+    function facetInterfaces() public view returns (bytes4[] memory ids_) {
+        bytes4[] memory selected_ = SY_FACET.facetInterfaces();
+        ids_ = new bytes4[](6 + selected_.length);
         ids_[0] = type(IERC20).interfaceId;
         ids_[1] = type(IERC20Metadata).interfaceId;
         ids_[2] = type(IERC20Permit).interfaceId;
         ids_[3] = type(IERC5267).interfaceId;
         ids_[4] = type(IStandardizedYield).interfaceId;
         ids_[5] = type(IStandardVault).interfaceId;
+        // Preserve ordinary declaration order and include only the selected implementation's
+        // additional interfaces. The same facet supplies its complete selector cut below.
+        uint256 count_ = 6;
+        for (uint256 i; i < selected_.length; ++i) {
+            bool present_;
+            for (uint256 j; j < count_; ++j) {
+                if (ids_[j] == selected_[i]) {
+                    present_ = true;
+                    break;
+                }
+            }
+            if (!present_) ids_[count_++] = selected_[i];
+        }
+        assembly { mstore(ids_, count_) }
     }
 
     /// @inheritdoc IDiamondFactoryPackage
@@ -130,10 +145,10 @@ contract DETFSYDFPkg is IDETFSYDFPkg, IStandardVaultPkg {
     function vaultFeeTypeIds() public pure returns (bytes32) { return bytes32(0); }
 
     /// @inheritdoc IStandardVaultPkg
-    function vaultTypes() public pure returns (bytes4[] memory) { return facetInterfaces(); }
+    function vaultTypes() public view returns (bytes4[] memory) { return facetInterfaces(); }
 
     /// @inheritdoc IStandardVaultPkg
-    function vaultDeclaration() public pure returns (VaultPkgDeclaration memory) {
+    function vaultDeclaration() public view returns (VaultPkgDeclaration memory) {
         return VaultPkgDeclaration({name: name(), vaultFeeTypeIds: vaultFeeTypeIds(), vaultTypes: vaultTypes()});
     }
 }

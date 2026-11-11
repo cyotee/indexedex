@@ -218,7 +218,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         return _syntheticOfPair(pairs_[0]);
     }
 
-    function _isMintingAllowedToken(IERC20 tokenIn_) internal view returns (bool) {
+    function _isMintingAllowedToken(IERC20 tokenIn_) internal view virtual returns (bool) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (!s.isReserveLive) return false;
         if (!s.mintTable.tokens._contains(address(tokenIn_))) return false;
@@ -311,7 +311,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         }
     }
 
-    function _pendingExpansionDetf() internal view returns (uint256) {
+    function _pendingExpansionDetf() internal view virtual returns (uint256) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (!_hasCompletedExpansionEpoch(s)) return 0;
         DETFEpochNaturalExpansionLib.AccrualInput memory in_;
@@ -346,7 +346,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         }
     }
 
-    function _realizeExpansionIfNeeded() internal returns (uint256 mintAmount_) {
+    function _realizeExpansionIfNeeded() internal virtual returns (uint256 mintAmount_) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (!_hasCompletedExpansionEpoch(s)) return 0;
         DETFEpochNaturalExpansionLib.AccrualInput memory in_;
@@ -466,7 +466,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         if (lpAmount_ == 0) return;
         Repo.Storage storage s = Repo._layoutStruct();
         IERC20 lp_ = IERC20(s.hook);
-        uint256 have_ = lp_.balanceOf(address(this));
+        uint256 have_ = _residualBalance(s.hook);
         if (have_ >= lpAmount_) return;
         uint256 need_ = lpAmount_ - have_;
         s.bondNftVault.transferHeldToken(lp_, address(this), need_);
@@ -475,7 +475,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     function _returnLeftoverLp() internal {
         Repo.Storage storage s = Repo._layoutStruct();
         IERC20 lp_ = IERC20(s.hook);
-        uint256 bal_ = lp_.balanceOf(address(this));
+        uint256 bal_ = _residualBalance(s.hook);
         if (bal_ == 0 || address(s.bondNftVault) == address(0)) return;
         lp_.safeTransfer(address(s.bondNftVault), bal_);
     }
@@ -489,12 +489,17 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         _sweepDustBody();
     }
 
-    function _sweepDustBody() internal {
+    /// @dev Families with protected inventory override only the spendable residual budget.
+    function _residualBalance(address token_) internal view virtual returns (uint256) {
+        return IERC20(token_).balanceOf(address(this));
+    }
+
+    function _sweepDustBody() internal virtual {
         Repo.Storage storage s = Repo._layoutStruct();
         address hookAddr_ = s.hook;
         if (hookAddr_ == address(0)) return;
         IERC20 lp_ = IERC20(hookAddr_);
-        uint256 lpBal_ = lp_.balanceOf(address(this));
+        uint256 lpBal_ = _residualBalance(hookAddr_);
         if (lpBal_ > 0 && address(s.bondNftVault) != address(0)) {
             lp_.safeTransfer(address(s.bondNftVault), lpBal_);
         }
@@ -525,9 +530,9 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
                 }
                 if (cursor_ == count_) break;
                 address token_ = cursor_ < tokens_.length ? tokens_[cursor_] : ses_[cursor_ - tokens_.length];
-                uint256 before_ = IERC20(token_).balanceOf(address(this));
+                uint256 before_ = _residualBalance(token_);
                 _tryJoinResidual(token_);
-                if (IERC20(token_).balanceOf(address(this)) != before_) {
+                if (_residualBalance(token_) != before_) {
                     changed_ = true;
                     basketDirty_ = true;
                 }
@@ -552,9 +557,9 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         address[] memory exchanges_ = new address[](pairs_.length);
         bool funded_;
         for (uint256 i; i < pairs_.length; ++i) {
-            local_[i] = IERC20(pairs_[i]).balanceOf(address(this));
+            local_[i] = _residualBalance(pairs_[i]);
             exchanges_[i] = _hook().standardExchangeOf(pairs_[i]);
-            if (exchanges_[i] != address(0)) shares_[i] = IERC20(exchanges_[i]).balanceOf(address(this));
+            if (exchanges_[i] != address(0)) shares_[i] = _residualBalance(exchanges_[i]);
             if (local_[i] != 0 || shares_[i] != 0) funded_ = true;
         }
         if (!funded_) return false;
@@ -581,10 +586,10 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     function _consolidateResidualPairs(address[] memory pairs_) private returns (bool changed_) {
         IVaultRegistryDisableQuery registry_ = IVaultRegistryDisableQuery(address(StandardVaultRepo._feeOracle()));
         for (uint256 i; i < pairs_.length; ++i) {
-            uint256 amount_ = IERC20(pairs_[i]).balanceOf(address(this));
+            uint256 amount_ = _residualBalance(pairs_[i]);
             if (amount_ == 0) continue;
             address se_ = _hook().standardExchangeOf(pairs_[i]);
-            if (se_ == address(0) || se_ == pairs_[i] || IERC20(se_).balanceOf(address(this)) == 0) continue;
+            if (se_ == address(0) || se_ == pairs_[i] || _residualBalance(se_) == 0) continue;
             if (registry_.isDisabled(se_)) continue;
             if (ExchangeInAmount.previewOut(IStandardExchangeIn(se_), IERC20(pairs_[i]), amount_, IERC20(se_)) == 0) continue;
             _sweepPairToShare(se_, pairs_[i], amount_);
@@ -610,9 +615,9 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         b.shareAmounts = new uint256[](pairs_.length);
         b.choiceBits = new uint256[](pairs_.length);
         for (uint256 i; i < pairs_.length; ++i) {
-            b.pairAmounts[i] = IERC20(pairs_[i]).balanceOf(address(this));
+            b.pairAmounts[i] = _residualBalance(pairs_[i]);
             b.shares[i] = _hook().standardExchangeOf(pairs_[i]);
-            if (b.shares[i] != address(0)) b.shareAmounts[i] = IERC20(b.shares[i]).balanceOf(address(this));
+            if (b.shares[i] != address(0)) b.shareAmounts[i] = _residualBalance(b.shares[i]);
             if (b.pairAmounts[i] != 0 || b.shareAmounts[i] != 0) ++b.fundedLegs;
             if (b.pairAmounts[i] != 0 && b.shareAmounts[i] != 0) b.choiceBits[i] = uint256(1) << b.choices++;
         }
@@ -643,7 +648,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     }
 
     function _tryJoinResidual(address token_) internal {
-        uint256 bal_ = IERC20(token_).balanceOf(address(this));
+        uint256 bal_ = _residualBalance(token_);
         if (bal_ == 0) return;
 
         if (_retainSubSharePairResidual(token_, bal_)) return;
@@ -653,7 +658,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
             return;
         }
-        uint256 leftover_ = IERC20(token_).balanceOf(address(this));
+        uint256 leftover_ = _residualBalance(token_);
         if (leftover_ > 0) {
             if (_joinResidualCapped(token_, leftover_)) {
                 MultiAssetBasicVaultRepo._updateReserve(IERC20(token_), IERC20(token_).balanceOf(address(this)));
@@ -673,7 +678,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         address hook_ = Repo._layoutStruct().hook;
         uint256 amt_ = amount_;
         for (uint256 i; i < 24 && amt_ > 0; ++i) {
-            uint256 before_ = IERC20(token_).balanceOf(address(this));
+            uint256 before_ = _residualBalance(token_);
             if (amt_ > before_) amt_ = before_;
             if (amt_ == 0) break;
             if (_retainSubSharePairResidual(token_, amt_)) return true;
@@ -682,7 +687,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             uint256 lpOut_ = IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, true);
             IERC20(token_).forceApprove(hook_, 0);
 
-            uint256 after_ = IERC20(token_).balanceOf(address(this));
+            uint256 after_ = _residualBalance(token_);
             if (lpOut_ == 0) break;
             // Let the outer sweep recombine this join's refunds with the other
             // legs before spending the remainder in another single-token zap.
@@ -701,7 +706,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         address hook_ = Repo._layoutStruct().hook;
         uint256 amt_ = amount_;
         for (uint256 i; i < 24 && amt_ > 0; ++i) {
-            uint256 before_ = IERC20(token_).balanceOf(address(this));
+            uint256 before_ = _residualBalance(token_);
             if (amt_ > before_) amt_ = before_;
             if (amt_ == 0) break;
             if (_retainSubSharePairResidual(token_, amt_)) return true;
@@ -710,7 +715,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             uint256 lpOut_ = IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, false);
             IERC20(token_).forceApprove(hook_, 0);
 
-            uint256 after_ = IERC20(token_).balanceOf(address(this));
+            uint256 after_ = _residualBalance(token_);
             if (lpOut_ == 0) break;
             // Recombine cross-leg refunds before repeating this token.
             if (after_ < before_) return true;

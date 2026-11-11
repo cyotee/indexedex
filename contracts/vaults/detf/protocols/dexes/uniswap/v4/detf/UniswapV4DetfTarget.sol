@@ -175,6 +175,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     function _entryPreviewMint(IERC20 tokenIn, uint256 amountIn)
         internal
         view
+        virtual
         returns (uint256 grossDetf, uint256 userDetf)
     {
         Repo.Storage storage s = Repo._layoutStruct();
@@ -352,7 +353,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     }
 
     function _stakeHeld(uint256 amount_, uint256 minimum_, address recipient_, uint256 deadline_)
-        internal returns (uint256 out_)
+        internal virtual returns (uint256 out_)
     {
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
         IERC20(address(this)).forceApprove(staking_, amount_);(out_,) = IStakedDETF(staking_).exchangeIn(IERC20(address(this)), amount_, IERC20(staking_), minimum_, recipient_, false, deadline_
@@ -362,7 +363,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     }
 
     function _unstakePath(uint256 amount_, IERC20 tokenOut_, uint256 minimum_, address recipient_, uint256 deadline_)
-        internal returns (uint256 out_)
+        internal virtual returns (uint256 out_)
     {
         _realizeExpansionIfNeeded();
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
@@ -531,7 +532,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) internal nonReentrant returns (uint256 tokenId, uint256 shares) {
+    ) internal virtual nonReentrant returns (uint256 tokenId, uint256 shares) {
         _requireNotDisabled();
         _requireActive(deadline, amountIn);
         if (recipient == address(0)) recipient = msg.sender;
@@ -712,7 +713,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     }
 
     function _openBondNft(uint256 principal_, uint256 lockDuration_, address recipient_)
-        private
+        internal virtual
         returns (uint256 tokenId_)
     {
         Repo.Storage storage s = Repo._layoutStruct();
@@ -737,6 +738,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
 
     function _entryJoinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline)
         internal
+        virtual
         nonReentrant
         returns (uint256 lpOut)
     {

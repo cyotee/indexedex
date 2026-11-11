@@ -44,9 +44,16 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
     }
 
     modifier synchronized() {
-        IDETFFundedRewards(Repo._layoutStruct().detf).synchronizeRewards();
+        _beforeSynchronized();
         _;
+        _afterSynchronized();
     }
+
+    function _beforeSynchronized() internal virtual {
+        IDETFFundedRewards(Repo._layoutStruct().detf).synchronizeRewards();
+    }
+
+    function _afterSynchronized() internal virtual {}
 
     /// @notice Owning DETF.
     function detf() external view returns (address) { return Repo._layoutStruct().detf; }
@@ -92,7 +99,7 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
 
     /// @notice Pull and stake only this purchase's DETF; no existing escrow surplus can fund it.
     function createFundedPosition(uint256 principal_, uint256 duration_, address recipient_)
-        external onlyDetf synchronized nonReentrant returns (uint256 tokenId_)
+        external virtual onlyDetf synchronized nonReentrant returns (uint256 tokenId_)
     {
         return _createFundedPosition(principal_, duration_, recipient_);
     }
@@ -191,10 +198,16 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
         position_.claimedPrincipal += principal_;
         position_.stakingGons -= debit_;
         s_.attributedGons -= debit_;
-        if (amount_ != 0) IERC20(address(staking_)).safeTransfer(recipient_, amount_);
+        if (amount_ != 0) _deliverClaim(staking_, recipient_, principal_, rewards_, k_);
         _retireIfPaid(tokenId_, staking_, k_);
         Repo._requireFunded(s_, staking_.gonsOf(address(this)));
         emit IDetfBondNFT.BondClaimed(tokenId_, recipient_, principal_, rewards_);
+    }
+
+    function _deliverClaim(
+        IStakedDETF staking_, address recipient_, uint256 principal_, uint256 rewards_, uint256
+    ) internal virtual {
+        IERC20(address(staking_)).safeTransfer(recipient_, principal_ + rewards_);
     }
 
     function _retireIfPaid(uint256 tokenId_, IStakedDETF staking_, uint256 k_) internal {

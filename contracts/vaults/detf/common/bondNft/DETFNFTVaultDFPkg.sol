@@ -65,7 +65,7 @@ contract DETFNFTVaultDFPkg is IDETFNFTVaultDFPkg, IStandardVaultPkg {
     }
 
     /// @inheritdoc IDiamondFactoryPackage
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
+    function facetInterfaces() public pure virtual returns (bytes4[] memory interfaces_) {
         interfaces_ = new bytes4[](5);
         interfaces_[0] = type(IERC721).interfaceId;
         interfaces_[1] = type(IERC721Metadata).interfaceId;

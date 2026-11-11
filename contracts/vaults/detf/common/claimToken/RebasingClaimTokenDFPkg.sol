@@ -73,8 +73,9 @@ contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
     }
 
     /// @inheritdoc IDiamondFactoryPackage
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](7);
+    function facetInterfaces() public view returns (bytes4[] memory interfaces_) {
+        bytes4[] memory selected_ = REBASING_CLAIM_TOKEN_FACET.facetInterfaces();
+        interfaces_ = new bytes4[](7 + selected_.length);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IERC20Permit).interfaceId;
@@ -82,6 +83,21 @@ contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
         interfaces_[4] = type(IStakedDETF).interfaceId;
         interfaces_[5] = type(IStandardExchangeIn).interfaceId;
         interfaces_[6] = type(IStandardExchangeOut).interfaceId;
+        // Preserve the ordinary declaration/order, adding only selected product extensions.
+        uint256 count_ = 7;
+        for (uint256 i; i < selected_.length; ++i) {
+            bool present_;
+            for (uint256 j; j < count_; ++j) {
+                if (interfaces_[j] == selected_[i]) {
+                    present_ = true;
+                    break;
+                }
+            }
+            if (!present_) interfaces_[count_++] = selected_[i];
+        }
+        assembly {
+            mstore(interfaces_, count_)
+        }
     }
 
     /// @inheritdoc IDiamondFactoryPackage
