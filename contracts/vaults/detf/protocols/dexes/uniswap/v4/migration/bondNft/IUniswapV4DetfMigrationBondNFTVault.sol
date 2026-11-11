@@ -19,8 +19,9 @@ interface IUniswapV4DetfMigrationBondNFTVault is
     );
 
     /// @notice Fixed parent only: pull/stake exact native DETF and open a fresh 90-day cliff from now.
-    /// @dev No caller-selected old timestamp, duration or credit policy. Initial production caller is
-    /// the parent's genuine independent issuance. Existing escrow surplus cannot fund this position.
+    /// @dev No caller-selected old timestamp, duration or credit policy. Both parent issuance routes
+    /// use this exact-funded path. Contract recipients must accept the fully opened marked NFT;
+    /// callback failure rolls back all funding and any outer legacy custody.
     function createMigrationPosition(uint256 principal_, address recipient_) external returns (uint256 tokenId_);
 
     /// @notice Marker selecting cliff policy and metadata; not an additional position/principal ledger.

@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
+import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
@@ -12,6 +14,8 @@ import {UniswapV4DetfRepo as ParentRepo} from "../detf/UniswapV4DetfRepo.sol";
 import {IUniswapV4DetfMigration as Migration} from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
 import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
+import {IMigrationLegacyNft} from "./legacy/IMigrationLegacyNft.sol";
+import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 
 /// @notice Permanent lifecycle reads and permissionless measured capital contributions.
 contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
@@ -39,6 +43,75 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
     }
     function independentIssuance(address recipient_) external view returns (Migration.IndependentIssuance memory) {
         return Repo._layoutStruct().issuances[recipient_];
+    }
+
+    function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32) {
+        return NftLib.originalId(collection_, tokenId_);
+    }
+    function nftEntitlement(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftEntitlement memory)
+    { return Repo._layoutStruct().nftEntitlements[collection_][tokenId_]; }
+    function nftSurrender(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftSurrender memory)
+    { return Repo._layoutStruct().nftSurrenders[collection_][tokenId_]; }
+    function nftCustody(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftCustody memory)
+    { return Repo._layoutStruct().nftCustodies[collection_][tokenId_]; }
+    function previewNftSurrender(address collection_, uint256 tokenId_)
+        external view returns (uint256 remaining_, uint256 credit_)
+    { (, remaining_, credit_,) = NftLib.preview(collection_, tokenId_); }
+
+    function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
+        external nonReentrant returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        _requireIdleChildren();
+        _requireNotDisabled();
+        _requireReserveLive();
+        if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
+        (address holder_, uint256 remaining_, uint256 quoted_, bytes32 before_) =
+            NftLib.preview(collection_, tokenId_);
+        if (msg.sender != holder_) revert Migration.NotNftHolder(msg.sender, holder_);
+        if (quoted_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, quoted_);
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Migration.NftEntitlement memory config_ = m_.nftEntitlements[collection_][tokenId_];
+        // Keep the guard over legacy synchronization as well as its pre-transfer receiver call.
+        m_.expectedNft = Repo.NftReceipt(collection_, holder_, tokenId_, false);
+        IMigrationLegacyNft(collection_).safeTransferFrom(holder_, address(this), tokenId_);
+        if (!m_.expectedNft.accepted || IMigrationLegacyNft(collection_).ownerOf(tokenId_) != address(this)) {
+            revert Migration.NftCustodyFailed(collection_, tokenId_);
+        }
+        (, bytes32 after_) = NftLib.position(collection_, tokenId_, config_.original.originalUnits);
+        if (after_ != before_) revert Migration.NftCustodyFailed(collection_, tokenId_);
+        delete m_.expectedNft;
+        m_.nftSurrenders[collection_][tokenId_] = Migration.NftSurrender(
+            true, config_.configurationId, holder_, config_.original.originalUnits, remaining_, quoted_, 0,
+            block.timestamp
+        );
+        m_.nftCustodies[collection_][tokenId_] =
+            Migration.NftCustody(collection_, tokenId_, config_.configurationId);
+        _realizeExpansionIfNeeded();
+        bondTokenId_ = Repo._fundBond(quoted_, holder_);
+        m_.nftSurrenders[collection_][tokenId_].bondTokenId = bondTokenId_;
+        _syncAllExpectedHoldReserves();
+        emit Migration.MigrationNftSurrendered(
+            collection_, tokenId_, holder_, config_.configurationId, remaining_, quoted_, bondTokenId_
+        );
+        return (bondTokenId_, quoted_);
+    }
+
+    /// @dev The admitted sources have not transferred ownership yet. This callback only accepts
+    /// the one expected pull; final ownership/position verification happens after transfer returns.
+    function onERC721Received(address operator_, address from_, uint256 tokenId_, bytes calldata data_)
+        external returns (bytes4)
+    {
+        Repo.NftReceipt storage expected_ = Repo._layoutStruct().expectedNft;
+        if (!ReentrancyLockRepo._isLocked() || expected_.collection == address(0)
+            || msg.sender != expected_.collection || operator_ != address(this) || from_ != expected_.holder
+            || tokenId_ != expected_.tokenId || data_.length != 0 || expected_.accepted) {
+            revert Migration.UnexpectedNftCallback();
+        }
+        expected_.accepted = true;
+        return IERC721Receiver.onERC721Received.selector;
     }
 
     function donateMigrationCapital(

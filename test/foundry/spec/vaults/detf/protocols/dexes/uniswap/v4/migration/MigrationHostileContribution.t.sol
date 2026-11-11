@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
@@ -16,6 +17,9 @@ contract MigrationHostileContribution is SimpleMintableERC20 {
     bytes public payload;
     bool public callbackSucceeded;
     constructor() SimpleMintableERC20("External hostile contribution fixture", "HOSTILE") {}
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
     function arm(bool short_, address parent_, address callback_, bytes calldata payload_) external {
         shortReceipt = short_; watchedParent = parent_; callback = callback_; payload = payload_;
     }

@@ -89,6 +89,45 @@ interface IUniswapV4DetfMigration is
         uint256 issuedAt;
     }
 
+    /// @notice Verified original purchase inputs, never a caller-supplied output award.
+    /// @dev contributionsKnown attests that BOTH components are known (a known zero is valid).
+    /// originalUnits are weighted fixed principal or earlier NewLock accounting shares.
+    struct NftEntitlementInput {
+        address collection;
+        uint256 tokenId;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct NftEntitlement {
+        NftEntitlementInput original;
+        bytes32 configurationId;
+        bytes32 originalId;
+        uint256 credit;
+    }
+
+    /// @notice Immutable execution facts, unaffected by later configuration replacement.
+    struct NftSurrender {
+        bool consumed;
+        bytes32 configurationId;
+        address holder;
+        uint256 originalUnits;
+        uint256 remainingUnits;
+        uint256 credit;
+        uint256 bondTokenId;
+        uint256 surrenderedAt;
+    }
+
+    /// @notice Recovery custody is separate from configuration and irreversible consumption.
+    struct NftCustody {
+        address collection;
+        uint256 tokenId;
+        bytes32 configurationId;
+    }
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -106,6 +145,12 @@ interface IUniswapV4DetfMigration is
     error InvalidGenesisLeg(address token);
     error InsufficientDonationInventory(address token, uint256 requested, uint256 available);
     error UnexpectedMigrationNativeValue(uint256 expected, uint256 actual);
+    error UnsupportedMigrationNft(uint256 chainId, address collection);
+    error InvalidNftEntitlement(address collection, uint256 tokenId);
+    error NftAlreadyConsumed(address collection, uint256 tokenId);
+    error NotNftHolder(address caller, address holder);
+    error NftCustodyFailed(address collection, uint256 tokenId);
+    error UnexpectedNftCallback();
 
     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
@@ -121,6 +166,29 @@ interface IUniswapV4DetfMigration is
     );
     event MigrationActivated(address indexed owner);
     event MigrationSyRewardTokenWired(address indexed rewardToken, address indexed receipt);
+    event NftEntitlementConfigured(
+        address indexed collection, uint256 indexed tokenId, bytes32 indexed configurationId,
+        bytes32 originalId, uint256 credit
+    );
+    event MigrationNftSurrendered(
+        address indexed collection, uint256 indexed tokenId, address indexed holder,
+        bytes32 configurationId, uint256 remainingUnits, uint256 credit, uint256 bondTokenId
+    );
+
+    /// @notice Canonical known-origin collision key, bound to chain, instance and frozen snapshot.
+    /// @dev Independent allocation IDs must use this key for this origin. Opaque aliases do not
+    /// prove disjoint exposure; operational ancestry reconciliation remains required.
+    function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32);
+    function nftEntitlement(address collection_, uint256 tokenId_) external view returns (NftEntitlement memory);
+    function nftSurrender(address collection_, uint256 tokenId_) external view returns (NftSurrender memory);
+    function nftCustody(address collection_, uint256 tokenId_) external view returns (NftCustody memory);
+    function previewNftSurrender(address collection_, uint256 tokenId_)
+        external view returns (uint256 remainingUnits_, uint256 credit_);
+
+    /// @notice Current holder only; whole identity custody and one exactly funded fresh 90-day bond.
+    /// @dev No beneficiary, historical quantity, arbitrary target or credit argument.
+    function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
+        external returns (uint256 bondTokenId_, uint256 credit_);
 
     /// @notice Sole finalized reward/new-money gate. Activation does not reset clocks or indices.
     function migrationActivated() external view returns (bool);
@@ -162,9 +230,12 @@ interface IUniswapV4DetfMigration is
 }
 
 /// @notice Entire current-core administration surface; current-owner-only and removed at activation.
-/// @dev No E1/E2-dependent source configuration, surrender tuple, arbitrary-credit issuer or price setter.
+/// @dev Only the two admitted NFT sources are configurable; no fungible attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Replace complete original NFT inputs on the frozen book without minting.
+    /// @dev Consumed identities and recovery custody cannot be reset or redirected by replacement.
+    function configureNftEntitlements(IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_) external;
     /// @notice Current owner selects/executes the one-time pooled genesis, not an arbitrary donor.
     /// @dev Exactly one representation per external hook leg; anchorIndex_ indexes legs_.
     /// Consume only booked budgets; derive selfMinted_ from actual consumed anchor capital using

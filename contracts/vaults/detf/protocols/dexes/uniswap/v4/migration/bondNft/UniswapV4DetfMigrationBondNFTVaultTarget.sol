@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
+import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
+import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {DETFFundedBondTarget} from "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol";
 import {DETFFundedBondRepo as BondRepo} from "contracts/vaults/detf/common/bondNft/DETFFundedBondRepo.sol";
@@ -29,6 +31,12 @@ contract UniswapV4DetfMigrationBondNFTVaultTarget is DETFFundedBondTarget {
     {
         tokenId_ = _createFundedPosition(principal_, 90 days, recipient_);
         MigrationRepo._layoutStruct().migrationPosition[tokenId_] = true;
+        if (recipient_.code.length != 0) {
+            if (IERC721Receiver(recipient_).onERC721Received(msg.sender, address(0), tokenId_, "")
+                != IERC721Receiver.onERC721Received.selector) {
+                revert IERC721Errors.ERC721InvalidReceiver(recipient_);
+            }
+        }
         emit IUniswapV4DetfMigrationBondNFTVault.MigrationPositionCreated(
             tokenId_, recipient_, principal_, block.timestamp, block.timestamp + 90 days
         );

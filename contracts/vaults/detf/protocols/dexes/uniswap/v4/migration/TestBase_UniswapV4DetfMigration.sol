@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
@@ -70,6 +71,10 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
     address internal migrationOwner;
     address internal payer;
     bool internal localBroadcast;
+
+    function onERC721Received(address, address, uint256, bytes calldata) external pure virtual returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
 
     function setUp() public virtual override {
         TestBase_ERC4626StandardExchange.setUp();

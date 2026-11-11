@@ -20,7 +20,7 @@ import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation 
     from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
 import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
-import {IUniswapV4DetfMigrationBondNFTVault} from "./bondNft/IUniswapV4DetfMigrationBondNFTVault.sol";
+import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 
 /// @notice The removable current-owner administration surface; no legacy attribution shortcuts.
 contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV4DetfMigrationPolicy {
@@ -74,6 +74,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 address issuedTo_ = m_.issuedOriginal[original_.entitlementId];
                 if (original_.entitlementId == bytes32(0)
                     || m_.configuredOriginal[original_.entitlementId] != address(0)
+                    || m_.nftOriginal[original_.entitlementId]
                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
                 }
@@ -107,19 +108,13 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             if (credit_ == 0) revert Migration.InvalidIndependentAllocation(recipient_);
             // Existing participation settles before any new principal or standing weight is added.
             _realizeExpansionIfNeeded();
-            address bond_ = address(ParentRepo._layoutStruct().bondNftVault);
-            _mintDetf(address(this), credit_);
-            IERC20(address(this)).forceApprove(bond_, credit_);
-            m_.expectedSynchronizer = bond_;
-            ids_[i_] = IUniswapV4DetfMigrationBondNFTVault(bond_).createMigrationPosition(credit_, recipient_);
-            delete m_.expectedSynchronizer;
-            IERC20(address(this)).forceApprove(bond_, 0);
+            ids_[i_] = Repo._fundBond(credit_, recipient_);
             m_.issuances[recipient_] = Migration.IndependentIssuance(
                 true, config_.configurationId, credit_, ids_[i_], block.timestamp
             );
             for (uint256 j_; j_ < config_.entitlements.length; ++j_) {
                 bytes32 originalId_ = config_.entitlements[j_].original.entitlementId;
-                if (m_.issuedOriginal[originalId_] != address(0)) {
+                if (m_.issuedOriginal[originalId_] != address(0) || m_.nftOriginal[originalId_]) {
                     revert Migration.DuplicateOriginalEntitlement(originalId_);
                 }
                 m_.issuedOriginal[originalId_] = recipient_;
@@ -129,6 +124,30 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             );
         }
         _syncAllExpectedHoldReserves();
+    }
+
+    function configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        for (uint256 i_; i_ < inputs_.length; ++i_) {
+            Migration.NftEntitlementInput calldata input_ = inputs_[i_];
+            bytes32 original_ = NftLib.originalId(input_.collection, input_.tokenId);
+            if (input_.tokenId < 3 || input_.originalUnits == 0 || !input_.contributionsKnown
+                || input_.evidenceId == bytes32(0)) {
+                revert Migration.InvalidNftEntitlement(input_.collection, input_.tokenId);
+            }
+            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)) {
+                revert Migration.DuplicateOriginalEntitlement(original_);
+            }
+            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
+            m_.nftEntitlements[input_.collection][input_.tokenId] =
+                Migration.NftEntitlement(input_, config_, original_, credit_);
+            m_.nftOriginal[original_] = true;
+            emit Migration.NftEntitlementConfigured(input_.collection, input_.tokenId, config_, original_, credit_);
+        }
     }
 
     function activateMigration() external administration nonReentrant {
@@ -149,12 +168,13 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](5);
+        selectors_ = new bytes4[](6);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
         selectors_[3] = Allocation.issueIndependentAllocations.selector;
         selectors_[4] = Allocation.activateMigration.selector;
+        selectors_[5] = Allocation.configureNftEntitlements.selector;
     }
 
     function bootstrapMigrationReserve(

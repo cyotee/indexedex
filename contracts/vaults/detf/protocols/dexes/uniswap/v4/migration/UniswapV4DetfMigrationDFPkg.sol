@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
@@ -155,7 +156,8 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](15);
+        interfaces_ = new bytes4[](16);
+        interfaces_[15] = type(IERC721Receiver).interfaceId;
         interfaces_[12] = type(IMultiStepOwnable).interfaceId;
         interfaces_[13] = type(IUniswapV4DetfMigration).interfaceId;
         interfaces_[14] = type(IUniswapV4DetfMigrationAllocation).interfaceId;
