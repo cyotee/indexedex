@@ -295,4 +295,3 @@ export async function exerciseClaimVault(context: {
     syntheticOriginalAllocation: row, originalCredit: c0.toString(), activated, observations,
   });
 }
-

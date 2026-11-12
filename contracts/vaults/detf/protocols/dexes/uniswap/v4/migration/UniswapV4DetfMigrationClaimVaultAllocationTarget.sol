@@ -55,4 +55,3 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
     }
 
 }
-

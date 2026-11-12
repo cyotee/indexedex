@@ -198,4 +198,3 @@ contract MigrationClaimVaultTest is MigrationClaimVaultForkBase {
         assertFalse(wallet_.activationReentered());
     }
 }
-

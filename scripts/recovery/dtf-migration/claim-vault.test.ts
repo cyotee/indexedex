@@ -80,4 +80,3 @@ test("direct claim-vault complete configuration hash agrees with Solidity and ty
     }
   } finally { await f.close(); }
 });
-

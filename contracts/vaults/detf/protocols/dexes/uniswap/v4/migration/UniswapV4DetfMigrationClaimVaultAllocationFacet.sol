@@ -17,4 +17,3 @@ contract UniswapV4DetfMigrationClaimVaultAllocationFacet is UniswapV4DetfMigrati
         return (facetName(), facetInterfaces(), facetFuncs());
     }
 }
-

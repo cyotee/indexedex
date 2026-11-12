@@ -191,4 +191,3 @@ contract MigrationRecoveryClaimVaultTest is MigrationClaimVaultForkBase {
         assertEq(_protected(bond_), protected_);
     }
 }
-

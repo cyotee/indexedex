@@ -248,4 +248,3 @@ contract MigrationClaimVaultConfigurationTest is TestBase_UniswapV4DetfMigration
         allocation.configureClaimVaultEntitlements(c_);
     }
 }
-

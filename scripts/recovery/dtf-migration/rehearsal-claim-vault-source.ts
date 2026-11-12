@@ -107,4 +107,3 @@ export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: s
   });
   return { originalWallet, shares: shares.toString() };
 }
-

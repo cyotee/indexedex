@@ -92,4 +92,3 @@ abstract contract MigrationClaimVaultForkBase is MigrationRecoveryDonationForkBa
         assertEq(IERC20(detf).allowance(detf, address(bonds)), 0);
     }
 }
-
