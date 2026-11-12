@@ -51,6 +51,8 @@ library UniswapV4DetfMigrationRepo {
         mapping(bytes32 => Migration.EarlierReceiptSurrender) earlierReceiptSurrenders;
         mapping(bytes32 => Migration.EarlierLiquidEntitlement) earlierLiquidEntitlements;
         mapping(bytes32 => Migration.EarlierLiquidSurrender) earlierLiquidSurrenders;
+        mapping(bytes32 => Migration.HeldSeLpEntitlement) heldSeLpEntitlements;
+        mapping(bytes32 => Migration.HeldSeLpSurrender) heldSeLpSurrenders;
     }
 
     struct NftReceipt {

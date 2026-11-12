@@ -63,6 +63,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
       for (const row of p.payloads.configure.claimVault) add("configureClaimVaultEntitlements", [[row.input]]);
       for (const row of p.payloads.configure.weightedReceipt) add("configureWeightedReceiptEntitlements", [[row.input]]);
       for (const row of p.payloads.configure.earlierLiquid) add("configureEarlierLiquidEntitlements", [[row.input]]);
+      for (const row of p.payloads.configure.heldSeLp) add("configureHeldSeLpEntitlements", [[row.input]]);
       for (const row of p.payloads.configure.earlierReceipt) add("configureEarlierReceiptEntitlements", [[row.input]]);
       if (!operations.length) throw new ExecutionError("DOMAIN", "no supported configuration selected");
       break;

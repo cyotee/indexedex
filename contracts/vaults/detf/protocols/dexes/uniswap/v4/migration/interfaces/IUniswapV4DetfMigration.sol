@@ -359,6 +359,60 @@ interface IUniswapV4DetfMigration is
         bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_
     ) external returns (uint256 bondTokenId_, uint256 credit_);
 
+    /// @notice Original W-SW SE shares, E-P physical LP or W-P physical LP, all native18.
+    /// @dev Only the three fixed chain4663 sources are supported. originalId is the
+    /// wallet-independent economic origin, shared with every other representation.
+    /// Known ETH/DTF components are original inputs, never holdings, rewards or live NAV.
+    struct HeldSeLpEntitlementInput {
+        bytes32 originalId;
+        address originalWallet;
+        address source;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct HeldSeLpEntitlement {
+        bool configured;
+        HeldSeLpEntitlementInput original;
+        bytes32 configurationId;
+        uint256 credit;
+    }
+
+    /// @notice Q0/Q/q are the recorded source's native18 units; C is new DETF native9.
+    struct HeldSeLpSurrender {
+        uint256 consumedUnits;
+        uint256 deliveredCredit;
+        uint256 remainingUnits;
+        uint256 remainingCredit;
+    }
+
+    error UnsupportedHeldSeLpSource(uint256 chainId, address source);
+    error InvalidHeldSeLpEntitlement(bytes32 originalId);
+    error NotOriginalHeldSeLpWallet(address caller, address originalWallet);
+    error InvalidHeldSeLpQuantity(uint256 requested, uint256 remaining);
+    error HeldSeLpCustodyFailed();
+    error HeldSeLpIdentityConsumed(bytes32 originalId);
+
+    event HeldSeLpEntitlementConfigured(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        address source, uint256 originalUnits, uint256 credit
+    );
+    event MigrationHeldSeLpSurrendered(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        address source, uint256 native18Units, uint256 credit, uint256 bondTokenId
+    );
+
+    function heldSeLpEntitlement(bytes32 originalId_) external view returns (HeldSeLpEntitlement memory);
+    function heldSeLpSurrender(bytes32 originalId_) external view returns (HeldSeLpSurrender memory);
+    function previewHeldSeLpSurrender(bytes32 originalId_, uint256 amount_) external view returns (uint256 credit_);
+    /// @notice Stage2 exact approved custody/credit only. No SE/LP conversion is admitted.
+    function surrenderMigrationHeldSeLp(
+        bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_
+    ) external returns (uint256 bondTokenId_, uint256 credit_);
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -610,6 +664,10 @@ interface IUniswapV4DetfMigration is
 /// @dev Only the two admitted NFT sources, weighted liquid, weighted SY and fixed DTF-custody SE; no attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Replace complete originals for exactly W-SW, E-P or W-P; removed at activation.
+    function configureHeldSeLpEntitlements(
+        IUniswapV4DetfMigration.HeldSeLpEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Stage1 complete native18 ED original and known components; no issuance or conversion.
     function configureEarlierLiquidEntitlements(
         IUniswapV4DetfMigration.EarlierLiquidEntitlementInput[] calldata inputs_

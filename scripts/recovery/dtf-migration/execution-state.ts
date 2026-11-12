@@ -123,6 +123,35 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       }
       break;
     }
+    case "configureHeldSeLpEntitlements": {
+      requireEvent("HeldSeLpEntitlementConfigured");
+      const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
+      if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid held SE/LP configuration array");
+      for (const row of rows) {
+        const originalId = String(tuple(row).getValue("originalId"));
+        const expected = requirePrepared(domain).payloads.configure.heldSeLp.find((r) => r.input.originalId === originalId);
+        if (!expected) throw new ExecutionError("STATE", "unbound held SE/LP configuration");
+        const actual = tuple((await query("heldSeLpEntitlement", [originalId]))[0]);
+        if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== expected.configurationId
+          || String(actual.getValue("credit")) !== expected.quotedCredit
+          || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== expected.input.originalWallet
+          || String(tuple(actual.getValue("original")).getValue("source")).toLowerCase() !== expected.input.source
+          || !events.some((e) => e.name === "HeldSeLpEntitlementConfigured"
+            && e.values[0] === originalId && e.values[1] === expected.configurationId
+            && e.values[2]?.toLowerCase() === expected.input.originalWallet
+            && e.values[3]?.toLowerCase() === expected.input.source
+            && e.values[4] === expected.input.originalUnits && e.values[5] === expected.quotedCredit)) {
+          throw new ExecutionError("STATE", "held SE/LP payload, storage or event differs");
+        }
+        const unspent = tuple((await query("heldSeLpSurrender", [originalId]))[0]);
+        if (unspent.getValue("consumedUnits") !== 0n || unspent.getValue("deliveredCredit") !== 0n
+          || String(unspent.getValue("remainingUnits")) !== expected.input.originalUnits
+          || String(unspent.getValue("remainingCredit")) !== expected.quotedCredit) {
+          throw new ExecutionError("STATE", "Stage1 held SE/LP loading did not initialize the full Q/C baseline");
+        }
+      }
+      break;
+    }
     case "configureEarlierLiquidEntitlements": {
       requireEvent("EarlierLiquidEntitlementConfigured");
       const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
@@ -427,6 +456,17 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
       || String(actual.getValue("credit")) !== row.quotedCredit
       || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
       throw new ExecutionError("STATE", "earlier liquid configuration mismatch");
+    }
+  }
+  for (const row of prepared.payloads.configure.heldSeLp) {
+    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "heldSeLpEntitlement",
+      [row.input.originalId]))[0]);
+    const original = tuple(actual.getValue("original"));
+    if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== row.configurationId
+      || String(actual.getValue("credit")) !== row.quotedCredit
+      || String(original.getValue("originalWallet")).toLowerCase() !== row.input.originalWallet
+      || String(original.getValue("source")).toLowerCase() !== row.input.source) {
+      throw new ExecutionError("STATE", "fixed held SE/LP configuration mismatch");
     }
   }
   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };

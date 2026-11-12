@@ -70,6 +70,21 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
+    /// @notice Fixed W-SW/E-P/W-P custody records only; no donor-owner operation or conversion.
+    function configureHeldSeLp(Allocation proxy_, Migration.HeldSeLpEntitlementInput[] calldata inputs_) external {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        proxy_.configureHeldSeLpEntitlements(inputs_);
+        vm.stopBroadcast();
+    }
+
+    function surrenderHeldSeLp(Migration proxy_, bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        (bondTokenId_, credit_) = proxy_.surrenderMigrationHeldSeLp(originalId_, amount_, minimum_, deadline_);
+        vm.stopBroadcast();
+    }
+
     function configureEarlierLiquid(Allocation proxy_, Migration.EarlierLiquidEntitlementInput[] calldata inputs_)
         external
     {

@@ -14,7 +14,7 @@ contract UniswapV4DetfMigrationRecoveryFacet is UniswapV4DetfMigrationRecoveryTa
         ids_[0] = type(Recovery).interfaceId;
     }
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](21);
+        funcs_ = new bytes4[](25);
         funcs_[0] = Recovery.recoverMigrationNfts.selector;
         funcs_[1] = Recovery.migrationRecoveryInventory.selector;
         funcs_[2] = Recovery.migrationRecoveryGons.selector;
@@ -36,6 +36,10 @@ contract UniswapV4DetfMigrationRecoveryFacet is UniswapV4DetfMigrationRecoveryTa
         funcs_[18] = Migration.earlierLiquidSurrender.selector;
         funcs_[19] = Migration.previewEarlierLiquidSurrender.selector;
         funcs_[20] = Migration.surrenderMigrationEarlierLiquid.selector;
+        funcs_[21] = Migration.heldSeLpEntitlement.selector;
+        funcs_[22] = Migration.heldSeLpSurrender.selector;
+        funcs_[23] = Migration.previewHeldSeLpSurrender.selector;
+        funcs_[24] = Migration.surrenderMigrationHeldSeLp.selector;
     }
     function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {
         return (facetName(), facetInterfaces(), facetFuncs());

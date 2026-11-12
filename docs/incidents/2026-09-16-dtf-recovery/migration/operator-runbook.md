@@ -1,5 +1,71 @@
 # Bounded Migration operator runbook
 
+## Three fixed native18 SE/LP custody and credit paths
+
+`heldSeLp` contains complete `original` and raw `proof` objects. Originals
+require `originalId`, `originalWallet`, `source`, positive `originalUnits`,
+known `originalEth` and `originalDtf`, `evidenceId`, and
+`contributionsKnown: true`. The three supported chain4663 sources are:
+
+| Source | Fixed token | Eligible units |
+| --- | --- | --- |
+| W-SW | `0x999dae02d22e5fee1c4508430d5196d31d631009` | native18 weighted WETH/DTF SE shares |
+| E-P | `0x923877336b14662cfb5b3a60b14e7d716d54a888` | native18 physical earlier LP |
+| W-P | `0x46e068c2393e189fbc86632f67210af253a42aa8` | native18 physical weighted LP |
+
+These are not native28 W-SD, native9 receipt/SY units, ER internal shares,
+NFT accounting shares, funded principal, or arbitrary ERC20s. E-S
+`0xb7d4bb379d361ad442cddee53ea71a33957826a7` remains unsupported.
+Preparation emits a separate `held-se-lp.json` review mirror. Configuration
+quotes each complete original separately through the frozen evaluator,
+without issuance or merging nonlinear inputs. The canonical wallet-independent
+origin excludes all other representations and independent current/issued
+history in both directions. A source cannot replace another source under the
+same origin; Stage1 same-source wallet/input corrections remain idempotent.
+Opaque alias reconciliation and approved historical originals remain
+operational inputs, not facts established by token possession.
+
+The existing paid owner-first ordinary bond precedes activation. Activation
+permanently removes all14 administration selectors, including
+`configureHeldSeLpEntitlements`; queries and `surrenderMigrationHeldSeLp`
+remain. Stage1 surrender rejects before effects. Stage2 requires the
+configured original wallet's actual native source allowance and control.
+Both its debit and Migration's receipt must equal requested positive native18
+q. Partial credit is full-precision floor(C*q/Q); exact terminal q==Q delivers
+all remaining C. Reject zero credit, failed minimum/deadline, source or
+funding/receiver failure atomically. Each successful surrender creates one
+exactly funded same-wallet bond with its own fresh90-day principal cliff.
+Transfer-away/back neither moves configured compensation nor resets it.
+Source maximum allowances decrement too.
+
+Only measured new q enters `migrationRecoveryInventory(source)`, in that
+source's native18 units. Preexisting/unsolicited holdings, other held sources,
+NFT rewards, ED, ER external E/internal B, WS gons, reserve/donor budgets
+and new-bond backing remain separate. There is no new conversion, debit,
+donation stage, successful-exit decoder, source enablement, or owner executor.
+W-SW exits remain VaultDisabled; E-P retains UnsupportedRoute/native NotOwner;
+W-P retains ordinary NotOwner and owner-only liquidity. Custody/credit
+acceptance does not accept their liquidation.
+
+The new cumulative local rehearsal uses only loopback18571 and
+`.omo-runtime/dtf-migration-held-se-lp/checkpoints`, with the existing
+`/bin/zsh -lc` archive bootstrap. It retains all earlier routes and all three
+real mined-before-checkpoint/fresh-process resumes. Earlier18567/18568/18569
+signer gates remain; there is no public fallback.
+
+Fixture acquisition is explicitly separate from production/operator authority.
+W-SW uses an authenticated existing EOA's personal transfer. E-P/W-P use only
+the separately admitted disposable-fork simulation: authenticate the existing
+EOA collector owner and deployed `pullFee` routing; that owner releases a
+small actual collector holding to itself, then separately donates its personal
+holding to the controlled original. Both donor operations are impersonated,
+not donor-key control, public consent, or a historical allocation. The
+controlled original signs its own approval and surrender. Its original
+ETH/DTF components are disclosed synthetic code-proof inputs, quoted by the
+real evaluator. General execution and Migration gain neither an ability nor
+a requirement to call the collector owner method. Actual users must already
+control their eligible tokens.
+
 ## Earlier liquid ED: custody and credit, not conversion
 
 `earlierLiquid` accepts complete known original records with the same

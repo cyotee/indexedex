@@ -11,6 +11,35 @@ import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyReco
 
 /// @notice Separate removable loader keeps both administration facets within EIP170.
 contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrationPolicy {
+    function configureHeldSeLpEntitlements(Migration.HeldSeLpEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        for (uint256 i_; i_ < inputs_.length; ++i_) {
+            Migration.HeldSeLpEntitlementInput calldata input_ = inputs_[i_];
+            Legacy.requireHeldSeLpSource(input_.source);
+            bytes32 original_ = input_.originalId;
+            if (original_ == bytes32(0) || input_.originalWallet == address(0)
+                || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
+                revert Migration.InvalidHeldSeLpEntitlement(original_);
+            }
+            _requireUnallocatedOrigin(original_, input_.source);
+            Migration.HeldSeLpSurrender storage surrender_ = m_.heldSeLpSurrenders[original_];
+            if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
+                revert Migration.HeldSeLpIdentityConsumed(original_);
+            }
+            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
+            m_.heldSeLpEntitlements[original_] = Migration.HeldSeLpEntitlement(true, input_, config_, credit_);
+            surrender_.remainingUnits = input_.originalUnits;
+            surrender_.remainingCredit = credit_;
+            emit Migration.HeldSeLpEntitlementConfigured(
+                original_, config_, input_.originalWallet, input_.source, input_.originalUnits, credit_
+            );
+        }
+    }
+
     function configureWeightedLiquidEntitlements(Migration.WeightedLiquidEntitlementInput[] calldata inputs_)
         external administration nonReentrant
     {
@@ -60,7 +89,9 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             || m_.claimVaultEntitlements[original_].configured
             || m_.weightedReceiptEntitlements[original_].configured
             || m_.earlierReceiptEntitlements[original_].configured
-            || (source_ != Legacy.EARLIER_DETF && m_.earlierLiquidEntitlements[original_].configured)) {
+            || (source_ != Legacy.EARLIER_DETF && m_.earlierLiquidEntitlements[original_].configured)
+            || (m_.heldSeLpEntitlements[original_].configured
+                && m_.heldSeLpEntitlements[original_].original.source != source_)) {
             revert Migration.DuplicateOriginalEntitlement(original_);
         }
     }
@@ -118,7 +149,8 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
                 || m_.dtfCustodySeEntitlements[original_].configured
                 || m_.weightedReceiptEntitlements[original_].configured
                 || m_.earlierReceiptEntitlements[original_].configured
-                || m_.earlierLiquidEntitlements[original_].configured) {
+                || m_.earlierLiquidEntitlements[original_].configured
+                || m_.heldSeLpEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             Migration.ClaimVaultSurrender storage surrender_ = m_.claimVaultSurrenders[original_];
@@ -157,7 +189,8 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
                 || m_.dtfCustodySeEntitlements[original_].configured
                 || m_.claimVaultEntitlements[original_].configured
                 || m_.earlierReceiptEntitlements[original_].configured
-                || m_.earlierLiquidEntitlements[original_].configured) {
+                || m_.earlierLiquidEntitlements[original_].configured
+                || m_.heldSeLpEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             Migration.WeightedReceiptSurrender storage surrender_ = m_.weightedReceiptSurrenders[original_];
@@ -197,7 +230,8 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
                 || m_.dtfCustodySeEntitlements[original_].configured
                 || m_.claimVaultEntitlements[original_].configured
                 || m_.weightedReceiptEntitlements[original_].configured
-                || m_.earlierLiquidEntitlements[original_].configured) {
+                || m_.earlierLiquidEntitlements[original_].configured
+                || m_.heldSeLpEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             Migration.EarlierReceiptSurrender storage surrender_ = m_.earlierReceiptSurrenders[original_];

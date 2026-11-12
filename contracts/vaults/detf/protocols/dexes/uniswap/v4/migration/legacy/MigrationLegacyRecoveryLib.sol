@@ -29,6 +29,17 @@ library MigrationLegacyRecoveryLib {
     address internal constant EARLIER_DETF = 0xaf0E1967c8F755c747615c5427108Bc549CA1122;
     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
+    address internal constant WEIGHTED_WETH_SE = 0x999DaE02D22E5FEe1c4508430D5196d31d631009;
+    address internal constant EARLIER_LP = 0x923877336b14662cFb5B3A60b14e7d716d54A888;
+    address internal constant WEIGHTED_LP = 0x46E068c2393e189Fbc86632f67210aF253a42Aa8;
+
+    /// @dev Fixed custody set, not a recovery-route or arbitrary ERC20 admission.
+    function requireHeldSeLpSource(address source_) internal view {
+        if (block.chainid != 4663
+            || (source_ != WEIGHTED_WETH_SE && source_ != EARLIER_LP && source_ != WEIGHTED_LP)) {
+            revert Migration.UnsupportedHeldSeLpSource(block.chainid, source_);
+        }
+    }
 
     struct EarlierReceiptObservation {
         uint256 rate;

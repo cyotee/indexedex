@@ -83,6 +83,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     || m_.weightedReceiptEntitlements[original_.entitlementId].configured
                     || m_.earlierReceiptEntitlements[original_.entitlementId].configured
                     || m_.earlierLiquidEntitlements[original_.entitlementId].configured
+                    || m_.heldSeLpEntitlements[original_.entitlementId].configured
                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
                 }
@@ -131,7 +132,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 if (m_.claimVaultEntitlements[originalId_].configured
                     || m_.weightedReceiptEntitlements[originalId_].configured
                     || m_.earlierReceiptEntitlements[originalId_].configured
-                    || m_.earlierLiquidEntitlements[originalId_].configured) {
+                    || m_.earlierLiquidEntitlements[originalId_].configured
+                    || m_.heldSeLpEntitlements[originalId_].configured) {
                     revert Migration.DuplicateOriginalEntitlement(originalId_);
                 }
                 m_.issuedOriginal[originalId_] = recipient_;
@@ -165,7 +167,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             if (m_.claimVaultEntitlements[original_].configured
                 || m_.weightedReceiptEntitlements[original_].configured
                 || m_.earlierReceiptEntitlements[original_].configured
-                || m_.earlierLiquidEntitlements[original_].configured) {
+                || m_.earlierLiquidEntitlements[original_].configured
+                || m_.heldSeLpEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
@@ -257,7 +260,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             || (source_ != Legacy.CLAIM_VAULT && m_.claimVaultEntitlements[original_].configured)
             || m_.weightedReceiptEntitlements[original_].configured
             || m_.earlierReceiptEntitlements[original_].configured
-            || m_.earlierLiquidEntitlements[original_].configured) {
+            || m_.earlierLiquidEntitlements[original_].configured
+            || m_.heldSeLpEntitlements[original_].configured) {
             revert Migration.DuplicateOriginalEntitlement(original_);
         }
     }
@@ -281,7 +285,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](13);
+        selectors_ = new bytes4[](14);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
@@ -295,6 +299,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         selectors_[10] = Allocation.configureWeightedReceiptEntitlements.selector;
         selectors_[11] = Allocation.configureEarlierReceiptEntitlements.selector;
         selectors_[12] = Allocation.configureEarlierLiquidEntitlements.selector;
+        selectors_[13] = Allocation.configureHeldSeLpEntitlements.selector;
     }
 
     function bootstrapMigrationReserve(

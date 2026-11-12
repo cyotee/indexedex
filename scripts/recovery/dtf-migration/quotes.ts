@@ -83,7 +83,7 @@ export async function quoteOriginals(input: PreparationInput, payloads: Configur
       || BigInt(snapshot.getValue("version")) !== 1n) {
       throw new PreparationError("DOMAIN", "snapshot identity/source mismatch");
     }
-    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid, ...payloads.weightedSy, ...payloads.dtfCustodySe, ...payloads.claimVault, ...payloads.weightedReceipt, ...payloads.earlierReceipt, ...payloads.earlierLiquid];
+    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid, ...payloads.weightedSy, ...payloads.dtfCustodySe, ...payloads.claimVault, ...payloads.weightedReceipt, ...payloads.earlierReceipt, ...payloads.earlierLiquid, ...payloads.heldSeLp];
     const pairs = new Map(originals.map((r) => [`${r.originalEth}:${r.originalDtf}`, r]));
     const quotes: Quote[] = [];
     for (const [, original] of [...pairs].sort(([a], [b]) => a.localeCompare(b))) {

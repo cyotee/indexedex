@@ -66,7 +66,7 @@ test("ER source and original partition cannot be substituted duplicated or silen
     assert.throws(() => buildPayloads({ ...f.input, earlierReceipt: [row, row] }), /overlapping original/);
     assert.throws(() => buildPayloads({ ...f.input, earlierReceipt: [] }), /unassigned origin/);
     const rows = dispositions(f.input);
-    assert.equal(rows.length, 14);
+    assert.equal(rows.length, 15);
     assert.equal(rows.find((r) => r.category === "earlier-receipt")?.disposition, "bounded");
     assert.equal(rows.find((r) => r.category === "earlier-liquidation")?.disposition, "blocked");
   } finally { await f.close(); }

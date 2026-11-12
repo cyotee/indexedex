@@ -42,6 +42,11 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
     --fork-block 108944663 --port 18569
     --checkpoint .omo-runtime/dtf-migration-earlier-liquid/checkpoints
     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/implementation/runtime
+  Three fixed native18 custody/credit sources (E-S and all three conversions blocked):
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+    --fork-block 108944663 --port 18571
+    --checkpoint .omo-runtime/dtf-migration-held-se-lp/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/runtime
 `;
 
 export async function main(args: readonly string[]): Promise<void> {

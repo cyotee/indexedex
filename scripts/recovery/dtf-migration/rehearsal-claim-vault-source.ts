@@ -24,7 +24,7 @@ export const claimVaultAbi = new Interface([
 
 /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
 export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: string) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569"].includes(chain.endpoint.port)) {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "claim-vault acquisition is restricted to the pinned owned local node");
   }
   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",

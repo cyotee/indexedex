@@ -13,6 +13,7 @@ export const categories = [
   "independent", "weighted-nft", "earlier-nft", "weighted-liquid", "earlier-liquid",
   "weighted-receipt", "earlier-receipt", "weighted-sy", "token-staking",
   "claim-vault", "dtf-custody-se", "underlying-se", "fungible-lp", "earlier-liquidation",
+  "held-se-lp",
 ] as const;
 export const proof = z.object({
   sourceId: z.string().min(1),
@@ -59,6 +60,15 @@ export const weightedReceipt = z.object({ original: weightedReceiptOriginal, pro
 // Exact internal ER shares. Displayed native18 and external floor shares are not Q0.
 export const earlierLiquidOriginal = weightedLiquidOriginal;
 export const earlierLiquid = z.object({ original: earlierLiquidOriginal, proof }).strict().readonly();
+export const heldSeLpSources = [
+  "0x999dae02d22e5fee1c4508430d5196d31d631009",
+  "0x923877336b14662cfb5b3a60b14e7d716d54a888",
+  "0x46e068c2393e189fbc86632f67210af253a42aa8",
+] as const;
+// Source-native18 shares/physical LP; neither native28 W-SD nor NFT accounting shares.
+export const heldSeLpOriginal = weightedLiquidOriginal.refine(
+  (row) => heldSeLpSources.some((source) => source === row.source), "unsupported fixed held SE/LP source");
+export const heldSeLp = z.object({ original: heldSeLpOriginal, proof }).strict().readonly();
 export const earlierReceiptOriginal = weightedLiquidOriginal;
 export const earlierReceipt = z.object({ original: earlierReceiptOriginal, proof }).strict().readonly();
 export const claimVaultOriginal = weightedLiquidOriginal;
@@ -127,6 +137,7 @@ export const preparationInput = z.object({
   weightedReceipt: z.array(weightedReceipt).readonly(),
   earlierReceipt: z.array(earlierReceipt).readonly().default([]),
   earlierLiquid: z.array(earlierLiquid).readonly().default([]),
+  heldSeLp: z.array(heldSeLp).readonly().default([]),
   issueRecipients: z.array(address).readonly(),
   harvest: z.object({
     steps: z.array(recoveryStep).max(8).readonly(),

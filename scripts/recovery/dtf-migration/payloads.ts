@@ -1,5 +1,5 @@
 import { AbiCoder, keccak256 } from "ethers";
-import { categories, PreparationError } from "./schema.js";
+import { categories, heldSeLpSources, PreparationError } from "./schema.js";
 import type { Domain, NftOriginal, Original, PreparationInput, WeightedLiquidOriginal } from "./schema.js";
 
 const coder = AbiCoder.defaultAbiCoder();
@@ -30,6 +30,7 @@ export type ConfigurationPayload = {
   readonly weightedReceipt: readonly WeightedLiquidOriginal[];
   readonly earlierLiquid: readonly WeightedLiquidOriginal[];
   readonly earlierReceipt: readonly WeightedLiquidOriginal[];
+  readonly heldSeLp: readonly WeightedLiquidOriginal[];
 };
 
 export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal): string {
@@ -45,8 +46,8 @@ export function nftOrigin(domain: Domain, input: NftOriginal): string {
 
 const blockedGate = {
   "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
-  "underlying-se": "H3/H5/H6: direct-user records and surrender absent; earlier and weighted WETH SE disabled; fixed W-SD has its separate admitted category",
-  "fungible-lp": "H3/H6: original records and surrender absent; legacy exits are owner-restricted, earlier exact-in unsupported",
+  "underlying-se": "E-S remains unsupported; fixed W-SD and held-se-lp W-SW have separate admitted custody categories; W-SW conversion remains VaultDisabled",
+  "fungible-lp": "Only fixed held-se-lp E-P/W-P custody is admitted; acquisition fixtures need an external EOA-owner donation; conversions remain owner-restricted",
   "earlier-liquidation": "ED exit actually reaches disabled ES; no successful ED conversion or donation is installed",
 } as const;
 
@@ -62,6 +63,7 @@ export function dispositions(input: PreparationInput) {
       case "weighted-liquid": return { category, disposition: "bounded", gate: "explicit original-wallet WD quantity/component allocation and measured surrender; operational allocations remain unapproved" };
       case "weighted-receipt": return { category, disposition: "bounded", gate: "fixed WS eligible original gons and known grouped components; synchronized native9 custody only; positive nonrepresentable Q/C remains recorded without promised future redemption; operational originals unapproved" };
       case "earlier-liquid": return { category, disposition: "bounded", gate: "fixed ED native18 original units and frozen known components; exact approved custody and bonded credit only; ED exit structurally blocked by disabled ES; operational originals unapproved" };
+      case "held-se-lp": return { category, disposition: "bounded", gate: "exactly W-SW/E-P/W-P native18 custody and frozen credit; E-P/W-P fixture acquisition depends on external EOA-owner release to itself then personal donation, not claimant/Migration authority; E-S and all three conversions unsupported; synthetic originals are not operational awards" };
       case "earlier-receipt": return { category, disposition: "bounded", gate: "fixed ER exact internal original shares and frozen known components; approved custody/credit only within singleton-rate measurement domain; liquidation remains VaultDisabled at ES; positive Q/C residue preserved; operational originals unapproved" };
       default: return { category, disposition: "blocked", gate: blockedGate[category] };
     }
@@ -172,6 +174,16 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
     }
     return original;
   }).sort((a, b) => a.originalId.localeCompare(b.originalId));
+  const heldSeLp = input.heldSeLp.map(({ original }) => {
+    if (input.domain.chainId !== "4663" || !heldSeLpSources.some((source) => source === original.source)) {
+      throw new PreparationError("DOMAIN", "held SE/LP custody requires one of three fixed native18 sources on chain 4663");
+    }
+    claimOrigin(original.originalId, "held-se-lp");
+    if (origins.get(original.originalId)?.originalUnits !== original.originalUnits) {
+      throw new PreparationError("PROVENANCE", "held SE/LP original native18 units differ from reconciled origin");
+    }
+    return original;
+  }).sort((a, b) => a.originalId.localeCompare(b.originalId));
   if (used.size !== origins.size) throw new PreparationError("PROVENANCE", "unassigned origin; no silent omission");
   if (new Set(input.issueRecipients).size !== input.issueRecipients.length) {
     throw new PreparationError("INPUT", "duplicate issuance recipient");
@@ -212,5 +224,5 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
   if (input.harvest.steps.length > 0 && (input.domain.chainId !== "4663" || input.harvest.deadline === "0")) {
     throw new PreparationError("DOMAIN", "recovery requires chain 4663 and deadline");
   }
-  return { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid };
+  return { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp };
 }
