@@ -20,7 +20,7 @@ export const wsWallet = (index = 117) => HDNodeWallet.fromPhrase(
 export async function signWs(chain: RehearsalChain, evidence: string, request: {
   readonly to: string; readonly data: string; readonly index?: number; readonly status?: bigint;
 }) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "WS signed fixture requires the fixed owned18567 node");
   }
   const wallet = wsWallet(request.index);
@@ -72,7 +72,7 @@ export async function acquireWeightedReceipt(chain: RehearsalChain, evidence: st
   const gonsBefore = z.bigint().parse((await chain.call(LEGACY.receipt, legacyAbi, "gonsOf", [originalWallet]))[0]);
   if (gonsBefore !== 0n) throw new ExecutionError("STATE", "WS acquisition wallet already owns receipt gons");
   const donor = "0x082cb14f04d9c485473dedc00d604d7e9abca303";
-  await chain.send("anvil_setBalance", [donor, "0xde0b6b3a7640000"]);
+  await chain.fundGas(donor);
   await chain.send("anvil_impersonateAccount", [donor]);
   try {
     await chain.transact(LEGACY.detf, { from: donor,

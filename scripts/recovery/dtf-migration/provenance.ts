@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { z } from "zod";
-import { PreparationError, preparationInput } from "./schema.js";
+import { identity, PreparationError, preparationInput } from "./schema.js";
 import type { PreparationInput, Proof } from "./schema.js";
 
 export function canonical(value: unknown): string {
@@ -51,10 +51,12 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
   if (!input.sources.some((s) => s.path === input.domain.snapshotArtifact)) {
     throw new PreparationError("PROVENANCE", "snapshot ABI artifact must be fingerprinted");
   }
+  const reviewed = new Map<string, unknown>();
   const check = (proof: Proof, value: unknown): void => {
     const raw = sources.get(proof.sourceId);
     if (!raw) throw new PreparationError("PROVENANCE", `missing source ${proof.sourceId}`);
-    const recorded = pointerValue(JSON.parse(new TextDecoder().decode(raw)), proof.pointer);
+    if (!reviewed.has(proof.sourceId)) reviewed.set(proof.sourceId, JSON.parse(new TextDecoder().decode(raw)));
+    const recorded = pointerValue(reviewed.get(proof.sourceId), proof.pointer);
     if (canonical(recorded) !== canonical(value)) {
       throw new PreparationError("PROVENANCE", `proof does not match full original: ${proof.sourceId}${proof.pointer}`);
     }
@@ -62,7 +64,14 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
   for (const row of input.independent) for (const item of row.entitlements) check(item.proof, item.original);
   for (const row of input.nfts) check(row.proof, row.original);
   for (const row of input.weightedLiquid) check(row.proof, row.original);
-  for (const row of input.weightedSy) check(row.proof, row.original);
+  // Claimed-origin evidence points at the complete reviewed record. Removing its
+  // certificate cannot make that same proof validate as ordinary independent SY.
+  for (const row of input.weightedSy) {
+    if (row.claimedOrigin && input.sources.find((s) => s.id === row.proof.sourceId)?.provenance.kind !== "file") {
+      throw new PreparationError("PROVENANCE", "claimed original eligibility requires reviewed owner input, not chain-observation authority");
+    }
+    check(row.proof, row.claimedOrigin ? { original: row.original, claimedOrigin: row.claimedOrigin } : row.original);
+  }
   for (const row of input.dtfCustodySe) check(row.proof, row.original);
   for (const row of input.claimVault) check(row.proof, row.original);
   for (const row of input.weightedReceipt) check(row.proof, row.original);
@@ -83,6 +92,27 @@ export async function validateProvenance(input: PreparationInput): Promise<void>
       + BigInt(row.recoveredUnits) + BigInt(row.excludedUnits);
     if (partition !== BigInt(row.originalUnits)) {
       throw new PreparationError("PROVENANCE", `origin partition differs: ${row.originId}`);
+    }
+  }
+  // Classification belongs to the reviewed document, not a caller-selected
+  // pointer. A nested/duplicate original tuple cannot erase its claimed origin.
+  const claimed = new Set<string>();
+  const pending: unknown[] = [...reviewed.values()];
+  while (pending.length > 0) {
+    const value = pending.pop();
+    if (Array.isArray(value)) pending.push(...value);
+    else if (value !== null && typeof value === "object") {
+      const record = z.record(z.unknown()).parse(value);
+      if (Object.hasOwn(record, "claimedOrigin")) {
+        const original = z.object({ originalId: identity }).passthrough().parse(record["original"]);
+        claimed.add(original.originalId);
+      }
+      pending.push(...Object.values(record));
+    }
+  }
+  for (const row of input.weightedSy) {
+    if (claimed.has(row.original.originalId) && !row.claimedOrigin) {
+      throw new PreparationError("PROVENANCE", "reviewed claimed origin requires its complete certificate; ordinary SY fallback forbidden");
     }
   }
 }

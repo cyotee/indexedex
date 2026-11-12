@@ -24,7 +24,7 @@ export const claimVaultAbi = new Interface([
 
 /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
 export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: string) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "claim-vault acquisition is restricted to the pinned owned local node");
   }
   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",
@@ -60,7 +60,7 @@ export async function acquireClaimVaultShares(chain: RehearsalChain, evidence: s
     throw new ExecutionError("STATE", "controlled acquisition must begin with no SY or source shares");
   }
   const holder = "0x11c17f25e958e4637dd26ca362adeae12e24ed5b";
-  await chain.send("anvil_setBalance", [holder, "0xde0b6b3a7640000"]);
+  await chain.fundGas(holder);
   await chain.send("anvil_impersonateAccount", [holder]);
   let funding;
   try {

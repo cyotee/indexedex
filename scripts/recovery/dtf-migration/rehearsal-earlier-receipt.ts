@@ -25,7 +25,7 @@ const bondAbi = new Interface([
   "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
 ]);
 async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 181, status = 1n) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571"].includes(chain.endpoint.port)) {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "ER signer requires an owned fixed loopback rehearsal");
   }
   const signer = wallet(index);

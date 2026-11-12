@@ -59,7 +59,7 @@ export async function fixture() {
       let result: unknown;
       switch (rpc.method) {
         case "eth_chainId": result = changes.chain; break;
-        case "eth_getBlockByNumber": result = { number: "0x64", hash: h(100), parentHash: h(99) }; break;
+        case "eth_getBlockByNumber": result = { number: "0x64", hash: h(100), parentHash: h(99), transactions: [] }; break;
         case "eth_getCode": result = changes.code; break;
         case "eth_call": {
           const call = z.object({ data: z.string() }).parse(rpc.params[0]);

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Interface, keccak256 } from "ethers";
 import { child, FOUNDRY, launchAnvil } from "./rehearsal-process.js";
 import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
-import { bootstrapManifest, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
+import { bootstrapManifest, captureOriginalInputBytes, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
 import { DEV } from "./execution-rpc.js";
 import { ExecutionError, rpcLog } from "./execution-schema.js";
 import { address, hash, hex } from "./schema.js";
@@ -23,6 +23,8 @@ import { acquireEarlierReceipt, exerciseEarlierReceipt } from "./rehearsal-earli
 import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
 import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
 import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
+import { acquireClaimedSy } from "./rehearsal-claimed-sy-source.js";
+import { checkClaimedSyIntake, exerciseClaimedSy } from "./rehearsal-claimed-sy.js";
 import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
 import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
 import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt, captureLinkedLibraries } from "./rehearsal-proof.js";
@@ -47,8 +49,9 @@ export async function rehearse(options: {
   readonly checkpoint: string; readonly evidence: string;
 }) {
   if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663"
-    || !["18567", "18568", "18569", "18571"].includes(options.port)
-    || options.checkpoint !== (options.port === "18571" ? ".omo-runtime/dtf-migration-held-se-lp/checkpoints"
+    || !["18567", "18568", "18569", "18571", "18573"].includes(options.port)
+    || options.checkpoint !== (options.port === "18573" ? ".omo-runtime/dtf-migration-claimed-sy/checkpoints"
+      : options.port === "18571" ? ".omo-runtime/dtf-migration-held-se-lp/checkpoints"
       : options.port === "18569" ? ".omo-runtime/dtf-migration-earlier-liquid/checkpoints" : options.port === "18568"
       ? ".omo-runtime/dtf-migration-earlier-receipt/checkpoints" : ".omo-runtime/dtf-migration-weighted-receipt/checkpoints")) {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
@@ -97,7 +100,7 @@ export async function rehearse(options: {
       await chain.send("eth_getBlockByNumber", ["0x67e5d17", false]));
     if (pin.hash !== PIN_HASH) throw new ExecutionError("DOMAIN", "historical header does not match");
     await save(join(evidence, "historical-header.json"), pin);
-    await chain.send("anvil_setBalance", [DEV, "0xd3c21bcecceda1000000"]);
+    const claimedAcquisition = options.port === "18573" ? await acquireClaimedSy(chain, evidence) : [];
     await chain.withHolder("3", async (holder) => {
       await chain.transact(LEGACY.weighted, { from: holder, data: legacyAbi.encodeFunctionData("claimBond", ["3", holder]) });
       const held = String((await chain.call(LEGACY.receipt, legacyAbi, "balanceOf", [holder]))[0]);
@@ -128,8 +131,8 @@ export async function rehearse(options: {
     const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
     const earlierAcquisition = await acquireEarlierReceipt(chain, evidence);
     const earlierLiquidAcquisition = await acquireEarlierLiquid(chain, evidence);
-    const heldSeLpAcquisition = options.port === "18571" ? await acquireHeldSeLp(chain, evidence) : [];
-    if (options.port !== "18571") await save(join(evidence, "held-se-lp-acquisition.json"), {
+    const heldSeLpAcquisition = ["18571", "18573"].includes(options.port) ? await acquireHeldSeLp(chain, evidence) : [];
+    if (!["18571", "18573"].includes(options.port)) await save(join(evidence, "held-se-lp-acquisition.json"), {
       rows: [], disposition: "not selected on the retained earlier rehearsal ports",
     });
     const manifest = await bootstrapManifest(chain, environmentPath);
@@ -196,11 +199,14 @@ export async function rehearse(options: {
       custodySe: custodyAcquisition, claimVault: claimAcquisition, weightedReceipt: receiptAcquisition,
       earlierReceipt: earlierAcquisition, earlierLiquid: earlierLiquidAcquisition,
       heldSeLp: heldSeLpAcquisition,
+      claimedSy: claimedAcquisition,
     });
     const prepared = join(evidence, "prepared");
+    await captureOriginalInputBytes(input, join(evidence, "original-input-bytes.json"));
     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
     await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
     await checkPreparation({ input, evidence, cli });
+    if (options.port === "18573") await checkClaimedSyIntake(chain, input, evidence);
     let post = { ...manifest, snapshotId: input.domain.snapshotId, preparedManifest: join(prepared, "manifest.json") };
     let postPath = join(evidence, "post-capture.json");
     await save(postPath, post);
@@ -237,6 +243,7 @@ export async function rehearse(options: {
     const issuedBeforeReplacement = (await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString();
     const replacementSupply = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
     input = await replacementFixture(input, evidence);
+    await captureOriginalInputBytes(input, join(evidence, "replacement-original-input-bytes.json"));
     const replacement = join(evidence, "replacement");
     await cli(["prepare", "--input", join(evidence, "replacement-input.json"), "--output", replacement]);
     post = { ...post, preparedManifest: join(replacement, "manifest.json") };
@@ -252,6 +259,7 @@ export async function rehearse(options: {
     await exerciseAdmission({ chain, manifest: post, input, evidence, activated: false });
     await exerciseWeightedLiquid({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
+    await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseClaimVault({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
@@ -269,6 +277,12 @@ export async function rehearse(options: {
     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
     await chain.send("evm_mine", []);
     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "final" });
+    if (options.port === "18573") {
+      await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "partial" });
+      await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+      await chain.send("evm_mine", []);
+      await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "terminal" });
+    }
     await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "partial" });
     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
     await chain.send("evm_mine", []);

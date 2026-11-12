@@ -24,7 +24,7 @@ const wallet = (index: number) => HDNodeWallet.fromPhrase(
 
 /** Disposable-fork donor simulation only. Migration and the operator gain no collector authority. */
 export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || chain.endpoint.port !== "18571") {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18571", "18573"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "held SE/LP acquisition requires the fixed owned loopback18571");
   }
   const originalWallet = wallet(201).address.toLowerCase();

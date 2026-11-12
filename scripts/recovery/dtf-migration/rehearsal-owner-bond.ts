@@ -104,7 +104,7 @@ export async function exerciseOrdinaryDeposit(chain: RehearsalChain, manifest: E
   ]);
   const amount = "1000000000000000000";
   await chain.transact(input, { from: DEV, data: token.encodeFunctionData("transfer", [buyer, amount]) });
-  await chain.send("anvil_setBalance", [buyer, "0x3635c9adc5dea00000"]);
+  await chain.fundGas(buyer);
   await chain.send("anvil_impersonateAccount", [buyer]);
   try {
     await chain.transact(input, { from: buyer, data: token.encodeFunctionData("approve", [manifest.proxy, amount]) });

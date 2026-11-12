@@ -1,6 +1,7 @@
 import { AbiCoder, keccak256 } from "ethers";
 import { categories, heldSeLpSources, PreparationError } from "./schema.js";
 import type { Domain, NftOriginal, Original, PreparationInput, WeightedLiquidOriginal } from "./schema.js";
+import { validateClaimedSyInputs } from "./claimed-sy.js";
 
 const coder = AbiCoder.defaultAbiCoder();
 const independentTuple = "tuple(address recipient,bytes32 evidenceId,tuple(bytes32 entitlementId,uint256 originalEth,uint256 originalDtf,bytes32 evidenceId)[] entitlements)";
@@ -71,6 +72,7 @@ export function dispositions(input: PreparationInput) {
 }
 
 export function buildPayloads(input: PreparationInput): ConfigurationPayload {
+  validateClaimedSyInputs(input);
   const origins = new Map(input.exposures.map((e) => [e.originId, e]));
   if (origins.size !== input.exposures.length) throw new PreparationError("PROVENANCE", "duplicate origin");
   const used = new Set<string>();

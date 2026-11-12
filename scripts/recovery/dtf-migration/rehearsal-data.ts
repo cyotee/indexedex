@@ -5,7 +5,8 @@ import type { ParamType } from "ethers";
 import { z } from "zod";
 import { canonical, fingerprint } from "./provenance.js";
 import { address, hash, hex, preparationInput } from "./schema.js";
-import type { PreparationInput } from "./schema.js";
+import type { ClaimedSyCertificate, PreparationInput } from "./schema.js";
+import { claimedSyEvidenceId } from "./claimed-sy.js";
 import { executionManifest, ExecutionError, packageArguments } from "./execution-schema.js";
 import type { ExecutionManifest } from "./execution-schema.js";
 import type { RehearsalChain } from "./rehearsal-chain.js";
@@ -29,6 +30,17 @@ export async function sourceFile(id: string, path: string) {
     provenance: { kind: "file" as const, authority: "synthetic-local rehearsal; not approved historical allocation" } };
 }
 export async function save(path: string, data: unknown) { await writeFile(path, `${canonical(data)}\n`, { flag: "wx" }); }
+export async function captureOriginalInputBytes(input: PreparationInput, path: string) {
+  const records = [];
+  for (const source of input.sources) {
+    const raw = await readFile(source.path);
+    if (fingerprint(raw) !== source.sha256 || String(raw.length) !== source.bytes) {
+      throw new ExecutionError("DOMAIN", "original source changed before lossless capture");
+    }
+    records.push({ ...source, rawBase64: raw.toString("base64"), terminalNewline: raw.at(-1) === 10 });
+  }
+  await save(path, { encoding: "lossless original bytes, not normalized JSON or reconstructed ABI", records });
+}
 export async function interfaceFile(path: string) {
   const artifact = z.object({ abi: z.array(z.unknown()) }).parse(JSON.parse(await readFile(path, "utf8")));
   return new Interface(JSON.stringify(artifact.abi));
@@ -82,6 +94,9 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("held-se-lp-owner-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding-verification/report.md"),
     sourceFile("held-se-lp-acquisition", join(dirname(environmentPath), "held-se-lp-acquisition.json")),
     sourceFile("earlier-receipt-acquisition", join(dirname(environmentPath), "earlier-receipt-acquisition.json")),
+    sourceFile("claimed-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md"),
+    sourceFile("claimed-sy-source-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/contract.md"),
+    sourceFile("claimed-sy-source-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/verification/report.md"),
   ]);
   const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
   const parameter = pkg.getFunction("deployVault")?.inputs[0];
@@ -129,7 +144,8 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     readonly weightedReceipt: { readonly originalWallet: string; readonly gons: string };
     readonly earlierReceipt: { readonly originalWallet: string; readonly internalShares: string };
     readonly earlierLiquid: { readonly originalWallet: string; readonly units: string };
-    readonly heldSeLp: readonly { readonly source: string; readonly originalWallet: string; readonly units: string }[] }) {
+    readonly heldSeLp: readonly { readonly source: string; readonly originalWallet: string; readonly units: string }[];
+    readonly claimedSy?: readonly { readonly q0: string; readonly certificate: Omit<ClaimedSyCertificate, "snapshotCapture"> }[] }) {
   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
   const snapshot: unknown = (await chain.call(manifest.proxy, migration, "migrationSnapshot"))[0];
   if (!(snapshot instanceof Result)) throw new ExecutionError("STATE", "snapshot tuple");
@@ -175,6 +191,26 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     originalDtf: "0", evidenceId: `0x${fingerprint("synthetic WY Q0 and components; not an approved allocation")}`,
     contributionsKnown: true as const,
   }];
+  const captureBlock = z.object({ hash, number: z.string(), transactions: z.array(hash) }).passthrough().parse(
+    await chain.send("eth_getBlockByNumber", [block.number, false]));
+  const captureTransaction = captureBlock.transactions[0];
+  if ((acquisition.claimedSy?.length ?? 0) > 0 && (captureBlock.transactions.length !== 1 || !captureTransaction)) {
+    throw new ExecutionError("DOMAIN", "fixture requires actual isolated snapshot capture receipt");
+  }
+  const claimedSy = (acquisition.claimedSy ?? []).map(({ q0, certificate: sourceCertificate }) => {
+    if (!captureTransaction) throw new ExecutionError("DOMAIN", "missing snapshot capture transaction");
+    const certificate = { ...sourceCertificate, snapshotCapture: { transactionHash: captureTransaction,
+      blockNumber: domain.blockNumber, blockHash: domain.blockHash } };
+    const review = certificate.review;
+    const original = {
+      originalId: review.originalId, originalWallet: review.originalWallet, source: certificate.sy,
+      originalUnits: q0, originalEth: review.originalEth, originalDtf: review.originalDtf,
+      evidenceId: `0x${fingerprint("unsealed certificate placeholder")}`, contributionsKnown: true as const,
+    };
+    return { original: { ...original, evidenceId: claimedSyEvidenceId(domain, original, certificate) },
+      claimedOrigin: certificate };
+  });
+  weightedSy.push(...claimedSy.map((row) => row.original));
   const dtfCustodySe = [{
     originalId: `0x${fingerprint("synthetic W-SD original allocation")}`,
     originalWallet: acquisition.custodySe.originalWallet, source: dtfCustodySeSource, originalUnits: acquisition.custodySe.shares,
@@ -230,7 +266,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
   const evidencePath = join(directory, "synthetic-originals.json");
-  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp, exposures });
+  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, claimedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp, exposures });
   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
   const input = preparationInput.parse({
     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
@@ -240,7 +276,9 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
       entitlements: [{ original: originals[i], proof: proof(`/originals/${i}`) }] })),
     nfts: nfts.map((original, i) => ({ original, proof: proof(`/nfts/${i}`) })),
     weightedLiquid: weightedLiquid.map((original, i) => ({ original, proof: proof(`/weightedLiquid/${i}`) })),
-    weightedSy: weightedSy.map((original, i) => ({ original, proof: proof(`/weightedSy/${i}`) })),
+    weightedSy: weightedSy.map((original, i) => i === 0
+      ? { original, proof: proof(`/weightedSy/${i}`) }
+      : { ...claimedSy[i - 1], proof: proof(`/claimedSy/${i - 1}`) }),
     dtfCustodySe: dtfCustodySe.map((original, i) => ({ original, proof: proof(`/dtfCustodySe/${i}`) })),
     claimVault: claimVault.map((original, i) => ({ original, proof: proof(`/claimVault/${i}`) })),
     weightedReceipt: weightedReceipt.map((original, i) => ({ original, proof: proof(`/weightedReceipt/${i}`) })),
@@ -267,7 +305,7 @@ export async function replacementFixture(input: PreparationInput, directory: str
       originalUnits: (BigInt(row.original.originalUnits) - 1n).toString(),
     },
   }));
-  const weightedSy = input.weightedSy.map((row) => ({
+  const weightedSy = input.weightedSy.map((row) => row.claimedOrigin ? row : ({
     ...row, original: { ...row.original, originalEth: "6000000000000000", originalUnits: "8087" },
   }));
   const dtfCustodySe = input.dtfCustodySe.map((row) => ({
@@ -301,6 +339,7 @@ export async function replacementFixture(input: PreparationInput, directory: str
     nfts: input.nfts.map((row) => row.original),
     weightedLiquid: weightedLiquid.map((row) => row.original),
     weightedSy: weightedSy.map((row) => row.original),
+    claimedSy: weightedSy.filter((row) => row.claimedOrigin).map(({ original, claimedOrigin }) => ({ original, claimedOrigin })),
     dtfCustodySe: dtfCustodySe.map((row) => row.original),
     claimVault: claimVault.map((row) => row.original),
     weightedReceipt: weightedReceipt.map((row) => row.original),

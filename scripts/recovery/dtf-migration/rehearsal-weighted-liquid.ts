@@ -76,7 +76,7 @@ export async function exerciseWeightedLiquid(context: {
     });
   }
   const impersonate = async (who: string, action: () => Promise<void>) => {
-    await chain.send("anvil_setBalance", [who, "0x3635c9adc5dea00000"]);
+    await chain.fundGas(who);
     await chain.send("anvil_impersonateAccount", [who]);
     try { await action(); }
     finally { await chain.send("anvil_stopImpersonatingAccount", [who]); }

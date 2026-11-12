@@ -53,7 +53,48 @@ export const weightedLiquidOriginal = z.object({
 }).strict().readonly();
 export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
 export const weightedSyOriginal = weightedLiquidOriginal;
-export const weightedSy = z.object({ original: weightedSyOriginal, proof }).strict().readonly();
+// Historical eligibility and exclusions are reviewed owner inputs, not chain facts.
+// A member is one direct signed EOA claim in an otherwise isolated canonical block.
+export const claimedSyCertificate = z.object({
+  kind: z.literal("complete-original-token-staking"),
+  chainId: z.literal("4663"),
+  source: z.literal("0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00"),
+  vault: z.literal("0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"),
+  sy: z.literal("0xb55604cf4dcdabb362078e106d20f98512391edf"),
+  snapshotCapture: z.object({
+    transactionHash: identity, blockNumber: positive, blockHash: identity,
+  }).strict().readonly(),
+  review: z.object({
+    authority: z.string().min(1),
+    originalId: identity,
+    originalWallet: address,
+    originalEth: uint,
+    originalDtf: uint,
+    eligibleWeight: positive,
+    priorDeliveredCredit: z.literal("0"),
+    contributionsKnown: z.literal(true),
+    eligiblePrincipalOnly: z.literal(true),
+    rewardsExcluded: z.literal(true),
+    aliasesReconciled: z.literal(true),
+    competingRepresentationsExcluded: z.literal(true),
+    unrelatedWeightFloor: uint,
+    unrelatedSyFloor: uint,
+  }).strict().readonly(),
+  members: z.array(z.object({
+    transactionHash: identity,
+    rawSignedTransaction: hex,
+    blockNumber: positive,
+    blockHash: identity,
+    consumedWeight: positive,
+    receivedSy: uint,
+    redeemedVaultShares: uint,
+  }).strict().readonly()).min(1).readonly(),
+}).strict().readonly();
+export const weightedSy = z.object({
+  original: weightedSyOriginal,
+  proof,
+  claimedOrigin: claimedSyCertificate.optional(),
+}).strict().readonly();
 // Q0 is documented eligible original ownership gons, not native9 WS or a live balance.
 export const weightedReceiptOriginal = weightedLiquidOriginal;
 export const weightedReceipt = z.object({ original: weightedReceiptOriginal, proof }).strict().readonly();
@@ -152,6 +193,7 @@ export type Original = z.infer<typeof original>;
 export type NftOriginal = z.infer<typeof nftOriginal>;
 export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
 export type WeightedSyOriginal = z.infer<typeof weightedSyOriginal>;
+export type ClaimedSyCertificate = z.infer<typeof claimedSyCertificate>;
 export type WeightedReceiptOriginal = z.infer<typeof weightedReceiptOriginal>;
 export type EarlierReceiptOriginal = z.infer<typeof earlierReceiptOriginal>;
 export type ClaimVaultOriginal = z.infer<typeof claimVaultOriginal>;

@@ -2,7 +2,7 @@ import { FetchRequest, Interface, JsonRpcProvider, Network } from "ethers";
 import { z } from "zod";
 import { address, hash, hex } from "./schema.js";
 import { ExecutionError, quantity, receipt } from "./execution-schema.js";
-import { subscribeReceipt } from "./execution-rpc.js";
+import { DEV, subscribeReceipt } from "./execution-rpc.js";
 import type { Receipt } from "./execution-schema.js";
 
 export const LEGACY = {
@@ -37,6 +37,9 @@ export class RehearsalChain {
     this.provider = new JsonRpcProvider(request, new Network("owned-anvil", 4663), { batchMaxCount: 1, staticNetwork: true, cacheTimeout: -1 });
   }
   async send(method: string, params: readonly unknown[]): Promise<unknown> { return this.provider.send(method, [...params]); }
+  async fundGas(recipient: string) {
+    return this.transact(recipient, { from: DEV, data: "0x", value: "0xde0b6b3a7640000" });
+  }
   async call(target: string, abi: Interface, method: string, args: readonly unknown[] = []) {
     return abi.decodeFunctionResult(method, hex.parse(await this.send("eth_call", [{ to: target, data: abi.encodeFunctionData(method, args) }, "latest"])));
   }
@@ -65,7 +68,7 @@ export class RehearsalChain {
   }
   async withHolder(tokenId: string, action: (holder: string) => Promise<void>) {
     const holder = address.parse((await this.call(LEGACY.weighted, legacyAbi, "ownerOf", [tokenId]))[0]);
-    await this.send("anvil_setBalance", [holder, "0x3635c9adc5dea00000"]);
+    await this.fundGas(holder);
     await this.send("anvil_impersonateAccount", [holder]);
     try { await action(holder); }
     finally { await this.send("anvil_stopImpersonatingAccount", [holder]); }

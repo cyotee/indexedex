@@ -1,5 +1,106 @@
 # Bounded Migration operator runbook
 
+## Complete-original TokenStaking claims prepared into SY
+
+This intake admits only a reviewed original whose entire eligible native18
+weight W0 was consumed by direct signed EOA `withdrawClaim` operations before
+its Stage1 loading. The source is fixed to chain4663 TokenStaking
+`0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00`, Wrapped phase2, claim vault
+`0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0`, and native9 SY
+`0xb55604cf4dcdabb362078e106d20f98512391edf`. Vault shares are native19.
+This is prior holder preparation, not an approved Migration pull of raw weight.
+
+Add `claimedOrigin` to the existing `weightedSy` row. Its typed schema is
+`claimedSyCertificate` in the existing operator schema. Keep the canonical
+wallet-independent `originalId`, original wallet and complete known E0/D0.
+The reviewed record explicitly supplies positive `eligibleWeight`, known
+`priorDeliveredCredit: "0"`, principal-only eligibility, reward exclusions,
+reconciled aliases, no competing representation, and unrelated weight/SY
+floors. Unknown or nonzero prior delivery, incomplete original components,
+partial preparation and aggregate zero SY are rejected. No allocation here
+approves operational historical records.
+
+Each member contains original raw signed bytes, transaction/block identities,
+positive native18 `consumedWeight`, exact native9 `receivedSy`, and measured
+native19 `redeemedVaultShares`. The admitted execution form is a direct
+code-less EOA transaction in an isolated canonical block. Contract wallets,
+delegation, special execution and multi-transaction preparation blocks are
+not admitted by this validator. A different form needs source admission,
+not a guessed trace interpretation.
+
+Preparation checks exact `sum(consumedWeight) == W0` and positive
+`Q0 = sum(receivedSy)`, including every actually committed zero-output slice.
+Set `originalUnits = Q0`. Never use total wallet balance, an old weight/SY
+ratio, a scaled nonlinear input, or a separate full quote for each split.
+The existing frozen evaluator quotes complete E0/D0 once; partial and terminal
+SY surrender use the existing remaining-Q/C arithmetic unchanged.
+
+The row's `proof` points at the entire reviewed
+`{ original, claimedOrigin }` object, not its `original` child. A stripped
+certificate therefore cannot validate against that same evidence as ordinary
+SY. `claimedSyEvidenceId(domain, original, certificate)` computes the required
+nonzero commitment, excluding only the commitment's own field. It binds chain,
+Migration proxy, frozen snapshot, complete original inputs, review and every
+member. The ordinary-independent SY proof form remains unchanged.
+Classification is also reconciled across all referenced reviewed JSON
+documents. Selecting a nested or separately copied original tuple does not
+erase a claimed-origin marker elsewhere in those reviewed records.
+The certificate also binds the actual `snapshotCapture` transaction, RPC
+block number and block hash. Its successful canonical receipt must contain
+the parent's matching `MigrationSnapshotCaptured` event. The event's EVM
+`block.number` is not substituted for the RPC height: those differ on the
+admitted Robinhood fork.
+
+The actual RPC, not an uploaded receipt, authenticates canonical block/receipt/
+transaction identity, signed caller and calldata, return and claim event,
+same-wallet vault redemption, source phase/asset/decimals and admitted proxy/
+facet runtimes. Historical source weight/supply/vault/SY deltas must match
+the exact member quantities. Unique transactions cannot appear twice within
+or across originals. Historical and current aggregate wallet budgets protect
+measured descendants and unrelated SY; current consumed units come only from
+the real Migration record. Current control at surrender remains mandatory.
+Previously configured SY origins must remain in the complete manifest census,
+including on subsequent preparation, execution and resume.
+
+Reviewed owner inputs establish historical eligibility, original contributions,
+known-zero prior delivery and semantic origin disjointness. Chain observations
+establish execution and quantities, not those historical facts. An opaque alias
+still requires owner reconciliation. The unchanged onchain loader trusts owner
+loading and the evidence commitment; it does not independently authenticate
+offchain certificates. Its canonical origin guards exclude other backed,
+receipt, liquid, SY, vault-share, LP, NFT and independent representations.
+Configuration and resume reconstruct and reauthenticate the prepared manifest
+before any signing, so changed evidence, domain or payload cannot be adopted.
+
+The new cumulative rehearsal is:
+
+```sh
+/bin/zsh -lc 'bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18573 \
+  --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints \
+  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime'
+```
+
+All earlier loopback gates/routes and three genuine mined-before-checkpoint
+resumes remain. The new full/split originals use controlled direct signatures,
+actual donor reassignments, real gas transfers and positive excluded weight/SY
+floors. Donor impersonation and synthetic historical partitions are labeled
+separately. Lossless raw input captures distinguish original bytes from JSON
+serialization or later reconstruction. No gas/code/storage/token injection,
+source governance or public operation is needed.
+
+Stage1 still rejects surrender. The paid owner-first bond precedes permanent
+loader removal and Stage2 opening. Each successful same-wallet SY surrender
+creates an exactly funded fresh90-day bond. A later child-funding failure
+restores that later SY/Migration transaction, not the earlier source claim:
+consumed raw weight stays consumed and the prepared SY stays with its wallet.
+Unchanged ordinary-SY contract-receiver/reentry tests are shared-path coverage,
+not claimed-origin callback witnesses. EOA-only admission is not broadened.
+
+Direct raw pull, partial/prior-delivered mappings, operational awards, full raw
+category closure, other unadmitted sources, blocked conversions, public action,
+host portability and target deployment gas remain outside this bounded intake.
+
 ## Three fixed native18 SE/LP custody and credit paths
 
 `heldSeLp` contains complete `original` and raw `proof` objects. Originals

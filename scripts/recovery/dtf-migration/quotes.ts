@@ -4,6 +4,7 @@ import { z } from "zod";
 import { address, hash, hex, PreparationError, uint } from "./schema.js";
 import type { PreparationInput } from "./schema.js";
 import type { ConfigurationPayload } from "./payloads.js";
+import { authenticateClaimedSy } from "./claimed-sy.js";
 
 const preview = new Interface(["function previewOriginalCredit(uint256,uint256) view returns (uint256)"]);
 const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);
@@ -83,6 +84,7 @@ export async function quoteOriginals(input: PreparationInput, payloads: Configur
       || BigInt(snapshot.getValue("version")) !== 1n) {
       throw new PreparationError("DOMAIN", "snapshot identity/source mismatch");
     }
+    await authenticateClaimedSy(input, provider);
     const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid, ...payloads.weightedSy, ...payloads.dtfCustodySe, ...payloads.claimVault, ...payloads.weightedReceipt, ...payloads.earlierReceipt, ...payloads.earlierLiquid, ...payloads.heldSeLp];
     const pairs = new Map(originals.map((r) => [`${r.originalEth}:${r.originalDtf}`, r]));
     const quotes: Quote[] = [];

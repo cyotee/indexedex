@@ -7,6 +7,7 @@ import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -38,6 +39,162 @@ contract WeightedSyReceiver is IERC721Receiver {
         ));
         (activationReentered,) = address(parent).call(abi.encodeCall(Allocation.activateMigration, ()));
         return rejectBond ? bytes4(0) : IERC721Receiver.onERC721Received.selector;
+    }
+}
+
+interface IClaimedSyWeightSource {
+    function reassign(address recipient, uint256 amount) external;
+    function withdrawClaim(uint256 amount) external returns (uint256);
+    function balanceOf(address wallet) external view returns (uint256);
+    function totalSupply() external view returns (uint256);
+    function phase() external view returns (uint8);
+    function claimVault() external view returns (address);
+}
+
+/// @notice Synthetic historical allocations; real source claims and registered Migration.
+/// Foundry caller simulation here is distinct from the CLI's retained EOA signatures.
+/// Ordinary-SY rejecting receiver/reentry above is shared-path coverage, not a
+/// claimed-origin callback witness; claimed preparation admits direct EOAs only.
+contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
+    IClaimedSyWeightSource constant SOURCE =
+        IClaimedSyWeightSource(address(bytes20(hex"e4c9ff4cfd17ae73ecb3825ebdf7db113c146d00")));
+    address constant DONOR = address(bytes20(hex"016900aa17a08a52f1cc10a9474b3bbfaeb380a3"));
+    uint256 constant W0 = 10013000000000000000017;
+    uint256 constant UNRELATED = 7 ether;
+    uint256 constant SEED = 3 ether;
+    bytes32 constant CLAIMED_ORIGIN = keccak256("synthetic complete claimed-SY original");
+
+    function _prepare(bool split_) private returns (address wallet_, uint256 q0_, uint256 floor_) {
+        wallet_ = vm.addr(split_ ? 23002 : 23001);
+        assertEq(wallet_.code.length, 0);
+        assertEq(DONOR.code.length, 0);
+        assertEq(SOURCE.phase(), 2);
+        assertEq(SOURCE.claimVault(), address(bytes20(hex"af5c0cd3fdedd10bee00eff77fa0429bacdb41f0")));
+        assertEq(SOURCE.balanceOf(wallet_), 0);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), 0);
+        uint256 donor_ = SOURCE.balanceOf(DONOR);
+        uint256 supply_ = SOURCE.totalSupply();
+        vm.prank(DONOR);
+        SOURCE.reassign(wallet_, W0 + UNRELATED + SEED);
+        assertEq(SOURCE.balanceOf(DONOR), donor_ - W0 - UNRELATED - SEED);
+        assertEq(SOURCE.totalSupply(), supply_);
+        vm.startPrank(wallet_);
+        floor_ = SOURCE.withdrawClaim(SEED);
+        assertGt(floor_, 0);
+        if (split_) {
+            uint256 first_ = 3337000000000000000005;
+            uint256 part_ = SOURCE.withdrawClaim(first_);
+            assertGt(part_, 0);
+            assertEq(SOURCE.balanceOf(wallet_), W0 - first_ + UNRELATED);
+            q0_ = part_ + SOURCE.withdrawClaim(W0 - first_);
+        } else {
+            q0_ = SOURCE.withdrawClaim(W0);
+        }
+        vm.stopPrank();
+        assertGt(q0_, 0);
+        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
+        assertEq(SOURCE.totalSupply(), supply_ - W0 - SEED);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), floor_ + q0_);
+    }
+
+    function _load(address wallet_, uint256 q0_) private returns (uint256 credit_) {
+        Migration.WeightedSyEntitlementInput[] memory inputs_ = new Migration.WeightedSyEntitlementInput[](1);
+        // Complete E0/D0 are deliberately not scaled by a source weight/SY fraction.
+        inputs_[0] = Migration.WeightedSyEntitlementInput(CLAIMED_ORIGIN, wallet_, Legacy.WEIGHTED_SY,
+            q0_, 0.01 ether, 1 ether, keccak256("synthetic reviewed complete preparation evidence"), true);
+        uint256 supply_ = IERC20(detf).totalSupply();
+        vm.prank(migrationOwner);
+        allocation.configureWeightedSyEntitlements(inputs_);
+        credit_ = migration.previewOriginalCredit(0.01 ether, 1 ether);
+        assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).credit, credit_);
+        assertEq(migration.weightedSySurrender(CLAIMED_ORIGIN).remainingUnits, q0_);
+        assertEq(IERC20(detf).totalSupply(), supply_);
+        vm.prank(wallet_);
+        IERC20(Legacy.WEIGHTED_SY).approve(detf, q0_);
+        vm.prank(wallet_);
+        vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
+        migration.surrenderMigrationWeightedSy(CLAIMED_ORIGIN, q0_, 1, block.timestamp);
+        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
+        _activate();
+        assertGt(migration.migrationOwnerFirstBondTokenId(), 0);
+        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));
+    }
+
+    function _surrender(address wallet_, uint256 q_, uint256 expected_) private returns (uint256 id_) {
+        uint256 supply_ = IERC20(detf).totalSupply();
+        uint256 backing_ = IERC20(detf).balanceOf(address(receipt));
+        uint256 held_ = IERC20(Legacy.WEIGHTED_SY).balanceOf(detf);
+        vm.prank(wallet_);
+        uint256 credit_;
+        (id_, credit_) = migration.surrenderMigrationWeightedSy(CLAIMED_ORIGIN, q_, expected_, block.timestamp);
+        assertEq(credit_, expected_);
+        assertEq(IERC721(address(bonds)).ownerOf(id_), wallet_);
+        assertEq(bonds.positionOf(id_).principal, expected_);
+        assertEq(bonds.positionOf(id_).claimedPrincipal, 0);
+        assertEq(bonds.positionOf(id_).startTimestamp, block.timestamp);
+        assertEq(bonds.positionOf(id_).vestingDuration, 90 days);
+        assertEq(bonds.positionOf(id_).stakingGons, expected_ * receipt.stakingState().gonsPerUnit);
+        assertEq(IERC20(detf).totalSupply(), supply_ + expected_);
+        assertEq(IERC20(detf).balanceOf(address(receipt)), backing_ + expected_);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), held_ + q_);
+        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
+    }
+
+    function _completeOriginal(bool split_) private {
+        (address wallet_, uint256 q0_, uint256 floor_) = _prepare(split_);
+        uint256 c0_ = _load(wallet_, q0_);
+        uint256 q_ = q0_ / 3;
+        uint256 first_ = _surrender(wallet_, q_, c0_ * q_ / q0_);
+        Migration.WeightedSySurrender memory state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
+        assertEq(state_.remainingUnits, q0_ - q_);
+        assertEq(state_.remainingCredit + state_.deliveredCredit, c0_);
+        uint256 firstStart_ = bonds.positionOf(first_).startTimestamp;
+        vm.warp(block.timestamp + 1 days);
+        migration.synchronizeRewards();
+        uint256 second_ = _surrender(wallet_, state_.remainingUnits, state_.remainingCredit);
+        assertNotEq(first_, second_);
+        assertEq(bonds.positionOf(first_).startTimestamp, firstStart_);
+        assertEq(bonds.positionOf(second_).startTimestamp, firstStart_ + 1 days);
+        state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
+        assertEq(state_.remainingUnits, 0);
+        assertEq(state_.remainingCredit, 0);
+        assertEq(state_.deliveredCredit, c0_);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), q0_);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), floor_);
+        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
+    }
+
+    function test_completeSingleClaimPreservesWholeOriginalCreditAndUnrelatedFloors() public {
+        _completeOriginal(false);
+    }
+
+    function test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal() public {
+        _completeOriginal(true);
+    }
+
+    function test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight() public {
+        (address wallet_, uint256 q0_, uint256 floor_) = _prepare(false);
+        uint256 c0_ = _load(wallet_, q0_);
+        bytes32 before_ = _protected(migration.migrationOwnerFirstBondTokenId());
+        bytes memory state_ = abi.encode(migration.weightedSySurrender(CLAIMED_ORIGIN));
+        uint256 sourceSupply_ = SOURCE.totalSupply();
+        vm.expectCall(address(receipt), abi.encodeCall(IStandardExchangeIn.exchangeIn, (
+            IERC20(detf), c0_, IERC20(address(receipt)), c0_, address(bonds), false, block.timestamp
+        )), uint64(2));
+        vm.prank(wallet_);
+        (bool ok_,) = detf.call{gas: 750000}(abi.encodeCall(
+            Migration.surrenderMigrationWeightedSy, (CLAIMED_ORIGIN, q0_, 1, block.timestamp)
+        ));
+        assertFalse(ok_);
+        assertEq(_protected(migration.migrationOwnerFirstBondTokenId()), before_);
+        assertEq(abi.encode(migration.weightedSySurrender(CLAIMED_ORIGIN)), state_);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), q0_ + floor_);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(detf), 0);
+        assertEq(IERC20(Legacy.WEIGHTED_SY).allowance(wallet_, detf), q0_);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.WEIGHTED_SY), 0);
+        assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
+        assertEq(SOURCE.totalSupply(), sourceSupply_);
+        _surrender(wallet_, q0_, c0_);
     }
 }
 
