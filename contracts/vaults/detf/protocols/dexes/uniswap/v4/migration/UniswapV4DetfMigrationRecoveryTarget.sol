@@ -55,6 +55,8 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
                     Legacy.convertWeighted(step_.amount, step_.minimum, deadline_);
                 } else if (step_.stage == Stage.WeightedSyRedeem) {
                     Legacy.redeemWeightedSy(step_.amount, step_.minimum);
+                } else if (step_.stage == Stage.DtfCustodySeRedeem) {
+                    Legacy.redeemDtfCustodySe(step_.amount, step_.minimum);
                 } else _donateRecovery(step_.amount, step_.minimum);
             }
         }

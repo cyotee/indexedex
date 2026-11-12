@@ -21,6 +21,7 @@ export function normalize(input: PreparationInput): PreparationInput {
     issueRecipients: [...input.issueRecipients].sort(),
     weightedLiquid: [...input.weightedLiquid].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
     weightedSy: [...input.weightedSy].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
+    dtfCustodySe: [...input.dtfCustodySe].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
     domain: { ...input.domain, bindings: [...input.domain.bindings]
       .sort((a, b) => a.role.localeCompare(b.role) || a.address.localeCompare(b.address)) },
   });
@@ -51,6 +52,9 @@ export async function prepareDomain(input: PreparationInput) {
   const weightedSy = payloads.weightedSy.map((r) => ({
     input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
   }));
+  const dtfCustodySe = payloads.dtfCustodySe.map((r) => ({
+    input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
+  }));
   const requests = normalized.issueRecipients.map((recipient) => {
     const config = independent.find((r) => r.input.recipient === recipient);
     if (!config) throw new PreparationError("INPUT", "missing selected recipient");
@@ -62,11 +66,11 @@ export async function prepareDomain(input: PreparationInput) {
     input: normalized,
     normalizedHash: fingerprint(canonical(normalized)),
     payloads: {
-      configure: { independent, nfts, weightedLiquid, weightedSy },
+      configure: { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe },
       independentIssue: { requests },
       harvest: normalized.harvest,
     },
-    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, weightedSy, requests, harvest: normalized.harvest })),
+    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, requests, harvest: normalized.harvest })),
     quoteEvidence: quotes,
     dispositions: dispositions(normalized),
     fullTask9: "open" as const,
@@ -109,6 +113,8 @@ export async function prepareFile(inputPath: string, outputDirectory: string): P
     `${canonical(prepared.payloads.configure.weightedLiquid.map((r) => r.input))}\n`, { flag: "wx" });
   await writeFile(resolve(outputDirectory, "weighted-sy.json"),
     `${canonical(prepared.payloads.configure.weightedSy.map((r) => r.input))}\n`, { flag: "wx" });
+  await writeFile(resolve(outputDirectory, "dtf-custody-se.json"),
+    `${canonical(prepared.payloads.configure.dtfCustodySe.map((r) => r.input))}\n`, { flag: "wx" });
   // Exclusive creation protects a prior accepted dataset from accidental overwrite.
   // Manifest is the acceptance marker, written only after all review mirrors.
   await writeFile(resolve(outputDirectory, "manifest.json"), `${canonical(prepared)}\n`, { flag: "wx" });

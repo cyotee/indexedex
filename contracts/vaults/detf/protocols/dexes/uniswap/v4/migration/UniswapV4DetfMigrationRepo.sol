@@ -41,6 +41,8 @@ library UniswapV4DetfMigrationRepo {
         uint256 ownerFirstBondTokenId;
         mapping(bytes32 => Migration.WeightedSyEntitlement) weightedSyEntitlements;
         mapping(bytes32 => Migration.WeightedSySurrender) weightedSySurrenders;
+        mapping(bytes32 => Migration.DtfCustodySeEntitlement) dtfCustodySeEntitlements;
+        mapping(bytes32 => Migration.DtfCustodySeSurrender) dtfCustodySeSurrenders;
     }
 
     struct NftReceipt {

@@ -78,6 +78,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     || m_.nftOriginal[original_.entitlementId]
                     || m_.weightedLiquidEntitlements[original_.entitlementId].configured
                     || m_.weightedSyEntitlements[original_.entitlementId].configured
+                    || m_.dtfCustodySeEntitlements[original_.entitlementId].configured
                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
                 }
@@ -119,7 +120,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 bytes32 originalId_ = config_.entitlements[j_].original.entitlementId;
                 if (m_.issuedOriginal[originalId_] != address(0) || m_.nftOriginal[originalId_]
                     || m_.weightedLiquidEntitlements[originalId_].configured
-                    || m_.weightedSyEntitlements[originalId_].configured) {
+                    || m_.weightedSyEntitlements[originalId_].configured
+                    || m_.dtfCustodySeEntitlements[originalId_].configured) {
                     revert Migration.DuplicateOriginalEntitlement(originalId_);
                 }
                 m_.issuedOriginal[originalId_] = recipient_;
@@ -146,7 +148,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             }
             if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
                 || m_.weightedLiquidEntitlements[original_].configured
-                || m_.weightedSyEntitlements[original_].configured) {
+                || m_.weightedSyEntitlements[original_].configured
+                || m_.dtfCustodySeEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
@@ -179,7 +182,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 revert Migration.InvalidWeightedLiquidEntitlement(original_);
             }
             if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
-                || m_.nftOriginal[original_] || m_.weightedSyEntitlements[original_].configured) {
+                || m_.nftOriginal[original_] || m_.weightedSyEntitlements[original_].configured
+                || m_.dtfCustodySeEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             Migration.WeightedLiquidSurrender storage surrender_ = m_.weightedLiquidSurrenders[original_];
@@ -215,7 +219,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 revert Migration.InvalidWeightedSyEntitlement(original_);
             }
             if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
-                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured) {
+                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured
+                || m_.dtfCustodySeEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             Migration.WeightedSySurrender storage surrender_ = m_.weightedSySurrenders[original_];
@@ -229,6 +234,42 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             surrender_.remainingUnits = input_.originalUnits;
             surrender_.remainingCredit = credit_;
             emit Migration.WeightedSyEntitlementConfigured(
+                original_, config_, input_.originalWallet, input_.originalUnits, credit_
+            );
+        }
+    }
+
+    function configureDtfCustodySeEntitlements(Migration.DtfCustodySeEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        for (uint256 i_; i_ < inputs_.length; ++i_) {
+            Migration.DtfCustodySeEntitlementInput calldata input_ = inputs_[i_];
+            if (block.chainid != 4663 || input_.source != Legacy.DTF_CUSTODY_SE) {
+                revert Migration.UnsupportedDtfCustodySeSource(block.chainid, input_.source);
+            }
+            bytes32 original_ = input_.originalId;
+            if (original_ == bytes32(0) || input_.originalWallet == address(0)
+                || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
+                revert Migration.InvalidDtfCustodySeEntitlement(original_);
+            }
+            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
+                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured
+                || m_.weightedSyEntitlements[original_].configured) {
+                revert Migration.DuplicateOriginalEntitlement(original_);
+            }
+            Migration.DtfCustodySeSurrender storage surrender_ = m_.dtfCustodySeSurrenders[original_];
+            if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
+                revert Migration.DtfCustodySeIdentityConsumed(original_);
+            }
+            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
+            m_.dtfCustodySeEntitlements[original_] =
+                Migration.DtfCustodySeEntitlement(true, input_, config_, credit_);
+            surrender_.remainingUnits = input_.originalUnits;
+            surrender_.remainingCredit = credit_;
+            emit Migration.DtfCustodySeEntitlementConfigured(
                 original_, config_, input_.originalWallet, input_.originalUnits, credit_
             );
         }
@@ -253,7 +294,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](8);
+        selectors_ = new bytes4[](9);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
@@ -262,6 +303,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         selectors_[5] = Allocation.configureNftEntitlements.selector;
         selectors_[6] = Allocation.configureWeightedLiquidEntitlements.selector;
         selectors_[7] = Allocation.configureWeightedSyEntitlements.selector;
+        selectors_[8] = Allocation.configureDtfCustodySeEntitlements.selector;
     }
 
     function bootstrapMigrationReserve(

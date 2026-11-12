@@ -164,7 +164,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
     }
 
     function test_retainedDeclarationIncludesEveryProductSelector() public {
-        bytes4[] memory expected_ = new bytes4[](26);
+        bytes4[] memory expected_ = new bytes4[](30);
         expected_[0] = Migration.migrationActivated.selector;
         expected_[1] = Migration.migrationSyRewardToken.selector;
         expected_[2] = Migration.migrationSnapshotSource.selector;
@@ -191,6 +191,10 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         expected_[23] = Migration.weightedSySurrender.selector;
         expected_[24] = Migration.previewWeightedSySurrender.selector;
         expected_[25] = Migration.surrenderMigrationWeightedSy.selector;
+        expected_[26] = Migration.dtfCustodySeEntitlement.selector;
+        expected_[27] = Migration.dtfCustodySeSurrender.selector;
+        expected_[28] = Migration.previewDtfCustodySeSurrender.selector;
+        expected_[29] = Migration.surrenderMigrationDtfCustodySe.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
         _buyOwnerFirstBond();

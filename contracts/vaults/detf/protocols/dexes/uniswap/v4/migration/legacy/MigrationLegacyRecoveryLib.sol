@@ -12,6 +12,7 @@ import {IMigrationLegacyNft, IMigrationWeightedNft, IMigrationEarlierNft} from "
 import {MigrationLegacyNftLib as NftLib} from "./MigrationLegacyNftLib.sol";
 import {
     IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationWeightedSy, IMigrationLegacyExchange,
+    IMigrationDtfCustodySe,
     IMigrationEarlierClaims, IMigrationEarlierSale, IMigrationEarlierReceipt
 } from "./IMigrationLegacyRecovery.sol";
 
@@ -22,6 +23,7 @@ library MigrationLegacyRecoveryLib {
     address internal constant WEIGHTED_RECEIPT = 0x4Fa4974a8a09660258B8edD430B51C1620eBFE5c;
     address internal constant WEIGHTED_DETF = 0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7;
     address internal constant WEIGHTED_SY = 0xB55604CF4dcdABB362078e106D20F98512391EdF;
+    address internal constant DTF_CUSTODY_SE = 0x2E9C1F705aB967c5Af59249203d7495bDabb223b;
     address internal constant EARLIER_DETF = 0xaf0E1967c8F755c747615c5427108Bc549CA1122;
     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
@@ -104,6 +106,24 @@ library MigrationLegacyRecoveryLib {
         r_.inventory[WEIGHTED_RECEIPT] += out_;
         emit Recovery.MigrationRecoveryConverted(WEIGHTED_SY, WEIGHTED_RECEIPT, shares_, out_);
         emit Recovery.MigrationWeightedSyRedeemed(shares_, out_, received_, k_, shares_ * 1e36 - received_);
+    }
+
+    function redeemDtfCustodySe(uint256 shares_, uint256 minimum_) internal {
+        Repo.Storage storage r_ = Repo._layoutStruct();
+        Repo._debit(r_, DTF_CUSTODY_SE, shares_);
+        IERC20 sharesToken_ = IERC20(DTF_CUSTODY_SE);
+        uint256 sharesBefore_ = sharesToken_.balanceOf(address(this));
+        uint256 assetsBefore_ = IERC20(DTF).balanceOf(address(this));
+        uint256 out_ = IMigrationDtfCustodySe(DTF_CUSTODY_SE).redeem(shares_, address(this), address(this));
+        uint256 sharesAfter_ = sharesToken_.balanceOf(address(this));
+        uint256 assetsAfter_ = IERC20(DTF).balanceOf(address(this));
+        if (sharesAfter_ > sharesBefore_ || sharesBefore_ - sharesAfter_ != shares_
+            || assetsAfter_ < assetsBefore_ || out_ == 0 || out_ < minimum_
+            || assetsAfter_ - assetsBefore_ != out_) {
+            revert Recovery.RecoveryDeltaMismatch(DTF_CUSTODY_SE);
+        }
+        r_.inventory[DTF] += out_;
+        emit Recovery.MigrationRecoveryConverted(DTF_CUSTODY_SE, DTF, shares_, out_);
     }
 
     function unstakeWeighted(uint256 amount_, uint256 deadline_) internal {

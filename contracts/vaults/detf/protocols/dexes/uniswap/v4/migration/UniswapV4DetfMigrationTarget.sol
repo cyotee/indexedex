@@ -181,6 +181,71 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
         );
     }
 
+    function dtfCustodySeEntitlement(bytes32 originalId_)
+        external view returns (Migration.DtfCustodySeEntitlement memory)
+    { return Repo._layoutStruct().dtfCustodySeEntitlements[originalId_]; }
+
+    function dtfCustodySeSurrender(bytes32 originalId_)
+        external view returns (Migration.DtfCustodySeSurrender memory)
+    { return Repo._layoutStruct().dtfCustodySeSurrenders[originalId_]; }
+
+    function previewDtfCustodySeSurrender(bytes32 originalId_, uint256 amount_)
+        public view returns (uint256 credit_)
+    {
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Migration.DtfCustodySeEntitlement storage config_ = m_.dtfCustodySeEntitlements[originalId_];
+        if (!config_.configured) revert Migration.InvalidDtfCustodySeEntitlement(originalId_);
+        if (block.chainid != 4663 || config_.original.source != Legacy.DTF_CUSTODY_SE) {
+            revert Migration.UnsupportedDtfCustodySeSource(block.chainid, config_.original.source);
+        }
+        Migration.DtfCustodySeSurrender storage s_ = m_.dtfCustodySeSurrenders[originalId_];
+        if (amount_ == 0 || amount_ > s_.remainingUnits) {
+            revert Migration.InvalidDtfCustodySeQuantity(amount_, s_.remainingUnits);
+        }
+        credit_ = amount_ == s_.remainingUnits
+            ? s_.remainingCredit : Math.mulDiv(s_.remainingCredit, amount_, s_.remainingUnits);
+        if (credit_ == 0) revert Migration.InvalidDtfCustodySeEntitlement(originalId_);
+    }
+
+    function surrenderMigrationDtfCustodySe(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external nonReentrant returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        if (!Repo._layoutStruct().activated) revert Migration.MigrationSurrenderClosed();
+        _requireIdleChildren();
+        _requireNotDisabled();
+        _requireReserveLive();
+        if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
+        credit_ = previewDtfCustodySeSurrender(originalId_, amount_);
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Migration.DtfCustodySeEntitlement storage config_ = m_.dtfCustodySeEntitlements[originalId_];
+        if (msg.sender != config_.original.originalWallet) {
+            revert Migration.NotOriginalDtfCustodySeWallet(msg.sender, config_.original.originalWallet);
+        }
+        if (credit_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, credit_);
+        IERC20 token_ = IERC20(Legacy.DTF_CUSTODY_SE);
+        uint256 walletBefore_ = token_.balanceOf(msg.sender);
+        uint256 custodyBefore_ = token_.balanceOf(address(this));
+        token_.safeTransferFrom(msg.sender, address(this), amount_);
+        uint256 walletAfter_ = token_.balanceOf(msg.sender);
+        uint256 custodyAfter_ = token_.balanceOf(address(this));
+        if (walletAfter_ > walletBefore_ || walletBefore_ - walletAfter_ != amount_
+            || custodyAfter_ < custodyBefore_ || custodyAfter_ - custodyBefore_ != amount_) {
+            revert Migration.DtfCustodySeCustodyFailed();
+        }
+        Migration.DtfCustodySeSurrender storage s_ = m_.dtfCustodySeSurrenders[originalId_];
+        s_.consumedUnits += amount_;
+        s_.deliveredCredit += credit_;
+        s_.remainingUnits -= amount_;
+        s_.remainingCredit -= credit_;
+        RecoveryRepo._layoutStruct().inventory[Legacy.DTF_CUSTODY_SE] += amount_;
+        _realizeExpansionIfNeeded();
+        bondTokenId_ = Repo._fundBond(credit_, msg.sender);
+        _syncAllExpectedHoldReserves();
+        emit Migration.MigrationDtfCustodySeSurrendered(
+            originalId_, config_.configurationId, msg.sender, amount_, credit_, bondTokenId_
+        );
+    }
+
     function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32) {
         return NftLib.originalId(collection_, tokenId_);
     }

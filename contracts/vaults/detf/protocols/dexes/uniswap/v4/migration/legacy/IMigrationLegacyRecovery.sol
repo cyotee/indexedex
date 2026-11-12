@@ -35,6 +35,11 @@ interface IMigrationWeightedSy {
         external returns (uint256 amountOut_);
 }
 
+/// @notice Authenticated W-SD ERC4626 own-share exit; native 28-decimal shares return 18-decimal DTF.
+interface IMigrationDtfCustodySe {
+    function redeem(uint256 shares_, address receiver_, address owner_) external returns (uint256 assets_);
+}
+
 interface IMigrationEarlierClaims {
     function claimRewards(uint256 tokenId_, address recipient_) external returns (uint256);
 }

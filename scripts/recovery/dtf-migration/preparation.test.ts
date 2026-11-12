@@ -68,7 +68,7 @@ for (const kind of ["chain", "block", "snapshot", "proxy", "package"] as const) 
   test(`rejects wrong ${kind} domain before accepting payloads`, async () => {
     const f = await setup();
     const input = {
-      ...f.input, nfts: [], weightedLiquid: [], weightedSy: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
+      ...f.input, nfts: [], weightedLiquid: [], weightedSy: [], dtfCustodySe: [], exposures: f.input.exposures.filter((e) => e.category === "independent"), domain: {
         ...f.input.domain,
         chainId: kind === "chain" ? "1" : f.input.domain.chainId,
         blockHash: kind === "block" ? h(3) : f.input.domain.blockHash,
@@ -166,7 +166,7 @@ test("rejects a nonconserving origin partition", async () => {
   const f = await setup();
   const exposures = f.input.exposures.map(({ proof, ...e }, i) => i === 0 ? { ...e, recoveredUnits: "11" } : e);
   const body = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
-    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original), ...f.input.weightedSy.map((n) => n.original)], exposures });
+    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original), ...f.input.weightedSy.map((n) => n.original), ...f.input.dtfCustodySe.map((n) => n.original)], exposures });
   await writeFile(f.evidencePath, body);
   const input = preparationInput.parse({ ...f.input,
     sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(body), bytes: Buffer.byteLength(body).toString() } : s),
@@ -239,7 +239,7 @@ test("preserves all category dispositions but emits no manifest for blocked expo
   const f = await setup();
   const exposures = f.input.exposures.map(({ proof, ...e }) => ({ ...e, category: "token-staking" }));
   const raw = canonical({ originals: [f.input.independent[0]?.entitlements[0]?.original,
-    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original), ...f.input.weightedSy.map((n) => n.original)], exposures });
+    ...f.input.nfts.map((n) => n.original), ...f.input.weightedLiquid.map((n) => n.original), ...f.input.weightedSy.map((n) => n.original), ...f.input.dtfCustodySe.map((n) => n.original)], exposures });
   await writeFile(f.evidencePath, raw);
   const input = preparationInput.parse({ ...f.input,
     sources: f.input.sources.map((s) => s.id === "proof" ? { ...s, sha256: fingerprint(raw), bytes: Buffer.byteLength(raw).toString() } : s),

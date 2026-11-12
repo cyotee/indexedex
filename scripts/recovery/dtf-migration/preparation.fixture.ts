@@ -9,7 +9,7 @@ import { once } from "node:events";
 import { text } from "node:stream/consumers";
 import { z } from "zod";
 import { canonical, fingerprint } from "./provenance.js";
-import { earlierCollection, nftOrigin, weightedCollection, weightedLiquidSource, weightedSySource } from "./payloads.js";
+import { earlierCollection, nftOrigin, weightedCollection, weightedLiquidSource, weightedSySource, dtfCustodySeSource } from "./payloads.js";
 import { domain as domainSchema, nftOriginal, preparationInput } from "./schema.js";
 
 export const h = (n: number): string => `0x${n.toString(16).padStart(64, "0")}`;
@@ -105,6 +105,8 @@ export async function fixture() {
   const liquid = { originalId: h(205), originalWallet: a(22), source: weightedLiquidSource,
     originalUnits: "3", originalEth: "100", originalDtf: "22", evidenceId: h(206), contributionsKnown: true };
   const sy = { ...liquid, originalId: h(207), source: weightedSySource, evidenceId: h(208) };
+  const custodySe = { ...liquid, originalId: h(209), source: dtfCustodySeSource,
+    originalUnits: "10000000000000000000000000000", evidenceId: h(215) };
   const nftId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(nft));
   const earlierId = nftOrigin(domainSchema.parse(domain), nftOriginal.parse(earlier));
   const exposures = [
@@ -119,7 +121,9 @@ export async function fixture() {
   ];
   exposures.push({ originId: sy.originalId, category: "weighted-sy", originalUnits: sy.originalUnits,
     descendants: [{ id: h(214), units: sy.originalUnits }], recoveredUnits: "0", excludedUnits: "0" });
-  const evidence = { originals: [original, nft, earlier, liquid, sy], exposures };
+  exposures.push({ originId: custodySe.originalId, category: "dtf-custody-se", originalUnits: custodySe.originalUnits,
+    descendants: [{ id: h(216), units: custodySe.originalUnits }], recoveredUnits: "0", excludedUnits: "0" });
+  const evidence = { originals: [original, nft, earlier, liquid, sy, custodySe], exposures };
   const evidencePath = join(root, "evidence.json");
   const raw = canonical(evidence);
   await writeFile(evidencePath, raw);
@@ -140,6 +144,7 @@ export async function fixture() {
     ],
     weightedLiquid: [{ original: liquid, proof: { sourceId: "proof", pointer: "/originals/3" } }],
     weightedSy: [{ original: sy, proof: { sourceId: "proof", pointer: "/originals/4" } }],
+    dtfCustodySe: [{ original: custodySe, proof: { sourceId: "proof", pointer: "/originals/5" } }],
     issueRecipients: [a(20)], harvest: { steps: [], deadline: "0" },
   });
   return { root, input, changes, methods, evidencePath, async close() {

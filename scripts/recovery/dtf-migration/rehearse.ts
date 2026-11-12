@@ -12,6 +12,8 @@ import { ExecutionError, rpcLog } from "./execution-schema.js";
 import { hash } from "./schema.js";
 import { exerciseRecovery } from "./rehearsal-recovery.js";
 import { exerciseAdmission } from "./rehearsal-admission.js";
+import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
+import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
 import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
 import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
 import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
@@ -36,8 +38,8 @@ export async function rehearse(options: {
   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
   readonly checkpoint: string; readonly evidence: string;
 }) {
-  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18564"
-    || options.checkpoint !== ".omo-runtime/dtf-migration-weighted-sy/checkpoints") {
+  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18565"
+    || options.checkpoint !== ".omo-runtime/dtf-migration-dtf-custody-se/checkpoints") {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
   }
   const evidence = resolve(options.evidence, `rehearsal-${Date.now()}`);
@@ -110,6 +112,7 @@ export async function rehearse(options: {
     if (setup.code !== 0) throw new ExecutionError("STATE", "genuine environment stage failed");
     await copyFile("broadcast/Phase_08_Stage_00_OperatorEnvironment.s.sol/4663/prepareEnvironment-latest.json",
       join(evidence, "environment-mined-transactions.json"));
+    const custodyAcquisition = await acquireDtfCustodyShares(chain, evidence);
     const manifest = await bootstrapManifest(chain, environmentPath);
     const pre = join(evidence, "pre-capture.json");
     await save(pre, manifest);
@@ -146,7 +149,7 @@ export async function rehearse(options: {
       totals: Object.fromEntries([...fundingTotals].map(([token, amount]) => [token, amount.toString()])),
       actualCapitalEvents: fundingLogs.length, genesisSupply });
     await cli(["capture", "--manifest", pre, "--checkpoint", join(runtime, "capture"), ...local]);
-    let input = await preparationFixture(chain, manifest, evidence);
+    let input = await preparationFixture(chain, manifest, evidence, custodyAcquisition);
     const prepared = join(evidence, "prepared");
     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
     await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
@@ -202,6 +205,7 @@ export async function rehearse(options: {
     await exerciseAdmission({ chain, manifest: post, input, evidence, activated: false });
     await exerciseWeightedLiquid({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
+    await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
     await exerciseOrdinaryDeposit(chain, post, evidence);
@@ -213,6 +217,10 @@ export async function rehearse(options: {
     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
     await chain.send("evm_mine", []);
     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "final" });
+    await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "partial" });
+    await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+    await chain.send("evm_mine", []);
+    await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "final" });
     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
   } catch (error) {
