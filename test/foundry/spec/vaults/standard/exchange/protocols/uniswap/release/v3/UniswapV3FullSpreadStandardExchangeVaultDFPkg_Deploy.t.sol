@@ -13,6 +13,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
+import {IStandardExchangeFrozenQuoteInputs} from "contracts/interfaces/IStandardExchangeFrozenQuoteInputs.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {
@@ -39,7 +40,8 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test is TestBase_U
             UniswapV3FullSpreadStandardExchangeVaultDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV3FullSpreadStandardExchangeVaultDFPkg).name, "package name");
-        assertEq(interfaces.length, 15, "interface count");
+        assertEq(interfaces.length, 16, "interface count");
+        assertEq(interfaces[15], type(IStandardExchangeFrozenQuoteInputs).interfaceId, "frozen quote interface");
         assertEq(facets.length, 15, "facet count");
         assertEq(facets[0], address(erc20Facet), "erc20");
         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");
