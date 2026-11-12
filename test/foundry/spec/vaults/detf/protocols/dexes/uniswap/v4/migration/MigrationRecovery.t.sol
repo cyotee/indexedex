@@ -22,7 +22,7 @@ import {MigrationHostileContribution} from "./MigrationHostileContribution.t.sol
 /// @notice Hermetic surface/authority and callback negatives; source successes belong to the real fork.
 contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
     function test_recoveryDeclarationAndProxySurviveActivation() public {
-        bytes4[] memory selectors_ = new bytes4[](17);
+        bytes4[] memory selectors_ = new bytes4[](21);
         selectors_[0] = Recovery.recoverMigrationNfts.selector;
         selectors_[1] = Recovery.migrationRecoveryInventory.selector;
         selectors_[2] = Recovery.migrationRecoveryGons.selector;
@@ -40,6 +40,10 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
         selectors_[14] = Migration.earlierReceiptSurrender.selector;
         selectors_[15] = Migration.previewEarlierReceiptSurrender.selector;
         selectors_[16] = Migration.surrenderMigrationEarlierReceipt.selector;
+        selectors_[17] = Migration.earlierLiquidEntitlement.selector;
+        selectors_[18] = Migration.earlierLiquidSurrender.selector;
+        selectors_[19] = Migration.previewEarlierLiquidSurrender.selector;
+        selectors_[20] = Migration.surrenderMigrationEarlierLiquid.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(selectors_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, selectors_, facet_.facetFuncs()));
         bytes4[] memory interfaces_ = new bytes4[](1);

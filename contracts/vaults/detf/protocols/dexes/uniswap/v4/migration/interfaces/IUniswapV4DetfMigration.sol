@@ -306,6 +306,59 @@ interface IUniswapV4DetfMigration is
         uint256 remainingCredit;
     }
 
+    /// @notice One documented earlier liquid original. Q0/Q/q are ED native18, C is new DETF native9.
+    /// @dev originalId is the wallet-independent economic origin shared by all representations.
+    /// BOTH original ETH/DTF components must be known; holdings and NFT rewards are not originals.
+    struct EarlierLiquidEntitlementInput {
+        bytes32 originalId;
+        address originalWallet;
+        address source;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct EarlierLiquidEntitlement {
+        bool configured;
+        EarlierLiquidEntitlementInput original;
+        bytes32 configurationId;
+        uint256 credit;
+    }
+
+    struct EarlierLiquidSurrender {
+        uint256 consumedUnits;
+        uint256 deliveredCredit;
+        uint256 remainingUnits;
+        uint256 remainingCredit;
+    }
+
+    error UnsupportedEarlierLiquidSource(uint256 chainId, address source);
+    error InvalidEarlierLiquidEntitlement(bytes32 originalId);
+    error NotOriginalEarlierLiquidWallet(address caller, address originalWallet);
+    error InvalidEarlierLiquidQuantity(uint256 requested, uint256 remaining);
+    error EarlierLiquidCustodyFailed();
+    error EarlierLiquidIdentityConsumed(bytes32 originalId);
+
+    event EarlierLiquidEntitlementConfigured(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 originalUnits, uint256 credit
+    );
+    event MigrationEarlierLiquidSurrendered(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 units, uint256 credit, uint256 bondTokenId
+    );
+
+    function earlierLiquidEntitlement(bytes32 originalId_) external view returns (EarlierLiquidEntitlement memory);
+    function earlierLiquidSurrender(bytes32 originalId_) external view returns (EarlierLiquidSurrender memory);
+    function previewEarlierLiquidSurrender(bytes32 originalId_, uint256 amount_)
+        external view returns (uint256 credit_);
+    /// @notice Stage2 exact approved ED custody and frozen credit only. ED conversion is not admitted.
+    function surrenderMigrationEarlierLiquid(
+        bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_
+    ) external returns (uint256 bondTokenId_, uint256 credit_);
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -557,6 +610,10 @@ interface IUniswapV4DetfMigration is
 /// @dev Only the two admitted NFT sources, weighted liquid, weighted SY and fixed DTF-custody SE; no attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Stage1 complete native18 ED original and known components; no issuance or conversion.
+    function configureEarlierLiquidEntitlements(
+        IUniswapV4DetfMigration.EarlierLiquidEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Stage1 complete original internal-share allocation; computes C0 on the frozen book.
     function configureEarlierReceiptEntitlements(
         IUniswapV4DetfMigration.EarlierReceiptEntitlementInput[] calldata inputs_

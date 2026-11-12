@@ -10,10 +10,12 @@ contract UniswapV4DetfMigrationClaimVaultAllocationFacet is UniswapV4DetfMigrati
     function facetName() public pure returns (string memory) { return "UniswapV4DetfMigrationClaimVaultAllocationFacet"; }
     function facetInterfaces() public pure returns (bytes4[] memory ids_) { return new bytes4[](0); }
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](3);
+        funcs_ = new bytes4[](5);
         funcs_[0] = Allocation.configureClaimVaultEntitlements.selector;
         funcs_[1] = Allocation.configureWeightedReceiptEntitlements.selector;
         funcs_[2] = Allocation.configureEarlierReceiptEntitlements.selector;
+        funcs_[3] = Allocation.configureWeightedLiquidEntitlements.selector;
+        funcs_[4] = Allocation.configureEarlierLiquidEntitlements.selector;
     }
     function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {
         return (facetName(), facetInterfaces(), facetFuncs());

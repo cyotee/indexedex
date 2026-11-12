@@ -70,6 +70,22 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
+    function configureEarlierLiquid(Allocation proxy_, Migration.EarlierLiquidEntitlementInput[] calldata inputs_)
+        external
+    {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        proxy_.configureEarlierLiquidEntitlements(inputs_);
+        vm.stopBroadcast();
+    }
+
+    function surrenderEarlierLiquid(Migration proxy_, bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        (bondTokenId_, credit_) = proxy_.surrenderMigrationEarlierLiquid(originalId_, amount_, minimum_, deadline_);
+        vm.stopBroadcast();
+    }
+
     function configureWeightedLiquid(Allocation proxy_, Migration.WeightedLiquidEntitlementInput[] calldata inputs_)
         external
     {

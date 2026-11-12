@@ -57,6 +57,8 @@ export const weightedSy = z.object({ original: weightedSyOriginal, proof }).stri
 export const weightedReceiptOriginal = weightedLiquidOriginal;
 export const weightedReceipt = z.object({ original: weightedReceiptOriginal, proof }).strict().readonly();
 // Exact internal ER shares. Displayed native18 and external floor shares are not Q0.
+export const earlierLiquidOriginal = weightedLiquidOriginal;
+export const earlierLiquid = z.object({ original: earlierLiquidOriginal, proof }).strict().readonly();
 export const earlierReceiptOriginal = weightedLiquidOriginal;
 export const earlierReceipt = z.object({ original: earlierReceiptOriginal, proof }).strict().readonly();
 export const claimVaultOriginal = weightedLiquidOriginal;
@@ -124,6 +126,7 @@ export const preparationInput = z.object({
   claimVault: z.array(claimVault).readonly(),
   weightedReceipt: z.array(weightedReceipt).readonly(),
   earlierReceipt: z.array(earlierReceipt).readonly().default([]),
+  earlierLiquid: z.array(earlierLiquid).readonly().default([]),
   issueRecipients: z.array(address).readonly(),
   harvest: z.object({
     steps: z.array(recoveryStep).max(8).readonly(),

@@ -11,7 +11,7 @@ import type { ExecutionManifest } from "./execution-schema.js";
 import type { RehearsalChain } from "./rehearsal-chain.js";
 import { LEGACY } from "./rehearsal-chain.js";
 import { DEV } from "./execution-rpc.js";
-import { dtfCustodySeSource, claimVaultSource, weightedReceiptSource, earlierReceiptSource, nftOrigin } from "./payloads.js";
+import { dtfCustodySeSource, claimVaultSource, weightedReceiptSource, earlierReceiptSource, earlierLiquidSource, nftOrigin } from "./payloads.js";
 
 // Standard public Anvil mnemonic, derivation indices 100-103. The commonly
 // used indices 0-2 carry historical EIP-7702 code on this fork, so cannot receive
@@ -70,8 +70,11 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("weighted-receipt-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md"),
     sourceFile("weighted-receipt-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md"),
     sourceFile("weighted-receipt-acquisition", join(dirname(environmentPath), "weighted-receipt-acquisition.json")),
-    sourceFile("earlier-receipt-contract", "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md"),
-    sourceFile("earlier-receipt-admission", "docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/report.md"),
+    sourceFile("earlier-receipt-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md"),
+    sourceFile("earlier-receipt-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/report.md"),
+    sourceFile("earlier-liquid-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source/contract.md"),
+    sourceFile("earlier-liquid-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source-verification/report.md"),
+    sourceFile("earlier-liquid-acquisition", join(dirname(environmentPath), "earlier-liquid-acquisition.json")),
     sourceFile("earlier-receipt-acquisition", join(dirname(environmentPath), "earlier-receipt-acquisition.json")),
   ]);
   const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
@@ -118,7 +121,8 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
   acquisition: { readonly custodySe: { readonly originalWallet: string; readonly shares: string };
     readonly claimVault: { readonly originalWallet: string; readonly shares: string };
     readonly weightedReceipt: { readonly originalWallet: string; readonly gons: string };
-    readonly earlierReceipt: { readonly originalWallet: string; readonly internalShares: string } }) {
+    readonly earlierReceipt: { readonly originalWallet: string; readonly internalShares: string };
+    readonly earlierLiquid: { readonly originalWallet: string; readonly units: string } }) {
   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
   const snapshot: unknown = (await chain.call(manifest.proxy, migration, "migrationSnapshot"))[0];
   if (!(snapshot instanceof Result)) throw new ExecutionError("STATE", "snapshot tuple");
@@ -192,6 +196,13 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     evidenceId: `0x${fingerprint("synthetic original ER components; genuine transfer10000 allocation; no reward exposure")}`,
     contributionsKnown: true as const,
   }];
+  const earlierLiquid = [{
+    originalId: `0x${fingerprint("synthetic ED native18 original") }`,
+    originalWallet: acquisition.earlierLiquid.originalWallet, source: earlierLiquidSource,
+    originalUnits: acquisition.earlierLiquid.units, originalEth: "10000000000000000", originalDtf: "0",
+    evidenceId: `0x${fingerprint("synthetic ED components; genuine controlled acquisition; not NFT purchase inputs")}`,
+    contributionsKnown: true as const,
+  }];
   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
     ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" })),
     ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" })),
@@ -199,11 +210,12 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     ...dtfCustodySe.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "dtf-custody-se" })),
     ...claimVault.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "claim-vault" })),
     ...weightedReceipt.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-receipt" })),
-    ...earlierReceipt.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "earlier-receipt" }))];
+    ...earlierReceipt.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "earlier-receipt" })),
+    ...earlierLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "earlier-liquid" }))];
   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
   const evidencePath = join(directory, "synthetic-originals.json");
-  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, exposures });
+  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, exposures });
   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
   const input = preparationInput.parse({
     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
@@ -217,6 +229,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     dtfCustodySe: dtfCustodySe.map((original, i) => ({ original, proof: proof(`/dtfCustodySe/${i}`) })),
     claimVault: claimVault.map((original, i) => ({ original, proof: proof(`/claimVault/${i}`) })),
     weightedReceipt: weightedReceipt.map((original, i) => ({ original, proof: proof(`/weightedReceipt/${i}`) })),
+    earlierLiquid: earlierLiquid.map((original, i) => ({ original, proof: proof(`/earlierLiquid/${i}`) })),
     earlierReceipt: earlierReceipt.map((original, i) => ({ original, proof: proof(`/earlierReceipt/${i}`) })),
     issueRecipients: recipients.slice(0, 3),
     harvest: { steps: [{ stage: "WeightedClaim", tokenId: "4", amount: "0", minimum: "0" }],
@@ -255,8 +268,11 @@ export async function replacementFixture(input: PreparationInput, directory: str
   const earlierReceipt = input.earlierReceipt.map((row) => ({
     ...row, original: { ...row.original, originalEth: "6000000000000000" },
   }));
+  const earlierLiquid = input.earlierLiquid.map((row) => ({
+    ...row, original: { ...row.original, originalEth: "6000000000000000" },
+  }));
   const exposures = input.exposures.map((row) => {
-    const liquid = [...weightedLiquid, ...weightedSy, ...dtfCustodySe, ...claimVault, ...weightedReceipt, ...earlierReceipt].find((entry) => entry.original.originalId === row.originId);
+    const liquid = [...weightedLiquid, ...weightedSy, ...dtfCustodySe, ...claimVault, ...weightedReceipt, ...earlierReceipt, ...earlierLiquid].find((entry) => entry.original.originalId === row.originId);
     return liquid ? { ...row, originalUnits: liquid.original.originalUnits,
       descendants: row.descendants.map((entry) => ({ ...entry, units: liquid.original.originalUnits })) } : row;
   });
@@ -270,9 +286,10 @@ export async function replacementFixture(input: PreparationInput, directory: str
     claimVault: claimVault.map((row) => row.original),
     weightedReceipt: weightedReceipt.map((row) => row.original),
     earlierReceipt: earlierReceipt.map((row) => row.original),
+    earlierLiquid: earlierLiquid.map((row) => row.original),
     exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
   });
-  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, exposures,
+  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, exposures,
     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
   await save(join(directory, "replacement-input.json"), replacement);
   return replacement;

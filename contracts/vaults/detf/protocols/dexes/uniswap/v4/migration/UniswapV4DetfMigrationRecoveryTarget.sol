@@ -22,6 +22,73 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
     using AddressSetRepo for AddressSet;
     using BetterSafeERC20 for IERC20;
 
+    function earlierLiquidEntitlement(bytes32 originalId_)
+        external view returns (Migration.EarlierLiquidEntitlement memory)
+    { return MigrationRepo._layoutStruct().earlierLiquidEntitlements[originalId_]; }
+
+    function earlierLiquidSurrender(bytes32 originalId_)
+        external view returns (Migration.EarlierLiquidSurrender memory)
+    { return MigrationRepo._layoutStruct().earlierLiquidSurrenders[originalId_]; }
+
+    function previewEarlierLiquidSurrender(bytes32 originalId_, uint256 amount_)
+        public view returns (uint256 credit_)
+    {
+        MigrationRepo.Storage storage m_ = MigrationRepo._layoutStruct();
+        Migration.EarlierLiquidEntitlement storage config_ = m_.earlierLiquidEntitlements[originalId_];
+        if (!config_.configured) revert Migration.InvalidEarlierLiquidEntitlement(originalId_);
+        if (block.chainid != 4663 || config_.original.source != Legacy.EARLIER_DETF) {
+            revert Migration.UnsupportedEarlierLiquidSource(block.chainid, config_.original.source);
+        }
+        Migration.EarlierLiquidSurrender storage s_ = m_.earlierLiquidSurrenders[originalId_];
+        if (amount_ == 0 || amount_ > s_.remainingUnits) {
+            revert Migration.InvalidEarlierLiquidQuantity(amount_, s_.remainingUnits);
+        }
+        credit_ = amount_ == s_.remainingUnits
+            ? s_.remainingCredit : Math.mulDiv(s_.remainingCredit, amount_, s_.remainingUnits);
+        if (credit_ == 0) revert Migration.InvalidEarlierLiquidEntitlement(originalId_);
+    }
+
+    function surrenderMigrationEarlierLiquid(bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external nonReentrant returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        if (!MigrationRepo._layoutStruct().activated) revert Migration.MigrationSurrenderClosed();
+        _requireIdleChildren();
+        _requireNotDisabled();
+        _requireReserveLive();
+        if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
+        credit_ = previewEarlierLiquidSurrender(originalId_, amount_);
+        MigrationRepo.Storage storage m_ = MigrationRepo._layoutStruct();
+        Migration.EarlierLiquidEntitlement storage config_ = m_.earlierLiquidEntitlements[originalId_];
+        if (msg.sender != config_.original.originalWallet) {
+            revert Migration.NotOriginalEarlierLiquidWallet(msg.sender, config_.original.originalWallet);
+        }
+        if (credit_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, credit_);
+        IERC20 token_ = IERC20(Legacy.EARLIER_DETF);
+        uint256 walletBefore_ = token_.balanceOf(msg.sender);
+        uint256 custodyBefore_ = token_.balanceOf(address(this));
+        token_.safeTransferFrom(msg.sender, address(this), amount_);
+        uint256 walletAfter_ = token_.balanceOf(msg.sender);
+        uint256 custodyAfter_ = token_.balanceOf(address(this));
+        if (walletAfter_ > walletBefore_ || walletBefore_ - walletAfter_ != amount_
+            || custodyAfter_ < custodyBefore_ || custodyAfter_ - custodyBefore_ != amount_) {
+            revert Migration.EarlierLiquidCustodyFailed();
+        }
+        Migration.EarlierLiquidSurrender storage s_ = m_.earlierLiquidSurrenders[originalId_];
+        s_.consumedUnits += amount_;
+        s_.deliveredCredit += credit_;
+        s_.remainingUnits -= amount_;
+        s_.remainingCredit -= credit_;
+        // Same native18 ED inventory as measured earlier-NFT rewards; add only this pull.
+        // No ED conversion/debit/donation route is installed.
+        Repo._layoutStruct().inventory[Legacy.EARLIER_DETF] += amount_;
+        _realizeExpansionIfNeeded();
+        bondTokenId_ = MigrationRepo._fundBond(credit_, msg.sender);
+        _syncAllExpectedHoldReserves();
+        emit Migration.MigrationEarlierLiquidSurrendered(
+            originalId_, config_.configurationId, msg.sender, amount_, credit_, bondTokenId_
+        );
+    }
+
     function migrationRecoveryInventory(address token_) external view returns (uint256) {
         return Repo._layoutStruct().inventory[token_];
     }

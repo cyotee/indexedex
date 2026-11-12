@@ -16,6 +16,7 @@ import { acquireClaimVaultShares } from "./rehearsal-claim-vault-source.js";
 import { exerciseClaimVault } from "./rehearsal-claim-vault.js";
 import { acquireWeightedReceipt } from "./rehearsal-weighted-receipt-source.js";
 import { exerciseWeightedReceipt } from "./rehearsal-weighted-receipt.js";
+import { acquireEarlierLiquid, exerciseEarlierLiquid } from "./rehearsal-earlier-liquid.js";
 import { acquireEarlierReceipt, exerciseEarlierReceipt } from "./rehearsal-earlier-receipt.js";
 import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
 import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
@@ -44,8 +45,8 @@ export async function rehearse(options: {
   readonly checkpoint: string; readonly evidence: string;
 }) {
   if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663"
-    || !["18567", "18568"].includes(options.port)
-    || options.checkpoint !== (options.port === "18568"
+    || !["18567", "18568", "18569"].includes(options.port)
+    || options.checkpoint !== (options.port === "18569" ? ".omo-runtime/dtf-migration-earlier-liquid/checkpoints" : options.port === "18568"
       ? ".omo-runtime/dtf-migration-earlier-receipt/checkpoints" : ".omo-runtime/dtf-migration-weighted-receipt/checkpoints")) {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
   }
@@ -123,6 +124,7 @@ export async function rehearse(options: {
     const claimAcquisition = await acquireClaimVaultShares(chain, evidence);
     const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
     const earlierAcquisition = await acquireEarlierReceipt(chain, evidence);
+    const earlierLiquidAcquisition = await acquireEarlierLiquid(chain, evidence);
     const manifest = await bootstrapManifest(chain, environmentPath);
     const pre = join(evidence, "pre-capture.json");
     await save(pre, manifest);
@@ -185,7 +187,7 @@ export async function rehearse(options: {
     await cli(["capture", "--manifest", pre, "--checkpoint", join(runtime, "capture"), ...local]);
     let input = await preparationFixture(chain, manifest, evidence, {
       custodySe: custodyAcquisition, claimVault: claimAcquisition, weightedReceipt: receiptAcquisition,
-      earlierReceipt: earlierAcquisition,
+      earlierReceipt: earlierAcquisition, earlierLiquid: earlierLiquidAcquisition,
     });
     const prepared = join(evidence, "prepared");
     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
@@ -246,6 +248,7 @@ export async function rehearse(options: {
     await exerciseClaimVault({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
+    await exerciseEarlierLiquid({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
     await exerciseOrdinaryDeposit(chain, post, evidence);
@@ -271,6 +274,10 @@ export async function rehearse(options: {
     await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "residual" });
     await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "partial" });
     await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "changed-rate" });
+    await exerciseEarlierLiquid({ chain, manifest: post, input, evidence, phase: "partial" });
+    await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+    await chain.send("evm_mine", []);
+    await exerciseEarlierLiquid({ chain, manifest: post, input, evidence, phase: "terminal" });
     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
   } catch (error) {

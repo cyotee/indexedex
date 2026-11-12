@@ -40,23 +40,24 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
     }
 
     function test_adminDeclarationMatchesInterfaceAndCannotBeRestored() public {
-        bytes4[] memory expected_ = new bytes4[](9);
+        bytes4[] memory expected_ = new bytes4[](8);
         expected_[0] = Allocation.bootstrapMigrationReserve.selector;
         expected_[1] = Allocation.captureMigrationSnapshot.selector;
         expected_[2] = Allocation.configureIndependentAllocations.selector;
         expected_[3] = Allocation.issueIndependentAllocations.selector;
         expected_[4] = Allocation.activateMigration.selector;
         expected_[5] = Allocation.configureNftEntitlements.selector;
-        expected_[6] = Allocation.configureWeightedLiquidEntitlements.selector;
-        expected_[7] = Allocation.configureWeightedSyEntitlements.selector;
-        expected_[8] = Allocation.configureDtfCustodySeEntitlements.selector;
+        expected_[6] = Allocation.configureWeightedSyEntitlements.selector;
+        expected_[7] = Allocation.configureDtfCustodySeEntitlements.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
         IFacet direct_ = IFacet(IDiamondLoupe(detf).facetAddress(Allocation.configureClaimVaultEntitlements.selector));
-        bytes4[] memory directSelectors_ = new bytes4[](3);
+        bytes4[] memory directSelectors_ = new bytes4[](5);
         directSelectors_[0] = Allocation.configureClaimVaultEntitlements.selector;
         directSelectors_[1] = Allocation.configureWeightedReceiptEntitlements.selector;
         directSelectors_[2] = Allocation.configureEarlierReceiptEntitlements.selector;
+        directSelectors_[3] = Allocation.configureWeightedLiquidEntitlements.selector;
+        directSelectors_[4] = Allocation.configureEarlierLiquidEntitlements.selector;
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(direct_, directSelectors_, direct_.facetFuncs()));
         _fundAndCapture();
         _buyOwnerFirstBond();

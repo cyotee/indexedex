@@ -1,5 +1,43 @@
 # Bounded Migration operator runbook
 
+## Earlier liquid ED: custody and credit, not conversion
+
+`earlierLiquid` accepts complete known original records with the same
+`originalId`, `originalWallet`, `source`, `originalUnits`, `originalEth`,
+`originalDtf`, `evidenceId`, `contributionsKnown: true` and raw proof fields.
+The only source is ED `0xaf0E1967c8F755c747615c5427108Bc549CA1122`,
+chain4663. All Q0/Q/q are ED native18; credit C is new-DETF native9.
+Neither current holdings nor another NFT purchase establishes these originals.
+Unknown ETH or DTF rejects; explicitly known zero is valid. Operational
+original allocations remain unapproved. Synthetic rehearsal inputs are labeled.
+
+Stage1 owner-only loading and full replacement compute C0 with the complete
+frozen original evaluator and issue nothing. The real paid owner-first bond
+remains required. Activation permanently removes the ED loader together with
+all existing loaders; moving WD loading to the smaller Migration allocation
+facet changes no selector or authorization. Stage2 requires the recorded
+original wallet's actual approved exact ED transfer, positive proportional
+remaining credit, and one exactly funded fresh90-day-cliff bond.
+Partial delivery is floor(C*q/Q); terminal q==Q pays all remaining C.
+Transfer-back does not reset consumption. ED recovery inventory adds only
+measured surrendered ED to the same native18 ledger as existing NFT rewards;
+unrelated raw ED is not newly booked. ER internal B and external E remain
+separate, in their existing units.
+
+ED conversion is structurally blocked at the historical pin: the positive
+source attempt `0x32fef16e3be33c26d73ab92174023ddc65be4266765a66774a54bc8b0455a9fc`
+reaches disabled ES `0xb7D4Bb379d361aD442Cddee53EA71A33957826A7`
+after positive LP sizing, then rolls back. The original receipt and trace
+remain in the immutable source-only worktree. No ED conversion/debit/donation
+stage or successful return decoder is installed. Earlier NFT reward holding
+and ER custody admission do not change this disposition.
+
+The retained18567 and18568 rehearsals remain accepted. The cumulative ED
+rehearsal uses18569 and `.omo-runtime/dtf-migration-earlier-liquid/checkpoints`;
+it retains all three real mined-before-checkpoint interruption/resume cases.
+Use the existing login-shell archive bootstrap. No source enablement or public
+operation is part of this rehearsal. Preparation also emits `earlier-liquid.json`.
+
 ## Preparation and read-only validation
 
 Entrypoint: `bun scripts/recovery/dtf-migration/cli.ts`.
