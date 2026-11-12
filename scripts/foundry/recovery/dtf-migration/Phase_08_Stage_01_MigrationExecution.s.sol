@@ -120,6 +120,20 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
+    function configureClaimVault(Allocation proxy_, Migration.ClaimVaultEntitlementInput[] calldata inputs_) external {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        proxy_.configureClaimVaultEntitlements(inputs_);
+        vm.stopBroadcast();
+    }
+
+    function surrenderClaimVault(Migration proxy_, bytes32 originalId_, uint256 amount_, uint256 minimum_, uint256 deadline_)
+        external returns (uint256 bondTokenId_, uint256 credit_)
+    {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        (bondTokenId_, credit_) = proxy_.surrenderMigrationClaimVault(originalId_, amount_, minimum_, deadline_);
+        vm.stopBroadcast();
+    }
+
     /// @notice Genuine paid ordinary purchase, with explicit operator amounts and duration.
     function ownerFirstBond(Migration proxy_, IERC20 token_, uint256 amount_, uint256 duration_, uint256 deadline_)
         external returns (uint256 bondId_, uint256 lpOut_)

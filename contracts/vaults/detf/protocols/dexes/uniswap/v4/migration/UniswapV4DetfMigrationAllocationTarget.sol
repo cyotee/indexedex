@@ -79,6 +79,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     || m_.weightedLiquidEntitlements[original_.entitlementId].configured
                     || m_.weightedSyEntitlements[original_.entitlementId].configured
                     || m_.dtfCustodySeEntitlements[original_.entitlementId].configured
+                    || m_.claimVaultEntitlements[original_.entitlementId].configured
                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
                 }
@@ -124,6 +125,9 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     || m_.dtfCustodySeEntitlements[originalId_].configured) {
                     revert Migration.DuplicateOriginalEntitlement(originalId_);
                 }
+                if (m_.claimVaultEntitlements[originalId_].configured) {
+                    revert Migration.DuplicateOriginalEntitlement(originalId_);
+                }
                 m_.issuedOriginal[originalId_] = recipient_;
             }
             emit Migration.IndependentAllocationIssued(
@@ -150,6 +154,9 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 || m_.weightedLiquidEntitlements[original_].configured
                 || m_.weightedSyEntitlements[original_].configured
                 || m_.dtfCustodySeEntitlements[original_].configured) {
+                revert Migration.DuplicateOriginalEntitlement(original_);
+            }
+            if (m_.claimVaultEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
@@ -181,11 +188,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
                 revert Migration.InvalidWeightedLiquidEntitlement(original_);
             }
-            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
-                || m_.nftOriginal[original_] || m_.weightedSyEntitlements[original_].configured
-                || m_.dtfCustodySeEntitlements[original_].configured) {
-                revert Migration.DuplicateOriginalEntitlement(original_);
-            }
+            _requireUnallocatedOrigin(original_, input_.source);
             Migration.WeightedLiquidSurrender storage surrender_ = m_.weightedLiquidSurrenders[original_];
             // Surrender is closed throughout configuration. Never erase impossible execution facts.
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
@@ -218,11 +221,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
                 revert Migration.InvalidWeightedSyEntitlement(original_);
             }
-            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
-                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured
-                || m_.dtfCustodySeEntitlements[original_].configured) {
-                revert Migration.DuplicateOriginalEntitlement(original_);
-            }
+            _requireUnallocatedOrigin(original_, input_.source);
             Migration.WeightedSySurrender storage surrender_ = m_.weightedSySurrenders[original_];
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.WeightedSyIdentityConsumed(original_);
@@ -254,11 +253,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
                 revert Migration.InvalidDtfCustodySeEntitlement(original_);
             }
-            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
-                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured
-                || m_.weightedSyEntitlements[original_].configured) {
-                revert Migration.DuplicateOriginalEntitlement(original_);
-            }
+            _requireUnallocatedOrigin(original_, input_.source);
             Migration.DtfCustodySeSurrender storage surrender_ = m_.dtfCustodySeSurrenders[original_];
             if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
                 revert Migration.DtfCustodySeIdentityConsumed(original_);
@@ -272,6 +267,18 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             emit Migration.DtfCustodySeEntitlementConfigured(
                 original_, config_, input_.originalWallet, input_.originalUnits, credit_
             );
+        }
+    }
+
+    function _requireUnallocatedOrigin(bytes32 original_, address source_) private view {
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
+            || m_.nftOriginal[original_]
+            || (source_ != Legacy.WEIGHTED_DETF && m_.weightedLiquidEntitlements[original_].configured)
+            || (source_ != Legacy.WEIGHTED_SY && m_.weightedSyEntitlements[original_].configured)
+            || (source_ != Legacy.DTF_CUSTODY_SE && m_.dtfCustodySeEntitlements[original_].configured)
+            || (source_ != Legacy.CLAIM_VAULT && m_.claimVaultEntitlements[original_].configured)) {
+            revert Migration.DuplicateOriginalEntitlement(original_);
         }
     }
 
@@ -294,7 +301,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](9);
+        selectors_ = new bytes4[](10);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
@@ -304,6 +311,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         selectors_[6] = Allocation.configureWeightedLiquidEntitlements.selector;
         selectors_[7] = Allocation.configureWeightedSyEntitlements.selector;
         selectors_[8] = Allocation.configureDtfCustodySeEntitlements.selector;
+        selectors_[9] = Allocation.configureClaimVaultEntitlements.selector;
     }
 
     function bootstrapMigrationReserve(

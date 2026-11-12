@@ -53,6 +53,8 @@ export const weightedLiquidOriginal = z.object({
 export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
 export const weightedSyOriginal = weightedLiquidOriginal;
 export const weightedSy = z.object({ original: weightedSyOriginal, proof }).strict().readonly();
+export const claimVaultOriginal = weightedLiquidOriginal;
+export const claimVault = z.object({ original: claimVaultOriginal, proof }).strict().readonly();
 export const dtfCustodySeOriginal = weightedLiquidOriginal;
 export const dtfCustodySe = z.object({ original: dtfCustodySeOriginal, proof }).strict().readonly();
 export const binding = z.object({
@@ -97,7 +99,7 @@ export const exposure = z.object({
 }).strict().readonly();
 export const recoveryStep = z.object({
   stage: z.enum(["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
-    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem", "DtfCustodySeRedeem"]),
+    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem", "DtfCustodySeRedeem", "ClaimVaultRedeem"]),
   tokenId: uint,
   amount: uint,
   minimum: uint,
@@ -113,6 +115,7 @@ export const preparationInput = z.object({
   weightedLiquid: z.array(weightedLiquid).readonly(),
   weightedSy: z.array(weightedSy).readonly(),
   dtfCustodySe: z.array(dtfCustodySe).readonly(),
+  claimVault: z.array(claimVault).readonly(),
   issueRecipients: z.array(address).readonly(),
   harvest: z.object({
     steps: z.array(recoveryStep).max(8).readonly(),
@@ -127,6 +130,7 @@ export type Original = z.infer<typeof original>;
 export type NftOriginal = z.infer<typeof nftOriginal>;
 export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
 export type WeightedSyOriginal = z.infer<typeof weightedSyOriginal>;
+export type ClaimVaultOriginal = z.infer<typeof claimVaultOriginal>;
 export type DtfCustodySeOriginal = z.infer<typeof dtfCustodySeOriginal>;
 export type RecoveryStep = z.infer<typeof recoveryStep>;
 

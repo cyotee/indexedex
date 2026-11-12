@@ -13,11 +13,13 @@ interface IUniswapV4DetfMigrationRecovery {
         EarlierSale,
         Donate,
         WeightedSyRedeem,
-        DtfCustodySeRedeem
+        DtfCustodySeRedeem,
+        ClaimVaultRedeem
     }
 
     /// @dev NFT stages use tokenId; conversions/donation use amount. minimum is native DTF
-    /// output, external earlier receipt shares, reserve LP, native WS output for SY redemption, or native 18-decimal DTF for DTF-custody SE redemption. Unused fields must
+    /// output, external earlier receipt shares, reserve LP, native WS output for SY redemption,
+    /// native9 SY for claim-vault redemption, or native18 DTF for DTF-custody SE redemption. Unused fields must
     /// be zero. No target, selector, recipient, pretransfer flag or route can be supplied.
     struct Step {
         Stage stage;

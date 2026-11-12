@@ -11,7 +11,7 @@ import type { ExecutionManifest } from "./execution-schema.js";
 import type { RehearsalChain } from "./rehearsal-chain.js";
 import { LEGACY } from "./rehearsal-chain.js";
 import { DEV } from "./execution-rpc.js";
-import { dtfCustodySeSource, nftOrigin } from "./payloads.js";
+import { dtfCustodySeSource, claimVaultSource, nftOrigin } from "./payloads.js";
 
 // Standard public Anvil mnemonic, derivation indices 100-103. The commonly
 // used indices 0-2 carry historical EIP-7702 code on this fork, so cannot receive
@@ -58,7 +58,9 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
     sourceFile("environment", environmentPath),
     sourceFile("dtf-custody-se-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md"),
-    sourceFile("dtf-custody-source-archive", "docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json"),
+    sourceFile("dtf-custody-source-archive", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json"),
+    sourceFile("claim-vault-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md"),
+    sourceFile("claim-vault-acquisition", join(dirname(environmentPath), "claim-vault-acquisition.json")),
     sourceFile("dtf-custody-acquisition", join(dirname(environmentPath), "dtf-custody-se-acquisition.json")),
     sourceFile("weighted-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md"),
     sourceFile("owner-first-bond-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md"),
@@ -106,7 +108,8 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
 }
 
 export async function preparationFixture(chain: RehearsalChain, manifest: ExecutionManifest, directory: string,
-  acquisition: { readonly originalWallet: string; readonly shares: string }) {
+  acquisition: { readonly custodySe: { readonly originalWallet: string; readonly shares: string };
+    readonly claimVault: { readonly originalWallet: string; readonly shares: string } }) {
   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
   const snapshot: unknown = (await chain.call(manifest.proxy, migration, "migrationSnapshot"))[0];
   if (!(snapshot instanceof Result)) throw new ExecutionError("STATE", "snapshot tuple");
@@ -154,20 +157,28 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
   }];
   const dtfCustodySe = [{
     originalId: `0x${fingerprint("synthetic W-SD original allocation")}`,
-    originalWallet: acquisition.originalWallet, source: dtfCustodySeSource, originalUnits: acquisition.shares,
+    originalWallet: acquisition.custodySe.originalWallet, source: dtfCustodySeSource, originalUnits: acquisition.custodySe.shares,
     originalEth: "0", originalDtf: "1000000000000000000",
     evidenceId: `0x${fingerprint("synthetic W-SD components; real controlled-wallet source acquisition")}`,
+    contributionsKnown: true as const,
+  }];
+  const claimVault = [{
+    originalId: `0x${fingerprint("synthetic direct claim-vault original")}`,
+    originalWallet: acquisition.claimVault.originalWallet, source: claimVaultSource, originalUnits: acquisition.claimVault.shares,
+    originalEth: "0", originalDtf: "1000000000000000000",
+    evidenceId: `0x${fingerprint("synthetic native19 originals; actual controlled source acquisition")}`,
     contributionsKnown: true as const,
   }];
   const origins = [...originals.map((o) => ({ id: o.entitlementId, units: "1", category: "independent" })),
     ...nfts.map((n) => ({ id: nftOrigin(domain, n), units: n.originalUnits, category: n.collection === LEGACY.weighted ? "weighted-nft" : "earlier-nft" })),
     ...weightedLiquid.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-liquid" })),
     ...weightedSy.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "weighted-sy" })),
-    ...dtfCustodySe.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "dtf-custody-se" }))];
+    ...dtfCustodySe.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "dtf-custody-se" })),
+    ...claimVault.map((n) => ({ id: n.originalId, units: n.originalUnits, category: "claim-vault" }))];
   const exposures = origins.map((o) => ({ originId: o.id, category: o.category, originalUnits: o.units,
     descendants: [{ id: `0x${fingerprint(`${o.id}:descendant`)}`, units: o.units }], recoveredUnits: "0", excludedUnits: "0" }));
   const evidencePath = join(directory, "synthetic-originals.json");
-  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, dtfCustodySe, exposures });
+  await save(evidencePath, { originals, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, exposures });
   const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
   const input = preparationInput.parse({
     version: "dtf-operator-preparation-v1", purpose: "synthetic-local", domain,
@@ -179,6 +190,7 @@ export async function preparationFixture(chain: RehearsalChain, manifest: Execut
     weightedLiquid: weightedLiquid.map((original, i) => ({ original, proof: proof(`/weightedLiquid/${i}`) })),
     weightedSy: weightedSy.map((original, i) => ({ original, proof: proof(`/weightedSy/${i}`) })),
     dtfCustodySe: dtfCustodySe.map((original, i) => ({ original, proof: proof(`/dtfCustodySe/${i}`) })),
+    claimVault: claimVault.map((original, i) => ({ original, proof: proof(`/claimVault/${i}`) })),
     issueRecipients: recipients.slice(0, 3),
     harvest: { steps: [{ stage: "WeightedClaim", tokenId: "4", amount: "0", minimum: "0" }],
       deadline: (await chain.timestamp() + 365n * 86400n).toString() },
@@ -206,8 +218,12 @@ export async function replacementFixture(input: PreparationInput, directory: str
     ...row, original: { ...row.original, originalDtf: "600000000000000000",
       originalUnits: (BigInt(row.original.originalUnits) - 7n).toString() },
   }));
+  const claimVault = input.claimVault.map((row) => ({
+    ...row, original: { ...row.original, originalDtf: "600000000000000000",
+      originalUnits: (BigInt(row.original.originalUnits) - 7n).toString() },
+  }));
   const exposures = input.exposures.map((row) => {
-    const liquid = [...weightedLiquid, ...weightedSy, ...dtfCustodySe].find((entry) => entry.original.originalId === row.originId);
+    const liquid = [...weightedLiquid, ...weightedSy, ...dtfCustodySe, ...claimVault].find((entry) => entry.original.originalId === row.originId);
     return liquid ? { ...row, originalUnits: liquid.original.originalUnits,
       descendants: row.descendants.map((entry) => ({ ...entry, units: liquid.original.originalUnits })) } : row;
   });
@@ -218,9 +234,10 @@ export async function replacementFixture(input: PreparationInput, directory: str
     weightedLiquid: weightedLiquid.map((row) => row.original),
     weightedSy: weightedSy.map((row) => row.original),
     dtfCustodySe: dtfCustodySe.map((row) => row.original),
+    claimVault: claimVault.map((row) => row.original),
     exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
   });
-  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, dtfCustodySe, exposures,
+  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, dtfCustodySe, claimVault, exposures,
     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
   await save(join(directory, "replacement-input.json"), replacement);
   return replacement;

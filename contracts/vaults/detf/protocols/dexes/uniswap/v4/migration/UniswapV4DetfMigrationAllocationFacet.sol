@@ -6,6 +6,10 @@ import {UniswapV4DetfMigrationAllocationTarget} from "./UniswapV4DetfMigrationAl
 contract UniswapV4DetfMigrationAllocationFacet is UniswapV4DetfMigrationAllocationTarget, IFacet {
 function facetName() public pure returns(string memory) { return "UniswapV4DetfMigrationAllocationFacet"; }
 function facetInterfaces() public pure returns(bytes4[] memory ids_) { ids_ = new bytes4[](1); ids_[0] = type(Allocation).interfaceId; }
-function facetFuncs() public pure returns(bytes4[] memory funcs_) { funcs_ = _administrationSelectors(); }
+function facetFuncs() public pure returns(bytes4[] memory funcs_) {
+bytes4[] memory all_ = _administrationSelectors();
+funcs_ = new bytes4[](9);
+for (uint256 i_; i_ < funcs_.length; ++i_) funcs_[i_] = all_[i_];
+}
 function facetMetadata() external pure returns(string memory,bytes4[] memory,bytes4[] memory) { return (facetName(),facetInterfaces(),facetFuncs()); }
 }

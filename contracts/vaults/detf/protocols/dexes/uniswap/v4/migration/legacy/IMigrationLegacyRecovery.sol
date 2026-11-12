@@ -40,6 +40,15 @@ interface IMigrationDtfCustodySe {
     function redeem(uint256 shares_, address receiver_, address owner_) external returns (uint256 assets_);
 }
 
+/// @notice Executed pinned claim-vault layouts; native19 shares pay native9 static SY.
+/// @dev Runtime and controlled-wallet traces authenticate these calls, not current-source equivalence.
+interface IMigrationClaimVault {
+    function deposit(uint256 assets_, address receiver_) external returns (uint256 shares_);
+    function redeem(uint256 shares_, address receiver_, address owner_) external returns (uint256 assets_);
+    function previewDeposit(uint256 assets_) external view returns (uint256 shares_);
+    function previewRedeem(uint256 shares_) external view returns (uint256 assets_);
+}
+
 interface IMigrationEarlierClaims {
     function claimRewards(uint256 tokenId_, address recipient_) external returns (uint256);
 }

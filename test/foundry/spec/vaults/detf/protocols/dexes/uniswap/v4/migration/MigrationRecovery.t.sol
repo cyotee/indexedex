@@ -11,6 +11,8 @@ import {TestBase_UniswapV4DetfMigration} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/TestBase_UniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationRecovery as Recovery} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigrationRecovery.sol";
+import {IUniswapV4DetfMigration as Migration} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
@@ -19,11 +21,15 @@ import {MigrationHostileContribution} from "./MigrationHostileContribution.t.sol
 /// @notice Hermetic surface/authority and callback negatives; source successes belong to the real fork.
 contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
     function test_recoveryDeclarationAndProxySurviveActivation() public {
-        bytes4[] memory selectors_ = new bytes4[](4);
+        bytes4[] memory selectors_ = new bytes4[](8);
         selectors_[0] = Recovery.recoverMigrationNfts.selector;
         selectors_[1] = Recovery.migrationRecoveryInventory.selector;
         selectors_[2] = Recovery.migrationRecoveryGons.selector;
         selectors_[3] = Recovery.migrationNftRecovery.selector;
+        selectors_[4] = Migration.claimVaultEntitlement.selector;
+        selectors_[5] = Migration.claimVaultSurrender.selector;
+        selectors_[6] = Migration.previewClaimVaultSurrender.selector;
+        selectors_[7] = Migration.surrenderMigrationClaimVault.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(selectors_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, selectors_, facet_.facetFuncs()));
         bytes4[] memory interfaces_ = new bytes4[](1);

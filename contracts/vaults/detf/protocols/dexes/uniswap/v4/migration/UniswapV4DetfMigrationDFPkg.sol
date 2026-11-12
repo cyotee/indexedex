@@ -72,6 +72,7 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     IFacet immutable MIGRATION_FACET;
     IFacet immutable ALLOCATION_FACET;
     IFacet immutable RECOVERY_FACET;
+    IFacet immutable CLAIM_VAULT_ALLOCATION_FACET;
     IUniswapV4DetfMigrationRewardTokenDFPkg immutable REWARD_TOKEN_PKG;
     address immutable SELF;
     constructor(PkgInit memory migrationInit_) {
@@ -80,10 +81,12 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         MIGRATION_FACET = migrationInit_.migrationFacet;
         ALLOCATION_FACET = migrationInit_.allocationFacet;
         RECOVERY_FACET = migrationInit_.recoveryFacet;
+        CLAIM_VAULT_ALLOCATION_FACET = migrationInit_.claimVaultAllocationFacet;
         REWARD_TOKEN_PKG = migrationInit_.rewardTokenPkg;
         SELF = address(this);
         if (address(OWNABLE_FACET) == address(0) || address(MIGRATION_FACET) == address(0)
             || address(ALLOCATION_FACET) == address(0) || address(RECOVERY_FACET) == address(0)
+            || address(CLAIM_VAULT_ALLOCATION_FACET) == address(0)
             || address(REWARD_TOKEN_PKG) == address(0)) revert InvalidMigrationPackageArguments();
         if (
             address(pkgInit.erc20Facet) == address(0)
@@ -146,7 +149,8 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](14);
+        facetAddresses_ = new address[](15);
+        facetAddresses_[14] = address(CLAIM_VAULT_ALLOCATION_FACET);
         facetAddresses_[13] = address(RECOVERY_FACET);
         facetAddresses_[10] = address(OWNABLE_FACET);
         facetAddresses_[11] = address(MIGRATION_FACET);

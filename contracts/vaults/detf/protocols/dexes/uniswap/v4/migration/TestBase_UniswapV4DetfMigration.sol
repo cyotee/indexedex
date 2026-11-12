@@ -248,6 +248,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         IFacet permanent_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationFacet");
         IFacet admin_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationAllocationFacet");
         IFacet recovery_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationRecoveryFacet");
+        IFacet claimAllocation_ = Components.deployFacet(create3Factory, "UniswapV4DetfMigrationClaimVaultAllocationFacet");
         _ownerStart();
         bondNftVaultPkg = IUniswapV4DetfBondNFTVaultDFPkg(address(Packages.deployBond(
             IVaultRegistryDeployment(address(indexedexManager)), IDETFNFTVaultDFPkg.PkgInit(
@@ -263,7 +264,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
                 erc20Facet, erc5267Facet, erc2612Facet, multiAssetBasicVaultFacet, multiAssetStandardVaultFacet,
                 products_, IVaultFeeOracleQuery(address(indexedexManager)),
                 IVaultRegistryDeployment(address(indexedexManager)), bondNftVaultPkg, rebasingClaimTokenPkg, syPkg
-            ), multiStepOwnableFacet, permanent_, admin_, recovery_, reward_));
+            ), multiStepOwnableFacet, permanent_, admin_, recovery_, claimAllocation_, reward_));
         _ownerStop();
     }
 
