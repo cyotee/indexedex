@@ -11,6 +11,7 @@ export const dtfCustodySeSource = "0x2e9c1f705ab967c5af59249203d7495bdabb223b";
 export const weightedSySource = "0xb55604cf4dcdabb362078e106d20f98512391edf";
 export const weightedLiquidSource = "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7";
 export const weightedReceiptSource = "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c";
+export const earlierReceiptSource = "0x4ac89ad061a531fa62ddceed53520c2750113b01";
 export const weightedCollection = "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e";
 export const earlierCollection = "0x15666f0b4c8d09d046d2aa9048afcaf49e8cb391";
 export type IndependentPayload = {
@@ -26,6 +27,7 @@ export type ConfigurationPayload = {
   readonly dtfCustodySe: readonly WeightedLiquidOriginal[];
   readonly claimVault: readonly WeightedLiquidOriginal[];
   readonly weightedReceipt: readonly WeightedLiquidOriginal[];
+  readonly earlierReceipt: readonly WeightedLiquidOriginal[];
 };
 
 export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal): string {
@@ -41,7 +43,6 @@ export function nftOrigin(domain: Domain, input: NftOriginal): string {
 
 const blockedGate = {
   "earlier-liquid": "H3/H6: original native-unit configuration and surrender not implemented; ED liquidation unproved",
-  "earlier-receipt": "H3/H6: original share denominator and fractional attribution unproved; earlier SE exits disabled",
   "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
   "underlying-se": "H3/H5/H6: direct-user records and surrender absent; earlier and weighted WETH SE disabled; fixed W-SD has its separate admitted category",
   "fungible-lp": "H3/H6: original records and surrender absent; legacy exits are owner-restricted, earlier exact-in unsupported",
@@ -59,6 +60,7 @@ export function dispositions(input: PreparationInput) {
       case "weighted-sy": return { category, disposition: "bounded", gate: "fixed WY original-wallet static-share/component inputs and measured custody; operational allocations remain unapproved" };
       case "weighted-liquid": return { category, disposition: "bounded", gate: "explicit original-wallet WD quantity/component allocation and measured surrender; operational allocations remain unapproved" };
       case "weighted-receipt": return { category, disposition: "bounded", gate: "fixed WS eligible original gons and known grouped components; synchronized native9 custody only; positive nonrepresentable Q/C remains recorded without promised future redemption; operational originals unapproved" };
+      case "earlier-receipt": return { category, disposition: "bounded", gate: "fixed ER exact internal original shares and frozen known components; approved custody/credit only within singleton-rate measurement domain; liquidation remains VaultDisabled at ES; positive Q/C residue preserved; operational originals unapproved" };
       default: return { category, disposition: "blocked", gate: blockedGate[category] };
     }
   }).map((row) => ({ ...row, records: input.exposures.filter((e) => e.category === row.category).length.toString() }));
@@ -148,6 +150,16 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
     }
     return original;
   }).sort((a, b) => a.originalId.localeCompare(b.originalId));
+  const earlierReceipt = input.earlierReceipt.map(({ original }) => {
+    if (input.domain.chainId !== "4663" || original.source !== earlierReceiptSource) {
+      throw new PreparationError("DOMAIN", "earlier receipt requires fixed ER on chain 4663");
+    }
+    claimOrigin(original.originalId, "earlier-receipt");
+    if (origins.get(original.originalId)?.originalUnits !== original.originalUnits) {
+      throw new PreparationError("PROVENANCE", "earlier receipt eligible original internal shares differ from reconciled origin");
+    }
+    return original;
+  }).sort((a, b) => a.originalId.localeCompare(b.originalId));
   if (used.size !== origins.size) throw new PreparationError("PROVENANCE", "unassigned origin; no silent omission");
   if (new Set(input.issueRecipients).size !== input.issueRecipients.length) {
     throw new PreparationError("INPUT", "duplicate issuance recipient");
@@ -188,5 +200,5 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
   if (input.harvest.steps.length > 0 && (input.domain.chainId !== "4663" || input.harvest.deadline === "0")) {
     throw new PreparationError("DOMAIN", "recovery requires chain 4663 and deadline");
   }
-  return { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt };
+  return { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt };
 }

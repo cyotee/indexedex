@@ -71,5 +71,9 @@ interface IUniswapV4DetfMigrationRecovery {
     /// @notice Attributed weighted receipt gons; their synchronized whole value is convertible.
     /// @dev Actual source debit must still preserve every unbooked gon, including fractions.
     function migrationRecoveryGons() external view returns (uint256);
+    /// @notice Standalone ER custody B in exact internal shares, separate from NFT external inventory E.
+    /// @dev Whole external representation is B/1e9; fractional internal representation is B%1e9.
+    /// Total booked internal ownership is checked E*1e9+B; neither query changes the other's unit.
+    function migrationEarlierReceiptInternalShares() external view returns (uint256);
     function migrationNftRecovery(address collection_, uint256 tokenId_) external view returns (NftRecovery memory);
 }

@@ -16,12 +16,13 @@ import { acquireClaimVaultShares } from "./rehearsal-claim-vault-source.js";
 import { exerciseClaimVault } from "./rehearsal-claim-vault.js";
 import { acquireWeightedReceipt } from "./rehearsal-weighted-receipt-source.js";
 import { exerciseWeightedReceipt } from "./rehearsal-weighted-receipt.js";
+import { acquireEarlierReceipt, exerciseEarlierReceipt } from "./rehearsal-earlier-receipt.js";
 import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
 import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
 import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
 import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
 import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
-import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt } from "./rehearsal-proof.js";
+import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt, captureLinkedLibraries } from "./rehearsal-proof.js";
 
 const PIN_HASH = "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733";
 async function resolveAlias(): Promise<string> {
@@ -42,8 +43,10 @@ export async function rehearse(options: {
   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
   readonly checkpoint: string; readonly evidence: string;
 }) {
-  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18567"
-    || options.checkpoint !== ".omo-runtime/dtf-migration-weighted-receipt/checkpoints") {
+  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663"
+    || !["18567", "18568"].includes(options.port)
+    || options.checkpoint !== (options.port === "18568"
+      ? ".omo-runtime/dtf-migration-earlier-receipt/checkpoints" : ".omo-runtime/dtf-migration-weighted-receipt/checkpoints")) {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
   }
   const evidence = resolve(options.evidence, `rehearsal-${Date.now()}`);
@@ -119,6 +122,7 @@ export async function rehearse(options: {
     const custodyAcquisition = await acquireDtfCustodyShares(chain, evidence);
     const claimAcquisition = await acquireClaimVaultShares(chain, evidence);
     const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
+    const earlierAcquisition = await acquireEarlierReceipt(chain, evidence);
     const manifest = await bootstrapManifest(chain, environmentPath);
     const pre = join(evidence, "pre-capture.json");
     await save(pre, manifest);
@@ -148,6 +152,7 @@ export async function rehearse(options: {
       deployedBindings.push({ ...component, code, codeHash: keccak256(code), facets: boundFacets });
     }
     await save(join(evidence, "deployed-runtime-bindings.json"), deployedBindings);
+    await captureLinkedLibraries(chain, deployedBindings.flatMap((component) => component.facets), evidence);
     const fund = join(runtime, "fund");
     await cli(["fund", "--manifest", pre, "--checkpoint", fund, ...local, "--fault-after-mined"], "fault");
     const donationFault = await interruptedReceipt(chain, fund, join(evidence, "donation-before-resume.json"));
@@ -180,6 +185,7 @@ export async function rehearse(options: {
     await cli(["capture", "--manifest", pre, "--checkpoint", join(runtime, "capture"), ...local]);
     let input = await preparationFixture(chain, manifest, evidence, {
       custodySe: custodyAcquisition, claimVault: claimAcquisition, weightedReceipt: receiptAcquisition,
+      earlierReceipt: earlierAcquisition,
     });
     const prepared = join(evidence, "prepared");
     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
@@ -239,6 +245,7 @@ export async function rehearse(options: {
     await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseClaimVault({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
+    await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
     await exerciseOrdinaryDeposit(chain, post, evidence);
@@ -262,6 +269,8 @@ export async function rehearse(options: {
     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
     await chain.send("evm_mine", []);
     await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "residual" });
+    await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "partial" });
+    await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "changed-rate" });
     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
   } catch (error) {

@@ -24,6 +24,7 @@ export function normalize(input: PreparationInput): PreparationInput {
     dtfCustodySe: [...input.dtfCustodySe].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
     claimVault: [...input.claimVault].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
     weightedReceipt: [...input.weightedReceipt].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
+    earlierReceipt: [...input.earlierReceipt].sort((a, b) => a.original.originalId.localeCompare(b.original.originalId)),
     domain: { ...input.domain, bindings: [...input.domain.bindings]
       .sort((a, b) => a.role.localeCompare(b.role) || a.address.localeCompare(b.address)) },
   });
@@ -63,6 +64,9 @@ export async function prepareDomain(input: PreparationInput) {
   const weightedReceipt = payloads.weightedReceipt.map((r) => ({
     input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
   }));
+  const earlierReceipt = payloads.earlierReceipt.map((r) => ({
+    input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
+  }));
   const requests = normalized.issueRecipients.map((recipient) => {
     const config = independent.find((r) => r.input.recipient === recipient);
     if (!config) throw new PreparationError("INPUT", "missing selected recipient");
@@ -74,11 +78,11 @@ export async function prepareDomain(input: PreparationInput) {
     input: normalized,
     normalizedHash: fingerprint(canonical(normalized)),
     payloads: {
-      configure: { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt },
+      configure: { independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt },
       independentIssue: { requests },
       harvest: normalized.harvest,
     },
-    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, requests, harvest: normalized.harvest })),
+    payloadHash: fingerprint(canonical({ independent, nfts, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, requests, harvest: normalized.harvest })),
     quoteEvidence: quotes,
     dispositions: dispositions(normalized),
     fullTask9: "open" as const,
@@ -127,6 +131,8 @@ export async function prepareFile(inputPath: string, outputDirectory: string): P
     `${canonical(prepared.payloads.configure.claimVault.map((r) => r.input))}\n`, { flag: "wx" });
   await writeFile(resolve(outputDirectory, "weighted-receipt.json"),
     `${canonical(prepared.payloads.configure.weightedReceipt.map((r) => r.input))}\n`, { flag: "wx" });
+  await writeFile(resolve(outputDirectory, "earlier-receipt.json"),
+    `${canonical(prepared.payloads.configure.earlierReceipt.map((r) => r.input))}\n`, { flag: "wx" });
   // Exclusive creation protects a prior accepted dataset from accidental overwrite.
   // Manifest is the acceptance marker, written only after all review mirrors.
   await writeFile(resolve(outputDirectory, "manifest.json"), `${canonical(prepared)}\n`, { flag: "wx" });

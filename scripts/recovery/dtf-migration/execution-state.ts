@@ -204,20 +204,24 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       }
       break;
     }
+    case "configureEarlierReceiptEntitlements":
     case "configureWeightedReceiptEntitlements":
     case "configureClaimVaultEntitlements": {
       const weightedReceipt = item.method === "configureWeightedReceiptEntitlements";
-      const eventName = weightedReceipt ? "WeightedReceiptEntitlementConfigured" : "ClaimVaultEntitlementConfigured";
+      const earlierReceipt = item.method === "configureEarlierReceiptEntitlements";
+      const eventName = earlierReceipt ? "EarlierReceiptEntitlementConfigured"
+        : weightedReceipt ? "WeightedReceiptEntitlementConfigured" : "ClaimVaultEntitlementConfigured";
       requireEvent(eventName);
       const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
       if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid claim-vault configuration array");
       for (const row of rows) {
         const originalId = String(tuple(row).getValue("originalId"));
         const configs = requirePrepared(domain).payloads.configure;
-        const expected = (weightedReceipt ? configs.weightedReceipt : configs.claimVault)
+        const expected = (earlierReceipt ? configs.earlierReceipt : weightedReceipt ? configs.weightedReceipt : configs.claimVault)
           .find((r) => r.input.originalId === originalId);
         if (!expected) throw new ExecutionError("STATE", "unbound claim-vault configuration");
-        const actual = tuple((await query(weightedReceipt ? "weightedReceiptEntitlement" : "claimVaultEntitlement", [originalId]))[0]);
+        const actual = tuple((await query(earlierReceipt ? "earlierReceiptEntitlement"
+          : weightedReceipt ? "weightedReceiptEntitlement" : "claimVaultEntitlement", [originalId]))[0]);
         if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== expected.configurationId
           || String(actual.getValue("credit")) !== expected.quotedCredit
           || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== expected.input.originalWallet
@@ -227,7 +231,8 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
             && e.values[3] === expected.input.originalUnits && e.values[4] === expected.quotedCredit)) {
           throw new ExecutionError("STATE", "claim-vault payload, storage or event differs");
         }
-        const unspent = tuple((await query(weightedReceipt ? "weightedReceiptSurrender" : "claimVaultSurrender", [originalId]))[0]);
+        const unspent = tuple((await query(earlierReceipt ? "earlierReceiptSurrender"
+          : weightedReceipt ? "weightedReceiptSurrender" : "claimVaultSurrender", [originalId]))[0]);
         if (unspent.getValue("consumedUnits") !== 0n || unspent.getValue("deliveredCredit") !== 0n
           || String(unspent.getValue("remainingUnits")) !== expected.input.originalUnits
           || String(unspent.getValue("remainingCredit")) !== expected.quotedCredit) {
@@ -286,6 +291,8 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
         "MigrationRecoveryDonated"].includes(e.name))) throw new ExecutionError("STATE", "recovery has no economic event");
       const gons = await rpc.call(m.proxy, abis.recovery, "migrationRecoveryGons", [], at);
       state["attributedGons"] = valueString(gons[0]);
+      state["earlierReceiptInternalShares"] = valueString(
+        (await rpc.call(m.proxy, abis.recovery, "migrationEarlierReceiptInternalShares", [], at))[0]);
       for (const token of ["0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0", "0x2e9c1f705ab967c5af59249203d7495bdabb223b", "0xb55604cf4dcdabb362078e106d20f98512391edf", "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
         "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "0xee5576fa1bcaa380e591d01245f406f3f384eb01"]) {
         state[`inventory:${token}`] = valueString((await rpc.call(m.proxy, abis.recovery, "migrationRecoveryInventory", [token], at))[0]);
@@ -375,6 +382,15 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
       || String(actual.getValue("credit")) !== row.quotedCredit
       || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
       throw new ExecutionError("STATE", "weighted receipt configuration mismatch");
+    }
+  }
+  for (const row of prepared.payloads.configure.earlierReceipt) {
+    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "earlierReceiptEntitlement",
+      [row.input.originalId]))[0]);
+    if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== row.configurationId
+      || String(actual.getValue("credit")) !== row.quotedCredit
+      || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
+      throw new ExecutionError("STATE", "earlier receipt configuration mismatch");
     }
   }
   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };

@@ -275,6 +275,37 @@ interface IUniswapV4DetfMigration is
         uint256 remainingCredit;
     }
 
+    /// @notice Documented original ER allocation in exact INTERNAL ownership shares.
+    /// @dev Displayed native18 approval units and floored external shares are not Q0.
+    /// evidenceId binds the original acquisition, eligible/excluded allocation and both
+    /// known original components; a live rate or current balance cannot supply those inputs.
+    struct EarlierReceiptEntitlementInput {
+        bytes32 originalId;
+        address originalWallet;
+        address source;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct EarlierReceiptEntitlement {
+        bool configured;
+        EarlierReceiptEntitlementInput original;
+        bytes32 configurationId;
+        uint256 credit;
+    }
+
+    /// @notice Q/q are internal ER shares; C is frozen native9 new DETF.
+    /// @dev Preserve positive Q/C even when no valid displayed transfer represents Q.
+    struct EarlierReceiptSurrender {
+        uint256 consumedUnits;
+        uint256 deliveredCredit;
+        uint256 remainingUnits;
+        uint256 remainingCredit;
+    }
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -331,6 +362,12 @@ interface IUniswapV4DetfMigration is
     error InvalidWeightedReceiptQuantity(uint256 requestedGons, uint256 remainingGons);
     error WeightedReceiptCustodyFailed();
     error WeightedReceiptIdentityConsumed(bytes32 originalId);
+    error UnsupportedEarlierReceiptSource(uint256 chainId, address source);
+    error InvalidEarlierReceiptEntitlement(bytes32 originalId);
+    error NotOriginalEarlierReceiptWallet(address caller, address originalWallet);
+    error InvalidEarlierReceiptQuantity(uint256 requestedInternalShares, uint256 remainingInternalShares);
+    error EarlierReceiptCustodyFailed();
+    error EarlierReceiptIdentityConsumed(bytes32 originalId);
 
     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
@@ -396,6 +433,25 @@ interface IUniswapV4DetfMigration is
         bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
         uint256 nativeAmount, uint256 eligibleGons, uint256 gonsPerUnit, uint256 credit, uint256 bondTokenId
     );
+
+    event EarlierReceiptEntitlementConfigured(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 originalInternalShares, uint256 credit
+    );
+    event MigrationEarlierReceiptSurrendered(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 nativeAmount, uint256 internalShares, uint256 rate, uint256 credit, uint256 bondTokenId
+    );
+
+    function earlierReceiptEntitlement(bytes32 originalId_) external view returns (EarlierReceiptEntitlement memory);
+    function earlierReceiptSurrender(bytes32 originalId_) external view returns (EarlierReceiptSurrender memory);
+    /// @notice Indicative frozen-credit view; surrender additionally proves the actual transfer rate.
+    function previewEarlierReceiptSurrender(bytes32 originalId_, uint256 nativeAmount_)
+        external view returns (uint256 credit_);
+    /// @notice Stage2 original-wallet approved ER pull; no conversion or inventory debit is admitted.
+    function surrenderMigrationEarlierReceipt(
+        bytes32 originalId_, uint256 nativeAmount_, uint256 minimum_, uint256 deadline_
+    ) external returns (uint256 bondTokenId_, uint256 credit_);
 
     function weightedReceiptEntitlement(bytes32 originalId_) external view returns (WeightedReceiptEntitlement memory);
     function weightedReceiptSurrender(bytes32 originalId_) external view returns (WeightedReceiptSurrender memory);
@@ -501,6 +557,10 @@ interface IUniswapV4DetfMigration is
 /// @dev Only the two admitted NFT sources, weighted liquid, weighted SY and fixed DTF-custody SE; no attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Stage1 complete original internal-share allocation; computes C0 on the frozen book.
+    function configureEarlierReceiptEntitlements(
+        IUniswapV4DetfMigration.EarlierReceiptEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Stage1 complete original-gon allocation and known original components; loading never issues.
     function configureWeightedReceiptEntitlements(
         IUniswapV4DetfMigration.WeightedReceiptEntitlementInput[] calldata inputs_

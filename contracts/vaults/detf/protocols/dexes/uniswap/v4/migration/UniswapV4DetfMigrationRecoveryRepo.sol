@@ -12,6 +12,7 @@ library UniswapV4DetfMigrationRecoveryRepo {
         mapping(address => uint256) inventory;
         uint256 weightedGons;
         mapping(address => mapping(uint256 => Recovery.NftRecovery)) positions;
+        uint256 earlierReceiptInternalShares;
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage s_) {

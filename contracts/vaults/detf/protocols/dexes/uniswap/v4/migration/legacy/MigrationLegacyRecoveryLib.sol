@@ -30,6 +30,92 @@ library MigrationLegacyRecoveryLib {
     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
 
+    struct EarlierReceiptObservation {
+        uint256 rate;
+        uint256 total;
+        uint256 walletShares;
+        uint256 custodyShares;
+        uint256 walletDisplay;
+        uint256 custodyDisplay;
+    }
+
+    function observeEarlierReceipt(address wallet_) private view returns (EarlierReceiptObservation memory o_) {
+        IMigrationEarlierReceipt receipt_ = IMigrationEarlierReceipt(EARLIER_RECEIPT);
+        o_.rate = receipt_.redemptionRate();
+        o_.total = receipt_.totalShares();
+        o_.walletShares = receipt_.sharesOf(wallet_);
+        o_.custodyShares = receipt_.sharesOf(address(this));
+        o_.walletDisplay = IERC20(EARLIER_RECEIPT).balanceOf(wallet_);
+        o_.custodyDisplay = IERC20(EARLIER_RECEIPT).balanceOf(address(this));
+    }
+
+    /// @dev Only authenticated public calls determine q. No internal-share getter or
+    /// displayed-balance cap: the source may transfer one more displayed unit than balanceOf.
+    function pullEarlierReceipt(address wallet_, uint256 nativeAmount_, uint256 remaining_)
+        internal returns (uint256 q_, uint256 rate_)
+    {
+        EarlierReceiptObservation memory before_ = observeEarlierReceipt(wallet_);
+        rate_ = before_.rate;
+        if (rate_ == 0 || nativeAmount_ == 0) revert Migration.EarlierReceiptCustodyFailed();
+        q_ = Math.mulDiv(nativeAmount_, 1e27, rate_);
+        if (q_ == 0 || q_ > remaining_) revert Migration.InvalidEarlierReceiptQuantity(q_, remaining_);
+        if (!IERC20(EARLIER_RECEIPT).transferFrom(wallet_, address(this), nativeAmount_)) {
+            revert Migration.EarlierReceiptCustodyFailed();
+        }
+        EarlierReceiptObservation memory after_ = observeEarlierReceipt(wallet_);
+        requireEarlierReceiptMeasurement(nativeAmount_, q_, before_, after_);
+    }
+
+    /// @dev Endpoint floors bound the ACTUAL internal movement, including both carries.
+    /// Invert that interval using full precision; a singleton proves the transfer's
+    /// intervening rate, which equal pre/post quote reads alone do not establish.
+    /// Checked interval construction, H+1 and lower-bound increment must all fit uint256.
+    function requireEarlierReceiptMeasurement(
+        uint256 nativeAmount_, uint256 q_,
+        EarlierReceiptObservation memory before_, EarlierReceiptObservation memory after_
+    ) internal pure {
+        if (before_.rate == 0 || before_.rate != after_.rate || before_.total != after_.total
+            || after_.walletShares > before_.walletShares || after_.custodyShares < before_.custodyShares
+            || after_.walletDisplay > before_.walletDisplay || after_.custodyDisplay < before_.custodyDisplay) {
+            revert Migration.EarlierReceiptCustodyFailed();
+        }
+        uint256 dw_ = before_.walletShares - after_.walletShares;
+        uint256 dm_ = after_.custodyShares - before_.custodyShares;
+        uint256 floor_ = q_ / 1e9;
+        uint256 ceiling_ = floor_ + (q_ % 1e9 == 0 ? 0 : 1);
+        if (dw_ < floor_ || dw_ > ceiling_ || dm_ < floor_ || dm_ > ceiling_) {
+            revert Migration.EarlierReceiptCustodyFailed();
+        }
+        uint256 max_ = dw_ > dm_ ? dw_ : dm_;
+        uint256 min_ = dw_ < dm_ ? dw_ : dm_;
+        if (max_ == 0) revert Migration.EarlierReceiptCustodyFailed();
+        uint256 low_ = (max_ - 1) * 1e9 + 1;
+        uint256 highPlusOne_ = (min_ + 1) * 1e9;
+        if (low_ >= highPlusOne_) revert Migration.EarlierReceiptCustodyFailed();
+        uint256 rateLow_ = Math.mulDiv(nativeAmount_, 1e27, highPlusOne_) + 1;
+        uint256 rateHigh_ = Math.mulDiv(nativeAmount_, 1e27, low_);
+        if (rateLow_ != before_.rate || rateHigh_ != before_.rate) {
+            revert Migration.EarlierReceiptCustodyFailed();
+        }
+        uint256 displayFloor_ = Math.mulDiv(q_, before_.rate, 1e27);
+        uint256 displayCeiling_ = displayFloor_ + (mulmod(q_, before_.rate, 1e27) == 0 ? 0 : 1);
+        dw_ = before_.walletDisplay - after_.walletDisplay;
+        dm_ = after_.custodyDisplay - before_.custodyDisplay;
+        if (dw_ < displayFloor_ || dw_ > displayCeiling_ || dm_ < displayFloor_ || dm_ > displayCeiling_) {
+            revert Migration.EarlierReceiptCustodyFailed();
+        }
+    }
+
+    /// @dev E remains external NFT-sale shares; B remains standalone internal shares.
+    /// Check the composed internal attribution on both booking routes without changing either unit.
+    function requireEarlierReceiptInventory() internal view {
+        Repo.Storage storage r_ = Repo._layoutStruct();
+        uint256 externalInternal_ = r_.inventory[EARLIER_RECEIPT] * 1e9;
+        if (r_.earlierReceiptInternalShares > type(uint256).max - externalInternal_) {
+            revert Migration.EarlierReceiptCustodyFailed();
+        }
+    }
+
     /// @dev Parent holds its shared guard throughout settlement, measurement and subsequent bond funding.
     /// Role allocations to EITHER endpoint must settle before baselines; they are not surrender.
     function pullWeightedReceipt(address wallet_, uint256 nativeAmount_)
@@ -275,6 +361,7 @@ library MigrationLegacyRecoveryLib {
         Repo.Storage storage r_ = Repo._layoutStruct();
         r_.inventory[EARLIER_DETF] += rewards_;
         r_.inventory[EARLIER_RECEIPT] += shares_;
+        requireEarlierReceiptInventory();
         r_.positions[NftLib.EARLIER][id_].rewardsClaimed += rewards_;
         r_.positions[NftLib.EARLIER][id_].receiptShares = shares_;
         r_.positions[NftLib.EARLIER][id_].sold = true;

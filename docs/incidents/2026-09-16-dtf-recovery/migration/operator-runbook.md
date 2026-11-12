@@ -21,7 +21,7 @@ source SHA-256 and byte lengths, full original proof objects, origin
 partitions, code/domain identities, the complete immutable snapshot and
 separate ETH/DTF frozen quotes. It writes full `independent.json` and
 `nfts.json`, `weighted-liquid.json`, `weighted-sy.json`, `dtf-custody-se.json`,
-`claim-vault.json` and `weighted-receipt.json` review mirrors plus the accepted `manifest.json`. These contain
+`claim-vault.json`, `weighted-receipt.json` and `earlier-receipt.json` review mirrors plus the accepted `manifest.json`. These contain
 configuration, not issued bonds. Every write is exclusive; retain a failed
 directory as failed evidence and select a fresh output directory.
 
@@ -330,7 +330,7 @@ artifacts and dependency links.
 | Weighted liquid DETF | Approved original-wallet Q0/component allocation required; Stage2 correction report records bounded synthetic-input integration |
 | Earlier liquid DETF | H3/H6 original native-unit configuration/surrender absent; ED liquidation unproved |
 | Weighted receipt | Bounded admitted eligible-original-gon mapping and synchronized Stage2 custody; approved operational original allocations remain absent |
-| Earlier receipt | H3/H6 original share denominator/fractional attribution unproved; earlier SE exits disabled |
+| Earlier receipt | Bounded exact internal-share custody/frozen credit within the singleton-rate measurement domain; liquidation remains blocked by disabled ES; operational originals unapproved |
 | Weighted SY | Fixed WY integration is bounded to synthetic original-wallet/static-share/component inputs; approved operational allocations remain absent |
 | TokenStaking raw weight | `reassign` debits caller, with no approved pull or recipient callback; ordinary Migration atomic surrender unsupported |
 | Claim-vault direct shares | Bounded configured direct native19 share support; approved operational original-wallet records remain absent. Indirect weights retain the separate caller restriction |
@@ -532,3 +532,78 @@ The phase15 W-SD archive remains a retained host dependency. Operational
 originals, other source categories, portability, full hermetic/full-plan
 acceptance and target deployment gas remain open; a permissive local node
 does not establish the historical32-million transaction limit is met.
+
+## Earlier ER receipt increment
+
+`earlierReceipt` supplies complete `original` and raw-bound `proof` objects.
+Its original tuple has `originalId`, `originalWallet`, fixed `source`,
+`originalUnits`, explicitly known `originalEth` and `originalDtf`,
+`evidenceId`, and `contributionsKnown: true`. Only chain4663 ER
+`0x4AC89aD061A531FA62ddceED53520C2750113b01` is admitted. Q0/Q/q are exact
+internal ER ownership shares, never displayed native18 or external floor
+shares. Preserve original acquisition input/rate or authenticated mint
+evidence and the eligible/excluded allocation; current holdings cannot
+supply missing originals. Each original's components are quoted once on
+the frozen evaluator, with no supplied award or selectable pricing mode.
+
+Stage1 configuration is owner-only full replacement and idempotent replay,
+without issuance. Canonical origins exclude independent compensation, both
+NFTs, WD, WY, W-SD, direct claim-vault and WS in both directions, including
+wallet corrections. Activation requires the genuine paid first owner bond
+and permanently removes all twelve administration selectors across the two
+removable facets. No Stage1 surrender or Stage2 amendment is available.
+
+`surrenderMigrationEarlierReceipt(originalId,nativeAmount,minimumCredit,deadline)`
+requires the configured original caller and actual displayed-unit allowance.
+Under the shared parent lock, the actual fixed-source approved pull observes
+both endpoints' external shares and displayed balances, positive unchanged
+rate and unchanged total external shares. Full-precision interval inversion
+must prove `rLow == rHigh == r`; equal pre/post rate alone is insufficient.
+Both floor carries are valid, but unresolved, inconsistent, zero and
+overflow measurements revert. There is no exact internal-share getter in
+production and no displayed-balance absolute input cap.
+
+Only measured q consumes remaining frozen Q/C: actual q==Q takes all C,
+otherwise floor(C*q/Q). Positive credit and minimum/deadline protection are
+required. Preserve nonrepresentable Q/C without rounding up, clamping,
+forgiving, clearing display-zero balances or promising future rate movement.
+Each success atomically funds one fresh same-wallet90-day cliff bond.
+Source, credit, funding or receiver failure restores the enclosing transaction;
+an earlier independent approval remains. Later callback donations are unbooked.
+
+`migrationRecoveryInventory(ER)` retains NFT-sale external-share inventory E.
+`migrationEarlierReceiptInternalShares()` separately returns standalone B.
+Its whole external representation is B/1e9 and fractional internal
+representation is B%1e9. Total booked internal ownership is checked E*1e9+B.
+Never add B directly to E. Both NFT/standalone arrival orders retain unrelated
+internal fractions.
+
+Custody/credit is available; liquidation is blocked. There is no new ER
+conversion, debit or donation recovery stage. Retain the actual direct ER
+and parent ED `VaultDisabled(ES)` failures and historical labels. No
+governance enablement, arbitrary executor or success decoder is supplied.
+
+Use the current phase18 worktree at base
+`acdbe319f3a20c3af6bea594c62461b6c7988717`:
+
+```sh
+bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18568 \
+  --checkpoint .omo-runtime/dtf-migration-earlier-receipt/checkpoints \
+  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/runtime
+```
+
+The prior18567 invocation and all previous routes/resumes remain accepted.
+New signing remains restricted to the owned fixed loopback rehearsals.
+The CLI binds both immutable admission documents and genuine ER acquisition;
+its original ETH0.01 then ETH0.006 replacement and known DTF0 are synthetic
+code-proof components, not operational awards. It retains signed ER bytes,
+raw receipts, actual Migration Q/C/B/E and fresh bond observations together
+with all three mined-before-checkpoint donation/issuance/owner-purchase resumes.
+Keep failed attempts and source/admission evidence unchanged.
+
+The retained phase15 archive dependency, legacy source-match qualifications,
+operational originals, opaque-origin reconciliation, other blocked sources,
+host portability, full hermetic/full-plan acceptance and target gas remain
+open. Prior parent deployment44,353,454 gas exceeds32million; the new
+rehearsal's permissive node does not convert that finding into target acceptance.

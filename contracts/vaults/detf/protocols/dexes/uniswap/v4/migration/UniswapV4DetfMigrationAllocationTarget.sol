@@ -81,6 +81,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     || m_.dtfCustodySeEntitlements[original_.entitlementId].configured
                     || m_.claimVaultEntitlements[original_.entitlementId].configured
                     || m_.weightedReceiptEntitlements[original_.entitlementId].configured
+                    || m_.earlierReceiptEntitlements[original_.entitlementId].configured
                     || (issuedTo_ != address(0) && issuedTo_ != input_.recipient)) {
                     revert Migration.DuplicateOriginalEntitlement(original_.entitlementId);
                 }
@@ -127,7 +128,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                     revert Migration.DuplicateOriginalEntitlement(originalId_);
                 }
                 if (m_.claimVaultEntitlements[originalId_].configured
-                    || m_.weightedReceiptEntitlements[originalId_].configured) {
+                    || m_.weightedReceiptEntitlements[originalId_].configured
+                    || m_.earlierReceiptEntitlements[originalId_].configured) {
                     revert Migration.DuplicateOriginalEntitlement(originalId_);
                 }
                 m_.issuedOriginal[originalId_] = recipient_;
@@ -159,7 +161,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             if (m_.claimVaultEntitlements[original_].configured
-                || m_.weightedReceiptEntitlements[original_].configured) {
+                || m_.weightedReceiptEntitlements[original_].configured
+                || m_.earlierReceiptEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
@@ -281,7 +284,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
             || (source_ != Legacy.WEIGHTED_SY && m_.weightedSyEntitlements[original_].configured)
             || (source_ != Legacy.DTF_CUSTODY_SE && m_.dtfCustodySeEntitlements[original_].configured)
             || (source_ != Legacy.CLAIM_VAULT && m_.claimVaultEntitlements[original_].configured)
-            || m_.weightedReceiptEntitlements[original_].configured) {
+            || m_.weightedReceiptEntitlements[original_].configured
+            || m_.earlierReceiptEntitlements[original_].configured) {
             revert Migration.DuplicateOriginalEntitlement(original_);
         }
     }
@@ -305,7 +309,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](11);
+        selectors_ = new bytes4[](12);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
@@ -317,6 +321,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         selectors_[8] = Allocation.configureDtfCustodySeEntitlements.selector;
         selectors_[9] = Allocation.configureClaimVaultEntitlements.selector;
         selectors_[10] = Allocation.configureWeightedReceiptEntitlements.selector;
+        selectors_[11] = Allocation.configureEarlierReceiptEntitlements.selector;
     }
 
     function bootstrapMigrationReserve(

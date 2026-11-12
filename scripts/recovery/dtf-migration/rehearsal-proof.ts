@@ -1,12 +1,49 @@
 import { readFile, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { join, basename } from "node:path";
+import { keccak256 } from "ethers";
 import { z } from "zod";
 import { canonical, fingerprint } from "./provenance.js";
 import { completion, intent, ExecutionError } from "./execution-schema.js";
 import type { Intent, Receipt } from "./execution-schema.js";
 import type { PreparationInput } from "./schema.js";
+import { address, hex } from "./schema.js";
 import type { RehearsalChain } from "./rehearsal-chain.js";
 import { save } from "./rehearsal-data.js";
+
+/** Capture actual transitive library runtimes at the addresses linked into deployed code. */
+export async function captureLinkedLibraries(
+  chain: RehearsalChain, facets: readonly { readonly name: string; readonly code: string }[], evidence: string,
+) {
+  const references = z.object({ deployedBytecode: z.object({ linkReferences:
+    z.record(z.string(), z.record(z.string(), z.array(z.object({ start: z.number(), length: z.literal(20) })))).default({}),
+  }).passthrough() }).passthrough();
+  const pending = facets.map((facet) => ({ ...facet, source: `${facet.name}.sol` }));
+  const libraries = new Map<string, { address: string; name: string; source: string; code: string; codeHash: string }>();
+  for (let index = 0; index < pending.length; index++) {
+    const consumer = pending[index];
+    if (!consumer) throw new ExecutionError("STATE", "missing runtime consumer");
+    const artifact = references.parse(JSON.parse(await readFile(
+      join("out", basename(consumer.source), `${consumer.name}.json`), "utf8")));
+    for (const [source, names] of Object.entries(artifact.deployedBytecode.linkReferences)) {
+      for (const [name, slots] of Object.entries(names)) for (const slot of slots) {
+        const linked = address.parse(`0x${consumer.code.slice(2 + slot.start * 2, 2 + (slot.start + slot.length) * 2)}`);
+        const prior = libraries.get(linked);
+        if (prior) {
+          if (prior.name !== name || prior.source !== source) throw new ExecutionError("STATE", "library identity conflict");
+          continue;
+        }
+        const code = hex.parse(await chain.send("eth_getCode", [linked, "latest"]));
+        if (code === "0x" || (code.length - 2) / 2 > 24576) {
+          throw new ExecutionError("STATE", "linked library is missing or exceeds EIP170");
+        }
+        const library = { address: linked, name, source, code, codeHash: keccak256(code) };
+        libraries.set(linked, library);
+        pending.push(library);
+      }
+    }
+  }
+  await save(join(evidence, "linked-library-runtime.json"), [...libraries.values()]);
+}
 
 export async function interruptedReceipt(chain: RehearsalChain, checkpoint: string, evidence: string) {
   const files = await readdir(checkpoint);
@@ -71,11 +108,12 @@ export async function checkPreparation(context: {
     dtfCustodySe: [...input.dtfCustodySe].reverse(),
     claimVault: [...input.claimVault].reverse(),
     weightedReceipt: [...input.weightedReceipt].reverse(),
+    earlierReceipt: [...input.earlierReceipt].reverse(),
     issueRecipients: [...input.issueRecipients].reverse(),
     domain: { ...input.domain, bindings: [...input.domain.bindings].reverse() } });
   await cli(["prepare", "--input", path, "--output", join(evidence, "prepared-reordered")]);
   const outputs = [];
-  for (const name of ["manifest.json", "independent.json", "nfts.json", "weighted-liquid.json", "weighted-sy.json", "dtf-custody-se.json", "claim-vault.json", "weighted-receipt.json"]) {
+  for (const name of ["manifest.json", "independent.json", "nfts.json", "weighted-liquid.json", "weighted-sy.json", "dtf-custody-se.json", "claim-vault.json", "weighted-receipt.json", "earlier-receipt.json"]) {
     const original = await readFile(join(evidence, "prepared", name));
     const reordered = await readFile(join(evidence, "prepared-reordered", name));
     if (!original.equals(reordered)) throw new ExecutionError("STATE", "preparation depends on input order");

@@ -16,12 +16,13 @@ import {IUniswapV4DetfMigration as Migration} from
 import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {MigrationHostileContribution} from "./MigrationHostileContribution.t.sol";
 
 /// @notice Hermetic surface/authority and callback negatives; source successes belong to the real fork.
 contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
     function test_recoveryDeclarationAndProxySurviveActivation() public {
-        bytes4[] memory selectors_ = new bytes4[](12);
+        bytes4[] memory selectors_ = new bytes4[](17);
         selectors_[0] = Recovery.recoverMigrationNfts.selector;
         selectors_[1] = Recovery.migrationRecoveryInventory.selector;
         selectors_[2] = Recovery.migrationRecoveryGons.selector;
@@ -34,6 +35,11 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
         selectors_[9] = Migration.weightedReceiptSurrender.selector;
         selectors_[10] = Migration.previewWeightedReceiptSurrender.selector;
         selectors_[11] = Migration.surrenderMigrationWeightedReceipt.selector;
+        selectors_[12] = Recovery.migrationEarlierReceiptInternalShares.selector;
+        selectors_[13] = Migration.earlierReceiptEntitlement.selector;
+        selectors_[14] = Migration.earlierReceiptSurrender.selector;
+        selectors_[15] = Migration.previewEarlierReceiptSurrender.selector;
+        selectors_[16] = Migration.surrenderMigrationEarlierReceipt.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(selectors_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, selectors_, facet_.facetFuncs()));
         bytes4[] memory interfaces_ = new bytes4[](1);
@@ -50,6 +56,7 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
         assertTrue(IERC165(detf).supportsInterface(type(Recovery).interfaceId));
         assertEq(Recovery(detf).migrationRecoveryInventory(Legacy.DTF), 0);
         assertEq(Recovery(detf).migrationRecoveryGons(), 0);
+        assertEq(Recovery(detf).migrationEarlierReceiptInternalShares(), 0);
         assertFalse(Recovery(detf).migrationNftRecovery(address(1), 3).sold);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
         Recovery(detf).recoverMigrationNfts(new Recovery.Step[](0), block.timestamp);
@@ -101,6 +108,62 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
 
     function checkGonDebit(uint256 before_, uint256 after_, uint256 attributed_) external pure returns (uint256) {
         return Legacy.requireGonDebit(before_, after_, attributed_);
+    }
+
+    /// @notice Supplemental arithmetic vectors; no source balance, state or rate is fabricated.
+    function checkEarlierMeasurement(
+        uint256 n_, uint256 q_, Legacy.EarlierReceiptObservation calldata before_,
+        Legacy.EarlierReceiptObservation calldata after_
+    ) external pure { Legacy.requireEarlierReceiptMeasurement(n_, q_, before_, after_); }
+
+    function _observation(uint256 r_, uint256 wallet_, uint256 custody_)
+        private pure returns (Legacy.EarlierReceiptObservation memory)
+    {
+        return Legacy.EarlierReceiptObservation(
+            r_, 1, wallet_ / 1e9, custody_ / 1e9,
+            Math.mulDiv(wallet_, r_, 1e27), Math.mulDiv(custody_, r_, 1e27)
+        );
+    }
+
+    function test_earlierSingletonUsesFullPrecisionBeyondUintProduct() public pure {
+        uint256 q_ = 1 << 200;
+        Legacy.requireEarlierReceiptMeasurement(
+            q_, q_, _observation(1e27, q_ + 7, 6), _observation(1e27, 7, q_ + 6)
+        );
+    }
+
+    function test_earlierUnresolvedRateAndZeroExternalDeltaReject() public {
+        vm.expectRevert(Migration.EarlierReceiptCustodyFailed.selector);
+        this.checkEarlierMeasurement(1e18, 1e18, _observation(1e27, 1e18, 0), _observation(1e27, 0, 1e18));
+        vm.expectRevert(Migration.EarlierReceiptCustodyFailed.selector);
+        this.checkEarlierMeasurement(1, 1, _observation(1e27, 1, 0), _observation(1e27, 0, 1));
+    }
+
+    function test_earlierRateSupplyAndDisplayedInconsistencyReject() public {
+        uint256 q_ = uint256(1e27) / 2197;
+        Legacy.EarlierReceiptObservation memory before_ = _observation(2197, q_ * 4, 0);
+        Legacy.EarlierReceiptObservation memory after_ = _observation(2197, q_ * 3, q_);
+        after_.rate += 1;
+        vm.expectRevert(Migration.EarlierReceiptCustodyFailed.selector);
+        this.checkEarlierMeasurement(1, q_, before_, after_);
+        after_.rate -= 1; after_.total += 1;
+        vm.expectRevert(Migration.EarlierReceiptCustodyFailed.selector);
+        this.checkEarlierMeasurement(1, q_, before_, after_);
+        after_.total -= 1; after_.walletDisplay = 0;
+        vm.expectRevert(Migration.EarlierReceiptCustodyFailed.selector);
+        this.checkEarlierMeasurement(1, q_, before_, after_);
+    }
+
+    function test_earlierIntervalMultiplicationAndInverseIncrementCannotWrap() public {
+        uint256 d_ = type(uint256).max / 1e9;
+        Legacy.EarlierReceiptObservation memory before_ = Legacy.EarlierReceiptObservation(1, 1, d_, 0, 1, 0);
+        Legacy.EarlierReceiptObservation memory after_ = Legacy.EarlierReceiptObservation(1, 1, 0, d_, 0, 1);
+        vm.expectRevert(abi.encodeWithSignature("Panic(uint256)", 0x11));
+        this.checkEarlierMeasurement(1, d_ * 1e9, before_, after_);
+        d_ = 1e18 - 1;
+        before_.walletShares = d_; after_.custodyShares = d_;
+        vm.expectRevert(abi.encodeWithSignature("Panic(uint256)", 0x11));
+        this.checkEarlierMeasurement(type(uint256).max, d_ * 1e9, before_, after_);
     }
 }
 

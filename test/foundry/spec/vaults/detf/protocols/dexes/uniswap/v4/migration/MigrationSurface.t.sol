@@ -53,9 +53,10 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
         IFacet direct_ = IFacet(IDiamondLoupe(detf).facetAddress(Allocation.configureClaimVaultEntitlements.selector));
-        bytes4[] memory directSelectors_ = new bytes4[](2);
+        bytes4[] memory directSelectors_ = new bytes4[](3);
         directSelectors_[0] = Allocation.configureClaimVaultEntitlements.selector;
         directSelectors_[1] = Allocation.configureWeightedReceiptEntitlements.selector;
+        directSelectors_[2] = Allocation.configureEarlierReceiptEntitlements.selector;
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(direct_, directSelectors_, direct_.facetFuncs()));
         _fundAndCapture();
         _buyOwnerFirstBond();
@@ -73,6 +74,7 @@ contract MigrationSurfaceTest is TestBase_UniswapV4DetfMigration {
         for (uint256 i_; i_ < expected_.length; ++i_) assertEq(IDiamondLoupe(detf).facetAddress(expected_[i_]), address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureClaimVaultEntitlements.selector), address(0));
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedReceiptEntitlements.selector), address(0));
+        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureEarlierReceiptEntitlements.selector), address(0));
     }
 
     function test_realTokenUriNumericCliffBoundaries() public {

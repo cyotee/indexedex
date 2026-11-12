@@ -65,4 +65,6 @@ interface IMigrationEarlierSale {
 
 interface IMigrationEarlierReceipt {
     function sharesOf(address account_) external view returns (uint256);
+    function totalShares() external view returns (uint256);
+    function redemptionRate() external view returns (uint256);
 }

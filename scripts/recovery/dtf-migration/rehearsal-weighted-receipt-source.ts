@@ -20,7 +20,7 @@ export const wsWallet = (index = 117) => HDNodeWallet.fromPhrase(
 export async function signWs(chain: RehearsalChain, evidence: string, request: {
   readonly to: string; readonly data: string; readonly index?: number; readonly status?: bigint;
 }) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || chain.endpoint.port !== "18567") {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "WS signed fixture requires the fixed owned18567 node");
   }
   const wallet = wsWallet(request.index);
