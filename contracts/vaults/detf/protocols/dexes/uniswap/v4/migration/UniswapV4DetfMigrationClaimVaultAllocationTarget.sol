@@ -36,7 +36,8 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
             if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
                 || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured
                 || m_.weightedSyEntitlements[original_].configured
-                || m_.dtfCustodySeEntitlements[original_].configured) {
+                || m_.dtfCustodySeEntitlements[original_].configured
+                || m_.weightedReceiptEntitlements[original_].configured) {
                 revert Migration.DuplicateOriginalEntitlement(original_);
             }
             Migration.ClaimVaultSurrender storage surrender_ = m_.claimVaultSurrenders[original_];
@@ -54,4 +55,41 @@ contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrat
         }
     }
 
+    function configureWeightedReceiptEntitlements(Migration.WeightedReceiptEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        for (uint256 i_; i_ < inputs_.length; ++i_) {
+            Migration.WeightedReceiptEntitlementInput calldata input_ = inputs_[i_];
+            if (block.chainid != 4663 || input_.source != Legacy.WEIGHTED_RECEIPT) {
+                revert Migration.UnsupportedWeightedReceiptSource(block.chainid, input_.source);
+            }
+            bytes32 original_ = input_.originalId;
+            if (original_ == bytes32(0) || input_.originalWallet == address(0)
+                || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
+                revert Migration.InvalidWeightedReceiptEntitlement(original_);
+            }
+            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
+                || m_.nftOriginal[original_] || m_.weightedLiquidEntitlements[original_].configured
+                || m_.weightedSyEntitlements[original_].configured
+                || m_.dtfCustodySeEntitlements[original_].configured
+                || m_.claimVaultEntitlements[original_].configured) {
+                revert Migration.DuplicateOriginalEntitlement(original_);
+            }
+            Migration.WeightedReceiptSurrender storage surrender_ = m_.weightedReceiptSurrenders[original_];
+            if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
+                revert Migration.WeightedReceiptIdentityConsumed(original_);
+            }
+            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
+            m_.weightedReceiptEntitlements[original_] =
+                Migration.WeightedReceiptEntitlement(true, input_, config_, credit_);
+            surrender_.remainingUnits = input_.originalUnits;
+            surrender_.remainingCredit = credit_;
+            emit Migration.WeightedReceiptEntitlementConfigured(
+                original_, config_, input_.originalWallet, input_.originalUnits, credit_
+            );
+        }
+    }
 }

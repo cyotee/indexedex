@@ -15,6 +15,7 @@ import {UniswapV4DetfRepo as ParentRepo} from "../detf/UniswapV4DetfRepo.sol";
 import {UniswapV4DetfMigrationPolicy} from "./UniswapV4DetfMigrationPolicy.sol";
 import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
+import {IMigrationWeightedReceipt} from "./legacy/IMigrationLegacyRecovery.sol";
 
 /// @notice Selected recovery remains available after activation and follows actual Crane ownership.
 contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, Recovery {
@@ -31,6 +32,82 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
 
     function migrationNftRecovery(address collection_, uint256 tokenId_) external view returns (NftRecovery memory) {
         return Repo._layoutStruct().positions[collection_][tokenId_];
+    }
+
+    function weightedReceiptEntitlement(bytes32 originalId_)
+        external view returns (Migration.WeightedReceiptEntitlement memory)
+    { return MigrationRepo._layoutStruct().weightedReceiptEntitlements[originalId_]; }
+
+    function weightedReceiptSurrender(bytes32 originalId_)
+        external view returns (Migration.WeightedReceiptSurrender memory)
+    { return MigrationRepo._layoutStruct().weightedReceiptSurrenders[originalId_]; }
+
+    function previewWeightedReceiptSurrender(bytes32 originalId_, uint256 nativeAmount_)
+        external view returns (uint256 credit_)
+    {
+        _requireWeightedReceipt(originalId_);
+        uint256 k_ = IMigrationWeightedReceipt(Legacy.WEIGHTED_RECEIPT).stakingState().gonsPerUnit;
+        if (k_ == 0) revert Migration.WeightedReceiptCustodyFailed();
+        return _weightedReceiptCredit(originalId_, nativeAmount_ * k_);
+    }
+
+    function surrenderMigrationWeightedReceipt(
+        bytes32 originalId_, uint256 nativeAmount_, uint256 minimum_, uint256 deadline_
+    ) external nonReentrant returns (uint256 bondTokenId_, uint256 credit_) {
+        if (!MigrationRepo._layoutStruct().activated) revert Migration.MigrationSurrenderClosed();
+        _requireIdleChildren();
+        _requireNotDisabled();
+        _requireReserveLive();
+        if (block.timestamp > deadline_) revert ParentRepo.DeadlineExpired(deadline_);
+        _requireWeightedReceipt(originalId_);
+        MigrationRepo.Storage storage m_ = MigrationRepo._layoutStruct();
+        Migration.WeightedReceiptEntitlement storage config_ = m_.weightedReceiptEntitlements[originalId_];
+        if (msg.sender != config_.original.originalWallet) {
+            revert Migration.NotOriginalWeightedReceiptWallet(msg.sender, config_.original.originalWallet);
+        }
+        Migration.WeightedReceiptSurrender storage s_ = m_.weightedReceiptSurrenders[originalId_];
+        if (nativeAmount_ == 0 || s_.remainingUnits == 0 || s_.remainingCredit == 0) {
+            revert Migration.InvalidWeightedReceiptEntitlement(originalId_);
+        }
+        // Protected WD settlement is inside the same reverting operation and BEFORE both
+        // endpoint baselines. WS's own synchronization must not change the measured divisor.
+        (uint256 q_, uint256 k_) = Legacy.pullWeightedReceipt(msg.sender, nativeAmount_);
+        credit_ = _weightedReceiptCredit(originalId_, q_);
+        if (credit_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, credit_);
+        s_.consumedUnits += q_;
+        s_.deliveredCredit += credit_;
+        s_.remainingUnits -= q_;
+        s_.remainingCredit -= credit_;
+        Repo.Storage storage r_ = Repo._layoutStruct();
+        Repo._reconcileWeighted(r_, Legacy.WEIGHTED_RECEIPT, k_);
+        r_.weightedGons += q_;
+        r_.inventory[Legacy.WEIGHTED_RECEIPT] += nativeAmount_;
+        _realizeExpansionIfNeeded();
+        bondTokenId_ = MigrationRepo._fundBond(credit_, msg.sender);
+        _syncAllExpectedHoldReserves();
+        emit Migration.MigrationWeightedReceiptSurrendered(
+            originalId_, config_.configurationId, msg.sender, nativeAmount_, q_, k_, credit_, bondTokenId_
+        );
+    }
+
+    function _requireWeightedReceipt(bytes32 originalId_) private view {
+        Migration.WeightedReceiptEntitlement storage config_ =
+            MigrationRepo._layoutStruct().weightedReceiptEntitlements[originalId_];
+        if (!config_.configured) revert Migration.InvalidWeightedReceiptEntitlement(originalId_);
+        if (block.chainid != 4663 || config_.original.source != Legacy.WEIGHTED_RECEIPT) {
+            revert Migration.UnsupportedWeightedReceiptSource(block.chainid, config_.original.source);
+        }
+    }
+
+    function _weightedReceiptCredit(bytes32 originalId_, uint256 q_) private view returns (uint256 credit_) {
+        Migration.WeightedReceiptSurrender storage s_ =
+            MigrationRepo._layoutStruct().weightedReceiptSurrenders[originalId_];
+        if (q_ == 0 || q_ > s_.remainingUnits) {
+            revert Migration.InvalidWeightedReceiptQuantity(q_, s_.remainingUnits);
+        }
+        credit_ = q_ == s_.remainingUnits
+            ? s_.remainingCredit : Math.mulDiv(s_.remainingCredit, q_, s_.remainingUnits);
+        if (credit_ == 0) revert Migration.InvalidWeightedReceiptEntitlement(originalId_);
     }
 
     function recoverMigrationNfts(Step[] calldata steps_, uint256 deadline_) external nonReentrant {

@@ -15,6 +15,11 @@ interface IMigrationWeightedClaims {
     function claimRewards(uint256 tokenId_, address recipient_) external returns (uint256);
 }
 
+/// @notice Historical WD settlement called before either WS custody baseline.
+interface IMigrationWeightedSynchronization {
+    function synchronizeRewards() external;
+}
+
 interface IMigrationWeightedReceipt is IMigrationLegacyExchange {
     struct StakingState {
         uint256 totalGons;

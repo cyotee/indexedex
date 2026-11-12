@@ -150,6 +150,7 @@ export async function fixture() {
     weightedSy: [{ original: sy, proof: { sourceId: "proof", pointer: "/originals/4" } }],
     dtfCustodySe: [{ original: custodySe, proof: { sourceId: "proof", pointer: "/originals/5" } }],
     claimVault: [{ original: claim, proof: { sourceId: "proof", pointer: "/originals/6" } }],
+    weightedReceipt: [],
     issueRecipients: [a(20)], harvest: { steps: [], deadline: "0" },
   });
   return { root, input, changes, methods, evidencePath, async close() {

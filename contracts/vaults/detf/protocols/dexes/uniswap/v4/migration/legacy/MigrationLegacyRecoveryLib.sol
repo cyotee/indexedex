@@ -11,7 +11,8 @@ import {UniswapV4DetfMigrationRecoveryRepo as Repo} from "../UniswapV4DetfMigrat
 import {IMigrationLegacyNft, IMigrationWeightedNft, IMigrationEarlierNft} from "./IMigrationLegacyNft.sol";
 import {MigrationLegacyNftLib as NftLib} from "./MigrationLegacyNftLib.sol";
 import {
-    IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationWeightedSy, IMigrationLegacyExchange,
+    IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationWeightedSynchronization,
+    IMigrationWeightedSy, IMigrationLegacyExchange,
     IMigrationDtfCustodySe, IMigrationClaimVault,
     IMigrationEarlierClaims, IMigrationEarlierSale, IMigrationEarlierReceipt
 } from "./IMigrationLegacyRecovery.sol";
@@ -28,6 +29,34 @@ library MigrationLegacyRecoveryLib {
     address internal constant EARLIER_DETF = 0xaf0E1967c8F755c747615c5427108Bc549CA1122;
     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
+
+    /// @dev Parent holds its shared guard throughout settlement, measurement and subsequent bond funding.
+    /// Role allocations to EITHER endpoint must settle before baselines; they are not surrender.
+    function pullWeightedReceipt(address wallet_, uint256 nativeAmount_)
+        internal returns (uint256 receivedGons_, uint256 k_)
+    {
+        IMigrationWeightedSynchronization(WEIGHTED_DETF).synchronizeRewards();
+        IMigrationWeightedReceipt receipt_ = IMigrationWeightedReceipt(WEIGHTED_RECEIPT);
+        IERC20 token_ = IERC20(WEIGHTED_RECEIPT);
+        k_ = receipt_.stakingState().gonsPerUnit;
+        uint256 walletGons_ = receipt_.gonsOf(wallet_);
+        uint256 custodyGons_ = receipt_.gonsOf(address(this));
+        if (k_ == 0 || token_.balanceOf(wallet_) != walletGons_ / k_
+            || token_.balanceOf(address(this)) != custodyGons_ / k_) {
+            revert Migration.WeightedReceiptCustodyFailed();
+        }
+        receivedGons_ = nativeAmount_ * k_;
+        token_.safeTransferFrom(wallet_, address(this), nativeAmount_);
+        uint256 walletAfter_ = receipt_.gonsOf(wallet_);
+        uint256 custodyAfter_ = receipt_.gonsOf(address(this));
+        if (receipt_.stakingState().gonsPerUnit != k_
+            || walletAfter_ > walletGons_ || walletGons_ - walletAfter_ != receivedGons_
+            || custodyAfter_ < custodyGons_ || custodyAfter_ - custodyGons_ != receivedGons_
+            || token_.balanceOf(wallet_) != walletAfter_ / k_
+            || token_.balanceOf(address(this)) != custodyAfter_ / k_) {
+            revert Migration.WeightedReceiptCustodyFailed();
+        }
+    }
 
     function requireCustody(address collection_, uint256 id_) internal view returns (uint256 original_) {
         NftLib.requireSource(collection_);

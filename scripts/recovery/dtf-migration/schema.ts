@@ -53,6 +53,9 @@ export const weightedLiquidOriginal = z.object({
 export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
 export const weightedSyOriginal = weightedLiquidOriginal;
 export const weightedSy = z.object({ original: weightedSyOriginal, proof }).strict().readonly();
+// Q0 is documented eligible original ownership gons, not native9 WS or a live balance.
+export const weightedReceiptOriginal = weightedLiquidOriginal;
+export const weightedReceipt = z.object({ original: weightedReceiptOriginal, proof }).strict().readonly();
 export const claimVaultOriginal = weightedLiquidOriginal;
 export const claimVault = z.object({ original: claimVaultOriginal, proof }).strict().readonly();
 export const dtfCustodySeOriginal = weightedLiquidOriginal;
@@ -116,6 +119,7 @@ export const preparationInput = z.object({
   weightedSy: z.array(weightedSy).readonly(),
   dtfCustodySe: z.array(dtfCustodySe).readonly(),
   claimVault: z.array(claimVault).readonly(),
+  weightedReceipt: z.array(weightedReceipt).readonly(),
   issueRecipients: z.array(address).readonly(),
   harvest: z.object({
     steps: z.array(recoveryStep).max(8).readonly(),
@@ -130,6 +134,7 @@ export type Original = z.infer<typeof original>;
 export type NftOriginal = z.infer<typeof nftOriginal>;
 export type WeightedLiquidOriginal = z.infer<typeof weightedLiquidOriginal>;
 export type WeightedSyOriginal = z.infer<typeof weightedSyOriginal>;
+export type WeightedReceiptOriginal = z.infer<typeof weightedReceiptOriginal>;
 export type ClaimVaultOriginal = z.infer<typeof claimVaultOriginal>;
 export type DtfCustodySeOriginal = z.infer<typeof dtfCustodySeOriginal>;
 export type RecoveryStep = z.infer<typeof recoveryStep>;

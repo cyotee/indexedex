@@ -243,6 +243,38 @@ interface IUniswapV4DetfMigration is
         uint256 remainingCredit;
     }
 
+    /// @notice One documented original WS allocation; originalUnits is Q0 in eligible ownership GONS.
+    /// @dev Native approvals/transfers have nine decimals and move n*k gons at the synchronized
+    /// operation divisor. Q0 is supplied from original allocation evidence, never a live balance
+    /// or an invented original divisor. Original ETH/DTF grouping excludes reward allocations.
+    struct WeightedReceiptEntitlementInput {
+        bytes32 originalId;
+        address originalWallet;
+        address source;
+        uint256 originalUnits;
+        uint256 originalEth;
+        uint256 originalDtf;
+        bytes32 evidenceId;
+        bool contributionsKnown;
+    }
+
+    struct WeightedReceiptEntitlement {
+        bool configured;
+        WeightedReceiptEntitlementInput original;
+        bytes32 configurationId;
+        uint256 credit;
+    }
+
+    /// @notice Remaining/consumed units are eligible gons; credit is frozen native9 new DETF.
+    /// @dev Positive Q/C may be unrepresentable by any positive native transfer at the current k.
+    /// Preserve both without forfeiture, ceiling-up custody or a promise of future representability.
+    struct WeightedReceiptSurrender {
+        uint256 consumedUnits;
+        uint256 deliveredCredit;
+        uint256 remainingUnits;
+        uint256 remainingCredit;
+    }
+
     /// @notice One selected representation of an external reserve leg, funded from booked donations.
     /// @dev amount is native token units; minSharesOut is native units of that leg's SE shares.
     /// The self leg is generated internally and must not be supplied in this array.
@@ -293,6 +325,12 @@ interface IUniswapV4DetfMigration is
     error InvalidClaimVaultQuantity(uint256 requested, uint256 remaining);
     error ClaimVaultCustodyFailed();
     error ClaimVaultIdentityConsumed(bytes32 originalId);
+    error UnsupportedWeightedReceiptSource(uint256 chainId, address source);
+    error InvalidWeightedReceiptEntitlement(bytes32 originalId);
+    error NotOriginalWeightedReceiptWallet(address caller, address originalWallet);
+    error InvalidWeightedReceiptQuantity(uint256 requestedGons, uint256 remainingGons);
+    error WeightedReceiptCustodyFailed();
+    error WeightedReceiptIdentityConsumed(bytes32 originalId);
 
     event MigrationCapitalReceived(address indexed donor, address indexed token, uint256 amount);
     event MigrationCapitalConsumed(address indexed token, uint256 amount);
@@ -349,6 +387,25 @@ interface IUniswapV4DetfMigration is
         bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
         uint256 units, uint256 credit, uint256 bondTokenId
     );
+
+    event WeightedReceiptEntitlementConfigured(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 originalGons, uint256 credit
+    );
+    event MigrationWeightedReceiptSurrendered(
+        bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
+        uint256 nativeAmount, uint256 eligibleGons, uint256 gonsPerUnit, uint256 credit, uint256 bondTokenId
+    );
+
+    function weightedReceiptEntitlement(bytes32 originalId_) external view returns (WeightedReceiptEntitlement memory);
+    function weightedReceiptSurrender(bytes32 originalId_) external view returns (WeightedReceiptSurrender memory);
+    /// @notice Indicative view at the current divisor; does not synchronize the legacy source.
+    function previewWeightedReceiptSurrender(bytes32 originalId_, uint256 nativeAmount_)
+        external view returns (uint256 credit_);
+    /// @notice Stage2 original-wallet native9 approved pull; consume only exact n*k eligible gons.
+    function surrenderMigrationWeightedReceipt(
+        bytes32 originalId_, uint256 nativeAmount_, uint256 minimum_, uint256 deadline_
+    ) external returns (uint256 bondTokenId_, uint256 credit_);
 
     function claimVaultEntitlement(bytes32 originalId_) external view returns (ClaimVaultEntitlement memory);
     function claimVaultSurrender(bytes32 originalId_) external view returns (ClaimVaultSurrender memory);
@@ -444,6 +501,10 @@ interface IUniswapV4DetfMigration is
 /// @dev Only the two admitted NFT sources, weighted liquid, weighted SY and fixed DTF-custody SE; no attribution shortcut or price setter.
 /// Do not place permanent reads on the implementing allocation facet.
 interface IUniswapV4DetfMigrationAllocation {
+    /// @notice Stage1 complete original-gon allocation and known original components; loading never issues.
+    function configureWeightedReceiptEntitlements(
+        IUniswapV4DetfMigration.WeightedReceiptEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Stage1 complete original-wallet direct-share configuration; no raw-weight authority or issuance.
     function configureClaimVaultEntitlements(
         IUniswapV4DetfMigration.ClaimVaultEntitlementInput[] calldata inputs_

@@ -204,25 +204,30 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       }
       break;
     }
+    case "configureWeightedReceiptEntitlements":
     case "configureClaimVaultEntitlements": {
-      requireEvent("ClaimVaultEntitlementConfigured");
+      const weightedReceipt = item.method === "configureWeightedReceiptEntitlements";
+      const eventName = weightedReceipt ? "WeightedReceiptEntitlementConfigured" : "ClaimVaultEntitlementConfigured";
+      requireEvent(eventName);
       const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
       if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid claim-vault configuration array");
       for (const row of rows) {
         const originalId = String(tuple(row).getValue("originalId"));
-        const expected = requirePrepared(domain).payloads.configure.claimVault.find((r) => r.input.originalId === originalId);
+        const configs = requirePrepared(domain).payloads.configure;
+        const expected = (weightedReceipt ? configs.weightedReceipt : configs.claimVault)
+          .find((r) => r.input.originalId === originalId);
         if (!expected) throw new ExecutionError("STATE", "unbound claim-vault configuration");
-        const actual = tuple((await query("claimVaultEntitlement", [originalId]))[0]);
+        const actual = tuple((await query(weightedReceipt ? "weightedReceiptEntitlement" : "claimVaultEntitlement", [originalId]))[0]);
         if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== expected.configurationId
           || String(actual.getValue("credit")) !== expected.quotedCredit
           || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== expected.input.originalWallet
-          || !events.some((e) => e.name === "ClaimVaultEntitlementConfigured"
+          || !events.some((e) => e.name === eventName
             && e.values[0] === originalId && e.values[1] === expected.configurationId
             && e.values[2]?.toLowerCase() === expected.input.originalWallet
             && e.values[3] === expected.input.originalUnits && e.values[4] === expected.quotedCredit)) {
           throw new ExecutionError("STATE", "claim-vault payload, storage or event differs");
         }
-        const unspent = tuple((await query("claimVaultSurrender", [originalId]))[0]);
+        const unspent = tuple((await query(weightedReceipt ? "weightedReceiptSurrender" : "claimVaultSurrender", [originalId]))[0]);
         if (unspent.getValue("consumedUnits") !== 0n || unspent.getValue("deliveredCredit") !== 0n
           || String(unspent.getValue("remainingUnits")) !== expected.input.originalUnits
           || String(unspent.getValue("remainingCredit")) !== expected.quotedCredit) {
@@ -361,6 +366,15 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
       || String(actual.getValue("credit")) !== row.quotedCredit
       || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
       throw new ExecutionError("STATE", "claim-vault configuration mismatch");
+    }
+  }
+  for (const row of prepared.payloads.configure.weightedReceipt) {
+    const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "weightedReceiptEntitlement",
+      [row.input.originalId]))[0]);
+    if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== row.configurationId
+      || String(actual.getValue("credit")) !== row.quotedCredit
+      || String(tuple(actual.getValue("original")).getValue("originalWallet")).toLowerCase() !== row.input.originalWallet) {
+      throw new ExecutionError("STATE", "weighted receipt configuration mismatch");
     }
   }
   return { rows, totalSupply: String((await rpc.call(domain.manifest.proxy, erc20Abi, "totalSupply"))[0]) };

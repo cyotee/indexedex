@@ -46,7 +46,7 @@ test("emits full separate replacements and independently quoted native credits",
   assert.deepEqual(result.payloads.independentIssue.requests, [{
     recipient: a(20), configurationId: result.payloads.configure.independent[0]?.configurationId,
   }]);
-  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 7);
+  assert.equal(result.dispositions.filter((d) => d.disposition === "blocked").length, 6);
   assert.deepEqual(result.payloads.configure.weightedLiquid[0]?.input, f.input.weightedLiquid[0]?.original);
   assert.equal(f.methods.every((m) => ["eth_chainId", "eth_getBlockByNumber", "eth_getCode", "eth_call"].includes(m)), true);
 });
@@ -159,7 +159,8 @@ for (const category of ["earlier-liquid", "weighted-receipt", "earlier-receipt",
     const f = await setup();
     const row = f.input.exposures[0];
     assert.ok(row);
-    assert.throws(() => buildPayloads({ ...f.input, exposures: [{ ...row, category }] }), new RegExp(category));
+    assert.throws(() => buildPayloads({ ...f.input, exposures: [{ ...row, category }] }),
+      category === "weighted-receipt" ? /missing matching origin/ : new RegExp(category));
   });
 }
 test("rejects a nonconserving origin partition", async () => {

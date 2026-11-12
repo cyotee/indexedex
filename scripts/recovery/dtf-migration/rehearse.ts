@@ -3,17 +3,19 @@ import { once } from "node:events";
 import { copyFile, mkdir, readFile, rm, readdir } from "node:fs/promises";
 import { resolve, join, dirname } from "node:path";
 import { z } from "zod";
-import { Interface } from "ethers";
+import { Interface, keccak256 } from "ethers";
 import { child, FOUNDRY, launchAnvil } from "./rehearsal-process.js";
 import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
 import { bootstrapManifest, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
 import { DEV } from "./execution-rpc.js";
 import { ExecutionError, rpcLog } from "./execution-schema.js";
-import { hash } from "./schema.js";
+import { address, hash, hex } from "./schema.js";
 import { exerciseRecovery } from "./rehearsal-recovery.js";
 import { exerciseAdmission } from "./rehearsal-admission.js";
 import { acquireClaimVaultShares } from "./rehearsal-claim-vault-source.js";
 import { exerciseClaimVault } from "./rehearsal-claim-vault.js";
+import { acquireWeightedReceipt } from "./rehearsal-weighted-receipt-source.js";
+import { exerciseWeightedReceipt } from "./rehearsal-weighted-receipt.js";
 import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
 import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
 import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
@@ -40,8 +42,8 @@ export async function rehearse(options: {
   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
   readonly checkpoint: string; readonly evidence: string;
 }) {
-  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18566"
-    || options.checkpoint !== ".omo-runtime/dtf-migration-claim-vault/checkpoints") {
+  if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663" || options.port !== "18567"
+    || options.checkpoint !== ".omo-runtime/dtf-migration-weighted-receipt/checkpoints") {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
   }
   const evidence = resolve(options.evidence, `rehearsal-${Date.now()}`);
@@ -116,12 +118,36 @@ export async function rehearse(options: {
       join(evidence, "environment-mined-transactions.json"));
     const custodyAcquisition = await acquireDtfCustodyShares(chain, evidence);
     const claimAcquisition = await acquireClaimVaultShares(chain, evidence);
+    const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
     const manifest = await bootstrapManifest(chain, environmentPath);
     const pre = join(evidence, "pre-capture.json");
     await save(pre, manifest);
     const local = ["--execute-local", "--instance-id", manifest.local?.instanceId ?? ""];
     await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy")]);
     await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy"), ...local]);
+    const deployedAbi = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
+    const loupe = new Interface([
+      "function facetAddresses() view returns(address[])",
+      "function facetName() view returns(string)",
+    ]);
+    const deployedBindings = [];
+    const components = [{ role: "parent", address: manifest.proxy }];
+    for (const method of ["bondNftVault", "rebasingClaimToken", "rawSY", "stakingSY", "migrationSyRewardToken"]) {
+      components.push({ role: method, address: address.parse((await chain.call(manifest.proxy, deployedAbi, method))[0]) });
+    }
+    for (const component of components) {
+      const code = hex.parse(await chain.send("eth_getCode", [component.address, "latest"]));
+      const facets = z.array(address).parse((await chain.call(component.address, loupe, "facetAddresses"))[0]);
+      const boundFacets = [];
+      for (const facet of facets) {
+        const runtime = hex.parse(await chain.send("eth_getCode", [facet, "latest"]));
+        const name = z.string().parse((await chain.call(facet, loupe, "facetName"))[0]);
+        if ((runtime.length - 2) / 2 > 24576) throw new ExecutionError("STATE", "actual deployed facet exceeds EIP170");
+        boundFacets.push({ address: facet, name, code: runtime, codeHash: keccak256(runtime) });
+      }
+      deployedBindings.push({ ...component, code, codeHash: keccak256(code), facets: boundFacets });
+    }
+    await save(join(evidence, "deployed-runtime-bindings.json"), deployedBindings);
     const fund = join(runtime, "fund");
     await cli(["fund", "--manifest", pre, "--checkpoint", fund, ...local, "--fault-after-mined"], "fault");
     const donationFault = await interruptedReceipt(chain, fund, join(evidence, "donation-before-resume.json"));
@@ -152,7 +178,9 @@ export async function rehearse(options: {
       totals: Object.fromEntries([...fundingTotals].map(([token, amount]) => [token, amount.toString()])),
       actualCapitalEvents: fundingLogs.length, genesisSupply });
     await cli(["capture", "--manifest", pre, "--checkpoint", join(runtime, "capture"), ...local]);
-    let input = await preparationFixture(chain, manifest, evidence, { custodySe: custodyAcquisition, claimVault: claimAcquisition });
+    let input = await preparationFixture(chain, manifest, evidence, {
+      custodySe: custodyAcquisition, claimVault: claimAcquisition, weightedReceipt: receiptAcquisition,
+    });
     const prepared = join(evidence, "prepared");
     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
     await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
@@ -210,6 +238,7 @@ export async function rehearse(options: {
     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseDtfCustodySe({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseClaimVault({ chain, manifest: post, input, evidence, phase: "stage1" });
+    await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
     await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
     await exerciseOrdinaryDeposit(chain, post, evidence);
@@ -229,6 +258,10 @@ export async function rehearse(options: {
     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
     await chain.send("evm_mine", []);
     await exerciseClaimVault({ chain, manifest: post, input, evidence, phase: "final" });
+    await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "partial" });
+    await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
+    await chain.send("evm_mine", []);
+    await exerciseWeightedReceipt({ chain, manifest: post, input, evidence, phase: "residual" });
     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify-after")]);
     return { evidence, fullTask9: "open", status: "bounded-rehearsal-complete" };
   } catch (error) {

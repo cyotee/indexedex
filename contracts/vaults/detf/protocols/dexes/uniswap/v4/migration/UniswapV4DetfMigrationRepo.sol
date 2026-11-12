@@ -45,6 +45,8 @@ library UniswapV4DetfMigrationRepo {
         mapping(bytes32 => Migration.DtfCustodySeSurrender) dtfCustodySeSurrenders;
         mapping(bytes32 => Migration.ClaimVaultEntitlement) claimVaultEntitlements;
         mapping(bytes32 => Migration.ClaimVaultSurrender) claimVaultSurrenders;
+        mapping(bytes32 => Migration.WeightedReceiptEntitlement) weightedReceiptEntitlements;
+        mapping(bytes32 => Migration.WeightedReceiptSurrender) weightedReceiptSurrenders;
     }
 
     struct NftReceipt {
