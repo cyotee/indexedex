@@ -1,5 +1,84 @@
 # Bounded Migration operator runbook
 
+## Offline historical review candidates
+
+```sh
+bun scripts/recovery/dtf-migration/cli.ts derive-candidates \
+  --input "$COMPLETE_HISTORICAL_TREE" --output "$NEW_CANDIDATE_DIRECTORY"
+```
+
+The input directory contains the original `manifest.json`, `sources.json` and
+every declared file. Preserve relative paths, including the pre-exploit sibling.
+Supply paths explicitly; there is no default workstation path, network lookup,
+RPC, signer or acquisition fallback. Every declared byte length and SHA-256,
+including Markdown, must match before any raw CSV is parsed. The manifest is
+the explicit trust root; its binding authenticates `sources.json` before that
+index is parsed. Missing, altered or symlinked inputs reject. A supplied
+hash-authenticated recovered historical body is not an original capture:
+retain its recovery provenance separately, never change a binding to accept
+later annotations. The annotated primary tree remains a negative case.
+
+`candidates.json` has version `dtf-historical-review-candidates-v1` and status
+`NON-ISSUABLE-REVIEW-CANDIDATES`. It is rejected by preparation, prepared-manifest
+validation and execution schemas. It supplies no configuration IDs, C0,
+approved flags, invented economic origins, Q0 or known-zero prior credit.
+Existing `prepare`/`validate`/execution and journal semantics are unchanged.
+Only the new offline command accepts this historical tree.
+
+The weighted NFT join uses S008 purchases, S011 mint/input transfers and S006
+pre-incident DTF details, retaining chain/collection/ID, recipient/payer,
+purchase/mint/input locators and separate observed DTF/WETH. Transaction sharing,
+mint and payer conflicts prohibit unique input attribution. An observed zero
+means zero in the saved inbound subset, not zero native cost, refund or net
+contribution. The 41 pre-incident and two later purchases are observations, not
+eligibility decisions. S009 retains all earlier LP-accounting-lock observations,
+direct DTF/WETH and routed intermediate DTF separately. Its unavailable original
+raw receipts remain a qualification; routed DTF is not another contribution.
+
+The complete CSV census retains original fields as `historicalFields` alongside
+parsed integer/unknown quantities and review links. Blank quantities become
+null; only the original signed `gons_delta` column accepts negative integers.
+LP-accounting shares, physical LP, gons, raw weights and native9/18/19/28 remain
+distinct. No sums across those units are produced. Position/exclusion,
+account/position/holding/recovery/exception, index-subset, NFT funding/claim
+and observed-output relations are checked. Machine-readable unresolved records
+identify missing basis, aliases, previous delivery, incomplete receipts/native/
+WETH/recoveries, stale control and unobserved accepted categories. Historical
+look-through/held totals are diagnostics, never Q0, contribution inputs or awards.
+Unrecomputed reported fields are listed explicitly, not accepted as proven.
+
+All historical policy fields are retained only as history. Current plan r5 and
+PRD r22 govern, especially MIG-R42 configured original-wallet/control and
+Stage2-only surrender. Old bearer, loss-formula, no-credit-after-custody and
+upfront-zero wording supplies no authority. Do not require intermediate-holder
+ancestry as a surrender prerequisite. Independent recipient observations remain
+separate from asset-surrender candidates; both need disjoint-original review.
+Standalone native/WETH observations are contribution/recovery provenance, not
+new compensated surrender routes.
+
+Writes are exclusive to a new output directory. Retain every failed output and
+command. Repeated runs and a complete byte-preserving relocation from another
+CWD produce identical canonical bytes. No wall clock or absolute input paths
+enter candidates. To verify the new source boundary locally:
+
+```sh
+bun node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext \
+  --moduleResolution Bundler --strict --noUncheckedIndexedAccess \
+  --exactOptionalPropertyTypes --verbatimModuleSyntax --skipLibCheck \
+  --types node scripts/recovery/dtf-migration/*.ts
+bun test --timeout 15000 ./scripts/recovery/dtf-migration/*.test.ts
+```
+
+Before any live preparation, separately acquire missing original data/receipts,
+refresh pinned current control and recoveries, reconcile exact original units
+and contribution components, remaining rights, aliases and previous delivery,
+independently review disjoint values, then arrange actual funding and capture
+the supported immutable mint-preview snapshot. Only separately reviewed
+originals may enter the existing loader preparation. This command does not
+close E-S, broader TokenStaking conservation, disabled conversions, operational
+dataset approval, selected reserve composition, deployment gas or missing P1
+historical artifacts, and does not authorize acquisition or public execution.
+
 ## Saved-evidence bundles and fresh relocation
 
 Every rehearsal requires `--bundle "$AUTHORITY_BUNDLE"`, naming a supplied

@@ -9,8 +9,10 @@ import type { Mode } from "./execution-schema.js";
 import { rehearse } from "./rehearse.js";
 import { exportBundle } from "./bundle.js";
 import { materializeBundle } from "./bundle-materialize.js";
+import { deriveCandidateFile } from "./candidates.js";
 
 export const help = `Bounded Migration operator
+  bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
   bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
   bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
   bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
@@ -94,6 +96,14 @@ export async function main(args: readonly string[]): Promise<void> {
     throw new PreparationError("INPUT", "preparation commands accept no execution flags");
   }
   switch (positionals[0]) {
+    case "derive-candidates": {
+      if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
+        throw new PreparationError("INPUT", "derive-candidates requires only --input and --output");
+      }
+      console.log(JSON.stringify({ command: "derive-candidates", mode: "offline-non-issuable",
+        ...await deriveCandidateFile(values.input, values.output) }));
+      return;
+    }
     case "bundle-export":
     case "bundle-materialize": {
       if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {

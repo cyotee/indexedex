@@ -1,0 +1,166 @@
+import { candidateError, field, integer, optionalInteger, signedInteger, table, unique } from "./candidate-input.js";
+import type { CandidateInput, TableRow } from "./candidate-input.js";
+
+export type ReviewIssue = {
+  readonly code: string; readonly records: readonly string[]; readonly detail: string;
+};
+export type InventoryRecord = {
+  readonly locator: string; readonly path: string; readonly row: number;
+  readonly historicalFields: Readonly<Record<string, string>>;
+  readonly quantities: Readonly<Record<string, { readonly raw: string | null; readonly unit: string }>>;
+  readonly links: readonly string[];
+};
+export const split = (v: string): readonly string[] => v === "" ? [] : v.split("|");
+export const order = (a: string, b: string): number => a < b ? -1 : a > b ? 1 : 0;
+export function quantityUnit(row: TableRow, key: string): string {
+  const f = row.fields;
+  if (/gons/.test(key) && !/per_unit/.test(key)) return "gons";
+  if (/gons_per_unit/.test(key)) return "gons-per-native9";
+  if (/lp_shares/.test(key)) return "LP-accounting-shares-not-physical-LP";
+  if (key === "stake_wei" || /legacy_stake.*raw/.test(key)) return "raw-weight-native18";
+  if (/weth/.test(key)) return "WETH-native18";
+  if (/dtf_wei/.test(key) || /^wallet_dtf_wei$/.test(key) || /dtf_paid|dtf_received|dtf_input|dtf_output|dtf_burn|raw_dtf|dtf_(sold|redeemed|donated|returned|in)_raw/.test(key)) return "DTF-native18";
+  if (key === "observed_amount_raw") return `${f["asset"]?.toLowerCase()}:native${f["decimals"]}`;
+  if (key === "output_raw") return `${f["output_asset"]?.toLowerCase()}:native${f["output_decimals"]}`;
+  if (key === "principal_raw" && f["kind"] === "legacy_weight_to_sy") return "raw-weight-native18";
+  if (key === "outgoing_source_units_raw" || key === "retained_source_units_lower_bound_raw") return f["source_unit"] ?? "unknown-source-unit";
+  if (key === "current_observed_quantity_raw") return f["current_observed_quantity_unit"] ?? "unknown-source-unit";
+  if (key === "quantity_raw" || key === "observed_quantity_raw" || key === "custody_quantity_raw")
+    return `${f["asset"]?.toLowerCase()}:native${f["decimals"] ?? "unknown"}`;
+  if (key === "amount_raw") return `${f["asset"]?.toLowerCase() ?? "weighted-sDETF"}:native${f["asset"] ? "source-defined" : "9"}`;
+  if (key === "balance_raw") return row.path.includes("sy-sdtf") ? "SY-native9" : "sDETF-native9";
+  if (key === "unallocated_raw") return f["unit"] ?? "unknown-source-unit";
+  if (/equivalent|exposure|exclusion|remainder|nominal/.test(key)) return "historical-DETF-equivalent-native9-not-award";
+  if (/sy_raw/.test(key)) return "SY-native9";
+  if (/sdetf|principal_detf|principal_claimed|rewards_claimed|principal_raw|rewards_raw/.test(key)) return "weighted-native9";
+  // No value is converted using this label. Unclassified fields retain the exact
+  // original column name rather than asserting an economic equivalence.
+  return `historical-column:${key}`;
+}
+
+export function deriveInventory(input: CandidateInput) {
+  const tables = new Map<string, readonly TableRow[]>();
+  for (const path of [...input.bytes.keys()].filter((p) => p.endsWith(".csv")).sort(order)) tables.set(path, table(input, path));
+  const get = (p: string): readonly TableRow[] => {
+    const rows = tables.get(p);
+    if (!rows) candidateError(`missing inventory table: ${p}`);
+    return rows;
+  };
+  const keys = [
+    ["positions.csv", "position_id"], ["account-ledger.csv", "ledger_id"],
+    ["held-exclusions.csv", "position_id"], ["custody-inventory.csv", "holding_id"],
+    ["observed-recoveries.csv", "recovery_id"], ["conversions.csv", "conversion_id"],
+    ["exceptions.csv", "exception_id"], ["rounding.csv", "layer"],
+    ["evidence/transfers.csv", "event_id"], ["evidence/index-events.csv", "source"],
+    ["evidence/all-index-events.csv", "source"],
+  ] as const;
+  const indexes = new Map<string, ReadonlyMap<string, TableRow>>(keys.map(([p, k]) => [p, unique(get(p), k)]));
+  const index = (p: string): ReadonlyMap<string, TableRow> => {
+    const m = indexes.get(p); if (!m) return candidateError(`missing index ${p}`); return m;
+  };
+  const linked = new Map<string, Set<string>>();
+  const link = (a: TableRow, b: TableRow): void => {
+    linked.set(a.locator, new Set([...(linked.get(a.locator) ?? []), b.locator]));
+    linked.set(b.locator, new Set([...(linked.get(b.locator) ?? []), a.locator]));
+  };
+  const requireLink = (a: TableRow, p: string, key: string): TableRow => {
+    const b = index(p).get(key.toLowerCase());
+    if (!b) return candidateError(`missing link ${key}: ${a.locator}`);
+    link(a, b); return b;
+  };
+  const issues: ReviewIssue[] = [];
+  const sourcePaths = new Map(input.sources.sources.map((s) => [s.id, s.path]));
+  for (const rows of tables.values()) for (const r of rows) {
+    for (const key of ["source_id", "source_ids"]) if (r.fields[key]) {
+      for (const id of new Set(split(field(r, key)))) if (!sourcePaths.has(id)) candidateError(`unknown source ${id}: ${r.locator}`);
+    }
+  }
+  const positionOwners = new Set<string>(), holdingOwners = new Set<string>(), recoveryOwners = new Set<string>();
+  for (const a of get("account-ledger.csv")) {
+    if (field(a, "ledger_id") !== `${field(a, "product")}:${field(a, "account")}`) candidateError(`account key differs: ${a.locator}`);
+    // Associate payer/recipient/source observations, not an economic-origin
+    // assignment. Keep earlier-product evidence separate from weighted rows.
+    for (const [id, path] of sourcePaths) {
+      const earlier = id === "S009" || id === "S010";
+      if (earlier !== (field(a, "product") === "earlier_cp")) continue;
+      for (const r of tables.get(path) ?? []) if (["address", "owner", "purchase_recipient", "payer", "bond_recipient", "recipient"]
+        .some((key) => r.fields[key]?.toLowerCase() === field(a, "account").toLowerCase())) link(a, r);
+    }
+    for (const [column, p, ownerKey, owners] of [
+      ["position_ids", "positions.csv", "account", positionOwners],
+      ["current_holding_ids", "custody-inventory.csv", "observed_holder", holdingOwners],
+      ["observed_recovery_ids", "observed-recoveries.csv", "recipient", recoveryOwners],
+    ] as const) {
+      for (const id of split(field(a, column))) {
+        const b = requireLink(a, p, id);
+        if (field(b, "product") !== field(a, "product") || field(b, ownerKey) !== field(a, "account") || owners.has(id))
+          candidateError(`duplicate or mismatched account attribution: ${id}`);
+        owners.add(id);
+      }
+    }
+    for (const id of split(field(a, "exception_ids"))) requireLink(a, "exceptions.csv", id);
+    const recoveryCount = optionalInteger(field(a, "observed_recovery_count"));
+    if (recoveryCount !== null && BigInt(recoveryCount) !== BigInt(split(field(a, "observed_recovery_ids")).length))
+      candidateError(`recovery count differs: ${a.locator}`);
+    if (recoveryCount === null) issues.push({ code: "unknown-recovery-count", records: [a.locator],
+      detail: "Blank recorded recovery count remains unknown; an empty linked subset does not prove zero recoveries." });
+    issues.push({ code: "independent-basis-unresolved", records: [a.locator],
+      detail: "Recipient grouping only. Original Q0/E0/D0, prior delivery and disjoint origin are unknown; nominal remainder and old loss fields are not compensation." });
+  }
+  for (const [p, owners] of [["positions.csv", positionOwners], ["custody-inventory.csv", holdingOwners], ["observed-recoveries.csv", recoveryOwners]] as const)
+    if (get(p).length !== owners.size) candidateError(`unlinked ${p} records`);
+  const exclusions = index("held-exclusions.csv");
+  if (exclusions.size !== get("positions.csv").length) candidateError("position/exclusion census differs");
+  for (const p of get("positions.csv")) {
+    const h = requireLink(p, "held-exclusions.csv", field(p, "position_id"));
+    if (field(h, "snapshot_account") !== field(p, "account") || field(h, "asset").toLowerCase() !== field(p, "asset").toLowerCase())
+      candidateError(`position/exclusion identity differs: ${p.locator}`);
+    const exposure = optionalInteger(field(p, "detf_equivalent_raw"));
+    const held = optionalInteger(field(h, "held_exclusion_detf_raw"));
+    const remainder = optionalInteger(field(h, "unresolved_snapshot_remainder_detf_raw"));
+    if (exposure !== null && (held === null || remainder === null || BigInt(held) + BigInt(remainder) !== BigInt(exposure)))
+      candidateError(`historical held partition differs: ${p.locator}`);
+    const ids = split(field(p, "source_id"));
+    const sourceKey = field(p, "source_key").toLowerCase();
+    for (const id of ids) {
+      const rows = tables.get(sourcePaths.get(id) ?? "") ?? [];
+      const matches = rows.filter((r) => ["address", "token_id"].some((k) => r.fields[k]?.toLowerCase() === sourceKey));
+      for (const m of matches) link(p, m);
+      if (!matches.length && id !== "S003") issues.push({ code: "aggregate-source-reference", records: [p.locator],
+        detail: `${id}:${sourceKey} is aggregate/event-replay evidence, not a unique acquisition or economic origin.` });
+    }
+    issues.push({ code: "original-contribution-unknown", records: [p.locator, h.locator],
+      detail: "Snapshot quantity and retained lower bound are historical observations, not original Q0 or a net contribution. Review surviving rights/aliases and prior delivery without requiring intermediate-holder ancestry." });
+  }
+  // Index subset duplication is intentional; inconsistent duplicate observations
+  // across the two indexes are not. Inside either file keys are already unique.
+  for (const r of get("evidence/index-events.csv")) {
+    const b = requireLink(r, "evidence/all-index-events.csv", field(r, "source"));
+    if (JSON.stringify(r.fields) !== JSON.stringify(b.fields)) candidateError(`index subset differs: ${r.locator}`);
+  }
+  const transferRows = get("evidence/transfers.csv");
+  for (const r of get("observed-recoveries.csv")) {
+    const event = requireLink(r, "evidence/transfers.csv", `${field(r, "asset").toLowerCase()}:${field(r, "tx")}:${field(r, "log_index")}`);
+    if (field(event, "amount_raw") !== field(r, "observed_amount_raw") || field(event, "to") !== field(r, "recipient"))
+      candidateError(`recovery event differs: ${r.locator}`);
+    issues.push({ code: "recovery-attribution-unresolved", records: [r.locator, event.locator],
+      detail: "Output is observed once; transaction input totals are context, not assigned to each output or deducted from compensation." });
+  }
+  for (const r of get("conversions.csv")) {
+    const matches = transferRows.filter((e) => field(e, "tx") === field(r, "tx") &&
+      field(e, "asset").toLowerCase() === field(r, "output_asset").toLowerCase() &&
+      field(e, "to") === field(r, "recipient") && field(e, "amount_raw") === field(r, "output_raw"));
+    for (const m of matches) link(r, m);
+    issues.push({ code: matches.length === 1 ? "conversion-origin-unresolved" : "conversion-event-unresolved",
+      records: [r.locator, ...matches.map((m) => m.locator)],
+      detail: "Representation change is not another contribution or external recovery; raw weight, receipt, SY and underlying rights require overlap/previous-delivery reconciliation." });
+  }
+  const records: InventoryRecord[] = [...tables.values()].flat().map((r) => {
+    const quantities = Object.fromEntries(Object.entries(r.fields).filter(([k]) =>
+      /(?:_raw$|_wei$|^dtf_wei_|^gons$|^staking_gons$|^gons_delta$|^gons_per_unit$|^gons_debited$|^[VRHE]_eth$)/.test(k))
+      .map(([k, v]) => [k, { raw: k === "gons_delta" ? signedInteger(v) : optionalInteger(v), unit: quantityUnit(r, k) }]));
+    return { locator: r.locator, path: r.path, row: r.row, historicalFields: r.fields, quantities,
+      links: [...(linked.get(r.locator) ?? [])].sort(order) };
+  });
+  return { records, issues, tables };
+}
