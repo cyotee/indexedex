@@ -8,6 +8,7 @@ import { z } from "zod";
 import { canonical, fingerprint } from "./provenance.js";
 import { ANCHOR, block, receipt, transaction } from "./receipt-association.js";
 import { claimSource, legacy, sy } from "./receipt-input.js";
+import type { ReceiptSelection } from "./receipt-input.js";
 import { ReceiptRpc } from "./receipt-rpc.js";
 import { collectReceipts } from "./receipt-evidence.js";
 
@@ -35,12 +36,12 @@ export const purchaseReceipt = receipt.parse({ ...commonLog, from: wallet, to: l
 const claimCommon = { blockHash: claimBlockHash, blockNumber: "0xb", transactionIndex: "0x0", transactionHash: claimHash, removed: false };
 export const claimTx = { ...purchaseTx, ...claimCommon, hash: claimHash, to: claimSource,
   input: `${id("withdrawClaim(uint256)").slice(0, 10)}${word("5")}` };
-export const claimReceipt = { ...purchaseReceipt, ...claimCommon, to: claimSource, logs: [
+export const claimReceipt = receipt.parse({ ...purchaseReceipt, ...claimCommon, to: claimSource, logs: [
   { ...claimCommon, address: sy, logIndex: "0x1", data: `0x${word("9")}`,
     topics: [transferTopic, addressTopic(`0x${"2".repeat(40)}`), addressTopic(wallet)] },
   { ...claimCommon, address: claimSource, logIndex: "0x2", data: `0x${word("5")}${word("9")}`,
     topics: [id("ClaimWithdrawn(address,uint256,uint256)"), addressTopic(wallet)] },
-] };
+] });
 const csv = (header: readonly string[], rows: readonly (readonly string[])[]) =>
   [header, ...rows].map((r) => r.map((v) => `"${v}"`).join(",")).join("\n") + "\n";
 export async function inputFixture(parent: string) {
@@ -58,6 +59,10 @@ export async function inputFixture(parent: string) {
     ["../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv", csv(["tx", "category", "bond_token_id", "dtf_wei", "payer", "bond_recipient"], [[txHash, "bond", "3", "12", wallet, wallet]])],
     ["conversions.csv", csv(["conversion_id", "kind", "recipient", "principal_raw", "output_raw", "output_asset", "output_decimals", "block", "tx"], [
       ["claim", "legacy_weight_to_sy", wallet, "5", "9", sy, "9", "11", claimHash],
+      ["conversion", "detf_to_sdetf", legacy.weighted, "", "12", legacy.dtf, "18", "10", txHash],
+    ])],
+    ["observed-recoveries.csv", csv(["recovery_id", "recipient", "asset", "decimals", "observed_amount_raw", "block", "tx", "log_index", "R_eth", "deduct_from_R"], [
+      ["recovery", wallet, sy, "9", "9", "11", claimHash, "1", "", "false"],
     ])],
   ]);
   const binding = (text: string) => ({ bytes: Buffer.byteLength(text), sha256: fingerprint(text) });
@@ -103,14 +108,15 @@ export async function wireFixture(respond: (q: WireRequest) => unknown) {
     const closed = once(server, "close"); server.close(); await closed;
   } };
 }
-export async function collectionFixture(respond: (q: WireRequest) => unknown = fixtureResponse) {
+export async function collectionFixture(respond: (q: WireRequest) => unknown = fixtureResponse,
+  selection: ReceiptSelection = "purchases-and-claims") {
   const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-receipts-"));
   const root = await inputFixture(parent);
   const server = await wireFixture(respond);
   const output = join(parent, "archive");
   try {
     const rpc = new ReceiptRpc(server.url, join(output, "http"));
-    const archive = await collectReceipts(root, output, rpc);
+    const archive = await collectReceipts(root, output, rpc, selection);
     return { archive, captures: rpc.captures };
   } finally { await server.close(); await rm(parent, { recursive: true }); }
 }

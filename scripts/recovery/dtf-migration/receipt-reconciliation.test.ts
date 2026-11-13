@@ -7,7 +7,7 @@ import { id } from "ethers";
 import { loadCandidateInput } from "./candidate-input.js";
 import { receiptReferences, legacy } from "./receipt-input.js";
 import { reconcileReference } from "./receipt-reconciliation.js";
-import { inputFixture, purchaseTx, purchaseReceipt, purchaseBlock, wallet } from "./receipt.fixture.js";
+import { inputFixture, purchaseTx, purchaseReceipt, purchaseBlock, wallet, claimTx, claimReceipt } from "./receipt.fixture.js";
 import { preparationInput } from "./schema.js";
 import { preparedEnvelope } from "./bundle.js";
 import { executionManifest } from "./execution-schema.js";
@@ -78,4 +78,75 @@ test("indirect calls retain calldata and never receive direct claim decoding", a
 test("receipt archive format cannot enter preparation, validation or execution loaders", () => {
   const archive = { version: "dtf-finite-receipt-evidence-v1", status: "NON-ISSUABLE-RECEIPT-OBSERVATIONS" };
   for (const schema of [preparationInput, preparedEnvelope, executionManifest]) assert.equal(schema.safeParse(archive).success, false);
+});
+async function outputReferences() {
+  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-output-"));
+  try {
+    return receiptReferences(await loadCandidateInput(await inputFixture(parent)), "conversions-and-recoveries");
+  } finally { await rm(parent, { recursive: true }); }
+}
+test("conversion reconciliation preserves exact native output and blank historical principal", async () => {
+  const ref = (await outputReferences()).find((r) => r.kind === "conversion" && r.tx === purchaseTx.hash);
+  assert.ok(ref);
+  const result = reconcileReference(ref, observation, 1);
+  assert.ok("expectedOutput" in result);
+  assert.equal(result.expectedOutput.amount, "12");
+  assert.equal(result.expectedOutput.decimals, "18");
+  assert.equal(result.historicalFields["principal_raw"], "");
+  assert.equal(result.outputs.length, 1);
+  assert.deepEqual(result.conflicts, []);
+  assert.equal(result.compensationDeduction, null);
+});
+test("conversion ambiguity retains individual matches and never assigns aggregate output", async () => {
+  const ref = (await outputReferences()).find((r) => r.kind === "conversion" && r.tx === purchaseTx.hash);
+  assert.ok(ref);
+  const output = purchaseReceipt.logs[1]; assert.ok(output);
+  const result = reconcileReference(ref, { ...observation,
+    receipt: { ...purchaseReceipt, logs: [...purchaseReceipt.logs, { ...output, logIndex: "0x4" }] } }, 2);
+  assert.ok("outputs" in result);
+  assert.equal(result.outputs.length, 2);
+  assert.ok(result.conflicts.includes("ambiguous-exact-output"));
+  assert.ok(result.conflicts.includes("shared-transaction-output-attribution-unresolved"));
+});
+test("unknown output remains null and missing rather than matching a zero transfer", async () => {
+  const ref = (await outputReferences()).find((r) => r.kind === "conversion");
+  assert.ok(ref && ref.kind === "conversion");
+  const result = reconcileReference({ ...ref, amount: null }, observation, 1);
+  assert.ok("expectedOutput" in result);
+  assert.equal(result.expectedOutput.amount, null);
+  assert.equal(result.outputs.length, 0);
+  assert.ok(result.conflicts.includes("unknown-output-amount"));
+});
+for (const [label, change] of [
+  ["asset", { asset: legacy.dtf }], ["recipient", { recipient: legacy.weighted }],
+  ["amount", { amount: "10" }], ["index", { logIndex: "2" }],
+  ["block", { expectedBlock: "12" }],
+] as const) test(`recovery matching requires the exact declared ${label}`, async () => {
+  const ref = (await outputReferences()).find((r) => r.kind === "recovery");
+  assert.ok(ref && ref.kind === "recovery");
+  const b = { ...purchaseBlock, hash: claimTx.blockHash, number: "0xb", transactions: [claimTx.hash] };
+  const result = reconcileReference({ ...ref, ...change }, {
+    transaction: claimTx, receipt: claimReceipt, byHash: b, byNumber: b,
+  }, 1);
+  assert.ok(result.conflicts.includes(label === "block" ? "declared-output-block" : "missing-exact-output"));
+});
+test("conversion canonical contradiction remains a conflict with a matching output", async () => {
+  const ref = (await outputReferences()).find((r) => r.kind === "conversion" && r.tx === purchaseTx.hash);
+  assert.ok(ref);
+  const result = reconcileReference(ref, { ...observation, byNumber: { ...purchaseBlock, hash: claimTx.blockHash } }, 1);
+  assert.ok(result.conflicts.includes("block-hash"));
+});
+test("selection parses native integers and rejects declared blocks beyond the anchor", async () => {
+  const parent = await mkdtemp(join(await realpath(tmpdir()), "dtf-output-schema-"));
+  try {
+    const input = await loadCandidateInput(await inputFixture(parent));
+    const raw = input.bytes.get("observed-recoveries.csv"); assert.ok(raw);
+    const text = new TextDecoder().decode(raw);
+    for (const [from, to] of [['"9","11"', '"9.5","11"'], ['"9","11"', '"-9","11"'],
+      ['"9","11"', '"9","108944664"'], ['"9","9","11"', '"256","9","11"']]) {
+      assert.ok(from && to && text.includes(from));
+      const bytes = new Map(input.bytes).set("observed-recoveries.csv", new TextEncoder().encode(text.replace(from, to)));
+      assert.throws(() => receiptReferences({ ...input, bytes }, "conversions-and-recoveries"));
+    }
+  } finally { await rm(parent, { recursive: true }); }
 });

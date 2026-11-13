@@ -118,3 +118,26 @@ test("CLI rejects signing, arbitrary endpoint, alias and ambiguous option inputs
       "--rpc-alias", "robinhood_mainnet_alchemy", ...extra]));
   }
 });
+test("explicit conversion selection collects complete tables without purchasing references", async () => {
+  const { archive, captures } = await collectionFixture(fixtureResponse, "conversions-and-recoveries");
+  assert.equal(archive.references, 3);
+  assert.equal(archive.distinctTransactions, 2);
+  assert.equal(archive.completeAssociations, 2);
+  assert.deepEqual(archive.results.flatMap((r) => r.references).sort(), [
+    "conversions.csv#row=2", "conversions.csv#row=3", "observed-recoveries.csv#row=2",
+  ]);
+  assert.equal(captures.filter((c) => c.method === "eth_getTransactionByHash").length, 2);
+});
+test("conversion selection retains every row unavailable on anchor failure", async () => {
+  const { archive, captures } = await collectionFixture((q) => q.method === "eth_chainId"
+    ? { jsonrpc: "2.0", id: q.id, result: "0x1" } : fixtureResponse(q), "conversions-and-recoveries");
+  assert.equal(archive.authenticated, false);
+  assert.equal(archive.references, 3);
+  assert.equal(archive.completeAssociations, 0);
+  assert.deepEqual(captures.map((c) => c.method), ["eth_chainId", "eth_getBlockByNumber"]);
+});
+test("selection rejects unknown values and cannot leak into execution commands", async () => {
+  await assert.rejects(main(["collect-receipts", "--input", "absent", "--output", "new",
+    "--rpc-alias", "robinhood_mainnet_alchemy", "--selection", "all"]), /Invalid enum/);
+  await assert.rejects(main(["activate", "--selection", "conversions-and-recoveries"]), /selection requires/);
+});

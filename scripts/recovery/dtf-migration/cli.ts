@@ -11,9 +11,11 @@ import { exportBundle } from "./bundle.js";
 import { materializeBundle } from "./bundle-materialize.js";
 import { deriveCandidateFile } from "./candidates.js";
 import { collectReceiptFile } from "./receipt-evidence.js";
+import { receiptSelection } from "./receipt-input.js";
 
 export const help = `Bounded Migration operator
   bun scripts/recovery/dtf-migration/cli.ts collect-receipts --input <complete-historical-tree> --output <new-directory> --rpc-alias robinhood_mainnet_alchemy
+    [--selection conversions-and-recoveries] (default: purchases-and-claims)
   bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
   bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
   bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
@@ -75,7 +77,7 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
 export async function main(args: readonly string[]): Promise<void> {
   const { values, positionals, tokens } = parseArgs({
     args: [...args], allowPositionals: true, strict: true, tokens: true,
-    options: { input: { type: "string" }, output: { type: "string" },
+    options: { input: { type: "string" }, output: { type: "string" }, selection: { type: "string" },
       manifest: { type: "string" }, bundle: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
       "execute-local": { type: "boolean" }, "instance-id": { type: "string" },
       broadcast: { type: "boolean" }, "confirm-chain": { type: "string" },
@@ -85,6 +87,9 @@ export async function main(args: readonly string[]): Promise<void> {
       "fork-block": { type: "string" }, port: { type: "string" }, evidence: { type: "string" } },
   });
   const suppliedOptions = tokens.filter((token) => token.kind === "option").map((token) => token.name);
+  if (values.selection !== undefined && positionals[0] !== "collect-receipts") {
+    throw new PreparationError("INPUT", "selection requires collect-receipts");
+  }
   if (new Set(suppliedOptions).size !== suppliedOptions.length) {
     throw new PreparationError("INPUT", "duplicate options are not accepted");
   }
@@ -100,10 +105,11 @@ export async function main(args: readonly string[]): Promise<void> {
   switch (positionals[0]) {
     case "collect-receipts": {
       if (!values.input || !values.output || !values["rpc-alias"]
-        || suppliedOptions.some((name) => !["input", "output", "rpc-alias"].includes(name))) {
+        || suppliedOptions.some((name) => !["input", "output", "rpc-alias", "selection"].includes(name))) {
         throw new PreparationError("INPUT", "collect-receipts requires only input, output and existing rpc-alias");
       }
-      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"]);
+      const selection = receiptSelection.parse(values.selection ?? "purchases-and-claims");
+      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"], selection);
       console.log(JSON.stringify({ command: "collect-receipts", authenticated: archive.authenticated,
         references: archive.references, distinctTransactions: archive.distinctTransactions,
         completeAssociations: archive.completeAssociations, referenceConflicts: archive.referenceConflicts }));

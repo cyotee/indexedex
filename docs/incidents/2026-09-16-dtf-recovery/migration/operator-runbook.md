@@ -1,5 +1,29 @@
 # Bounded Migration operator runbook
 
+## Finite conversion and recovery receipt selection
+
+Add `--selection conversions-and-recoveries` to `collect-receipts` to select
+every authenticated row in `conversions.csv` and `observed-recoveries.csv`.
+Omitting selection preserves the existing purchase/claim collector. No execution
+command accepts selection. The same five read methods, provider, anchor, exclusive
+output and safe raw capture rules below apply. Do not replay the old purchase
+archive separately. Counts and request hashes derive from complete bound rows.
+
+Every selected row retains its original fields and logical locator. Recovery
+matching requires exact transaction, log index, asset, recipient, integer amount
+and declared block. Conversion matching requires exact output asset, recipient,
+amount and declared block; zero/multiple matches and shared transactions stay
+explicit. Blank amounts stay unknown, never zero. Candidate transfers and exact
+matches are retained individually, never allocated transaction totals.
+
+These are reviewed observations only. Keep token/native units separate. Labels
+such as `is_external_recovery=false`, `deduct_from_R=false` or blank `R_eth`
+are historical fields, not proof of zero compensation or approved deductions.
+Matching gross output is not net contribution, current control, transferred
+entitlement, principal/reward attribution, W0/Q0 or source admission. This
+selection does not relax direct-EOA claim admission. The NON-ISSUABLE archive
+remains rejected by operational intake and does not close old candidate unknowns.
+
 ## Finite named receipt evidence
 
 ```sh

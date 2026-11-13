@@ -8,6 +8,7 @@ import { PreparationError } from "./schema.js";
 import { ANCHOR, associationConflicts, block, quantity, receipt, transaction } from "./receipt-association.js";
 import type { Associated, Transaction, Receipt } from "./receipt-association.js";
 import { archiveVersion, receiptReferences, receiptRequests } from "./receipt-input.js";
+import type { ReceiptSelection } from "./receipt-input.js";
 import { ReceiptRpc } from "./receipt-rpc.js";
 import { reconcileReference } from "./receipt-reconciliation.js";
 
@@ -30,10 +31,12 @@ export type CollectionResult = {
   readonly transactionObservation: Transaction | null; readonly receiptObservation: Receipt | null;
 };
 
+// Keep the existing positional API and optional selection for default callers.
 // Also used with a local wire transport by offline tests; the CLI never accepts a URL.
-export async function collectReceipts(inputRoot: string, output: string, rpc: ReceiptRpc) {
+export async function collectReceipts(inputRoot: string, output: string, rpc: ReceiptRpc,
+  selection: ReceiptSelection = "purchases-and-claims") {
   const input = await loadCandidateInput(inputRoot);
-  const refs = receiptReferences(input), requests = receiptRequests(refs);
+  const refs = receiptReferences(input, selection), requests = receiptRequests(refs);
   const outputDirectory = resolve(output);
   await mkdir(outputDirectory, { recursive: false });
   await mkdir(join(outputDirectory, "http"));
@@ -47,7 +50,8 @@ export async function collectReceipts(inputRoot: string, output: string, rpc: Re
     identities: [...input.bytes].map(([path, bytes]) => ({ path, bytes: bytes.byteLength, sha256: fingerprint(bytes) })),
     qualification: "hash-authenticated recovered historical bodies, not located original captures",
   });
-  await save("references.json", { refs, requests });
+  await save("references.json", { refs, requests,
+    ...(selection === "conversions-and-recoveries" ? { selection } : {}) });
   const chain = await rpc.read("eth_chainId", [], quantity);
   const anchor = await rpc.read("eth_getBlockByNumber", [`0x${BigInt(ANCHOR.number).toString(16)}`, false], block);
   const authenticated = chain.kind === "success" && BigInt(chain.value) === 4663n && anchor.kind === "success"
@@ -97,13 +101,17 @@ export async function collectReceipts(inputRoot: string, output: string, rpc: Re
   const reconciliation = refs.map((ref) => {
     const result = results.find((r) => r.tx === ref.tx);
     if (!result?.observed) return { locator: ref.row.locator, tx: ref.tx, kind: ref.kind,
-      historicalFields: ref.row.fields, conflicts: result?.conflicts ?? ["missing-transaction"], observation: null };
+      historicalFields: ref.row.fields, conflicts: result?.conflicts ?? ["missing-transaction"], observation: null,
+      ...(selection === "conversions-and-recoveries" ? { status: "reviewed-observations-only",
+        priorCompensation: null, compensationDeduction: null, currentCustody: null,
+        qualifications: ["unavailable-not-zero", "no-eligibility-or-source-admission"] } : {}) };
     const reconciled = reconcileReference(ref, result.observed, result.references.length);
     return { ...reconciled, conflicts: [...new Set([...result.conflicts, ...reconciled.conflicts])] };
   });
   const reconciliationIdentity = await save("reconciliation.json", reconciliation);
   const http = await save("http-manifest.json", [...rpc.captures].sort((a, b) => a.id - b.id));
   const index = { version: archiveVersion.value, status: "NON-ISSUABLE-RECEIPT-OBSERVATIONS",
+    ...(selection === "conversions-and-recoveries" ? { selection } : {}),
     provider: "robinhood_mainnet_alchemy", chainId: "4663", anchor: ANCHOR, authenticated,
     inputs, http, reconciliation: reconciliationIdentity, results,
     references: refs.length, distinctTransactions: requests.length,
@@ -116,9 +124,10 @@ export async function collectReceipts(inputRoot: string, output: string, rpc: Re
   await save("archive.json", index);
   return index;
 }
-export async function collectReceiptFile(input: string, output: string, alias: string) {
+export async function collectReceiptFile(input: string, output: string, alias: string,
+  selection: ReceiptSelection = "purchases-and-claims") {
   // Authenticate before resolving credentials; offline input errors never access RPC.
-  receiptReferences(await loadCandidateInput(input));
+  receiptReferences(await loadCandidateInput(input), selection);
   const endpoint = await configuredEndpoint(alias);
-  return collectReceipts(input, output, new ReceiptRpc(endpoint, join(resolve(output), "http")));
+  return collectReceipts(input, output, new ReceiptRpc(endpoint, join(resolve(output), "http")), selection);
 }

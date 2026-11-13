@@ -66,6 +66,27 @@ export function reconcileReference(ref: ReceiptReference, observed: Associated, 
   const base = { locator: ref.row.locator, kind: ref.kind, tx: ref.tx, historicalFields: ref.row.fields,
     transactionContext, savedTransferLocators: ref.expectedTransfers.map((r) => r.locator) };
   switch (ref.kind) {
+    case "conversion":
+    case "recovery": {
+      const candidates = decoded.filter((t) => t.amount !== null && t.address === ref.asset && t.to === ref.recipient);
+      const outputs = candidates.filter((t) => ref.amount !== null && t.amount === ref.amount
+        && (ref.logIndex === null || t.logIndex === ref.logIndex));
+      if (ref.amount === null) conflicts.push("unknown-output-amount");
+      if (outputs.length === 0) conflicts.push("missing-exact-output");
+      if (outputs.length > 1) conflicts.push("ambiguous-exact-output");
+      if (transactionContext.block !== ref.expectedBlock) conflicts.push("declared-output-block");
+      if (sharedReferences > 1) conflicts.push("shared-transaction-output-attribution-unresolved");
+      return { ...base, conflicts, candidates, outputs,
+        expectedOutput: { asset: ref.asset, recipient: ref.recipient, amount: ref.amount,
+          decimals: ref.decimals, block: ref.expectedBlock, logIndex: ref.logIndex },
+        status: "reviewed-observations-only",
+        priorCompensation: null, compensationDeduction: null, currentCustody: null,
+        qualifications: ["native-token-units-not-ETH-C0-or-current-value",
+          "internal-conversion-label-not-compensation-status", "gross-output-not-net-contribution",
+          "principal-rewards-and-transaction-totals-not-allocated",
+          "prior-compensation-unknown-not-zero", "no-entitlement-transfer-or-current-control-proved",
+          "known-output-only-not-full-W0-or-Q0", "no-eligibility-or-source-admission"] };
+    }
     case "nft": {
       const n = ref.nft, target = n.collection === legacy.weightedNft ? legacy.weighted : earlier;
       const mints = decoded.filter((t) => t.address === n.collection && t.from === legacy.zero);
