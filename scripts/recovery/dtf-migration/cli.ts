@@ -10,8 +10,10 @@ import { rehearse } from "./rehearse.js";
 import { exportBundle } from "./bundle.js";
 import { materializeBundle } from "./bundle-materialize.js";
 import { deriveCandidateFile } from "./candidates.js";
+import { collectReceiptFile } from "./receipt-evidence.js";
 
 export const help = `Bounded Migration operator
+  bun scripts/recovery/dtf-migration/cli.ts collect-receipts --input <complete-historical-tree> --output <new-directory> --rpc-alias robinhood_mainnet_alchemy
   bun scripts/recovery/dtf-migration/cli.ts derive-candidates --input <complete-historical-tree> --output <new-directory>
   bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
   bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
@@ -96,6 +98,18 @@ export async function main(args: readonly string[]): Promise<void> {
     throw new PreparationError("INPUT", "preparation commands accept no execution flags");
   }
   switch (positionals[0]) {
+    case "collect-receipts": {
+      if (!values.input || !values.output || !values["rpc-alias"]
+        || suppliedOptions.some((name) => !["input", "output", "rpc-alias"].includes(name))) {
+        throw new PreparationError("INPUT", "collect-receipts requires only input, output and existing rpc-alias");
+      }
+      const archive = await collectReceiptFile(values.input, values.output, values["rpc-alias"]);
+      console.log(JSON.stringify({ command: "collect-receipts", authenticated: archive.authenticated,
+        references: archive.references, distinctTransactions: archive.distinctTransactions,
+        completeAssociations: archive.completeAssociations, referenceConflicts: archive.referenceConflicts }));
+      if (!archive.authenticated || archive.completeAssociations !== archive.distinctTransactions) process.exitCode = 1;
+      return;
+    }
     case "derive-candidates": {
       if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
         throw new PreparationError("INPUT", "derive-candidates requires only --input and --output");

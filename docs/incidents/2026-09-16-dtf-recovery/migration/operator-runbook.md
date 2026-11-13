@@ -1,5 +1,70 @@
 # Bounded Migration operator runbook
 
+## Finite named receipt evidence
+
+```sh
+bun scripts/recovery/dtf-migration/cli.ts collect-receipts \
+  --input "$COMPLETE_HISTORICAL_TREE" --output "$NEW_RECEIPT_DIRECTORY" \
+  --rpc-alias robinhood_mainnet_alchemy
+```
+
+Use the existing login-shell archive credential bootstrap. The command reads
+only `ALCHEMY_KEY` and the configured alias in `foundry.toml`; never place an
+endpoint or credential in argv. There is no endpoint override, signer,
+automatic retry, provider fallback or installation. Invalid historical bindings
+fail before RPC configuration is read. Offline tests use a local wire server;
+the live CLI accepts only the existing Robinhood Alchemy alias.
+
+All manifest/source raw bindings authenticate before deriving the complete
+S008 weighted purchases, S009 earlier CP purchases, and `legacy_weight_to_sy`
+conversion references. Every original row is retained. Duplicate transaction
+hashes share requests, not economic attribution. The observed full historical
+population is 43 weighted, 16 earlier and 18 raw claims (77 distinct hashes);
+these counts are derived, not a hardcoded request list.
+
+Before named collection, authenticate chain 4663 and canonical block 108944663,
+hash `0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733`.
+Only `eth_chainId`, `eth_getTransactionByHash`, `eth_getTransactionReceipt`,
+`eth_getBlockByHash`, and `eth_getBlockByNumber` are sent. Each distinct named
+transaction and receipt is requested once. Exact blocks are cached by hash and
+number, without range scans. A failed request stays failed; unaffected finite
+requests continue. Wrong chain/anchor stops named requests and accounts for
+every reference as unavailable. Provider refusal is evidence, never permission
+to switch providers, methods, scan ranges or trace execution.
+
+`http/` preserves request bytes and complete safe response entity bytes (not
+HTTP framing or original signed transactions). `http-manifest.json` binds byte
+lengths, SHA-256, request IDs/methods/parameters, HTTP status and response outcome.
+Credential-bearing responses are sanitized, named `.response.redacted`, marked
+`raw: false`, and rejected as successful observations. Transport failures retain
+sanitized error details, never an endpoint-bearing exception. `archive.json`
+records normalized successes, partial failures, canonical associations and exact
+request links. `references.json` retains source rows and request deduplication;
+`reconciliation.json` accounts for every reference, conflict and qualification.
+Output creation and every file write are exclusive. Preserve any partial output
+and command failure; never reuse an output directory.
+
+Transaction/receipt/block identities, index membership, receipt endpoints,
+every log identity/order, canonical block agreement, successful receipt status
+and the anchor upper bound are checked. Purchase reconciliation requires both
+the exact NFT mint/recipient and its generation-specific purchase event/basis.
+Direct DTF/WETH and routed inputs stay separate. Shared/multiaction or indirect
+purchases never attribute the whole transaction input to each original.
+Claim reconciliation retains caller/callee/value/calldata, source/SY logs and
+exact known output locators/amounts. Only a direct exact-length call to the fixed
+TokenStaking address is decoded as `withdrawClaim`; arbitrary calldata is not.
+Event signatures/layouts are local interface interpretation, not authenticated
+historical build provenance.
+
+The archive version is `dtf-finite-receipt-evidence-v1`, status
+`NON-ISSUABLE-RECEIPT-OBSERVATIONS`; operational loaders reject it. Gross transfers,
+mints and matching events do not establish net contribution or eligibility.
+This is observed RPC JSON, not a trustless proof, historical storage, execution
+prefix, current control, full W0/Q0, all prior claims or zero prior compensation.
+It does not modify candidates or close all 1240 unresolved records, exhaustive
+native/WETH/refund/recovery/source exposure, configuration, funding, C0 or credit.
+Preserve recovered-input qualification and all source/external/gas/P1 limits.
+
 ## Offline historical review candidates
 
 ```sh
