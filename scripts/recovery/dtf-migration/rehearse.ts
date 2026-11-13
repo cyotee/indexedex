@@ -4,7 +4,7 @@ import { copyFile, mkdir, readFile, rm, readdir } from "node:fs/promises";
 import { resolve, join, dirname } from "node:path";
 import { z } from "zod";
 import { Interface, keccak256 } from "ethers";
-import { child, FOUNDRY, launchAnvil } from "./rehearsal-process.js";
+import { child, FORGE, ANVIL, launchAnvil } from "./rehearsal-process.js";
 import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
 import { bootstrapManifest, captureOriginalInputBytes, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
 import { DEV } from "./execution-rpc.js";
@@ -28,10 +28,12 @@ import { checkClaimedSyIntake, exerciseClaimedSy } from "./rehearsal-claimed-sy.
 import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
 import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
 import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt, captureLinkedLibraries } from "./rehearsal-proof.js";
+import { loadSavedBundle } from "./bundle.js";
+import { rejectChangedBundles, relocateExecution } from "./rehearsal-portable.js";
 
 const PIN_HASH = "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733";
 async function resolveAlias(): Promise<string> {
-  const config = spawn(join(FOUNDRY, "forge"), ["config", "--json"], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+  const config = spawn(FORGE, ["config", "--json"], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
   const exit = once(config, "exit", { signal: AbortSignal.timeout(15000) });
   let output = "";
   config.stdout?.on("data", (data: Buffer) => { output += data.toString(); });
@@ -47,15 +49,19 @@ async function resolveAlias(): Promise<string> {
 export async function rehearse(options: {
   readonly rpcAlias: string; readonly forkBlock: string; readonly port: string;
   readonly checkpoint: string; readonly evidence: string;
+  readonly bundle: string;
 }) {
   if (options.rpcAlias !== "robinhood_mainnet_alchemy" || options.forkBlock !== "108944663"
-    || !["18567", "18568", "18569", "18571", "18573"].includes(options.port)
-    || options.checkpoint !== (options.port === "18573" ? ".omo-runtime/dtf-migration-claimed-sy/checkpoints"
+    || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(options.port)
+    || options.checkpoint !== (options.port === "18575" ? ".omo-runtime/dtf-migration-portable/checkpoints"
+      : options.port === "18573" ? ".omo-runtime/dtf-migration-claimed-sy/checkpoints"
       : options.port === "18571" ? ".omo-runtime/dtf-migration-held-se-lp/checkpoints"
       : options.port === "18569" ? ".omo-runtime/dtf-migration-earlier-liquid/checkpoints" : options.port === "18568"
       ? ".omo-runtime/dtf-migration-earlier-receipt/checkpoints" : ".omo-runtime/dtf-migration-weighted-receipt/checkpoints")) {
     throw new ExecutionError("DOMAIN", "rehearsal identity is fixed by the CLI contract");
   }
+  const authorities = await loadSavedBundle(options.bundle);
+  if (authorities.kind !== "authorities") throw new ExecutionError("DOMAIN", "rehearsal requires a complete authority bundle");
   const evidence = resolve(options.evidence, `rehearsal-${Date.now()}`);
   const runtime = resolve(options.checkpoint);
   await mkdir(evidence, { recursive: true });
@@ -66,7 +72,7 @@ export async function rehearse(options: {
   const args = ["--host", "127.0.0.1", "--port", options.port, "--chain-id", "4663",
     "--fork-url", upstream, "--fork-block-number", options.forkBlock, "--gas-limit", "100000000",
     "--disable-min-priority-fee", "--balance", "1000000"];
-  await save(join(evidence, "anvil-command.json"), { command: [join(FOUNDRY, "anvil"), ...args.map((a) => a === upstream ? "<resolved archive alias>" : a)] });
+  await save(join(evidence, "anvil-command.json"), { command: [ANVIL, ...args.map((a) => a === upstream ? "<resolved archive alias>" : a)] });
   let node: Awaited<ReturnType<typeof launchAnvil>>;
   try { node = await launchAnvil(args, join(evidence, "anvil.log"), upstream); }
   catch (error) {
@@ -78,20 +84,22 @@ export async function rehearse(options: {
   const previousRpc = process.env["DTF_OPERATOR_LOCAL_RPC"];
   process.env["DTF_OPERATOR_LOCAL_RPC"] = chain.endpoint.toString();
   let sequence = 0;
-  const cli = async (args: readonly string[], expected: "success" | "fault" | "reject" = "success") => {
-    const nonceBefore = expected === "reject" ? await chain.send("eth_getTransactionCount", [DEV, "latest"]) : undefined;
+  const cli = async (args: readonly string[], expected: "success" | "fault" | "reject" | "reject-bundle" = "success") => {
+    const rejecting = expected === "reject" || expected === "reject-bundle";
+    const nonceBefore = rejecting ? await chain.send("eth_getTransactionCount", [DEV, "latest"]) : undefined;
     const result = await child([process.execPath, "scripts/recovery/dtf-migration/cli.ts", ...args],
       join(evidence, `${String(++sequence).padStart(3, "0")}-${args[0]}.log`));
     if (expected === "success" && result.code !== 0) throw new ExecutionError("STATE", `CLI ${args[0]} failed; see command evidence`);
     if (expected === "fault" && (result.signal !== "SIGKILL" || !result.output.includes('"fault":"mined-before-checkpoint"'))) {
       throw new ExecutionError("STATE", "expected actual mined interruption did not occur");
     }
-    if (expected === "reject") {
+    if (rejecting) {
       if (result.code !== 1) throw new ExecutionError("STATE", "negative did not fail with a controlled rejection");
-      z.object({ error: z.literal("DOMAIN") }).passthrough().parse(JSON.parse(result.output.trim()));
+      const rejected = z.object({ error: expected === "reject" ? z.literal("DOMAIN")
+        : z.enum(["DOMAIN", "PROVENANCE", "INPUT"]) }).passthrough().parse(JSON.parse(result.output.trim()));
       const nonceAfter = await chain.send("eth_getTransactionCount", [DEV, "latest"]);
       if (nonceBefore !== nonceAfter) throw new ExecutionError("STATE", "rejected command submitted a transaction");
-      await save(join(evidence, `${String(sequence).padStart(3, "0")}-rejection.json`), { nonceBefore, nonceAfter, error: "DOMAIN" });
+      await save(join(evidence, `${String(sequence).padStart(3, "0")}-rejection.json`), { nonceBefore, nonceAfter, error: rejected.error });
     }
     return result;
   };
@@ -100,7 +108,7 @@ export async function rehearse(options: {
       await chain.send("eth_getBlockByNumber", ["0x67e5d17", false]));
     if (pin.hash !== PIN_HASH) throw new ExecutionError("DOMAIN", "historical header does not match");
     await save(join(evidence, "historical-header.json"), pin);
-    const claimedAcquisition = options.port === "18573" ? await acquireClaimedSy(chain, evidence) : [];
+    const claimedAcquisition = ["18573", "18575"].includes(options.port) ? await acquireClaimedSy(chain, evidence) : [];
     await chain.withHolder("3", async (holder) => {
       await chain.transact(LEGACY.weighted, { from: holder, data: legacyAbi.encodeFunctionData("claimBond", ["3", holder]) });
       const held = String((await chain.call(LEGACY.receipt, legacyAbi, "balanceOf", [holder]))[0]);
@@ -114,10 +122,9 @@ export async function rehearse(options: {
         data: legacyAbi.encodeFunctionData("transfer", [DEV, "10000000000000000000000"]) });
     });
     const environmentPath = join(evidence, "environment.json");
-    const environment: NodeJS.ProcessEnv = { ...process.env, SENDER: DEV, OPERATOR_ENVIRONMENT_OUTPUT: environmentPath,
-      PATH: `${FOUNDRY}:${process.env["PATH"] ?? ""}` };
+    const environment: NodeJS.ProcessEnv = { ...process.env, SENDER: DEV, OPERATOR_ENVIRONMENT_OUTPUT: environmentPath };
     delete environment["PRIVATE_KEY"];
-    const setup = await child([join(FOUNDRY, "forge"), "script", "--use", "solar",
+    const setup = await child([FORGE, "script", "--use", "solar",
       "scripts/foundry/recovery/dtf-migration/Phase_08_Stage_00_OperatorEnvironment.s.sol:Phase_08_Stage_00_OperatorEnvironment",
       "--sig", "prepareEnvironment()", "--rpc-url", chain.endpoint.toString(), "--sender", DEV,
       "--unlocked", "--broadcast", "--slow", "--legacy", "--gas-price", "2000000000",
@@ -131,13 +138,16 @@ export async function rehearse(options: {
     const receiptAcquisition = await acquireWeightedReceipt(chain, evidence);
     const earlierAcquisition = await acquireEarlierReceipt(chain, evidence);
     const earlierLiquidAcquisition = await acquireEarlierLiquid(chain, evidence);
-    const heldSeLpAcquisition = ["18571", "18573"].includes(options.port) ? await acquireHeldSeLp(chain, evidence) : [];
-    if (!["18571", "18573"].includes(options.port)) await save(join(evidence, "held-se-lp-acquisition.json"), {
+    const heldSeLpAcquisition = ["18571", "18573", "18575"].includes(options.port) ? await acquireHeldSeLp(chain, evidence) : [];
+    if (!["18571", "18573", "18575"].includes(options.port)) await save(join(evidence, "held-se-lp-acquisition.json"), {
       rows: [], disposition: "not selected on the retained earlier rehearsal ports",
     });
-    const manifest = await bootstrapManifest(chain, environmentPath);
-    const pre = join(evidence, "pre-capture.json");
+    const manifest = await bootstrapManifest(chain, environmentPath, authorities.sources);
+    let pre = join(evidence, "pre-capture.json");
     await save(pre, manifest);
+    if (options.port === "18575") {
+      pre = (await relocateExecution({ manifestPath: pre, evidence, label: "funding", cli })).path;
+    }
     const local = ["--execute-local", "--instance-id", manifest.local?.instanceId ?? ""];
     await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy")]);
     await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy"), ...local]);
@@ -206,10 +216,22 @@ export async function rehearse(options: {
     await cli(["prepare", "--input", join(evidence, "input.json"), "--output", prepared]);
     await cli(["validate", "--manifest", join(prepared, "manifest.json")]);
     await checkPreparation({ input, evidence, cli });
-    if (options.port === "18573") await checkClaimedSyIntake(chain, input, evidence);
+    if (["18573", "18575"].includes(options.port)) await checkClaimedSyIntake(chain, input, evidence);
     let post = { ...manifest, snapshotId: input.domain.snapshotId, preparedManifest: join(prepared, "manifest.json") };
     let postPath = join(evidence, "post-capture.json");
     await save(postPath, post);
+    const originalPostPath = postPath;
+    if (options.port === "18575") {
+      const relocated = await relocateExecution({ manifestPath: postPath, evidence, label: "configuration", cli });
+      if (!relocated.domain.prepared || !relocated.domain.manifest.preparedManifest || !relocated.domain.manifest.snapshotId) {
+        throw new ExecutionError("STATE", "relocated post-capture domain lacks preparation");
+      }
+      postPath = relocated.path;
+      post = { ...relocated.domain.manifest, preparedManifest: relocated.domain.manifest.preparedManifest,
+        snapshotId: relocated.domain.manifest.snapshotId };
+      input = relocated.domain.prepared.input;
+      await rejectChangedBundles({ manifestPath: postPath, evidence, local, cli });
+    }
     await cli(["configure", "--manifest", postPath, "--checkpoint", join(runtime, "configure"), ...local, "--reverse"]);
     const supplyBefore = String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]);
     if (supplyBefore !== genesisSupply) throw new ExecutionError("STATE", "configuration minted supply");
@@ -221,6 +243,11 @@ export async function rehearse(options: {
     if (await chain.send("eth_getTransactionCount", [DEV, "latest"]) !== issueNonce) throw new ExecutionError("STATE", "default issuance resume sent");
     await cli(["resume", "--manifest", postPath, "--checkpoint", issue, ...local, "--reverse"]);
     await recoveredReceipt(issueFault, issue, join(evidence, "issuance-resumed.json"));
+    if (options.port === "18575") {
+      await cli(["resume", "--manifest", originalPostPath, "--checkpoint", issue, ...local], "reject");
+      const firstPath = join(evidence, "relocation-configuration/materialized-a/execution.json");
+      await cli(["resume", "--manifest", firstPath, "--checkpoint", issue, ...local], "reject");
+    }
     await checkRemainingOrder(input, issue, join(evidence, "reordered-issuance.json"));
     await cli(["verify", "--manifest", postPath, "--checkpoint", join(runtime, "verify")]);
     const unclaimed = (await chain.call(manifest.proxy, migration, "independentIssuance",
@@ -246,9 +273,20 @@ export async function rehearse(options: {
     await captureOriginalInputBytes(input, join(evidence, "replacement-original-input-bytes.json"));
     const replacement = join(evidence, "replacement");
     await cli(["prepare", "--input", join(evidence, "replacement-input.json"), "--output", replacement]);
-    post = { ...post, preparedManifest: join(replacement, "manifest.json") };
+    const { bundle: _oldBundle, ...nativePost } = post;
+    post = { ...nativePost, preparedManifest: join(replacement, "manifest.json") };
     postPath = join(evidence, "replacement-execution.json");
     await save(postPath, post);
+    if (options.port === "18575") {
+      const relocated = await relocateExecution({ manifestPath: postPath, evidence, label: "replacement", cli });
+      if (!relocated.domain.prepared || !relocated.domain.manifest.preparedManifest || !relocated.domain.manifest.snapshotId) {
+        throw new ExecutionError("STATE", "relocated replacement domain lacks preparation");
+      }
+      postPath = relocated.path;
+      post = { ...relocated.domain.manifest, preparedManifest: relocated.domain.manifest.preparedManifest,
+        snapshotId: relocated.domain.manifest.snapshotId };
+      input = relocated.domain.prepared.input;
+    }
     await cli(["configure", "--manifest", postPath, "--checkpoint", join(runtime, "replacement"), ...local]);
     if ((await chain.call(manifest.proxy, migration, "independentIssuance", [RECIPIENTS[0]])).toString() !== issuedBeforeReplacement
       || String((await chain.call(manifest.proxy, supplyAbi, "totalSupply"))[0]) !== replacementSupply) {
@@ -277,7 +315,7 @@ export async function rehearse(options: {
     await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
     await chain.send("evm_mine", []);
     await exerciseWeightedSy({ chain, manifest: post, input, evidence, phase: "final" });
-    if (options.port === "18573") {
+    if (["18573", "18575"].includes(options.port)) {
       await exerciseClaimedSy({ chain, manifest: post, input, evidence, phase: "partial" });
       await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 86400n)]);
       await chain.send("evm_mine", []);

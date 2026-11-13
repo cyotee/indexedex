@@ -25,7 +25,7 @@ export const custodySeAbi = new Interface([
 
 /** A fresh, signed controlled-wallet acquisition, not a transfer of infrastructure-held shares. */
 export async function acquireDtfCustodyShares(chain: RehearsalChain, evidence: string) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "W-SD acquisition is restricted to the pinned owned local node");
   }
   const wallet = HDNodeWallet.fromPhrase("test test test test test test test test test test test junk",

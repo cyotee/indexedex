@@ -1,5 +1,70 @@
 # Bounded Migration operator runbook
 
+## Saved-evidence bundles and fresh relocation
+
+Every rehearsal requires `--bundle "$AUTHORITY_BUNDLE"`, naming a supplied
+complete authority bundle's `bundle.json`. There is no default host inventory
+or old-worktree fallback. A strict `dtf-operator-authorities-v1` export input
+supplies all 22 distinct `authorityRoles` in `bundle.ts`, with original raw
+SHA-256, byte length and provenance. Preserve every source qualification.
+Runtime acquisition records and four actual ABI artifacts are additional
+bound inputs, not substitutes for those authorities.
+
+```sh
+bun scripts/recovery/dtf-migration/cli.ts bundle-export \
+  --input "$NATIVE_INPUT" --output "$NEW_BUNDLE_DIRECTORY"
+bun scripts/recovery/dtf-migration/cli.ts bundle-materialize \
+  --input "$BUNDLE_MANIFEST" --output "$NEW_MATERIALIZATION_DIRECTORY"
+```
+
+Export accepts a native authority input, preparation input, prepared manifest
+or execution manifest. Its raw template, explicitly referenced sources,
+snapshot ABI and bound prepared manifest are saved without changing bytes.
+Nothing else is discovered or downloaded. Do not include secrets, environment
+files or keystores in source lists. Export is offline integrity/transport,
+not chain authentication or historical eligibility. Duplicate/conflicting
+source identities, ambiguous references and missing inputs reject.
+
+Copy the complete bundle directory to another owned data root, then materialize.
+The loader reads every declared regular file, checks raw hash/byte length,
+requires exact data membership and rejects traversal and symlinks, including
+symlinked roots/ancestors. Original paths are metadata lookup keys, never
+alternate filesystem locations. Missing or changed data fails while the old
+host file still exists. Do not merge partial exports.
+
+Materialization creates new local templates/manifests, not original captures.
+Preparation retains live canonical verification. Post-capture execution
+materialization rebuilds preparation against the actual chain and compares
+all original saved payloads, configuration IDs, quotes and dispositions.
+Prepare and execution revalidate their complete bound bundle. Native absolute
+inputs and their existing hash/domain rules remain supported.
+
+Two locations on the same chain/snapshot/originals must produce identical
+onchain payload bytes, configuration IDs and frozen quotes. Normalized hashes
+and execution domains intentionally differ: locations remain hashed.
+Use fresh preparation and checkpoints after relocation. Never migrate an
+already signed journal; changed-domain resume rejects. Each genuine resume
+uses unchanged inputs in one location. Full replacements and new harvest
+selections use fresh templates/domains, not edits to prior bundles/journals.
+
+The complete portable workflow uses only owned loopback18575:
+
+```sh
+bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --bundle "$AUTHORITY_BUNDLE" \
+  --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575 \
+  --checkpoint .omo-runtime/dtf-migration-portable/checkpoints \
+  --evidence docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime
+```
+
+Forge/Anvil resolve from `PATH` or explicit `FORGE_BIN`/`ANVIL_BIN` executables.
+Select a Solar-capable installation; no install or compiler fallback occurs.
+Installed source, dependencies and Foundry artifacts are prerequisites.
+The existing login-shell archive bootstrap remains; never print its resolved
+credential URL. Same-host relocation is not cold dependency reconstruction or
+cross-platform proof. P1's two historical artifact JSON versions remain
+unrecovered. Operational originals, source limits and target gas stay open.
+
 ## Complete-original TokenStaking claims prepared into SY
 
 This intake admits only a reviewed original whose entire eligible native18
@@ -76,6 +141,7 @@ The new cumulative rehearsal is:
 
 ```sh
 /bin/zsh -lc 'bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --bundle "$AUTHORITY_BUNDLE" \
   --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18573 \
   --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints \
   --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime'
@@ -381,6 +447,7 @@ The fixed rehearsal invocation is:
 
 ```sh
 bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --bundle "$AUTHORITY_BUNDLE" \
   --rpc-alias robinhood_mainnet_alchemy \
   --fork-block 108944663 \
   --port 18567 \
@@ -412,13 +479,14 @@ Every local command and receipt is retained under an exclusive rehearsal
 evidence directory. Journals are copied there before the owned node exits
 and its temporary checkpoint root is removed.
 
-Run from the weighted-receipt worktree on
-`work/dtf-migration-phase-17-weighted-receipt`, based on audited
-`a96f0fd26c1a1fdba35750cff74d866afa3a9796`. The existing archive alias is
+Run these invocations with the current bundle-capable operator. The historical
+weighted-receipt evidence was produced on `work/dtf-migration-phase-17-weighted-receipt`,
+based on audited `a96f0fd26c1a1fdba35750cff74d866afa3a9796`; that old checkout is
+not the executable for the updated commands above. The existing archive alias is
 resolved through `forge config --json`. On this workstation its credential
 is in the existing login environment; `/bin/zsh -lc` wraps
 the exact command above. Do not print the resolved endpoint. The wrapper
-uses the installed Solar-capable `/Users/cyotee/.foundry/bin/forge` and Anvil,
+uses explicitly configured or PATH-resolved Solar-capable Forge and Anvil,
 and the existing warm `out/`, `cache_forge/` and dependency links.
 
 Port 18567 must be unused and the chosen checkpoint directory absent before
@@ -788,11 +856,13 @@ conversion, debit or donation recovery stage. Retain the actual direct ER
 and parent ED `VaultDisabled(ES)` failures and historical labels. No
 governance enablement, arbitrary executor or success decoder is supplied.
 
-Use the current phase18 worktree at base
+Run this retained scenario with the current bundle-capable operator and a
+complete authority bundle. Its historical phase18 evidence used base
 `acdbe319f3a20c3af6bea594c62461b6c7988717`:
 
 ```sh
 bun scripts/recovery/dtf-migration/cli.ts rehearse \
+  --bundle "$AUTHORITY_BUNDLE" \
   --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18568 \
   --checkpoint .omo-runtime/dtf-migration-earlier-receipt/checkpoints \
   --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/runtime

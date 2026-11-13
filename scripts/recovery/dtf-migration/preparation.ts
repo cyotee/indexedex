@@ -1,11 +1,11 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { z } from "zod";
 import { buildPayloads, configurationId, dispositions, nftOrigin } from "./payloads.js";
 import { canonical, fingerprint, loadInput, validateProvenance } from "./provenance.js";
 import { quoteOriginals } from "./quotes.js";
-import { PreparationError, preparationInput, sha256 } from "./schema.js";
+import { PreparationError, preparationInput } from "./schema.js";
 import type { PreparationInput } from "./schema.js";
+import { bundledInput, preparedEnvelope } from "./bundle.js";
 
 export function normalize(input: PreparationInput): PreparationInput {
   return preparationInput.parse({
@@ -34,6 +34,10 @@ export function normalize(input: PreparationInput): PreparationInput {
 
 export async function prepareDomain(input: PreparationInput) {
   const normalized = normalize(input);
+  const saved = await bundledInput(input);
+  if (saved && canonical(normalized) !== canonical(normalize(saved.input))) {
+    throw new PreparationError("PROVENANCE", "materialized preparation differs from saved template");
+  }
   await validateProvenance(normalized);
   const payloads = buildPayloads(normalized);
   const quotes = await quoteOriginals(normalized, payloads);
@@ -81,7 +85,7 @@ export async function prepareDomain(input: PreparationInput) {
     if (config.quotedCredit === "0") throw new PreparationError("QUOTE", "invalid issuance credit");
     return { recipient, configurationId: config.configurationId };
   });
-  return {
+  const result = {
     version: "dtf-operator-manifest-v1" as const,
     input: normalized,
     normalizedHash: fingerprint(canonical(normalized)),
@@ -95,19 +99,17 @@ export async function prepareDomain(input: PreparationInput) {
     dispositions: dispositions(normalized),
     fullTask9: "open" as const,
   };
+  if (saved?.prepared) {
+    const original = saved.prepared;
+    if (canonical(original.input) !== canonical(normalize(original.input))
+      || original.normalizedHash !== fingerprint(canonical(normalize(original.input)))
+      || canonical(original) !== canonical({ ...result, input: original.input, normalizedHash: original.normalizedHash })) {
+      throw new PreparationError("DOMAIN", "saved preparation payload, quote or domain differs");
+    }
+  }
+  return result;
 }
 export type PreparedDomain = Awaited<ReturnType<typeof prepareDomain>>;
-
-const envelope = z.object({
-  version: z.literal("dtf-operator-manifest-v1"),
-  input: preparationInput,
-  normalizedHash: sha256,
-  payloads: z.unknown(),
-  payloadHash: sha256,
-  quoteEvidence: z.unknown(),
-  dispositions: z.unknown(),
-  fullTask9: z.literal("open"),
-}).strict();
 
 export async function prepareFile(inputPath: string, outputDirectory: string): Promise<PreparedDomain> {
   const input = await loadInput(resolve(inputPath));
@@ -152,7 +154,7 @@ export async function prepareFile(inputPath: string, outputDirectory: string): P
 }
 
 export async function validateManifest(path: string): Promise<PreparedDomain> {
-  const supplied = envelope.parse(JSON.parse(await readFile(path, "utf8")));
+  const supplied = preparedEnvelope.parse(JSON.parse(await readFile(path, "utf8")));
   const current = await prepareDomain(supplied.input);
   if (canonical(supplied) !== canonical(current)) {
     throw new PreparationError("DOMAIN", "manifest, source, snapshot, quote or payload binding differs");

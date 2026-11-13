@@ -8,6 +8,7 @@ import { address, hex } from "./schema.js";
 import { ExecutionError, executionManifest } from "./execution-schema.js";
 import type { ExecutionManifest } from "./execution-schema.js";
 import type { Rpc } from "./execution-rpc.js";
+import { loadSavedBundle } from "./bundle.js";
 
 export const registryAbi = new Interface(["function vaultsOfPackage(address) view returns (address[])"]);
 export const loupeAbi = new Interface([
@@ -17,6 +18,14 @@ export const loupeAbi = new Interface([
 
 export async function loadExecution(path: string) {
   const manifest = executionManifest.parse(JSON.parse(await readFile(resolve(path), "utf8")));
+  if (manifest.bundle) {
+    const saved = await loadSavedBundle(manifest.bundle.path, manifest.bundle);
+    if (saved.kind !== "execution"
+      || canonical(manifest) !== canonical({ ...saved.execution, preparedManifest: manifest.preparedManifest })
+      || Boolean(saved.prepared) !== Boolean(manifest.preparedManifest)) {
+      throw new ExecutionError("DOMAIN", "materialized execution differs from saved template");
+    }
+  }
   for (const source of manifest.sources) {
     if (!source.path.startsWith("/")) throw new ExecutionError("DOMAIN", "execution source paths must be absolute");
     const bytes = await readFile(source.path);
@@ -25,6 +34,9 @@ export async function loadExecution(path: string) {
     }
   }
   const prepared = manifest.preparedManifest ? await validateManifest(manifest.preparedManifest) : undefined;
+  if (manifest.bundle && prepared && canonical(prepared.input.bundle) !== canonical(manifest.bundle)) {
+    throw new ExecutionError("DOMAIN", "execution and preparation bundles differ");
+  }
   if (prepared && (prepared.input.domain.chainId !== manifest.chainId
     || prepared.input.domain.proxy !== manifest.proxy || prepared.input.domain.snapshotId !== manifest.snapshotId
     || prepared.input.purpose !== manifest.purpose || prepared.input.domain.rpcEnv !== manifest.rpcEnv

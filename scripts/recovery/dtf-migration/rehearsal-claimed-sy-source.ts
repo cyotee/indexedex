@@ -22,13 +22,13 @@ const sourceAbi = new Interface([
 export const claimedWallet = (index: number) => HDNodeWallet.fromPhrase(
   "test test test test test test test test test test test junk", undefined, `m/44'/60'/0'/0/${index}`);
 
-/** Only disposable loopback18573; signed bytes are retained before submission. */
+/** Only owned disposable loopbacks; signed bytes are retained before submission. */
 export async function claimedSigned(chain: RehearsalChain, evidence: string, request: {
   readonly index: number; readonly to: string; readonly data: string;
   readonly value?: bigint; readonly gas?: bigint; readonly status?: bigint;
 }) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || chain.endpoint.port !== "18573") {
-    throw new ExecutionError("DOMAIN", "claimed SY signer requires owned loopback18573");
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18573", "18575"].includes(chain.endpoint.port)) {
+    throw new ExecutionError("DOMAIN", "claimed SY signer requires owned loopback18573 or18575");
   }
   const signer = claimedWallet(request.index);
   const from = signer.address.toLowerCase();

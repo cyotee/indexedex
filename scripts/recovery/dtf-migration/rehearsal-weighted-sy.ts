@@ -30,8 +30,9 @@ export async function exerciseWeightedSy(context: {
   const { chain, manifest, input, evidence, phase } = context;
   const activated = phase !== "stage1";
   const final = phase === "final";
-  const row = input.weightedSy[0]?.original;
-  if (!row) throw new ExecutionError("STATE", "missing synthetic W-Y original inputs");
+  const ordinary = input.weightedSy.filter((row) => row.claimedOrigin === undefined);
+  const row = ordinary[0]?.original;
+  if (ordinary.length !== 1 || !row) throw new ExecutionError("STATE", "expected one ordinary synthetic W-Y original");
   const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
   const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
   const parent = manifest.proxy;

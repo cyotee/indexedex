@@ -7,8 +7,12 @@ import { execute } from "./execution.js";
 import { ExecutionError, stage } from "./execution-schema.js";
 import type { Mode } from "./execution-schema.js";
 import { rehearse } from "./rehearse.js";
+import { exportBundle } from "./bundle.js";
+import { materializeBundle } from "./bundle-materialize.js";
 
 export const help = `Bounded Migration operator
+  bun scripts/recovery/dtf-migration/cli.ts bundle-export --input <native-template> --output <new-bundle-directory>
+  bun scripts/recovery/dtf-migration/cli.ts bundle-materialize --input <bundle.json> --output <new-data-directory>
   bun scripts/recovery/dtf-migration/cli.ts prepare --input <file> --output <directory>
   bun scripts/recovery/dtf-migration/cli.ts validate --manifest <file>
   bun scripts/recovery/dtf-migration/cli.ts <stage> --manifest <file> --checkpoint <directory>
@@ -17,6 +21,11 @@ export const help = `Bounded Migration operator
 prepare reads caller-pinned evidence and the actual immutable snapshot.
 validate rereads evidence, code identities, snapshot and independent ETH/DTF quotes.
 RPC comes only from the manifest's rpcEnv environment variable. No signer is loaded.
+bundle-export preserves raw bytes offline; it is not chain authentication or award approval.
+bundle-materialize creates fresh local inputs; post-capture execution reauthenticates saved preparation.
+Copy the complete bundle directory before materializing elsewhere. Never relocate a live signed journal.
+Every rehearse invocation requires --bundle <complete-authority-bundle.json>.
+Forge/Anvil resolve from PATH or explicit FORGE_BIN/ANVIL_BIN; no installation is performed.
 All integers are decimal strings. Inputs are full replacements, not deltas.
 Unsupported categories fail closed. Synthetic datasets are loopback-only.
 Stages: deploy, fund, capture, configure, independent-issue, owner-bond, verify, activate, harvest.
@@ -28,37 +37,42 @@ Public execution: --broadcast --confirm-chain <id> --confirm-proxy <address>
   --confirm-snapshot <id> --signer-key-env <selected environment variable name>.
 --reverse reorders only independent unsettled configuration/issuance rows.
 --fault-after-mined is restricted to synthetic-local interruption rehearsal.
-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
     --fork-block 108944663 --port 18567
     --checkpoint .omo-runtime/dtf-migration-weighted-receipt/checkpoints
     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/implementation/runtime
   Earlier ER custody/credit rehearsal (liquidation remains blocked):
-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
     --fork-block 108944663 --port 18568
     --checkpoint .omo-runtime/dtf-migration-earlier-receipt/checkpoints
     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/implementation/runtime
   Earlier liquid ED custody/credit rehearsal (conversion reaches disabled ES):
-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
     --fork-block 108944663 --port 18569
     --checkpoint .omo-runtime/dtf-migration-earlier-liquid/checkpoints
     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/implementation/runtime
   Three fixed native18 custody/credit sources (E-S and all three conversions blocked):
-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
     --fork-block 108944663 --port 18571
     --checkpoint .omo-runtime/dtf-migration-held-se-lp/checkpoints
     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/held-se-lp/implementation/runtime
   Complete-original claimed SY (direct signed EOA preparation; not raw-weight pull):
-  bun scripts/recovery/dtf-migration/cli.ts rehearse --rpc-alias robinhood_mainnet_alchemy
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <authority-bundle.json> --rpc-alias robinhood_mainnet_alchemy
     --fork-block 108944663 --port 18573
     --checkpoint .omo-runtime/dtf-migration-claimed-sy/checkpoints
     --evidence docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-integration/implementation/runtime
+  Portable complete workflow:
+  bun scripts/recovery/dtf-migration/cli.ts rehearse --bundle <complete-authority-bundle.json>
+    --rpc-alias robinhood_mainnet_alchemy --fork-block 108944663 --port 18575
+    --checkpoint .omo-runtime/dtf-migration-portable/checkpoints
+    --evidence docs/incidents/2026-09-16-dtf-recovery/migration/portable-operator/implementation/runtime
 `;
 
 export async function main(args: readonly string[]): Promise<void> {
   const { values, positionals, tokens } = parseArgs({
     args: [...args], allowPositionals: true, strict: true, tokens: true,
     options: { input: { type: "string" }, output: { type: "string" },
-      manifest: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
+      manifest: { type: "string" }, bundle: { type: "string" }, checkpoint: { type: "string" }, help: { type: "boolean" },
       "execute-local": { type: "boolean" }, "instance-id": { type: "string" },
       broadcast: { type: "boolean" }, "confirm-chain": { type: "string" },
       "confirm-proxy": { type: "string" }, "confirm-snapshot": { type: "string" },
@@ -80,13 +94,23 @@ export async function main(args: readonly string[]): Promise<void> {
     throw new PreparationError("INPUT", "preparation commands accept no execution flags");
   }
   switch (positionals[0]) {
+    case "bundle-export":
+    case "bundle-materialize": {
+      if (!values.input || !values.output || suppliedOptions.some((name) => !["input", "output"].includes(name))) {
+        throw new PreparationError("INPUT", "bundle commands require only --input and --output");
+      }
+      console.log(JSON.stringify(positionals[0] === "bundle-export"
+        ? { bundle: await exportBundle(values.input, values.output), mode: "offline-integrity-only" }
+        : await materializeBundle(values.input, values.output)));
+      return;
+    }
     case "rehearse": {
-      if (!values["rpc-alias"] || !values["fork-block"] || !values.port || !values.checkpoint || !values.evidence
-        || suppliedOptions.some((name) => !["rpc-alias", "fork-block", "port", "checkpoint", "evidence"].includes(name))) {
+      if (!values.bundle || !values["rpc-alias"] || !values["fork-block"] || !values.port || !values.checkpoint || !values.evidence
+        || suppliedOptions.some((name) => !["bundle", "rpc-alias", "fork-block", "port", "checkpoint", "evidence"].includes(name))) {
         throw new PreparationError("INPUT", "rehearse requires the exact pinned invocation");
       }
       console.log(JSON.stringify(await rehearse({ rpcAlias: values["rpc-alias"], forkBlock: values["fork-block"],
-        port: values.port, checkpoint: values.checkpoint, evidence: values.evidence })));
+        port: values.port, checkpoint: values.checkpoint, evidence: values.evidence, bundle: values.bundle })));
       return;
     }
     case "prepare": {
@@ -112,7 +136,7 @@ export async function main(args: readonly string[]): Promise<void> {
       if (!values.manifest || !values.checkpoint || values.input || values.output || values.help) {
         throw new PreparationError("INPUT", "stage requires only manifest, checkpoint, and explicit execution options");
       }
-      if (values["rpc-alias"] || values["fork-block"] || values.port || values.evidence) throw new PreparationError("INPUT", "rehearsal flags require rehearse");
+      if (values.bundle || values["rpc-alias"] || values["fork-block"] || values.port || values.evidence) throw new PreparationError("INPUT", "rehearsal flags require rehearse");
       if (values["execute-local"] && values.broadcast) throw new PreparationError("INPUT", "execution modes are exclusive");
       let mode: Mode = { kind: "simulate" };
       if (values["execute-local"]) {

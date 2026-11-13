@@ -27,7 +27,7 @@ const tuple = (value: unknown): Result => {
   return value;
 };
 async function signed(chain: RehearsalChain, evidence: string, to: string, data: string, index = 191, status = 1n) {
-  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573"].includes(chain.endpoint.port)) {
+  if (chain.endpoint.hostname !== "127.0.0.1" || !["18567", "18568", "18569", "18571", "18573", "18575"].includes(chain.endpoint.port)) {
     throw new ExecutionError("DOMAIN", "ED signer requires the fixed owned loopback rehearsal");
   }
   const signer = wallet(index);

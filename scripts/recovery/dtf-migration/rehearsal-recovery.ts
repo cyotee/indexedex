@@ -22,10 +22,14 @@ export async function exerciseRecovery(context: Context) {
     const name = `harvest-${String(++sequence).padStart(2, "0")}-${step.stage}`;
     const path = join(evidence, `${name}-input.json`);
     const directory = join(evidence, name);
-    await save(path, { ...input, harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
+    // A newly selected harvest is a fresh domain, never a mutation of the saved
+    // configuration bundle or its signed journal. Retain its relocated sources.
+    const { bundle: _inputBundle, ...nativeInput } = input;
+    const { bundle: _executionBundle, ...nativeManifest } = manifest;
+    await save(path, { ...nativeInput, harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
     await cli(["prepare", "--input", path, "--output", directory]);
     const executionPath = join(evidence, `${name}-execution.json`);
-    await save(executionPath, { ...manifest, preparedManifest: join(directory, "manifest.json") });
+    await save(executionPath, { ...nativeManifest, preparedManifest: join(directory, "manifest.json") });
     await cli(["harvest", "--manifest", executionPath, "--checkpoint", join(runtime, name), ...local]);
   };
   const nftStep = (stage: RecoveryStep["stage"], tokenId: string): RecoveryStep => ({ stage, tokenId, amount: "0", minimum: "0" });

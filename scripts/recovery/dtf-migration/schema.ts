@@ -8,6 +8,9 @@ export const address = z.string().regex(/^0x[0-9a-fA-F]{40}$/).transform((v) => 
 export const hash = z.string().regex(/^0x[0-9a-fA-F]{64}$/).transform((v) => v.toLowerCase());
 export const identity = hash.refine((v) => v !== `0x${"0".repeat(64)}`, "zero identity");
 export const sha256 = z.string().regex(/^[0-9a-f]{64}$/);
+export const bundleReference = z.object({
+  path: z.string().min(1), sha256, bytes: uint,
+}).strict().readonly();
 export const hex = z.string().regex(/^0x(?:[0-9a-fA-F]{2})*$/).transform((v) => v.toLowerCase());
 export const categories = [
   "independent", "weighted-nft", "earlier-nft", "weighted-liquid", "earlier-liquid",
@@ -165,6 +168,7 @@ export const recoveryStep = z.object({
 }).strict().readonly();
 export const preparationInput = z.object({
   version: z.literal("dtf-operator-preparation-v1"),
+  bundle: bundleReference.optional(),
   purpose: z.enum(["synthetic-local", "operational-review"]),
   domain,
   sources: z.array(source).min(1).readonly(),

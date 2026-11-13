@@ -13,6 +13,7 @@ import type { RehearsalChain } from "./rehearsal-chain.js";
 import { LEGACY } from "./rehearsal-chain.js";
 import { DEV } from "./execution-rpc.js";
 import { dtfCustodySeSource, claimVaultSource, weightedReceiptSource, earlierReceiptSource, earlierLiquidSource, nftOrigin } from "./payloads.js";
+import { authorityInput } from "./bundle.js";
 
 // Standard public Anvil mnemonic, derivation indices 100-103. The commonly
 // used indices 0-2 carry historical EIP-7702 code on this fork, so cannot receive
@@ -58,7 +59,9 @@ function nativeJson(parameter: ParamType, value: unknown): unknown {
   if (typeof value === "bigint") return value.toString();
   return value;
 }
-export async function bootstrapManifest(chain: RehearsalChain, environmentPath: string): Promise<ExecutionManifest> {
+export async function bootstrapManifest(chain: RehearsalChain, environmentPath: string,
+  authorities: z.infer<typeof authorityInput>["sources"]): Promise<ExecutionManifest> {
+  authorityInput.parse({ version: "dtf-operator-authorities-v1", sources: authorities });
   const environment = z.object({
     proxy: address, registry: address, package: address, weth: address,
     pairToken: address, arguments: hex, proxyCodeHash: hash, facets: z.array(address),
@@ -69,34 +72,13 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
     sourceFile("environment", environmentPath),
-    sourceFile("dtf-custody-se-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md"),
-    sourceFile("dtf-custody-source-archive", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json"),
-    sourceFile("claim-vault-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md"),
     sourceFile("claim-vault-acquisition", join(dirname(environmentPath), "claim-vault-acquisition.json")),
     sourceFile("dtf-custody-acquisition", join(dirname(environmentPath), "dtf-custody-se-acquisition.json")),
-    sourceFile("weighted-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md"),
-    sourceFile("owner-first-bond-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md"),
-    sourceFile("current-main-plan", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md"),
-    sourceFile("current-main-prd", "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md"),
-    sourceFile("weighted-receipt-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-implementation-brief.md"),
-    sourceFile("weighted-receipt-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md"),
-    sourceFile("weighted-receipt-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md"),
     sourceFile("weighted-receipt-acquisition", join(dirname(environmentPath), "weighted-receipt-acquisition.json")),
-    sourceFile("earlier-receipt-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md"),
-    sourceFile("earlier-receipt-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/report.md"),
-    sourceFile("earlier-liquid-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source/contract.md"),
-    sourceFile("earlier-liquid-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source-verification/report.md"),
     sourceFile("earlier-liquid-acquisition", join(dirname(environmentPath), "earlier-liquid-acquisition.json")),
-    sourceFile("held-se-lp-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase21-admitted-se-lp-implementation-brief.md"),
-    sourceFile("held-se-lp-source-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source/contract.md"),
-    sourceFile("held-se-lp-source-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/source-verification/report.md"),
-    sourceFile("held-se-lp-owner-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding/contract.md"),
-    sourceFile("held-se-lp-owner-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-20-se-lp-source/docs/incidents/2026-09-16-dtf-recovery/migration/se-lp-sources/owner-funding-verification/report.md"),
     sourceFile("held-se-lp-acquisition", join(dirname(environmentPath), "held-se-lp-acquisition.json")),
     sourceFile("earlier-receipt-acquisition", join(dirname(environmentPath), "earlier-receipt-acquisition.json")),
-    sourceFile("claimed-sy-authority", "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase23-claimed-sy-integration-brief.md"),
-    sourceFile("claimed-sy-source-contract", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/contract.md"),
-    sourceFile("claimed-sy-source-admission", "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/verification/report.md"),
+    ...authorities,
   ]);
   const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
   const parameter = pkg.getFunction("deployVault")?.inputs[0];
@@ -348,7 +330,27 @@ export async function replacementFixture(input: PreparationInput, directory: str
     heldSeLp: heldSeLp.map((row) => row.original),
     exposures: exposures.map(({ proof: _proof, ...exposure }) => exposure),
   });
-  const replacement = preparationInput.parse({ ...input, independent, weightedLiquid, weightedSy, dtfCustodySe, claimVault, weightedReceipt, earlierReceipt, earlierLiquid, heldSeLp, exposures,
+  const { bundle: _bundle, ...native } = input;
+  // The newly written document has this array order, which need not match the
+  // earlier raw document after normalization. Bind to its actual new positions.
+  const proof = (pointer: string) => ({ sourceId: "synthetic-proof", pointer });
+  const repoint = <T extends { readonly proof: { readonly sourceId: string; readonly pointer: string } }>(
+    rows: readonly T[], field: string,
+  ) => rows.map((row, index) => ({ ...row, proof: proof(`/${field}/${index}`) }));
+  let originalIndex = 0;
+  let claimedIndex = 0;
+  const replacement = preparationInput.parse({ ...native,
+    independent: independent.map((row) => ({ ...row, entitlements: row.entitlements.map((entry) => ({
+      ...entry, proof: proof(`/originals/${originalIndex++}`),
+    })) })),
+    nfts: repoint(input.nfts, "nfts"),
+    weightedLiquid: repoint(weightedLiquid, "weightedLiquid"),
+    weightedSy: weightedSy.map((row, index) => ({ ...row,
+      proof: proof(row.claimedOrigin ? `/claimedSy/${claimedIndex++}` : `/weightedSy/${index}`) })),
+    dtfCustodySe: repoint(dtfCustodySe, "dtfCustodySe"),
+    claimVault: repoint(claimVault, "claimVault"), weightedReceipt: repoint(weightedReceipt, "weightedReceipt"),
+    earlierReceipt: repoint(earlierReceipt, "earlierReceipt"), earlierLiquid: repoint(earlierLiquid, "earlierLiquid"),
+    heldSeLp: repoint(heldSeLp, "heldSeLp"), exposures: repoint(exposures, "exposures"),
     sources: [...input.sources.filter((s) => s.id !== "synthetic-proof"), await sourceFile("synthetic-proof", evidencePath)] });
   await save(join(directory, "replacement-input.json"), replacement);
   return replacement;

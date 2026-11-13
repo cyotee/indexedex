@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { address, binding, hash, hex, identity, positive, sha256, source, uint } from "./schema.js";
+import { address, binding, bundleReference, hash, hex, identity, positive, sha256, source, uint } from "./schema.js";
 
 export const stages = ["deploy", "fund", "capture", "configure", "independent-issue",
   "owner-bond", "verify", "activate", "harvest"] as const;
@@ -48,6 +48,7 @@ export const ownerBond = z.object({
 }).strict().readonly();
 export const executionManifest = z.object({
   version: z.literal("dtf-operator-execution-v1"),
+  bundle: bundleReference.optional(),
   purpose: z.enum(["synthetic-local", "operational-review"]),
   chainId: positive,
   rpcEnv: z.string().regex(/^[A-Z][A-Z0-9_]*$/),

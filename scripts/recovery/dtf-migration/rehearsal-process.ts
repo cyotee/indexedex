@@ -2,10 +2,10 @@ import { spawn } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
 import { once } from "node:events";
 import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { ExecutionError } from "./execution-schema.js";
 
-export const FOUNDRY = "/Users/cyotee/.foundry/bin";
+export const FORGE = process.env["FORGE_BIN"] ?? "forge";
+export const ANVIL = process.env["ANVIL_BIN"] ?? "anvil";
 export async function child(command: readonly string[], evidence: string, environment = process.env) {
   const executable = command[0];
   if (!executable) throw new ExecutionError("DOMAIN", "empty command");
@@ -24,7 +24,7 @@ export async function child(command: readonly string[], evidence: string, enviro
 }
 
 export async function launchAnvil(args: readonly string[], evidence: string, secret: string) {
-  const process_ = spawn(join(FOUNDRY, "anvil"), [...args], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+  const process_ = spawn(ANVIL, [...args], { env: process.env, stdio: ["ignore", "pipe", "pipe"] });
   let output = "";
   const scrub = (text: string) => text.replaceAll(secret, "<redacted-upstream>");
   const ready = new Promise<void>((resolve, reject) => {
