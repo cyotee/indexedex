@@ -111,6 +111,19 @@ interface IUniswapV4DetfMigration is
         uint256 credit;
     }
 
+    /// @notice One separately quoted original; array order is also bond issuance order.
+    struct NftContribution {
+        uint256 originalEth;
+        uint256 originalDtf;
+        uint256 credit;
+    }
+
+    /// @notice Actual separately funded principal and bond from the single whole-NFT surrender.
+    struct NftContributionSurrender {
+        uint256 credit;
+        uint256 bondTokenId;
+    }
+
     /// @notice Immutable execution facts, unaffected by later configuration replacement.
     struct NftSurrender {
         bool consumed;
@@ -179,6 +192,20 @@ interface IUniswapV4DetfMigration is
         WeightedSyEntitlementInput original;
         bytes32 configurationId;
         uint256 credit;
+    }
+
+    /// @notice Complete eligible remainder prepared as measured native9 SY before Stage1 loading.
+    /// @dev Both weights are native18 raw parent units; ETH/DTF are the FULL original components.
+    /// original.originalUnits is the measured SY backing the entire eligible remainder, not raw weight.
+    struct ClaimedSyEntitlementInput {
+        WeightedSyEntitlementInput original;
+        uint256 originalWeight;
+        uint256 eligibleWeight;
+    }
+
+    struct ClaimedSyWeights {
+        uint256 originalWeight;
+        uint256 eligibleWeight;
     }
 
     struct WeightedSySurrender {
@@ -499,6 +526,10 @@ interface IUniswapV4DetfMigration is
         address indexed collection, uint256 indexed tokenId, address indexed holder,
         bytes32 configurationId, uint256 remainingUnits, uint256 credit, uint256 bondTokenId
     );
+    event MigrationNftContributionSurrendered(
+        address indexed collection, uint256 indexed tokenId, uint256 indexed contributionIndex,
+        uint256 credit, uint256 bondTokenId
+    );
     event WeightedLiquidEntitlementConfigured(
         bytes32 indexed originalId, bytes32 indexed configurationId, address indexed originalWallet,
         uint256 originalUnits, uint256 credit
@@ -578,6 +609,9 @@ interface IUniswapV4DetfMigration is
         external returns (uint256 bondTokenId_, uint256 credit_);
 
     function weightedSyEntitlement(bytes32 originalId_) external view returns (WeightedSyEntitlement memory);
+    /// @notice Bound native18 weights; both zero for the ordinary complete SY representation.
+    function claimedSyWeights(bytes32 originalId_)
+        external view returns (uint256 originalWeight, uint256 eligibleWeight);
     function weightedSySurrender(bytes32 originalId_) external view returns (WeightedSySurrender memory);
     function previewWeightedSySurrender(bytes32 originalId_, uint256 amount_) external view returns (uint256 credit_);
     /// @notice Stage2 only: pull configured original-wallet WY shares for one fresh exactly funded cliff bond.
@@ -609,11 +643,17 @@ interface IUniswapV4DetfMigration is
     function nftEntitlement(address collection_, uint256 tokenId_) external view returns (NftEntitlement memory);
     function nftSurrender(address collection_, uint256 tokenId_) external view returns (NftSurrender memory);
     function nftCustody(address collection_, uint256 tokenId_) external view returns (NftCustody memory);
+    function nftContributions(address collection_, uint256 tokenId_) external view returns (NftContribution[] memory);
+    function nftContributionSurrenders(address collection_, uint256 tokenId_)
+        external view returns (NftContributionSurrender[] memory);
+    function previewNftContributionSurrender(address collection_, uint256 tokenId_)
+        external view returns (uint256 remainingUnits_, uint256[] memory credits_);
     function previewNftSurrender(address collection_, uint256 tokenId_)
         external view returns (uint256 remainingUnits_, uint256 credit_);
 
-    /// @notice Stage 2, configured original wallet and current holder only; one funded fresh 90-day bond.
-    /// @dev No beneficiary, historical quantity, arbitrary target or credit argument.
+    /// @notice Stage 2 original-wallet whole-NFT custody; one fresh 90-day bond per configured original.
+    /// @dev Returns the first bond ID and aggregate credit. Per-original results are retained separately.
+    /// No beneficiary, historical quantity, arbitrary target or credit argument.
     function surrenderMigrationNft(address collection_, uint256 tokenId_, uint256 minimum_, uint256 deadline_)
         external returns (uint256 bondTokenId_, uint256 credit_);
 
@@ -688,6 +728,12 @@ interface IUniswapV4DetfMigrationAllocation {
     function configureWeightedSyEntitlements(
         IUniswapV4DetfMigration.WeightedSyEntitlementInput[] calldata inputs_
     ) external;
+    /// @notice Replace one fully prepared eligible remainder; floor(full original quote * eligible/original).
+    /// @dev No prior Migration delivery, raw-weight pull, preparation credit or arbitrary credit input.
+    /// Shares the ordinary SY original identity and remaining-credit ledger; removed at activation.
+    function configureClaimedSyEntitlements(
+        IUniswapV4DetfMigration.ClaimedSyEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Stage1 full replacement on the frozen book; native 28-decimal DTF-custody SE shares, no issuance or live valuation.
     function configureDtfCustodySeEntitlements(
         IUniswapV4DetfMigration.DtfCustodySeEntitlementInput[] calldata inputs_
@@ -700,6 +746,12 @@ interface IUniswapV4DetfMigrationAllocation {
     /// @notice Replace complete original NFT inputs on the frozen book without minting.
     /// @dev Consumed identities and recovery custody cannot be reset or redirected by replacement.
     function configureNftEntitlements(IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_) external;
+    /// @notice Complete replacement with two originals: ETH first, DTF second, both nonzero.
+    /// @dev Each is quoted separately and receives its own bond on the same atomic Stage2 surrender.
+    /// The scalar entitlement credit is their sum; configureNftEntitlements retains one-bond semantics.
+    function configureNftContributionEntitlements(
+        IUniswapV4DetfMigration.NftEntitlementInput[] calldata inputs_
+    ) external;
     /// @notice Current owner selects/executes the one-time pooled genesis, not an arbitrary donor.
     /// @dev Exactly one representation per external hook leg; anchorIndex_ indexes legs_.
     /// Consume only booked budgets; derive selfMinted_ from actual consumed anchor capital using

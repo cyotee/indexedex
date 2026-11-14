@@ -272,14 +272,15 @@ contract MigrationNativeHandler is MigrationNativeLedger {
     }
 
     /// @notice Interface-derived administration set, not copied facet output.
-    function administrationSelectors() public pure returns (bytes4[14] memory) {
+    function administrationSelectors() public pure returns (bytes4[16] memory) {
         return [Allocation.bootstrapMigrationReserve.selector, Allocation.captureMigrationSnapshot.selector,
             Allocation.configureIndependentAllocations.selector, Allocation.issueIndependentAllocations.selector,
             Allocation.activateMigration.selector, Allocation.configureNftEntitlements.selector,
             Allocation.configureWeightedSyEntitlements.selector, Allocation.configureDtfCustodySeEntitlements.selector,
             Allocation.configureWeightedLiquidEntitlements.selector, Allocation.configureClaimVaultEntitlements.selector,
             Allocation.configureWeightedReceiptEntitlements.selector, Allocation.configureEarlierReceiptEntitlements.selector,
-            Allocation.configureEarlierLiquidEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector];
+            Allocation.configureEarlierLiquidEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector,
+            Allocation.configureNftContributionEntitlements.selector, Allocation.configureClaimedSyEntitlements.selector];
     }
 
     function assertAll() public view {
@@ -300,7 +301,7 @@ contract MigrationNativeHandler is MigrationNativeLedger {
             assertEq(x_.configurationId, issuedConfiguration[i_]);
             assertEq(x_.issuedAt, issuedTime[i_]);
         }
-        bytes4[14] memory ss_ = administrationSelectors();
+        bytes4[16] memory ss_ = administrationSelectors();
         for (uint256 i_; i_ < ss_.length; ++i_) {
             if (active) assertEq(IDiamondLoupe(address(parent)).facetAddress(ss_[i_]), address(0));
             else assertNotEq(IDiamondLoupe(address(parent)).facetAddress(ss_[i_]), address(0));

@@ -6,14 +6,14 @@ import {TestBase_MigrationSourceUnits} from
 import {MigrationSourceUnitsLedger} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/invariant/MigrationSourceUnitsLedger.sol";
 
-/// @notice W-L/E-L/W-R/E-R/C/W-SD/W-SW/E-P/W-P each execute real custody in every prelude.
-/// @dev No E-S, raw-weight surrender, claimed-origin preparation or disabled conversion admission.
+/// @notice W-L/E-L/W-R/E-R/C/W-SD/W-SW/E-P/W-P/E-S each execute real custody in every prelude.
+/// @dev No raw-weight surrender, claimed-origin preparation or disabled conversion admission.
 contract MigrationSourceUnitsInvariantTest is TestBase_MigrationSourceUnits {
     function invariant_exactOriginalUnitsCustodyAndFreshEscrow() public view { handler.assertAll(); }
 
     function afterInvariant() public {
         handler.assertAll();
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             emit log_named_address("source-unit counter address", handler.source(i_));
             emit log_named_uint("source successful surrenders", handler.surrenderSuccesses(i_));
             emit log_named_uint("source exact rejected operations", handler.rejectionCounts(i_));
@@ -33,7 +33,7 @@ contract MigrationSourceUnitsInvariantTest is TestBase_MigrationSourceUnits {
 
     /// @notice Scalar terminal credit and explicit nonrepresentable receipt residue, never confiscation.
     function test_allUnitsTerminalOrRetainedResidueAndLaterOwnCliffs() public {
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             handler.surrender(i_, 0);
             MigrationSourceUnitsLedger.Row memory r_ = handler.row(i_);
             if (i_ == 2 || i_ == 3) {

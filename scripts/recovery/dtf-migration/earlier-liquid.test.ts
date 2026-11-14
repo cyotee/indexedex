@@ -9,6 +9,8 @@ import { buildPayloads, configurationId, dispositions, earlierLiquidSource } fro
 import { prepareDomain } from "./preparation.js";
 import { canonical, fingerprint } from "./provenance.js";
 import { interfaceFile } from "./rehearsal-data.js";
+import { executionManifest } from "./execution-schema.js";
+import { plan } from "./execution-plan.js";
 
 async function receiptFixture() {
   const f = await fixture();
@@ -106,5 +108,42 @@ test("ED operator stage and Solidity share exact tuple ABI and retain separate c
     assert.ok(migration.getFunction("earlierLiquidEntitlement"));
     assert.ok(migration.getFunction("earlierLiquidSurrender"));
     assert.ok(recovery.getFunction("migrationRecoveryInventory"));
+  } finally { await f.close(); }
+});
+
+for (const [stage, stageId] of [
+  ["EarlierConvert", 11n], ["WeightedWethSeConvert", 12n], ["EarlierSeConvert", 13n],
+  ["WeightedLpRedeem", 14n],
+  ["EarlierNftReceiptRedeem", 15n], ["EarlierStandaloneReceiptRedeem", 16n],
+] as const)
+test(`${stage} encodes its appended stage and rejects NFT-shaped conversion fields`, async () => {
+  const f = await receiptFixture();
+  try {
+    const input = preparationInput.parse({ ...f.input, harvest: {
+      steps: [{ stage, tokenId: "0", amount: "123", minimum: "7" }], deadline: "100",
+    } });
+    const prepared = await prepareDomain(input);
+    const allocation = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json");
+    const migration = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
+    const recovery = await interfaceFile("out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json");
+    const pkg = await interfaceFile("out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json");
+    const syPackage = await interfaceFile("out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json");
+    const manifest = executionManifest.parse({
+      version: "dtf-operator-execution-v1", purpose: input.purpose, chainId: input.domain.chainId,
+      rpcEnv: input.domain.rpcEnv, signer: a(20), local: null, proxy: input.domain.proxy,
+      registry: a(11), package: a(12), snapshotId: input.domain.snapshotId,
+      bindings: input.domain.bindings, sources: input.sources, preparedManifest: "prepared.json",
+      deployment: null, funding: { donations: [], genesis: null }, ownerBond: null,
+    });
+    const operations = plan({ manifest, prepared, abis: { allocation, migration, recovery, pkg, syPackage },
+      domain: { manifest, preparedHash: prepared.normalizedHash, payloadHash: prepared.payloadHash } }, "harvest");
+    assert.equal(operations.length, 1);
+    assert.ok(operations[0]);
+    const decoded = recovery.decodeFunctionData("recoverMigrationNfts", operations[0].transaction.data);
+    assert.deepEqual([...decoded[0][0]], [stageId, 0n, 123n, 7n]);
+    assert.equal(decoded[1], 100n);
+    assert.throws(() => buildPayloads({ ...input, harvest: {
+      ...input.harvest, steps: [{ stage, tokenId: "3", amount: "123", minimum: "7" }],
+    } }), { code: "INPUT" });
   } finally { await f.close(); }
 });

@@ -8,7 +8,7 @@ import type { ExecutionDomain } from "./execution-domain.js";
 import { plan } from "./execution-plan.js";
 import { Rpc, subscribeReceipt } from "./execution-rpc.js";
 import { captureCompletion, verifyConfiguration } from "./execution-state.js";
-import { ExecutionError, intent, quantity, stage as stageSchema } from "./execution-schema.js";
+import { deploymentGasLimit, ExecutionError, intent, quantity, stage as stageSchema } from "./execution-schema.js";
 import type { Intent, Mode, Operation, Stage } from "./execution-schema.js";
 import { Journal } from "./journal.js";
 import { hash, hex } from "./schema.js";
@@ -25,6 +25,9 @@ const runSchema = z.object({ stage: stageSchema, operationIds: z.array(z.string(
 
 function validateIntent(record: Intent, operation: Operation): void {
   const signed = Transaction.from(record.signedTransaction);
+  if (operation.stage === "deploy" && signed.gasLimit > deploymentGasLimit) {
+    throw new ExecutionError("INTENT", "deployment intent exceeds target transaction gas limit");
+  }
   if (record.id !== operation.id || record.stage !== operation.stage || record.method !== operation.method
     || canonical(record.transaction) !== canonical(operation.transaction)
     || signed.hash !== record.transactionHash || signed.from?.toLowerCase() !== operation.transaction.from
@@ -130,7 +133,8 @@ export async function execute(run: Run) {
           if (nonce !== await rpc.nonce("latest")) throw new ExecutionError("AMBIGUOUS", "signer has pending unrelated transaction");
           const { from, to, data, value } = operation.transaction;
           // Exact finite ABI operation is simulated before signing. No retry after a revert.
-          const simulationInput = { from, to, data, value: `0x${BigInt(value).toString(16)}` };
+          const simulationInput = { from, to, data, value: `0x${BigInt(value).toString(16)}`,
+            ...(operation.stage === "deploy" ? { gas: `0x${deploymentGasLimit.toString(16)}` } : {}) };
           let simulated: string;
           try { simulated = hex.parse(await rpc.send("eth_call", [simulationInput, "latest"])); }
           catch (error) {
@@ -145,12 +149,18 @@ export async function execute(run: Run) {
             && String(domain.abis.pkg.decodeFunctionResult("deployVault", simulated)[0]).toLowerCase() !== domain.manifest.proxy) {
             throw new ExecutionError("DOMAIN", "package deployment does not predict bound proxy");
           }
-          const estimate = BigInt(quantity.parse(await rpc.send("eth_estimateGas", [{ from, to, data, value: `0x${BigInt(value).toString(16)}` }])));
+          const estimate = BigInt(quantity.parse(await rpc.send("eth_estimateGas", [simulationInput])));
+          if (operation.stage === "deploy" && estimate > deploymentGasLimit) {
+            throw new ExecutionError("STATE", "deployment estimate exceeds target transaction gas limit");
+          }
+          const bufferedGas = estimate * 3n / 2n;
+          const gasLimit = operation.stage === "deploy" && bufferedGas > deploymentGasLimit
+            ? deploymentGasLimit : bufferedGas;
           const gasPrice = BigInt(quantity.parse(await rpc.send("eth_gasPrice", [])));
           if (nonce > BigInt(Number.MAX_SAFE_INTEGER)) throw new ExecutionError("INTENT", "nonce exceeds signer safe range");
           const raw = await rpc.wallet(run.mode).signTransaction({
             chainId: BigInt(domain.manifest.chainId), nonce: Number(nonce), to, data, value: BigInt(value),
-            gasLimit: estimate * 3n / 2n, gasPrice, type: 0,
+            gasLimit, gasPrice, type: 0,
           });
           record = intent.parse({ version: "dtf-operator-intent-v1", domainHash: journal.domainHash,
             id: operation.id, stage: operation.stage, method: operation.method, transaction: operation.transaction,
@@ -163,7 +173,7 @@ export async function execute(run: Run) {
           const sent = hash.parse(await rpc.send("eth_sendRawTransaction", [record.signedTransaction]));
           if (sent !== record.transactionHash) throw new ExecutionError("INTENT", "node returned another transaction hash");
           const mined = await watch.mined();
-          if (run.faultAfterMined && ["donateMigrationCapital", "issueIndependentAllocations", "bond"].includes(record.method)) {
+          if (run.faultAfterMined && ["prepareSyChildren", "donateMigrationCapital", "issueIndependentAllocations", "bond"].includes(record.method)) {
             console.log(JSON.stringify({ fault: "mined-before-checkpoint", transactionHash: mined.transactionHash, nonce: record.nonce }));
             process.kill(process.pid, "SIGKILL");
           }

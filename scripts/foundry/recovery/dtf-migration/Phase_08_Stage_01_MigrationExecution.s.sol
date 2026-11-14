@@ -13,6 +13,14 @@ import {IUniswapV4DetfMigrationRecovery as Recovery}
 /// @notice Typed stage simulations. The CLI owns durable intents and submission.
 /// @dev No target/calldata executor and no implicit run() or broadcast flag.
 contract Phase_08_Stage_01_MigrationExecution is Script {
+    function prepareDeployment(Package package_, Package.PkgArgs calldata args_)
+        external returns (address rawSy_, address stakingSy_)
+    {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        (rawSy_, stakingSy_) = package_.prepareSyChildren(args_);
+        vm.stopBroadcast();
+    }
+
     function deploy(Package package_, Package.PkgArgs calldata args_) external returns (address proxy_) {
         vm.startBroadcast(vm.envAddress("SENDER"));
         proxy_ = package_.deployVault(args_);
@@ -62,6 +70,12 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
+    function configureNftContributions(Allocation proxy_, Migration.NftEntitlementInput[] calldata inputs_) external {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        proxy_.configureNftContributionEntitlements(inputs_);
+        vm.stopBroadcast();
+    }
+
     function independentIssue(Allocation proxy_, Migration.IndependentIssuanceRequest[] calldata requests_)
         external returns (uint256[] memory ids_)
     {
@@ -70,7 +84,7 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
         vm.stopBroadcast();
     }
 
-    /// @notice Fixed W-SW/E-P/W-P custody records only; no donor-owner operation or conversion.
+    /// @notice Fixed W-SW/E-P/W-P/E-S custody records only; no donor-owner operation or conversion.
     function configureHeldSeLp(Allocation proxy_, Migration.HeldSeLpEntitlementInput[] calldata inputs_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
         proxy_.configureHeldSeLpEntitlements(inputs_);
@@ -126,6 +140,12 @@ contract Phase_08_Stage_01_MigrationExecution is Script {
     function configureWeightedSy(Allocation proxy_, Migration.WeightedSyEntitlementInput[] calldata inputs_) external {
         vm.startBroadcast(vm.envAddress("SENDER"));
         proxy_.configureWeightedSyEntitlements(inputs_);
+        vm.stopBroadcast();
+    }
+
+    function configureClaimedSy(Allocation proxy_, Migration.ClaimedSyEntitlementInput[] calldata inputs_) external {
+        vm.startBroadcast(vm.envAddress("SENDER"));
+        proxy_.configureClaimedSyEntitlements(inputs_);
         vm.stopBroadcast();
     }
 

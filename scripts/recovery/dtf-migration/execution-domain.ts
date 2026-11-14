@@ -55,7 +55,8 @@ export async function loadExecution(path: string) {
   const allocation = await artifact("allocation-abi");
   const recovery = await artifact("recovery-abi");
   const pkg = await artifact("package-abi");
-  return { manifest, prepared, abis: { migration, allocation, recovery, pkg },
+  const syPackage = await artifact("sy-package-abi");
+  return { manifest, prepared, abis: { migration, allocation, recovery, pkg, syPackage },
     domain: { manifest, preparedHash: prepared?.normalizedHash ?? null, payloadHash: prepared?.payloadHash ?? null } };
 }
 export type ExecutionDomain = Awaited<ReturnType<typeof loadExecution>>;

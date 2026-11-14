@@ -6,6 +6,9 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
+import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
 import {IUniswapV4DetfMigration as Migration} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -85,6 +88,7 @@ contract MigrationEarlierReceiptTest is MigrationRecoveryDonationForkBase {
             _internal(who_), _internal(detf), oldEr.redemptionRate(), oldEr.totalShares(),
             IERC20(Legacy.EARLIER_RECEIPT).allowance(who_, detf),
             migration.earlierReceiptSurrender(ORIGIN), recovery.migrationEarlierReceiptInternalShares(),
+            recovery.migrationEarlierNftReceiptRemainder(),
             recovery.migrationRecoveryInventory(Legacy.EARLIER_RECEIPT),
             IERC20(detf).totalSupply(), receipt.stakingState(), receipt.gonsOf(address(bonds)),
             IERC20(detf).balanceOf(address(receipt)), IERC20(detf).allowance(detf, address(bonds))
@@ -292,5 +296,95 @@ contract MigrationEarlierReceiptTest is MigrationRecoveryDonationForkBase {
             assertEq(recovery.migrationNftRecovery(EARLIER, 3).receiptShares, e_);
             assertTrue(vm.revertToStateAndDelete(snap_));
         }
+    }
+
+    struct RecoveryBooks {
+        uint256 nftInternal;
+        uint256 standaloneInternal;
+        uint256 remainder;
+        uint256 actualInternal;
+        uint256 earlierDetf;
+    }
+
+    function _recoveryBooks() private view returns (RecoveryBooks memory b_) {
+        b_.remainder = recovery.migrationEarlierNftReceiptRemainder();
+        b_.nftInternal = recovery.migrationRecoveryInventory(Legacy.EARLIER_RECEIPT) * 1e9 + b_.remainder;
+        b_.standaloneInternal = recovery.migrationEarlierReceiptInternalShares();
+        b_.actualInternal = _internal(detf);
+        b_.earlierDetf = IERC20(Legacy.EARLIER_DETF).balanceOf(detf);
+    }
+
+    function _prepareReceiptRecovery() private returns (uint256 bond_) {
+        uint256 q_ = _acquire(erWallet, 10000);
+        _config(erWallet, q_);
+        _configureNft(EARLIER, 3);
+        _activate();
+        (bond_,) = _pull(10000);
+        _surrender(EARLIER, 3);
+        vm.warp(IMigrationEarlierNft(EARLIER).getPosition(3).unlockTime);
+        _run(Recovery.Stage.EarlierSale, 3, 0, 1);
+        vm.prank(0xBEdf78eB17A054D972c85cE222E2175F19899CD6);
+        IERC20(Legacy.EARLIER_RECEIPT).transfer(detf, 1);
+        address registry_ = 0x09682b00D873D913ada0bB69B4D4c9631810d0bc;
+        IVaultRegistryDisableQuery query_ = IVaultRegistryDisableQuery(registry_);
+        (, bool byVault_, bool byPackage_) = query_.isDisabledDetailed(Legacy.EARLIER_SE);
+        vm.startPrank(IMultiStepOwnable(registry_).owner());
+        if (byVault_) IVaultRegistryDisableManager(registry_).setVaultAddressDisabled(Legacy.EARLIER_SE, false);
+        if (byPackage_) {
+            IVaultRegistryDisableManager(registry_).setPackageDisabled(query_.packageOfVault(Legacy.EARLIER_SE), false);
+        }
+        vm.stopPrank();
+    }
+
+    function test_rewardFundedRedemptionPreservesBothReceiptBucketsAndUnbookedFractions() public {
+        uint256 bond_ = _prepareReceiptRecovery();
+        for (uint256 bucket_; bucket_ < 2; ++bucket_) {
+            vm.prank(address(bytes20(hex"495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed")));
+            IERC20(Legacy.EARLIER_DETF).transfer(EARLIER, 1e24);
+            Recovery.Stage stage_ = bucket_ == 0
+                ? Recovery.Stage.EarlierNftReceiptRedeem : Recovery.Stage.EarlierStandaloneReceiptRedeem;
+            RecoveryBooks memory before_ = _recoveryBooks();
+            uint256 burned_ = Math.mulDiv(1000, 1e27, oldEr.redemptionRate());
+            bytes32 unchanged_ = _state(erWallet);
+            bytes32 protected_ = _protected(bond_);
+            Recovery.Step[] memory steps_ = new Recovery.Step[](2);
+            steps_[0] = Recovery.Step(stage_, 0, 1000, 1);
+            steps_[1] = Recovery.Step(Recovery.Stage.Donate, 1, 1, 1);
+            vm.expectRevert(Recovery.InvalidRecoveryStep.selector);
+            vm.prank(migrationOwner);
+            recovery.recoverMigrationNfts(steps_, block.timestamp);
+            assertEq(_state(erWallet), unchanged_);
+            assertEq(abi.encode(_recoveryBooks()), abi.encode(before_));
+            _run(stage_, 0, 1000, 1);
+            RecoveryBooks memory after_ = _recoveryBooks();
+            assertEq(before_.actualInternal - after_.actualInternal, burned_);
+            assertEq(after_.nftInternal, before_.nftInternal - (bucket_ == 0 ? burned_ : 0));
+            assertEq(after_.standaloneInternal, before_.standaloneInternal - (bucket_ == 1 ? burned_ : 0));
+            assertEq(after_.actualInternal - after_.nftInternal - after_.standaloneInternal,
+                before_.actualInternal - before_.nftInternal - before_.standaloneInternal);
+            if (bucket_ == 0) assertGt(after_.remainder, 0);
+            else assertEq(after_.remainder, before_.remainder);
+            uint256 received_ = after_.earlierDetf - before_.earlierDetf;
+            assertGt(received_, 0);
+            uint256 dtfBefore_ = recovery.migrationRecoveryInventory(Legacy.DTF);
+            _run(Recovery.Stage.EarlierConvert, 0, received_, 1);
+            assertGt(recovery.migrationRecoveryInventory(Legacy.DTF), dtfBefore_);
+            assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), before_.earlierDetf);
+            assertEq(_protected(bond_), protected_);
+        }
+    }
+
+    function test_receiptRecoveryCannotSpendTheOtherBucketOrUnbookedShares() public {
+        _prepareReceiptRecovery();
+        RecoveryBooks memory before_ = _recoveryBooks();
+        uint256 amount_ = type(uint128).max;
+        uint256 burned_ = Math.mulDiv(amount_, 1e27, oldEr.redemptionRate());
+        vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector,
+            Legacy.EARLIER_RECEIPT, burned_, before_.standaloneInternal));
+        _run(Recovery.Stage.EarlierStandaloneReceiptRedeem, 0, amount_, 0);
+        vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector,
+            Legacy.EARLIER_RECEIPT, burned_, before_.nftInternal));
+        _run(Recovery.Stage.EarlierNftReceiptRedeem, 0, amount_, 0);
+        assertEq(abi.encode(_recoveryBooks()), abi.encode(before_));
     }
 }

@@ -9,6 +9,10 @@ interface IMigrationLegacyExchange {
     ) external returns (uint256);
 }
 
+interface IMigrationWeightedLp is IMigrationLegacyExchange {
+    function feeTo() external view returns (address);
+}
+
 interface IMigrationWeightedClaims {
     function claimBond(uint256 tokenId_, address recipient_) external returns (uint256 principal_, uint256 rewards_);
     function claimPrincipal(uint256 tokenId_, address recipient_) external returns (uint256);
@@ -56,6 +60,15 @@ interface IMigrationClaimVault {
 
 interface IMigrationEarlierClaims {
     function claimRewards(uint256 tokenId_, address recipient_) external returns (uint256);
+}
+
+interface IMigrationEarlierSynchronization {
+    function compoundProtocolRewards() external returns (uint256 detfIn_, uint256 lpOut_);
+}
+
+interface IMigrationEarlierRedemption {
+    function redeemClaim(uint256 amount_, address tokenOut_, uint256 minimum_, address recipient_, uint256 deadline_)
+        external returns (uint256);
 }
 
 interface IMigrationEarlierSale {

@@ -109,6 +109,7 @@ export async function exerciseEarlierLiquid(context: {
   const inventory = async (asset: string) => z.bigint().parse((await chain.call(parent, recovery, "migrationRecoveryInventory", [asset]))[0]);
   const protectedInventory = async () => [
     String(await inventory(ER)), String((await chain.call(parent, recovery, "migrationEarlierReceiptInternalShares"))[0]),
+    String((await chain.call(parent, recovery, "migrationEarlierNftReceiptRemainder"))[0]),
     String(await number(chain, ER, "balanceOf", [parent])),
     String((await chain.call(parent, migration, "migrationDonationInventory", [manifest.deployment?.weth]))[0]),
   ].join("|");

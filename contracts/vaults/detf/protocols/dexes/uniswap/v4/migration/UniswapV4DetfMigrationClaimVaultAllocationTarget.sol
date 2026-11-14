@@ -8,9 +8,75 @@ import {IUniswapV4DetfMigration as Migration} from "./interfaces/IUniswapV4DetfM
 import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
 import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
+import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 
 /// @notice Separate removable loader keeps both administration facets within EIP170.
 contract UniswapV4DetfMigrationClaimVaultAllocationTarget is UniswapV4DetfMigrationPolicy {
+    function configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        _configureNftEntitlements(inputs_, false);
+    }
+
+    function configureNftContributionEntitlements(Migration.NftEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        _configureNftEntitlements(inputs_, true);
+    }
+
+    function _configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_, bool separate_)
+        private
+    {
+        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        for (uint256 i_; i_ < inputs_.length; ++i_) {
+            Migration.NftEntitlementInput calldata input_ = inputs_[i_];
+            bytes32 original_ = NftLib.originalId(input_.collection, input_.tokenId);
+            if (input_.tokenId < 3 || input_.originalWallet == address(0)
+                || input_.originalUnits == 0 || !input_.contributionsKnown
+                || input_.evidenceId == bytes32(0)
+                || (separate_ && (input_.originalEth == 0 || input_.originalDtf == 0))) {
+                revert Migration.InvalidNftEntitlement(input_.collection, input_.tokenId);
+            }
+            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
+                || m_.weightedLiquidEntitlements[original_].configured
+                || m_.weightedSyEntitlements[original_].configured
+                || m_.dtfCustodySeEntitlements[original_].configured) {
+                revert Migration.DuplicateOriginalEntitlement(original_);
+            }
+            if (m_.claimVaultEntitlements[original_].configured
+                || m_.weightedReceiptEntitlements[original_].configured
+                || m_.earlierReceiptEntitlements[original_].configured
+                || m_.earlierLiquidEntitlements[original_].configured
+                || m_.heldSeLpEntitlements[original_].configured) {
+                revert Migration.DuplicateOriginalEntitlement(original_);
+            }
+            if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
+                revert Migration.NftAlreadyConsumed(input_.collection, input_.tokenId);
+            }
+            uint256 credit_;
+            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
+            delete m_.nftContributions[input_.collection][input_.tokenId];
+            Migration.NftContribution[] storage contributions_ = m_.nftContributions[input_.collection][input_.tokenId];
+            if (separate_) {
+                config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_, true));
+                uint256 ethCredit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, 0);
+                uint256 dtfCredit_ = SnapshotLib.evaluateOriginals(book_, 0, input_.originalDtf);
+                contributions_.push(Migration.NftContribution(input_.originalEth, 0, ethCredit_));
+                contributions_.push(Migration.NftContribution(0, input_.originalDtf, dtfCredit_));
+                credit_ = ethCredit_ + dtfCredit_;
+            } else {
+                credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+                contributions_.push(Migration.NftContribution(input_.originalEth, input_.originalDtf, credit_));
+            }
+            m_.nftEntitlements[input_.collection][input_.tokenId] =
+                Migration.NftEntitlement(input_, config_, original_, credit_);
+            m_.nftOriginal[original_] = true;
+            emit Migration.NftEntitlementConfigured(
+                input_.collection, input_.tokenId, config_, input_.originalWallet, original_, credit_
+            );
+        }
+    }
     function configureHeldSeLpEntitlements(Migration.HeldSeLpEntitlementInput[] calldata inputs_)
         external administration nonReentrant
     {

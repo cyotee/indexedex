@@ -1,5 +1,186 @@
 # Bounded Migration operator runbook
 
+Current scope (2026-11-13): TokenStaking remains in scope because its backing
+was migrated to the old DTF DETF. Plain DTF holdings use ordinary new deposits.
+E-S is admitted through the fixed held-SE/LP path below; historical proof
+sections retain their narrower coverage at the time of those runs.
+
+## Typed recovery added after the whole-plan gate
+
+Recovery stage ordinals 11, 12 and 13 append `EarlierConvert`,
+`WeightedWethSeConvert` and `EarlierSeConvert`; existing ordinals do not change.
+Each accepts a selected native input amount, minimum DTF output and the common
+deadline. The target, input token, DTF output and migration recipient are fixed.
+Only booked recovery inventory is spendable; unrelated balances are protected,
+temporary allowances are cleared, and output is booked once for `Donate`.
+
+Both SE routes have real-source, real-Migration conversion/donation and
+late-batch rollback coverage after the legacy administrator enables the source
+through its actual registry API on a local fork. Those tests do not enable any
+public deployment or grant Migration legacy administrative authority. The
+unchanged pinned sources remain disabled. An earlier SE dust holding worth less
+than one raw DTF unit fails its minimum without burning; the positive witness
+uses a genuine paid source acquisition rather than injected shares.
+
+`EarlierConvert` uses the fixed public pool swap at the earlier LP address.
+The initially attempted native ED burn failed in its LP-to-SE transfer, but
+the alternate swap has passed actual Migration conversion and donation tests.
+Do not classify a source as irrecoverable from that failed native route alone.
+
+Ordinal 14, `WeightedLpRedeem`, uses the deployed source's real liquidity
+authorization. Tests demonstrate a current-fee-recipient grant by the legacy
+oracle owner on a local fork. The adapter grants no role itself. LP minted
+as protocol fees during redemption remains unbooked and protected.
+
+Ordinals 15 and 16, `EarlierNftReceiptRedeem` and
+`EarlierStandaloneReceiptRedeem`, redeem native ER input through the earlier
+parent's reward-funded ED payout; their minimum is ED, not DTF. Follow with
+`EarlierConvert`. NFT-sale inventory keeps external shares E plus internal
+remainder R below 1e9; standalone inventory remains internal shares B. Total
+booked internal ownership is E*1e9+R+B. Checkpoints record all three quantities.
+Insufficient source rewards can still make redemption fail atomically; actual
+future income, not time alone, supplies the demonstrated successful case.
+
+Earlier physical LP remains under its different immutable owner-only guard:
+the fee-recipient change and a one-year advance did not grant exit authority,
+and its parent rejects physical LP intake. It is the sole permanent-custody
+source under the existing immutable interfaces.
+
+## Routine harvest policy
+
+Select `WeightedRewards` and `EarlierClaim` for repeated reward harvesting.
+Keep old principal and NFT custody, even after unlock. Principal claims,
+combined full claims and `EarlierSale` are separate explicit selections, never
+automatically implied by maturity. The reward-only rehearsal checks both
+generations across later cycles and combines genuine DTF recovery before a
+reserve donation reaches its native minimum size.
+
+No test promises future yield. At the pinned earlier source, time alone did
+not produce expansion; tests supply genuine external reward-token income
+through the actual source to verify subsequent harvests. Conditional local
+enablement and fee-role changes are not public-governance approvals.
+
+## Bounded deployment and interrupted preparation
+
+The registered Migration package now requires `prepareSyChildren(fullArgs)`
+before `deployVault(fullArgs)`. Preparation constructs the bound, unreserved
+bond and both empty SY children; the final transaction creates and publishes
+the complete parent. Both operations use identical full arguments, including
+the actual hook. The `deploy` CLI stage performs them in dependency order.
+
+Deployment simulation, estimation, signing and resumed intents are constrained
+to 32,000,000 gas per transaction. A larger Anvil block limit is not a larger
+permitted deployment envelope. Preparation reconciliation independently hashes
+the full arguments, checks the package's completed construction record,
+authenticates its child arguments and registry/factory identities, and verifies
+the absent parent/receipt and inert children at the preparation receipt block.
+The SY package ABI must be included as the fingerprinted `sy-package-abi` source.
+
+After a crash following mined preparation, `resume` remains read-only unless
+execution is explicitly selected. Executing resume authenticates the same
+canonical preparation receipt and child identities, then submits only the
+remaining final transaction. Do not discard the signed journal and replay
+preparation against an already constructed parent.
+
+## Delegated-wallet claim authentication
+
+A member may include `execution: { kind: "direct-eip7702-v1", delegate,
+delegateCodeHash }` when the original wallet directly signs the source claim.
+The original wallet remains the signed sender, source caller, SY recipient
+and eventual bond beneficiary. Authenticate stable pre/post delegation code
+and delegate runtime, exactly one source invocation, and no execution of the
+claimant's wallet code within that source transaction. All existing source,
+canonical-block, measured-unit and complete-original checks still apply.
+
+For a signed outer transaction addressed to the original delegated wallet,
+`relayed-eip7702-v1` separates the outer signer from the actual source caller.
+The canonical successful trace must contain exactly one fixed-source claim
+from the original wallet, with its exact input, return, nested vault redemption,
+source events and measured weight/share/SY deltas. Failed inner calls and
+ambiguous multiple-source calls are rejected even if the outer receipt succeeds.
+The observed delegate hash binds runtime identity; it does not grant the
+relayer a Migration role or infer a wallet authorization policy.
+
+An unbracketed indirect member may instead use
+`execution: { kind: "indirect-transaction-v1", walletCodeHash }`. Its outer target
+need not be the original wallet, and its block may contain neighboring
+transactions. The verifier authenticates the unique actual wallet-to-source
+call, nested redemption, runtime/routing and receipt, then reads before/after
+books at the exact canonical transaction prefixes using `debug_traceCall`
+with a hex-quantity `txIndex`. Unavailable prefix state fails closed, never
+falls back to parent/end-block deltas. The local source proof uses an
+uninstrumented outer relay with real source mutations on both sides of the
+selected transaction; it does not claim a full ERC-4337 implementation.
+
+This removes the structural outer-target and isolated-block restrictions for
+that evidence mode. It does not supply the unavailable historical EntryPoint
+trace or approve that holder's financial eligibility. A delegated wallet must
+also accept the real funded bond's ERC721 callback; rejection rolls back
+Migration custody and issuance. The original wallet remains the beneficiary.
+
+## Conserved TokenStaking remainder
+
+The owner selected one economic original across eligible remaining claims and
+already-claimed SY, excluding disposed or previously compensated portions.
+The bounded `complete-remaining-token-staking` certificate keeps the full
+original ETH/DTF contributions, adds `review.originalWeight`, and retains
+`review.eligibleWeight`. Both weights use native18 parent units; the
+configured `originalUnits` is the measured native9 SY representing the
+complete eligible remainder. These units are not interchangeable.
+
+Preparation authenticates every admitted source claim and requires its
+consumed-weight sum to equal the complete eligible remainder. Original weight,
+eligibility and exclusions are reviewed inputs, not inferred from current
+balances. Existing direct signed EOA, canonical isolated-block, source-runtime,
+measured-output, unrelated-budget and anti-downgrade checks remain in force.
+The original identity cannot simultaneously appear as ordinary SY or another
+compensated representation. Prior delivered Migration credit remains excluded
+from this bounded intake.
+
+The complete measured SY balance and excluded floor are authenticated at the
+pinned preparation block. A later holder transfer does not erase the configured
+original or block the owner's paid first bond and activation. Current asset
+control is enforced by the actual surrender transaction: missing assets revert
+without custody or credit changes, and returning them to the original wallet
+does not require reconstructing intermediate transfers.
+
+The operator uses `configureClaimedSyEntitlements` and preserves both the full
+original quote and `floor(originalCredit * eligibleWeight / originalWeight)`.
+It rejects an absent/invalid denominator or zero remaining credit, binds the
+weight basis in the configuration hash, and verifies `claimedSyWeights`.
+Do not multiply down ETH/DTF quantities and quote them again. Later partial
+SY surrender consumes the stored remaining credit proportionally, with final
+rounding residue paid only when the remainder is surrendered.
+
+This path requires complete preparation of the configured eligible remainder
+before Stage 1 loading; it does not add a raw-weight pull or authenticate a
+delegated wallet. Source claims themselves issue no compensation. A later
+Migration failure restores its SY custody and credit, not earlier completed
+source claims. The original complete-original certificate remains supported.
+
+## Separate NFT contribution bonds
+
+Set `separateContributions: true` on the reviewed NFT `original` record to
+configure two bonds, with ETH first and DTF second. Both original amounts must
+be positive. Omit the field for the existing single-bond mode. The proof binds
+the mode together with the full original; changing or removing it requires a
+reviewed replacement, not an operator-only switch.
+
+For weighted collection `0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e`, ID `3`,
+the owner selected separate originals of `999999000000000` raw18 WETH and
+`362893857600000000000` raw18 DTF. Preparation quotes each against the same
+frozen snapshot and records both credits. The configure stage selects
+`configureNftContributionEntitlements`; the typed Forge helper is
+`configureNftContributions`. Its configuration hash includes the separate-mode
+boolean, so resume verification cannot confuse it with a single-bond record.
+
+One eligible Stage 2 whole-NFT surrender creates both bonds atomically. The
+legacy scalar return reports the first bond ID and total delivered credit;
+read `nftContributionSurrenders` or the per-contribution events for both IDs
+and principals. Each stored credit is scaled by remaining principal separately.
+This is not an independent compensation allocation. Configuration still
+requires reviewed source units, wallet identity and non-overlapping exposure.
+
 ## Finite conversion and recovery receipt selection
 
 Add `--selection conversions-and-recoveries` to `collect-receipts` to select
@@ -340,17 +521,17 @@ host portability and target deployment gas remain outside this bounded intake.
 `heldSeLp` contains complete `original` and raw `proof` objects. Originals
 require `originalId`, `originalWallet`, `source`, positive `originalUnits`,
 known `originalEth` and `originalDtf`, `evidenceId`, and
-`contributionsKnown: true`. The three supported chain4663 sources are:
+`contributionsKnown: true`. The four supported chain4663 sources are:
 
 | Source | Fixed token | Eligible units |
 | --- | --- | --- |
 | W-SW | `0x999dae02d22e5fee1c4508430d5196d31d631009` | native18 weighted WETH/DTF SE shares |
 | E-P | `0x923877336b14662cfb5b3a60b14e7d716d54a888` | native18 physical earlier LP |
 | W-P | `0x46e068c2393e189fbc86632f67210af253a42aa8` | native18 physical weighted LP |
+| E-S | `0xb7d4bb379d361ad442cddee53ea71a33957826a7` | native18 earlier SE shares |
 
 These are not native28 W-SD, native9 receipt/SY units, ER internal shares,
-NFT accounting shares, funded principal, or arbitrary ERC20s. E-S
-`0xb7d4bb379d361ad442cddee53ea71a33957826a7` remains unsupported.
+NFT accounting shares, funded principal, or arbitrary ERC20s.
 Preparation emits a separate `held-se-lp.json` review mirror. Configuration
 quotes each complete original separately through the frozen evaluator,
 without issuance or merging nonlinear inputs. The canonical wallet-independent
@@ -378,7 +559,7 @@ source's native18 units. Preexisting/unsolicited holdings, other held sources,
 NFT rewards, ED, ER external E/internal B, WS gons, reserve/donor budgets
 and new-bond backing remain separate. There is no new conversion, debit,
 donation stage, successful-exit decoder, source enablement, or owner executor.
-W-SW exits remain VaultDisabled; E-P retains UnsupportedRoute/native NotOwner;
+E-S/W-SW conversions remain unadmitted; E-P retains UnsupportedRoute/native NotOwner;
 W-P retains ordinary NotOwner and owner-only liquidity. Custody/credit
 acceptance does not accept their liquidation.
 
@@ -389,7 +570,11 @@ real mined-before-checkpoint/fresh-process resumes. Earlier18567/18568/18569
 signer gates remain; there is no public fallback.
 
 Fixture acquisition is explicitly separate from production/operator authority.
-W-SW uses an authenticated existing EOA's personal transfer. E-P/W-P use only
+W-SW uses an authenticated existing EOA's personal transfer. E-S uses actual
+EOA holder `0xbab6a03be445094a10695772a79777407dcdc0e7` with pinned balance
+2021090200239501983 native18 shares; this proves custody, not funded acquisition
+or financial eligibility. See the retained pretransferred-mint qualification.
+E-P/W-P use only
 the separately admitted disposable-fork simulation: authenticate the existing
 EOA collector owner and deployed `pullFee` routing; that owner releases a
 small actual collector holding to itself, then separately donates its personal

@@ -114,9 +114,9 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
             bytes4 selector_ = Allocation.configureEarlierLiquidEntitlements.selector;
             if (category_ == 9) held_[0].source = Legacy.EARLIER_DETF;
             else {
-                address[3] memory fixed_ = [Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP];
+                address[4] memory fixed_ = [Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP, Legacy.EARLIER_SE];
                 uint256 seen_;
-                for (uint256 i_; i_ < 3; ++i_) if (fixed_[i_] != _source()) {
+                for (uint256 i_; i_ < 4; ++i_) if (fixed_[i_] != _source()) {
                     if (seen_++ == category_ - 10) { held_[0].source = fixed_[i_]; break; }
                 }
                 selector_ = Allocation.configureHeldSeLpEntitlements.selector;
@@ -143,7 +143,7 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
     }
 
     function test_allCanonicalOriginsExcludeBothDirectionsAfterWalletCorrection() public {
-        for (uint256 category_; category_ < 12; ++category_) {
+        for (uint256 category_; category_ < 13; ++category_) {
             for (uint256 direction_; direction_ < 2; ++direction_) {
                 uint256 snap_ = vm.snapshotState();
                 bytes32 origin_ = category_ == 1 || category_ == 2
@@ -200,34 +200,34 @@ abstract contract MigrationHeldSeLpConfigurationTest is TestBase_UniswapV4DetfMi
     }
 
     function test_mixedFixedSourcesQuoteOriginalsSeparatelyAndRollbackInvalidLastRow() public {
-        address[3] memory fixed_ = [Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP];
-        Migration.HeldSeLpEntitlementInput[] memory a_ = new Migration.HeldSeLpEntitlementInput[](3);
+        address[4] memory fixed_ = [Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP, Legacy.EARLIER_SE];
+        Migration.HeldSeLpEntitlementInput[] memory a_ = new Migration.HeldSeLpEntitlementInput[](4);
         uint256 supply_ = IERC20(detf).totalSupply();
-        for (uint256 i_; i_ < 3; ++i_) {
+        for (uint256 i_; i_ < 4; ++i_) {
             a_[i_] = _input(bytes32(i_ + 1))[0];
             a_[i_].source = fixed_[i_];
             a_[i_].originalEth = (i_ + 1) * 0.1 ether;
         }
-        a_[2].contributionsKnown = false;
+        a_[3].contributionsKnown = false;
         vm.prank(migrationOwner);
-        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, bytes32(uint256(3))));
+        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidHeldSeLpEntitlement.selector, bytes32(uint256(4))));
         allocation.configureHeldSeLpEntitlements(a_);
-        for (uint256 i_; i_ < 3; ++i_) assertFalse(migration.heldSeLpEntitlement(bytes32(i_ + 1)).configured);
-        a_[2].contributionsKnown = true;
+        for (uint256 i_; i_ < 4; ++i_) assertFalse(migration.heldSeLpEntitlement(bytes32(i_ + 1)).configured);
+        a_[3].contributionsKnown = true;
         vm.prank(migrationOwner); allocation.configureHeldSeLpEntitlements(a_);
         uint256 credits_;
-        for (uint256 i_; i_ < 3; ++i_) {
+        for (uint256 i_; i_ < 4; ++i_) {
             uint256 c_ = migration.heldSeLpEntitlement(bytes32(i_ + 1)).credit;
             assertEq(c_, migration.previewOriginalCredit(a_[i_].originalEth, 0));
             credits_ += c_;
         }
-        assertNotEq(credits_, migration.previewOriginalCredit(0.6 ether, 0));
+        assertNotEq(credits_, migration.previewOriginalCredit(1 ether, 0));
         assertEq(IERC20(detf).totalSupply(), supply_);
     }
 
-    function test_earlierSeIsUnsupportedNotAnotherAdmittedNative18Source() public {
+    function test_contributionDtfIsNotAnotherAdmittedHeldSource() public {
         Migration.HeldSeLpEntitlementInput[] memory a_ = _input(ORIGIN);
-        a_[0].source = address(bytes20(hex"b7d4bb379d361ad442cddee53ea71a33957826a7"));
+        a_[0].source = Legacy.DTF;
         vm.prank(migrationOwner);
         vm.expectRevert(abi.encodeWithSelector(Migration.UnsupportedHeldSeLpSource.selector, 4663, a_[0].source));
         allocation.configureHeldSeLpEntitlements(a_);
@@ -243,4 +243,7 @@ contract MigrationEarlierLpConfigurationTest is MigrationHeldSeLpConfigurationTe
 }
 contract MigrationWeightedLpConfigurationTest is MigrationHeldSeLpConfigurationTest {
     function _source() internal pure override returns (address) { return Legacy.WEIGHTED_LP; }
+}
+contract MigrationEarlierSeConfigurationTest is MigrationHeldSeLpConfigurationTest {
+    function _source() internal pure override returns (address) { return Legacy.EARLIER_SE; }
 }

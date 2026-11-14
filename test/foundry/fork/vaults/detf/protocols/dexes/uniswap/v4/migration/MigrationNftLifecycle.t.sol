@@ -7,6 +7,9 @@ import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {IMigrationWeightedNft} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
 import {MigrationNftForkBase} from "./MigrationNftForkBase.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -19,6 +22,8 @@ import {IUniswapV4DetfMigrationStakedDETF as MigrationReceipt} from
 contract MigrationNftHolder is IERC721Receiver {
     Migration immutable parent;
     bool public rejectBond;
+    bool public rejectSecondBond;
+    uint256 public receivedBonds;
     bool public reentrySucceeded;
     bool public activationSucceeded;
     bool public replaySucceeded;
@@ -28,6 +33,7 @@ contract MigrationNftHolder is IERC721Receiver {
 
     constructor(Migration parent_) { parent = parent_; }
     function reject(bool value_) external { rejectBond = value_; }
+    function rejectSecond(bool value_) external { rejectSecondBond = value_; }
     function acceptOwnership() external { parent.acceptOwnershipTransfer(); }
     function surrender(address collection_, uint256 id_) external returns (uint256, uint256) {
         source = collection_; sourceId = id_;
@@ -36,6 +42,7 @@ contract MigrationNftHolder is IERC721Receiver {
     }
     function onERC721Received(address, address, uint256 id_, bytes calldata) external returns (bytes4) {
         if (msg.sender == parent.bondNftVault()) {
+            ++receivedBonds;
             Bonds bond_ = Bonds(msg.sender);
             MigrationReceipt receipt_ = MigrationReceipt(parent.rebasingClaimToken());
             observedFunded = bond_.isMigrationPosition(id_) && bond_.positionOf(id_).principal != 0
@@ -48,13 +55,156 @@ contract MigrationNftHolder is IERC721Receiver {
             (replaySucceeded,) = address(parent).call(abi.encodeCall(
                 IERC721Receiver.onERC721Received, (address(parent), address(this), sourceId, bytes(""))
             ));
-            if (rejectBond) return bytes4(0);
+            if (rejectBond || (rejectSecondBond && receivedBonds == 2)) return bytes4(0);
         }
         return IERC721Receiver.onERC721Received.selector;
     }
 }
 
 contract MigrationNftLifecycleTest is MigrationNftForkBase {
+    function test_weightedNftThreeIssuesTwoIndependentlyFundedBondsOnOneSurrender() public {
+        Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
+        rows_[0] = _original(WEIGHTED, 3);
+        vm.prank(migrationOwner);
+        allocation.configureNftContributionEntitlements(rows_);
+        Migration.NftContribution[] memory parts_ = migration.nftContributions(WEIGHTED, 3);
+        assertEq(parts_.length, 2);
+        assertEq(parts_[0].originalEth, 999999000000000);
+        assertEq(parts_[0].originalDtf, 0);
+        assertEq(parts_[1].originalEth, 0);
+        assertEq(parts_[1].originalDtf, 362893857600000000000);
+        assertEq(parts_[0].credit, migration.previewOriginalCredit(999999000000000, 0));
+        assertEq(parts_[1].credit, migration.previewOriginalCredit(0, 362893857600000000000));
+        assertNotEq(parts_[0].credit, parts_[1].credit);
+        _activate();
+        (uint256 remaining_, uint256[] memory credits_) = migration.previewNftContributionSurrender(WEIGHTED, 3);
+        assertEq(credits_.length, 2);
+        for (uint256 i_; i_ < 2; ++i_) {
+            assertEq(credits_[i_], Math.mulDiv(parts_[i_].credit, remaining_, rows_[0].originalUnits));
+        }
+        (, uint256 scalar_) = migration.previewNftSurrender(WEIGHTED, 3);
+        assertEq(scalar_, credits_[0] + credits_[1]);
+        address wallet_ = rows_[0].originalWallet;
+        uint256 supply_ = IERC20(detf).totalSupply();
+        vm.startPrank(wallet_);
+        IERC721(WEIGHTED).approve(detf, 3);
+        (uint256 first_, uint256 paid_) = migration.surrenderMigrationNft(WEIGHTED, 3, scalar_, block.timestamp);
+        vm.stopPrank();
+        Migration.NftContributionSurrender[] memory issued_ = migration.nftContributionSurrenders(WEIGHTED, 3);
+        assertEq(issued_.length, 2);
+        assertEq(issued_[0].bondTokenId, first_);
+        assertEq(issued_[1].bondTokenId, first_ + 1);
+        uint256 gons_;
+        for (uint256 i_; i_ < 2; ++i_) {
+            uint256 id_ = issued_[i_].bondTokenId;
+            assertEq(issued_[i_].credit, credits_[i_]);
+            assertEq(bonds.positionOf(id_).principal, credits_[i_]);
+            assertEq(bonds.positionOf(id_).startTimestamp, block.timestamp);
+            assertEq(bonds.positionOf(id_).vestingDuration, 90 days);
+            assertTrue(bonds.isMigrationPosition(id_));
+            assertEq(IERC721(address(bonds)).ownerOf(id_), wallet_);
+            assertEq(bonds.previewClaim(id_).principalDue, 0);
+            gons_ += bonds.positionOf(id_).stakingGons;
+        }
+        assertEq(paid_, scalar_);
+        assertEq(IERC20(detf).totalSupply(), supply_ + paid_);
+        assertEq(receipt.stakingState().accountedBacking, initialBacking + paid_);
+        assertEq(receipt.gonsOf(address(bonds)), initialBondGons + gons_);
+        assertEq(receipt.stakingState().totalGons, initialTotalGons + gons_);
+        assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + paid_);
+        assertEq(IERC20(detf).allowance(detf, address(bonds)), 0);
+        assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);
+        assertEq(IERC721(WEIGHTED).ownerOf(3), detf);
+        assertTrue(migration.nftSurrender(WEIGHTED, 3).consumed);
+        assertEq(migration.nftSurrender(WEIGHTED, 3).credit, paid_);
+        assertEq(migration.nftSurrender(WEIGHTED, 3).bondTokenId, first_);
+        assertEq(migration.nftCustody(WEIGHTED, 3).configurationId,
+            migration.nftEntitlement(WEIGHTED, 3).configurationId);
+        vm.prank(wallet_);
+        vm.expectRevert(abi.encodeWithSelector(Migration.NftAlreadyConsumed.selector, WEIGHTED, 3));
+        migration.surrenderMigrationNft(WEIGHTED, 3, 0, block.timestamp);
+        assertEq(migration.nftContributionSurrenders(WEIGHTED, 3).length, 2);
+        vm.warp(block.timestamp + 90 days);
+        assertEq(bonds.previewClaim(first_).principalDue, credits_[0]);
+        assertEq(bonds.previewClaim(first_ + 1).principalDue, credits_[1]);
+    }
+
+    function test_twoOriginalsApplyRemainingPrincipalToEachFrozenCredit() public {
+        Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
+        rows_[0] = _original(WEIGHTED, 32);
+        // Synthetic second original isolates fractional arithmetic on a real partially claimed NFT.
+        rows_[0].originalEth = 999999000000000;
+        rows_[0].evidenceId = keccak256("two-original partial-principal fixture");
+        vm.prank(migrationOwner);
+        allocation.configureNftContributionEntitlements(rows_);
+        IMigrationWeightedNft.Position memory p_ = IMigrationWeightedNft(WEIGHTED).positionOf(32);
+        assertGt(p_.claimedPrincipal, 0);
+        uint256 remaining_ = p_.principal - p_.claimedPrincipal;
+        uint256 eth_ = Math.mulDiv(migration.previewOriginalCredit(rows_[0].originalEth, 0), remaining_, p_.principal);
+        uint256 dtf_ = Math.mulDiv(migration.previewOriginalCredit(0, rows_[0].originalDtf), remaining_, p_.principal);
+        _activate();
+        (uint256 previewRemaining_, uint256[] memory credits_) = migration.previewNftContributionSurrender(WEIGHTED, 32);
+        assertEq(previewRemaining_, remaining_);
+        assertEq(credits_[0], eth_);
+        assertEq(credits_[1], dtf_);
+        vm.startPrank(rows_[0].originalWallet);
+        IERC721(WEIGHTED).approve(detf, 32);
+        (uint256 first_, uint256 paid_) = migration.surrenderMigrationNft(WEIGHTED, 32, eth_ + dtf_, block.timestamp);
+        vm.stopPrank();
+        assertEq(paid_, eth_ + dtf_);
+        assertEq(bonds.positionOf(first_).principal, eth_);
+        assertEq(bonds.positionOf(first_ + 1).principal, dtf_);
+        assertEq(migration.nftSurrender(WEIGHTED, 32).remainingUnits, remaining_);
+    }
+
+    function test_secondContributionReceiverFailureRollsBackBothBondsAndWholeNft() public {
+        MigrationNftHolder holder_ = new MigrationNftHolder(migration);
+        Migration.NftEntitlementInput[] memory rows_ = new Migration.NftEntitlementInput[](1);
+        rows_[0] = _original(WEIGHTED, 3);
+        // Synthetic eligible contract wallet exercises the actual funded NFT receiver boundary.
+        rows_[0].originalWallet = address(holder_);
+        rows_[0].evidenceId = keccak256("two-original rejecting receiver fixture");
+        vm.prank(migrationOwner);
+        allocation.configureNftContributionEntitlements(rows_);
+        address old_ = IERC721(WEIGHTED).ownerOf(3);
+        vm.prank(old_);
+        IERC721(WEIGHTED).safeTransferFrom(old_, address(holder_), 3);
+        _activate();
+        holder_.rejectSecond(true);
+        uint256 supply_ = IERC20(detf).totalSupply();
+        uint256 attributed_ = bonds.attributedBondGons();
+        uint256 first_ = migration.migrationOwnerFirstBondTokenId() + 1;
+        bytes memory config_ = abi.encode(migration.nftContributions(WEIGHTED, 3));
+        // The exact second NFT callback must be reached; a first-issuance failure is not this regression.
+        vm.expectCall(address(holder_), abi.encodeCall(
+            IERC721Receiver.onERC721Received, (detf, address(0), first_ + 1, bytes(""))
+        ));
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(holder_)));
+        holder_.surrender(WEIGHTED, 3);
+        _assertNotConsumed(WEIGHTED, 3, address(holder_), supply_);
+        assertEq(holder_.receivedBonds(), 0);
+        assertEq(migration.nftContributionSurrenders(WEIGHTED, 3).length, 0);
+        assertEq(abi.encode(migration.nftContributions(WEIGHTED, 3)), config_);
+        assertEq(bonds.attributedBondGons(), attributed_);
+        assertEq(receipt.gonsOf(address(bonds)), initialBondGons);
+        assertEq(IERC721(address(bonds)).ownerOf(first_), address(0));
+        assertEq(IERC721(address(bonds)).ownerOf(first_ + 1), address(0));
+        assertFalse(bonds.isMigrationPosition(first_));
+        assertFalse(bonds.isMigrationPosition(first_ + 1));
+        assertEq(IERC20(detf).balanceOf(address(bonds)), 0);
+        assertEq(IERC20(detf).allowance(address(bonds), address(receipt)), 0);
+        assertEq(IERC721(WEIGHTED).getApproved(3), address(0));
+        holder_.rejectSecond(false);
+        (uint256 retried_, uint256 credit_) = holder_.surrender(WEIGHTED, 3);
+        assertEq(retried_, first_);
+        assertEq(holder_.receivedBonds(), 2);
+        assertEq(IERC721(WEIGHTED).ownerOf(3), detf);
+        assertEq(bonds.positionOf(first_).principal + bonds.positionOf(first_ + 1).principal, credit_);
+        assertFalse(holder_.reentrySucceeded());
+        assertFalse(holder_.activationSucceeded());
+        assertFalse(holder_.replaySucceeded());
+    }
+
     function test_removedLoadersCannotResizeReopenOrCreateDescendantCredit() public {
         uint256 c0_ = _configureNft(WEIGHTED, 32);
         _activate();

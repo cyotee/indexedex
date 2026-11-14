@@ -120,6 +120,13 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
         external view returns (Migration.WeightedSyEntitlement memory)
     { return Repo._layoutStruct().weightedSyEntitlements[originalId_]; }
 
+    function claimedSyWeights(bytes32 originalId_)
+        external view returns (uint256 originalWeight, uint256 eligibleWeight)
+    {
+        Migration.ClaimedSyWeights storage weights_ = Repo._layoutStruct().claimedSyWeights[originalId_];
+        return (weights_.originalWeight, weights_.eligibleWeight);
+    }
+
     function weightedSySurrender(bytes32 originalId_)
         external view returns (Migration.WeightedSySurrender memory)
     { return Repo._layoutStruct().weightedSySurrenders[originalId_]; }
@@ -249,12 +256,6 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
     function migrationNftOriginalId(address collection_, uint256 tokenId_) external view returns (bytes32) {
         return NftLib.originalId(collection_, tokenId_);
     }
-    function nftEntitlement(address collection_, uint256 tokenId_)
-        external view returns (Migration.NftEntitlement memory)
-    { return Repo._layoutStruct().nftEntitlements[collection_][tokenId_]; }
-    function nftSurrender(address collection_, uint256 tokenId_)
-        external view returns (Migration.NftSurrender memory)
-    { return Repo._layoutStruct().nftSurrenders[collection_][tokenId_]; }
     function nftCustody(address collection_, uint256 tokenId_)
         external view returns (Migration.NftCustody memory)
     { return Repo._layoutStruct().nftCustodies[collection_][tokenId_]; }
@@ -295,7 +296,15 @@ contract UniswapV4DetfMigrationTarget is UniswapV4DetfMigrationPolicy {
         m_.nftCustodies[collection_][tokenId_] =
             Migration.NftCustody(collection_, tokenId_, config_.configurationId);
         _realizeExpansionIfNeeded();
-        bondTokenId_ = Repo._fundBond(quoted_, holder_);
+        uint256[] memory credits_ = NftLib.contributionCredits(collection_, tokenId_, remaining_);
+        for (uint256 i_; i_ < credits_.length; ++i_) {
+            uint256 id_ = Repo._fundBond(credits_[i_], holder_);
+            if (i_ == 0) bondTokenId_ = id_;
+            m_.nftContributionSurrenders[collection_][tokenId_].push(
+                Migration.NftContributionSurrender(credits_[i_], id_)
+            );
+            emit Migration.MigrationNftContributionSurrendered(collection_, tokenId_, i_, credits_[i_], id_);
+        }
         m_.nftSurrenders[collection_][tokenId_].bondTokenId = bondTokenId_;
         _syncAllExpectedHoldReserves();
         emit Migration.MigrationNftSurrendered(

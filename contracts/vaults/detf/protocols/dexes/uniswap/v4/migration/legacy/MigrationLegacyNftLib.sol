@@ -60,7 +60,20 @@ library MigrationLegacyNftLib {
         holder_ = IMigrationLegacyNft(collection_).ownerOf(tokenId_);
         if (holder_ == address(0)) revert Migration.InvalidNftEntitlement(collection_, tokenId_);
         (remaining_, fingerprint_) = position(collection_, tokenId_, config_.original.originalUnits);
-        credit_ = Math.mulDiv(config_.credit, remaining_, config_.original.originalUnits);
-        if (credit_ == 0) revert Migration.InvalidNftEntitlement(collection_, tokenId_);
+        uint256[] memory credits_ = contributionCredits(collection_, tokenId_, remaining_);
+        for (uint256 i_; i_ < credits_.length; ++i_) credit_ += credits_[i_];
+    }
+
+    function contributionCredits(address collection_, uint256 tokenId_, uint256 remaining_)
+        internal view returns (uint256[] memory credits_)
+    {
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        Migration.NftContribution[] storage originals_ = m_.nftContributions[collection_][tokenId_];
+        uint256 originalUnits_ = m_.nftEntitlements[collection_][tokenId_].original.originalUnits;
+        credits_ = new uint256[](originals_.length);
+        for (uint256 i_; i_ < originals_.length; ++i_) {
+            credits_[i_] = Math.mulDiv(originals_[i_].credit, remaining_, originalUnits_);
+            if (credits_[i_] == 0) revert Migration.InvalidNftEntitlement(collection_, tokenId_);
+        }
     }
 }

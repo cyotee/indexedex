@@ -6,6 +6,7 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {TestBase_UniswapV4DetfMigration} from
@@ -18,6 +19,8 @@ import {IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationLegacyExc
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
+import {IMigrationWeightedNft, IMigrationEarlierNft} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
 import {MigrationRecoveryForkBase} from "./MigrationRecoveryForkBase.sol";
 
 /// @notice An external rate currency, not a replacement legacy or new-product contract.
@@ -104,6 +107,94 @@ abstract contract MigrationRecoveryDonationForkBase is MigrationRecoveryForkBase
 }
 
 contract MigrationRecoveryDonationTest is MigrationRecoveryDonationForkBase {
+    function test_iterativeEarlierRewardsReachDtfWithoutSellingUnlockedNft() public {
+        _configureNft(WEIGHTED, 4);
+        uint256 bond_ = _take(EARLIER, 3);
+        _take(WEIGHTED, 4);
+        IMigrationEarlierNft.Position memory original_ = IMigrationEarlierNft(EARLIER).getPosition(3);
+        IMigrationWeightedNft.Position memory weighted_ = IMigrationWeightedNft(WEIGHTED).positionOf(4);
+        address registry_ = 0x09682b00D873D913ada0bB69B4D4c9631810d0bc;
+        IVaultRegistryDisableQuery query_ = IVaultRegistryDisableQuery(registry_);
+        (, bool byVault_, bool byPackage_) = query_.isDisabledDetailed(Legacy.EARLIER_SE);
+        vm.startPrank(IMultiStepOwnable(registry_).owner());
+        if (byVault_) IVaultRegistryDisableManager(registry_).setVaultAddressDisabled(Legacy.EARLIER_SE, false);
+        if (byPackage_) {
+            IVaultRegistryDisableManager(registry_).setPackageDisabled(query_.packageOfVault(Legacy.EARLIER_SE), false);
+        }
+        vm.stopPrank();
+        if (block.timestamp <= original_.unlockTime) vm.warp(original_.unlockTime + 1);
+        uint256 previousRewards_;
+        for (uint256 cycle_; cycle_ < 3; ++cycle_) {
+            if (cycle_ != 0) vm.warp(vm.getBlockTimestamp() + 8 hours);
+            bytes32 protected_ = _protected(bond_);
+            // Actual external income, not an assertion that time alone creates rewards.
+            address donor_ = address(bytes20(hex"495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed"));
+            uint256 income_ = IERC20(Legacy.EARLIER_DETF).balanceOf(donor_) / 4;
+            assertGt(income_, 0);
+            vm.prank(donor_);
+            IERC20(Legacy.EARLIER_DETF).transfer(EARLIER, income_);
+            _run(Recovery.Stage.EarlierClaim, 3, 0, 0);
+            Recovery.NftRecovery memory harvested_ = recovery.migrationNftRecovery(EARLIER, 3);
+            assertGt(harvested_.rewardsClaimed, previousRewards_);
+            previousRewards_ = harvested_.rewardsClaimed;
+            assertFalse(harvested_.sold);
+            uint256 rewards_ = recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF);
+            uint256 dtfBefore_ = recovery.migrationRecoveryInventory(Legacy.DTF);
+            _run(Recovery.Stage.EarlierConvert, 0, rewards_, 1);
+            uint256 received_ = recovery.migrationRecoveryInventory(Legacy.DTF) - dtfBefore_;
+            assertGt(received_, 0);
+            // Combine genuine reward recovery from another retained bond so the
+            // reserve join need not confiscate an earlier source's sub-LP-unit dust.
+            _run(Recovery.Stage.WeightedRewards, 4, 0, 0);
+            _run(Recovery.Stage.WeightedUnstake, 0, _weightedAmount(), 0);
+            _run(Recovery.Stage.WeightedConvert, 0, recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 1);
+            uint256 combined_ = recovery.migrationRecoveryInventory(Legacy.DTF);
+            uint256 donation_ = combined_ > 1 ether ? 1 ether : combined_;
+            _run(Recovery.Stage.Donate, 0, donation_, 1);
+            assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), combined_ - donation_);
+            assertEq(IMigrationEarlierNft(EARLIER).getPosition(3).originalShares, original_.originalShares);
+            assertEq(IERC721(EARLIER).ownerOf(3), detf);
+            assertEq(IMigrationWeightedNft(WEIGHTED).positionOf(4).principal, weighted_.principal);
+            assertEq(IMigrationWeightedNft(WEIGHTED).positionOf(4).claimedPrincipal, weighted_.claimedPrincipal);
+            assertEq(IERC721(WEIGHTED).ownerOf(4), detf);
+            assertEq(_protected(bond_), protected_);
+        }
+    }
+
+    function test_iterativeRewardHarvestDonatesDtfWithoutTakingUnlockedPrincipal() public {
+        uint256 bond_ = _take(WEIGHTED, 4);
+        IMigrationWeightedNft.Position memory original_ = IMigrationWeightedNft(WEIGHTED).positionOf(4);
+        assertGt(original_.principal, original_.claimedPrincipal);
+        uint256 unlock_ = original_.startTimestamp + original_.vestingDuration + 1;
+        if (block.timestamp < unlock_) vm.warp(unlock_);
+        uint256 previousRewards_;
+        for (uint256 cycle_; cycle_ < 3; ++cycle_) {
+            if (cycle_ != 0) vm.warp(vm.getBlockTimestamp() + 8 hours);
+            bytes32 protected_ = _protected(bond_);
+            _run(Recovery.Stage.WeightedRewards, 4, 0, 0);
+            Recovery.NftRecovery memory harvested_ = recovery.migrationNftRecovery(WEIGHTED, 4);
+            assertEq(harvested_.principalClaimed, 0);
+            assertGt(harvested_.rewardsClaimed, previousRewards_);
+            previousRewards_ = harvested_.rewardsClaimed;
+            uint256 rewards_ = _weightedAmount();
+            assertGt(rewards_, 0);
+            _run(Recovery.Stage.WeightedUnstake, 0, rewards_, 0);
+            uint256 dtfBefore_ = recovery.migrationRecoveryInventory(Legacy.DTF);
+            _run(Recovery.Stage.WeightedConvert, 0, recovery.migrationRecoveryInventory(Legacy.WEIGHTED_DETF), 1);
+            uint256 received_ = recovery.migrationRecoveryInventory(Legacy.DTF) - dtfBefore_;
+            assertGt(received_, 0);
+            uint256 donation_ = received_ > 1 ether ? 1 ether : received_;
+            _run(Recovery.Stage.Donate, 0, donation_, 1);
+            assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), dtfBefore_ + received_ - donation_);
+            IMigrationWeightedNft.Position memory remaining_ = IMigrationWeightedNft(WEIGHTED).positionOf(4);
+            assertEq(remaining_.principal, original_.principal);
+            assertEq(remaining_.claimedPrincipal, original_.claimedPrincipal);
+            assertGt(remaining_.stakingGons, 0);
+            assertEq(IERC721(WEIGHTED).ownerOf(4), detf);
+            assertEq(_protected(bond_), protected_);
+        }
+    }
+
     function test_actualRecoveredDtfDonationProtectsUnrelatedInventoryAndBacking() public {
         (uint256 bond_, uint256 out_) = _converted();
         IERC20(Legacy.DTF).transfer(detf, 7 ether);

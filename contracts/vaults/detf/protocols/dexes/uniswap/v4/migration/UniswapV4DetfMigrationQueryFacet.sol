@@ -7,6 +7,8 @@ import {UniswapV4DetfTarget} from "../detf/UniswapV4DetfTarget.sol";
 import {UniswapV4DetfRepo as ParentRepo} from "../detf/UniswapV4DetfRepo.sol";
 import {UniswapV4DetfMigrationPolicy} from "./UniswapV4DetfMigrationPolicy.sol";
 import {UniswapV4DetfMigrationRepo as Repo} from "./UniswapV4DetfMigrationRepo.sol";
+import {IUniswapV4DetfMigration as Migration} from "./interfaces/IUniswapV4DetfMigration.sol";
+import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 import {IUniswapV4DetfMigrationAccounting as Accounting} from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IDETFStakingPreview, IDETFStandardizedYield} from "contracts/interfaces/IDETFStandardizedYield.sol";
@@ -23,6 +25,24 @@ import {UniswapV4DetfQueryTarget} from "../detf/UniswapV4DetfQueryTarget.sol";
 
 /// @notice Migration policy composed with the actual ordinary query implementation.
 contract UniswapV4DetfMigrationQueryFacet is UniswapV4DetfFacet, UniswapV4DetfQueryTarget, UniswapV4DetfMigrationPolicy {
+    function nftEntitlement(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftEntitlement memory)
+    { return Repo._layoutStruct().nftEntitlements[collection_][tokenId_]; }
+    function nftSurrender(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftSurrender memory)
+    { return Repo._layoutStruct().nftSurrenders[collection_][tokenId_]; }
+    function nftContributions(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftContribution[] memory)
+    { return Repo._layoutStruct().nftContributions[collection_][tokenId_]; }
+    function nftContributionSurrenders(address collection_, uint256 tokenId_)
+        external view returns (Migration.NftContributionSurrender[] memory)
+    { return Repo._layoutStruct().nftContributionSurrenders[collection_][tokenId_]; }
+    function previewNftContributionSurrender(address collection_, uint256 tokenId_)
+        external view returns (uint256 remaining_, uint256[] memory credits_)
+    {
+        (, remaining_,,) = NftLib.preview(collection_, tokenId_);
+        credits_ = NftLib.contributionCredits(collection_, tokenId_, remaining_);
+    }
     function facetName() public pure override returns (string memory) { return "UniswapV4DetfMigrationQueryFacet"; }
 
     function _pendingExpansionDetf() internal view override(UniswapV4DetfCommon, UniswapV4DetfMigrationPolicy) returns (uint256) { return UniswapV4DetfMigrationPolicy._pendingExpansionDetf(); }
@@ -36,7 +56,7 @@ contract UniswapV4DetfMigrationQueryFacet is UniswapV4DetfFacet, UniswapV4DetfQu
         return super._entryPreviewMint(token_, amount_);
     }
     function facetFuncs() public pure override returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](35);
+        funcs_ = new bytes4[](40);
         funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[1] = IUniswapV4Detf.hook.selector;
         funcs_[2] = IUniswapV4Detf.reservePool.selector;
@@ -72,5 +92,10 @@ contract UniswapV4DetfMigrationQueryFacet is UniswapV4DetfFacet, UniswapV4DetfQu
         funcs_[32] = IUniswapV4Detf.previewFirstBondPayments.selector;
         funcs_[33] = IUniswapV4Detf.ownerOnlyLiquidity.selector;
         funcs_[34] = IUniswapV4Detf.previewBond.selector;
+        funcs_[35] = Migration.nftContributions.selector;
+        funcs_[36] = Migration.nftContributionSurrenders.selector;
+        funcs_[37] = Migration.previewNftContributionSurrender.selector;
+        funcs_[38] = Migration.nftEntitlement.selector;
+        funcs_[39] = Migration.nftSurrender.selector;
     }
 }

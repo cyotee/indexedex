@@ -73,6 +73,7 @@ export async function exerciseHeldSeLp(context: {
     const protectedInventory = async () => {
       const values = [String(await inventory(ER)),
         String((await chain.call(parent, recovery, "migrationEarlierReceiptInternalShares"))[0]),
+        String((await chain.call(parent, recovery, "migrationEarlierNftReceiptRemainder"))[0]),
         String(await number(chain, ER, "balanceOf", [parent])),
         String(await inventory(ED)), String(await number(chain, ED, "balanceOf", [parent])),
         String(await inventory(WS)), String((await chain.call(parent, recovery, "migrationRecoveryGons"))[0]),
@@ -160,7 +161,7 @@ export async function exerciseHeldSeLp(context: {
       }
     }
     await save(join(evidence, `held-se-lp-${source}-${phase}.json`), {
-      observations, source, original: row, disposition: "custody-and-credit-only; all three conversions blocked; synthetic originals",
+      observations, source, original: row, disposition: "custody-and-credit-only; held-source conversions not admitted; synthetic originals",
     });
   }
 }

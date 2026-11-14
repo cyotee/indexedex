@@ -8,6 +8,8 @@ import { ExecutionError } from "./execution-schema.js";
 import type { Completion, Intent, Receipt } from "./execution-schema.js";
 import { canonical, fingerprint } from "./provenance.js";
 import { captureOwnerBond } from "./execution-owner-bond.js";
+import { capturePreparation } from "./execution-deployment.js";
+import { heldSeLpSources } from "./schema.js";
 
 function tuple(value: unknown): Result {
   if (!(value instanceof Result)) throw new ExecutionError("STATE", "invalid contract tuple");
@@ -45,6 +47,9 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
     if (!events.some((e) => e.name === name)) throw new ExecutionError("STATE", `missing actual ${name} event`);
   };
   switch (item.method) {
+    case "prepareSyChildren":
+      Object.assign(state, await capturePreparation(rpc, domain, at));
+      break;
     case "deployVault":
       await checkRelationships(rpc, domain, false);
       state["owner"] = String((await query("owner"))[0]).toLowerCase();
@@ -92,7 +97,8 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       break;
     }
     case "configureIndependentAllocations":
-    case "configureNftEntitlements": {
+    case "configureNftEntitlements":
+    case "configureNftContributionEntitlements": {
       const p = requirePrepared(domain);
       const independent = item.method === "configureIndependentAllocations";
       requireEvent(independent ? "IndependentAllocationConfigured" : "NftEntitlementConfigured");
@@ -206,14 +212,21 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       }
       break;
     }
-    case "configureWeightedSyEntitlements": {
+    case "configureWeightedSyEntitlements":
+    case "configureClaimedSyEntitlements": {
       requireEvent("WeightedSyEntitlementConfigured");
       const rows: unknown = abis.allocation.decodeFunctionData(item.method, item.transaction.data)[0];
       if (!Array.isArray(rows)) throw new ExecutionError("STATE", "invalid weighted SY configuration array");
       for (const row of rows) {
-        const originalId = String(tuple(row).getValue("originalId"));
+        const originalId = String((item.method === "configureClaimedSyEntitlements"
+          ? tuple(tuple(row).getValue("original")) : tuple(row)).getValue("originalId"));
         const expected = requirePrepared(domain).payloads.configure.weightedSy.find((r) => r.input.originalId === originalId);
         if (!expected) throw new ExecutionError("STATE", "unbound weighted SY configuration");
+        const weights = await query("claimedSyWeights", [originalId]);
+        if (String(weights[0]) !== (expected.input.claimBasis?.originalWeight ?? "0")
+          || String(weights[1]) !== (expected.input.claimBasis?.eligibleWeight ?? "0")) {
+          throw new ExecutionError("STATE", "claimed SY weight basis differs from reviewed original");
+        }
         const actual = tuple((await query("weightedSyEntitlement", [originalId]))[0]);
         if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== expected.configurationId
           || String(actual.getValue("credit")) !== expected.quotedCredit
@@ -349,8 +362,12 @@ export async function captureCompletion(rpc: Rpc, domain: ExecutionDomain, item:
       state["attributedGons"] = valueString(gons[0]);
       state["earlierReceiptInternalShares"] = valueString(
         (await rpc.call(m.proxy, abis.recovery, "migrationEarlierReceiptInternalShares", [], at))[0]);
+      state["earlierNftReceiptRemainder"] = valueString(
+        (await rpc.call(m.proxy, abis.recovery, "migrationEarlierNftReceiptRemainder", [], at))[0]);
       for (const token of ["0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0", "0x2e9c1f705ab967c5af59249203d7495bdabb223b", "0xb55604cf4dcdabb362078e106d20f98512391edf", "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
-        "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "0xee5576fa1bcaa380e591d01245f406f3f384eb01"]) {
+        "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7", "0xee5576fa1bcaa380e591d01245f406f3f384eb01",
+        "0xaf0e1967c8f755c747615c5427108bc549ca1122", "0x4ac89ad061a531fa62ddceed53520c2750113b01",
+        ...heldSeLpSources]) {
         state[`inventory:${token}`] = valueString((await rpc.call(m.proxy, abis.recovery, "migrationRecoveryInventory", [token], at))[0]);
       }
       const steps: unknown = abis.recovery.decodeFunctionData(item.method, item.transaction.data)[0];
@@ -405,6 +422,12 @@ export async function verifyConfiguration(rpc: Rpc, domain: ExecutionDomain) {
     }
   }
   for (const row of prepared.payloads.configure.weightedSy) {
+    const weights = await rpc.call(domain.manifest.proxy, domain.abis.migration, "claimedSyWeights",
+      [row.input.originalId]);
+    if (String(weights[0]) !== (row.input.claimBasis?.originalWeight ?? "0")
+      || String(weights[1]) !== (row.input.claimBasis?.eligibleWeight ?? "0")) {
+      throw new ExecutionError("STATE", "claimed SY weight basis mismatch");
+    }
     const actual = tuple((await rpc.call(domain.manifest.proxy, domain.abis.migration, "weightedSyEntitlement",
       [row.input.originalId]))[0]);
     if (actual.getValue("configured") !== true || actual.getValue("configurationId") !== row.configurationId

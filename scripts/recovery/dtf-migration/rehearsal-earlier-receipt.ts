@@ -121,6 +121,7 @@ export async function exerciseEarlierReceipt(context: {
     custodyDisplay: String(await number(chain, ER, "balanceOf", [parent])),
     allowance: String(await number(chain, ER, "allowance", [row.originalWallet, parent])),
     surrender: [...await state()].map(String), B: String(await booked()), E: String(await e()),
+    nftRemainder: String((await chain.call(parent, recovery, "migrationEarlierNftReceiptRemainder"))[0]),
     supply: String(await number(chain, parent, "totalSupply")), backing: String(await number(chain, parent, "balanceOf", [receipt])),
   });
   const reject = async (origin: string, n: bigint, expected: string, args: readonly unknown[], index = 181) => {

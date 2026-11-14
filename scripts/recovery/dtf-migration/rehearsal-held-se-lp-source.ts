@@ -8,10 +8,11 @@ import type { RehearsalChain } from "./rehearsal-chain.js";
 import { save } from "./rehearsal-data.js";
 
 const donor = "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b";
+const earlierSeDonor = "0xbab6a03be445094a10695772a79777407dcdc0e7";
 const collector = "0x20af9a1e21a59a411cd3b0c40e70af9084770b2e";
 const collectorFacet = "0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669";
 const tokenFacet = "0x1d17aca0e0717d90cea916372070a1be4652223f";
-const protectedTokens = [...heldSeLpSources, "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+const protectedTokens = [...heldSeLpSources,
   "0xee5576fa1bcaa380e591d01245f406f3f384eb01"] as const;
 const abi = new Interface([
   "function owner() view returns(address)", "function facetAddress(bytes4) view returns(address)",
@@ -48,12 +49,13 @@ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
     for (const source of protectedTokens) values.push({ source,
       collector: String(await uint(source, "balanceOf", [collector])),
       donor: String(await uint(source, "balanceOf", [donor])),
+      earlierSeDonor: String(await uint(source, "balanceOf", [earlierSeDonor])),
       original: String(await uint(source, "balanceOf", [originalWallet])),
       supply: String(await uint(source, "totalSupply")) });
     return values;
   };
   const beforeAuthority = await authority();
-  for (const who of [originalWallet, wallet(202).address.toLowerCase()]) {
+  for (const who of [originalWallet, wallet(202).address.toLowerCase(), earlierSeDonor]) {
     if (await chain.send("eth_getCode", [who, "latest"]) !== "0x") throw new ExecutionError("DOMAIN", "held signer is not an EOA");
     await chain.transact(who, { from: DEV, data: "0x", value: "0xde0b6b3a7640000" });
   }
@@ -76,8 +78,9 @@ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
     if (keccak256(sourceCode) !== "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601") {
       throw new ExecutionError("DOMAIN", "held source proxy runtime differs");
     }
-    const sourceOwner = source === heldSeLpSources[0] ? null
-      : address.parse((await chain.call(source, abi, "owner"))[0]);
+    const isLp = source === heldSeLpSources[1] || source === heldSeLpSources[2];
+    const sourceDonor = source === heldSeLpSources[3] ? earlierSeDonor : donor;
+    const sourceOwner = isLp ? address.parse((await chain.call(source, abi, "owner"))[0]) : null;
     const expectedOwner = source === heldSeLpSources[1]
       ? "0xaf0e1967c8f755c747615c5427108bc549ca1122" : "0x4a5cfdc2b07016fcf917f4ed5a51c52111a0fcc7";
     if (sourceOwner !== null && (sourceOwner !== expectedOwner
@@ -86,11 +89,14 @@ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
     }
     const units = 10020n;
     const collectorBefore = await uint(source, "balanceOf", [collector]);
-    const ownerBefore = await uint(source, "balanceOf", [donor]);
+    const ownerBefore = await uint(source, "balanceOf", [sourceDonor]);
+    if (source === heldSeLpSources[3] && ownerBefore !== 2021090200239501983n) {
+      throw new ExecutionError("DOMAIN", "pinned earlier SE ordinary-holder balance differs");
+    }
     let release = null;
-    await chain.send("anvil_impersonateAccount", [donor]);
+    await chain.send("anvil_impersonateAccount", [sourceDonor]);
     try {
-      if (source !== heldSeLpSources[0]) {
+      if (isLp) {
         if (collectorBefore < units) throw new ExecutionError("STATE", "qualified LP donor inventory unavailable");
         const mined = await chain.transact(collector, { from: donor,
           data: abi.encodeFunctionData("pullFee", [source, units, donor]) });
@@ -104,9 +110,9 @@ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
           throw new ExecutionError("STATE", "qualified LP owner release delta differs");
         }
       }
-      const personalBefore = await uint(source, "balanceOf", [donor]);
-      const mined = await chain.transact(source, { from: donor, data: abi.encodeFunctionData("transfer", [originalWallet, units]) });
-      if (await uint(source, "balanceOf", [donor]) !== personalBefore - units
+      const personalBefore = await uint(source, "balanceOf", [sourceDonor]);
+      const mined = await chain.transact(source, { from: sourceDonor, data: abi.encodeFunctionData("transfer", [originalWallet, units]) });
+      if (await uint(source, "balanceOf", [sourceDonor]) !== personalBefore - units
         || await uint(source, "balanceOf", [originalWallet]) !== units) {
         throw new ExecutionError("STATE", "personal donor transfer delta differs");
       }
@@ -122,12 +128,12 @@ export async function acquireHeldSeLp(chain: RehearsalChain, evidence: string) {
           throw new ExecutionError("STATE", "donor operation changed supply or unrelated holdings");
         }
       }
-      rows.push({ source, sourceCode, sourceOwner, originalWallet, units: String(units - 7n), facets, release, before, after,
+      rows.push({ source, sourceCode, sourceOwner, sourceDonor, originalWallet, units: String(units - 7n), facets, release, before, after,
         donation: { provenance: "impersonated personal-holder transfer; no donor-key/public-consent claim",
           transaction: await chain.send("eth_getTransactionByHash", [mined.transactionHash]),
           receipt: await chain.send("eth_getTransactionReceipt", [mined.transactionHash]),
           trace: await chain.send("debug_traceTransaction", [mined.transactionHash, { tracer: "callTracer" }]) } });
-    } finally { await chain.send("anvil_stopImpersonatingAccount", [donor]); }
+    } finally { await chain.send("anvil_stopImpersonatingAccount", [sourceDonor]); }
   }
   const afterAuthority = await authority();
   if (JSON.stringify(beforeAuthority) !== JSON.stringify(afterAuthority)) throw new ExecutionError("STATE", "donor authority changed");

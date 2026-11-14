@@ -13,7 +13,7 @@ import {IUniswapV4DetfMigrationStakedDETF as MigrationReceipt} from "../claimTok
 import {IMigrationWeightedReceipt, IMigrationEarlierReceipt} from "../legacy/IMigrationLegacyRecovery.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "../legacy/MigrationLegacyRecoveryLib.sol";
 
-/// @notice Nine fixed admitted sources; their original units are never summed or normalized.
+/// @notice Ten fixed admitted sources; their original units are never summed or normalized.
 /// @dev ABI-equivalent original/surrender tuples share encoding only, not unit arithmetic.
 abstract contract MigrationSourceUnitsLedger is Test {
     struct Row {
@@ -43,7 +43,7 @@ abstract contract MigrationSourceUnitsLedger is Test {
     Recovery public recovery;
     Bonds public bonds;
     MigrationReceipt public receipt;
-    Row[9] internal rows;
+    Row[10] internal rows;
     Position[] internal positions;
     uint256 internal baseSupply;
     uint256 internal baseBacking;
@@ -65,9 +65,9 @@ abstract contract MigrationSourceUnitsLedger is Test {
     address internal constant EARLIER_NFT = 0x15666F0b4C8D09d046d2Aa9048aFcAF49e8cB391;
     bytes32 internal snapshot;
     address public currentOwner;
-    uint256[9] public surrenderSuccesses;
-    uint256[9] public rejectionCounts;
-    uint256[9] public fundingRollbacks;
+    uint256[10] public surrenderSuccesses;
+    uint256[10] public rejectionCounts;
+    uint256[10] public fundingRollbacks;
     uint256 public recoveries;
     uint256 public principalPaid;
     uint256 public transfers;
@@ -87,70 +87,70 @@ abstract contract MigrationSourceUnitsLedger is Test {
     }
 
     function source(uint256 i_) public pure returns (address) {
-        address[9] memory sources_ = [Legacy.WEIGHTED_DETF, Legacy.EARLIER_DETF,
+        address[10] memory sources_ = [Legacy.WEIGHTED_DETF, Legacy.EARLIER_DETF,
             Legacy.WEIGHTED_RECEIPT, Legacy.EARLIER_RECEIPT, Legacy.CLAIM_VAULT,
-            Legacy.DTF_CUSTODY_SE, Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP];
+            Legacy.DTF_CUSTODY_SE, Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP, Legacy.EARLIER_SE];
         return sources_[i_];
     }
 
     function surrenderSelector(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory selectors_ = [Migration.surrenderMigrationWeightedLiquid.selector,
+        bytes4[10] memory selectors_ = [Migration.surrenderMigrationWeightedLiquid.selector,
             Migration.surrenderMigrationEarlierLiquid.selector, Migration.surrenderMigrationWeightedReceipt.selector,
             Migration.surrenderMigrationEarlierReceipt.selector, Migration.surrenderMigrationClaimVault.selector,
             Migration.surrenderMigrationDtfCustodySe.selector, Migration.surrenderMigrationHeldSeLp.selector,
-            Migration.surrenderMigrationHeldSeLp.selector, Migration.surrenderMigrationHeldSeLp.selector];
+            Migration.surrenderMigrationHeldSeLp.selector, Migration.surrenderMigrationHeldSeLp.selector, Migration.surrenderMigrationHeldSeLp.selector];
         return selectors_[i_];
     }
 
     function querySelector(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory selectors_ = [Migration.weightedLiquidSurrender.selector, Migration.earlierLiquidSurrender.selector,
+        bytes4[10] memory selectors_ = [Migration.weightedLiquidSurrender.selector, Migration.earlierLiquidSurrender.selector,
             Migration.weightedReceiptSurrender.selector, Migration.earlierReceiptSurrender.selector,
             Migration.claimVaultSurrender.selector, Migration.dtfCustodySeSurrender.selector,
-            Migration.heldSeLpSurrender.selector, Migration.heldSeLpSurrender.selector, Migration.heldSeLpSurrender.selector];
+            Migration.heldSeLpSurrender.selector, Migration.heldSeLpSurrender.selector, Migration.heldSeLpSurrender.selector, Migration.heldSeLpSurrender.selector];
         return selectors_[i_];
     }
 
     function configSelector(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory selectors_ = [Allocation.configureWeightedLiquidEntitlements.selector,
+        bytes4[10] memory selectors_ = [Allocation.configureWeightedLiquidEntitlements.selector,
             Allocation.configureEarlierLiquidEntitlements.selector, Allocation.configureWeightedReceiptEntitlements.selector,
             Allocation.configureEarlierReceiptEntitlements.selector, Allocation.configureClaimVaultEntitlements.selector,
             Allocation.configureDtfCustodySeEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector,
-            Allocation.configureHeldSeLpEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector];
+            Allocation.configureHeldSeLpEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector, Allocation.configureHeldSeLpEntitlements.selector];
         return selectors_[i_];
     }
 
     function entitlementSelector(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory selectors_ = [Migration.weightedLiquidEntitlement.selector, Migration.earlierLiquidEntitlement.selector,
+        bytes4[10] memory selectors_ = [Migration.weightedLiquidEntitlement.selector, Migration.earlierLiquidEntitlement.selector,
             Migration.weightedReceiptEntitlement.selector, Migration.earlierReceiptEntitlement.selector,
             Migration.claimVaultEntitlement.selector, Migration.dtfCustodySeEntitlement.selector,
-            Migration.heldSeLpEntitlement.selector, Migration.heldSeLpEntitlement.selector, Migration.heldSeLpEntitlement.selector];
+            Migration.heldSeLpEntitlement.selector, Migration.heldSeLpEntitlement.selector, Migration.heldSeLpEntitlement.selector, Migration.heldSeLpEntitlement.selector];
         return selectors_[i_];
     }
 
     function invalidRecord(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory errors_ = [Migration.InvalidWeightedLiquidEntitlement.selector, Migration.InvalidEarlierLiquidEntitlement.selector,
+        bytes4[10] memory errors_ = [Migration.InvalidWeightedLiquidEntitlement.selector, Migration.InvalidEarlierLiquidEntitlement.selector,
             Migration.InvalidWeightedReceiptEntitlement.selector, Migration.InvalidEarlierReceiptEntitlement.selector,
             Migration.InvalidClaimVaultEntitlement.selector, Migration.InvalidDtfCustodySeEntitlement.selector,
             Migration.InvalidHeldSeLpEntitlement.selector, Migration.InvalidHeldSeLpEntitlement.selector,
-            Migration.InvalidHeldSeLpEntitlement.selector];
+            Migration.InvalidHeldSeLpEntitlement.selector, Migration.InvalidHeldSeLpEntitlement.selector];
         return errors_[i_];
     }
 
     function wrongWallet(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory errors_ = [Migration.NotOriginalWeightedLiquidWallet.selector, Migration.NotOriginalEarlierLiquidWallet.selector,
+        bytes4[10] memory errors_ = [Migration.NotOriginalWeightedLiquidWallet.selector, Migration.NotOriginalEarlierLiquidWallet.selector,
             Migration.NotOriginalWeightedReceiptWallet.selector, Migration.NotOriginalEarlierReceiptWallet.selector,
             Migration.NotOriginalClaimVaultWallet.selector, Migration.NotOriginalDtfCustodySeWallet.selector,
             Migration.NotOriginalHeldSeLpWallet.selector, Migration.NotOriginalHeldSeLpWallet.selector,
-            Migration.NotOriginalHeldSeLpWallet.selector];
+            Migration.NotOriginalHeldSeLpWallet.selector, Migration.NotOriginalHeldSeLpWallet.selector];
         return errors_[i_];
     }
 
     function quantityError(uint256 i_) public pure returns (bytes4) {
-        bytes4[9] memory errors_ = [Migration.InvalidWeightedLiquidQuantity.selector, Migration.InvalidEarlierLiquidQuantity.selector,
+        bytes4[10] memory errors_ = [Migration.InvalidWeightedLiquidQuantity.selector, Migration.InvalidEarlierLiquidQuantity.selector,
             Migration.InvalidWeightedReceiptQuantity.selector, Migration.InvalidEarlierReceiptQuantity.selector,
             Migration.InvalidClaimVaultQuantity.selector, Migration.InvalidDtfCustodySeQuantity.selector,
             Migration.InvalidHeldSeLpQuantity.selector, Migration.InvalidHeldSeLpQuantity.selector,
-            Migration.InvalidHeldSeLpQuantity.selector];
+            Migration.InvalidHeldSeLpQuantity.selector, Migration.InvalidHeldSeLpQuantity.selector];
         return errors_[i_];
     }
 
@@ -193,7 +193,7 @@ abstract contract MigrationSourceUnitsLedger is Test {
             assertEq(keccak256(abi.encode(parent.independentIssuance(OTHER))), independentHistory);
             assertEq(parent.independentAllocation(OTHER).configurationId, independentConfiguration);
         }
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             Row memory r_ = rows[i_];
             (bool ok_, bytes memory state_) = address(parent).staticcall(abi.encodeWithSelector(querySelector(i_), r_.origin));
             assertTrue(ok_);

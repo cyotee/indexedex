@@ -74,6 +74,7 @@ contract Phase_08_Stage_00_OperatorEnvironment is MigrationCoreLocalQA {
         vm.stopBroadcast();
         // This call is simulation-only: it establishes exact predicted runtime and
         // installed facets without recording a deployment transaction in this stage.
+        migrationPkg.prepareSyChildren(args_);
         address simulated_ = migrationPkg.deployVault(args_);
         require(simulated_ == predicted_, "registry prediction");
         string memory key_ = "operator";

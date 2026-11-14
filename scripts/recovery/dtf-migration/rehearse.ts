@@ -8,7 +8,7 @@ import { child, FORGE, ANVIL, launchAnvil } from "./rehearsal-process.js";
 import { RehearsalChain, LEGACY, legacyAbi } from "./rehearsal-chain.js";
 import { bootstrapManifest, captureOriginalInputBytes, interfaceFile, preparationFixture, replacementFixture, RECIPIENTS, save } from "./rehearsal-data.js";
 import { DEV } from "./execution-rpc.js";
-import { ExecutionError, rpcLog } from "./execution-schema.js";
+import { ExecutionError, intent, quantity, rpcLog } from "./execution-schema.js";
 import { address, hash, hex } from "./schema.js";
 import { exerciseRecovery } from "./rehearsal-recovery.js";
 import { exerciseAdmission } from "./rehearsal-admission.js";
@@ -24,7 +24,9 @@ import { acquireDtfCustodyShares } from "./rehearsal-dtf-custody-source.js";
 import { exerciseDtfCustodySe } from "./rehearsal-dtf-custody-se.js";
 import { exerciseWeightedSy } from "./rehearsal-weighted-sy.js";
 import { acquireClaimedSy } from "./rehearsal-claimed-sy-source.js";
-import { checkClaimedSyIntake, exerciseClaimedSy } from "./rehearsal-claimed-sy.js";
+import { exerciseClaimedSy } from "./rehearsal-claimed-sy.js";
+import { checkClaimedSyIntake } from "./rehearsal-claimed-sy-intake.js";
+import { exerciseClaimedSyTransfer } from "./rehearsal-claimed-sy-transfer.js";
 import { exerciseWeightedLiquid } from "./rehearsal-weighted-liquid.js";
 import { exerciseOwnerBond, exerciseOrdinaryDeposit } from "./rehearsal-owner-bond.js";
 import { checkPreparation, checkRemainingOrder, interruptedReceipt, recoveredReceipt, captureLinkedLibraries } from "./rehearsal-proof.js";
@@ -149,8 +151,39 @@ export async function rehearse(options: {
       pre = (await relocateExecution({ manifestPath: pre, evidence, label: "funding", cli })).path;
     }
     const local = ["--execute-local", "--instance-id", manifest.local?.instanceId ?? ""];
-    await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy")]);
-    await cli(["deploy", "--manifest", pre, "--checkpoint", join(runtime, "deploy"), ...local]);
+    const deployCheckpoint = join(runtime, "deploy");
+    await cli(["deploy", "--manifest", pre, "--checkpoint", deployCheckpoint]);
+    await cli(["deploy", "--manifest", pre, "--checkpoint", deployCheckpoint, ...local, "--fault-after-mined"], "fault");
+    const preparedFault = await interruptedReceipt(chain, deployCheckpoint, join(evidence, "preparation-before-resume.json"));
+    if (preparedFault.intent.method !== "prepareSyChildren"
+      || await chain.send("eth_getCode", [manifest.proxy, "latest"]) !== "0x") {
+      throw new ExecutionError("STATE", "preparation interruption already published parent");
+    }
+    const preparationNonce = BigInt(quantity.parse(await chain.send("eth_getTransactionCount", [DEV, "latest"])));
+    await cli(["resume", "--manifest", pre, "--checkpoint", deployCheckpoint]);
+    if (BigInt(quantity.parse(await chain.send("eth_getTransactionCount", [DEV, "latest"]))) !== preparationNonce) {
+      throw new ExecutionError("STATE", "read-only preparation resume sent a transaction");
+    }
+    await cli(["resume", "--manifest", pre, "--checkpoint", deployCheckpoint, ...local]);
+    await recoveredReceipt(preparedFault, deployCheckpoint, join(evidence, "preparation-resumed.json"));
+    if (BigInt(quantity.parse(await chain.send("eth_getTransactionCount", [DEV, "latest"]))) !== preparationNonce + 1n) {
+      throw new ExecutionError("STATE", "preparation resume did not submit exactly one final transaction");
+    }
+    const deploymentGas = [];
+    for (const name of await readdir(deployCheckpoint)) {
+      if (!name.endsWith(".intent.json")) continue;
+      const record = intent.parse(JSON.parse(await readFile(join(deployCheckpoint, name), "utf8")));
+      const tx = z.object({ gas: quantity }).passthrough().parse(
+        await chain.send("eth_getTransactionByHash", [record.transactionHash]));
+      const mined = await chain.canonicalReceipt(record.transactionHash);
+      if (!mined || BigInt(mined.status) !== 1n || BigInt(tx.gas) > 32_000_000n) {
+        throw new ExecutionError("STATE", "deployment did not succeed within the target envelope");
+      }
+      deploymentGas.push({ method: record.method, transactionHash: record.transactionHash,
+        envelope: BigInt(tx.gas).toString(), gasUsed: BigInt(quantity.parse(mined["gasUsed"])).toString() });
+    }
+    if (deploymentGas.length !== 2) throw new ExecutionError("STATE", "expected preparation and final deployment receipts");
+    await save(join(evidence, "bounded-deployment-gas.json"), deploymentGas);
     const deployedAbi = await interfaceFile("out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigration.json");
     const loupe = new Interface([
       "function facetAddresses() view returns(address[])",
@@ -304,8 +337,13 @@ export async function rehearse(options: {
     await exerciseEarlierReceipt({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseEarlierLiquid({ chain, manifest: post, input, evidence, phase: "stage1" });
     await exerciseHeldSeLp({ chain, manifest: post, input, evidence, phase: "stage1" });
-    await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
-    await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
+    const activate = async () => {
+      await exerciseOwnerBond({ chain, manifest: post, manifestPath: postPath, evidence, runtime, local, cli });
+      await cli(["activate", "--manifest", postPath, "--checkpoint", join(runtime, "activate"), ...local]);
+    };
+    if (input.weightedSy.some((row) => row.claimedOrigin)) {
+      await exerciseClaimedSyTransfer({ chain, manifest: post, input, evidence, activate });
+    } else await activate();
     await exerciseOrdinaryDeposit(chain, post, evidence);
     await exerciseWeightedLiquid({ chain, manifest: post, input, evidence, phase: "partial" });
     await exerciseRecovery({ chain, manifest: post, input, evidence, runtime, cli, local });

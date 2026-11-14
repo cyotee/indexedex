@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {ERC2535Repo} from "@crane/contracts/introspection/ERC2535/ERC2535Repo.sol";
 import {ERC165Repo} from "@crane/contracts/introspection/ERC165/ERC165Repo.sol";
@@ -20,7 +21,6 @@ import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation 
     from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationSnapshot as Snapshot} from "./interfaces/IUniswapV4DetfMigrationSnapshot.sol";
 import {UniswapV4DetfMigrationSnapshotLib as SnapshotLib} from "./UniswapV4DetfMigrationSnapshotLib.sol";
-import {MigrationLegacyNftLib as NftLib} from "./legacy/MigrationLegacyNftLib.sol";
 import {MigrationLegacyRecoveryLib as Legacy} from "./legacy/MigrationLegacyRecoveryLib.sol";
 
 /// @notice The removable current-owner administration surface; no legacy attribution shortcuts.
@@ -145,47 +145,6 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         _syncAllExpectedHoldReserves();
     }
 
-    function configureNftEntitlements(Migration.NftEntitlementInput[] calldata inputs_)
-        external administration nonReentrant
-    {
-        Snapshot.Snapshot memory book_ = Repo._snapshot();
-        Repo.Storage storage m_ = Repo._layoutStruct();
-        for (uint256 i_; i_ < inputs_.length; ++i_) {
-            Migration.NftEntitlementInput calldata input_ = inputs_[i_];
-            bytes32 original_ = NftLib.originalId(input_.collection, input_.tokenId);
-            if (input_.tokenId < 3 || input_.originalWallet == address(0)
-                || input_.originalUnits == 0 || !input_.contributionsKnown
-                || input_.evidenceId == bytes32(0)) {
-                revert Migration.InvalidNftEntitlement(input_.collection, input_.tokenId);
-            }
-            if (m_.configuredOriginal[original_] != address(0) || m_.issuedOriginal[original_] != address(0)
-                || m_.weightedLiquidEntitlements[original_].configured
-                || m_.weightedSyEntitlements[original_].configured
-                || m_.dtfCustodySeEntitlements[original_].configured) {
-                revert Migration.DuplicateOriginalEntitlement(original_);
-            }
-            if (m_.claimVaultEntitlements[original_].configured
-                || m_.weightedReceiptEntitlements[original_].configured
-                || m_.earlierReceiptEntitlements[original_].configured
-                || m_.earlierLiquidEntitlements[original_].configured
-                || m_.heldSeLpEntitlements[original_].configured) {
-                revert Migration.DuplicateOriginalEntitlement(original_);
-            }
-            if (m_.nftSurrenders[input_.collection][input_.tokenId].consumed) {
-                revert Migration.NftAlreadyConsumed(input_.collection, input_.tokenId);
-            }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
-            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
-            m_.nftEntitlements[input_.collection][input_.tokenId] =
-                Migration.NftEntitlement(input_, config_, original_, credit_);
-            m_.nftOriginal[original_] = true;
-            emit Migration.NftEntitlementConfigured(
-                input_.collection, input_.tokenId, config_, input_.originalWallet, original_, credit_
-            );
-        }
-    }
-
-
     function configureWeightedSyEntitlements(Migration.WeightedSyEntitlementInput[] calldata inputs_)
         external administration nonReentrant
     {
@@ -193,29 +152,64 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         Repo.Storage storage m_ = Repo._layoutStruct();
         for (uint256 i_; i_ < inputs_.length; ++i_) {
             Migration.WeightedSyEntitlementInput calldata input_ = inputs_[i_];
-            if (block.chainid != 4663 || input_.source != Legacy.WEIGHTED_SY) {
-                revert Migration.UnsupportedWeightedSySource(block.chainid, input_.source);
-            }
-            bytes32 original_ = input_.originalId;
-            if (original_ == bytes32(0) || input_.originalWallet == address(0)
-                || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
-                revert Migration.InvalidWeightedSyEntitlement(original_);
-            }
-            _requireUnallocatedOrigin(original_, input_.source);
-            Migration.WeightedSySurrender storage surrender_ = m_.weightedSySurrenders[original_];
-            if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
-                revert Migration.WeightedSyIdentityConsumed(original_);
-            }
-            uint256 credit_ = SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+            uint256 credit_ = _quoteWeightedSy(input_, book_);
             bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
-            m_.weightedSyEntitlements[original_] =
-                Migration.WeightedSyEntitlement(true, input_, config_, credit_);
-            surrender_.remainingUnits = input_.originalUnits;
-            surrender_.remainingCredit = credit_;
-            emit Migration.WeightedSyEntitlementConfigured(
-                original_, config_, input_.originalWallet, input_.originalUnits, credit_
-            );
+            delete m_.claimedSyWeights[input_.originalId];
+            _storeWeightedSy(input_, config_, credit_);
         }
+    }
+
+    function configureClaimedSyEntitlements(Migration.ClaimedSyEntitlementInput[] calldata inputs_)
+        external administration nonReentrant
+    {
+        Snapshot.Snapshot memory book_ = Repo._snapshot();
+        for (uint256 i_; i_ < inputs_.length; ++i_) {
+            Migration.ClaimedSyEntitlementInput calldata input_ = inputs_[i_];
+            if (input_.eligibleWeight == 0 || input_.eligibleWeight > input_.originalWeight) {
+                revert Migration.InvalidWeightedSyEntitlement(input_.original.originalId);
+            }
+            uint256 credit_ = Math.mulDiv(
+                _quoteWeightedSy(input_.original, book_), input_.eligibleWeight, input_.originalWeight
+            );
+            if (credit_ == 0) revert Migration.InvalidWeightedSyEntitlement(input_.original.originalId);
+            bytes32 config_ = keccak256(abi.encode(block.chainid, address(this), book_.id, input_));
+            Repo._layoutStruct().claimedSyWeights[input_.original.originalId] =
+                Migration.ClaimedSyWeights(input_.originalWeight, input_.eligibleWeight);
+            _storeWeightedSy(input_.original, config_, credit_);
+        }
+    }
+
+    function _quoteWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, Snapshot.Snapshot memory book_)
+        private view returns (uint256)
+    {
+        if (block.chainid != 4663 || input_.source != Legacy.WEIGHTED_SY) {
+            revert Migration.UnsupportedWeightedSySource(block.chainid, input_.source);
+        }
+        bytes32 original_ = input_.originalId;
+        if (original_ == bytes32(0) || input_.originalWallet == address(0)
+            || input_.originalUnits == 0 || !input_.contributionsKnown || input_.evidenceId == bytes32(0)) {
+            revert Migration.InvalidWeightedSyEntitlement(original_);
+        }
+        _requireUnallocatedOrigin(original_, input_.source);
+        Migration.WeightedSySurrender storage surrender_ = Repo._layoutStruct().weightedSySurrenders[original_];
+        if (surrender_.consumedUnits != 0 || surrender_.deliveredCredit != 0) {
+            revert Migration.WeightedSyIdentityConsumed(original_);
+        }
+        return SnapshotLib.evaluateOriginals(book_, input_.originalEth, input_.originalDtf);
+    }
+
+    function _storeWeightedSy(Migration.WeightedSyEntitlementInput calldata input_, bytes32 config_, uint256 credit_)
+        private
+    {
+        Repo.Storage storage m_ = Repo._layoutStruct();
+        m_.weightedSyEntitlements[input_.originalId] =
+            Migration.WeightedSyEntitlement(true, input_, config_, credit_);
+        Migration.WeightedSySurrender storage surrender_ = m_.weightedSySurrenders[input_.originalId];
+        surrender_.remainingUnits = input_.originalUnits;
+        surrender_.remainingCredit = credit_;
+        emit Migration.WeightedSyEntitlementConfigured(
+            input_.originalId, config_, input_.originalWallet, input_.originalUnits, credit_
+        );
     }
 
     function configureDtfCustodySeEntitlements(Migration.DtfCustodySeEntitlementInput[] calldata inputs_)
@@ -285,7 +279,7 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
     }
 
     function _administrationSelectors() internal pure returns (bytes4[] memory selectors_) {
-        selectors_ = new bytes4[](14);
+        selectors_ = new bytes4[](16);
         selectors_[0] = Allocation.bootstrapMigrationReserve.selector;
         selectors_[1] = Allocation.captureMigrationSnapshot.selector;
         selectors_[2] = Allocation.configureIndependentAllocations.selector;
@@ -300,6 +294,8 @@ contract UniswapV4DetfMigrationAllocationTarget is UniswapV4DetfTarget, UniswapV
         selectors_[11] = Allocation.configureEarlierReceiptEntitlements.selector;
         selectors_[12] = Allocation.configureEarlierLiquidEntitlements.selector;
         selectors_[13] = Allocation.configureHeldSeLpEntitlements.selector;
+        selectors_[14] = Allocation.configureNftContributionEntitlements.selector;
+        selectors_[15] = Allocation.configureClaimedSyEntitlements.selector;
     }
 
     function bootstrapMigrationReserve(

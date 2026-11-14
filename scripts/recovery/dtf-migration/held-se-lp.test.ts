@@ -32,7 +32,8 @@ async function receiptFixture(source: string) {
   return { ...f, input, original };
 }
 
-for (const source of heldSeLpSources) {
+// E-S must still be exercised if its production admission accidentally disappears.
+for (const source of new Set([...heldSeLpSources, "0xb7d4bb379d361ad442cddee53ea71a33957826a7"])) {
 test(`held ${source} preparation requires complete known original native18 units without pricing or unit alternatives`, async () => {
   const f = await receiptFixture(source);
   try {

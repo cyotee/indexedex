@@ -42,7 +42,10 @@ export const nftOriginal = z.object({
   originalDtf: uint,
   evidenceId: identity,
   contributionsKnown: z.literal(true),
-}).strict().readonly();
+  separateContributions: z.literal(true).optional(),
+}).strict().refine((row) => !row.separateContributions
+  || (BigInt(row.originalEth) > 0n && BigInt(row.originalDtf) > 0n),
+"separate NFT contributions require both ETH and DTF").readonly();
 export const nft = z.object({ original: nftOriginal, proof }).strict().readonly();
 export const weightedLiquidOriginal = z.object({
   originalId: identity,
@@ -57,9 +60,9 @@ export const weightedLiquidOriginal = z.object({
 export const weightedLiquid = z.object({ original: weightedLiquidOriginal, proof }).strict().readonly();
 export const weightedSyOriginal = weightedLiquidOriginal;
 // Historical eligibility and exclusions are reviewed owner inputs, not chain facts.
-// A member is one direct signed EOA claim in an otherwise isolated canonical block.
+// Legacy members require isolation; witnessed members authenticate transaction-local reads.
 export const claimedSyCertificate = z.object({
-  kind: z.literal("complete-original-token-staking"),
+  kind: z.enum(["complete-original-token-staking", "complete-remaining-token-staking"]),
   chainId: z.literal("4663"),
   source: z.literal("0xe4c9ff4cfd17ae73ecb3825ebdf7db113c146d00"),
   vault: z.literal("0xaf5c0cd3fdedd10bee00eff77fa0429bacdb41f0"),
@@ -74,6 +77,7 @@ export const claimedSyCertificate = z.object({
     originalEth: uint,
     originalDtf: uint,
     eligibleWeight: positive,
+    originalWeight: positive.optional(),
     priorDeliveredCredit: z.literal("0"),
     contributionsKnown: z.literal(true),
     eligiblePrincipalOnly: z.literal(true),
@@ -91,6 +95,19 @@ export const claimedSyCertificate = z.object({
     consumedWeight: positive,
     receivedSy: uint,
     redeemedVaultShares: uint,
+    execution: z.union([z.object({
+      kind: z.enum(["direct-eip7702-v1", "relayed-eip7702-v1"]),
+      delegate: address,
+      delegateCodeHash: identity,
+    }).strict().readonly(), z.object({
+      kind: z.literal("witnessed-eip7702-v1"),
+      delegate: address,
+      delegateCodeHash: identity,
+      witness: address,
+    }).strict().readonly(), z.object({
+      kind: z.literal("indirect-transaction-v1"),
+      walletCodeHash: identity,
+    }).strict().readonly()]).optional(),
   }).strict().readonly()).min(1).readonly(),
 }).strict().readonly();
 export const weightedSy = z.object({
@@ -108,6 +125,7 @@ export const heldSeLpSources = [
   "0x999dae02d22e5fee1c4508430d5196d31d631009",
   "0x923877336b14662cfb5b3a60b14e7d716d54a888",
   "0x46e068c2393e189fbc86632f67210af253a42aa8",
+  "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
 ] as const;
 // Source-native18 shares/physical LP; neither native28 W-SD nor NFT accounting shares.
 export const heldSeLpOriginal = weightedLiquidOriginal.refine(
@@ -161,7 +179,7 @@ export const exposure = z.object({
 }).strict().readonly();
 export const recoveryStep = z.object({
   stage: z.enum(["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
-    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem", "DtfCustodySeRedeem", "ClaimVaultRedeem"]),
+    "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem", "DtfCustodySeRedeem", "ClaimVaultRedeem", "EarlierConvert", "WeightedWethSeConvert", "EarlierSeConvert", "WeightedLpRedeem", "EarlierNftReceiptRedeem", "EarlierStandaloneReceiptRedeem"]),
   tokenId: uint,
   amount: uint,
   minimum: uint,

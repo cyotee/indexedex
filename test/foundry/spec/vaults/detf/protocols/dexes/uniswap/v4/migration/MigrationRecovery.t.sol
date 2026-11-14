@@ -22,7 +22,7 @@ import {MigrationHostileContribution} from "./MigrationHostileContribution.t.sol
 /// @notice Hermetic surface/authority and callback negatives; source successes belong to the real fork.
 contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
     function test_recoveryDeclarationAndProxySurviveActivation() public {
-        bytes4[] memory selectors_ = new bytes4[](25);
+        bytes4[] memory selectors_ = new bytes4[](26);
         selectors_[0] = Recovery.recoverMigrationNfts.selector;
         selectors_[1] = Recovery.migrationRecoveryInventory.selector;
         selectors_[2] = Recovery.migrationRecoveryGons.selector;
@@ -48,6 +48,7 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
         selectors_[22] = Migration.heldSeLpSurrender.selector;
         selectors_[23] = Migration.previewHeldSeLpSurrender.selector;
         selectors_[24] = Migration.surrenderMigrationHeldSeLp.selector;
+        selectors_[25] = Recovery.migrationEarlierNftReceiptRemainder.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(selectors_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, selectors_, facet_.facetFuncs()));
         bytes4[] memory interfaces_ = new bytes4[](1);
@@ -65,6 +66,7 @@ contract MigrationRecoveryTest is TestBase_UniswapV4DetfMigration {
         assertEq(Recovery(detf).migrationRecoveryInventory(Legacy.DTF), 0);
         assertEq(Recovery(detf).migrationRecoveryGons(), 0);
         assertEq(Recovery(detf).migrationEarlierReceiptInternalShares(), 0);
+        assertEq(Recovery(detf).migrationEarlierNftReceiptRemainder(), 0);
         assertFalse(Recovery(detf).migrationNftRecovery(address(1), 3).sold);
         vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
         Recovery(detf).recoverMigrationNfts(new Recovery.Step[](0), block.timestamp);

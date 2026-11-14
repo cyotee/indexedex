@@ -12,9 +12,10 @@ import {IMigrationLegacyNft, IMigrationWeightedNft, IMigrationEarlierNft} from "
 import {MigrationLegacyNftLib as NftLib} from "./MigrationLegacyNftLib.sol";
 import {
     IMigrationWeightedClaims, IMigrationWeightedReceipt, IMigrationWeightedSynchronization,
-    IMigrationWeightedSy, IMigrationLegacyExchange,
+    IMigrationWeightedSy, IMigrationLegacyExchange, IMigrationWeightedLp,
     IMigrationDtfCustodySe, IMigrationClaimVault,
-    IMigrationEarlierClaims, IMigrationEarlierSale, IMigrationEarlierReceipt
+    IMigrationEarlierClaims, IMigrationEarlierSynchronization, IMigrationEarlierRedemption,
+    IMigrationEarlierSale, IMigrationEarlierReceipt
 } from "./IMigrationLegacyRecovery.sol";
 
 /// @notice Finite admitted source calls. The parent supplies the common lock/current-owner guard.
@@ -30,13 +31,15 @@ library MigrationLegacyRecoveryLib {
     address internal constant EARLIER_RECEIPT = 0x4AC89aD061A531FA62ddceED53520C2750113b01;
     address internal constant DTF = 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
     address internal constant WEIGHTED_WETH_SE = 0x999DaE02D22E5FEe1c4508430D5196d31d631009;
+    address internal constant EARLIER_SE = 0xb7D4Bb379D361AD442CddEE53eA71a33957826A7;
     address internal constant EARLIER_LP = 0x923877336b14662cFb5B3A60b14e7d716d54A888;
     address internal constant WEIGHTED_LP = 0x46E068c2393e189Fbc86632f67210aF253a42Aa8;
 
     /// @dev Fixed custody set, not a recovery-route or arbitrary ERC20 admission.
     function requireHeldSeLpSource(address source_) internal view {
         if (block.chainid != 4663
-            || (source_ != WEIGHTED_WETH_SE && source_ != EARLIER_LP && source_ != WEIGHTED_LP)) {
+            || (source_ != WEIGHTED_WETH_SE && source_ != EARLIER_SE
+                && source_ != EARLIER_LP && source_ != WEIGHTED_LP)) {
             revert Migration.UnsupportedHeldSeLpSource(block.chainid, source_);
         }
     }
@@ -117,11 +120,13 @@ library MigrationLegacyRecoveryLib {
         }
     }
 
-    /// @dev E remains external NFT-sale shares; B remains standalone internal shares.
-    /// Check the composed internal attribution on both booking routes without changing either unit.
+    /// @dev E remains external NFT-sale shares; R preserves their conversion remainder,
+    /// while B remains standalone internal shares. Check E*1e9+R+B without conflating units.
     function requireEarlierReceiptInventory() internal view {
         Repo.Storage storage r_ = Repo._layoutStruct();
         uint256 externalInternal_ = r_.inventory[EARLIER_RECEIPT] * 1e9;
+        if (r_.earlierNftReceiptRemainder >= 1e9) revert Migration.EarlierReceiptCustodyFailed();
+        externalInternal_ += r_.earlierNftReceiptRemainder;
         if (r_.earlierReceiptInternalShares > type(uint256).max - externalInternal_) {
             revert Migration.EarlierReceiptCustodyFailed();
         }
@@ -318,22 +323,113 @@ library MigrationLegacyRecoveryLib {
     }
 
     function convertWeighted(uint256 amount_, uint256 minimum_, uint256 deadline_) internal {
+        convertLegacyToken(WEIGHTED_DETF, WEIGHTED_DETF, amount_, minimum_, deadline_);
+    }
+
+    /// @dev The fixed public reserve swap avoids the legacy primary-burn unwrap failure.
+    function convertEarlier(uint256 amount_, uint256 minimum_, uint256 deadline_) internal {
+        convertLegacyToken(EARLIER_DETF, EARLIER_LP, amount_, minimum_, deadline_);
+    }
+
+    function convertWeightedWethSe(uint256 amount_, uint256 minimum_, uint256 deadline_) internal {
+        convertLegacyToken(WEIGHTED_WETH_SE, WEIGHTED_WETH_SE, amount_, minimum_, deadline_);
+    }
+
+    function convertEarlierSe(uint256 amount_, uint256 minimum_, uint256 deadline_) internal {
+        convertLegacyToken(EARLIER_SE, EARLIER_SE, amount_, minimum_, deadline_);
+    }
+
+    function convertLegacyToken(address source_, address target_, uint256 amount_, uint256 minimum_, uint256 deadline_) private {
         Repo.Storage storage r_ = Repo._layoutStruct();
-        Repo._debit(r_, WEIGHTED_DETF, amount_);
-        IERC20 token_ = IERC20(WEIGHTED_DETF);
+        Repo._debit(r_, source_, amount_);
+        IERC20 token_ = IERC20(source_);
         uint256 in0_ = token_.balanceOf(address(this));
         uint256 out0_ = IERC20(DTF).balanceOf(address(this));
-        token_.forceApprove(WEIGHTED_DETF, amount_);
-        uint256 out_ = IMigrationLegacyExchange(WEIGHTED_DETF).exchangeIn(
-            WEIGHTED_DETF, amount_, DTF, minimum_, address(this), false, deadline_
+        token_.forceApprove(target_, amount_);
+        uint256 out_ = IMigrationLegacyExchange(target_).exchangeIn(
+            source_, amount_, DTF, minimum_, address(this), false, deadline_
         );
-        token_.forceApprove(WEIGHTED_DETF, 0);
+        token_.forceApprove(target_, 0);
         if (in0_ - token_.balanceOf(address(this)) != amount_ || out_ == 0 || out_ < minimum_
             || IERC20(DTF).balanceOf(address(this)) - out0_ != out_) {
             revert Recovery.RecoveryDeltaMismatch(DTF);
         }
         r_.inventory[DTF] += out_;
-        emit Recovery.MigrationRecoveryConverted(WEIGHTED_DETF, DTF, amount_, out_);
+        emit Recovery.MigrationRecoveryConverted(source_, DTF, amount_, out_);
+    }
+
+    /// @dev The source enforces its owner/current-fee-recipient removal policy.
+    /// Newly minted protocol-fee LP is not surrendered inventory and stays unbooked.
+    function redeemWeightedLp(uint256 amount_, uint256 minimum_, uint256 deadline_) internal {
+        Repo.Storage storage r_ = Repo._layoutStruct();
+        Repo._debit(r_, WEIGHTED_LP, amount_);
+        IERC20 lp_ = IERC20(WEIGHTED_LP);
+        IMigrationWeightedLp source_ = IMigrationWeightedLp(WEIGHTED_LP);
+        uint256 in0_ = lp_.balanceOf(address(this));
+        uint256 supply0_ = lp_.totalSupply();
+        address feeTo_ = source_.feeTo();
+        uint256 out0_ = IERC20(DTF).balanceOf(address(this));
+        uint256 out_ = source_.exchangeIn(WEIGHTED_LP, amount_, DTF, minimum_, address(this), false, deadline_);
+        uint256 minted_ = lp_.totalSupply() + amount_ - supply0_;
+        if (source_.feeTo() != feeTo_
+            || lp_.balanceOf(address(this)) != in0_ - amount_ + (feeTo_ == address(this) ? minted_ : 0)
+            || out_ == 0 || out_ < minimum_ || IERC20(DTF).balanceOf(address(this)) - out0_ != out_) {
+            revert Recovery.RecoveryDeltaMismatch(WEIGHTED_LP);
+        }
+        r_.inventory[DTF] += out_;
+        emit Recovery.MigrationRecoveryConverted(WEIGHTED_LP, DTF, amount_, out_);
+    }
+
+    /// @dev The admitted parent burns native ER using its pre-burn redemption rate.
+    /// Its preceding ED expansion funds NFT rewards, without changing LP/share rate inputs.
+    /// A reward-funded redemption returns ED; the separate fixed swap realizes DTF.
+    function redeemEarlierReceipt(uint256 amount_, uint256 minimum_, uint256 deadline_, bool nftInventory_) internal {
+        EarlierReceiptObservation memory before_ = observeEarlierReceipt(address(this));
+        if (before_.rate == 0) revert Recovery.RecoveryDeltaMismatch(EARLIER_RECEIPT);
+        uint256 burned_ = Math.mulDiv(amount_, 1e27, before_.rate);
+        debitEarlierReceipt(burned_, nftInventory_);
+        uint256 out0_ = IERC20(EARLIER_DETF).balanceOf(address(this));
+        uint256 out_ = IMigrationEarlierRedemption(EARLIER_DETF).redeemClaim(
+            amount_, EARLIER_DETF, minimum_, address(this), deadline_
+        );
+        requireEarlierReceiptBurn(burned_, before_, observeEarlierReceipt(address(this)));
+        if (out_ == 0 || out_ < minimum_ || IERC20(EARLIER_DETF).balanceOf(address(this)) - out0_ != out_) {
+            revert Recovery.RecoveryDeltaMismatch(EARLIER_DETF);
+        }
+        Repo._layoutStruct().inventory[EARLIER_DETF] += out_;
+        emit Recovery.MigrationEarlierReceiptRedeemed(amount_, burned_, before_.rate, nftInventory_, out_);
+        emit Recovery.MigrationRecoveryConverted(EARLIER_RECEIPT, EARLIER_DETF, amount_, out_);
+    }
+
+    function debitEarlierReceipt(uint256 burned_, bool nftInventory_) private {
+        Repo.Storage storage r_ = Repo._layoutStruct();
+        requireEarlierReceiptInventory();
+        uint256 available_ = nftInventory_
+            ? r_.inventory[EARLIER_RECEIPT] * 1e9 + r_.earlierNftReceiptRemainder
+            : r_.earlierReceiptInternalShares;
+        if (burned_ == 0 || burned_ > available_) {
+            revert Recovery.RecoveryInventoryInsufficient(EARLIER_RECEIPT, burned_, available_);
+        }
+        if (nftInventory_) {
+            available_ -= burned_;
+            r_.inventory[EARLIER_RECEIPT] = available_ / 1e9;
+            r_.earlierNftReceiptRemainder = available_ % 1e9;
+        } else r_.earlierReceiptInternalShares -= burned_;
+    }
+
+    function requireEarlierReceiptBurn(
+        uint256 burned_, EarlierReceiptObservation memory before_, EarlierReceiptObservation memory after_
+    ) private pure {
+        if (after_.custodyShares > before_.custodyShares || after_.total > before_.total) {
+            revert Recovery.RecoveryDeltaMismatch(EARLIER_RECEIPT);
+        }
+        uint256 lower_ = burned_ / 1e9;
+        uint256 upper_ = lower_ + (burned_ % 1e9 == 0 ? 0 : 1);
+        uint256 custodyDebit_ = before_.custodyShares - after_.custodyShares;
+        uint256 supplyDebit_ = before_.total - after_.total;
+        if (custodyDebit_ < lower_ || custodyDebit_ > upper_ || supplyDebit_ < lower_ || supplyDebit_ > upper_) {
+            revert Recovery.RecoveryDeltaMismatch(EARLIER_RECEIPT);
+        }
     }
 
     function claimEarlier(uint256 id_) internal {
@@ -342,6 +438,9 @@ library MigrationLegacyRecoveryLib {
         if (nft_.getPosition(id_).originalShares != original_) {
             revert Recovery.InvalidRecoveryCustody(NftLib.EARLIER, id_);
         }
+        // The NFT claim itself does not realize elapsed parent expansion. Settle
+        // through the parent's public path before measuring this position's reward.
+        IMigrationEarlierSynchronization(EARLIER_DETF).compoundProtocolRewards();
         uint256 before_ = IERC20(EARLIER_DETF).balanceOf(address(this));
         uint256 rewards_ = IMigrationEarlierClaims(NftLib.EARLIER).claimRewards(id_, address(this));
         if (IERC20(EARLIER_DETF).balanceOf(address(this)) - before_ != rewards_

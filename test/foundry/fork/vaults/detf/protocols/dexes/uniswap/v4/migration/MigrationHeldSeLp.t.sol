@@ -8,6 +8,8 @@ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -17,10 +19,18 @@ import {MigrationLegacyRecoveryLib as Legacy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/MigrationLegacyRecoveryLib.sol";
 import {IMigrationEarlierNft} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyNft.sol";
+import {IMigrationLegacyExchange} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/legacy/IMigrationLegacyRecovery.sol";
 
 interface IHeldSeLpCollector {
     function owner() external view returns (address);
     function pullFee(address token_, uint256 amount_, address recipient_) external returns (bool);
+}
+
+interface IHeldLpFeeOracle {
+    function feeOracle() external view returns (address);
+    function feeTo() external view returns (address);
+    function setFeeTo(address recipient_) external returns (bool);
 }
 
 /// @notice Synthetic acquiring contract wallet; the source and funding system remain real.
@@ -60,6 +70,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
 
     address constant COLLECTOR = address(bytes20(hex"20af9a1e21a59a411cd3b0c40e70af9084770b2e"));
     address constant DONOR = address(bytes20(hex"72bea6fa3e68ef18c87d045aac7c4aa5249d933b"));
+    address constant EARLIER_SE_HOLDER = address(bytes20(hex"bab6a03be445094a10695772a79777407dcdc0e7"));
 
     function setUp() public override {
         super.setUp();
@@ -69,6 +80,20 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
     /// @dev Impersonated local donor preparation, not controlled signatures or historical originals.
     /// LP release belongs ONLY to the existing EOA collector owner and goes to that same owner.
     function _acquire(address source_, address recipient_, uint256 q_) internal {
+        if (source_ == Legacy.EARLIER_SE) {
+            assertEq(EARLIER_SE_HOLDER.code.length, 0);
+            assertEq(IERC20(source_).balanceOf(EARLIER_SE_HOLDER), 2021090200239501983);
+            assertEq(IDiamondLoupe(source_).facetAddress(IERC20.transferFrom.selector),
+                0x1d17acA0e0717d90cea916372070a1BE4652223F);
+            uint256 supply_ = IERC20(source_).totalSupply();
+            uint256 before_ = IERC20(source_).balanceOf(recipient_);
+            vm.prank(EARLIER_SE_HOLDER);
+            assertTrue(IERC20(source_).transfer(recipient_, q_));
+            assertEq(IERC20(source_).balanceOf(EARLIER_SE_HOLDER), 2021090200239501983 - q_);
+            assertEq(IERC20(source_).balanceOf(recipient_), before_ + q_);
+            assertEq(IERC20(source_).totalSupply(), supply_);
+            return;
+        }
         assertEq(DONOR.code.length, 0);
         assertEq(IHeldSeLpCollector(COLLECTOR).owner(), DONOR);
         address facet_ = IDiamondLoupe(COLLECTOR).facetAddress(IHeldSeLpCollector.pullFee.selector);
@@ -104,7 +129,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         );
     }
 
-    function _configureLiquid(address wallet_, uint256 q_) private returns (uint256) {
+    function _configureLiquid(address wallet_, uint256 q_) internal returns (uint256) {
         Migration.HeldSeLpEntitlementInput[] memory a_ = _liquidInput(wallet_, q_, 0.01 ether);
         vm.prank(migrationOwner);
         allocation.configureHeldSeLpEntitlements(a_);
@@ -375,10 +400,10 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         assertEq(bonds.positionOf(id_).claimedPrincipal, credit_);
     }
 
-    function test_threeHeldSourcesPreserveMixedNftEdErWsAndDonationInventories() public {
-        address[3] memory fixed_ = [Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP];
-        Migration.HeldSeLpEntitlementInput[] memory a_ = new Migration.HeldSeLpEntitlementInput[](3);
-        for (uint256 i_; i_ < 3; ++i_) {
+    function test_fourHeldSourcesPreserveMixedNftEdErWsAndDonationInventories() public {
+        address[4] memory fixed_ = [Legacy.WEIGHTED_WETH_SE, Legacy.EARLIER_LP, Legacy.WEIGHTED_LP, Legacy.EARLIER_SE];
+        Migration.HeldSeLpEntitlementInput[] memory a_ = new Migration.HeldSeLpEntitlementInput[](4);
+        for (uint256 i_; i_ < 4; ++i_) {
             if (fixed_[i_] != _source()) _acquire(fixed_[i_], HOLDER, 10020);
             a_[i_] = _liquidInput(HOLDER, 3, 0.01 ether)[0];
             a_[i_].originalId = bytes32(uint256(uint160(fixed_[i_])));
@@ -403,7 +428,7 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         vm.startPrank(HOLDER);
         IERC20(Legacy.EARLIER_RECEIPT).approve(detf, 4);
         migration.surrenderMigrationEarlierReceipt(bytes32("distinct ER original"), 4, 1, block.timestamp);
-        for (uint256 i_; i_ < 3; ++i_) IERC20(fixed_[i_]).transfer(detf, 13);
+        for (uint256 i_; i_ < 4; ++i_) IERC20(fixed_[i_]).transfer(detf, 13);
         vm.stopPrank();
         vm.prank(address(bytes20(hex"495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed")));
         IERC20(Legacy.EARLIER_DETF).transfer(detf, 7);
@@ -414,13 +439,13 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
         assertGt(recovery.migrationRecoveryInventory(Legacy.EARLIER_RECEIPT), 0);
         assertGt(recovery.migrationEarlierReceiptInternalShares(), 0);
         assertGt(recovery.migrationRecoveryGons(), 0);
-        for (uint256 i_; i_ < 3; ++i_) {
+        for (uint256 i_; i_ < 4; ++i_) {
             vm.startPrank(HOLDER);
             IERC20(fixed_[i_]).approve(detf, 3);
             migration.surrenderMigrationHeldSeLp(a_[i_].originalId, 3, 1, block.timestamp);
             vm.stopPrank();
             assertEq(_inheritedInventory(), before_);
-            for (uint256 j_; j_ < 3; ++j_) {
+            for (uint256 j_; j_ < 4; ++j_) {
                 uint256 booked_ = j_ <= i_ ? 3 : 0;
                 assertEq(recovery.migrationRecoveryInventory(fixed_[j_]), booked_);
                 assertEq(IERC20(fixed_[j_]).balanceOf(detf), 13 + booked_);
@@ -447,10 +472,232 @@ abstract contract MigrationHeldSeLpTest is MigrationRecoveryDonationForkBase {
 
 contract MigrationWeightedWethSeTest is MigrationHeldSeLpTest {
     function _source() internal pure override returns (address) { return Legacy.WEIGHTED_WETH_SE; }
+
+    function test_typedRecoveryAfterLocalLegacyEnablementPreservesUnbookedShares() public {
+        uint256 q_ = IERC20(_source()).balanceOf(DONOR) - 100;
+        _acquire(_source(), HOLDER, q_);
+        _acquire(_source(), detf, 100);
+        _configureLiquid(HOLDER, q_);
+        _activate();
+        vm.startPrank(HOLDER);
+        IERC20(_source()).approve(detf, q_);
+        (uint256 bond_,) = migration.surrenderMigrationHeldSeLp(ORIGIN, q_, 1, block.timestamp);
+        vm.stopPrank();
+        bytes32 protected_ = _protected(bond_);
+        vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)", _source()));
+        _run(Recovery.Stage.WeightedWethSeConvert, 0, q_, 1);
+        assertEq(recovery.migrationRecoveryInventory(_source()), q_);
+        assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);
+        assertEq(IERC20(_source()).allowance(detf, _source()), 0);
+
+        address registry_ = 0x09682b00D873D913ada0bB69B4D4c9631810d0bc;
+        IVaultRegistryDisableQuery query_ = IVaultRegistryDisableQuery(registry_);
+        (, bool byVault_, bool byPackage_) = query_.isDisabledDetailed(_source());
+        vm.startPrank(IMultiStepOwnable(registry_).owner());
+        if (byVault_) IVaultRegistryDisableManager(registry_).setVaultAddressDisabled(_source(), false);
+        if (byPackage_) {
+            IVaultRegistryDisableManager(registry_).setPackageDisabled(query_.packageOfVault(_source()), false);
+        }
+        vm.stopPrank();
+        assertFalse(query_.isDisabled(_source()));
+        uint256 before_ = IERC20(Legacy.DTF).balanceOf(detf);
+        uint256 sourceSupply_ = IERC20(_source()).totalSupply();
+        Recovery.Step[] memory steps_ = new Recovery.Step[](2);
+        steps_[0] = Recovery.Step(Recovery.Stage.WeightedWethSeConvert, 0, q_, 1);
+        steps_[1] = Recovery.Step(Recovery.Stage.Donate, 1, 1, 1);
+        vm.expectRevert(Recovery.InvalidRecoveryStep.selector);
+        vm.prank(migrationOwner);
+        recovery.recoverMigrationNfts(steps_, block.timestamp);
+        assertEq(IERC20(_source()).totalSupply(), sourceSupply_);
+        assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);
+        assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_);
+        assertEq(recovery.migrationRecoveryInventory(_source()), q_);
+        assertEq(IERC20(_source()).allowance(detf, _source()), 0);
+        assertEq(_protected(bond_), protected_);
+        _run(Recovery.Stage.WeightedWethSeConvert, 0, q_, 1);
+        uint256 out_ = IERC20(Legacy.DTF).balanceOf(detf) - before_;
+        assertGt(out_, 0);
+        assertEq(recovery.migrationRecoveryInventory(_source()), 0);
+        assertEq(IERC20(_source()).balanceOf(detf), 100);
+        assertEq(IERC20(_source()).allowance(detf, _source()), 0);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);
+        assertEq(_protected(bond_), protected_);
+        _run(Recovery.Stage.Donate, 0, out_, 1);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
+        assertEq(_protected(bond_), protected_);
+    }
 }
 contract MigrationEarlierLpTest is MigrationHeldSeLpTest {
     function _source() internal pure override returns (address) { return Legacy.EARLIER_LP; }
 }
 contract MigrationWeightedLpTest is MigrationHeldSeLpTest {
     function _source() internal pure override returns (address) { return Legacy.WEIGHTED_LP; }
+
+    function test_typedLpRecoveryAfterActualOracleAuthorizationPreservesFeeMints() public {
+        uint256 q_ = IERC20(_source()).balanceOf(COLLECTOR) / 2;
+        _acquire(_source(), HOLDER, q_);
+        _acquire(_source(), detf, 100);
+        _configureLiquid(HOLDER, q_);
+        _activate();
+        vm.startPrank(HOLDER);
+        IERC20(_source()).approve(detf, q_);
+        (uint256 bond_,) = migration.surrenderMigrationHeldSeLp(ORIGIN, q_, 1, block.timestamp);
+        vm.stopPrank();
+        bytes32 protected_ = _protected(bond_);
+        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", detf));
+        _run(Recovery.Stage.WeightedLpRedeem, 0, q_, 1);
+        assertEq(recovery.migrationRecoveryInventory(_source()), q_);
+        assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);
+
+        address oracle_ = IHeldLpFeeOracle(_source()).feeOracle();
+        address administrator_ = IMultiStepOwnable(oracle_).owner();
+        assertEq(administrator_.code.length, 0);
+        // Conditional real external authorization, not Migration assigning itself a role.
+        vm.prank(administrator_);
+        IHeldLpFeeOracle(oracle_).setFeeTo(detf);
+        assertEq(IHeldLpFeeOracle(_source()).feeTo(), detf);
+        uint256 before_ = IERC20(Legacy.DTF).balanceOf(detf);
+        uint256 supply_ = IERC20(_source()).totalSupply();
+        Recovery.Step[] memory steps_ = new Recovery.Step[](2);
+        steps_[0] = Recovery.Step(Recovery.Stage.WeightedLpRedeem, 0, q_, 1);
+        steps_[1] = Recovery.Step(Recovery.Stage.Donate, 1, 1, 1);
+        vm.expectRevert(Recovery.InvalidRecoveryStep.selector);
+        vm.prank(migrationOwner);
+        recovery.recoverMigrationNfts(steps_, block.timestamp);
+        assertEq(IERC20(_source()).totalSupply(), supply_);
+        assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);
+        assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_);
+        assertEq(recovery.migrationRecoveryInventory(_source()), q_);
+        assertEq(_protected(bond_), protected_);
+        _run(Recovery.Stage.WeightedLpRedeem, 0, q_, 1);
+        uint256 minted_ = IERC20(_source()).totalSupply() + q_ - supply_;
+        uint256 out_ = IERC20(Legacy.DTF).balanceOf(detf) - before_;
+        assertGt(out_, 0);
+        assertEq(IERC20(_source()).balanceOf(detf), 100 + minted_);
+        assertEq(IERC20(_source()).allowance(detf, _source()), 0);
+        assertEq(recovery.migrationRecoveryInventory(_source()), 0);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);
+        vm.expectRevert(abi.encodeWithSelector(
+            Recovery.RecoveryInventoryInsufficient.selector, _source(), 1, 0
+        ));
+        _run(Recovery.Stage.WeightedLpRedeem, 0, 1, 0);
+        _run(Recovery.Stage.Donate, 0, out_, 1);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
+        assertEq(_protected(bond_), protected_);
+    }
+}
+
+/// @notice Actual pinned EOA custody; contribution amounts and configured eligibility remain synthetic.
+contract MigrationEarlierSeTest is MigrationHeldSeLpTest {
+    function _source() internal pure override returns (address) { return Legacy.EARLIER_SE; }
+
+    function test_genuineOriginalHolderSurrendersIntoFreshFundedBondsWithDisabledRecovery() public {
+        uint256 quantity_ = IERC20(_source()).balanceOf(EARLIER_SE_HOLDER);
+        uint256 credit_ = _configureLiquid(EARLIER_SE_HOLDER, quantity_);
+        assertEq(migration.heldSeLpEntitlement(ORIGIN).original.originalWallet, EARLIER_SE_HOLDER);
+        _activate();
+        uint256 supply_ = IERC20(detf).totalSupply();
+        uint256 firstCredit_ = credit_ * 1 ether / quantity_;
+        vm.startPrank(EARLIER_SE_HOLDER);
+        IERC20(_source()).approve(detf, quantity_);
+        (uint256 first_, uint256 partial_) =
+            migration.surrenderMigrationHeldSeLp(ORIGIN, 1 ether, firstCredit_, block.timestamp);
+        assertEq(partial_, firstCredit_);
+        assertEq(IERC20(_source()).balanceOf(EARLIER_SE_HOLDER), quantity_ - 1 ether);
+        assertEq(IERC20(_source()).balanceOf(detf), 1 ether);
+        assertEq(migration.heldSeLpSurrender(ORIGIN).remainingCredit, credit_ - firstCredit_);
+        (uint256 last_, uint256 delivered_) = migration.surrenderMigrationHeldSeLp(
+            ORIGIN, quantity_ - 1 ether, credit_ - firstCredit_, block.timestamp
+        );
+        assertEq(delivered_, credit_ - firstCredit_);
+        vm.stopPrank();
+        assertNotEq(first_, last_);
+        for (uint256 i_; i_ < 2; ++i_) {
+            uint256 bond_ = i_ == 0 ? first_ : last_;
+            uint256 principal_ = i_ == 0 ? firstCredit_ : credit_ - firstCredit_;
+            assertEq(IERC721(address(bonds)).ownerOf(bond_), EARLIER_SE_HOLDER);
+            assertEq(bonds.positionOf(bond_).principal, principal_);
+            assertEq(bonds.positionOf(bond_).claimedPrincipal, 0);
+            assertEq(bonds.positionOf(bond_).startTimestamp, block.timestamp);
+            assertEq(bonds.positionOf(bond_).vestingDuration, 90 days);
+            assertEq(bonds.positionOf(bond_).stakingGons, principal_ * receipt.stakingState().gonsPerUnit);
+        }
+        assertEq(IERC20(_source()).balanceOf(EARLIER_SE_HOLDER), 0);
+        assertEq(IERC20(_source()).balanceOf(detf), quantity_);
+        assertEq(IERC20(_source()).allowance(EARLIER_SE_HOLDER, detf), 0);
+        assertEq(recovery.migrationRecoveryInventory(_source()), quantity_);
+        assertEq(migration.heldSeLpSurrender(ORIGIN).remainingUnits, 0);
+        assertEq(migration.heldSeLpSurrender(ORIGIN).remainingCredit, 0);
+        assertEq(migration.heldSeLpSurrender(ORIGIN).consumedUnits, quantity_);
+        assertEq(migration.heldSeLpSurrender(ORIGIN).deliveredCredit, credit_);
+        assertEq(IERC20(detf).totalSupply(), supply_ + credit_);
+        assertEq(IERC20(detf).balanceOf(address(receipt)), initialBacking + credit_);
+        bytes32 protected_ = _protected(first_);
+        // Other stages cannot select E-S. Its own stage honors the actual disabled source.
+        vm.expectRevert(Recovery.InvalidRecoveryStep.selector);
+        _run(Recovery.Stage.EarlierSale, 0, quantity_, 1);
+        vm.expectRevert(abi.encodeWithSelector(
+            Recovery.RecoveryInventoryInsufficient.selector, Legacy.DTF_CUSTODY_SE, quantity_, 0
+        ));
+        _run(Recovery.Stage.DtfCustodySeRedeem, 0, quantity_, 1);
+        vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)", _source()));
+        _run(Recovery.Stage.EarlierSeConvert, 0, quantity_, 1);
+        assertEq(recovery.migrationRecoveryInventory(_source()), quantity_);
+        assertEq(IERC20(_source()).balanceOf(detf), quantity_);
+        assertEq(_protected(first_), protected_);
+    }
+
+    function test_typedEarlierSeRecoveryAfterPaidAcquisitionAndLocalEnablement() public {
+        address registry_ = 0x09682b00D873D913ada0bB69B4D4c9631810d0bc;
+        IVaultRegistryDisableQuery query_ = IVaultRegistryDisableQuery(registry_);
+        (, bool byVault_, bool byPackage_) = query_.isDisabledDetailed(_source());
+        vm.startPrank(IMultiStepOwnable(registry_).owner());
+        if (byVault_) IVaultRegistryDisableManager(registry_).setVaultAddressDisabled(_source(), false);
+        if (byPackage_) {
+            IVaultRegistryDisableManager(registry_).setPackageDisabled(query_.packageOfVault(_source()), false);
+        }
+        vm.stopPrank();
+        assertFalse(query_.isDisabled(_source()));
+        // Pay for a non-dust source position from genuinely holder-funded DTF.
+        IERC20(Legacy.DTF).transfer(HOLDER, 1e12);
+        vm.startPrank(HOLDER);
+        IERC20(Legacy.DTF).approve(_source(), 1e12);
+        uint256 q_ = IMigrationLegacyExchange(_source()).exchangeIn(
+            Legacy.DTF, 1e12, _source(), 1, HOLDER, false, block.timestamp
+        );
+        IERC20(Legacy.DTF).approve(_source(), 0);
+        IERC20(_source()).transfer(detf, 100);
+        vm.stopPrank();
+        _configureLiquid(HOLDER, q_);
+        _activate();
+        vm.startPrank(HOLDER);
+        IERC20(_source()).approve(detf, q_);
+        (uint256 bond_,) = migration.surrenderMigrationHeldSeLp(ORIGIN, q_, 1, block.timestamp);
+        vm.stopPrank();
+        bytes32 protected_ = _protected(bond_);
+        uint256 before_ = IERC20(Legacy.DTF).balanceOf(detf);
+        uint256 supply_ = IERC20(_source()).totalSupply();
+        Recovery.Step[] memory steps_ = new Recovery.Step[](2);
+        steps_[0] = Recovery.Step(Recovery.Stage.EarlierSeConvert, 0, q_, 1);
+        steps_[1] = Recovery.Step(Recovery.Stage.Donate, 1, 1, 1);
+        vm.expectRevert(Recovery.InvalidRecoveryStep.selector);
+        vm.prank(migrationOwner);
+        recovery.recoverMigrationNfts(steps_, block.timestamp);
+        assertEq(IERC20(_source()).totalSupply(), supply_);
+        assertEq(IERC20(_source()).balanceOf(detf), q_ + 100);
+        assertEq(IERC20(Legacy.DTF).balanceOf(detf), before_);
+        assertEq(recovery.migrationRecoveryInventory(_source()), q_);
+        assertEq(IERC20(_source()).allowance(detf, _source()), 0);
+        assertEq(_protected(bond_), protected_);
+        _run(Recovery.Stage.EarlierSeConvert, 0, q_, 1);
+        uint256 out_ = IERC20(Legacy.DTF).balanceOf(detf) - before_;
+        assertGt(out_, 0);
+        assertEq(recovery.migrationRecoveryInventory(_source()), 0);
+        assertEq(IERC20(_source()).balanceOf(detf), 100);
+        assertEq(IERC20(_source()).allowance(detf, _source()), 0);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);
+        _run(Recovery.Stage.Donate, 0, out_, 1);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
+        assertEq(_protected(bond_), protected_);
+    }
 }

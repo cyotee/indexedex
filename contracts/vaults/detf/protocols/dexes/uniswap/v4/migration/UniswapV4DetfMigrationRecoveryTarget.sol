@@ -77,8 +77,8 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
         s_.deliveredCredit += credit_;
         s_.remainingUnits -= amount_;
         s_.remainingCredit -= credit_;
-        // Native18 fixed-source holding only. Neither preexisting balances nor
-        // unrelated sources become credit, and no conversion/debit route is installed.
+        // Only measured surrendered native18 units enter recovery inventory.
+        // Physical LP has no admitted exit; SE conversions select their own fixed sources.
         Repo._layoutStruct().inventory[config_.original.source] += amount_;
         _realizeExpansionIfNeeded();
         bondTokenId_ = MigrationRepo._fundBond(credit_, msg.sender);
@@ -350,6 +350,19 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
                     Legacy.redeemDtfCustodySe(step_.amount, step_.minimum);
                 } else if (step_.stage == Stage.ClaimVaultRedeem) {
                     Legacy.redeemClaimVault(step_.amount, step_.minimum);
+                } else if (step_.stage == Stage.EarlierConvert) {
+                    Legacy.convertEarlier(step_.amount, step_.minimum, deadline_);
+                } else if (step_.stage == Stage.WeightedWethSeConvert) {
+                    Legacy.convertWeightedWethSe(step_.amount, step_.minimum, deadline_);
+                } else if (step_.stage == Stage.EarlierSeConvert) {
+                    Legacy.convertEarlierSe(step_.amount, step_.minimum, deadline_);
+                } else if (step_.stage == Stage.WeightedLpRedeem) {
+                    Legacy.redeemWeightedLp(step_.amount, step_.minimum, deadline_);
+                } else if (step_.stage == Stage.EarlierNftReceiptRedeem
+                    || step_.stage == Stage.EarlierStandaloneReceiptRedeem) {
+                    Legacy.redeemEarlierReceipt(
+                        step_.amount, step_.minimum, deadline_, step_.stage == Stage.EarlierNftReceiptRedeem
+                    );
                 } else _donateRecovery(step_.amount, step_.minimum);
             }
         }
@@ -359,6 +372,10 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
     function claimVaultEntitlement(bytes32 originalId_)
         external view returns (Migration.ClaimVaultEntitlement memory)
     { return MigrationRepo._layoutStruct().claimVaultEntitlements[originalId_]; }
+
+    function migrationEarlierNftReceiptRemainder() external view returns (uint256) {
+        return Repo._layoutStruct().earlierNftReceiptRemainder;
+    }
 
     function claimVaultSurrender(bytes32 originalId_)
         external view returns (Migration.ClaimVaultSurrender memory)
@@ -432,12 +449,20 @@ contract UniswapV4DetfMigrationRecoveryTarget is UniswapV4DetfMigrationPolicy, R
         }
         Repo._debit(token_, amount_);
         uint256 lpBefore_ = IERC20(s_.hook).balanceOf(_bondLpHolder());
+        MigrationRepo.Storage storage m_ = MigrationRepo._layoutStruct();
+        address[] memory tokens_ = _budgetTokens();
+        uint256[] memory residuals_ = new uint256[](tokens_.length);
         _beginBudget();
-        // This transfers only selected recovered capital into the existing reserve residual domain.
-        // All other recovery inventory, older donation budgets and unsolicited balances stay floors.
-        MigrationRepo._layoutStruct().operationFloor[token_] -= amount_;
+        // A selected recovery donation cannot also spend an earlier operation's residuals.
+        // Preserve their bookkeeping while exposing only this donation's measured budget.
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            residuals_[i_] = m_.residualInventory[tokens_[i_]];
+            m_.operationFloor[tokens_[i_]] = IERC20(tokens_[i_]).balanceOf(address(this));
+        }
+        m_.operationFloor[token_] -= amount_;
         _sweepDustBody();
         _endBudget();
+        for (uint256 i_; i_ < tokens_.length; ++i_) m_.residualInventory[tokens_[i_]] += residuals_[i_];
         uint256 lpOut_ = IERC20(s_.hook).balanceOf(_bondLpHolder()) - lpBefore_;
         if (lpOut_ == 0 || lpOut_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, lpOut_);
         emit MigrationRecoveryDonated(token_, amount_, lpOut_);

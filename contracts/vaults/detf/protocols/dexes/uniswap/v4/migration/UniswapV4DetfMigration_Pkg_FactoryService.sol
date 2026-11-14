@@ -9,6 +9,7 @@ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
 import {IUniswapV4DetfMigrationDFPkg} from "./interfaces/IUniswapV4DetfMigrationDFPkg.sol";
 import {IUniswapV4DetfMigrationRewardTokenDFPkg} from "./sy/rewards/IUniswapV4DetfMigrationRewardToken.sol";
+import {IUniswapV4DetfMigrationSYDFPkg} from "./sy/IUniswapV4DetfMigrationSYDFPkg.sol";
 
 /// @notice Registered parent/bond packages and the generic immutable local RT package.
 library UniswapV4DetfMigration_Pkg_FactoryService {
@@ -24,6 +25,14 @@ library UniswapV4DetfMigration_Pkg_FactoryService {
         internal returns (IDETFNFTVaultDFPkg)
     {
         return IDETFNFTVaultDFPkg(_registered(registry_, "UniswapV4DetfMigrationBondNFTVaultDFPkg", abi.encode(init_)));
+    }
+
+    function deploySy(IVaultRegistryDeployment registry_, IUniswapV4DetfMigrationSYDFPkg.MigrationPkgInit memory init_)
+        internal returns (IUniswapV4DetfMigrationSYDFPkg)
+    {
+        return IUniswapV4DetfMigrationSYDFPkg(
+            _registered(registry_, "UniswapV4DetfMigrationSYDFPkg", abi.encode(init_))
+        );
     }
 
     function deployRewardToken(

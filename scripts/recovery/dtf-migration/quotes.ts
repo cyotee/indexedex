@@ -4,6 +4,7 @@ import { z } from "zod";
 import { address, hash, hex, PreparationError, uint } from "./schema.js";
 import type { PreparationInput } from "./schema.js";
 import type { ConfigurationPayload } from "./payloads.js";
+import { nftContributionOriginals } from "./payloads.js";
 import { authenticateClaimedSy } from "./claimed-sy.js";
 
 const preview = new Interface(["function previewOriginalCredit(uint256,uint256) view returns (uint256)"]);
@@ -85,7 +86,7 @@ export async function quoteOriginals(input: PreparationInput, payloads: Configur
       throw new PreparationError("DOMAIN", "snapshot identity/source mismatch");
     }
     await authenticateClaimedSy(input, provider);
-    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts, ...payloads.weightedLiquid, ...payloads.weightedSy, ...payloads.dtfCustodySe, ...payloads.claimVault, ...payloads.weightedReceipt, ...payloads.earlierReceipt, ...payloads.earlierLiquid, ...payloads.heldSeLp];
+    const originals = [...payloads.independent.flatMap((r) => r.entitlements), ...payloads.nfts.flatMap(nftContributionOriginals), ...payloads.weightedLiquid, ...payloads.weightedSy, ...payloads.dtfCustodySe, ...payloads.claimVault, ...payloads.weightedReceipt, ...payloads.earlierReceipt, ...payloads.earlierLiquid, ...payloads.heldSeLp];
     const pairs = new Map(originals.map((r) => [`${r.originalEth}:${r.originalDtf}`, r]));
     const quotes: Quote[] = [];
     for (const [, original] of [...pairs].sort(([a], [b]) => a.localeCompare(b))) {

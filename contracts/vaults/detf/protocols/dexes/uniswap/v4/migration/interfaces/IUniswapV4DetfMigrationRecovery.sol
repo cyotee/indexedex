@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-/// @notice Retained current-owner recovery of admitted chain-4663 NFTs, weighted liquid, SY and fixed DTF-custody SE.
+/// @notice Current-owner recovery of admitted chain-4663 custody through fixed targets and beneficiaries.
 interface IUniswapV4DetfMigrationRecovery {
     enum Stage {
         WeightedClaim,
@@ -14,12 +14,19 @@ interface IUniswapV4DetfMigrationRecovery {
         Donate,
         WeightedSyRedeem,
         DtfCustodySeRedeem,
-        ClaimVaultRedeem
+        ClaimVaultRedeem,
+        EarlierConvert,
+        WeightedWethSeConvert,
+        EarlierSeConvert,
+        WeightedLpRedeem,
+        EarlierNftReceiptRedeem,
+        EarlierStandaloneReceiptRedeem
     }
 
     /// @dev NFT stages use tokenId; conversions/donation use amount. minimum is native DTF
     /// output, external earlier receipt shares, reserve LP, native WS output for SY redemption,
-    /// native9 SY for claim-vault redemption, or native18 DTF for DTF-custody SE redemption. Unused fields must
+    /// native9 SY for claim-vault redemption, or native18 ED for earlier receipt redemption.
+    /// Earlier receipt redemption amount is the source's native token input, not an internal-share quantity. Unused fields must
     /// be zero. No target, selector, recipient, pretransfer flag or route can be supplied.
     struct Step {
         Stage stage;
@@ -48,6 +55,9 @@ interface IUniswapV4DetfMigrationRecovery {
     );
     event MigrationRecoverySold(uint256 indexed tokenId, uint256 originalShares, uint256 receiptShares, uint256 rewards);
     event MigrationRecoveryConverted(address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
+    event MigrationEarlierReceiptRedeemed(
+        uint256 nativeInput, uint256 internalShares, uint256 rate, bool nftInventory, uint256 earlierDetfOutput
+    );
     /// @notice Actual WS gons received from selected WY; conversion dust stays at the legacy wrapper.
     /// @dev The synchronized divisor values recovery only, never configured compensation.
     event MigrationWeightedSyRedeemed(
@@ -73,7 +83,11 @@ interface IUniswapV4DetfMigrationRecovery {
     function migrationRecoveryGons() external view returns (uint256);
     /// @notice Standalone ER custody B in exact internal shares, separate from NFT external inventory E.
     /// @dev Whole external representation is B/1e9; fractional internal representation is B%1e9.
-    /// Total booked internal ownership is checked E*1e9+B; neither query changes the other's unit.
+    /// Total booked internal ownership is E*1e9+B+R, where R is the NFT remainder below.
+    /// Neither query changes the other's unit.
     function migrationEarlierReceiptInternalShares() external view returns (uint256);
+    /// @notice Internal-share remainder below 1e9 belonging to NFT-sale receipt inventory.
+    /// @dev NFT ownership is inventory[ER]*1e9 plus this remainder; standalone B is separate.
+    function migrationEarlierNftReceiptRemainder() external view returns (uint256);
     function migrationNftRecovery(address collection_, uint256 tokenId_) external view returns (NftRecovery memory);
 }

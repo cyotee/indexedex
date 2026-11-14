@@ -50,6 +50,71 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         assertEq(migration.nftCustody(WEIGHTED, 3).collection, address(0));
     }
 
+    function test_separateContributionsReplaceCompletelyAndPreserveSingleOriginalMode() public {
+        Migration.NftEntitlementInput[] memory a_ = _input(WEIGHTED);
+        a_[0].originalDtf = 0.4 ether;
+        uint256 supply_ = IERC20(detf).totalSupply();
+        vm.startPrank(migrationOwner);
+        allocation.configureNftContributionEntitlements(a_);
+        bytes32 splitId_ = migration.nftEntitlement(WEIGHTED, 3).configurationId;
+        allocation.configureNftContributionEntitlements(a_);
+        assertEq(migration.nftEntitlement(WEIGHTED, 3).configurationId, splitId_);
+        a_[0].originalEth = 0.2 ether;
+        a_[0].originalDtf = 0.3 ether;
+        allocation.configureNftContributionEntitlements(a_);
+        vm.stopPrank();
+        Migration.NftContribution[] memory parts_ = migration.nftContributions(WEIGHTED, 3);
+        assertEq(parts_.length, 2);
+        assertEq(parts_[0].originalEth, 0.2 ether);
+        assertEq(parts_[0].originalDtf, 0);
+        assertEq(parts_[1].originalEth, 0);
+        assertEq(parts_[1].originalDtf, 0.3 ether);
+        assertEq(parts_[0].credit, migration.previewOriginalCredit(0.2 ether, 0));
+        assertEq(parts_[1].credit, migration.previewOriginalCredit(0, 0.3 ether));
+        Migration.NftEntitlement memory config_ = migration.nftEntitlement(WEIGHTED, 3);
+        assertEq(config_.credit, parts_[0].credit + parts_[1].credit);
+        assertEq(config_.configurationId,
+            keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, a_[0], true)));
+        vm.prank(migrationOwner);
+        allocation.configureNftEntitlements(a_);
+        parts_ = migration.nftContributions(WEIGHTED, 3);
+        assertEq(parts_.length, 1);
+        assertEq(parts_[0].originalEth, a_[0].originalEth);
+        assertEq(parts_[0].originalDtf, a_[0].originalDtf);
+        assertEq(parts_[0].credit, config_.credit);
+        assertNotEq(migration.nftEntitlement(WEIGHTED, 3).configurationId, config_.configurationId);
+        vm.prank(migrationOwner);
+        allocation.configureNftContributionEntitlements(a_);
+        assertEq(migration.nftContributions(WEIGHTED, 3).length, 2);
+        assertEq(migration.nftEntitlement(WEIGHTED, 3).configurationId, config_.configurationId);
+        assertEq(IERC20(detf).totalSupply(), supply_);
+        assertEq(receipt.stakingState().totalGons, 0);
+        assertEq(migration.nftContributionSurrenders(WEIGHTED, 3).length, 0);
+        assertFalse(migration.nftSurrender(WEIGHTED, 3).consumed);
+        assertEq(migration.nftCustody(WEIGHTED, 3).collection, address(0));
+        vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
+        migration.surrenderMigrationNft(WEIGHTED, 3, 0, block.timestamp);
+    }
+
+    function test_separateContributionLoaderRequiresOwnerAndBothNonzeroOriginalsAtomically() public {
+        Migration.NftEntitlementInput[] memory a_ = _input(WEIGHTED);
+        a_[0].originalDtf = 0.4 ether;
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, address(this)));
+        allocation.configureNftContributionEntitlements(a_);
+        Migration.NftEntitlementInput[] memory batch_ = new Migration.NftEntitlementInput[](2);
+        batch_[0] = a_[0];
+        batch_[1] = _input(EARLIER)[0];
+        vm.prank(migrationOwner);
+        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, EARLIER, 3));
+        allocation.configureNftContributionEntitlements(batch_);
+        assertEq(migration.nftEntitlement(WEIGHTED, 3).configurationId, bytes32(0));
+        assertEq(migration.nftContributions(WEIGHTED, 3).length, 0);
+        a_[0].originalEth = 0;
+        vm.prank(migrationOwner);
+        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, WEIGHTED, 3));
+        allocation.configureNftContributionEntitlements(a_);
+    }
+
     function test_sameNumericIdentityHasDistinctSourceAndDomain() public {
         vm.startPrank(migrationOwner);
         allocation.configureNftEntitlements(_input(WEIGHTED));
@@ -164,7 +229,7 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
     }
 
     function test_retainedDeclarationIncludesEveryProductSelector() public {
-        bytes4[] memory expected_ = new bytes4[](30);
+        bytes4[] memory expected_ = new bytes4[](29);
         expected_[0] = Migration.migrationActivated.selector;
         expected_[1] = Migration.migrationSyRewardToken.selector;
         expected_[2] = Migration.migrationSnapshotSource.selector;
@@ -176,25 +241,24 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         expected_[8] = Migration.migrationBootstrapSelfMinted.selector;
         expected_[9] = Migration.donateMigrationCapital.selector;
         expected_[10] = Migration.migrationNftOriginalId.selector;
-        expected_[11] = Migration.nftEntitlement.selector;
-        expected_[12] = Migration.nftSurrender.selector;
-        expected_[13] = Migration.nftCustody.selector;
-        expected_[14] = Migration.previewNftSurrender.selector;
-        expected_[15] = Migration.surrenderMigrationNft.selector;
-        expected_[16] = IERC721Receiver.onERC721Received.selector;
-        expected_[17] = Migration.weightedLiquidEntitlement.selector;
-        expected_[18] = Migration.weightedLiquidSurrender.selector;
-        expected_[19] = Migration.previewWeightedLiquidSurrender.selector;
-        expected_[20] = Migration.surrenderMigrationWeightedLiquid.selector;
-        expected_[21] = Migration.migrationOwnerFirstBondTokenId.selector;
-        expected_[22] = Migration.weightedSyEntitlement.selector;
-        expected_[23] = Migration.weightedSySurrender.selector;
-        expected_[24] = Migration.previewWeightedSySurrender.selector;
-        expected_[25] = Migration.surrenderMigrationWeightedSy.selector;
-        expected_[26] = Migration.dtfCustodySeEntitlement.selector;
-        expected_[27] = Migration.dtfCustodySeSurrender.selector;
-        expected_[28] = Migration.previewDtfCustodySeSurrender.selector;
-        expected_[29] = Migration.surrenderMigrationDtfCustodySe.selector;
+        expected_[11] = Migration.nftCustody.selector;
+        expected_[12] = Migration.previewNftSurrender.selector;
+        expected_[13] = Migration.surrenderMigrationNft.selector;
+        expected_[14] = IERC721Receiver.onERC721Received.selector;
+        expected_[15] = Migration.weightedLiquidEntitlement.selector;
+        expected_[16] = Migration.weightedLiquidSurrender.selector;
+        expected_[17] = Migration.previewWeightedLiquidSurrender.selector;
+        expected_[18] = Migration.surrenderMigrationWeightedLiquid.selector;
+        expected_[19] = Migration.migrationOwnerFirstBondTokenId.selector;
+        expected_[20] = Migration.weightedSyEntitlement.selector;
+        expected_[21] = Migration.weightedSySurrender.selector;
+        expected_[22] = Migration.previewWeightedSySurrender.selector;
+        expected_[23] = Migration.surrenderMigrationWeightedSy.selector;
+        expected_[24] = Migration.dtfCustodySeEntitlement.selector;
+        expected_[25] = Migration.dtfCustodySeSurrender.selector;
+        expected_[26] = Migration.previewDtfCustodySeSurrender.selector;
+        expected_[27] = Migration.surrenderMigrationDtfCustodySe.selector;
+        expected_[28] = Migration.claimedSyWeights.selector;
         IFacet facet_ = IFacet(IDiamondLoupe(detf).facetAddress(expected_[0]));
         assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet_, expected_, facet_.facetFuncs()));
         _buyOwnerFirstBond();
@@ -203,9 +267,22 @@ contract MigrationNftConfigurationTest is TestBase_UniswapV4DetfMigration {
         for (uint256 i_; i_ < expected_.length; ++i_) {
             assertEq(IDiamondLoupe(detf).facetAddress(expected_[i_]), address(facet_));
         }
+        address query_ = IDiamondLoupe(detf).facetAddress(Migration.nftContributions.selector);
+        assertNotEq(query_, address(0));
+        assertEq(IDiamondLoupe(detf).facetAddress(Migration.nftEntitlement.selector), query_);
+        assertEq(IDiamondLoupe(detf).facetAddress(Migration.nftSurrender.selector), query_);
+        assertEq(IDiamondLoupe(detf).facetAddress(Migration.nftContributionSurrenders.selector), query_);
+        assertEq(IDiamondLoupe(detf).facetAddress(Migration.previewNftContributionSurrender.selector), query_);
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureNftEntitlements.selector), address(0));
+        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureNftContributionEntitlements.selector), address(0));
+        assertEq(migration.nftContributions(WEIGHTED, 3).length, 0);
+        assertEq(migration.nftContributionSurrenders(WEIGHTED, 3).length, 0);
+        vm.expectRevert(abi.encodeWithSelector(Migration.InvalidNftEntitlement.selector, WEIGHTED, 3));
+        migration.previewNftContributionSurrender(WEIGHTED, 3);
         Migration.NftEntitlementInput[] memory a_ = _input(WEIGHTED);
         (bool ok_,) = detf.call(abi.encodeCall(Allocation.configureNftEntitlements, (a_)));
+        assertFalse(ok_);
+        (ok_,) = detf.call(abi.encodeCall(Allocation.configureNftContributionEntitlements, (a_)));
         assertFalse(ok_);
     }
 }

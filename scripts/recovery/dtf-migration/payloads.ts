@@ -21,11 +21,14 @@ export type IndependentPayload = {
   readonly evidenceId: string;
   readonly entitlements: readonly Original[];
 };
+export type WeightedSyPayload = WeightedLiquidOriginal & {
+  readonly claimBasis?: { readonly originalWeight: string; readonly eligibleWeight: string };
+};
 export type ConfigurationPayload = {
   readonly independent: readonly IndependentPayload[];
   readonly nfts: readonly NftOriginal[];
   readonly weightedLiquid: readonly WeightedLiquidOriginal[];
-  readonly weightedSy: readonly WeightedLiquidOriginal[];
+  readonly weightedSy: readonly WeightedSyPayload[];
   readonly dtfCustodySe: readonly WeightedLiquidOriginal[];
   readonly claimVault: readonly WeightedLiquidOriginal[];
   readonly weightedReceipt: readonly WeightedLiquidOriginal[];
@@ -34,10 +37,25 @@ export type ConfigurationPayload = {
   readonly heldSeLp: readonly WeightedLiquidOriginal[];
 };
 
-export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal): string {
+export function configurationId(domain: Domain, input: IndependentPayload | NftOriginal | WeightedLiquidOriginal | WeightedSyPayload): string {
   const tuple = "recipient" in input ? independentTuple : "collection" in input ? nftTuple : weightedLiquidTuple;
+  if ("claimBasis" in input && input.claimBasis) {
+    return keccak256(coder.encode(["uint256", "address", "bytes32",
+      `tuple(${weightedLiquidTuple} original,uint256 originalWeight,uint256 eligibleWeight)`],
+    [domain.chainId, domain.proxy, domain.snapshotId, { original: input, ...input.claimBasis }]));
+  }
+  if ("collection" in input && input.separateContributions) {
+    return keccak256(coder.encode(["uint256", "address", "bytes32", tuple, "bool"],
+      [domain.chainId, domain.proxy, domain.snapshotId, input, true]));
+  }
   return keccak256(coder.encode(["uint256", "address", "bytes32", tuple],
     [domain.chainId, domain.proxy, domain.snapshotId, input]));
+}
+
+export function nftContributionOriginals(input: NftOriginal) {
+  return input.separateContributions
+    ? [{ originalEth: input.originalEth, originalDtf: "0" }, { originalEth: "0", originalDtf: input.originalDtf }]
+    : [{ originalEth: input.originalEth, originalDtf: input.originalDtf }];
 }
 
 export function nftOrigin(domain: Domain, input: NftOriginal): string {
@@ -47,9 +65,9 @@ export function nftOrigin(domain: Domain, input: NftOriginal): string {
 
 const blockedGate = {
   "token-staking": "H3/H5: reassign debits caller without recipient callback or approved pull; atomic raw-weight surrender unsupported",
-  "underlying-se": "E-S remains unsupported; fixed W-SD and held-se-lp W-SW have separate admitted custody categories; W-SW conversion remains VaultDisabled",
-  "fungible-lp": "Only fixed held-se-lp E-P/W-P custody is admitted; acquisition fixtures need an external EOA-owner donation; conversions remain owner-restricted",
-  "earlier-liquidation": "ED exit actually reaches disabled ES; no successful ED conversion or donation is installed",
+  "underlying-se": "Use fixed W-SD or held-se-lp E-S/W-SW categories; E-S/W-SW typed exits require external legacy enablement; arbitrary sources remain unsupported",
+  "fungible-lp": "Use fixed held-se-lp E-P/W-P originals; W-P recovery requires actual legacy liquidity authority, while E-P remains in custody under its immutable owner-only restriction",
+  "earlier-liquidation": "Recovery operation, not another compensation original: use earlier-liquid/earlier-receipt originals and the explicit typed swap or reward-funded redemption stages",
 } as const;
 
 export function dispositions(input: PreparationInput) {
@@ -63,9 +81,9 @@ export function dispositions(input: PreparationInput) {
       case "weighted-sy": return { category, disposition: "bounded", gate: "fixed WY original-wallet static-share/component inputs and measured custody; operational allocations remain unapproved" };
       case "weighted-liquid": return { category, disposition: "bounded", gate: "explicit original-wallet WD quantity/component allocation and measured surrender; operational allocations remain unapproved" };
       case "weighted-receipt": return { category, disposition: "bounded", gate: "fixed WS eligible original gons and known grouped components; synchronized native9 custody only; positive nonrepresentable Q/C remains recorded without promised future redemption; operational originals unapproved" };
-      case "earlier-liquid": return { category, disposition: "bounded", gate: "fixed ED native18 original units and frozen known components; exact approved custody and bonded credit only; ED exit structurally blocked by disabled ES; operational originals unapproved" };
-      case "held-se-lp": return { category, disposition: "bounded", gate: "exactly W-SW/E-P/W-P native18 custody and frozen credit; E-P/W-P fixture acquisition depends on external EOA-owner release to itself then personal donation, not claimant/Migration authority; E-S and all three conversions unsupported; synthetic originals are not operational awards" };
-      case "earlier-receipt": return { category, disposition: "bounded", gate: "fixed ER exact internal original shares and frozen known components; approved custody/credit only within singleton-rate measurement domain; liquidation remains VaultDisabled at ES; positive Q/C residue preserved; operational originals unapproved" };
+      case "earlier-liquid": return { category, disposition: "bounded", gate: "fixed ED native18 originals, custody and frozen bonded credit; fixed public EL swap recovers DTF after legacy SE enablement without relying on the broken native burn; operational originals unapproved" };
+      case "held-se-lp": return { category, disposition: "bounded", gate: "fixed W-SW/E-P/W-P/E-S custody and frozen credit; SE recovery requires legacy enablement, W-P recovery actual source liquidity authority; E-P remains in custody under immutable owner-only rules; local fixtures are not public governance approvals" };
+      case "earlier-receipt": return { category, disposition: "bounded", gate: "fixed ER exact internal originals and frozen credit; singleton-rate custody; reward-funded parent redemption to ED then fixed DTF swap; NFT external shares/remainder and standalone internal shares remain separate; positive Q/C residue preserved and operational originals unapproved" };
       default: return { category, disposition: "blocked", gate: blockedGate[category] };
     }
   }).map((row) => ({ ...row, records: input.exposures.filter((e) => e.category === row.category).length.toString() }));
@@ -116,7 +134,7 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
     }
     return original;
   }).sort((a, b) => a.originalId.localeCompare(b.originalId));
-  const weightedSy = input.weightedSy.map(({ original }) => {
+  const weightedSy = input.weightedSy.map(({ original, claimedOrigin }) => {
     if (input.domain.chainId !== "4663" || original.source !== weightedSySource) {
       throw new PreparationError("DOMAIN", "weighted SY source requires fixed WY on chain 4663");
     }
@@ -124,7 +142,10 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
     if (origins.get(original.originalId)?.originalUnits !== original.originalUnits) {
       throw new PreparationError("PROVENANCE", "weighted SY original units differ from reconciled origin");
     }
-    return original;
+    const originalWeight = claimedOrigin?.review.originalWeight;
+    if (!claimedOrigin || originalWeight === undefined) return original;
+    return { ...original,
+      claimBasis: { originalWeight, eligibleWeight: claimedOrigin.review.eligibleWeight } };
   }).sort((a, b) => a.originalId.localeCompare(b.originalId));
   const dtfCustodySe = input.dtfCustodySe.map(({ original }) => {
     if (input.domain.chainId !== "4663" || original.source !== dtfCustodySeSource) {
@@ -214,6 +235,12 @@ export function buildPayloads(input: PreparationInput): ConfigurationPayload {
       case "DtfCustodySeRedeem":
       case "ClaimVaultRedeem":
       case "WeightedConvert":
+      case "EarlierConvert":
+      case "WeightedWethSeConvert":
+      case "EarlierSeConvert":
+      case "WeightedLpRedeem":
+      case "EarlierNftReceiptRedeem":
+      case "EarlierStandaloneReceiptRedeem":
       case "Donate":
         if (step.tokenId !== "0" || step.amount === "0"
           || (step.stage === "WeightedUnstake" && step.minimum !== "0")) {

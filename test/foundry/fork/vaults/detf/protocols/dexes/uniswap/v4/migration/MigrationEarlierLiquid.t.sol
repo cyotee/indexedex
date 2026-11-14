@@ -7,6 +7,8 @@ import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -312,7 +314,7 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
         assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_RECEIPT), e_);
         assertEq(recovery.migrationEarlierReceiptInternalShares(), b_);
         assertEq(IERC20(Legacy.EARLIER_RECEIPT).balanceOf(detf), erHeld_);
-        // No installed stage can select ED as an input. Weighted conversion cannot spend it.
+        // Weighted conversion cannot spend the separate ED recovery budget.
         vm.expectRevert(abi.encodeWithSelector(Recovery.RecoveryInventoryInsufficient.selector,
             Legacy.WEIGHTED_DETF, 1, 0));
         _run(Recovery.Stage.WeightedConvert, 0, 1, 1);
@@ -332,5 +334,66 @@ contract MigrationEarlierLiquidTest is MigrationRecoveryDonationForkBase {
         vm.prank(HOLDER);
         assertEq(bonds.claimPrincipal(id_, HOLDER), credit_);
         assertEq(bonds.positionOf(id_).claimedPrincipal, credit_);
+    }
+
+    function test_typedEarlierConversionReachesDisabledSourceAndRollsBack() public {
+        uint256 q_ = 1e24;
+        _configureLiquid(HOLDER, q_);
+        _activate();
+        (uint256 id_,) = _surrenderLiquid(q_);
+        bytes32 protected_ = _protected(id_);
+        uint256 held_ = IERC20(Legacy.EARLIER_DETF).balanceOf(detf);
+        uint256 dtf_ = IERC20(Legacy.DTF).balanceOf(detf);
+        vm.expectRevert(abi.encodeWithSignature("VaultDisabled(address)", Legacy.EARLIER_SE));
+        _run(Recovery.Stage.EarlierConvert, 0, q_, 1);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF), q_);
+        assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), held_);
+        assertEq(IERC20(Legacy.EARLIER_DETF).allowance(detf, Legacy.EARLIER_DETF), 0);
+        assertEq(IERC20(Legacy.EARLIER_DETF).allowance(detf, Legacy.EARLIER_LP), 0);
+        assertEq(IERC20(Legacy.DTF).balanceOf(detf), dtf_);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
+        assertEq(_protected(id_), protected_);
+        vm.expectRevert(abi.encodeWithSelector(
+            Recovery.RecoveryInventoryInsufficient.selector, Legacy.EARLIER_DETF, q_ + 1, q_
+        ));
+        _run(Recovery.Stage.EarlierConvert, 0, q_ + 1, 0);
+    }
+
+    /// @dev Conditional local-fork witness only. The real legacy administrator enables
+    /// its source through the real registry API; Migration receives no such authority.
+    function test_typedEarlierConversionAfterLocalLegacyEnablement() public {
+        uint256 q_ = 1e24;
+        _configureLiquid(HOLDER, q_);
+        _activate();
+        (uint256 id_,) = _surrenderLiquid(q_);
+        bytes32 protected_ = _protected(id_);
+        address registry_ = 0x09682b00D873D913ada0bB69B4D4c9631810d0bc;
+        IVaultRegistryDisableQuery query_ = IVaultRegistryDisableQuery(registry_);
+        (bool disabled_, bool byVault_, bool byPackage_) = query_.isDisabledDetailed(Legacy.EARLIER_SE);
+        assertTrue(disabled_);
+        address administrator_ = IMultiStepOwnable(registry_).owner();
+        assertNotEq(administrator_, detf);
+        vm.startPrank(administrator_);
+        if (byVault_) IVaultRegistryDisableManager(registry_).setVaultAddressDisabled(Legacy.EARLIER_SE, false);
+        if (byPackage_) {
+            IVaultRegistryDisableManager(registry_).setPackageDisabled(query_.packageOfVault(Legacy.EARLIER_SE), false);
+        }
+        vm.stopPrank();
+        assertFalse(query_.isDisabled(Legacy.EARLIER_SE));
+        uint256 before_ = IERC20(Legacy.DTF).balanceOf(detf);
+        uint256 supply_ = IERC20(Legacy.EARLIER_DETF).totalSupply();
+        _run(Recovery.Stage.EarlierConvert, 0, q_, 1);
+        uint256 out_ = IERC20(Legacy.DTF).balanceOf(detf) - before_;
+        assertGt(out_, 0);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.EARLIER_DETF), 0);
+        assertEq(IERC20(Legacy.EARLIER_DETF).balanceOf(detf), 0);
+        assertEq(IERC20(Legacy.EARLIER_DETF).allowance(detf, Legacy.EARLIER_DETF), 0);
+        assertEq(IERC20(Legacy.EARLIER_DETF).allowance(detf, Legacy.EARLIER_LP), 0);
+        assertEq(IERC20(Legacy.EARLIER_DETF).totalSupply(), supply_);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), out_);
+        assertEq(_protected(id_), protected_);
+        _run(Recovery.Stage.Donate, 0, out_, 1);
+        assertEq(recovery.migrationRecoveryInventory(Legacy.DTF), 0);
+        assertEq(_protected(id_), protected_);
     }
 }

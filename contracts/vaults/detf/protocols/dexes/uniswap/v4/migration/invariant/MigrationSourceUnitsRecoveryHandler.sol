@@ -61,7 +61,7 @@ contract MigrationSourceUnitsRecoveryHandler is MigrationSourceUnitsHandler {
         vm.prank(currentOwner); Allocation(address(parent)).configureIndependentAllocations(a_);
         independentConfiguration = keccak256(abi.encode(
             block.chainid, address(parent), parent.migrationSnapshot().id, a_[0]));
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             Migration.WeightedLiquidEntitlementInput[] memory inputs_ = new Migration.WeightedLiquidEntitlementInput[](1);
             inputs_[0] = _input(i_, 0);
             inputs_[0].originalId = original_;

@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { buildPayloads, configurationId, dispositions, nftOrigin } from "./payloads.js";
+import { buildPayloads, configurationId, dispositions, nftOrigin, nftContributionOriginals } from "./payloads.js";
 import { canonical, fingerprint, loadInput, validateProvenance } from "./provenance.js";
 import { quoteOriginals } from "./quotes.js";
 import { PreparationError, preparationInput } from "./schema.js";
@@ -51,16 +51,26 @@ export async function prepareDomain(input: PreparationInput) {
     if (total >= 2n ** 256n) throw new PreparationError("QUOTE", "recipient total overflows uint256");
     return { input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: total.toString() };
   });
-  const nfts = payloads.nfts.map((r) => ({
-    input: r, configurationId: configurationId(normalized.domain, r), originalId: nftOrigin(normalized.domain, r),
-    quotedCredit: creditOf(r).toString(),
-  }));
+  const nfts = payloads.nfts.map((r) => {
+    const contributions = nftContributionOriginals(r).map((original) => ({
+      ...original, credit: creditOf(original).toString(),
+    }));
+    const total = contributions.reduce((sum, original) => sum + BigInt(original.credit), 0n);
+    if (total >= 2n ** 256n) throw new PreparationError("QUOTE", "NFT total overflows uint256");
+    return { input: r, configurationId: configurationId(normalized.domain, r), originalId: nftOrigin(normalized.domain, r),
+      quotedCredit: total.toString(), contributions };
+  });
   const weightedLiquid = payloads.weightedLiquid.map((r) => ({
     input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
   }));
-  const weightedSy = payloads.weightedSy.map((r) => ({
-    input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
-  }));
+  const weightedSy = payloads.weightedSy.map((r) => {
+    const originalCredit = creditOf(r);
+    const credit = r.claimBasis
+      ? originalCredit * BigInt(r.claimBasis.eligibleWeight) / BigInt(r.claimBasis.originalWeight) : originalCredit;
+    if (r.claimBasis && credit === 0n) throw new PreparationError("QUOTE", "remaining original has zero credit");
+    return { input: r, configurationId: configurationId(normalized.domain, r),
+      originalQuotedCredit: originalCredit.toString(), quotedCredit: credit.toString() };
+  });
   const dtfCustodySe = payloads.dtfCustodySe.map((r) => ({
     input: r, configurationId: configurationId(normalized.domain, r), quotedCredit: creditOf(r).toString(),
   }));

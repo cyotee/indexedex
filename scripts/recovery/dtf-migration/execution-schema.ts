@@ -3,6 +3,7 @@ import { address, binding, bundleReference, hash, hex, identity, positive, sha25
 
 export const stages = ["deploy", "fund", "capture", "configure", "independent-issue",
   "owner-bond", "verify", "activate", "harvest"] as const;
+export const deploymentGasLimit = 32_000_000n;
 export const stage = z.enum(stages);
 export type Stage = z.infer<typeof stage>;
 export const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);

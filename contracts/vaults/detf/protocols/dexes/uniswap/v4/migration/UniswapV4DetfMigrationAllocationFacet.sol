@@ -9,7 +9,10 @@ function facetInterfaces() public pure returns(bytes4[] memory ids_) { ids_ = ne
 function facetFuncs() public pure returns(bytes4[] memory funcs_) {
 bytes4[] memory all_ = _administrationSelectors();
 funcs_ = new bytes4[](8);
-for (uint256 i_; i_ < funcs_.length; ++i_) funcs_[i_] = all_[i_];
+for (uint256 i_; i_ < 5; ++i_) funcs_[i_] = all_[i_];
+funcs_[5] = Allocation.configureWeightedSyEntitlements.selector;
+funcs_[6] = Allocation.configureDtfCustodySeEntitlements.selector;
+funcs_[7] = Allocation.configureClaimedSyEntitlements.selector;
 }
 function facetMetadata() external pure returns(string memory,bytes4[] memory,bytes4[] memory) { return (facetName(),facetInterfaces(),facetFuncs()); }
 }

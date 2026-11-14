@@ -8,6 +8,7 @@ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {MigrationRecoveryDonationForkBase} from "./MigrationRecoveryDonation.t.sol";
 import {IUniswapV4DetfMigration as Migration, IUniswapV4DetfMigrationAllocation as Allocation} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/interfaces/IUniswapV4DetfMigration.sol";
@@ -62,6 +63,8 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
     uint256 constant W0 = 10013000000000000000017;
     uint256 constant UNRELATED = 7 ether;
     uint256 constant SEED = 3 ether;
+    // Deliberately synthetic denominator: not a historical allocation or approved exclusion.
+    uint256 constant ORIGINAL_WEIGHT = W0 * 3;
     bytes32 constant CLAIMED_ORIGIN = keccak256("synthetic complete claimed-SY original");
 
     function _prepare(bool split_) private returns (address wallet_, uint256 q0_, uint256 floor_) {
@@ -97,15 +100,28 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
         assertEq(IERC20(Legacy.WEIGHTED_SY).balanceOf(wallet_), floor_ + q0_);
     }
 
-    function _load(address wallet_, uint256 q0_) private returns (uint256 credit_) {
+    function _load(address wallet_, uint256 q0_, bool remaining_) private returns (uint256 credit_) {
         Migration.WeightedSyEntitlementInput[] memory inputs_ = new Migration.WeightedSyEntitlementInput[](1);
         // Complete E0/D0 are deliberately not scaled by a source weight/SY fraction.
         inputs_[0] = Migration.WeightedSyEntitlementInput(CLAIMED_ORIGIN, wallet_, Legacy.WEIGHTED_SY,
             q0_, 0.01 ether, 1 ether, keccak256("synthetic reviewed complete preparation evidence"), true);
         uint256 supply_ = IERC20(detf).totalSupply();
-        vm.prank(migrationOwner);
-        allocation.configureWeightedSyEntitlements(inputs_);
         credit_ = migration.previewOriginalCredit(0.01 ether, 1 ether);
+        if (remaining_) {
+            Migration.ClaimedSyEntitlementInput[] memory claimed_ = new Migration.ClaimedSyEntitlementInput[](1);
+            claimed_[0] = Migration.ClaimedSyEntitlementInput(inputs_[0], ORIGINAL_WEIGHT, W0);
+            vm.prank(migrationOwner);
+            allocation.configureClaimedSyEntitlements(claimed_);
+            credit_ = Math.mulDiv(credit_, W0, ORIGINAL_WEIGHT);
+            assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).configurationId,
+                keccak256(abi.encode(block.chainid, detf, migration.migrationSnapshot().id, claimed_[0])));
+            (uint256 original_, uint256 eligible_) = migration.claimedSyWeights(CLAIMED_ORIGIN);
+            assertEq(original_, ORIGINAL_WEIGHT);
+            assertEq(eligible_, W0);
+        } else {
+            vm.prank(migrationOwner);
+            allocation.configureWeightedSyEntitlements(inputs_);
+        }
         assertEq(migration.weightedSyEntitlement(CLAIMED_ORIGIN).credit, credit_);
         assertEq(migration.weightedSySurrender(CLAIMED_ORIGIN).remainingUnits, q0_);
         assertEq(IERC20(detf).totalSupply(), supply_);
@@ -118,6 +134,7 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
         _activate();
         assertGt(migration.migrationOwnerFirstBondTokenId(), 0);
         assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureWeightedSyEntitlements.selector), address(0));
+        assertEq(IDiamondLoupe(detf).facetAddress(Allocation.configureClaimedSyEntitlements.selector), address(0));
     }
 
     function _surrender(address wallet_, uint256 q_, uint256 expected_) private returns (uint256 id_) {
@@ -140,21 +157,30 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
         assertEq(SOURCE.balanceOf(wallet_), UNRELATED);
     }
 
-    function _completeOriginal(bool split_) private {
+    function _completeOriginal(bool split_, bool remaining_) private {
         (address wallet_, uint256 q0_, uint256 floor_) = _prepare(split_);
-        uint256 c0_ = _load(wallet_, q0_);
+        uint256 c0_ = _load(wallet_, q0_, remaining_);
         uint256 q_ = q0_ / 3;
-        uint256 first_ = _surrender(wallet_, q_, c0_ * q_ / q0_);
+        uint256 first_ = _surrender(wallet_, q_, Math.mulDiv(c0_, q_, q0_));
         Migration.WeightedSySurrender memory state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
         assertEq(state_.remainingUnits, q0_ - q_);
         assertEq(state_.remainingCredit + state_.deliveredCredit, c0_);
         uint256 firstStart_ = bonds.positionOf(first_).startTimestamp;
         vm.warp(block.timestamp + 1 days);
         migration.synchronizeRewards();
-        uint256 second_ = _surrender(wallet_, state_.remainingUnits, state_.remainingCredit);
+        uint256 secondUnits_ = state_.remainingUnits / 2;
+        uint256 secondCredit_ = Math.mulDiv(state_.remainingCredit, secondUnits_, state_.remainingUnits);
+        uint256 second_ = _surrender(wallet_, secondUnits_, secondCredit_);
         assertNotEq(first_, second_);
         assertEq(bonds.positionOf(first_).startTimestamp, firstStart_);
         assertEq(bonds.positionOf(second_).startTimestamp, firstStart_ + 1 days);
+        state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
+        assertEq(state_.remainingUnits, q0_ - q_ - secondUnits_);
+        assertEq(state_.remainingCredit, c0_ - bonds.positionOf(first_).principal - secondCredit_);
+        uint256 third_ = _surrender(wallet_, state_.remainingUnits, state_.remainingCredit);
+        assertNotEq(third_, second_);
+        assertEq(bonds.positionOf(first_).principal + bonds.positionOf(second_).principal
+            + bonds.positionOf(third_).principal, c0_);
         state_ = migration.weightedSySurrender(CLAIMED_ORIGIN);
         assertEq(state_.remainingUnits, 0);
         assertEq(state_.remainingCredit, 0);
@@ -165,16 +191,35 @@ contract MigrationClaimedSyTest is MigrationRecoveryDonationForkBase {
     }
 
     function test_completeSingleClaimPreservesWholeOriginalCreditAndUnrelatedFloors() public {
-        _completeOriginal(false);
+        _completeOriginal(false, false);
     }
 
     function test_completeSplitClaimsAggregateMeasuredOutputsIntoOneOriginal() public {
-        _completeOriginal(true);
+        _completeOriginal(true, false);
+    }
+
+    /// @notice Full eligible remainder is prepared; a synthetic original denominator scales credit once.
+    function test_partialOriginalSinglePreparationConservesScaledCreditThroughThreeSurrenders() public {
+        _completeOriginal(false, true);
+    }
+
+    /// @notice Previously measured SY and the rest of the prepared claim share one original ledger.
+    function test_partialOriginalSplitPreparationConservesScaledCreditThroughThreeSurrenders() public {
+        _completeOriginal(true, true);
     }
 
     function test_lateChildFundingRollbackCannotRestoreEarlierConsumedRawWeight() public {
+        _lateFundingRollback(false);
+    }
+
+    /// @notice Late failure reverts Migration custody/credit, not already completed legacy preparation.
+    function test_partialOriginalLateFundingFailureRestoresEligibleCreditAndSyCustody() public {
+        _lateFundingRollback(true);
+    }
+
+    function _lateFundingRollback(bool remaining_) private {
         (address wallet_, uint256 q0_, uint256 floor_) = _prepare(false);
-        uint256 c0_ = _load(wallet_, q0_);
+        uint256 c0_ = _load(wallet_, q0_, remaining_);
         bytes32 before_ = _protected(migration.migrationOwnerFirstBondTokenId());
         bytes memory state_ = abi.encode(migration.weightedSySurrender(CLAIMED_ORIGIN));
         uint256 sourceSupply_ = SOURCE.totalSupply();

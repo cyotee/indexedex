@@ -43,6 +43,7 @@ import {IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve as V3Reserve}
     from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfMigrationSYDFPkg as MigrationSYPackage} from "./sy/IUniswapV4DetfMigrationSYDFPkg.sol";
 import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "../detf/interfaces/IUniswapV4Detf.sol";
@@ -256,9 +257,10 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
                 IVaultRegistryDeployment(address(indexedexManager))
             )
         )));
-        syPkg = DetfPkgFactoryService.deployDETFSYDFPkg(IVaultRegistryDeployment(address(indexedexManager)),
-            IDETFSYDFPkg.PkgInit(erc5267Facet, erc2612Facet, sy_, IVaultFeeOracleQuery(address(indexedexManager)),
-                IVaultRegistryDeployment(address(indexedexManager))));
+        syPkg = Packages.deploySy(IVaultRegistryDeployment(address(indexedexManager)),
+            MigrationSYPackage.MigrationPkgInit(IDETFSYDFPkg.PkgInit(erc5267Facet, erc2612Facet, sy_,
+                IVaultFeeOracleQuery(address(indexedexManager)), IVaultRegistryDeployment(address(indexedexManager))),
+                diamondPackageFactory));
         migrationPkg = Packages.deployParent(IVaultRegistryDeployment(address(indexedexManager)),
             MigrationPackage.PkgInit(IUniswapV4DetfDFPkg.PkgInit(
                 erc20Facet, erc5267Facet, erc2612Facet, multiAssetBasicVaultFacet, multiAssetStandardVaultFacet,
@@ -279,6 +281,24 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
     }
 
     function _deployMigration(MigrationPackage.PkgArgs memory args_) internal returns (address parent_) {
+        args_ = _prepareMigrationHook(args_);
+        _ownerStart();
+        migrationPkg.prepareSyChildren(args_);
+        parent_ = migrationPkg.deployVault(args_);
+        _ownerStop();
+        require(parent_ == diamondPackageFactory.calcAddress(IDiamondFactoryPackage(address(migrationPkg)), abi.encode(args_)),
+            "owner-aware prediction");
+    }
+
+    /// @notice Separate the real hook construction so tests/witnesses can observe the preparation boundary.
+    function _prepareMigrationHook(MigrationPackage.PkgArgs memory args_) internal returns (MigrationPackage.PkgArgs memory) {
+        return _prepareMigrationHookWithWeight(args_, 4e17);
+    }
+
+    /// @notice A different real hook payload can share the historical hook-cleared parent prediction.
+    function _prepareMigrationHookWithWeight(MigrationPackage.PkgArgs memory args_, uint256 selfWeight_)
+        internal returns (MigrationPackage.PkgArgs memory)
+    {
         address predicted_ = diamondPackageFactory.calcAddress(IDiamondFactoryPackage(address(migrationPkg)), abi.encode(args_));
         address[] memory tokens_ = new address[](3);
         tokens_[0] = predicted_; tokens_[1] = pairA; tokens_[2] = pairB;
@@ -286,7 +306,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         uint256[] memory weights_ = new uint256[](3);
         address[] memory exchanges_ = new address[](3);
         for (uint256 i_; i_ < 3; ++i_) {
-            weights_[i_] = tokens_[i_] == predicted_ ? 4e17 : 3e17;
+            weights_[i_] = tokens_[i_] == predicted_ ? selfWeight_ : (1e18 - selfWeight_) / 2;
             exchanges_[i_] = tokens_[i_] == predicted_ ? address(0) : tokens_[i_] == pairA ? se0 : se1;
         }
         HookPackage.PkgArgs memory hookArgs_ = HookPackage.PkgArgs(
@@ -303,10 +323,7 @@ abstract contract TestBase_UniswapV4DetfMigration is TestBase_UniswapV4Detf_Weig
         init_.deployPair(tokens_[1], tokens_[2]);
         require(init_.finalizeInitialization(), "hook initialized");
         args_.baseArgs.hook = reserveHook;
-        _ownerStart();
-        parent_ = migrationPkg.deployVault(args_);
-        _ownerStop();
-        require(parent_ == predicted_, "owner-aware prediction");
+        return args_;
     }
 
     function _fundAndCapture() internal {

@@ -22,6 +22,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
   switch (stage) {
     case "deploy":
       if (!m.deployment) throw new ExecutionError("DOMAIN", "deploy requires complete typed package arguments");
+      add("prepareSyChildren", [m.deployment], abis.pkg, m.package);
       add("deployVault", [m.deployment], abis.pkg, m.package);
       break;
     case "fund":
@@ -56,9 +57,15 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
     case "configure": {
       const p = requirePrepared(domain);
       for (const row of p.payloads.configure.independent) add("configureIndependentAllocations", [[row.input]]);
-      for (const row of p.payloads.configure.nfts) add("configureNftEntitlements", [[row.input]]);
+      for (const row of p.payloads.configure.nfts) {
+        add(row.input.separateContributions ? "configureNftContributionEntitlements" : "configureNftEntitlements", [[row.input]]);
+      }
       for (const row of p.payloads.configure.weightedLiquid) add("configureWeightedLiquidEntitlements", [[row.input]]);
-      for (const row of p.payloads.configure.weightedSy) add("configureWeightedSyEntitlements", [[row.input]]);
+      for (const row of p.payloads.configure.weightedSy) {
+        if (row.input.claimBasis) {
+          add("configureClaimedSyEntitlements", [[{ original: row.input, ...row.input.claimBasis }]]);
+        } else add("configureWeightedSyEntitlements", [[row.input]]);
+      }
       for (const row of p.payloads.configure.dtfCustodySe) add("configureDtfCustodySeEntitlements", [[row.input]]);
       for (const row of p.payloads.configure.claimVault) add("configureClaimVaultEntitlements", [[row.input]]);
       for (const row of p.payloads.configure.weightedReceipt) add("configureWeightedReceiptEntitlements", [[row.input]]);
@@ -85,7 +92,7 @@ export function plan(domain: ExecutionDomain, stage: Stage): readonly Operation[
       const h = requirePrepared(domain).payloads.harvest;
       if (!h.steps.length) throw new ExecutionError("DOMAIN", "no admitted recovery step selected");
       const names = ["WeightedClaim", "WeightedPrincipal", "WeightedRewards", "WeightedUnstake",
-        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem", "DtfCustodySeRedeem", "ClaimVaultRedeem"] as const;
+        "WeightedConvert", "EarlierClaim", "EarlierSale", "Donate", "WeightedSyRedeem", "DtfCustodySeRedeem", "ClaimVaultRedeem", "EarlierConvert", "WeightedWethSeConvert", "EarlierSeConvert", "WeightedLpRedeem", "EarlierNftReceiptRedeem", "EarlierStandaloneReceiptRedeem"] as const;
       add("recoverMigrationNfts", [h.steps.map((s) => ({ ...s, stage: names.indexOf(s.stage) })), h.deadline], abis.recovery);
       break;
     }

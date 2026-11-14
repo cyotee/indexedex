@@ -24,11 +24,11 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     constructor(Migration m_) MigrationSourceUnitsLedger(m_) {}
 
     /// @notice Original eligible units and credit anchors are explicit fixture inputs.
-    function initialize(uint256[9] calldata quantities_, uint256[2] calldata credits_) external {
+    function initialize(uint256[10] calldata quantities_, uint256[2] calldata credits_) external {
         require(!initialized, "one fixture initialization");
         initialized = true;
         creditAnchors = credits_;
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             Row storage r_ = rows[i_];
             r_.origin = keccak256(abi.encode("stateful fixed source original", source(i_)));
             r_.originalQ = quantities_[i_]; r_.q = quantities_[i_];
@@ -60,9 +60,9 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
 
     /// @notice Actual full replacements and every competing fixed-source representation.
     function enrollmentWitness() external {
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             _configure(i_, 1); _configure(i_, 0);
-            for (uint256 j_; j_ < 9; ++j_) {
+            for (uint256 j_; j_ < 10; ++j_) {
                 if (j_ == i_) continue;
                 Migration.WeightedLiquidEntitlementInput[] memory inputs_ = new Migration.WeightedLiquidEntitlementInput[](1);
                 inputs_[0] = _input(i_, 0); inputs_[0].source = source(j_);
@@ -84,7 +84,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     }
 
     function surrender(uint256 index_, uint256 seed_) public {
-        uint256 i_ = index_ % 9;
+        uint256 i_ = index_ % 10;
         _settleSource(i_);
         uint256 max_ = nativeMaximum(i_);
         if (max_ == 0) { rejectExcess(i_); return; }
@@ -111,7 +111,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     }
 
     function missingRecord(uint256 index_) public {
-        uint256 i_ = index_ % 9;
+        uint256 i_ = index_ % 10;
         bytes32 before_ = economicState();
         _reject(_payload(i_, bytes32("absent"), 1, 0), abi.encodeWithSelector(invalidRecord(i_), bytes32("absent")));
         assertEq(economicState(), before_); ++rejectionCounts[i_];
@@ -119,7 +119,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     }
 
     function rejectControls(uint256 index_) public {
-        uint256 i_ = index_ % 9;
+        uint256 i_ = index_ % 10;
         missingRecord(i_); _settleSource(i_);
         uint256 n_ = nativeMaximum(i_) / 4;
         if (n_ == 0) { rejectExcess(i_); return; }
@@ -143,7 +143,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     }
 
     function rejectExcess(uint256 index_) public {
-        uint256 i_ = index_ % 9;
+        uint256 i_ = index_ % 10;
         _settleSource(i_);
         uint256 n_ = nativeMaximum(i_) + 1;
         bytes memory error_ = (i_ == 2 || i_ == 3) && rows[i_].q == 0
@@ -156,7 +156,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     }
 
     function failedIssuance(uint256 index_) public {
-        uint256 i_ = index_ % 9;
+        uint256 i_ = index_ % 10;
         _settleSource(i_);
         uint256 n_ = nativeMaximum(i_) / 2;
         if (n_ == 0) { rejectExcess(i_); return; }
@@ -180,7 +180,7 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     }
 
     function removedConfiguration(uint256 index_) public {
-        uint256 i_ = index_ % 9;
+        uint256 i_ = index_ % 10;
         Migration.WeightedLiquidEntitlementInput[] memory a_ = new Migration.WeightedLiquidEntitlementInput[](1);
         a_[0] = _input(i_, 1);
         bytes32 before_ = economicState();
@@ -219,13 +219,14 @@ contract MigrationSourceUnitsHandler is MigrationSourceUnitsLedger, IERC721Recei
     function economicState() public view returns (bytes32) {
         bytes memory state_ = abi.encode(IERC20(address(parent)).totalSupply(), receipt.stakingState(),
             receipt.gonsOf(address(bonds)), IERC20(address(parent)).balanceOf(address(receipt)));
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             (bool ok_, bytes memory surrender_) = address(parent).staticcall(abi.encodeWithSelector(querySelector(i_), rows[i_].origin));
             require(ok_, "actual retained query");
             state_ = abi.encode(state_, surrender_, units(i_, address(this)), units(i_, address(parent)), units(i_, OTHER),
                 IERC20(source(i_)).allowance(address(this), address(parent)), recovery.migrationRecoveryInventory(source(i_)));
         }
         return keccak256(abi.encode(state_, recovery.migrationRecoveryGons(), recovery.migrationEarlierReceiptInternalShares(),
+            recovery.migrationEarlierNftReceiptRemainder(),
             IERC20(Legacy.DTF).balanceOf(address(parent)), IERC20(Legacy.WEIGHTED_SY).balanceOf(address(parent))));
     }
 }

@@ -47,16 +47,16 @@ abstract contract TestBase_MigrationSourceUnits is MigrationRecoveryDonationFork
         _fundHistoricalBook(); _buyOwnerFirstBond();
         _configureNft(EARLIER, 3); _returnToOriginal(EARLIER, 3);
         handler = new MigrationSourceUnitsRecoveryHandler(migration);
-        uint256[9] memory q_;
+        uint256[10] memory q_;
         _acquireLiquid();
         q_[0] = 10000; q_[1] = 10000;
         q_[2] = _acquireWeightedReceipt();
         q_[3] = _acquireEarlierReceipt();
         q_[4] = _acquireClaimVault();
         q_[5] = _acquireCustodySe();
-        for (uint256 i_ = 6; i_ < 9; ++i_) { _acquireHeld(i_); q_[i_] = 10000; }
-        uint8[9] memory decimals_ = [9, 18, 9, 18, 19, 28, 18, 18, 18];
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_ = 6; i_ < 10; ++i_) { _acquireHeld(i_); q_[i_] = 10000; }
+        uint8[10] memory decimals_ = [9, 18, 9, 18, 19, 28, 18, 18, 18, 18];
+        for (uint256 i_; i_ < 10; ++i_) {
             assertEq(IERC20Metadata(handler.source(i_)).decimals(), decimals_[i_]);
             emit log_named_address("admitted fixed unit source", handler.source(i_));
             emit log_named_uint("configured eligible original source units", q_[i_]);
@@ -66,14 +66,14 @@ abstract contract TestBase_MigrationSourceUnits is MigrationRecoveryDonationFork
         handler.initialize(q_, credits_);
         handler.enrollmentWitness();
         handler.independentOriginWitness();
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             vm.expectRevert(Migration.MigrationSurrenderClosed.selector);
             handler.surrender(i_, 3);
             handler.assertAll();
         }
         _activate();
         MigrationStatefulBindings.capture(migration, address(migrationPkg), address(indexedexManager));
-        for (uint256 i_; i_ < 9; ++i_) {
+        for (uint256 i_; i_ < 10; ++i_) {
             handler.rejectControls(i_);
             handler.failedIssuance(i_);
             handler.surrender(i_, 3);
@@ -88,7 +88,7 @@ abstract contract TestBase_MigrationSourceUnits is MigrationRecoveryDonationFork
         handler.changeOwner();
         handler.advanceTime(29);
         laterFirst = handler.positionCount();
-        for (uint256 i_; i_ < 9; ++i_) handler.surrender(i_, 3);
+        for (uint256 i_; i_ < 10; ++i_) handler.surrender(i_, 3);
         handler.transferBond(handler.positionCount() - 1);
         handler.claimPrincipal(handler.positionCount() - 1);
         _target();
@@ -160,6 +160,20 @@ abstract contract TestBase_MigrationSourceUnits is MigrationRecoveryDonationFork
 
     function _acquireHeld(uint256 i_) private {
         address token_ = handler.source(i_);
+        if (token_ == Legacy.EARLIER_SE) {
+            address donor_ = 0xbAb6A03be445094a10695772a79777407DcdC0E7;
+            assertEq(donor_.code.length, 0);
+            uint256 before_ = IERC20(token_).balanceOf(donor_);
+            uint256 supply_ = IERC20(token_).totalSupply();
+            assertEq(before_, 2021090200239501983);
+            vm.prank(donor_); assertTrue(IERC20(token_).transfer(address(handler), 10020));
+            assertEq(IERC20(token_).balanceOf(donor_), before_ - 10020);
+            vm.prank(address(handler)); assertTrue(IERC20(token_).transfer(detf, 10));
+            assertEq(IERC20(token_).balanceOf(address(handler)), 10010);
+            assertEq(IERC20(token_).balanceOf(detf), 10);
+            assertEq(IERC20(token_).totalSupply(), supply_);
+            return;
+        }
         assertEq(LP_DONOR.code.length, 0);
         assertEq(IHeldSeLpCollector(COLLECTOR).owner(), LP_DONOR);
         address facet_ = IDiamondLoupe(COLLECTOR).facetAddress(IHeldSeLpCollector.pullFee.selector);

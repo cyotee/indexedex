@@ -2,6 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IERC721Receiver} from "@crane/contracts/interfaces/IERC721Receiver.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -41,6 +44,7 @@ import {IUniswapV4DetfMigrationDFPkg} from "./interfaces/IUniswapV4DetfMigration
 import {IUniswapV4DetfMigrationRecovery} from "./interfaces/IUniswapV4DetfMigrationRecovery.sol";
 import {IUniswapV4DetfMigration, IUniswapV4DetfMigrationAllocation, IUniswapV4DetfMigrationAccounting} from "./interfaces/IUniswapV4DetfMigration.sol";
 import {IUniswapV4DetfMigrationRewardTokenDFPkg, IUniswapV4DetfMigrationRewardToken} from "./sy/rewards/IUniswapV4DetfMigrationRewardToken.sol";
+import {IUniswapV4DetfMigrationSYDFPkg as MigrationSYPackage} from "./sy/IUniswapV4DetfMigrationSYDFPkg.sol";
 import {UniswapV4DetfMigrationRepo as MigrationRepo} from "./UniswapV4DetfMigrationRepo.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
@@ -67,6 +71,7 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
     IUniswapV4DetfBondNFTVaultDFPkg immutable BOND_NFT_VAULT_PKG;
     IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
     IDETFSYDFPkg immutable SY_PKG;
+    IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     IFacet immutable OWNABLE_FACET;
     IFacet immutable MIGRATION_FACET;
@@ -116,10 +121,37 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         BOND_NFT_VAULT_PKG = pkgInit.bondNftVaultPkg;
         REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
         SY_PKG = pkgInit.syPkg;
+        DIAMOND_FACTORY = MigrationSYPackage(address(pkgInit.syPkg)).diamondFactory();
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault) {
-        return VAULT_REGISTRY_DEPLOYMENT.deployVault(IStandardVaultPkg(address(this)), abi.encode(args));
+        if (address(this) != SELF) revert InvalidMigrationPackageArguments();
+        _requireArgs(args);
+        bytes memory encoded_ = abi.encode(args);
+        vault = VAULT_REGISTRY_DEPLOYMENT.deployVault(IStandardVaultPkg(SELF), encoded_);
+        // Existing-code factory reuse skips every callback. Never report a different hook's
+        // already constructed parent as a successful deployment of this full payload.
+        if (address(DIAMOND_FACTORY.pkgOfAccount(vault)) != SELF
+            || keccak256(DIAMOND_FACTORY.pkgArgsOfAccount(vault)) != keccak256(encoded_)) {
+            revert InvalidMigrationPackageArguments();
+        }
+    }
+
+    function syPackage() external view returns (address) { return address(SY_PKG); }
+
+    function prepareSyChildren(PkgArgs memory args_) external returns (address rawSy_, address stakingSy_) {
+        if (address(this) != SELF) revert InvalidMigrationPackageArguments();
+        MigrationSYPackage.Preparation memory p_ = MigrationSYPackage(address(SY_PKG)).prepare(args_);
+        return (p_.rawSy, p_.stakingSy);
+    }
+
+    function preparationDependencies() external view returns (PreparationDependencies memory) {
+        return PreparationDependencies(address(BOND_NFT_VAULT_PKG), address(REBASING_CLAIM_TOKEN_PKG),
+            address(FEE_ORACLE), address(SY_PKG));
+    }
+
+    function syConstruction(PkgArgs memory args_) external view returns (SyConstruction memory) {
+        return MigrationSYPackage(address(SY_PKG)).construction(SELF, args_);
     }
 
     function packageName() public pure returns (string memory) {
@@ -226,19 +258,28 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         ArgsLib.requireHookShape(args.baseArgs.hook);
         ArgsLib.requireLiquidityPolicy(args.baseArgs.hook, args.baseArgs.ownerOnlyLiquidity);
         _requireArgs(args);
+        _requirePreparation(args);
         return pkgArgs;
     }
 
     /// @dev Factory preconstruction validation. No proxy call, cut, or state write occurs here.
     function updatePkg(address account_, bytes memory args_) public view returns (bool) {
-        if (account_.code.length != 0) revert InvalidMigrationPackageArguments();
+        if (address(this) != SELF || msg.sender != address(DIAMOND_FACTORY) || account_.code.length != 0
+            || account_ != DIAMOND_FACTORY.calcAddress(IDiamondFactoryPackage(SELF), args_)) {
+            revert InvalidMigrationPackageArguments();
+        }
         _requireArgs(_decodeArgs(args_));
         return true;
     }
 
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = _decodeArgs(initArgs);
-        if (address(this) == SELF || MigrationRepo._layoutStruct().weth != address(0)) revert InvalidMigrationPackageArguments();
+        if (msg.sender != address(DIAMOND_FACTORY) || address(this) == SELF || address(this).code.length != 0
+            || MigrationRepo._layoutStruct().weth != address(0)
+            || address(DIAMOND_FACTORY.pkgOfAccount(address(this))) != SELF
+            || keccak256(DIAMOND_FACTORY.pkgArgsOfAccount(address(this))) != keccak256(initArgs)) {
+            revert InvalidMigrationPackageArguments();
+        }
         _requireArgs(args);
         UniswapV4DetfInitializationLib._initialize(
             args.baseArgs,
@@ -255,10 +296,19 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
 
     function postDeploy(address expectedProxy) public returns (bool) {
         if (address(this) != expectedProxy) {
+            if (address(this) != SELF || msg.sender != address(DIAMOND_FACTORY)
+                || address(DIAMOND_FACTORY.pkgOfAccount(expectedProxy)) != SELF) revert InvalidMigrationPackageArguments();
             IPostDeployAccountHook(expectedProxy).postDeploy();
             return true;
         }
+        if (msg.sender != SELF) revert InvalidMigrationPackageArguments();
         IUniswapV4Detf self_ = IUniswapV4Detf(address(this));
+        PkgArgs memory args_ = _decodeArgs(DIAMOND_FACTORY.pkgArgsOfAccount(address(this)));
+        MigrationSYPackage.Preparation memory prepared_ = _requirePreparation(args_);
+        SyConstruction memory construction_ = MigrationSYPackage(address(SY_PKG)).construction(SELF, args_);
+        MigrationSYPackage(address(SY_PKG)).validateBond(
+            prepared_.bond, prepared_.bondPackage, construction_.bondArgs, false, address(0)
+        );
         self_.completeReserveBondNft();
         self_.completeReserveClaim();
         Repo.Storage storage s_ = Repo._layoutStruct();
@@ -277,7 +327,66 @@ contract UniswapV4DetfMigrationDFPkg is IUniswapV4DetfMigrationDFPkg {
         if (rt_.parent() != address(this) || rt_.receipt() != self_.rebasingClaimToken()
             || IStandardizedYield(sy_.rawSY).yieldToken() != address(this)
             || IStandardizedYield(sy_.stakingSY).yieldToken() != self_.rebasingClaimToken()) revert InvalidMigrationChild(m_.rewardToken);
+        _validatePreparedChildren(s_, sy_, self_);
+        MigrationSYPackage(address(SY_PKG)).validateBond(
+            address(s_.bondNftVault), prepared_.bondPackage, construction_.bondArgs, true, s_.creator
+        );
         return true;
+    }
+
+    function _requirePreparation(PkgArgs memory args_) private view returns (MigrationSYPackage.Preparation memory p_) {
+        bytes32 id_ = keccak256(abi.encode(block.chainid, SELF, args_));
+        p_ = MigrationSYPackage(address(SY_PKG)).preparation(id_);
+        SyConstruction memory c_ = MigrationSYPackage(address(SY_PKG)).construction(SELF, args_);
+        if (!p_.completed || p_.constructionId != id_ || p_.parentPackage != SELF
+            || p_.parent != c_.parent || p_.bond != c_.bond || p_.receipt != c_.receipt
+            || p_.bondPackage != address(BOND_NFT_VAULT_PKG)
+            || p_.bondArgsHash != keccak256(abi.encode(c_.bondArgs))
+            || p_.rawArgsHash != keccak256(abi.encode(c_.rawArgs))
+            || p_.stakingArgsHash != keccak256(abi.encode(c_.stakingArgs))) {
+            revert MigrationPreparationRequired(id_);
+        }
+    }
+
+    function _validatePreparedChildren(Repo.Storage storage s_, DETFChildSYRepo.Storage storage sy_,
+        IUniswapV4Detf self_) private view
+    {
+        PkgArgs memory args_ = _decodeArgs(DIAMOND_FACTORY.pkgArgsOfAccount(address(this)));
+        MigrationSYPackage.Preparation memory p_ = _requirePreparation(args_);
+        if (p_.parent != address(this) || p_.bond != address(s_.bondNftVault)
+            || p_.receipt != address(s_.rebasingClaimToken) || p_.rawSy != sy_.rawSY || p_.stakingSy != sy_.stakingSY) {
+            revert InvalidMigrationChild(address(SY_PKG));
+        }
+        IDETFSYDFPkg.PkgArgs memory a_ = IDETFSYDFPkg.PkgArgs(
+            IERC20(address(this)), IStakedDETF(address(s_.rebasingClaimToken)), false,
+            string.concat("SY ", IERC20Metadata(address(this)).name()),
+            string.concat("SY-", IERC20Metadata(address(this)).symbol()),
+            s_.mintTable.tokens._values(), s_.burnTable.tokens._values()
+        );
+        if (keccak256(abi.encode(a_)) != p_.rawArgsHash) revert InvalidMigrationChild(sy_.rawSY);
+        MigrationSYPackage(address(SY_PKG)).validateChild(sy_.rawSY, a_);
+        a_.isStaking = true;
+        a_.name = string.concat("SY Staked ", IERC20Metadata(address(this)).name());
+        a_.symbol = string.concat("SY-s", IERC20Metadata(address(this)).symbol());
+        if (keccak256(abi.encode(a_)) != p_.stakingArgsHash) revert InvalidMigrationChild(sy_.stakingSY);
+        MigrationSYPackage(address(SY_PKG)).validateChild(sy_.stakingSY, a_);
+        address[5] memory children_ = [p_.bond, p_.receipt, MigrationRepo._layoutStruct().rewardToken, p_.rawSy, p_.stakingSy];
+        for (uint256 i_; i_ < children_.length; ++i_) {
+            if (children_[i_] == address(this) || children_[i_] == address(0)) revert InvalidMigrationChild(children_[i_]);
+            for (uint256 j_; j_ < i_; ++j_) {
+                if (children_[i_] == children_[j_]) revert InvalidMigrationChild(children_[i_]);
+            }
+            if (IUniswapV4DetfMigrationAccounting(children_[i_]).migrationAccountingPhase() != 0) {
+                revert InvalidMigrationChild(children_[i_]);
+            }
+        }
+        address feeTo_ = address(FEE_ORACLE.feeTo());
+        if (IStakedDETF(p_.receipt).detf() != address(this) || IERC20(p_.receipt).totalSupply() != 0
+            || IStakedDETF(p_.receipt).stakingState().accountedBacking != 0
+            || IStakedDETF(p_.receipt).stakingState().totalGons != 0
+            || IERC721(p_.bond).ownerOf(0) != p_.bond || IERC721(p_.bond).ownerOf(1) != feeTo_
+            || IERC721(p_.bond).ownerOf(2) != (s_.creator == address(0) ? feeTo_ : s_.creator)
+            || self_.rebasingClaimToken() != p_.receipt) revert InvalidMigrationChild(p_.receipt);
     }
     function _requireArgs(PkgArgs memory args_) private pure {
         if (args_.owner == address(0) || args_.weth == address(0) || args_.originalDtf == address(0)

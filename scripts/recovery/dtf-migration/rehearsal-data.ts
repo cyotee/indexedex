@@ -71,6 +71,7 @@ export async function bootstrapManifest(chain: RehearsalChain, environmentPath: 
     sourceFile("allocation-abi", "out/IUniswapV4DetfMigration.sol/IUniswapV4DetfMigrationAllocation.json"),
     sourceFile("recovery-abi", "out/IUniswapV4DetfMigrationRecovery.sol/IUniswapV4DetfMigrationRecovery.json"),
     sourceFile("package-abi", "out/IUniswapV4DetfMigrationDFPkg.sol/IUniswapV4DetfMigrationDFPkg.json"),
+    sourceFile("sy-package-abi", "out/IUniswapV4DetfMigrationSYDFPkg.sol/IUniswapV4DetfMigrationSYDFPkg.json"),
     sourceFile("environment", environmentPath),
     sourceFile("claim-vault-acquisition", join(dirname(environmentPath), "claim-vault-acquisition.json")),
     sourceFile("dtf-custody-acquisition", join(dirname(environmentPath), "dtf-custody-se-acquisition.json")),

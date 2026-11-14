@@ -1,11 +1,10 @@
 import { Interface, Result } from "ethers";
 import { join } from "node:path";
 import { z } from "zod";
-import { claimedSyEvidenceId, stakingClaim, stakingSource } from "./claimed-sy.js";
-import { claimedSigned } from "./rehearsal-claimed-sy-source.js";
-import { interfaceFile, save, sourceFile } from "./rehearsal-data.js";
-import { prepareDomain } from "./preparation.js";
-import { address, claimedSyCertificate, PreparationError, preparationInput, heldSeLpSources } from "./schema.js";
+import { stakingClaim, stakingSource } from "./claimed-sy.js";
+import { claimedSigned, claimedWallet } from "./rehearsal-claimed-sy-source.js";
+import { interfaceFile, save } from "./rehearsal-data.js";
+import { address, heldSeLpSources } from "./schema.js";
 import type { PreparationInput } from "./schema.js";
 import type { ExecutionManifest } from "./execution-schema.js";
 import { ExecutionError } from "./execution-schema.js";
@@ -28,70 +27,7 @@ function tuple(value: unknown): Result {
   return value;
 }
 
-/** Reconcile the real gate before any configuration transaction, not only a schema mock. */
-export async function checkClaimedSyIntake(chain: RehearsalChain, input: PreparationInput, evidence: string) {
-  const selected = input.weightedSy.filter((row) => row.claimedOrigin);
-  const first = selected[0];
-  const second = selected[1];
-  if (!first?.claimedOrigin || !second?.claimedOrigin) throw new ExecutionError("STATE", "two complete originals required");
-  const nonce = await chain.send("eth_getTransactionCount", [DEV, "latest"]);
-  const cases = [
-    { name: "incomplete", certificate: { ...second.claimedOrigin, members: second.claimedOrigin.members.slice(0, -1) } },
-    { name: "duplicate", certificate: { ...second.claimedOrigin,
-      members: second.claimedOrigin.members.map((m) => ({ ...m, transactionHash: second.claimedOrigin?.members[0]?.transactionHash })) } },
-    { name: "wrong-output", certificate: { ...second.claimedOrigin,
-      members: second.claimedOrigin.members.map((m, i) => i === 0 ? { ...m, receivedSy: String(BigInt(m.receivedSy) + 1n) } : m) } },
-    { name: "noncanonical", certificate: { ...second.claimedOrigin,
-      members: second.claimedOrigin.members.map((m) => ({ ...m, blockHash: `0x${"f".repeat(64)}` })) } },
-    { name: "tampered-signature", certificate: { ...second.claimedOrigin,
-      members: second.claimedOrigin.members.map((m) => ({ ...m, rawSignedTransaction: first.claimedOrigin?.members[0]?.rawSignedTransaction })) } },
-  ];
-  const observations = [];
-  for (const test of cases) {
-    const certificate = claimedSyCertificate.parse(test.certificate);
-    const original = { ...second.original, evidenceId: claimedSyEvidenceId(input.domain, second.original, certificate) };
-    const changed = { original, claimedOrigin: certificate };
-    const path = join(evidence, `claimed-intake-${test.name}.json`);
-    await save(path, changed);
-    const candidate = preparationInput.parse({ ...input,
-      sources: [...input.sources, await sourceFile(`claimed-negative-${test.name}`, path)],
-      weightedSy: input.weightedSy.map((row) => row.original.originalId === original.originalId
-        ? { ...changed, proof: { sourceId: `claimed-negative-${test.name}`, pointer: "" } } : row),
-    });
-    let rejected = false;
-    try { await prepareDomain(candidate); }
-    catch (error) {
-      if (!(error instanceof PreparationError)) throw error;
-      observations.push({ case: test.name, code: error.code, reason: error.message });
-      rejected = true;
-    }
-    if (!rejected) throw new ExecutionError("STATE", `claimed intake ${test.name} unexpectedly passed`);
-  }
-  const { claimedOrigin: _missing, ...ordinary } = second;
-  const flatIndex = input.weightedSy.findIndex(row => row.original.originalId === second.original.originalId);
-  for (const [name, pointer] of [
-    ["missing-certificate", ordinary.proof.pointer],
-    ["nested-proof-downgrade", `${ordinary.proof.pointer}/original`],
-    ["flat-proof-downgrade", `/weightedSy/${flatIndex}`],
-  ]) {
-    const candidate = preparationInput.parse({ ...input, weightedSy: input.weightedSy.map((row) =>
-      row.original.originalId === second.original.originalId
-        ? { ...ordinary, proof: { ...ordinary.proof, pointer } } : row) });
-    try {
-      await prepareDomain(candidate);
-      throw new ExecutionError("STATE", "missing claimed evidence fell back to ordinary SY");
-    } catch (error) {
-      if (!(error instanceof PreparationError) || error.code !== "PROVENANCE") throw error;
-      observations.push({ case: name, code: error.code, reason: error.message });
-    }
-  }
-  if (nonce !== await chain.send("eth_getTransactionCount", [DEV, "latest"])) {
-    throw new ExecutionError("STATE", "claimed intake rejection broadcast a configuration");
-  }
-  await save(join(evidence, "claimed-intake-rejections.json"), { nonceBefore: nonce, nonceAfter: nonce, observations });
-}
-
-/** Same-wallet EOA custody/funding; no claimed-origin receiver callback is asserted. */
+/** Original-wallet custody/funding, including real delegated receiver rollback. */
 export async function exerciseClaimedSy(context: {
   readonly chain: RehearsalChain; readonly input: PreparationInput; readonly manifest: ExecutionManifest;
   readonly evidence: string; readonly phase: "stage1" | "partial" | "terminal";
@@ -111,12 +47,19 @@ export async function exerciseClaimedSy(context: {
     if (!certificate) continue;
     const original = row.original;
     const wallet = original.originalWallet;
-    const index = certificate.members.length === 1 ? 231 : 232;
+    const index = [231, 232, 233, 234, 235, 236, 237, 238, 240].find((candidate) => claimedWallet(candidate).address.toLowerCase() === wallet);
+    if (index === undefined) throw new ExecutionError("STATE", "unknown controlled claimed-SY signer");
     const send = async (data: string, to = parent, status = 1n, gas = 20000000n) =>
       claimedSigned(chain, evidence, { index, to, data, status, gas });
     const state = async () => tuple((await chain.call(parent, migration, "weightedSySurrender", [original.originalId]))[0]);
     const config = tuple((await chain.call(parent, migration, "weightedSyEntitlement", [original.originalId]))[0]);
     const c0 = z.bigint().parse(config.getValue("credit"));
+    const originalCredit = z.bigint().parse((await chain.call(parent, migration, "previewOriginalCredit",
+      [original.originalEth, original.originalDtf]))[0]);
+    const fullWeight = certificate.review.originalWeight;
+    const eligibleCredit = fullWeight === undefined ? originalCredit
+      : originalCredit * BigInt(certificate.review.eligibleWeight) / BigInt(fullWeight);
+    if (c0 !== eligibleCredit) throw new ExecutionError("STATE", "eligible credit does not conserve the full original quote");
     const loaded = tuple(config.getValue("original"));
     if (loaded.getValue("evidenceId") !== original.evidenceId || loaded.getValue("originalUnits") !== BigInt(original.originalUnits)
       || loaded.getValue("originalEth") !== BigInt(original.originalEth)
@@ -130,7 +73,8 @@ export async function exerciseClaimedSy(context: {
         "0xaf0e1967c8f755c747615c5427108bc549ca1122", "0x4ac89ad061a531fa62ddceed53520c2750113b01",
         ...heldSeLpSources]) values.push(String(await n(asset, "balanceOf", [parent])), String(await inventory(asset)));
       values.push(String((await chain.call(parent, recovery, "migrationRecoveryGons"))[0]),
-        String((await chain.call(parent, recovery, "migrationEarlierReceiptInternalShares"))[0]));
+        String((await chain.call(parent, recovery, "migrationEarlierReceiptInternalShares"))[0]),
+        String((await chain.call(parent, recovery, "migrationEarlierNftReceiptRemainder"))[0]));
       return values.join("|");
     };
     const economic = async () => [
@@ -185,6 +129,26 @@ export async function exerciseClaimedSy(context: {
         }) || saved !== await economic()) throw new ExecutionError("STATE", "failure did not reach actual child funding and restore later books");
         observations.push({ kind: "late-funding-rollback", transactionHash: failed.mined.transactionHash,
           minimumFailure: minimumFailure.mined.transactionHash, rawWeightStillConsumed: true });
+        if (certificate.members.some((member) => member.execution)) {
+          const receiver = new Interface(["function setRejectReceipt(bool)"]);
+          await send(receiver.encodeFunctionData("setRejectReceipt", [true]), wallet);
+          const beforeReceiverFailure = await economic();
+          const rejected = await send(migration.encodeFunctionData("surrenderMigrationWeightedSy",
+            [original.originalId, q, expected, deadline]), parent, 0n);
+          const pending: unknown[] = [rejected.trace];
+          let callback = false;
+          while (pending.length) {
+            const frame = z.object({ to: address, input: z.string(),
+              error: z.string().optional(), calls: z.array(z.unknown()).default([]) }).passthrough().parse(pending.pop());
+            if (frame.to === wallet && frame.input.startsWith("0x150b7a02") && frame.error) callback = true;
+            pending.push(...frame.calls);
+          }
+          if (!callback || beforeReceiverFailure !== await economic()) {
+            throw new ExecutionError("STATE", "delegated receiver failure did not restore real custody and funding");
+          }
+          await send(receiver.encodeFunctionData("setRejectReceipt", [false]), wallet);
+          observations.push({ kind: "delegated-receiver-rollback", transactionHash: rejected.mined.transactionHash });
+        }
       }
       const floor = await protectedInventory();
       const supply = await n(parent, "totalSupply");
@@ -226,7 +190,8 @@ export async function exerciseClaimedSy(context: {
       throw new ExecutionError("STATE", "earlier source claims or unrelated floors changed");
     }
     await save(join(evidence, `claimed-sy-${index}-${phase}.json`), { original, certificate,
-      originalCredit: String(c0), configurationId: config.getValue("configurationId"), observations,
+      originalCredit: String(originalCredit), eligibleCredit: String(c0),
+      configurationId: config.getValue("configurationId"), observations,
       authority: "synthetic reviewed originals; actual direct controlled signatures; ordinary-SY callback tests are shared-path only",
       actualLoadedOriginal: canonical(loaded.toArray().map((v) => typeof v === "bigint" ? String(v) : v)) });
   }

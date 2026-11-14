@@ -1,4 +1,6 @@
 import { join } from "node:path";
+import { Interface, Result } from "ethers";
+import { z } from "zod";
 import type { PreparationInput, RecoveryStep } from "./schema.js";
 import type { ExecutionManifest } from "./execution-schema.js";
 import { ExecutionError } from "./execution-schema.js";
@@ -7,6 +9,7 @@ import type { RehearsalChain } from "./rehearsal-chain.js";
 import { interfaceFile, save } from "./rehearsal-data.js";
 import { DEV } from "./execution-rpc.js";
 import { exerciseAdmission } from "./rehearsal-admission.js";
+import { canonical } from "./provenance.js";
 
 type Context = {
   readonly chain: RehearsalChain; readonly manifest: ExecutionManifest; readonly input: PreparationInput;
@@ -26,7 +29,12 @@ export async function exerciseRecovery(context: Context) {
     // configuration bundle or its signed journal. Retain its relocated sources.
     const { bundle: _inputBundle, ...nativeInput } = input;
     const { bundle: _executionBundle, ...nativeManifest } = manifest;
-    await save(path, { ...nativeInput, harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
+    // Recovery uses already consumed on-chain custody, not a new entitlement load.
+    // Keep this fresh operation domain free of configuration/issuance selections;
+    // the full original configuration is independently verified after the rehearsal.
+    await save(path, { ...nativeInput, exposures: [], independent: [], nfts: [], weightedLiquid: [], weightedSy: [],
+      dtfCustodySe: [], claimVault: [], weightedReceipt: [], earlierReceipt: [], earlierLiquid: [], heldSeLp: [],
+      issueRecipients: [], harvest: { steps: [step], deadline: (await chain.timestamp() + 3600n).toString() } });
     await cli(["prepare", "--input", path, "--output", directory]);
     const executionPath = join(evidence, `${name}-execution.json`);
     await save(executionPath, { ...nativeManifest, preparedManifest: join(directory, "manifest.json") });
@@ -36,8 +44,28 @@ export async function exerciseRecovery(context: Context) {
   const conversion = (stage: RecoveryStep["stage"], amount: bigint): RecoveryStep => ({
     stage, tokenId: "0", amount: amount.toString(), minimum: stage === "WeightedUnstake" ? "0" : "1",
   });
-  await harvest(nftStep("WeightedClaim", "4"));
-  await harvest(nftStep("WeightedPrincipal", "26"));
+  const source = new Interface([...legacyAbi.fragments,
+    "function positionOf(uint256) view returns((uint256 principal,uint256 claimedPrincipal,uint256 stakingGons,uint256 startTimestamp,uint256 vestingDuration))",
+    "function getPosition(uint256) view returns((uint256 originalShares,uint256 effectiveShares,uint256 bonusMultiplier,uint256 unlockTime,uint256 rewardDebt))",
+    "function owner() view returns(address)", "function isDisabledDetailed(address) view returns(bool,bool,bool)",
+    "function packageOfVault(address) view returns(address)", "function setVaultAddressDisabled(address,bool) returns(bool)",
+    "function setPackageDisabled(address,bool) returns(bool)",
+  ]);
+  const retained = async () => {
+    const weighted = [];
+    for (const id of ["4", "26"]) {
+      const p = (await chain.call(LEGACY.weighted, source, "positionOf", [id]))[0];
+      if (!(p instanceof Result)) throw new ExecutionError("STATE", "missing weighted position");
+      weighted.push({ id, principal: String(p[0]), claimedPrincipal: String(p[1]),
+        owner: String((await chain.call(LEGACY.weighted, source, "ownerOf", [id]))[0]) });
+    }
+    const p = (await chain.call(LEGACY.earlier, source, "getPosition", [3]))[0];
+    if (!(p instanceof Result)) throw new ExecutionError("STATE", "missing earlier position");
+    return { weighted, earlier: { id: "3", originalShares: String(p[0]),
+      owner: String((await chain.call(LEGACY.earlier, source, "ownerOf", [3]))[0]) } };
+  };
+  const retainedBefore = await retained();
+  await harvest(nftStep("WeightedRewards", "4"));
   await harvest(nftStep("WeightedRewards", "26"));
   const original = BigInt((await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.receipt]))[0]);
   if (original === 0n) throw new ExecutionError("STATE", "weighted claims created no attributed inventory");
@@ -58,13 +86,68 @@ export async function exerciseRecovery(context: Context) {
   const donation = recovered > 10n ** 18n ? 10n ** 18n : recovered;
   await harvest(conversion("Donate", donation));
   await harvest(nftStep("EarlierClaim", "3"));
+  const earlierFirst = (await chain.call(manifest.proxy, recovery, "migrationNftRecovery", [LEGACY.earlier, 3]))[0];
+  if (!(earlierFirst instanceof Result)) throw new ExecutionError("STATE", "missing earlier recovery");
   await chain.send("evm_setNextBlockTimestamp", [Number(await chain.timestamp() + 365n * 86400n)]);
   await chain.send("evm_mine", []);
-  await harvest({ ...nftStep("EarlierSale", "3"), minimum: "1" });
+  await harvest(nftStep("WeightedRewards", "4"));
+  await harvest(nftStep("WeightedRewards", "26"));
+  const nextReceipt = z.bigint().parse((await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.receipt]))[0]);
+  if (nextReceipt === 0n) throw new ExecutionError("STATE", "later weighted rewards did not accrue");
+  await harvest(conversion("WeightedUnstake", nextReceipt));
+  await harvest(conversion("WeightedConvert", z.bigint().parse(
+    (await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.detf]))[0])));
+
+  // Explicit local source prerequisites, never public governance or fabricated balances.
+  const registry = "0x09682b00d873d913ada0bb69b4d4c9631810d0bc";
+  const earlierSe = "0xb7d4bb379d361ad442cddee53ea71a33957826a7";
+  const earlierDetf = "0xaf0e1967c8f755c747615c5427108bc549ca1122";
+  const administrator = z.string().parse((await chain.call(registry, source, "owner"))[0]).toLowerCase();
+  const disabled = await chain.call(registry, source, "isDisabledDetailed", [earlierSe]);
+  const prerequisites = [];
+  await chain.fundGas(administrator);
+  await chain.send("anvil_impersonateAccount", [administrator]);
+  try {
+    if (disabled[1]) prerequisites.push(await chain.transact(registry, { from: administrator,
+      data: source.encodeFunctionData("setVaultAddressDisabled", [earlierSe, false]) }));
+    if (disabled[2]) prerequisites.push(await chain.transact(registry, { from: administrator,
+      data: source.encodeFunctionData("setPackageDisabled",
+        [(await chain.call(registry, source, "packageOfVault", [earlierSe]))[0], false]) }));
+  } finally { await chain.send("anvil_stopImpersonatingAccount", [administrator]); }
+  const donor = "0x495d9d8bc7b1d00cfb3dfe8aa3666c64771910ed";
+  const donorBefore = z.bigint().parse((await chain.call(earlierDetf, source, "balanceOf", [donor]))[0]);
+  const income = donorBefore / 4n;
+  if (income === 0n) throw new ExecutionError("STATE", "real earlier reward donor unavailable");
+  await chain.fundGas(donor);
+  await chain.send("anvil_impersonateAccount", [donor]);
+  try { prerequisites.push(await chain.transact(earlierDetf, { from: donor,
+    data: source.encodeFunctionData("transfer", [LEGACY.earlier, income]) })); }
+  finally { await chain.send("anvil_stopImpersonatingAccount", [donor]); }
+  if (z.bigint().parse((await chain.call(earlierDetf, source, "balanceOf", [donor]))[0]) !== donorBefore - income) {
+    throw new ExecutionError("STATE", "earlier reward income was not actually funded");
+  }
+  await harvest(nftStep("EarlierClaim", "3"));
+  const earlierNext = (await chain.call(manifest.proxy, recovery, "migrationNftRecovery", [LEGACY.earlier, 3]))[0];
+  if (!(earlierNext instanceof Result) || earlierNext[1] <= earlierFirst[1] || earlierNext[3] !== false) {
+    throw new ExecutionError("STATE", "later earlier rewards did not accrue without sale");
+  }
+  await harvest(conversion("EarlierConvert", z.bigint().parse(
+    (await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [earlierDetf]))[0])));
+  const combined = z.bigint().parse((await chain.call(manifest.proxy, recovery, "migrationRecoveryInventory", [LEGACY.dtf]))[0]);
+  await harvest(conversion("Donate", combined > 10n ** 18n ? 10n ** 18n : combined));
+  const retainedAfter = await retained();
+  if (canonical(retainedAfter) !== canonical(retainedBefore)) {
+    throw new ExecutionError("STATE", "routine reward recovery changed old principal or NFT custody");
+  }
+  await save(join(evidence, "reward-harvest-retention.json"), { before: retainedBefore, after: retainedAfter,
+    nextWeightedReceipt: String(nextReceipt), earlierRewardsBefore: String(earlierFirst[1]),
+    earlierRewardsAfter: String(earlierNext[1]), externalEarlierIncome: String(income), prerequisites,
+    qualification: "Local source enablement and real external reward income; no claim that time alone guarantees earlier yield." });
   await save(join(evidence, "recovery-observation.json"), {
     original: original.toString(), attributedGonsAfterOriginalSpent: gons.toString(), synchronizedDivisor: divisor.toString(),
     accrued: accrued.toString(), actualWeightedOutput: weighted.toString(), convertedDtf: recovered.toString(),
     donated: donation.toString(), fixedDestination: manifest.proxy, owner: DEV,
-    earlierLiquidation: "blocked: SB-E1/E2/E3/E4; sale-and-hold is not liquidation",
+    earlierLiquidation: "reward-only claim and fixed public swap; conditional local source enablement",
+    routine: "reward-only; old principal and NFT custody preserved across both cycles",
   });
 }
