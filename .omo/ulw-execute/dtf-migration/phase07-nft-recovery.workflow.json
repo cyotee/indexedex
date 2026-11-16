@@ -1,0 +1,97 @@
+{
+  "key": "dtf-migration-phase07-nft-recovery-v1",
+  "name": "Migration DETF phase 7: bounded NFT custody recovery",
+  "nodes": [
+    {
+      "id": "weighted-recovery-contract",
+      "label": "Bind weighted NFT recovery stages",
+      "category": "deep-low",
+      "task_summary": "Verify exact weighted claim, unstake, conversion and donation prerequisites",
+      "prompt": "TASK: Specify the exact source-bound recovery stages for weighted NFTs held by Migration.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/weighted/contract.md plus only supporting evidence there.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md completely, original main-checkout plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery at independently verified6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31. Root observed warm seed exit0 and clean correct branch/head. Prior phase01/04/05 evidence is read-only. No source-policy change, public operation, commits, extra delegation, dependencies/config edits, arbitrary executor/recipient or E2 implementation. Preserve all remaining source/harvest/operator/release gates. Read actual pinned weighted source archives and successful phase01 claim/unstake/DETF-to-DTF evidence, and accepted phase05 custody/consumption contract. No production/test edits or Forge compiler. Reuse proven calls; investigate only exact unresolved caller/return/rounding/recipient facts. Owned port18555 only if needed.\nVERIFY: Bind each typed stage selector/layout/source identity, input/output native units, caller authority, actual fixed receiver, repeated/mature/partial claim behavior, allowance requirements, registry/activation interactions and atomic failure. Determine what can actually be called by the custody-owning Migration proxy without operator grants or parent impersonation. No balance-as-newly-recovered accounting.\nSTOP WHEN: Exact admitted stage contract and any concrete missing prerequisite are evidenced, with owned cleanup; no all-source task8 claim."
+    },
+    {
+      "id": "earlier-recovery-contract",
+      "label": "Bind earlier NFT recovery stages",
+      "category": "deep-low",
+      "task_summary": "Verify executable earlier NFT claim/holding stages and disabled exit limits",
+      "prompt": "TASK: Specify exact safe recovery stages for earlier LP-lock NFTs held by Migration.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/earlier/contract.md plus only supporting evidence there.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md completely, original main-checkout plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery at independently verified6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31. Root observed warm seed exit0 and clean correct branch/head. Prior phase01/04/05 evidence is read-only. No source-policy change, public operation, commits, extra delegation, dependencies/config edits, arbitrary executor/recipient or E2 implementation. Preserve all remaining source/harvest/operator/release gates. Read actual earlier deployed NFT/DETF/receipt sources and phase01 pinned claim/sale/disabled-exit evidence; accepted phase05 custody contract. No production/test edits or Forge compiler. Owned18556 only for a named missing concern.\nVERIFY: Distinguish LP accounting shares, old DETF reward and receipt assets; exact owner/proxy caller, selector/returns, burn/sale/staged holding and fixed recipients. Preserve disabled SE conversion and masked wrong-owner mature-close limitations. Identify genuinely executable safe claim/holding stages separately from unsafe/unproved/disabled later stages. Do not manufacture a successful full liquidation or change registry policy.\nSTOP WHEN: Every proposed stage has an exact admitted contract or explicit source/security blocker, with complete cleanup and no broader recovery claim."
+    },
+    {
+      "id": "verify-recovery-contracts",
+      "label": "Verify NFT recovery source contracts",
+      "category": "deep-high",
+      "task_summary": "Independently admit safe recovery stages and retain concrete source blockers",
+      "dependsOn": [
+        "weighted-recovery-contract",
+        "earlier-recovery-contract"
+      ],
+      "prompt": "TASK: Independently admit the precise NFT recovery stage contracts for implementation.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/source-verification/report.md with exact admitted stages, needs-fix/source blockers, and no invented route success.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md completely, original main-checkout plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery at independently verified6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31. Root observed warm seed exit0 and clean correct branch/head. Prior phase01/04/05 evidence is read-only. No source-policy change, public operation, commits, extra delegation, dependencies/config edits, arbitrary executor/recipient or E2 implementation. Preserve all remaining source/harvest/operator/release gates. Read both contract.md files and actual source/receipt evidence. Write ONLY source-verification/. No production edits, new broad inventory or duplicate valid probes.\nVERIFY: Challenge custody/caller authority, selector/tuple units, redirected proceeds, old/new token distinction, restricted/disabled exits and operation-local accounting. A safe holding stage may be admitted while later conversion is blocked; neither category is omitted or relabeled completely supported. Independent current owner/fixed-destination and prior bond/consumption invariants must remain implementable.\nSTOP WHEN: Implementer can consume an exact finite stage contract with all security/source limitations stated and no pending runtime."
+    },
+    {
+      "id": "implement-nft-recovery",
+      "label": "Implement and prove bounded NFT recovery",
+      "category": "deep-high",
+      "task_summary": "Build owner-only measured recovery stages, atomic batches and fixed donations",
+      "dependsOn": [
+        "verify-recovery-contracts"
+      ],
+      "prompt": "TASK: Implement all independently admitted bounded NFT recovery stages and their real execution proof.\nDELIVERABLE: Complete production/spec/fork changes in brief-owned paths and /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/implementation/report.md with stage matrix, commands/counts/exits/source bindings/gas and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md completely, original main-checkout plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery at independently verified6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31. Root observed warm seed exit0 and clean correct branch/head. Prior phase01/04/05 evidence is read-only. No source-policy change, public operation, commits, extra delegation, dependencies/config edits, arbitrary executor/recipient or E2 implementation. Preserve all remaining source/harvest/operator/release gates. Read both source contracts and source-verification report first. Do not implement unadmitted or unsafe caller routes. Own only Migration recovery/root wiring/legacy/TestBase and migration spec/fork paths enumerated by brief; common/ordinary/Crane/config/snapshot read-only. One compiler. No generalized rescue/calldata executor or external beneficiary.\nVERIFY: Current-owner bounded selected batches before/after activation and ownership transfer; actual surrendered pinned NFTs; genuine successful admitted claim/conversion/donation; operation-local inventory equation with no total-balance sweep; protect new backing, budgets, self-leg and receipt packets; partial/repeated/new-accrual behavior; failing middle item whole rollback and smaller retry; earlier completed stages survive later failure; clear approvals; malicious callback; no bond resizing/new personal mint/reopened consumption. Keep disabled earlier stages explicitly failed/unimplemented as admitted, not fake success. Measure selected-work gas with unrelated custody population. Artifact-first Solar migration specs, pinned forks and affected ordinary/common regressions once per changed inputs; preserve all failures. Do not stop with pending command/report/cleanup.\nSTOP WHEN: Every admitted stage works through actual registry/pinned source calls with complete evidence and cleanup, or all independent work is complete and exact external blockers are reported; never label partial all-source recovery complete."
+    },
+    {
+      "id": "verify-nft-recovery",
+      "label": "Independently verify NFT recovery runtime",
+      "category": "deep-high",
+      "task_summary": "Verify genuine recovery accounting, fixed destinations, rollback and preserved bonds",
+      "dependsOn": [
+        "implement-nft-recovery"
+      ],
+      "prompt": "TASK: Independently verify bounded NFT recovery and preserved Migration behavior.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery/docs/incidents/2026-09-16-dtf-recovery/migration/nft-recovery/verification/report.md with AdversarialVerify confirmed, needs-fix or needs-human-review and exact admitted/blocked stage matrix.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-nft-recovery-brief.md completely, original main-checkout plan and repository/canonical rules. Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery at independently verified6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31. Root observed warm seed exit0 and clean correct branch/head. Prior phase01/04/05 evidence is read-only. No source-policy change, public operation, commits, extra delegation, dependencies/config edits, arbitrary executor/recipient or E2 implementation. Preserve all remaining source/harvest/operator/release gates. Read source gate, implementation report and actual current sources/tests/evidence. Write only verification/ and bounded witnesses. No fixes to production/tests/producer evidence.\nVERIFY: Execute the actual admitted pinned NFT recovery paths through genuine registry proxy; audit owner/activation, measured token deltas and undonated inventories, no correlated double count, protected backing, fixed new-DETF destination, allowance cleanup, repeat/new-accrual, staged versus whole-selected-batch atomicity, receiver/callback and selected-work gas. Reconcile source/artifacts/results and current ordinary regressions without repeating valid large suites. Preserve concrete earlier disabled/authority limitations and all other categories; no SUT mutation or fake route.\nSTOP WHEN: Actual bounded recovery has a decisive independent verdict and cleanup, with no claim of closed general harvest/E2/operator/release gates."
+    },
+    {
+      "id": "correct-recovery-accrual",
+      "label": "Correct attributable recovery accrual conversion",
+      "category": "deep-high",
+      "task_summary": "Fix stranded receipt growth with real fail-before and passing pinned proof",
+      "dependsOn": [
+        "verify-nft-recovery"
+      ],
+      "prompt": "TASK: Correct R1 so synchronized whole-unit value of recovery-owned receipt gons remains convertible after native claim budget exhaustion.\nDELIVERABLE: Minimal allowed production/test correction plus migration/nft-recovery/correction/report.md with genuine fail-before/passing-after evidence, current builds/specs/forks/bindings and cleanup.\nSCOPE: Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery, base6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31 with existing uncommitted recovery code. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-accrual-correction.md completely, full independent recovery report/R1 traces and original plan/repo rules. Prior witnesses/reports immutable. No commits, delegation, common/ordinary/Crane/config edits or public actions. Original task8 harvestability governs; the earlier engineering no-native-budget-expansion sentence cannot strand attributable whole units. All other source/gon-floor/owner/atomicity constraints remain. Exact allowed files are in the correction brief. Preserve actual gon debit and unbooked floor; distinguish accrual representation adjustment from new claims or compensation. No arbitrary executor or source route.\nVERIFY: Capture a new real-proxy regression failing on current source; implement minimal accounting correction. Execute the terminal-burned-NFT case, actual source index movement, exhausted native budget, positive Migration conversion, partial/full/mixed fractional/whole unbooked protection, repeated/no-doublecount/later-new-claim cases and complete selected-batch rollback. Artifact-first Solar full migration specs and pinned forks on changed inputs; preserve other passing regressions unless their inputs changed or a specific concern requires rerun. No mocked SUT, storage injection or impersonated parent. Retain old adverse evidence.\nSTOP WHEN: R1 is corrected with decisive current-source actual Migration proof, report and cleanup, ready for independent review; no pending required run or unsupported full-plan claim."
+    },
+    {
+      "id": "verify-recovery-accrual",
+      "label": "Verify recovery accrual correction independently",
+      "category": "deep-high",
+      "task_summary": "Verify accrued whole-unit redemption and exact unbooked-gon protection",
+      "dependsOn": [
+        "correct-recovery-accrual"
+      ],
+      "prompt": "TASK: Independently verify R1 correction and all preserved bounded recovery protections.\nDELIVERABLE: migration/nft-recovery/correction-verification/report.md with AdversarialVerify confirmed or needs-fix and actual proof only in that directory.\nSCOPE: Work ONLY in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery, base6e7d8b8dc2cda313c7fb19ec051bfb84612f5f31 with existing uncommitted recovery code. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-accrual-correction.md completely, full independent recovery report/R1 traces and original plan/repo rules. Prior witnesses/reports immutable. No commits, delegation, common/ordinary/Crane/config edits or public actions. Original task8 harvestability governs; the earlier engineering no-native-budget-expansion sentence cannot strand attributable whole units. All other source/gon-floor/owner/atomicity constraints remain. Read correction/report.md, actual changes and original independent witnesses. No production/test or producer/historical evidence edits.\nVERIFY: Independently execute formerly stranded whole units via actual Migration after terminal NFT burn/native budget exhaustion; challenge synchronization, attributed vs unbooked gons, partial/full retirement, repeated/new claims, exact output/inventory adjustment, no duplicate claim or compensation, fixed destinations, guard and rollback. Reconcile current source/artifact/spec/fork evidence and unchanged ordinary dependencies; no redundant large suites. Retain blocked earlier liquidation and full-plan gates.\nSTOP WHEN: R1 and preserved bounds have a decisive independent execution-based verdict, complete artifact/report/cleanup and no pending runtime."
+    },
+    {
+      "id": "commit-nft-recovery",
+      "label": "Commit verified bounded NFT recovery",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "verify-recovery-accrual"
+      ],
+      "task_summary": "Bind accepted recovery source and tests, then commit only that local increment",
+      "prompt": "TASK: Deliver the independently verified bounded recovery increment as one local commit.\nDELIVERABLE: migration/nft-recovery/commit/source-manifest.json and receipt.md plus exact scoped source/test commit.\nSCOPE: Read and follow /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-commit-brief.md completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery. No public actions, push, merge, source/test edits, caches removal or duplicate suites. Preserve historical evidence and every unrelated change.\nVERIFY: Follow the brief numbered obligations in order: inspect parent/index and complete candidate diff; bind each exact source/test; preserve baseline; stage exact paths; inspect staged diff; commit with repository convention and one required coauthor; record actual blob equality and protected refs. Stop before commit if any binding fails.\nSTOP WHEN: Receipt and verified source commit exist, or a concrete provenance conflict is reported. No pending runtime."
+    },
+    {
+      "id": "verify-nft-recovery-commit",
+      "label": "Independently verify recovery commit",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-nft-recovery"
+      ],
+      "task_summary": "Independently match recovery commit blobs to accepted execution and preservation",
+      "prompt": "TASK: Independently verify the bounded recovery source commit.\nDELIVERABLE: migration/nft-recovery/commit/verification.md and supporting evidence only there.\nSCOPE: Read and follow /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase07-recovery-commit-brief.md completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-07-recovery on work/dtf-migration-phase-07-recovery. No public actions, push, merge, source/test edits, caches removal or duplicate suites. Preserve historical evidence and every unrelated change. Do not create a commit.\nVERIFY: Compare actual parent, exact paths/modes/blobs, current bytes and accepted independent source/execution identities; inspect preservation of other changes/index/main/integration refs and message trailer. Assess provenance qualifications yourself; do not merely copy producer flags. If no commit exists report needs-fix.\nSTOP WHEN: confirmed or needs-fix report is complete with concrete evidence and no pending runtime."
+    }
+  ]
+}

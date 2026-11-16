@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/python3",
+    "-B",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification/prove.py"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex",
+  "start": "2026-11-13T09:37:14.458Z",
+  "stop": "2026-11-13T09:37:14.561Z",
+  "exitCode": 0,
+  "pythonVersion": "Python 3.15.2 (main, Oct 25 2026, 16:57:51) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "captureRuntime": "Bun 1.4.4",
+  "stdout": {
+    "artifact": "proof.json",
+    "bytes": 3313903,
+    "sha256": "6840c3dd337213e5fb7569728cdd1304df178bc5a5a5f3e1a1cbdb2d0794548b"
+  },
+  "stderr": {
+    "text": "",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source": {
+    "path": "prove.py",
+    "bytes": 14246,
+    "sha256": "773f6e333d6ad5b53e70266521ead43f4707820aadbdf4ea194dece5e539f638"
+  },
+  "inputs": {
+    "path": "inputs.json",
+    "bytes": 2381,
+    "sha256": "4522c60d5100134b116e58edd2b07a0c8f8b7176632893e6e8ad530b89374196"
+  },
+  "publication": "Captured stdout was published byte-for-byte through apply_patch; the verifier program writes no files.",
+  "priorAttempt": "attempts.json",
+  "staticDiagnostics": "basedpyright and Biome language servers unavailable; no installation attempted"
+}

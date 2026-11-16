@@ -1,0 +1,147 @@
+{
+  "date": "2026-11-13T09:40:18.618Z",
+  "status": "complete-and-stopped",
+  "verdict": "confirmed",
+  "ownedWritesRoot": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/recipient-flow-review-verification",
+  "inputPreservation": [
+    {
+      "name": "worksheet",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/observed-recipient-flow-review-20261113.json",
+      "expected": {
+        "bytes": 902872,
+        "sha256": "ed8474ac3454453697308ce82adffebb8bbfe9d346050973e0753a46cf6af39e"
+      },
+      "actual": {
+        "bytes": 902872,
+        "sha256": "ed8474ac3454453697308ce82adffebb8bbfe9d346050973e0753a46cf6af39e"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "archive28",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/archive.json",
+      "expected": {
+        "bytes": 3848804,
+        "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b"
+      },
+      "actual": {
+        "bytes": 3848804,
+        "sha256": "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "recon28",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/actual/reconciliation.json",
+      "expected": {
+        "bytes": 251139,
+        "sha256": "c1717f1e35984ff03aeddd16c6a7571439e8066f4160fdeec2f7f844ced1577e"
+      },
+      "actual": {
+        "bytes": 251139,
+        "sha256": "c1717f1e35984ff03aeddd16c6a7571439e8066f4160fdeec2f7f844ced1577e"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "archive30",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+      "expected": {
+        "bytes": 5917231,
+        "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+      },
+      "actual": {
+        "bytes": 5917231,
+        "sha256": "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "recon30",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/reconciliation.json",
+      "expected": {
+        "bytes": 841408,
+        "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+      },
+      "actual": {
+        "bytes": 841408,
+        "sha256": "7b900c143f64446301f8385f81eaa0daaada81a06d4dd0468de4b38dcd5d90d2"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "report28",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/report.md",
+      "expected": {
+        "bytes": 20647,
+        "sha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa"
+      },
+      "actual": {
+        "bytes": 20647,
+        "sha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "report30",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/report.md",
+      "expected": {
+        "bytes": 13625,
+        "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50"
+      },
+      "actual": {
+        "bytes": 13625,
+        "sha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50"
+      },
+      "unchanged": true
+    },
+    {
+      "name": "plan",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "expected": {
+        "bytes": 79305,
+        "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+      },
+      "actual": {
+        "bytes": 79305,
+        "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d"
+      },
+      "unchanged": true
+    }
+  ],
+  "executions": [
+    {
+      "purpose": "initial proof with overly strict context-list order",
+      "start": "2026-11-13T09:36:29.522Z",
+      "stop": "2026-11-13T09:36:29.634Z",
+      "exitCode": 1,
+      "completed": true
+    },
+    {
+      "purpose": "complete corrected proof",
+      "start": "2026-11-13T09:37:14.458Z",
+      "stop": "2026-11-13T09:37:14.561Z",
+      "exitCode": 0,
+      "completed": true
+    },
+    {
+      "purpose": "python version identification",
+      "completed": true,
+      "exitCode": 0,
+      "output": "Python 3.15.2 (main, Oct 25 2026, 16:57:51) [Clang 21.0.0 (clang-2100.3.34.2)]"
+    }
+  ],
+  "pendingOwnedProcesses": [],
+  "backgroundTasksStarted": 0,
+  "monitorsStarted": 0,
+  "serversStarted": 0,
+  "temporaryResourcesCreated": [],
+  "deletions": [],
+  "networkOrRpcCalls": 0,
+  "oldGateReplays": 0,
+  "gitOperations": 0,
+  "sourceOrEvidenceEdits": 0,
+  "partialPhase29Inputs": 0,
+  "staticDiagnostics": "Biome and basedpyright unavailable. No installation, static-pass claim, or workaround.",
+  "publication": "Only manifest.json and seal.json remain to be added; seal is published last. No review artifact edit follows the seal."
+}

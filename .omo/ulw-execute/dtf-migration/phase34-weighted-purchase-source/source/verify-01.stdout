@@ -1,0 +1,22 @@
+{
+  "status": "confirmed-producer-reproduction-not-independent-verdict",
+  "proofBytes": 6336233,
+  "proofSha256": "e5a0aafdc3a509e40708c5d4ae6ff565ad40178c059b43972b1bd7705426ea98",
+  "counts": {
+    "assertions": 41822,
+    "bindings": 7379,
+    "receiptLogs": 1746,
+    "weightedContext": 43,
+    "direct": 39,
+    "indirectUntouched": 4,
+    "earlierUntouched": 16,
+    "positiveGrossComponents": 40,
+    "affirmativeGrossZeros": 38,
+    "originalTransferWitnesses": 498,
+    "originalS006Witnesses": 23
+  },
+  "reconstructedSourceBodies": 99,
+  "exactHistoricalDirectRuntimeComparisons": 39,
+  "newNetworkRequests": 0,
+  "pendingOwnedOperations": 0
+}

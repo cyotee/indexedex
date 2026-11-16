@@ -1,0 +1,9 @@
+{
+  "scope": "One bounded public source lookup for the retained E-S exchange-facet address; no chain query or source admission",
+  "url": "https://sourcify.dev/server/v2/contract/4663/0x461d94f18afef2c82bbbffbd63270e37c322da07?fields=all",
+  "httpStatus": 404,
+  "body": "{\"match\":null,\"creationMatch\":null,\"runtimeMatch\":null,\"chainId\":\"4663\",\"address\":\"0x461D94F18afEF2C82BBbfFBd63270E37c322DA07\"}",
+  "bodySha256": "9b30b35ac9317e84858be766c06802fec66fcd9f02d34a168d7e0135ffe049bc",
+  "result": "Public package returned404/no match. The inspected earlier-CP source archive also has no entry for this facet. Do not infer its fee-oracle storage layout from another contract or declare no source exists anywhere.",
+  "unchanged": "No holder found, no balance/supply absence conclusion, no E-S admission or source-state change."
+}

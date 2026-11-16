@@ -1,0 +1,29 @@
+{
+  "key": "dtf-migration-phase30-recovery-receipts-delivery",
+  "name": "Migration DETF phase 30: recovery receipt collector immutable delivery",
+  "nodes": [
+    {
+      "id": "commit-recovery-receipts",
+      "label": "Commit verified recovery receipt collector",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "task_summary": "Commit the eight verified collector paths with exact source and evidence preservation",
+      "prompt": "TASK: Complete the scoped local delivery in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-commit-source.json. Read both entire files and required actual records first. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts soleparent07d54b9a3d20d98aee24e75235bbf16b650a8028; exactly8modified sourcepaths, no evidence/data. DELIVERABLE: Actual single commit plus /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/receipt.md, source-manifest.json and new support. VERIFY: Full source/diff, current/index/tested rawbytes/lengths/qualifiedmodes, stagedwhitespace; capture originalper-entry evidence/inputs/artifactlinks/usedartifacts/refs/foreignindexes beforestaging; repo-style commit exactlyone coauthor; actualparent/all70frozen identities/immutablewhitespace/cleantracked-index/everyoriginal preservationrow. No sourcefixes, types/tests/collector/oracle/Forge/secret/network replay, originalevidence/input edits, config/install/historyrewrite/merge/push or phase29 work. Preserve JSON property-order difference, parsedhistoricalpolicy projection, failures and economic/source/gas/P1 limits. STOP WHEN: Complete actual8pathcommit and exactreceipt/manifest/cleanup with no pendingoperation, or preciseblocker withoutcommit."
+    },
+    {
+      "id": "audit-recovery-receipts",
+      "label": "Audit immutable recovery collector delivery",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-recovery-receipts"
+      ],
+      "task_summary": "Independently audit eight-file delivery against tested bytes and actual stopped evidence",
+      "prompt": "TASK: Independently audit actual completed delivery under /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase30-recovery-receipts-commit-source.json. Read both completely plus required actual receipts/manifests/commands/seals. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts; own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/commit/verification.md and new audit-support. DELIVERABLE: Complete confirmed/needs-fix immutable audit. VERIFY: Soleparent07d54b9a3d20d98aee24e75235bbf16b650a8028,eightmodifiedpaths,noadds,coauthor,current-index-committed-tested bytes/lengths/modes,all70sourcebindings,fullimmutablewhitespace. Authenticate172test/319record/1278response proof and all raw order/projection/failure qualifications without replay. Reproduce every originalper-entry preservationrow from originalbaselines, rawbytes,modes,linktargets; do not substituteaggregate/newermanifest or inventuniversalpreservation. No sourcefix/Gitwrite/evidence-edit/config/install/test/type/collector/oracle/Forge/secret/network replay or phase29retry. STOP WHEN: Complete bounded immutable report/proof and stoppedcleanup, not a promise or pendingoperation; no fullplan/source/financialapproval."
+    }
+  ]
+}

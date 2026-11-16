@@ -1,0 +1,21 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/verify.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+  "pid": 3394,
+  "startedAt": "2026-11-13T12:07:37.343Z",
+  "finishedAt": "2026-11-13T12:07:37.933Z",
+  "exit": 0,
+  "stdoutBytes": 656,
+  "stdoutSha256": "32051f66730c20a659d27c0a80fcda5a3b79b8c0d5c5ed84cfab30cab81da743",
+  "stderrBytes": 0,
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrInline": "",
+  "stdout": {
+    "path": "verify-01.stdout",
+    "bytes": 656,
+    "sha256": "32051f66730c20a659d27c0a80fcda5a3b79b8c0d5c5ed84cfab30cab81da743"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "key": "dtf-migration-phase08-operator-v1",
+  "name": "Migration DETF phase 8: resumable local operator",
+  "nodes": [
+    {
+      "id": "operator-preparation",
+      "label": "Implement deterministic operator preparation",
+      "category": "deep-low",
+      "task_summary": "Build typed preparation, deterministic evidence domains and quote validation",
+      "prompt": "TASK: Implement the preparation and read-only command domain for the bounded operator CLI.\nDELIVERABLE: Real scripts/schemas/neighboring tests plus /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/preparation/report.md and interface.md documenting exact typed execution payloads.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md and phase08-operator-cli-contract.md completely, original plan task9 and repository rules/skills. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator on work/dtf-migration-phase-08-operator at recovery base421072a7630a0d3d47a6f36e1062d9eae98c93e2 after root verifies setup and independent commit acceptance. Edit only the brief-owned script/runbook/evidence paths. No production/test-base/config/dependency edits, public broadcast, source commit, push or merge. Unsupported categories remain explicit blocked dispositions, never invented credit or no-op success. Keep source/evidence bindings and cleanup receipts. Exact CLI is fixed before this lane.\nVERIFY: Deterministic native-integer datasets, full replacement records, separate independent/NFT configs, actual snapshot quote inputs and provenance validation; reject missing inputs and unsupported categories without forging payloads. Follow existing test layout and run applicable script checks once.\nSTOP WHEN: Working preparation/validation commands, typed stage payload contract and evidence exist, or an exact source blocker is reported; no pending runtime."
+    },
+    {
+      "id": "operator-execution",
+      "label": "Implement durable transaction execution and resume",
+      "category": "deep-high",
+      "dependsOn": [
+        "operator-preparation"
+      ],
+      "task_summary": "Build guarded stage commands and durable mined-transaction reconciliation",
+      "prompt": "TASK: Implement all admitted execution stages and durable recovery in the actual CLI.\nDELIVERABLE: Complete CLI/journal and Foundry stages with /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/execution/report.md, no stubs.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md and phase08-operator-cli-contract.md completely, original plan task9 and repository rules/skills. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator on work/dtf-migration-phase-08-operator at recovery base421072a7630a0d3d47a6f36e1062d9eae98c93e2 after root verifies setup and independent commit acceptance. Edit only the brief-owned script/runbook/evidence paths. No production/test-base/config/dependency edits, public broadcast, source commit, push or merge. Unsupported categories remain explicit blocked dispositions, never invented credit or no-op success. Keep source/evidence bindings and cleanup receipts. Exact CLI is fixed before this lane. Read preparation/report.md and interface.md from /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator; verify the interface is executable before proceeding.\nVERIFY: Actual production registry deployment and fixed stages; simulation default, exact local identity, no inherited execution mode on resume; persist intent before send; reconcile nonce/transaction/canonical receipt/onchain state before resend; reject changed domains, preserve completed work on rebatching, no arbitrary target/calldata. Add focused tests and actual local proof appropriate to this implementation; event-based bounded waits only.\nSTOP WHEN: All admitted commands execute, interruption-safe journal integrates and command evidence/cleanup are complete; report concrete defects outside owned scope."
+    },
+    {
+      "id": "operator-rehearsal",
+      "label": "Execute pinned local operator rehearsal",
+      "category": "deep-high",
+      "dependsOn": [
+        "operator-execution"
+      ],
+      "task_summary": "Prove real mined interruptions, fresh-process resume and no duplicate issuance",
+      "prompt": "TASK: Execute the exact fixed local rehearsal CLI and correct in-scope script defects.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/rehearsal/report.md with actual commands/receipts, deterministic outputs, source bindings, gas and cleanup; complete migration/operator-runbook.md.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md and phase08-operator-cli-contract.md completely, original plan task9 and repository rules/skills. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator on work/dtf-migration-phase-08-operator at recovery base421072a7630a0d3d47a6f36e1062d9eae98c93e2 after root verifies setup and independent commit acceptance. Edit only the brief-owned script/runbook/evidence paths. No production/test-base/config/dependency edits, public broadcast, source commit, push or merge. Unsupported categories remain explicit blocked dispositions, never invented credit or no-op success. Keep source/evidence bindings and cleanup receipts. Exact CLI is fixed before this lane. Read predecessor reports and actual scripts.\nVERIFY: Run fixed rehearse invocation at historical pin with loopback18560. Genuine registry deployment, funding/capture/config replacement, independent issuance, actual NFT surrender, activation, admitted recovery including accrued attributed value. Interrupt after mining before checkpoint for donation and issuance; fresh-process resume proves same transaction/nonce/bond and no doubled totals. Unclaimed entitlement creates no supply. Execute wrong domain and reordered remaining work negatives. No mocks of the asserted journal/RPC/receipt behavior, no sleeps or polling-based test luck. Preserve failures and rerun only affected changed checks.\nSTOP WHEN: Exact local rehearsal evidence and cleanup are complete, or precise unresolved defect is reported; no public operations."
+    },
+    {
+      "id": "verify-operator",
+      "label": "Independently verify operator and resume",
+      "category": "deep-high",
+      "dependsOn": [
+        "operator-rehearsal"
+      ],
+      "task_summary": "Independently execute interruption recovery and audit operator scope and evidence",
+      "prompt": "TASK: Independently verify the bounded operator implementation and real resume behavior.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/report.md with AdversarialVerify confirmed or needs-fix, exact exercised coverage, limits and evidence.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-execution-brief.md and phase08-operator-cli-contract.md completely, original plan task9 and repository rules/skills. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator on work/dtf-migration-phase-08-operator at recovery base421072a7630a0d3d47a6f36e1062d9eae98c93e2 after root verifies setup and independent commit acceptance. Edit only the brief-owned script/runbook/evidence paths. No production/test-base/config/dependency edits, public broadcast, source commit, push or merge. Unsupported categories remain explicit blocked dispositions, never invented credit or no-op success. Keep source/evidence bindings and cleanup receipts. Exact CLI is fixed before this lane. Write only verification evidence and independent witness under /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator/docs/incidents/2026-09-16-dtf-recovery/migration/operator/verification/. Read the complete predecessor reports and relevant actual code; no source fixes or commits.\nVERIFY: Independently execute both mined-before-checkpoint interruption/resume scenarios using actual CLI in a fresh owned local run; inspect preparation determinism, quote/provenance domains, no duplicates, unclaimed supply, wrong-domain/reordering cases, actual fixed destinations and public-mode rejection. Match source/artifact/transaction identities and preserved ordinary code. Confirm unsupported categories remain blocked and full task9 is not falsely accepted. Use exact event signals and bounded timeouts.\nSTOP WHEN: Concrete independent verdict and runtime cleanup receipts exist, no pending owned process."
+    },
+    {
+      "id": "commit-bounded-operator",
+      "label": "Commit verified bounded operator increment",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "verify-operator"
+      ],
+      "task_summary": "Bind accepted operator sources and runbook then create one scoped local commit",
+      "prompt": "TASK: Deliver the independently verified bounded operator source increment as one local commit.\nDELIVERABLE: incident migration/operator/commit/source-manifest.json, receipt.md and exact scoped source/test/runbook commit.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-commit-brief.md completely and follow it. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator. No source/test edits, unrelated changes, duplicate accepted suites, public operations, push or merge. Historical reports and runtime evidence remain uncommitted and unchanged. Deployment gas excess and all original category gates remain open.\nVERIFY: Inspect parent/index/whole diff, derive exact accepted candidate set, check all source/doc identities, capture preservation baseline, stage only exact paths, inspect staged diff, commit with convention and one required coauthor, prove committed bytes and protected refs. Missing binding or foreign-index conflict means no commit and exact blocker.\nSTOP WHEN: Complete verified delivery receipt exists or concrete conflict is reported; no pending runtime."
+    },
+    {
+      "id": "verify-operator-commit",
+      "label": "Independently verify operator delivery",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-bounded-operator"
+      ],
+      "task_summary": "Independently compare committed operator bytes and preservation against accepted execution",
+      "prompt": "TASK: Independently verify the scoped operator source commit.\nDELIVERABLE: incident migration/operator/commit/verification.md and supporting audit evidence only there.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase08-operator-commit-brief.md completely and follow it. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator. No source/test edits, unrelated changes, duplicate accepted suites, public operations, push or merge. Historical reports and runtime evidence remain uncommitted and unchanged. Deployment gas excess and all original category gates remain open. No commit.\nVERIFY: Independently inspect exact actual commit paths,modes,blobs,parent,trailer,accepted final-source/runbook binding and preserved noncandidate index,prior evidence,unrelated changes and protected refs. Retain local deployment gas/full-category limits. Do not copy producer pass flags or rerun accepted suites.\nSTOP WHEN: confirmed or needs-fix with concrete evidence and no pending owned runtime."
+    }
+  ]
+}

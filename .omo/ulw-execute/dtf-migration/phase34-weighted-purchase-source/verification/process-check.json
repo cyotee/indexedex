@@ -1,0 +1,37 @@
+{
+  "executable": "/bin/ps",
+  "argv": [
+    "-axo",
+    "pid=,ppid=,comm="
+  ],
+  "pid": 14303,
+  "startedAt": "2026-11-13T12:27:12.525Z",
+  "finishedAt": "2026-11-13T12:27:12.555Z",
+  "exit": 0,
+  "stdoutBytes": 89257,
+  "stdoutSha256": "466e8f37a363287db3206ac0b798b74c1feaabfc63d6c455645f444b71e00373",
+  "stderrBytes": 0,
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrInline": "",
+  "recordedChildPids": [
+    1876,
+    3389,
+    3390,
+    3391,
+    3392,
+    3394,
+    5753,
+    10033,
+    10355,
+    10635,
+    11012,
+    11432,
+    11109,
+    11110,
+    11111,
+    11926
+  ],
+  "remainingRecordedChildPids": [],
+  "inspectionChildExited": true,
+  "qualification": "Snapshot checks recorded child PIDs; command receipts establish actual exits. No universal unknown-process provenance claim."
+}

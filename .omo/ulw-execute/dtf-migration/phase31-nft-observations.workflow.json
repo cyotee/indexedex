@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase31-nft-observations",
+  "name": "Migration DETF phase 31: pinned named NFT state observations",
+  "nodes": [
+    {
+      "id": "observe-known-nfts",
+      "label": "Observe pinned legacy NFT state",
+      "category": "deep-low",
+      "task_summary": "Read current pinned ownership and source position fields for all 59 known legacy NFTs",
+      "prompt": "TASK: Execute the complete read-only named NFT state-refresh in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations-brief.md. Read that entire brief and required current/archived source interfaces and evidence before constructing calls. SCOPE: Read-only cumulative source1694e68a and existing archived evidence; write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/. No production changes, Gitwrites, installs, fulltests/Forge, signing/governance, trace/ranges/otherprovider or phase29retry. DELIVERABLE: Complete59row original-reference-to-current-state observation, fixed numericpin/header, exact view ABI/units/code/routing/raw requests/responses/failures and reproducible script/report/manifests/stoppedcleanup/seal. VERIFY: Authenticate original43+16purchase population and chain4663, chooseoneactual latestpin >=108944663 and useit for everyread with endcanonicalcheck. Actual ownerOf/state getters and currentroute/runtime identity, exact weighted principal versus earlierLPunits, recognizedabsence versus arbitraryerrors; originalwallet/eligibility/credit remainseparate. Preserve all59rows andunknowns, no inferredzero or transferofentitlement. STOP WHEN: Actual complete stopped bounded result/seal or preciseunavailableidentity/data report, no status-onlyfinal or pendingruntime."
+    },
+    {
+      "id": "verify-known-nft-state",
+      "label": "Verify pinned NFT observations",
+      "category": "deep-low",
+      "dependsOn": [
+        "observe-known-nfts"
+      ],
+      "task_summary": "Independently verify all 59 named NFT observations at the same numeric source-state pin",
+      "prompt": "TASK: Independently verify the complete stopped NFT state observation described in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations-brief.md. Read entirebrief and actualproducer report/source/rawdata/manifests/cleanup/seal. SCOPE: Own only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/; no source/producer edits or livewrite/signing, no phase29retry/providerchange/trace/ranges/install/Forge/fullsuite. DELIVERABLE: Full confirmed/needs-fix report, independently acquired same-pin observations for all59records, exact proof/input/code/ABI bindings, limits and stoppedcleanup/seal. VERIFY: Exact current/archivedgetter schemas and nativeunits, numericblock/hash/timestamp, source/facetidentity, every originalrecord/owner/position/error and canonicalendcheck. Derive expectedrecords and interpretation independently; do not useproducer output as soleoracle. Recognizednonexistence is not genericRPCerror; unknowns are notzero, ownerchanges do notmovecompensation, remainingprincipal is notE0/D0/credit. Preserve no-census/finality/operational/source limits. STOP WHEN: Actual complete bounded59row verdict and stoppedproof/cleanup with no pendingoperations, never launched-command completion or financialapproval."
+    }
+  ]
+}

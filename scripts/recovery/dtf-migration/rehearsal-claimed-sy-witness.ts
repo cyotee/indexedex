@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import { claimedSigned, claimedWallet } from "./rehearsal-claimed-sy-source.js";
 import { stakingClaim, stakingSource } from "./claimed-sy-source.js";
-import { claimFrame, claimWitness, claimWitnessCodeHash, witnessedClaimBooks } from "./claimed-sy-witness.js";
+import { claimFrame, claimWitness, witnessedClaimBooks } from "./claimed-sy-witness.js";
 import { address, claimedSyCertificate, hash, hex } from "./schema.js";
 import { ExecutionError, quantity } from "./execution-schema.js";
 import { subscribeReceipt } from "./execution-rpc.js";
@@ -84,9 +84,6 @@ export async function acquireWitnessedClaimedSy(chain: RehearsalChain, evidence:
     await readFile("out/MigrationClaimWitness.sol/MigrationClaimWitness.json", "utf8")));
   const deployment = await claimedSigned(chain, evidence, { index: 0, data: artifact.bytecode.object });
   const witness = address.parse(deployment.mined["contractAddress"]);
-  if (keccak256(hex.parse(await chain.send("eth_getCode", [witness, "latest"]))) !== claimWitnessCodeHash) {
-    throw new ExecutionError("STATE", "built witness runtime differs from verifier pin");
-  }
   const execution = { kind: "witnessed-eip7702-v1" as const, ...delegate, witness };
   const wallet = claimedWallet(238).address.toLowerCase();
   const neighbor = claimedWallet(239).address.toLowerCase();

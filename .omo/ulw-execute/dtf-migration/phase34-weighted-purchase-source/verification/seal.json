@@ -1,0 +1,101 @@
+{
+  "version": "phase34-independent-stopped-final-seal-v1",
+  "verdict": "confirmed",
+  "status": "complete-bounded-39-direct-source-observation-verification",
+  "publishedAt": "2026-11-13T12:28:52.019Z",
+  "ownedDirectory": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification",
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 3455,
+    "sha256": "3b9733f710ed31e89c239e973196f42e8957126798275176556accebcfd557be"
+  },
+  "bindings": [
+    {
+      "path": "artifact-checks.json",
+      "bytes": 3961,
+      "sha256": "4f04ffaf517f2a3913f39c716bd47de1497fcae9a839d8de66a8cb24da88d3a2"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 2634,
+      "sha256": "57113f2b274372d76e249df2870fcfa2e56f9eab4b550a014a6f8533efce9900"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 2987626,
+      "sha256": "30c8423ec144825411b28992f151f36f5a7094f504a002cd36bb807da58dab33"
+    },
+    {
+      "path": "process-check.json",
+      "bytes": 850,
+      "sha256": "0892079b1f3c79257bc084266b415ff459112552b8ffd6a0cffb0557020ae259"
+    },
+    {
+      "path": "proof-04.command.json",
+      "bytes": 1205,
+      "sha256": "52b918be5bcc2cef2e9a72e2346081183c3529e218fd33df76bc86a6fd9f11a8"
+    },
+    {
+      "path": "proof.json",
+      "bytes": 6275016,
+      "sha256": "66351a0b9218a5db2cca5f99409c75414772d7ad161973f8e60dfbf57954ce2c"
+    },
+    {
+      "path": "report.md",
+      "bytes": 29120,
+      "sha256": "7ce910b5d92232da9858905533c0739bbf43888542c0fe1f9917f83e20adf3ca"
+    },
+    {
+      "path": "source-excerpts.json",
+      "bytes": 84164,
+      "sha256": "34aa60fcc82d24e23c5d4927341ed87fb1d93f7520d8e1fa5669601e67e23e40"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 2190,
+      "sha256": "b888245c53845084d956f5f08f45480dbc7e91a672f3b29af08ff1f5cf19f3f3"
+    }
+  ],
+  "manifestFiles": 22,
+  "decodedEntity": {
+    "bytes": 1636793,
+    "sha256": "adb0729a4d782cef809684171914caa90e8dcc4357446dfef18741f3d7256e27"
+  },
+  "sourceContentsAuthenticated": 99,
+  "historicalCompleteRuntimeComparisons": 39,
+  "weightedContext": 43,
+  "directRows": 39,
+  "indirectUnchanged": 4,
+  "earlierUnchanged": 16,
+  "positiveGrossCallerTokenComponents": 40,
+  "affirmativeOtherTokenGrossZeros": 38,
+  "approvedOriginalCostRows": 0,
+  "firstFullBookExtraDtf18": "362893857600000000000",
+  "firstFullBookExtraApprovedOriginalCostDtf18": null,
+  "runtimeKeccak256": "0x2676830f3b489088787c4ecc21803326a7909fbaaf9fd72994ec62b111bf62f8",
+  "checks": {
+    "assertions": 197939,
+    "bindings": 7731,
+    "uniqueFinalInputPreservation": 6780,
+    "changedInputs": 0,
+    "proofExit": 0,
+    "finalScriptSyntaxExits": [
+      0,
+      0,
+      0
+    ],
+    "publishedProofEqualsActualStdout": true,
+    "publishedProcessStreamEqualsActualStdout": true,
+    "producerInventoryEqualsSealedInventory": true,
+    "retainedFailedVerifierAttempts": 2
+  },
+  "needsFixFindings": [],
+  "newNetworkRequests": 0,
+  "pendingOwnedOperations": 0,
+  "stopped": true,
+  "remainingRecordedChildPids": [],
+  "retainedFailure": "Phase32 first243 raw response entities/outcomes unavailable; not repaired or reconstructed. Independent failed assumptions retained in command records and exact source snapshots.",
+  "limits": "Proposed gross ERC20 payment observations and bounded source roles only. No approved original NFT cost/E0/D0/C0, net/native refund closure, lifetime history, eligibility, universal transitive historical execution, G2/phase29 closure, financial/source-wide/operational/full-plan approval.",
+  "finalPublication": true,
+  "noVerifierWriteFollows": true
+}

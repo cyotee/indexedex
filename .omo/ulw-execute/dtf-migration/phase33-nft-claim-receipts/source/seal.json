@@ -1,0 +1,70 @@
+{
+  "version": "phase33-named-claims-producer-v1",
+  "publishedAt": "2026-11-13T11:25:47.356Z",
+  "status": "COMPLETE-STOPPED-BOUNDED-PRODUCER",
+  "bindings": [
+    {
+      "path": "report.md",
+      "bytes": 24850,
+      "sha256": "26a34556d1f878da998fcc6d9aefe580b11ba25b5bc6a31338f922d524b09ece"
+    },
+    {
+      "path": "proof.json",
+      "bytes": 62328,
+      "sha256": "9a2c70af6b99867332f101849cb03a8e9ae601eec04c4cfc887502d533c39aee"
+    },
+    {
+      "path": "reconciliation.json",
+      "bytes": 352372,
+      "sha256": "352a4590726bbcc0b90b26260ba2cb790e58122d66224a59f739725ccd574058"
+    },
+    {
+      "path": "archive.json",
+      "bytes": 371005,
+      "sha256": "526241ff35c8f13d82f791eb04ccd258638cd6f74c4696ed0b740f5f528c0b23"
+    },
+    {
+      "path": "schema-bindings.json",
+      "bytes": 106757,
+      "sha256": "fcdd62303a7c82ada2ebf7bef3589877be2194dbdfbfa9d87eae8d0d9950e328"
+    },
+    {
+      "path": "inputs.json",
+      "bytes": 19061,
+      "sha256": "72d02595debb1640653e2cd2d5f9985c8f9486db37bd13341e63129075a9c297"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 1492389,
+      "sha256": "d4c822c7e7122f7c5db3e7e5e7da71ed6ab6711cdb18f4d9470ead0b88f72a17"
+    },
+    {
+      "path": "http-manifest.json",
+      "bytes": 1817713,
+      "sha256": "3403664efe5d64fbab477fc9a4ab71732dce4429dcb575547d89316408ac79a2"
+    },
+    {
+      "path": "references.json",
+      "bytes": 6769,
+      "sha256": "9df2311d96d61ed4b42924e82e9ebe838196145be48095f423d6c9fcd99d789f"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 14590,
+      "sha256": "015c002eb405c5831f31fcd8d5002650e844c189ce444b93f39df3d259f65c76"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 124315,
+      "sha256": "798336e0f7ab521067e6b6342f3fb65493c3c290bb69db69f5ea5861657b03af"
+    }
+  ],
+  "references": 23,
+  "reusedReceipts": 7,
+  "newReceipts": 16,
+  "pendingOperationsAfterPublisherExit": 0,
+  "independentLiveVerification": "separate-role-not-claimed",
+  "finalArtifactWrite": true,
+  "publicationPid": 79553,
+  "scope": "named evidence only; no census, source or financial authority"
+}

@@ -1,0 +1,57 @@
+{
+  "executable": "/opt/homebrew/bin/node",
+  "argv": [
+    "--check",
+    "acquire.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification",
+  "pid": 85385,
+  "startedAt": "2026-11-13T11:36:06.752Z",
+  "stoppedAt": "2026-11-13T11:36:06.794Z",
+  "exitCode": 0,
+  "signal": null,
+  "streams": {
+    "stdout": {
+      "path": "syntax-final-acquire.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "syntax-final-acquire.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "source": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/evidence.mjs",
+      "bytes": 11183,
+      "sha256": "e92b16242b1d996fd71df2e6b788af113bbcc8b5e6fdbd56b2d7d8236b983f79"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/acquire.mjs",
+      "bytes": 5716,
+      "sha256": "7f0051b9a2ca18be5bbf6d1bc5dec0d68b084280f9452742747b613959cd8ce4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/record.mjs",
+      "bytes": 2389,
+      "sha256": "d0d680863c386bccc9bba68409e3cd9d55d7c2e8e0f4fdc8c0f29c713871f9bd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/semantics.mjs",
+      "bytes": 4371,
+      "sha256": "66d8aef76353246b1bb2c4f09858e132d561f78c0d0e11ccd90a348459d715de"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/proof.mjs",
+      "bytes": 16233,
+      "sha256": "b8f8ddda254a8121c9f187d03b409ec5834f33ccc02beaf4abfd248cd9b434f9"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/publish.mjs",
+      "bytes": 5937,
+      "sha256": "df3b33c5a9f1ac07bc9dc314e68713be7751abfac8285d9e11fcb5e54511d052"
+    }
+  ]
+}

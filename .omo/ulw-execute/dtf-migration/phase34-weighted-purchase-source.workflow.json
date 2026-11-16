@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase34-weighted-purchase-source",
+  "name": "Migration DETF phase 34: recovered weighted purchase source attribution",
+  "nodes": [
+    {
+      "id": "reconcile-recovered-weighted-inputs",
+      "label": "Reconcile recovered weighted purchase source",
+      "category": "deep-low",
+      "task_summary": "Bind recovered facet source and reassess paid-input roles for the 39 direct weighted purchases",
+      "prompt": "TASK: Complete the read-only G1 follow-up in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source-brief.md. Read the entire brief, new captured package, exact phase32 handoff and relevant accepted evidence first. SCOPE: Write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source/. No old/source/production edits, commits, compilers/full gates, signing, trace/range/provider workarounds or G2/phase29 retry. DELIVERABLE: Authenticated recovered source/ABI/runtime and all 39 direct-row payment-role dispositions, proposed purchase-time quantities only where supported, precise unknowns, proof/report/manifests and stopped cleanup/seal. VERIFY: Decode exact captured bytes, recompute all99 metadata source hashes, compare published runtime to accepted historical bytes, inspect actual facet/target/common semantics and every calldata/receipt witness. Special-case the actual first-full-book extra DTF payment: do not force its component to zero or promote inventory/protocol capital into approved original NFT cost. Affirmative zeros need source and complete call/receipt support. Distinguish current owner, source claims, native/refund/net-capital ambiguity and financial approval. Keep four indirect rows and earlier proposals untouched; retain initial243-response loss. Prefer offline work; persist any narrowly necessary permitted historical read before parsing. STOP WHEN: Complete bounded direct-row source-supported observations with justified values or gaps and no pending operation, never an allocation or status-only promise."
+    },
+    {
+      "id": "verify-recovered-weighted-inputs",
+      "label": "Verify recovered weighted purchase attribution",
+      "category": "deep-low",
+      "dependsOn": [
+        "reconcile-recovered-weighted-inputs"
+      ],
+      "task_summary": "Independently verify recovered source binding and each direct weighted input/zero/role conclusion",
+      "prompt": "TASK: Independently verify the actual stopped follow-up under /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source-brief.md. Read the whole brief, captured package, source report/code/proof/manifests/cleanup/seal and relevant accepted historical observations. SCOPE: Write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/. No producer/source fixes, Git writes, refetch/replay for counts, production changes, compilers, signing, traces, provider changes or G2/phase29 work. DELIVERABLE: Complete confirmed/needs-fix report, independent all-row proof, actual source/input bindings, stopped cleanup and final seal. VERIFY: Reconstruct source hashes, exact historical runtime/ABI correspondence and all39 direct references, amounts, zeros, first-full-book and inventory/payment roles independently of producer conclusions. Receipt totals or leading calldata alone are not original-cost authority. Retain unknown native/net/refund/history facts, old flags, four unresolved indirect purchases, unchanged earlier proposals and financial/source/operational limits. Any unsupported attribution needs an exact row/source location and correction direction, not a silent edit. STOP WHEN: Complete bounded verdict with actual stopped evidence, not forced numeric closure or a pending-operation handoff."
+    }
+  ]
+}

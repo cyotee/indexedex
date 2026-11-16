@@ -1,0 +1,42 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "-e",
+    "const m=await import(\"./evidence.mjs\");const s=await m.intake();console.log(JSON.stringify({producer:s.producerBindings.length,bindings:s.bindings.length,rows:s.rows.length,refs:s.refs.length}));"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification",
+  "pid": 82103,
+  "startedAt": "2026-11-13T11:30:14.705Z",
+  "stoppedAt": "2026-11-13T11:30:15.190Z",
+  "exitCode": 1,
+  "signal": null,
+  "streams": {
+    "stdout": {
+      "path": "intake-01.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "intake-01.stderr",
+      "bytes": 982,
+      "sha256": "50f661aba66fad4758e699931f7adfa38cd28bafe7076d502b6e7f332cda1fb0"
+    }
+  },
+  "source": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/evidence.mjs",
+      "bytes": 10957,
+      "sha256": "0dd7433d0dd2e75e85a82c880915ea703fb34ce7a4b4522cde3c6d83c0b76d53"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/acquire.mjs",
+      "bytes": 5716,
+      "sha256": "7f0051b9a2ca18be5bbf6d1bc5dec0d68b084280f9452742747b613959cd8ce4"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/record.mjs",
+      "bytes": 2286,
+      "sha256": "f950a6c968b0227ebf6cff45c640b4f0cb873c09c424f95bf0d870613da4b42a"
+    }
+  ]
+}

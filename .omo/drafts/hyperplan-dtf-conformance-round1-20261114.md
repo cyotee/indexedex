@@ -1,0 +1,50 @@
+=== Round 1 Findings Bundle ===
+Context: paths are relative to /Users/cyotee/Projects/indexedex unless marked retained. Retained means /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/. Migration Solidity files are under contracts/vaults/detf/protocols/dexes/uniswap/v4/migration/; operator TS files under scripts/recovery/dtf-migration/. Plan means the COMPLETE original MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md. Findings below are condensed, not approved conclusions.
+
+[skeptic]:
+1. Existing architecture should not be rebuilt: package,snapshot,claimed-SY loader and recovery stages already exist at c33f7068. Reject unjustified nested-quote frameworks,generic routers,new facets/adapters; allocation split already cites EIP-170.
+2. Completion is not fixed by editing strings. F1-F6 are claims,not replacement requirements; quote-evidence6 refuses E3 and bundle31/execution98,185 hardcode open. Do not merely flip them or restore zero-output returns.
+3. Integrate retained source-manifest,source-route-matrix,verification,recovery-route-disposition without inventing an evidence platform or fabricated surrender/package records. Retained verification names1694e68 plus uncommitted work; reconcile its source identity. Signed32m local measurements are not public target-chain receipts.
+4. SnapshotLib21-23,45-47 bounds routing/output; allocation162 and source-matrix already use claimed-SY preparation. Do not invent quote models,financial data,or raw-weight pulls. Pin actual reserve or retain concrete E3 blocker.
+5. tokenId<3 is not proven wrong until earlier occupancy is read. Do not remove it or invent exclusions merely from the weighted-only plan wording.
+6. Existing separate reward/principal/combined stages and sole earlier-physical-LP permanent-custody disposition already exist. Synthetic rehearsal-data272 still selects WeightedClaim; change only if represented as routine policy,not by adding stages.
+7. Missing named adversarial TestBase is not resolved by an empty alias or duplicate catalog. Existing hostile tests such as MigrationRecoveryAccrualRollback already cover some behavior.
+
+[validator]:
+1. E3 demonstrationgap: quote-evidence165-169 lacks actual recovery binding; retainedsource-manifest9 describeslegacycoverage,notnew fundedreserve. Match actualconfiguredreserve toboundedevaluator(plan190),notarbitrarynestedmodels.
+2. E1 demonstrationgap: retainedmanifest18,54,63 hasnullruntimehashes forweightedNFT/receipt/earlierreceipt(plan188). Notproofruntime mismatch.
+3. NFT IDs0-2 unresolved: NftLib57/schema38excludeboth,and MigrationNftConfiguration167-172 testsearlierexclusion. Retainedmatrix/manifests show noearlieroccupancy/roles; neitherkeepnorremovefloorisconformanceproven.
+4. Missing NFT3 crossmodule rehearsal: rehearsal-data147-160 usesweighted4/26/6,earlier3/9,no separateContributions; finalrehearsal1794614635102/prepared/nfts.jsonconfirms. Contract/fork/payloadtests do notexercise configure->interruption/resume->activation->two-bond surrender; execution/resumeregressioncanescape.
+5. Stalerunbook952-964 claimsold earlier-liquid/SELPabsencescontradictedbyRecoveryTarget49,117;11/12selectorcounts985,1179unlabelled. Notbehavioralproof; couldmisdirectremediation.
+6. Local32m gaswitnessonlytestedconstructions,notarbitraryargsor loading/issuance/harvestlimits(plan542). verification71stilllistsforks/reviewpending. Nopublictxdemanded.
+7. Deliverygap: mainonlyrunbook/quote-evidence; retainedfour source/verification/dispositionfilesmustbereconciled. surrender-spec/package-evidencemissingbothenumeratedtrees. Notcontractfailure.
+Limits: read-only, no tests/builds/RPC/edits.
+
+[researcher]:
+1. Main omits substantive retained verification/source/recovery records required by original-plan tasks1/3/10. Comparing91 snapshot contents to main found86 matches,two absent recorder/verifier files,and three differing files: claimed-sy-member.ts,rehearsal-claimed-sy-intake.ts,operator-runbook.md. Reconcile exact versions; neither discard retained work nor attribute every old record to main.
+2. SnapshotLib:45-47 rejects buffered DETF output;65-88 requires direct contribution-to-pair routes and recognized enabled-buffer deposit models;135-174 evaluates frozen inputs without live repricing. quote-evidence.md:6,165-167 establishes fixtures,not actual recovery composition. E3 needs actual configured-route closure,not arbitrary models or invented configuration.
+3. Retained source-manifest has three null runtimeCodeHash fields and repeated proxy hashes without selector-to-facet bindings. Source-route matrix lacks exact selector/return schema,ownership/remaining-unit reads and fixture links required at original plan446-453. Underlying evidence may exist; incomplete summary is not proof of absent adapters.
+4. RecoveryTarget:353-365 installs earlier/SE/weighted-LP/receipt conversions; retained recovery-route-disposition:9-17 records conditional permissions/income. This defeats blanket historical blocked-table readings,without authorizing public governance. Earlier physical LP has different owner-only immutable constraints at disposition19-31; independently verify them.
+5. Actual signed32m local construction receipts exist: preparation19746568/19595700 and publication29905302/29344006. Historical44353454 is not current measured failure. Original plan542 still requires loading/issuance/harvest batch limits,not just two deployment arguments.
+6. Retained hermetic/operator/fork results pass,including181forks,despite verification.md71 still saying forks pending. fullTask9='open' and stale RecoveryTarget comments must be reconciled to actual behavior; missing full53-row/E1-E5 reconciliation is the completion issue,not literals alone.
+Limits: read-only,no tests/builds/RPC/Git commands/edits/subagents; no new production defect established and no rejected zero-output/ID-floor allegation reopened.
+
+[architect]:
+1. Static implementation gap: NFT3 mandatory two-original policy(plan95-101) is optional. schema36-48,payloads114-124,execution-plan60-62 allow omission and combined loader; ClaimVaultAllocationTarget61-70 stores one contribution. Enforce named source/ID policy at operational configuration boundary and test omission rejection,without inventing snapshot/award.
+2. E3 actual-composition demonstration gap: SnapshotLib45-48,65-88 intentionally rejects buffered DETF output/nonidentity contributions; quote-evidence165-169 lacks actual binding. Bind actual reserve/capture-preview identities/vectors,then only add a reachable unsupported model(plan188-190,455-462),not universal nested-vault design.
+3. E1 source index insufficient: manifest18,54,63 has null identities;27,36,45 repeats proxy hashes; matrix5-20 lacks selector/return schemas,remaining-unit reads,fixtures(plan180,188,447-453). Link retained facet/raw proofs perrow; this is not proof adapters/rawproofs are absent.
+4. Delivery gap: main migration docs has only runbook/quote-evidence; retained full/hermetic/fork/operator logs record28604/181/194pass. Snapshot comparison86/91exact,twoTSdifferences onlyEOFblankline,one runbookdifference,twoabsent verificationprograms. Integrate existingwork,complete surrender-spec/package-evidence,and map originalrequirements ratherthan claim aggregatescloseplan(plan453,474,540-546,723).
+5. Typed conditional recovery exists (RecoveryTarget353-360) despite stale81,148comments. Source permissions stayexternal(disposition10-15); preserve reward-onlyretention and bounded earlierphysicalLP permanentcustody argument19-37. Temporarydisablement/localgovernanceimpersonation is neither irrecoverability nor publicauthorization.
+6. Static operational gasgap: execution26-30,136-158 capsdeploy32m but signs otheroperationsat150%estimate uncapped; fittingestimate canyieldovercap envelope. Currentfourlocaldeploymentreceipts pass19746568/19595700/29905302/29344006,so preserve split and close measured nondeploy limits(plan540-546). Not an observedtargetfailure.
+Limits: completeplanread,readonlysource/history/logs, no tests/builds/RPC/mutations; NFT-IDfloor/zero-outputnotdefectsestablished.
+
+[creative]:
+1. Recover and reconcile existing untracked source-manifest,source-route-matrix,verification,recovery-route-disposition rather than regenerate them; current migration code matches c33f7068. surrender-spec and package-evidence remain absent,so recovery alone is not completion (plan453,474).
+2. Source-manifest12-20,48-65 has null code hashes for weighted NFT/receipt and earlier receipt; E1(plan188) needs identity per source. Do not infer from common diamond proxy hashes or behavior alone; find pinned code/selector evidence.
+3. verification71 says forks/gas pending but final-fork03.log4947 proves181passes and bounded-remediation constrained-receipts records four successes. Reconcile exact local records,not blind rerun or public-chain claims.
+4. E3 SnapshotLib43-47,69-88 rejects buffered DETF output/non-direct contributions; plan190 concerns actual configuration,not universal nesting. Actual composition is an owner/deployment input; prove it or block unsupported capture,without inventing one.
+5. Candidate implementation gap: weighted NFT3 two-bond rule is optional capability. ClaimVaultAllocationTarget15-24,60-78 generic loader selects false for any admitted NFT; schema35-48 checks two nonzero components only when separateContributions selected. Bind NFT3 to required two-original path and reject one-bond configuration,or justify preparer-provenance enforcement under plan95-103; current test proves capability not exclusivity.
+6. execution98-99,184-185 hardcodes fullTask9 open. Separate success of this reconciled rehearsal from full-plan prerequisite status instead of flipping literal (preparation105-111).
+7. execution-schema6 hardcodes32m but four local receipts don't authenticate chain4663 limits or bound everyargument/batch(plan542). Measure per-operation batches and actualchain constraints; no public deployment is required.
+Limits: read-only source/document/Git metadata; no tests,builds,RPC,or edits.
+=== End ===

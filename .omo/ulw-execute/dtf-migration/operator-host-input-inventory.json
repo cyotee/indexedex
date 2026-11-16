@@ -1,0 +1,125 @@
+{
+  "scope": "Read-only literal host dependency inventory of the independently runtime-accepted ED operator candidate; not a portability fix or full F3 acceptance.",
+  "codePath": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid/scripts/recovery/dtf-migration/rehearsal-data.ts",
+  "codeSha256": "5d61c9ccebb91143ef3c521f047626d5aa90c12ef4540aee12afd2a1203f1c00",
+  "inputs": [
+    {
+      "id": "dtf-custody-se-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase15-dtf-custody-se-brief.md",
+      "codeLine": 60,
+      "bytes": 7542,
+      "sha256": "fe961165903c72cfd3ebd8a9c139d64ff841b799743109a2eb65e9fdcc785433",
+      "category": "root execution authority"
+    },
+    {
+      "id": "dtf-custody-source-archive",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-15-dtf-custody-se/docs/incidents/2026-09-16-dtf-recovery/migration/dtf-custody-se/implementation/source-archive.json",
+      "codeLine": 61,
+      "bytes": 1047506,
+      "sha256": "600c072adccc5e624333fd3dfd511787a3d89868193b320efdb8cbfc912483e7",
+      "category": "retained worktree input"
+    },
+    {
+      "id": "claim-vault-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase16-claim-vault-brief.md",
+      "codeLine": 62,
+      "bytes": 9896,
+      "sha256": "d891944faa7c106ad340d89466340d4f70e8b1cb28d77c0bddf952e4aa79a2f1",
+      "category": "root execution authority"
+    },
+    {
+      "id": "weighted-sy-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase14-weighted-sy-brief.md",
+      "codeLine": 65,
+      "bytes": 7330,
+      "sha256": "6fd8d01b1f279a1245ac70ce68e7b1918df9cf41e53324bbedf6d2f51415b384",
+      "category": "root execution authority"
+    },
+    {
+      "id": "owner-first-bond-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase13-owner-first-bond-correction.md",
+      "codeLine": 66,
+      "bytes": 8528,
+      "sha256": "29dca72edabe86612e98665a941d1f621cb7184e707bbfa841385fa779ccfb92",
+      "category": "root execution authority"
+    },
+    {
+      "id": "current-main-plan",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "codeLine": 67,
+      "bytes": 79305,
+      "sha256": "60d02b608c8a10f19cffce7b99838146c205a98410641e9bce45944e620dc56d",
+      "category": "main current product document"
+    },
+    {
+      "id": "current-main-prd",
+      "path": "/Users/cyotee/Projects/indexedex/docs/incidents/2026-09-16-dtf-recovery/MIGRATION_DETF_DRAFT_PRD.md",
+      "codeLine": 68,
+      "bytes": 108022,
+      "sha256": "cfe1853f49de0dc41ae106f1cc1b94eacd24d4aa8f79477c66a5b7f24a4d67ed",
+      "category": "main current product document"
+    },
+    {
+      "id": "weighted-receipt-authority",
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase17-weighted-receipt-implementation-brief.md",
+      "codeLine": 69,
+      "bytes": 5693,
+      "sha256": "6d0a78d3a27b74ff30e56360153b090d4e48fdc8e3635d799538447fceb95f6b",
+      "category": "root execution authority"
+    },
+    {
+      "id": "weighted-receipt-contract",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source/contract.md",
+      "codeLine": 70,
+      "bytes": 18779,
+      "sha256": "8505a56f2b9dec9a34d9fb322d1a9cd78aa7e151678008427143cce9ff782bd6",
+      "category": "retained worktree input"
+    },
+    {
+      "id": "weighted-receipt-admission",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-17-weighted-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/weighted-receipt/source-verification/report.md",
+      "codeLine": 71,
+      "bytes": 15387,
+      "sha256": "b39dd7edeb5f0250ffd257744df2304eb18485c195f121ec64f058eebb077c56",
+      "category": "retained worktree input"
+    },
+    {
+      "id": "earlier-receipt-contract",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source/contract.md",
+      "codeLine": 73,
+      "bytes": 22508,
+      "sha256": "173bc343faf90a1d01ada52f16f86b0d707f6d87687bc438d9e209654bcbdc91",
+      "category": "retained worktree input"
+    },
+    {
+      "id": "earlier-receipt-admission",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-18-earlier-receipt/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-receipt/source-verification/report.md",
+      "codeLine": 74,
+      "bytes": 20560,
+      "sha256": "86d0c1a22ffd398b528f9008c658a8fc51c39f273cdd50275faabd64668fbf35",
+      "category": "retained worktree input"
+    },
+    {
+      "id": "earlier-liquid-contract",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source/contract.md",
+      "codeLine": 75,
+      "bytes": 12969,
+      "sha256": "86d4cf1d517b688b6b3aa8da73b00252c171d22182d92cb56a7e70f93d5339b4",
+      "category": "retained worktree input"
+    },
+    {
+      "id": "earlier-liquid-admission",
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-19-earlier-liquid-source/docs/incidents/2026-09-16-dtf-recovery/migration/earlier-liquid/source-verification/report.md",
+      "codeLine": 76,
+      "bytes": 20874,
+      "sha256": "e56481a5040ae406b1c14122d404e227a0ea4391ecb03dd54b77283142b1af1b",
+      "category": "retained worktree input"
+    }
+  ],
+  "executable": {
+    "path": "/Users/cyotee/.foundry/bin",
+    "codePath": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+    "line": 8
+  },
+  "preservation": "No input/source/out/cache/index/ref changed; no tests or runtime replayed."
+}

@@ -1,0 +1,41 @@
+{
+  "increment": "Earlier SE custody admission and ten-source stateful coverage",
+  "worktree": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts",
+  "baseCommit": "1694e68a4bd66dd67d3b5e3f145f1da23074ff48",
+  "delivery": "Eight scoped modified files; uncommitted and undeployed",
+  "custody": {
+    "token": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+    "holder": "0xbab6a03be445094a10695772a79777407dcdc0e7",
+    "testPin": 108944663,
+    "balanceRaw": "2021090200239501983",
+    "route": "Finite chain4663 held-SE/LP intake; no new conversion route"
+  },
+  "checks": {
+    "child": "st_01a1d541: production build then28configuration+46fork/recovery tests passed, exit0",
+    "parent": "mon_FVAW73G50FT1V9Y1: production-artifact helper and2stateful tests passed exit0; explicit fail_on_revert=true,32runs,depth16,512calls,0reverts. Earlier non-strict run also passed but is not substituted for the retained strict configuration.",
+    "diffCheck": "exit0 after final fix",
+    "lsp": "Child reported three implementation/test files clean. Parent invariant-file LSP could not resolve worktree remappings/imports; not represented as clean. Both compiler-backed builds passed."
+  },
+  "initialFailures": [
+    "Child setup needed explicit dynamic runtime artifact roots; corrected before74passingtests.",
+    "Parent fixture extension accidentally shifted an action-selector index; restoredslot9 and reran focused suite successfully."
+  ],
+  "coverage": [
+    "RealEOA-held token custody delta and fresh funded bonds",
+    "Four held-source behavioral/configuration/isolation matrix",
+    "Ten-source stateful original-unit/credit and custody conservation",
+    "Missing/wrong wallet, approval and late funding rollback controls",
+    "Fresh principal cliffs and separate donation/recovery inventories",
+    "Earlier disabled-exit and unadmitted E-S conversion rejection preserved"
+  ],
+  "limits": [
+    "Financial eligibility and original contribution values remain synthetic fixtures, not operator allocations.",
+    "Full migration plan remains incomplete: broader TokenStaking forms, final economic inputs, recovery/composition and deployment feasibility remain open.",
+    "No refused provider operation retried and no unanswered financial decision applied."
+  ],
+  "cleanup": {
+    "temporaryCraneLink": "removed; original emptydirectoryrestored",
+    "warmArtifactCopy": "mon_0ZJKA1Y06Z1Y69XG completed exit0; ES_WARM_SEED_READY"
+  },
+  "testCommand": "/bin/zsh -lc 'set -e\ncd /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts\nexport PATH=/Users/cyotee/.foundry/bin:$PATH\nexport FOUNDRY_PROFILE=fork FOUNDRY_INVARIANT_FAIL_ON_REVERT=true FOUNDRY_INVARIANT_RUNS=32 FOUNDRY_INVARIANT_DEPTH=16 FOUNDRY_FUZZ_SEED=0x39\nM=contracts/vaults/detf/protocols/dexes/uniswap/v4/migration\nF=test/foundry/fork/vaults/detf/protocols/dexes/uniswap/v4/migration\nR=($M/**/*Facet.sol $M/UniswapV4DetfMigrationDFPkg.sol $M/bondNft/UniswapV4DetfMigrationBondNFTVaultDFPkg.sol $M/sy/rewards/UniswapV4DetfMigrationRewardTokenDFPkg.sol)\npython3 scripts/forge-artifacts.py test $M/invariant/MigrationSourceUnitsLedger.sol $M/invariant/MigrationSourceUnitsHandler.sol $M/invariant/MigrationSourceUnitsRecoveryHandler.sol $M/invariant/TestBase_MigrationSourceUnits.sol $R --test-root $F/invariant/MigrationSourceUnitsInvariant.t.sol -- -vv --match-contract \"^MigrationSourceUnitsInvariantTest$\"\n'"
+}

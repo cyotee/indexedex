@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase22-claimed-sy-source",
+  "name": "Migration DETF phase 22: claimed SY source mapping",
+  "nodes": [
+    {
+      "id": "claimed-sy-source-contract",
+      "label": "Specify actual complete-weight SY mapping",
+      "category": "deep-low",
+      "task_summary": "Test complete original-weight conversion into measured same-wallet SY without inventing credit or atomicity",
+      "prompt": "TASK: Produce one bounded source-admission contract and real source witness. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md completely and all required actual source/current-code evidence. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source at unchanged4eaa7dec. Own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/source/.\nMUST: Test the complete-original claimed-SY normalization hypothesis against actual deployed TokenStaking, authentic ordinary holder acquisition and real controlled-wallet signatures. Fixed18572 pin/bootstrap only. Capture exact weight/supply/vault/SY quantities and rounding for full and split eligible preparation with protected unrelated balances; partial preparation is not full original coverage. Specify required operational originals versus observed facts, measured SY Q0, original C0 conservation, same-origin exclusions and remaining gaps. Inspect current SY loader compatibility; do not assume a missing parent-credit field exists. Retain direct raw pull limitation and distinct transaction rollback boundaries.\nFORBIDDEN: Production/test/operator/config/dependency edits, old evidence changes, arbitrary executors, source/gas/storage/code/role injection, contract-owner or SUT impersonation, specialized account execution, public/provider/IPFS operations, commits/refs/index writes, unchanged suite replay or fake historical data. Ordinary existing EOA holder local-fork reassign funding is allowed, explicitly impersonated; subsequent controlled claims are real signatures.\nSTOP: Complete contract.md/report.md, exact raw/sealed evidence and stopped cleanup, no pending operation. Qualified proposal or concrete not-ready, never implementation/full-category acceptance."
+    },
+    {
+      "id": "verify-claimed-sy-source",
+      "label": "Independently verify claimed SY mapping",
+      "category": "deep-low",
+      "dependsOn": [
+        "claimed-sy-source-contract"
+      ],
+      "task_summary": "Independently check actual claimed quantities, origin conservation and compatibility with the existing SY loader",
+      "prompt": "TASK: Independently evaluate the actual stopped source-normalization proposal and bounded witness. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase22-claimed-sy-source-brief.md and complete required inputs plus producer contract/report/seal. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source at unchanged4eaa7dec. Own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-22-claimed-sy-source/docs/incidents/2026-09-16-dtf-recovery/migration/claimed-sy-source/verification/.\nMUST: Require complete stopped handoff; independently verify bindings and actual acquisition authority, signatures, exact source math/rounding and same-wallet outputs. Execute only the new bounded source witness at fixed18572 with fresh controlled signatures, distinguishing donor impersonation. Verify complete and split original coverage, partial-incomplete rejection, unrelated balances, no duplicate raw/backing/SY credit and explicit original-data trust boundary. Inspect actual current SY loader: full-original candidate compatibility is distinct from unsupported partial/prior-delivered credit. Separate observation and inference; a previously completed source claim cannot be rolled back by later Migration failure.\nFORBIDDEN: Source fixes/production integration, prior evidence edits, commits/refs/index, held09, governance/role/storage/code/token/gas injection, arbitrary executor, special account assumption, public/provider/IPFS work or full suite replay. No operational award, full raw-category closure or implementation authorization.\nSTOP: Complete bounded admitted-proposal/not-ready/unable-to-verify report, full raw evidence/seal and cleanup, no owned pending operation."
+    }
+  ]
+}

@@ -1,0 +1,442 @@
+{
+  "status": "POSITIVE-EOA-HOLDER-FOUND",
+  "token": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+  "holder": "0xbab6a03be445094a10695772a79777407dcdc0e7",
+  "pin": {
+    "block": "113279837",
+    "hash": "0x78f23110692ee71a64dfea3463f7df0f9687ffa5d5f951fabb22c239921c4113"
+  },
+  "holderBalanceRaw": "2021090200239501983",
+  "decimals": 18,
+  "holderCode": "0x",
+  "totalSupplyRaw": "240208335094234316503663860544238124591",
+  "knownLpBalanceRaw": "240208335094234316501642770343998622608",
+  "accountedSupplyEqualsLpPlusHolder": true,
+  "mintTransaction": "0x01c689522da55be117f6e4b991d7ddefe8e2c2866a4739dc72568a8244e94e53",
+  "mintBlock": "78511776",
+  "mintReceiptFrom": "0xbab6a03be445094a10695772a79777407dcdc0e7",
+  "mintReceiptTo": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+  "codeBoundary": {
+    "lo": 45647273,
+    "hi": 45647274,
+    "steps": [
+      {
+        "block": 56639918,
+        "hasCode": true,
+        "capture": 28
+      },
+      {
+        "block": 28319959,
+        "hasCode": false,
+        "capture": 29
+      },
+      {
+        "block": 42479938,
+        "hasCode": false,
+        "capture": 30
+      },
+      {
+        "block": 49559928,
+        "hasCode": true,
+        "capture": 31
+      },
+      {
+        "block": 46019933,
+        "hasCode": true,
+        "capture": 32
+      },
+      {
+        "block": 44249935,
+        "hasCode": false,
+        "capture": 33
+      },
+      {
+        "block": 45134934,
+        "hasCode": false,
+        "capture": 34
+      },
+      {
+        "block": 45577433,
+        "hasCode": false,
+        "capture": 35
+      },
+      {
+        "block": 45798683,
+        "hasCode": true,
+        "capture": 36
+      },
+      {
+        "block": 45688058,
+        "hasCode": true,
+        "capture": 37
+      },
+      {
+        "block": 45632745,
+        "hasCode": false,
+        "capture": 38
+      },
+      {
+        "block": 45660401,
+        "hasCode": true,
+        "capture": 39
+      },
+      {
+        "block": 45646573,
+        "hasCode": false,
+        "capture": 40
+      },
+      {
+        "block": 45653487,
+        "hasCode": true,
+        "capture": 41
+      },
+      {
+        "block": 45650030,
+        "hasCode": true,
+        "capture": 42
+      },
+      {
+        "block": 45648301,
+        "hasCode": true,
+        "capture": 43
+      },
+      {
+        "block": 45647437,
+        "hasCode": true,
+        "capture": 44
+      },
+      {
+        "block": 45647005,
+        "hasCode": false,
+        "capture": 45
+      },
+      {
+        "block": 45647221,
+        "hasCode": false,
+        "capture": 46
+      },
+      {
+        "block": 45647329,
+        "hasCode": true,
+        "capture": 47
+      },
+      {
+        "block": 45647275,
+        "hasCode": true,
+        "capture": 48
+      },
+      {
+        "block": 45647248,
+        "hasCode": false,
+        "capture": 49
+      },
+      {
+        "block": 45647261,
+        "hasCode": false,
+        "capture": 50
+      },
+      {
+        "block": 45647268,
+        "hasCode": false,
+        "capture": 51
+      },
+      {
+        "block": 45647271,
+        "hasCode": false,
+        "capture": 52
+      },
+      {
+        "block": 45647273,
+        "hasCode": false,
+        "capture": 53
+      },
+      {
+        "block": 45647274,
+        "hasCode": true,
+        "capture": 54
+      }
+    ]
+  },
+  "mintSupplyBoundary": {
+    "lo": 45652333,
+    "hi": 45652334,
+    "steps": [
+      {
+        "block": 79463555,
+        "supply": "240208335094234316503663860544238124591",
+        "capture": 56
+      },
+      {
+        "block": 62555414,
+        "supply": "240208335094234316501642770343998622608",
+        "capture": 57
+      },
+      {
+        "block": 54101344,
+        "supply": "240208335094234316693403808542855624793",
+        "capture": 58
+      },
+      {
+        "block": 49874309,
+        "supply": "240208335094596461650611181926036454387",
+        "capture": 59
+      },
+      {
+        "block": 47760791,
+        "supply": "240208335094596461650611181926036454387",
+        "capture": 60
+      },
+      {
+        "block": 46704032,
+        "supply": "239143842082879911303000865881227199482",
+        "capture": 61
+      },
+      {
+        "block": 46175653,
+        "supply": "2188484100282088635483882",
+        "capture": 62
+      },
+      {
+        "block": 45911463,
+        "supply": "2188484100282088635483882",
+        "capture": 63
+      },
+      {
+        "block": 45779368,
+        "supply": "1800910846190741615585610",
+        "capture": 64
+      },
+      {
+        "block": 45713321,
+        "supply": "1800910846190741615585610",
+        "capture": 65
+      },
+      {
+        "block": 45680297,
+        "supply": "1778859964387451305574664",
+        "capture": 66
+      },
+      {
+        "block": 45663785,
+        "supply": "1778859964387451305574664",
+        "capture": 67
+      },
+      {
+        "block": 45655529,
+        "supply": "1778859964387451305574664",
+        "capture": 68
+      },
+      {
+        "block": 45651401,
+        "supply": "0",
+        "capture": 69
+      },
+      {
+        "block": 45653465,
+        "supply": "1778859964387451305574664",
+        "capture": 70
+      },
+      {
+        "block": 45652433,
+        "supply": "1778859964387451305574664",
+        "capture": 71
+      },
+      {
+        "block": 45651917,
+        "supply": "0",
+        "capture": 72
+      },
+      {
+        "block": 45652175,
+        "supply": "0",
+        "capture": 73
+      },
+      {
+        "block": 45652304,
+        "supply": "0",
+        "capture": 74
+      },
+      {
+        "block": 45652368,
+        "supply": "1778859964387451305574664",
+        "capture": 75
+      },
+      {
+        "block": 45652336,
+        "supply": "1778859964387451305574664",
+        "capture": 76
+      },
+      {
+        "block": 45652320,
+        "supply": "0",
+        "capture": 77
+      },
+      {
+        "block": 45652328,
+        "supply": "0",
+        "capture": 78
+      },
+      {
+        "block": 45652332,
+        "supply": "0",
+        "capture": 79
+      },
+      {
+        "block": 45652334,
+        "supply": "1778859964387451305574664",
+        "capture": 80
+      },
+      {
+        "block": 45652333,
+        "supply": "0",
+        "capture": 81
+      }
+    ]
+  },
+  "outsideLpBoundary": {
+    "lo": 78511775,
+    "hi": 78511776,
+    "steps": [
+      {
+        "block": 79466085,
+        "difference": "2021090200239501983",
+        "capture": 83
+      },
+      {
+        "block": 62559209,
+        "difference": "0",
+        "capture": 84
+      },
+      {
+        "block": 71012647,
+        "difference": "0",
+        "capture": 85
+      },
+      {
+        "block": 75239366,
+        "difference": "0",
+        "capture": 86
+      },
+      {
+        "block": 77352725,
+        "difference": "0",
+        "capture": 87
+      },
+      {
+        "block": 78409405,
+        "difference": "0",
+        "capture": 88
+      },
+      {
+        "block": 78937745,
+        "difference": "2021090200239501983",
+        "capture": 89
+      },
+      {
+        "block": 78673575,
+        "difference": "2021090200239501983",
+        "capture": 90
+      },
+      {
+        "block": 78541490,
+        "difference": "2021090200239501983",
+        "capture": 91
+      },
+      {
+        "block": 78475447,
+        "difference": "0",
+        "capture": 92
+      },
+      {
+        "block": 78508468,
+        "difference": "0",
+        "capture": 93
+      },
+      {
+        "block": 78524979,
+        "difference": "2021090200239501983",
+        "capture": 94
+      },
+      {
+        "block": 78516723,
+        "difference": "2021090200239501983",
+        "capture": 95
+      },
+      {
+        "block": 78512595,
+        "difference": "2021090200239501983",
+        "capture": 96
+      },
+      {
+        "block": 78510531,
+        "difference": "0",
+        "capture": 97
+      },
+      {
+        "block": 78511563,
+        "difference": "0",
+        "capture": 98
+      },
+      {
+        "block": 78512079,
+        "difference": "2021090200239501983",
+        "capture": 99
+      },
+      {
+        "block": 78511821,
+        "difference": "2021090200239501983",
+        "capture": 100
+      },
+      {
+        "block": 78511692,
+        "difference": "0",
+        "capture": 101
+      },
+      {
+        "block": 78511756,
+        "difference": "0",
+        "capture": 102
+      },
+      {
+        "block": 78511788,
+        "difference": "2021090200239501983",
+        "capture": 103
+      },
+      {
+        "block": 78511772,
+        "difference": "0",
+        "capture": 104
+      },
+      {
+        "block": 78511780,
+        "difference": "2021090200239501983",
+        "capture": 105
+      },
+      {
+        "block": 78511776,
+        "difference": "2021090200239501983",
+        "capture": 106
+      },
+      {
+        "block": 78511774,
+        "difference": "0",
+        "capture": 107
+      },
+      {
+        "block": 78511775,
+        "difference": "0",
+        "capture": 108
+      }
+    ]
+  },
+  "provenance": {
+    "mintLogsCapture": "capture-109.json",
+    "holderReceiptAndPinCapture": "capture-110.json"
+  },
+  "method": "Historical code and accounting-state boundary searches, followed by actual Transfer logs inside the supported block range, receipt and pinned balance/code reads. Boundary searches do not claim monotone histories or enumerate all past holders.",
+  "limits": [
+    "Actual source custody fixture is now available; no custody implementation/test has run on this finding yet.",
+    "Balance reconciliation is not approval of eligibility, original cost or compensation.",
+    "No role changes, signing, mainnet writes, restricted trace retry or provider upgrade occurred."
+  ]
+}

@@ -1,0 +1,29 @@
+# Remaining source acquisition: actual EOA-owner funding qualification
+
+Root read the complete four-row producer and independent source verdicts. W-SW remains admitted; E-S/E-P/W-P lack a genuine positive controlled fixture. Root additionally checked31 retained original-purchaser wallets at the exact historical pin:93 successful balance reads, all zero. That is not a holder census or proof of no legitimate acquisition. Preserve the entire original source/source-verification handoff and holder-followup-root evidence unchanged.
+
+## Narrow correction to the root-authored fixture restriction
+
+The original phase20 brief says "impersonation of legacy contract owners" is prohibited. Root imposed that blanket fixture restriction; current main plan sections1.3-1.5 and5.1-5.4 require actual original-wallet control and legitimate source operations, not a blanket ban on simulating an existing EOA-owned donor funding operation on a disposable fork. The distinction below replaces only that overly broad fixture reading in this follow-up. No new production or recovery permission is given.
+
+Allowed: authenticate the deployed fee collector, its actual current EOA owner and fixed pullFee selector, then on the owned local fork simulate that same existing EOA owner releasing a small amount of tokens the collector actually holds to the owner itself. Follow that with an ordinary personal-holder transfer to a controlled signing wallet. This is a role-dependent donor funding fixture, not proof that an ordinary claimant or Migration can call pullFee, not a historical award, not donor-key control, and not a public authorization. Label every impersonated transaction distinctly from controlled-wallet signatures.
+
+Still forbidden: impersonating contract-valued owners ED/WD or infrastructure token holders, pretending the controlled wallet is already the owner, changing any owner/role/storage/code/balance, enabling a source, bypassing a guard, calling arbitrary target/calldata or creating a generic executor. No ownership transfer, governance action, public transaction or production source edit. If collector owner is not the actually observed EOA, or the documented operation/available balance does not permit the withdrawal, stop that path and retain its exact failure.
+
+## Fixed bounded experiment
+
+Use the existing phase20 source worktree, unchanged base1df9076c, fixed chain4663/block108944663/hash and loopback18570. Producer owns owner-funding/ evidence only; independent verifier owns owner-funding-verification/. All Git reads GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0; do not change refs/indexes or read changing ED implementation outputs. Existing login-shell archive bootstrap only.
+
+Collector `0x20af9a1e21a59a411cd3b0c40e70af9084770b2e`; previously observed owner `0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b`. Reconfirm actual owner, code and selector routing at the pin. Existing source evidence identifies pullFee(address,uint256,address), selector0x45e94ee3. Current FeeCollectorManagerTarget.sol explains an onlyOwner token transfer, but its artifact is not identical to deployed code: current source is not legacy equivalence proof. Actual caller, receipt, return, exact balances and unchanged authority must establish this operation.
+
+Investigate only the three remaining tokens E-S `0xb7d4bb379d361ad442cddee53ea71a33957826a7`, E-P `0x923877336b14662cfb5b3a60b14e7d716d54a888`, W-P `0x46e068c2393e189fbc86632f67210af253a42aa8`. Read actual collector inventory first. Withdraw only a small positive bounded amount actually present, to the same actual owner; preserve unrelated inventory and verify collector debit equals owner receipt, supply unchanged and owner/routing unchanged. Do not transfer or withdraw W-SW again. No conversion, LP mint, liquidity exit or source enablement is in this experiment. No broad history scan, oversized log request, request chunking or alternate provider.
+
+For a row with successful legitimate owner-funded acquisition, the controlled recipient must sign its own approval and exact native18 partial/terminal custody operations, finite/max allowance checks, wrong/missing control and late-after-pull rollback. Preserve unrelated inventory and the Q/C recurrence with disclosed synthetic originals only. No primitive or role permission may be falsely attributed to Migration. If another row has no balance or unavailable lawful acquisition, retain not-ready with exact limits; never generalize a successful row.
+
+## Gate and preservation
+
+Deliver owner-funding/contract.md and report.md with operation-by-operation authority, whether acquisition depends on an external owner donation, exact raw source/runtime/transaction/state evidence and cleanup. All old negative ordinary-caller and blocked exit observations remain valid and must not be rerun merely to add coverage. This follow-up changes only fixture acquisition evidence.
+
+Independent verification must separately authenticate the existing EOA authority and actual local release/personal transfer, then prove decisive new admitted custody on a fresh fork. Verify unchanged owner/roles/source states except actual authorized transfers, no fabricated original allocations, and exact signature/provenance labels. If that boundary cannot be proved, return not-ready; do not paper over it with raw balances. Write owner-funding-verification/report.md. No production integration until root reads the actual qualified admission.
+
+Both lanes use disjoint evidence, preserve failed attempts, bind raw byte counts/hashes and stop every owned runtime/provider/subscription/impersonation/checkpoint before sealing. Source recovery restrictions, operational original datasets, opaque origins, archived-source qualifications, portability and gas remain open. No commit, merge, public write, dependency/config change or held09 work.

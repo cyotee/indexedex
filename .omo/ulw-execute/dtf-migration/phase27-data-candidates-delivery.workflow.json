@@ -1,0 +1,29 @@
+{
+  "key": "dtf-migration-phase27-candidate-delivery",
+  "name": "Migration DETF phase 27: offline candidates immutable delivery",
+  "nodes": [
+    {
+      "id": "commit-offline-candidates",
+      "label": "Commit verified offline candidates",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "task_summary": "Commit the ten verified candidate-pipeline files with exact preservation proof",
+      "prompt": "TASK: Deliver one scoped verified local commit. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-commit-source.json completely and all actual required reports/seals. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates; soleparent0856a5c56e5d09b81c669f59b613efef79133e19; exactly10accepted sourcepaths (2modified/8added), no evidence/data. DELIVERABLE: Actual commit plus complete /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/receipt.md, source-manifest.json and new support only. VERIFY: Full diff/newbodies; current/staged/tested bytes/lengths, actualmodeencodings qualified against available tested evidence, stagedwhitespace. Before staging capture reproducible per-entry original preservation of evidence/out/cache/original+recovered inputs/host dependencies/refs/foreign indexes. Commit exactlyone increment with requiredsinglecoauthor; verify soleparent, full immutablewhitespace, committed/current/index/tested identity, clean source/index and every original row. No source fixes, replay of tests/builds/derivation/oracles, old evidence edits, provider/held09/public operations, config/dependency changes, merges/push/rewrites. Git GIT_MASTER=1 --no-pager GIT_PAGER=cat; reads GIT_OPTIONAL_LOCKS=0; diff/status ignoresubmodules. Preserve non-issuability,128test proof, authenticatedrecovery, allfailures/optionalASTauditqualification/P1/source/gas limits. STOP WHEN: Actual ten-file commit and complete receipt/proof with no pending operation; otherwise precise blocker, no commit."
+    },
+    {
+      "id": "audit-offline-candidates",
+      "label": "Audit offline candidate commit",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-offline-candidates"
+      ],
+      "task_summary": "Independently audit the committed pipeline, real data proof and every original preservation row",
+      "prompt": "TASK: Independently audit completed ten-file offline candidate delivery. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase27-data-candidates-commit-source.json completely plus all actual required records. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates; write only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-27-data-candidates/docs/incidents/2026-09-16-dtf-recovery/migration/data-candidates/commit/verification.md and new support. DELIVERABLE: Complete confirmed/needs-fix immutable audit, not a new runtime run. VERIFY: Actual receipt/manifest, soleparent0856a5c56e5d09b81c669f59b613efef79133e19,10paths/8newsourcebodies/onecoauthor, committed/current/index/tested bytes/lengths and qualifiedmodeevidence, full immutablewhitespace and clean source/index. Read real128tests/full18044record+39507quantity/1240unresolved/byte-identical16.57MB candidate proof and loader rejection; authenticate complete seals/recovered input bindings. Reproduce ALL original per-entry preservation rows including rawfile/symlink hashes/lengths/modes and original/recovered inputs, not aggregatecounts or newer baselines. Preserve failed histories and actual optionalASTerrorqualification. No sourcefix, tests/build/derivation/oracle replay, ref/index/commit mutation, provider/held09/public action or configuration change. Git GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 --no-pager GIT_PAGER=cat, ignore submodules. STOP WHEN: Complete bounded immutable-verification report and stopped cleanup, none pending; retain operational/source/gas/P1 limits and no fullplan acceptance."
+    }
+  ]
+}

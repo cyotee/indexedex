@@ -1,0 +1,1062 @@
+{
+  "version": "dtf-weighted-nft-offline-observations-v1",
+  "observedAt": "2026-11-13",
+  "status": "non-issuable observations; not a loader input",
+  "sourceCutoff": {
+    "block": 108944663,
+    "hash": "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733",
+    "utc": "2026-11-08T04:08:21Z"
+  },
+  "sourceBindings": [
+    {
+      "id": "S006",
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "bytes": 186222,
+      "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda",
+      "rows": 819
+    },
+    {
+      "id": "S008",
+      "path": "evidence/weighted-bonds.csv",
+      "bytes": 12283,
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9",
+      "rows": 43
+    },
+    {
+      "id": "S011",
+      "path": "evidence/transfers.csv",
+      "bytes": 4535122,
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939",
+      "rows": 12191
+    }
+  ],
+  "method": [
+    "Read complete S006/S008/S011 and verify exact UTF-8 byte lengths and SHA-256 before parsing CSV.",
+    "Keep quantities as decimal strings; parse only nonempty ASCII integers using arbitrary-precision arithmetic.",
+    "Require unique purchase transaction per S008 row before attributing transaction inputs.",
+    "Join DTF/WETH transfers into the weighted DETF in the purchase transaction; require each inbound payer to equal purchase_recipient.",
+    "Require exactly one same-transaction zero-address NFT mint with matching source collection, token ID and recipient.",
+    "For pre-incident direct DTF inputs, require S006 bond classification, token ID, log index, amount, payer and recipient to equal the S011 join."
+  ],
+  "limits": [
+    "No RPC acquisition, live ownership refresh, independent receipt authentication or eligibility approval.",
+    "Observed zero means no selected transfer in the retained scope, not proof of zero total/net contribution; native ETH remains unknown.",
+    "WETH history is inbound-only through block69999999; refunds, native paths and complete economic attribution are not established.",
+    "Original contribution evidence must not be replaced by current principal, reward, nominal exposure or the obsolete loss formula.",
+    "Current MIG-R42 requires the configured original acquiring/contributing wallet and actual control; historical current_owner is not current authority.",
+    "All43 rows remain non-issuable, including the41pre-incident and2post-incident observations; no automatic cohort approval or denial.",
+    "This is an offline intake result, not a shipped standalone data-generation pipeline or complete source-gate closure."
+  ],
+  "summary": {
+    "purchaseRows": 43,
+    "uniquePurchaseTransactions": 43,
+    "matchingMints": 43,
+    "preIncidentObservations": 41,
+    "postIncidentObservations": 2,
+    "joinIssues": [],
+    "issuableRows": 0
+  },
+  "rows": [
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "3",
+      "observedOriginalWallet": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "purchaseTx": "0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624",
+      "purchaseBlock": "62146514",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "362893857600000000000",
+      "observedDirectWethRaw": "999999000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624:6",
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624:8"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x140c83d7c5a5170424fe13788194f21d1f30694bc166134ae486681a1fa3c624:48"
+      ],
+      "s006CorroboratingLogIndices": [
+        "8"
+      ],
+      "historicalCurrentOwner": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "4",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe",
+      "purchaseBlock": "62341820",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "30000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe:211"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x2595bbc003c11cf938ea4da468676ca5eb46241b6bdc4e3cc0ae108df7211bfe:245"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "5",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293",
+      "purchaseBlock": "62342269",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "50000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293:1"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x1812ec8bd64c0629707c30da87cf59d786426271065b0f653501862339947293:29"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "6",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917",
+      "purchaseBlock": "62342633",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "80000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917:155"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xeefb57d4fd369c08c6050f125d93f19c7171c557f0280270049ed4c6e613a917:183"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "7",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296",
+      "purchaseBlock": "62343028",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "130000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296:58"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xa19407e27f675728c094c6ee0c0f40a37d5be24baaa99b0b68dd58191a25d296:86"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "8",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb",
+      "purchaseBlock": "62343591",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "220000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb:1"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xce2e18987a6cd3644b52702fb9ac47fb34e34916ed7c27355c183a72414bb8cb:29"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "9",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a",
+      "purchaseBlock": "62344891",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "150000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a:59"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x70fb38227e885c80057c384a0ffad1a31912220b7c47d6e29957960849f11d2a:89"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "10",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651",
+      "purchaseBlock": "62345519",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "180000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651:71"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xf84c55aaee2784b0334e2af96ba6700242060ef5dd33844d4b18d3106f648651:105"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "11",
+      "observedOriginalWallet": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "purchaseTx": "0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b",
+      "purchaseBlock": "62552509",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "117620151493077568323998",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b:5"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xb86e32336704974be5a4c3973269bf2a7256acdb4e262badd13409e4ba174c0b:33"
+      ],
+      "s006CorroboratingLogIndices": [
+        "5"
+      ],
+      "historicalCurrentOwner": "0x3e01a5779cfa830794dbb9c8673a61b3c5c5608a",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "12",
+      "observedOriginalWallet": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "purchaseTx": "0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1",
+      "purchaseBlock": "62714894",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "1000000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1:85"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xbab7b6801334d28cc2805a716aac0b3d08f7d531ab888a1bbddfb8030826aec1:111"
+      ],
+      "s006CorroboratingLogIndices": [
+        "85"
+      ],
+      "historicalCurrentOwner": "0xb2b12665da21fccfb9b8e4d4f2349a4c835fc669",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "13",
+      "observedOriginalWallet": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "purchaseTx": "0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb",
+      "purchaseBlock": "62733792",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "1000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb:33"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x61b92972e5c140d2f79db2e8990ca8cd6d4b0590f43eeaa4abd9bfc36fdf61bb:59"
+      ],
+      "s006CorroboratingLogIndices": [
+        "33"
+      ],
+      "historicalCurrentOwner": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "14",
+      "observedOriginalWallet": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "purchaseTx": "0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd",
+      "purchaseBlock": "62734028",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "100000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd:53"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xf9698195b5d4497e0b9b719808697cf1449f3a1ccbbcbaa8cb786a55717ad2cd:79"
+      ],
+      "s006CorroboratingLogIndices": [
+        "53"
+      ],
+      "historicalCurrentOwner": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "15",
+      "observedOriginalWallet": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "purchaseTx": "0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27",
+      "purchaseBlock": "62734220",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "1000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27:35"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x1d01114d19123fc4672351935617087af66ffbf7150878d5ece34558bd25bc27:61"
+      ],
+      "s006CorroboratingLogIndices": [
+        "35"
+      ],
+      "historicalCurrentOwner": "0xe8ca5d7b03204d110ff8a06753e7cd90defc544a",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "16",
+      "observedOriginalWallet": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "purchaseTx": "0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1",
+      "purchaseBlock": "62787379",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "84207000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1:39"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xb2bef901e7b6ff58446a79a6de19a4536b7892f14fd7160d2ae4408c23ae90c1:65"
+      ],
+      "s006CorroboratingLogIndices": [
+        "39"
+      ],
+      "historicalCurrentOwner": "0x03f523d7243aaf869c44322197b4fc55e0d12cd7",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "17",
+      "observedOriginalWallet": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "purchaseTx": "0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b",
+      "purchaseBlock": "62815870",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "100000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b:0"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x95495a3c68397d245175693240a7f37889e55ca1d0431e6b2b7e47162479878b:26"
+      ],
+      "s006CorroboratingLogIndices": [
+        "0"
+      ],
+      "historicalCurrentOwner": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "18",
+      "observedOriginalWallet": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "purchaseTx": "0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd",
+      "purchaseBlock": "62849167",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "28722838050154716955768",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd:8"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xe213477237aca92a72461478bb797b2208f79eb872fac28dfeb1130e18d5b1bd:34"
+      ],
+      "s006CorroboratingLogIndices": [
+        "8"
+      ],
+      "historicalCurrentOwner": "0xdc7d32b21cfdf003b5467141bd67e1f68a732cce",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "19",
+      "observedOriginalWallet": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "purchaseTx": "0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9",
+      "purchaseBlock": "62867558",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "100000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9:12"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x514ce8099216a62d16f6c1d84829a8c71e49e6d02359266486a055dd5fae77a9:40"
+      ],
+      "s006CorroboratingLogIndices": [
+        "12"
+      ],
+      "historicalCurrentOwner": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "20",
+      "observedOriginalWallet": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "purchaseTx": "0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71",
+      "purchaseBlock": "62871823",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "200000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71:57"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xb3778e6b5b6cb914fc9c99dd258034e949b3eea9be8ad7c3888b1d63bd2e3a71:85"
+      ],
+      "s006CorroboratingLogIndices": [
+        "57"
+      ],
+      "historicalCurrentOwner": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "21",
+      "observedOriginalWallet": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "purchaseTx": "0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d",
+      "purchaseBlock": "62938743",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "13638592554139803593186",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d:80"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x4f337590de70440aff4716fdd44abd1fb1dd678a211443b8eb3c1a938a93ad0d:108"
+      ],
+      "s006CorroboratingLogIndices": [
+        "80"
+      ],
+      "historicalCurrentOwner": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "22",
+      "observedOriginalWallet": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "purchaseTx": "0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac",
+      "purchaseBlock": "62945130",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "1010505832294964975193008",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac:39"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x412965ee1ae9b6c8e23939f443f080ee62f5204c1a40319ba23b6a78091cf4ac:67"
+      ],
+      "s006CorroboratingLogIndices": [
+        "39"
+      ],
+      "historicalCurrentOwner": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "23",
+      "observedOriginalWallet": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "purchaseTx": "0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a",
+      "purchaseBlock": "63027482",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "200000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a:2"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x3763ac1015d74655c52e84357ffcfef4cc59938fcfd6d77dafb0a0bc0d7efd3a:28"
+      ],
+      "s006CorroboratingLogIndices": [
+        "2"
+      ],
+      "historicalCurrentOwner": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "24",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352",
+      "purchaseBlock": "63042152",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "2000000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352:5"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xcce46effe1c0877581ab82bcd32f5690b09dd9eaa782bf653c8545ff9f608352:37"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "25",
+      "observedOriginalWallet": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "purchaseTx": "0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970",
+      "purchaseBlock": "63088827",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "50000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970:54"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xbaf5a8671bb876febd555fdfc95ad53289598eb90e0cdb535c5d54a6bb533970:82"
+      ],
+      "s006CorroboratingLogIndices": [
+        "54"
+      ],
+      "historicalCurrentOwner": "0x0000000000000000000000000000000000000000",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "26",
+      "observedOriginalWallet": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "purchaseTx": "0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d",
+      "purchaseBlock": "63127526",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "50000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d:117"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x03a24910340df937a7597382909e015284f60432f266e63ffc163dc559255e0d:143"
+      ],
+      "s006CorroboratingLogIndices": [
+        "117"
+      ],
+      "historicalCurrentOwner": "0x2e69e40c4a4ab5ca6826850f347acf8076a8063e",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "27",
+      "observedOriginalWallet": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "purchaseTx": "0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0",
+      "purchaseBlock": "63274560",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "3638287394965303325165504",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0:70"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x343e2e392a180d5d7b325ad655b26c0af8d6e10ef393c8a63cae9afd33ead0a0:98"
+      ],
+      "s006CorroboratingLogIndices": [
+        "70"
+      ],
+      "historicalCurrentOwner": "0x4aa38d56933887bdba2e790fa45509bfd9d1b938",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "28",
+      "observedOriginalWallet": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "purchaseTx": "0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737",
+      "purchaseBlock": "63301693",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "4646962928061246692056443",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737:33"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x3c4d60f7662423e28bb9701d0d0cc86fba5f1f0a72b657bbab43c86a23ae8737:61"
+      ],
+      "s006CorroboratingLogIndices": [
+        "33"
+      ],
+      "historicalCurrentOwner": "0xb63159deb0ed4b388b964c5eb5a9f2845e469a08",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "29",
+      "observedOriginalWallet": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "purchaseTx": "0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1",
+      "purchaseBlock": "63340059",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "2000000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1:1"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x4657b3a4dc9d185528850a3c348328e2731f1130087464370e9963d0a41c57f1:27"
+      ],
+      "s006CorroboratingLogIndices": [
+        "1"
+      ],
+      "historicalCurrentOwner": "0xcb2735084b4c10343e2f54c2c7573615ccf4d97f",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "30",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9",
+      "purchaseBlock": "63388857",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "500000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9:7"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x0b710505696fd871c01a6a671eaf7899bddc3c506972d8ebe88a44f2e46f71d9:35"
+      ],
+      "s006CorroboratingLogIndices": [
+        "7"
+      ],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "31",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04",
+      "purchaseBlock": "63389915",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "6190000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04:6"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x7bdfad0304c2c6b95a966cb524aa266e20c042dab687376982ae5da4b615da04:38"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "32",
+      "observedOriginalWallet": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "purchaseTx": "0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914",
+      "purchaseBlock": "63391984",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "56017714220190058289217",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914:0"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x66c1011955675c6927bf67fd64935a147dec659a1791e8ee86ea5cacfdd70914:26"
+      ],
+      "s006CorroboratingLogIndices": [
+        "0"
+      ],
+      "historicalCurrentOwner": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "33",
+      "observedOriginalWallet": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "purchaseTx": "0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc",
+      "purchaseBlock": "63423313",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "15063801572703677690083241",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc:0"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x3a1ffa3810f9995a53c474c6a1843543802c82ba23374b21a8356f9d96362cfc:28"
+      ],
+      "s006CorroboratingLogIndices": [
+        "0"
+      ],
+      "historicalCurrentOwner": "0x9140e11bb397188a0c930e91f3f266029c35524d",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "34",
+      "observedOriginalWallet": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "purchaseTx": "0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92",
+      "purchaseBlock": "63442871",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "6412108793936732436515",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92:40"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xd9562354a472f6db7ee553586602a4d96f8340b7d70ecaca49e7f0e1d6283e92:68"
+      ],
+      "s006CorroboratingLogIndices": [
+        "40"
+      ],
+      "historicalCurrentOwner": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "35",
+      "observedOriginalWallet": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "purchaseTx": "0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b",
+      "purchaseBlock": "63479261",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "14069000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b:22"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xaf50932dd1887a0b040b9f3ebe56e41a816438d7bd1a9c60ba9ed2165698032b:50"
+      ],
+      "s006CorroboratingLogIndices": [
+        "22"
+      ],
+      "historicalCurrentOwner": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "36",
+      "observedOriginalWallet": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "purchaseTx": "0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb",
+      "purchaseBlock": "63484319",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "126626591392013828699598",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb:36"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x50027e2f28032e2984df2f0d3edf38d9c883505df137aad51a3850e51c0800cb:62"
+      ],
+      "s006CorroboratingLogIndices": [
+        "36"
+      ],
+      "historicalCurrentOwner": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "37",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6",
+      "purchaseBlock": "63544244",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "3929803780631121610",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6:5"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x542ef3e006d0c2abdffe8de50be1276a715b53001ff8d53a9965314635124ec6:37"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "38",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f",
+      "purchaseBlock": "63552580",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "2000000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f:27"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xa8fa821dee294b5c50201e7f42c8edec6b2f1d868156b93757b3589f42678b0f:59"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "39",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47",
+      "purchaseBlock": "63553772",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "6000000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47:26"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x265781359b86c99ca1df38ea2132430dbc0d96369411e6e6d748d8980c3ecd47:58"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "40",
+      "observedOriginalWallet": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "purchaseTx": "0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9",
+      "purchaseBlock": "63555724",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "1000000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9:8"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xcb03d5db72ad067fad5199f33e1c6877d68e263ee506ba623ec5c20f3ed272e9:42"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "41",
+      "observedOriginalWallet": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "purchaseTx": "0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4",
+      "purchaseBlock": "63677030",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "0",
+      "observedDirectWethRaw": "50000000000000000",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0x0bd7d308f8e1639fab988df18a8011f41eacad73:0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4:10"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x81d091be8e2fac3b579a6d3dcd99b8ba5656c86002679dbece0e4c00e26e3ab4:42"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0x74d09665900a5f29bac25befd30c73a5962d44e7",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "42",
+      "observedOriginalWallet": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "purchaseTx": "0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba",
+      "purchaseBlock": "63914051",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "400000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba:45"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x3334bd0e091f8d9f869709c6333b5e6e491dc15cd0e1a35c0283aaf3fa3739ba:71"
+      ],
+      "s006CorroboratingLogIndices": [
+        "45"
+      ],
+      "historicalCurrentOwner": "0x0000000000000000000000000000000000000000",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "43",
+      "observedOriginalWallet": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "purchaseTx": "0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27",
+      "purchaseBlock": "64160774",
+      "preAttackObservation": true,
+      "observedDirectDtfRaw": "100000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27:23"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xab95cc263000f9305cdde269920706aac5e7a8bfd177993e9bc9cb3f79ec0b27:51"
+      ],
+      "s006CorroboratingLogIndices": [
+        "23"
+      ],
+      "historicalCurrentOwner": "0xb4b258c63d56c11f97d3f881d19aa296945846ae",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "44",
+      "observedOriginalWallet": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "purchaseTx": "0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd",
+      "purchaseBlock": "64544155",
+      "preAttackObservation": false,
+      "observedDirectDtfRaw": "1000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd:0"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0x8175991424ff423b7e184076fbba7e2a3c6172c7b39d7993492b6d64edbaa7bd:28"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "issuable": false,
+      "joinIssues": []
+    },
+    {
+      "chainId": 4663,
+      "sourceNft": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+      "tokenId": "45",
+      "observedOriginalWallet": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "purchaseTx": "0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731",
+      "purchaseBlock": "64548928",
+      "preAttackObservation": false,
+      "observedDirectDtfRaw": "100000000000000000000000",
+      "observedDirectWethRaw": "0",
+      "nativeEthContribution": null,
+      "inputEventIds": [
+        "0xee5576fa1bcaa380e591d01245f406f3f384eb01:0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731:23"
+      ],
+      "mintEventIds": [
+        "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e:0xd70fc904c7b3c6889eb2d3caad6417965674f4b2250a8d20a6649be3cae2e731:51"
+      ],
+      "s006CorroboratingLogIndices": [],
+      "historicalCurrentOwner": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "issuable": false,
+      "joinIssues": []
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+24 |       data: loupe.encodeFunctionData("facetAddress", ["0x3de35b79"]) }, block]);
+25 |     if (pairRoute.result && addressWord(pairRoute.result) === CORE) {
+26 |       pair = await rpc.read("eth_call", [{ to: row.parent, data: "0x3de35b79" }, block]);
+27 |     }
+28 |   }
+29 |   const expectedProxy = data.wa[row.collection].runtimeBytecode.onchainBytecode;
+                                         ^
+TypeError: undefined is not an object (evaluating 'data.wa[row.collection].runtimeBytecode')
+      at /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe.mjs:29:37
+
+Bun v1.4.2 (macOS arm64)

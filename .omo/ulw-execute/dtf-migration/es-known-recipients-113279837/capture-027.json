@@ -1,0 +1,28 @@
+{
+  "alias": "robinhood_mainnet_alchemy",
+  "start": "2026-11-13T14:05:59.219Z",
+  "stop": "2026-11-13T14:05:59.390Z",
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 178,
+      "method": "eth_getLogs",
+      "params": [
+        {
+          "address": "0xb7d4bb379d361ad442cddee53ea71a33957826a7",
+          "fromBlock": "0x0",
+          "toBlock": "0x6c0835d",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+          ]
+        }
+      ]
+    }
+  ],
+  "httpStatus": 200,
+  "responseText": "[{\"jsonrpc\":\"2.0\",\"id\":178,\"error\":{\"code\":-32600,\"message\":\"Under the Free tier plan, you can make eth_getLogs requests with up to a 10 block range. Based on your parameters, this block range should work: [0x0, 0x9]. Upgrade to PAYG for expanded block range.\"}}]",
+  "responseUtf8Bytes": 263,
+  "responseSha256": "78a9333b96f7cd51678ad4c0798af8b6f4362bf5092a2f87558b2e17b99232e0",
+  "raw": true,
+  "transportFailure": null
+}

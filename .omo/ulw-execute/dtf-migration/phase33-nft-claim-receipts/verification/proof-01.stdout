@@ -1,0 +1,1 @@
+{"verdict":"confirmed","counts":{"references":23,"originals":43,"newReceipts":16,"reusedReceipts":7,"ownRequests":67,"producerRequests":343,"priorRequests":30,"mintRequests":174,"canonicalLogs":96,"mintCanonicalLogs":1746,"runtimeChecks":115,"routeChecks":161,"rewardOnly":7},"totals":{"principal":"16780565667","rewards":"883066406","payout":"17663632073"},"findings":[]}

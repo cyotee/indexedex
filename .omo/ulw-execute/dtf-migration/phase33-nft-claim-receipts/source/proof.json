@@ -1,0 +1,1543 @@
+{
+  "status": "PASS-BOUNDED-PRODUCER-RAW-PROOF",
+  "independentLiveVerifier": false,
+  "refs": 23,
+  "originals": 43,
+  "reused": 7,
+  "new": 16,
+  "rawRequests": 343,
+  "priorRawRequestsChecked": 30,
+  "canonicalLogs": 96,
+  "proofRows": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=3",
+      "tx": "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf",
+      "tokenId": "4",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "principal": "0",
+      "rewards": "15414315",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "15414315",
+      "claimLog": {
+        "blockHash": "0x0ddcaadcb819aab04a34f81066658a5ff9ba961e300d523ad1e474cca8e1c244",
+        "blockNumber": "0x3c6f07d",
+        "transactionIndex": "0x5",
+        "transactionHash": "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf",
+        "logIndex": "0x20",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000004",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eb342b",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c753"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x0ddcaadcb819aab04a34f81066658a5ff9ba961e300d523ad1e474cca8e1c244",
+            "blockNumber": "0x3c6f07d",
+            "transactionIndex": "0x5",
+            "transactionHash": "0x98c198c8c25946098971110ac701ac1891036d573232db84788f7c3f665d19cf",
+            "logIndex": "0x1f",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000000000000000eb342b",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c753"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=5",
+      "tx": "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc",
+      "tokenId": "6",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "principal": "0",
+      "rewards": "38281206",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "38281206",
+      "claimLog": {
+        "blockHash": "0x9d218793d01fe1e8348bd81bbe72301e590c2ee289f993fb3a02f2257d24468a",
+        "blockNumber": "0x3c6f352",
+        "transactionIndex": "0x1",
+        "transactionHash": "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc",
+        "logIndex": "0x1",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000006",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002481ff6",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c79c"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x9d218793d01fe1e8348bd81bbe72301e590c2ee289f993fb3a02f2257d24468a",
+            "blockNumber": "0x3c6f352",
+            "transactionIndex": "0x1",
+            "transactionHash": "0x25bcdec5ebd3f1a1b5223f30c7a4a5be7b1c7b732fa7fb36a8a2cbdc45e803bc",
+            "logIndex": "0x0",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000000000000002481ff6",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c79c"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=6",
+      "tx": "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff",
+      "tokenId": "7",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          11,
+          12,
+          13,
+          14
+        ]
+      },
+      "principal": "0",
+      "rewards": "58561139",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "58561139",
+      "claimLog": {
+        "blockHash": "0x44ca57465325ff1b0402d5c2e6206a15605cb8221b26abe94de91257ae5506d7",
+        "blockNumber": "0x3c6f45e",
+        "transactionIndex": "0x6",
+        "transactionHash": "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff",
+        "logIndex": "0x1d",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000007",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000037d9273",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c7b7"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x44ca57465325ff1b0402d5c2e6206a15605cb8221b26abe94de91257ae5506d7",
+            "blockNumber": "0x3c6f45e",
+            "transactionIndex": "0x6",
+            "transactionHash": "0x8af05d894ccb05f0a57eb5bea4838f3267726b41033609a1007ea744a5f406ff",
+            "logIndex": "0x1c",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000037d9273",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c7b7"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=7",
+      "tx": "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed",
+      "tokenId": "8",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "principal": "0",
+      "rewards": "86294368",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "86294368",
+      "claimLog": {
+        "blockHash": "0xe6b617de4ca48e48b8c61ece53babbcc43c6a61c83be51d367639b8077f6c322",
+        "blockNumber": "0x3c6f543",
+        "transactionIndex": "0x3",
+        "transactionHash": "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed",
+        "logIndex": "0x5",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000008",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000524bf60",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c7ce"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xe6b617de4ca48e48b8c61ece53babbcc43c6a61c83be51d367639b8077f6c322",
+            "blockNumber": "0x3c6f543",
+            "transactionIndex": "0x3",
+            "transactionHash": "0x1db62f8a403bb8e6c1e2ff44853a105cfd033d8fc70902e51795bb483b9bf3ed",
+            "logIndex": "0x4",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000000524bf60",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c7ce"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=8",
+      "tx": "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5",
+      "tokenId": "9",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          19,
+          20,
+          21,
+          22
+        ]
+      },
+      "principal": "0",
+      "rewards": "120399548",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "120399548",
+      "claimLog": {
+        "blockHash": "0xba9cec6ee2e559c012eaad4b85ac08f1431d75dcdf4ddfa6748e9f11effd40d4",
+        "blockNumber": "0x3c6f616",
+        "transactionIndex": "0x6",
+        "transactionHash": "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5",
+        "logIndex": "0x43",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000009",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000072d26bc",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c7e4"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xba9cec6ee2e559c012eaad4b85ac08f1431d75dcdf4ddfa6748e9f11effd40d4",
+            "blockNumber": "0x3c6f616",
+            "transactionIndex": "0x6",
+            "transactionHash": "0xeea4d604f7178e4caa89c36898574e34ebb484404985ab12662670c96e9b51f5",
+            "logIndex": "0x42",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000072d26bc",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c7e4"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=9",
+      "tx": "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19",
+      "tokenId": "10",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          23,
+          24,
+          25,
+          26
+        ]
+      },
+      "principal": "0",
+      "rewards": "153046829",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "153046829",
+      "claimLog": {
+        "blockHash": "0x9deb08ca74f8da22c2c528e777bd6754b2233fcb179c6ffd78eed4307b2ecd18",
+        "blockNumber": "0x3c6f731",
+        "transactionIndex": "0xe",
+        "transactionHash": "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19",
+        "logIndex": "0x6e",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000000a",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000091f4f2d",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c800"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x9deb08ca74f8da22c2c528e777bd6754b2233fcb179c6ffd78eed4307b2ecd18",
+            "blockNumber": "0x3c6f731",
+            "transactionIndex": "0xe",
+            "transactionHash": "0x5e92e5978d3c22ec6e00fb9bc2feeb6a251fd9ccc2e3274f7be7c96ab6470d19",
+            "logIndex": "0x6d",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000091f4f2d",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c800"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=13",
+      "tx": "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1",
+      "tokenId": "14",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          27,
+          28,
+          29,
+          30
+        ]
+      },
+      "principal": "39",
+      "rewards": "1",
+      "recipient": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "total": "40",
+      "claimLog": {
+        "blockHash": "0x44ff92cd9e8f252afd47c7232519b35ac133990cec6eeb8194b4c165deb742dc",
+        "blockNumber": "0x3bd536e",
+        "transactionIndex": "0x3",
+        "transactionHash": "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1",
+        "logIndex": "0x2",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000000e",
+          "0x0000000000000000000000005160f655bf9b567f8a47a4f107371ad938126c3c"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000270000000000000000000000000000000000000000000000000000000000000001",
+        "removed": false,
+        "blockTimestamp": "0x6aa7cd1c"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x44ff92cd9e8f252afd47c7232519b35ac133990cec6eeb8194b4c165deb742dc",
+            "blockNumber": "0x3bd536e",
+            "transactionIndex": "0x3",
+            "transactionHash": "0x6168c6e2a65335b24d93f294064207d50b41931cd738aaab9c1b868a27f1a8c1",
+            "logIndex": "0x1",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000005160f655bf9b567f8a47a4f107371ad938126c3c"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000028",
+            "removed": false,
+            "blockTimestamp": "0x6aa7cd1c"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=13",
+      "tx": "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4",
+      "tokenId": "14",
+      "occurrence": 2,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          31,
+          32,
+          33,
+          34
+        ]
+      },
+      "principal": "5247",
+      "rewards": "3070",
+      "recipient": "0x5160f655bf9b567f8a47a4f107371ad938126c3c",
+      "total": "8317",
+      "claimLog": {
+        "blockHash": "0x2320a65cc98bf2c6a4b22f13066aa6ffab671f521d59563c57cec46e35cb1630",
+        "blockNumber": "0x3c7fb4b",
+        "transactionIndex": "0x1",
+        "transactionHash": "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4",
+        "logIndex": "0x1",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000000e",
+          "0x0000000000000000000000005160f655bf9b567f8a47a4f107371ad938126c3c"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000000147f0000000000000000000000000000000000000000000000000000000000000bfe",
+        "removed": false,
+        "blockTimestamp": "0x6aa8e263"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x2320a65cc98bf2c6a4b22f13066aa6ffab671f521d59563c57cec46e35cb1630",
+            "blockNumber": "0x3c7fb4b",
+            "transactionIndex": "0x1",
+            "transactionHash": "0x1878ba4049d26b08a81843edbeb2a936edbd8e8d8be9dfb2ec26531ef0b580d4",
+            "logIndex": "0x0",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000005160f655bf9b567f8a47a4f107371ad938126c3c"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000000000207d",
+            "removed": false,
+            "blockTimestamp": "0x6aa8e263"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076",
+      "tokenId": "21",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          35,
+          36,
+          37,
+          38
+        ]
+      },
+      "principal": "592850",
+      "rewards": "519358",
+      "recipient": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "total": "1112208",
+      "claimLog": {
+        "blockHash": "0xcd77a95d4e87e404a9b0f4a656c8c68e16206a87e8c9727068cee060f1e35ee5",
+        "blockNumber": "0x3cd6a25",
+        "transactionIndex": "0xd",
+        "transactionHash": "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076",
+        "logIndex": "0x4c",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000015",
+          "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000090bd2000000000000000000000000000000000000000000000000000000000007ecbe",
+        "removed": false,
+        "blockTimestamp": "0x6aa9706b"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xcd77a95d4e87e404a9b0f4a656c8c68e16206a87e8c9727068cee060f1e35ee5",
+            "blockNumber": "0x3cd6a25",
+            "transactionIndex": "0xd",
+            "transactionHash": "0xb973e4523b957f950800308b0327eab13782f54309bec9ffb5a5ed3d8c0fe076",
+            "logIndex": "0x4b",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000000010f890",
+            "removed": false,
+            "blockTimestamp": "0x6aa9706b"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954",
+      "tokenId": "21",
+      "occurrence": 2,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          39,
+          40,
+          41,
+          42
+        ]
+      },
+      "principal": "191",
+      "rewards": "0",
+      "recipient": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "total": "191",
+      "claimLog": {
+        "blockHash": "0xf6a04c661887218784522205167764e29523e853ad994a9a76521ce01442afaa",
+        "blockNumber": "0x3cd6b30",
+        "transactionIndex": "0x4",
+        "transactionHash": "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954",
+        "logIndex": "0x10",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000015",
+          "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000bf0000000000000000000000000000000000000000000000000000000000000000",
+        "removed": false,
+        "blockTimestamp": "0x6aa97087"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xf6a04c661887218784522205167764e29523e853ad994a9a76521ce01442afaa",
+            "blockNumber": "0x3cd6b30",
+            "transactionIndex": "0x4",
+            "transactionHash": "0x0db6934c05928ca3f3a88b0c6be21071dcae4f873dda3f6992dea75b4b670954",
+            "logIndex": "0xf",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000000000bf",
+            "removed": false,
+            "blockTimestamp": "0x6aa97087"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=20",
+      "tx": "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029",
+      "tokenId": "21",
+      "occurrence": 3,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          43,
+          44,
+          45,
+          46
+        ]
+      },
+      "principal": "110390",
+      "rewards": "14657",
+      "recipient": "0xed2e9d1e229e6a78baf74abc7314bd16b9924f33",
+      "total": "125047",
+      "claimLog": {
+        "blockHash": "0x4b9fff90bdce7165c65062d8dd67ae5048206c73a0c2149d454c3dd15d28d3a7",
+        "blockNumber": "0x3cfcf70",
+        "transactionIndex": "0x4",
+        "transactionHash": "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029",
+        "logIndex": "0x3",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000015",
+          "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000001af360000000000000000000000000000000000000000000000000000000000003941",
+        "removed": false,
+        "blockTimestamp": "0x6aa9afda"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x4b9fff90bdce7165c65062d8dd67ae5048206c73a0c2149d454c3dd15d28d3a7",
+            "blockNumber": "0x3cfcf70",
+            "transactionIndex": "0x4",
+            "transactionHash": "0x08c32381c229242054fbb3b1f5e66cbae181e678b9c5b4b0cb37a42854f8e029",
+            "logIndex": "0x2",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ed2e9d1e229e6a78baf74abc7314bd16b9924f33"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000000001e877",
+            "removed": false,
+            "blockTimestamp": "0x6aa9afda"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077",
+      "tokenId": "22",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          47,
+          48,
+          49,
+          50
+        ]
+      },
+      "principal": "3751798",
+      "rewards": "395154",
+      "recipient": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "total": "4146952",
+      "claimLog": {
+        "blockHash": "0xd2e540a21400396f47855033d262c19b3634c4f4679d2482604973144ad2e864",
+        "blockNumber": "0x3c1988e",
+        "transactionIndex": "0x13",
+        "transactionHash": "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077",
+        "logIndex": "0x53",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000016",
+          "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000393f760000000000000000000000000000000000000000000000000000000000060792",
+        "removed": false,
+        "blockTimestamp": "0x6aa83c5e"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xd2e540a21400396f47855033d262c19b3634c4f4679d2482604973144ad2e864",
+            "blockNumber": "0x3c1988e",
+            "transactionIndex": "0x13",
+            "transactionHash": "0xb76c35b8cbcf976712dac07d1816b2df06fb5258b6bd844ae9352d02c0d37077",
+            "logIndex": "0x52",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000003f4708",
+            "removed": false,
+            "blockTimestamp": "0x6aa83c5e"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572",
+      "tokenId": "22",
+      "occurrence": 2,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          51,
+          52,
+          53,
+          54
+        ]
+      },
+      "principal": "18851422",
+      "rewards": "3475244",
+      "recipient": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "total": "22326666",
+      "claimLog": {
+        "blockHash": "0x86cad23d77307fe9683c1216982e7e0388cf7497fe4b06197699f5c2c1ac6d91",
+        "blockNumber": "0x3c74b9e",
+        "transactionIndex": "0x3",
+        "transactionHash": "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572",
+        "logIndex": "0x5",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000016",
+          "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000000000011fa65e000000000000000000000000000000000000000000000000000000000035072c",
+        "removed": false,
+        "blockTimestamp": "0x6aa8d08e"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x86cad23d77307fe9683c1216982e7e0388cf7497fe4b06197699f5c2c1ac6d91",
+            "blockNumber": "0x3c74b9e",
+            "transactionIndex": "0x3",
+            "transactionHash": "0x2a94d0afa94e43d4d261baf0bb4c37e0d98d32051aa924a2ddfa3320867fb572",
+            "logIndex": "0x4",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000000154ad8a",
+            "removed": false,
+            "blockTimestamp": "0x6aa8d08e"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=21",
+      "tx": "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578",
+      "tokenId": "22",
+      "occurrence": 3,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          55,
+          56,
+          57,
+          58
+        ]
+      },
+      "principal": "20266670",
+      "rewards": "33302823",
+      "recipient": "0x8b73c11e053581620bf5d7826d0942c50cb7b9cf",
+      "total": "53569493",
+      "claimLog": {
+        "blockHash": "0x0beff93428e99bd58e69d306389811a090bacde530d6796359ce3148be4ad2ef",
+        "blockNumber": "0x3cd64bc",
+        "transactionIndex": "0x2",
+        "transactionHash": "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578",
+        "logIndex": "0x1",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000016",
+          "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000001353eae0000000000000000000000000000000000000000000000000000000001fc2927",
+        "removed": false,
+        "blockTimestamp": "0x6aa96fde"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0x0beff93428e99bd58e69d306389811a090bacde530d6796359ce3148be4ad2ef",
+            "blockNumber": "0x3cd64bc",
+            "transactionIndex": "0x2",
+            "transactionHash": "0x6997764082b1c00f01956a7c576c9aeb1f9c47e4f0356327e22b0f520f0c1578",
+            "logIndex": "0x0",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000008b73c11e053581620bf5d7826d0942c50cb7b9cf"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000033167d5",
+            "removed": false,
+            "blockTimestamp": "0x6aa96fde"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=23",
+      "tx": "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f",
+      "tokenId": "24",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          59,
+          60,
+          61,
+          62
+        ]
+      },
+      "principal": "0",
+      "rewards": "2678508",
+      "recipient": "0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8",
+      "total": "2678508",
+      "claimLog": {
+        "blockHash": "0xfcf27b786084723bf30f9ce0b2a2e4145ed65b4ac43251f8e0fe754dea1d1537",
+        "blockNumber": "0x3c6f83a",
+        "transactionIndex": "0x5",
+        "transactionHash": "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f",
+        "logIndex": "0x9",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000018",
+          "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000028deec",
+        "removed": false,
+        "blockTimestamp": "0x6aa8c81b"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xfcf27b786084723bf30f9ce0b2a2e4145ed65b4ac43251f8e0fe754dea1d1537",
+            "blockNumber": "0x3c6f83a",
+            "transactionIndex": "0x5",
+            "transactionHash": "0x9f1ed965eeaa9c52248ce937443ba29ff34f5a350c8b1915d1132e6459719d0f",
+            "logIndex": "0x8",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000000028deec",
+            "removed": false,
+            "blockTimestamp": "0x6aa8c81b"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=24",
+      "tx": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+      "tokenId": "25",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 105,
+        "requestIds": [
+          423,
+          424,
+          425,
+          426
+        ]
+      },
+      "principal": "53274997",
+      "rewards": "2865189",
+      "recipient": "0xf0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+      "total": "56140186",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0x59fadcf1fe0bb14585ba1ad32a11bf5550e69d71aff9a53fa0348cdf688814f5",
+        "blockNumber": "0x553c96e",
+        "blockTimestamp": "0x6ad102fb",
+        "data": "0x00000000000000000000000000000000000000000000000000000000032ce97500000000000000000000000000000000000000000000000000000000002bb825",
+        "logIndex": "0x1e",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000019",
+          "0x000000000000000000000000f0f80dd7e46ee7c3e7bd68f806bab1875f069530"
+        ],
+        "transactionHash": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+        "transactionIndex": "0x6"
+      },
+      "claimReceiptIndex": 11,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0x59fadcf1fe0bb14585ba1ad32a11bf5550e69d71aff9a53fa0348cdf688814f5",
+            "blockNumber": "0x553c96e",
+            "blockTimestamp": "0x6ad102fb",
+            "data": "0x000000000000000000000000000000000000000000000000000000000358a19a",
+            "logIndex": "0x1c",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000f0f80dd7e46ee7c3e7bd68f806bab1875f069530"
+            ],
+            "transactionHash": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+            "transactionIndex": "0x6"
+          },
+          "i": 9
+        }
+      ],
+      "retirementLogs": [
+        {
+          "l": {
+            "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+            "blockHash": "0x59fadcf1fe0bb14585ba1ad32a11bf5550e69d71aff9a53fa0348cdf688814f5",
+            "blockNumber": "0x553c96e",
+            "blockTimestamp": "0x6ad102fb",
+            "data": "0x",
+            "logIndex": "0x1d",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000f0f80dd7e46ee7c3e7bd68f806bab1875f069530",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000000000000000000000000000000000000000000019"
+            ],
+            "transactionHash": "0x5912c8beef25c63604f3b1a4545307e2e20cf752f34fd84a03f4c32e312a4e83",
+            "transactionIndex": "0x6"
+          },
+          "i": 10
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=31",
+      "tx": "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b",
+      "tokenId": "32",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 160,
+        "requestIds": [
+          643,
+          644,
+          645,
+          646
+        ]
+      },
+      "principal": "8071216",
+      "rewards": "2716673",
+      "recipient": "0x4dfebb21d855115d4019819393e514977e490e5d",
+      "total": "10787889",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0x3bac9818d474274bdcf576b56689e3459d9bd3875138df7ce83228816a28cd2e",
+        "blockNumber": "0x5228693",
+        "blockTimestamp": "0x6acbff9b",
+        "data": "0x00000000000000000000000000000000000000000000000000000000007b28300000000000000000000000000000000000000000000000000000000000297401",
+        "logIndex": "0xa",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000020",
+          "0x0000000000000000000000004dfebb21d855115d4019819393e514977e490e5d"
+        ],
+        "transactionHash": "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b",
+        "transactionIndex": "0x1"
+      },
+      "claimReceiptIndex": 10,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0x3bac9818d474274bdcf576b56689e3459d9bd3875138df7ce83228816a28cd2e",
+            "blockNumber": "0x5228693",
+            "blockTimestamp": "0x6acbff9b",
+            "data": "0x0000000000000000000000000000000000000000000000000000000000a49c31",
+            "logIndex": "0x9",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000004dfebb21d855115d4019819393e514977e490e5d"
+            ],
+            "transactionHash": "0x8ec4c3be22e3226dd695cfdbeb8da03fd0b3adde63996b094fd9238f6c91946b",
+            "transactionIndex": "0x1"
+          },
+          "i": 9
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=33",
+      "tx": "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f",
+      "tokenId": "34",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 138,
+        "requestIds": [
+          555,
+          556,
+          557,
+          558
+        ]
+      },
+      "principal": "7942358",
+      "rewards": "1540843",
+      "recipient": "0xba9b369a75e216cc9d73c9f3f916c939a5755a08",
+      "total": "9483201",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0xfb8801c76aa3f4e3710de8afe747be4f915e28f2868b4b0974d8a9240cf39f1f",
+        "blockNumber": "0x3fcb712",
+        "blockTimestamp": "0x6aae358f",
+        "data": "0x00000000000000000000000000000000000000000000000000000000007930d600000000000000000000000000000000000000000000000000000000001782eb",
+        "logIndex": "0x1",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000022",
+          "0x000000000000000000000000ba9b369a75e216cc9d73c9f3f916c939a5755a08"
+        ],
+        "transactionHash": "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f",
+        "transactionIndex": "0x1"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0xfb8801c76aa3f4e3710de8afe747be4f915e28f2868b4b0974d8a9240cf39f1f",
+            "blockNumber": "0x3fcb712",
+            "blockTimestamp": "0x6aae358f",
+            "data": "0x000000000000000000000000000000000000000000000000000000000090b3c1",
+            "logIndex": "0x0",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000ba9b369a75e216cc9d73c9f3f916c939a5755a08"
+            ],
+            "transactionHash": "0x76179386f800116488db19c7164a076f887dd533822a32d055c05d395f52296f",
+            "transactionIndex": "0x1"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=35",
+      "tx": "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a",
+      "tokenId": "36",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "archive.json",
+        "requestIds": [
+          63,
+          64,
+          65,
+          66
+        ]
+      },
+      "principal": "3247321",
+      "rewards": "14090243",
+      "recipient": "0x3b7137ef234e0a6bce37b19d3e1c4bb4584e0866",
+      "total": "17337564",
+      "claimLog": {
+        "blockHash": "0xfbeaf38e0d89da11e5a40c26c0768c46a3970f84c57abbe35ef9d63ae00e388f",
+        "blockNumber": "0x3cd48d2",
+        "transactionIndex": "0x7",
+        "transactionHash": "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a",
+        "logIndex": "0x14",
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x0000000000000000000000000000000000000000000000000000000000000024",
+          "0x0000000000000000000000003b7137ef234e0a6bce37b19d3e1c4bb4584e0866"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000318cd90000000000000000000000000000000000000000000000000000000000d70003",
+        "removed": false,
+        "blockTimestamp": "0x6aa96d03"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "blockHash": "0xfbeaf38e0d89da11e5a40c26c0768c46a3970f84c57abbe35ef9d63ae00e388f",
+            "blockNumber": "0x3cd48d2",
+            "transactionIndex": "0x7",
+            "transactionHash": "0xf7325a1194157d76db83360914d405799cb041165bd63522a5f8f6be0ebd7f0a",
+            "logIndex": "0x13",
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x0000000000000000000000003b7137ef234e0a6bce37b19d3e1c4bb4584e0866"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000000000000001088cdc",
+            "removed": false,
+            "blockTimestamp": "0x6aa96d03"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=41",
+      "tx": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04",
+      "tokenId": "42",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 254,
+        "requestIds": [
+          1019,
+          1020,
+          1021,
+          1022
+        ]
+      },
+      "principal": "5129740381",
+      "rewards": "162562490",
+      "recipient": "0x26acc4c07cac494d49054eaad406ef108a074a66",
+      "total": "5292302871",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0x7f31f132b03c28f410cacfbf6a583a72d3cbc10d57f2537dbac3a5d35ee70fbf",
+        "blockNumber": "0x62b1153",
+        "blockTimestamp": "0x6ae759b0",
+        "data": "0x0000000000000000000000000000000000000000000000000000000131c1a05d0000000000000000000000000000000000000000000000000000000009b081ba",
+        "logIndex": "0x10",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000002a",
+          "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66"
+        ],
+        "transactionHash": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04",
+        "transactionIndex": "0x5"
+      },
+      "claimReceiptIndex": 13,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0x7f31f132b03c28f410cacfbf6a583a72d3cbc10d57f2537dbac3a5d35ee70fbf",
+            "blockNumber": "0x62b1153",
+            "blockTimestamp": "0x6ae759b0",
+            "data": "0x000000000000000000000000000000000000000000000000000000013b722217",
+            "logIndex": "0xe",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66"
+            ],
+            "transactionHash": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04",
+            "transactionIndex": "0x5"
+          },
+          "i": 11
+        }
+      ],
+      "retirementLogs": [
+        {
+          "l": {
+            "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+            "blockHash": "0x7f31f132b03c28f410cacfbf6a583a72d3cbc10d57f2537dbac3a5d35ee70fbf",
+            "blockNumber": "0x62b1153",
+            "blockTimestamp": "0x6ae759b0",
+            "data": "0x",
+            "logIndex": "0xf",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x00000000000000000000000026acc4c07cac494d49054eaad406ef108a074a66",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x000000000000000000000000000000000000000000000000000000000000002a"
+            ],
+            "transactionHash": "0xcbd779f65dc55f8838fdbe1776d1c008383e885f9ef78ae9dc8c9cfc9267db04",
+            "transactionIndex": "0x5"
+          },
+          "i": 12
+        }
+      ]
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=43",
+      "tx": "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd",
+      "tokenId": "44",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 283,
+        "requestIds": [
+          1135,
+          1136,
+          1137,
+          1138
+        ]
+      },
+      "principal": "73745125",
+      "rewards": "1262696",
+      "recipient": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "total": "75007821",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0x8110532303cb7a2ff3386b546be0d4e2dcf39414802004476a8b953e63194343",
+        "blockNumber": "0x53bcd08",
+        "blockTimestamp": "0x6ace977d",
+        "data": "0x00000000000000000000000000000000000000000000000000000000046542e50000000000000000000000000000000000000000000000000000000000134468",
+        "logIndex": "0x6",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000002c",
+          "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+        ],
+        "transactionHash": "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd",
+        "transactionIndex": "0x3"
+      },
+      "claimReceiptIndex": 1,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0x8110532303cb7a2ff3386b546be0d4e2dcf39414802004476a8b953e63194343",
+            "blockNumber": "0x53bcd08",
+            "blockTimestamp": "0x6ace977d",
+            "data": "0x000000000000000000000000000000000000000000000000000000000478874d",
+            "logIndex": "0x5",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+            ],
+            "transactionHash": "0xe5cef98c943aee410e44370dbf2abdfd0df3f6df906a49786133a1596a9025fd",
+            "transactionIndex": "0x3"
+          },
+          "i": 0
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=44",
+      "tx": "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+      "tokenId": "45",
+      "occurrence": 1,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 216,
+        "requestIds": [
+          867,
+          868,
+          869,
+          870
+        ]
+      },
+      "principal": "802706343",
+      "rewards": "54999359",
+      "recipient": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "total": "857705702",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0xf15fce3c3c050e7728ee50db810384a4f3d546aa6891292af0c92cfc44545a80",
+        "blockNumber": "0x3f1f8a8",
+        "blockTimestamp": "0x6aad2083",
+        "data": "0x000000000000000000000000000000000000000000000000000000002fd853a7000000000000000000000000000000000000000000000000000000000347393f",
+        "logIndex": "0x24",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000002d",
+          "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+        ],
+        "transactionHash": "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+        "transactionIndex": "0x4"
+      },
+      "claimReceiptIndex": 10,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0xf15fce3c3c050e7728ee50db810384a4f3d546aa6891292af0c92cfc44545a80",
+            "blockNumber": "0x3f1f8a8",
+            "blockTimestamp": "0x6aad2083",
+            "data": "0x00000000000000000000000000000000000000000000000000000000331f8ce6",
+            "logIndex": "0x23",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+            ],
+            "transactionHash": "0xb54fc2bc5865af3326f1f934d41c29274a825ffa7c96b848294bfebe71d2ae52",
+            "transactionIndex": "0x4"
+          },
+          "i": 9
+        }
+      ],
+      "retirementLogs": []
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=44",
+      "tx": "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289",
+      "tokenId": "45",
+      "occurrence": 2,
+      "provenance": {
+        "archive": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/docs/incidents/2026-09-16-dtf-recovery/migration/recovery-receipts/verification/actual/archive.json",
+        "resultIndex": 306,
+        "requestIds": [
+          1227,
+          1228,
+          1229,
+          1230
+        ]
+      },
+      "principal": "10658259319",
+      "rewards": "130642693",
+      "recipient": "0xd221eea1c0ca823f57a96fdfe1d392a367384fdd",
+      "total": "10788902012",
+      "claimLog": {
+        "address": "0xfe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+        "blockHash": "0xbf7f5e15aa94fbeb893de07baad544f38af6c5a6d91ac0a69e71913246a569e9",
+        "blockNumber": "0x53bcc42",
+        "blockTimestamp": "0x6ace9768",
+        "data": "0x000000000000000000000000000000000000000000000000000000027b4821770000000000000000000000000000000000000000000000000000000007c97305",
+        "logIndex": "0x10",
+        "removed": false,
+        "topics": [
+          "0xc9ce1fda0c77561624626cb96a2d6d13038d1873f8999d5401c3e48f858dbc05",
+          "0x000000000000000000000000000000000000000000000000000000000000002d",
+          "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+        ],
+        "transactionHash": "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289",
+        "transactionIndex": "0x4"
+      },
+      "claimReceiptIndex": 10,
+      "payoutLogs": [
+        {
+          "l": {
+            "address": "0x4fa4974a8a09660258b8edd430b51c1620ebfe5c",
+            "blockHash": "0xbf7f5e15aa94fbeb893de07baad544f38af6c5a6d91ac0a69e71913246a569e9",
+            "blockNumber": "0x53bcc42",
+            "blockTimestamp": "0x6ace9768",
+            "data": "0x000000000000000000000000000000000000000000000000000000028311947c",
+            "logIndex": "0xf",
+            "removed": false,
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000fe4cc6d5faafdf210af4e728f4108fcaad9bb65e",
+              "0x000000000000000000000000d221eea1c0ca823f57a96fdfe1d392a367384fdd"
+            ],
+            "transactionHash": "0xf7a553d8d377f46c8f827de6f00f865d30142f3d0a87a9f37978d0f13412a289",
+            "transactionIndex": "0x4"
+          },
+          "i": 9
+        }
+      ],
+      "retirementLogs": []
+    }
+  ],
+  "allNewRequestsAccounted": true,
+  "failures": [],
+  "inputBindings": [
+    {
+      "path": "manifest.json",
+      "bytes": 3209,
+      "sha256": "a0fa15cf67f145f2a21e2738ff036c2611aab0cf1a03a97f56bc03c5349f9dec"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sdtf-detf-holders.csv",
+      "bytes": 24558,
+      "sha256": "22bde6b3f956632bebb3301106aaff8291933a7c9601921f5d88d430be59d703"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/stakers.csv",
+      "bytes": 10515,
+      "sha256": "1bc0e14d3dff474b40947a6df6345813ae7d5b477204df2e6e8aaf02ca91bb8f"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/snapshot.json",
+      "bytes": 3055,
+      "sha256": "e1178c8c5d5cfe2b0767bdcdd18599d0ee3b772ee6b7b8da1c0c343655982295"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/sy-sdtf-detf-holders.csv",
+      "bytes": 1432,
+      "sha256": "b57b63bd520c1630e84536def9204bd501a6f6f287055a8835b1254911551bce"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf.csv",
+      "bytes": 41120,
+      "sha256": "c5c360e416206b323c94a765acb5dfdec9cac6704e8af83405dbb9978ab44cb2"
+    },
+    {
+      "path": "../2026-09-16-dtf-pre-exploit/dtf-sold-to-detf-details.csv",
+      "bytes": 186222,
+      "sha256": "ef5e09a85b598e9ba2ae83c39703309dc6bad3253fbba19afc6975764a5a4bda"
+    },
+    {
+      "path": "evidence/weighted-candidates.csv",
+      "bytes": 83558,
+      "sha256": "fca97fca8bcce962e6d0316e6b1b6c10c3e12151ac4a915e6a41f307daec98da"
+    },
+    {
+      "path": "evidence/weighted-bonds.csv",
+      "bytes": 12283,
+      "sha256": "f1f63c97dee2d6fbaa0f0148b3e602a312af79d018e3b8b56967764d9e3a24e9"
+    },
+    {
+      "path": "evidence/earlier-cp-bonds.csv",
+      "bytes": 3709,
+      "sha256": "240a0cdb10c0a85f4df8e44c4fd568f9009e8e172bc72a5d0b109df38a06d223"
+    },
+    {
+      "path": "evidence/earlier-cp-wallets.csv",
+      "bytes": 2542,
+      "sha256": "9c0c63db97c5866d60f188f4901f616efcc0a8207e82f71b50eac1e55f260559"
+    },
+    {
+      "path": "evidence/transfers.csv",
+      "bytes": 4535122,
+      "sha256": "c840d060c5c7119a1f4777730d726fc0e0390e87ed3190ea0b4b841e99417939"
+    },
+    {
+      "path": "evidence/bond-accounting.csv",
+      "bytes": 18666,
+      "sha256": "d49479bf53fdab71b2ad20f8b8d838529abfbdf7b95f83b76c713fd76da4af3f"
+    },
+    {
+      "path": "evidence/index-events.csv",
+      "bytes": 111333,
+      "sha256": "47b646809c90cb1878bf5b03f700be0f137d446462c416abde2902699029129c"
+    },
+    {
+      "path": "evidence/all-index-events.csv",
+      "bytes": 141460,
+      "sha256": "5c7ff1eb0c03366560eb2a1d8219b7ef2928caaece5d00a0a46a13ebf0b8b9b9"
+    },
+    {
+      "path": "evidence/post-incident-bond-claims.csv",
+      "bytes": 3012,
+      "sha256": "2f734ae7d29d0d4b2c05352e9e3f8523522d7c331d27c223af9811427897b719"
+    },
+    {
+      "path": "account-ledger.csv",
+      "bytes": 285464,
+      "sha256": "0b717360d82589fcb5391de4e0312e452ccdc8a116bde58d36f217ca81025510"
+    },
+    {
+      "path": "positions.csv",
+      "bytes": 123221,
+      "sha256": "38f9bd5b6db1bd76fe5237a77c3f5129b67bb2e7132ed2af5cf0f3b76f1ca1a3"
+    },
+    {
+      "path": "observed-recoveries.csv",
+      "bytes": 30839,
+      "sha256": "d3546c814a4081ba2006006d5adab088bbb88f5ff4bc7846b84e1bfc735f8b94"
+    },
+    {
+      "path": "conversions.csv",
+      "bytes": 91676,
+      "sha256": "52717d786f3b3771d37b8e3c758ee071b10bea033221296485c343fa5742207a"
+    },
+    {
+      "path": "exceptions.csv",
+      "bytes": 3404,
+      "sha256": "8cd143734b41e77a1756d893623660e7240d59b7906d8362ad7a02736b13bb8f"
+    },
+    {
+      "path": "rounding.csv",
+      "bytes": 327,
+      "sha256": "12ada9fcd714d0b602ebeef2b9f861761a8942fdda3cadbbc95292107efd1d61"
+    },
+    {
+      "path": "reconciliation.json",
+      "bytes": 1798,
+      "sha256": "52098bd8cca329f0e24e574ec681b64dfd5adaebb0cabc84d43cee3b569acd89"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 5502,
+      "sha256": "a981fcda0323a33cfd2f95f0025bd445d80f2bb5db7d6a69b81b792f70693b3a"
+    },
+    {
+      "path": "LOSS_AND_RECOVERY_LEDGER.md",
+      "bytes": 15308,
+      "sha256": "8564764d3d2140b25a9de361c49606c2e4d3d53cc404309ccc00bb955f572f07"
+    },
+    {
+      "path": "held-exclusions.csv",
+      "bytes": 188644,
+      "sha256": "31e102d7ee0b2bd449888e34d6d881205a1e143224e34f41e3eb035ce0db2acc"
+    },
+    {
+      "path": "custody-inventory.csv",
+      "bytes": 139535,
+      "sha256": "1125c3355cf0960e2d3a3d56fb1e91d254c02ffc6d5172077d7e3f0422c527ea"
+    },
+    {
+      "path": "CUSTODY_AND_HARVEST.md",
+      "bytes": 7357,
+      "sha256": "0ddb0eb30523e26551dce653d3f3bfb2e439f7b0c83fe2c8c93aaf953d6f42cd"
+    }
+  ],
+  "currentEvidence": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/verification/observations.json",
+  "financialAuthority": false,
+  "allHistoryCensus": false
+}

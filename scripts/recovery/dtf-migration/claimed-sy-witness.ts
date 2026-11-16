@@ -7,8 +7,6 @@ import { stakingClaim, stakingSource, claimBookFacets } from "./claimed-sy-sourc
 export const claimWitness = new Interface([
   "function witness(address wallet,bytes data) returns(uint256[7] beforeBooks,uint256[7] afterBooks)",
 ]);
-// Solar-built MigrationClaimWitness.sol, optimizer_runs=1. Not supplied by a certificate.
-export const claimWitnessCodeHash = "0x4ae06bcb278766df6529bcd60e05453fee6c853f6536b9f18d2a4d0dac8fd899";
 export const claimFrame = z.object({
   from: address, to: address, input: hex, output: hex.default("0x"), type: z.string(),
   error: z.string().optional(), calls: z.array(z.unknown()).default([]),

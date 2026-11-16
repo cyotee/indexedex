@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-13",
+  "run": "dag_ba88c194-7ea6-4c9d-a880-904eb80d6138",
+  "child": "st_01a1d3a4",
+  "childRelease": "Retained child or queued continuation released by task_cancel; error result remains readable.",
+  "observations": {
+    "processCwdScanExit": 0,
+    "matchingWorktreeCwds": [],
+    "processCwdScanErrors": "",
+    "port18579Listener": false,
+    "portScanExit": 1,
+    "previousCompilerChainProcessScan": "No anvil, forge or solar process observed."
+  },
+  "preservation": "Partial historical responses and unfinished probe files retained. Worktree and copied artifacts retained for later archival. No producer seal or completed witness is asserted.",
+  "verification": "Runtime cleanup observation only; not source-admission, test, build or independent verification success.",
+  "pendingQuestion": "Whether the existing configured model provider restriction has been resolved. No retry until answered affirmatively."
+}

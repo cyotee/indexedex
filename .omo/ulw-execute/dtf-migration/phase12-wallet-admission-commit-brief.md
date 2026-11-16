@@ -1,0 +1,18 @@
+# Wallet-admission verified local delivery
+
+Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission, branch work/dtf-migration-phase-12-wallet-admission, expected parent3f577eeca049c1bd70a812d130941c8a38dd4781. Read repository rules and git-master; every Git invocation uses GIT_MASTER=1. User authorizes scoped verified local commits only, no push/PR/main or integration merge/public action.
+
+Read current main plan r3 section1.3, phase12-original-wallet-admission-brief.md, complete wallet-admission/implementation/report.md and verification/report.md in the incident migration evidence. Independent verifier st_01a1ca52 confirms H1/H2/H7 bounded original-wallet admission/operator propagation:97 specs,47 pinned forks,54 operator tests, strict TypeScript, real CLI admission/resume and cleanup. Full categories and historical32m deployment constraint remain open. No held phase09 candidate may be read/imported/changed/tested.
+
+Root corrected the two minor verifier documentation findings after the runtime audit: cli.ts help port18560 ->18562 (one literal in exported help string only); runbook current deployment42985865 versus baseline42985843, and current wallet-admission evidence locators replacing historical operator pointers. Root ran actual cli.ts --help and git diff --check successfully. Historical report and original bindings remain unchanged. Independently inspect this exact delta before accepting current packaging; do not pretend its current hashes were runtime-audited. No new prose-pinning test or full suite for these wording-only corrections.
+
+## Commit ownership
+
+Candidates are ONLY phase12-owned exact accepted Migration interface/repo/target/legacy helper changes, necessary neighboring Migration TestBase/spec/fork files, operator TypeScript/tests/Foundry stages and operator-runbook.md. Derive exact list from actual status, final-source independent baseline/parity evidence and current diff. Exclude all evidence/report/probe witnesses/logs/generated journals/broadcasts/caches/links/config/dependencies/unrelated files. No broad directory staging. No production/script/test changes in this delivery lane; report a concrete mismatch rather than changing it.
+
+Inspect exact parent/index/convention and entire candidate diff, bind every current path/mode to accepted independent source identities, with the two explicitly reviewed documentation exceptions above. Detect resolved secret endpoints or production signing material before staging. Preserve foreign staged and unrelated changes. Write wallet-admission/commit/source-manifest.json with exact candidate paths,modes,current/accepted hashes/provenance and baseline preservation. Stage only exact paths, inspect complete staged diff, create one coherent repository-convention commit with exactly one required coauthor trailer, verify committed/current/accepted equivalence and preservation. Write commit/receipt.md with full hash,parent,path count/list,verification,exceptions,protected refs and no pending runtime.
+
+## Independent commit audit
+
+Write only wallet-admission/commit/verification.md and supporting evidence there. Independently derive exact accepted path/hash/mode set from runtime verifier sources, then review cli help and runbook wording exceptions against the actual report and rehearse.ts required port. Execute --help and confirm no executable logic change is hidden. Compare actual committed/current blobs,parent,path set/trailer; preserve unrelated index/files/prior evidence/protected refs. Do not rerun unchanged transaction suites or copy producer pass flags. No new commit or fixes. Return confirmed/needs-fix for local source delivery only, with exact provenance qualifications and cleanup.
+

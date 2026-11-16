@@ -1,0 +1,44 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source",
+  "pid": 67238,
+  "startedAt": "2026-11-13T11:05:02.634Z",
+  "finishedAt": "2026-11-13T11:05:27.445Z",
+  "exit": 1,
+  "signal": null,
+  "sources": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/common.mjs",
+      "bytes": 8781,
+      "sha256": "1fc57a223c889441a3e7bb9d1d7add6c5137a1abe63e96f736d3ec3a81647727"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/rpc.mjs",
+      "bytes": 3440,
+      "sha256": "40e3c802bfcffebde4ac510528b86ddab476f5e335487f84b7d30605e444bddd"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe.mjs",
+      "bytes": 3005,
+      "sha256": "01ebc7f7828989a0e6e99ab25af203a7bc85af05b50107da08db34443d302289"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/record.mjs",
+      "bytes": 1614,
+      "sha256": "dff0983bbe73bab16e5bde65904969851796ec41265ae4d957246571a8de49ed"
+    }
+  ],
+  "stdout": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe-01.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/source/observe-01.stderr",
+    "bytes": 650,
+    "sha256": "18ccdc07e25dc2b301462b1c55673ec8142b141a41429cab47d3db4c8c0d9812"
+  }
+}

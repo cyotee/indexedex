@@ -1,0 +1,57 @@
+[
+  {
+    "start": "2026-11-13T09:36:29.522Z",
+    "end": "2026-11-13T09:36:29.634Z",
+    "exitCode": 1,
+    "stdoutBytes": 3315077,
+    "stdoutSha256": "daae0edd1dd1be38849e0a6c2d26556c6612bd19274e1524ab382af8e815b698",
+    "stderr": "",
+    "failures": [
+      {
+        "actual": [
+          "evidence/weighted-bonds.csv#row=43",
+          "conversions.csv#row=94"
+        ],
+        "expected": [
+          "conversions.csv#row=94",
+          "evidence/weighted-bonds.csv#row=43"
+        ],
+        "location": "recipientFlows/176/allTransactionReferences"
+      },
+      {
+        "actual": [
+          "evidence/weighted-bonds.csv#row=43",
+          "conversions.csv#row=94"
+        ],
+        "expected": [
+          "conversions.csv#row=94",
+          "evidence/weighted-bonds.csv#row=43"
+        ],
+        "location": "recipientFlows/177/allTransactionReferences"
+      },
+      {
+        "actual": [
+          "evidence/weighted-bonds.csv#row=44",
+          "conversions.csv#row=100"
+        ],
+        "expected": [
+          "conversions.csv#row=100",
+          "evidence/weighted-bonds.csv#row=44"
+        ],
+        "location": "recipientFlows/320/allTransactionReferences"
+      },
+      {
+        "actual": [
+          "evidence/weighted-bonds.csv#row=44",
+          "conversions.csv#row=100"
+        ],
+        "expected": [
+          "conversions.csv#row=100",
+          "evidence/weighted-bonds.csv#row=44"
+        ],
+        "location": "recipientFlows/321/allTransactionReferences"
+      }
+    ],
+    "diagnosis": "Verifier incorrectly required sorted order for the allTransactionReferences membership list. The worksheet preserves phase28-before-phase30 encounter order. Membership and duplicate absence, not sorted order, are the contract. No worksheet derivation mismatch was found in this run."
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "parent": "789fced820ed494d9651c598fb8f75c646d727a7",
+  "reportSha256": "77bb12de3b210f0091d4f7409fdb52eff81b1fec5d8cc11dce0db38897bfa5aa",
+  "paths": [
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 63759,
+      "sha256": "f2c55a085028e6fb8e8c7eb54d78a6b041528ca012cdc2fe4ce80124423b3c1c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 13040,
+      "sha256": "655227085f6dad1fceab01cd152366c5a8bb53fa6e629be0449a9f7b532db6c4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "bytes": 3498,
+      "sha256": "24bd61407af078275decdfa4fd7d4cf948aae486866aa87a2548360e09fe4838"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "bytes": 8030,
+      "sha256": "19ff713d8268fa606e564adced389212a806f42a605c49c8add25850bf98af4c"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "bytes": 6178,
+      "sha256": "67281df0eba8c79a9f319ed932f1a640affacbf9a1dd42addf5adb74e6a45155"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "bytes": 3491,
+      "sha256": "ffe85fb5c09603a39377bdda08d4a7a3f2a399c92b2634fd4b32314824d09333"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "bytes": 8602,
+      "sha256": "11fa849afaa8ebeaca2b20f9b157242364b991b448c8b2d70b09b46f691cb1f0"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "bytes": 8133,
+      "sha256": "8dc3101301ce8369d20a3e66e8f09ece53dc94325ee9bb6be972132c34664536"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "bytes": 5027,
+      "sha256": "ac292360c69e8fabae5e9d537499a058460a115312cda1f8e314ec1e7ed24397"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "bytes": 7985,
+      "sha256": "edae27a4bf0600f1a09e94ed6756fe6b6fdbabe3570f5307d5976fec47bece80"
+    }
+  ]
+}

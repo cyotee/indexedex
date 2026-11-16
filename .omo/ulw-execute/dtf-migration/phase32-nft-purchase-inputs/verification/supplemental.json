@@ -1,0 +1,202 @@
+{
+  "producerRows": 59,
+  "producerUniqueKeys": 59,
+  "originalDirectFields": [
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=2",
+      "dtfOriginal": "0",
+      "dtfDerived": "0",
+      "wethOriginal": "2000000000000000000",
+      "wethDerived": "2000000000000000000"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=3",
+      "dtfOriginal": "7215852540309913726431",
+      "dtfDerived": "7215852540309913726431",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=4",
+      "dtfOriginal": "14939945008882434692090",
+      "dtfDerived": "14939945008882434692090",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=5",
+      "dtfOriginal": "55026060195080703684401",
+      "dtfDerived": "55026060195080703684401",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=6",
+      "dtfOriginal": "320000000000000000000000",
+      "dtfDerived": "320000000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=7",
+      "dtfOriginal": "10000000000000000000000",
+      "dtfDerived": "10000000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=8",
+      "dtfOriginal": "0",
+      "dtfDerived": "0",
+      "wethOriginal": "100000000000000",
+      "wethDerived": "100000000000000"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=9",
+      "dtfOriginal": "1000000000000000000000",
+      "dtfDerived": "1000000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=10",
+      "dtfOriginal": "100000000000000000000",
+      "dtfDerived": "100000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=11",
+      "dtfOriginal": "75081277576132719227716",
+      "dtfDerived": "75081277576132719227716",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=12",
+      "dtfOriginal": "22000000000000000000",
+      "dtfDerived": "22000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=13",
+      "dtfOriginal": "100000000000000000000",
+      "dtfDerived": "100000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=14",
+      "dtfOriginal": "600000000000000000000",
+      "dtfDerived": "600000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=15",
+      "dtfOriginal": "1063674247110000000000",
+      "dtfDerived": "1063674247110000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=16",
+      "dtfOriginal": "117496434189960639589934",
+      "dtfDerived": "117496434189960639589934",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    },
+    {
+      "locator": "evidence/earlier-cp-bonds.csv#row=17",
+      "dtfOriginal": "1000000000000000000",
+      "dtfDerived": "1000000000000000000",
+      "wethOriginal": "0",
+      "wethDerived": "0"
+    }
+  ],
+  "currentAbsent": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=24",
+      "tokenId": "25",
+      "observations": {
+        "ownerOf": {
+          "requestId": 125,
+          "status": "success",
+          "value": "0x0000000000000000000000000000000000000000"
+        },
+        "positionOf": {
+          "requestId": 126,
+          "status": "failure",
+          "value": null,
+          "failure": {
+            "kind": "rpc",
+            "error": {
+              "code": 3,
+              "message": "execution reverted",
+              "data": "0x7e2732890000000000000000000000000000000000000000000000000000000000000019"
+            }
+          }
+        },
+        "previewClaim": {
+          "requestId": 127,
+          "status": "failure",
+          "value": null,
+          "failure": {
+            "kind": "rpc",
+            "error": {
+              "code": 3,
+              "message": "execution reverted",
+              "data": "0x7e2732890000000000000000000000000000000000000000000000000000000000000019"
+            }
+          }
+        }
+      }
+    },
+    {
+      "locator": "evidence/weighted-bonds.csv#row=41",
+      "tokenId": "42",
+      "observations": {
+        "ownerOf": {
+          "requestId": 176,
+          "status": "success",
+          "value": "0x0000000000000000000000000000000000000000"
+        },
+        "positionOf": {
+          "requestId": 177,
+          "status": "failure",
+          "value": null,
+          "failure": {
+            "kind": "rpc",
+            "error": {
+              "code": 3,
+              "message": "execution reverted",
+              "data": "0x7e273289000000000000000000000000000000000000000000000000000000000000002a"
+            }
+          }
+        },
+        "previewClaim": {
+          "requestId": 178,
+          "status": "failure",
+          "value": null,
+          "failure": {
+            "kind": "rpc",
+            "error": {
+              "code": 3,
+              "message": "execution reverted",
+              "data": "0x7e273289000000000000000000000000000000000000000000000000000000000000002a"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "differentOwner": [
+    {
+      "locator": "evidence/weighted-bonds.csv#row=25",
+      "tokenId": "26",
+      "original": "0xc379feb4182211abe71a34858265e4bf5ff35e06",
+      "current": "0x2e69e40c4a4ab5ca6826850f347acf8076a8063e"
+    }
+  ]
+}

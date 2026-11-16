@@ -1,0 +1,45 @@
+{
+  "version": "recipient-flow-review-verification-manifest-v1",
+  "scope": "New offline review artifacts only",
+  "entries": [
+    {
+      "path": "attempts.json",
+      "bytes": 1827,
+      "sha256": "f0bc8ba2d80e792e9425fa5ea9e50089c45e39b361ff2a0f9c90bac560323c7e"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 5552,
+      "sha256": "6f830eed0ba8dc09362dcf52471fa9192b914c386cc38441b98429465abe5167"
+    },
+    {
+      "path": "command.json",
+      "bytes": 1287,
+      "sha256": "ed27f92359ce3bdbdf190e161e4e3e5f80ca3ade8d2ffd73e8a3b6e5a406b220"
+    },
+    {
+      "path": "inputs.json",
+      "bytes": 2381,
+      "sha256": "4522c60d5100134b116e58edd2b07a0c8f8b7176632893e6e8ad530b89374196"
+    },
+    {
+      "path": "proof.json",
+      "bytes": 3313903,
+      "sha256": "6840c3dd337213e5fb7569728cdd1304df178bc5a5a5f3e1a1cbdb2d0794548b"
+    },
+    {
+      "path": "prove.py",
+      "bytes": 14246,
+      "sha256": "773f6e333d6ad5b53e70266521ead43f4707820aadbdf4ea194dece5e539f638"
+    },
+    {
+      "path": "report.md",
+      "bytes": 13287,
+      "sha256": "bc82bdfd4964657223080b45852fc560513a2c9d8badb0ffa7962e734eccfd81"
+    }
+  ],
+  "excludes": [
+    "manifest.json",
+    "seal.json"
+  ]
+}

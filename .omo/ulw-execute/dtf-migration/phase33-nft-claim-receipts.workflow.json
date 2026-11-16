@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase33-nft-claim-receipts",
+  "name": "Migration DETF phase 33: named weighted NFT claim receipts",
+  "nodes": [
+    {
+      "id": "collect-nft-claims",
+      "label": "Reconcile named weighted NFT claims",
+      "category": "deep-low",
+      "task_summary": "Acquire 16 missing named receipts and reconcile all 23 NFT principal/reward claim records",
+      "prompt": "TASK: Complete the read-only named-claim evidence unit in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts-brief.md. Read the entire brief and authenticated originals/accepted archives/source schemas before acting. SCOPE: Write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/source/. No production or old-evidence edits, commits, installs, full-gate replay, signing, source changes, trace/range scans, provider switch or phase29 retry. Do not read changing phase32 outputs. DELIVERABLE: All 23 named claim dispositions, explicit provenance for seven reused and16 new receipt captures, actual claim/retirement/payout event evidence, principal/reward comparisons with frozen/current counters, unknowns, reproducible proof, report, manifests and stopped cleanup/seal. VERIFY: Independently derive names from complete S008 claim_transactions, authenticate chain4663/historical108944663 anchor, apply exact canonical transaction/receipt/block/log checks. Interpret amounts only with actual source/schema evidence; distinguish principal, rewards, current remaining NFT, descendants and migration compensation. Missing splits/history remain unknown; no replay of seven already accepted receipts or old suites. STOP WHEN: Complete bounded actual evidence and precise gaps with no pending operation, no financial/source approval or status-only handoff."
+    },
+    {
+      "id": "verify-nft-claims",
+      "label": "Verify NFT claim lifecycle evidence",
+      "category": "deep-low",
+      "dependsOn": [
+        "collect-nft-claims"
+      ],
+      "task_summary": "Independently verify all 23 named claim records and principal/reward lifecycle comparisons",
+      "prompt": "TASK: Independently verify the stopped handoff under /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts-brief.md. Read the entire brief and actual source report, raw identities, schemas, manifests, cleanup and seal. SCOPE: Write only /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/. No producer/source changes, Git writes, installs, full-gate replay, source mutation, signing, traces, provider change or phase29 retry. Do not read changing phase32 output. DELIVERABLE: Complete confirmed/needs-fix report with independent all-record proof, source/input identities, actual stopped acquisition and cleanup/seal. VERIFY: Reconstruct all 23 original references, reuse seven authenticated prior receipts, independently acquire16 missing transactions at the same historical anchor, and reconcile every actual claim/output/retirement log and supported principal/reward split without producer conclusions as sole oracle. Compare exact native-unit totals to frozen/current records only where evidence supports them; absent current positions stay unknown, incomplete history stays incomplete, reward payments are not new capital and legacy payouts are not migration deductions. No descendant ownership/eligibility/C0 inference. STOP WHEN: Complete bounded verdict and stopped evidence, with explicit missing semantics rather than invented values or a pending-command promise."
+    }
+  ]
+}

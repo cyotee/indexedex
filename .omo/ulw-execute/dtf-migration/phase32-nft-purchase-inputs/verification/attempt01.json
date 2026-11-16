@@ -1,0 +1,17 @@
+{
+  "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+  "argv": [
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/verify.mjs"
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification",
+  "pid": 79090,
+  "startedAt": "2026-11-13T11:24:56.600Z",
+  "finishedAt": "2026-11-13T11:24:57.117Z",
+  "exit": 1,
+  "stdout": "",
+  "stderr": "27 | export class VerificationError extends Error {\n28 |   constructor(label) { super(label); this.name = \"VerificationError\"; }\n29 | }\n30 | export function check(condition, label) {\n31 |   counters.checks++;\n32 |   if (!condition) throw new VerificationError(label);\n                             ^\nVerificationError: current pin evidence/weighted-bonds.csv#row=2\n      at check (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/intake.mjs:32:25)\n      at /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification/verify.mjs:136:3\n\nBun v1.4.2 (macOS arm64)\n",
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "77c10016ad067fcefc2c3ddbe0fc03fc3073087343eee15348700c17fc97f376",
+  "executedSourceSha256": "a5cedd3d14820979b88b72ec7b90d1e4c1a82b682f9a66b18f35a484d0e3e82a"
+}
+

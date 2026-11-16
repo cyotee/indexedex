@@ -1,0 +1,20 @@
+{
+  "tokenStaking": "Dedicated claimed-origin path removed; legacy claimedOrigin inputs reject; ordinary SY/direct claim-vault and other sources preserved",
+  "canonicalScope": "Primary PRDr23 and planr6 aligned",
+  "esOperator": "Fourth finite held source admitted; E-S-independent table case protects against accidental removal; actual EOA donor fixture, no collector/infrastructure authority",
+  "checks": {
+    "types": "strict TypeScript exit0",
+    "operator": "177passed0failed,mon_X9J7EM5MFNK8PMNA",
+    "solidity": "Retained ordinary-SY test/execution-script Solar build exit0; preceding E-S76-test gate preserved",
+    "runtime": "mon_XNRDENQAW3B4XQC5 exit0; four real legacy source acquisitions, nine local transactions; E-S donor debit10020 equals controlled recipient credit10020, supply unchanged; node closed in finally",
+    "diff": "git diff --check exit0",
+    "lsp": "Four changed operator files clean; rehearsal-held-se-lp.ts retains a pre-existing unused hex import hint. Child test-file LSP timeouts were not reported as passes."
+  },
+  "limits": [
+    "No full operator deployment/issuance rehearsal was rerun; this runtime check covers actual acquisition helper, with payload/ABI and custody tested separately.",
+    "Financial eligibility/original components remain unapproved; synthetic fixtures do not approve allocations.",
+    "No public transaction, deployment, commit, source governance change or further TokenStaking claimant research."
+  ],
+  "runtimeEvidence": "es-operator-acquisition-20261113/held-se-lp-acquisition.json",
+  "fullMigrationComplete": false
+}

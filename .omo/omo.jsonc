@@ -1,0 +1,26 @@
+// Repo-owned skill exclusions. This file hides user-installed skills that do not
+// belong in this repository. It does not isolate an untrusted headless run, and
+// containers must still be built with only their selected bundles.
+{
+  "disabled_skills": [
+    "accelerator-usage",
+    "blender-mcp",
+    "boardgame-io",
+    "boardgameio-crypto",
+    "godot",
+    "godot-blender-models",
+    "godot-development",
+    "helia",
+    "libp2p",
+    "manamesh-architecture",
+    "manamesh-assets",
+    "manamesh-contracts",
+    "manamesh-crypto",
+    "manamesh-game-modules",
+    "manamesh-p2p",
+    "manamesh-ui-tx-testing"
+  ],
+  "_migrations": [
+    "2026-08-reasoning-unification"
+  ]
+}

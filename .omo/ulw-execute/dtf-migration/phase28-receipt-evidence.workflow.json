@@ -1,0 +1,23 @@
+{
+  "key": "dtf-migration-phase28-receipt-evidence",
+  "name": "Migration DETF phase 28: finite canonical receipt evidence",
+  "nodes": [
+    {
+      "id": "collect-known-receipts",
+      "label": "Implement known receipt collection",
+      "category": "deep-low",
+      "task_summary": "Build a read-only collector and archive the 77 known purchase and claim transactions",
+      "prompt": "TASK: Implement and execute the finite receipt-evidence increment specified in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-brief.md. Read that entire brief, current requirements, source inputs and actual operator boundaries first. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence at789fced820ed494d9651c598fb8f75c646d727a7; existing operator and runbook only; owned /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/implementation/ and temporary outputs. DELIVERABLE: Typed offline-safe/read-only CLI, meaningful tests, complete actual77-record archive/reconciliation, stopped source/report/cleanup/seal. VERIFY: Full raw-input binding, exact43weighted/16CP/18raw-claim references and deduplication; existing provider chain4663/anchor108944663 authenticated; every actual transaction/receipt/block/log association and all conflicts/unknowns. Only the five named read RPC methods; no range scans, alternative provider, retries/workarounds, debug trace, signer/transaction, source governance or held09. No credential output/storage. Strict types, one final operator suite and one complete actual finite collection; preserve raw safe responses, failures, non-raw redactions and source qualification. No existingfinancial/hash/journal behavior changes, old data/evidence edits, dependency/config/install/Solidity or Forge/full-rehearsal replay. No commit. All detailed brief requirements apply. STOP WHEN: Actual complete functional collector plus stopped report/source/evidence seal, or exact genuine blocker without fabricated records. No status-only final while work remains."
+    },
+    {
+      "id": "verify-known-receipts",
+      "label": "Verify canonical receipt evidence",
+      "category": "deep-low",
+      "dependsOn": [
+        "collect-known-receipts"
+      ],
+      "task_summary": "Independently verify the finite archive, canonical links and source observation limits",
+      "prompt": "TASK: Independently verify actual stopped receipt collector against /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-brief.md. Read the whole brief and require complete producer implementation/report.md, source manifest, cleanup and seal. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence; own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/verification/ and explicitly owned temporary outputs. DELIVERABLE: Complete confirmed/needs-fix source/execution/evidence report and final seal/cleanup. VERIFY: Complete diff, no private credentials or signing/unsupported RPC paths; exact authenticated known77references; every raw response/canonical transaction, receipt, header/membership/index/log and source mint/asset observation. Independently execute strict types/operator tests and one actual finite collector run through the existing provider only; independently reconcile all observations from raw input and RPC rather than sole reliance on producer algorithms. Retain indirect/multiaction/unknown/refund/net/control/history limits and every unavailable/error record. No source fixes, old evidence/input changes, installs/config, alternateprovider/range/debugtrace/held09/signing/public actions, Git writes or unchanged Forge/full-rehearsal replay. STOP WHEN: Complete independent bounded result, exact seal and stopped cleanup; no pending operation or status-only promise. No operational eligibility/fullplan acceptance; P1 remains historical."
+    }
+  ]
+}

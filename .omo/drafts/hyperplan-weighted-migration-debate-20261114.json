@@ -1,0 +1,199 @@
+{
+  "team": "4a160771-7864-43f0-a5b9-70a156b5ba56",
+  "round1": {
+    "researcher": [
+      "Preserve enabled-buffer amount-dependent V3 deposit/refund evaluation; a flat input rate cannot replace it. Define closed raw/disabled/provider-backed/enabled-V3 manual branches using the existing frozen-deposit operands. References: StandardExchangeFrozenQuoteLib.sol:48-56, StandardExchangeConstantProduct.sol:58-64, IStandardExchangeFrozenQuoteInputs.sol:16-26.",
+      "Remove mutable snapshot/pricing identity from both Solidity and operator economic-origin derivations together. NFT keys currently include snapshotId in MigrationLegacyNftLib.sol:20-23 and payloads.ts:61-64, and exposure authentication uses those keys at payloads.ts:119-122; keep pricing provenance in replaceable configuration identity.",
+      "Replace global freshness with operation-sensitive validation: execution-domain.ts:104-107 rejects all old snapshot manifests, conflicting with issuance of stored credits under keep-until-reloaded (AllocationTarget.sol:108-117). Quote-sensitive loads need an expected pricing hash checked on chain; stored issuance/resume must use its stored configuration identity, not require latest global pricing.",
+      "Reconcile setter installation, allocation-interface selector classification, complete activation removal and permanent queries explicitly. AllocationFacet.sol:9-15 installs a fixed subset; AllocationTarget.sol:263-298 has a separate removal census; execution-domain.ts:97-100 classifies removable selectors by ABI."
+    ],
+    "validator": [
+      "Use one atomic route-shaped manual book, not a flat effective rate: preserve raw/SE reserves, inventory/rated scales, rates, weights, disabled state and complete Frozen.Inputs for enabled V3 deposits, plus output operands, fee and seigniorage. SnapshotLib.sol:120-168 and IStandardExchangeFrozenQuoteInputs.sol:18-29 show the distinct amount-dependent mapping.",
+      "Decouple pricing from economic-original keys in both MigrationLegacyNftLib.sol:20-23 and payloads.ts:61-64; keep pricing provenance in replaceable configuration IDs (payloads.ts:40-52). Prove A-to-B updates preserve NFT3 origins/collision mappings and change credits/configuration only on explicit reload.",
+      "Handle mixed pricing revisions end to end: old A manifests fail execution-domain.ts:104-107, while preparing under B makes still-valid stored A rows fail execution-state.ts:394-409, called before activation at execution.ts:77-80. Reject unexecuted stale A configuration under B, but resume/verify/activate stored A rows against their own identities without forced reload.",
+      "Reconcile installation, actual removal, operator selector/interface verification and Weighted artifact names together: AllocationFacet.sol:9-16, AllocationTarget.sol:263-298, execution-state.ts:345-355, MigrationFacet.sol:10-15 and Component_FactoryService.sol:15-20. Include every pricing overwrite path; retain only reads/previews."
+    ],
+    "architect": [
+      "Define a fixed closed manual book with two native18 contribution legs, rated balances/weights and direct/rated/V3-deposit mapping operands, plus common fee/seigniorage and raw native9 output operands. Preserve enabled-buffer deposit/refund math; RPC outcome/revert bytes and facet-authentication metadata are acquisition evidence, not economic operands. References: SnapshotLib.sol:154-174, FrozenQuoteLib.sol:39-55, StandardExchangeConstantProduct.sol:49-62, HookCapture.sol:8-40.",
+      "Use a stable NFT original domain of fixed prefix, chain, proxy, collection and tokenId, excluding mutable pricing in Solidity and TS. The collection/token consumed guard already protects same-NFT surrender, but does not stabilize cross-category original exclusion; pricing belongs only in replaceable configuration provenance. References: NftLib.sol:20-23, payloads.ts:61-63, ClaimVaultAllocationTarget.sol:34-55,72-74.",
+      "Current global freshness cannot distinguish stale unsent loads from valid stored credits. Check expected pricing hash atomically in every quote-sensitive loader; reconcile mined A intents and issue/verify/activate stored A records under their own facts after B, while rejecting unsent A loads under B. References: execution-domain.ts:104-106, execution.ts:76,122-125, AllocationTarget.sol:109-122, execution-plan.ts:57-74.",
+      "Replace the once-only capture writer with one atomic complete-book setter on the existing allocation surface, retaining permanent book/hash/previews. Reconcile installation, removal and interfaces; rename only the coupled retained facet/target to WeightedHook names and pricing interface/library, with artifact/salt/package references updated. References: AllocationTarget.sol:37-52,263-298, AllocationFacet.sol:9-15, Component_FactoryService.sol:11-19; naming changes deployment identity, not only cosmetics."
+    ],
+    "skeptic": [
+      "Delete the flat-rate substitute, new WeightedPricing interface/library and added refund formula. One setter should store operands already consumed by evaluateOriginal, including Frozen.Inputs, keeping one fee application; FrozenQuoteLib.evaluate does not assign amountRefunded, so a new editable refund field adds behavior. References: FrozenQuoteLib.sol:48-56, SnapshotLib.sol:169-176, ClaimLib.sol:151-155.",
+      "Delete snapshotId from both economic-original hashes; do not add a provenance table, revision counter or second ID type. The finding claims a book overwrite 'mints a second claimable original for the same NFT'; configurationId already binds replaceable loads to their book and must not become economic identity. References: NftLib.sol:20-23, payloads.ts:61-63, AllocationTarget.sol:79.",
+      "Delete the global snapshot abort and off-chain reseal ceremony: execution-domain.ts:104-106 rejects every resume after a changed book, and quotes.ts:73-86 reauthenticates version, consumer, subject and chainId as old capture. One expected-book-id check on configure prevents A loading under B; issuance already checks configurationId without repricing and explicit reload is existing overwrite, not a new entrypoint (AllocationTarget.sol:70-88,112-116).",
+      "Use one setter on existing allocation storage and the existing activation cut; remove captureMigrationSnapshot and its once-only guard/stage, not add a second facet, package rename or cut. Permanent preview survives; facet naming changes CREATE3 salt and package renaming changes instance identity. References: Component_FactoryService.sol:15-18, DFPkg.sol:156-158, Repo.sol:25,76-79, AllocationTarget.sol:44-46,265-297, execution-plan.ts:56, MigrationTarget.sol:43-45."
+    ],
+    "creative": [
+      "Use an atomic WeightedPricing book with separate ETH/DTF rated balances and weights, common output rated balance/native9 reserve/scale/weight, fee and seigniorage, and two closed input-mapping forms: pair-or-disabled {rateWad,ratedScale} and enabled-V3 {rateWad,invScale,ratedScale,Frozen.Inputs}. Preserve Quote.evaluate output/refund handling, one fee deduction, canonical budget/output checks and native rounding without a duration bonus. References: SnapshotLib.sol:145-174, FrozenQuoteLib.sol:47-58, ClaimLib.sol:150-163, MintSplitLib.sol:19-26.",
+      "NFT economic origin must be stable: hash fixed migration.nft prefix, chain, proxy, collection and tokenId, removing snapshot from both Solidity and TS. Price hash is separately domain-bound to chain/proxy/complete manual book and appears only in quote/configuration provenance, so reload changes no original or issued history. References: NftLib.sol:20-23, payloads.ts:61-64, IUniswapV4DetfMigration.sol:65-89.",
+      "Add expectedPricingId to every configuration loader and check atomically before evaluation; a preflight cannot prevent A preparation mining after B. Reject stale unsent loads, while verify/issue/owner-bond/activate validate stored record configuration identities rather than latest global pricing. References: AllocationTarget.sol:55-90, execution-state.ts:99-119,394-410, execution-domain.ts:40-47,104-106.",
+      "Replace captureMigrationSnapshot with one atomic setMigrationWeightedPricing(next,expectedPricingId) on the current allocation facet; remove it at activation and keep migrationWeightedPricing book/hash plus preview queries permanent. Rename the coupled retained facet/target to WeightedHook and pricing interface/library narrowly, updating artifact strings and salts; leave package and unrelated facets unchanged. References: AllocationTarget.sol:44-52,263-298, AllocationFacet.sol:9-16, IUniswapV4DetfMigration.sol:670-677, Component_FactoryService.sol:15-19, TestBase:248-252."
+    ]
+  },
+  "round2": {
+    "researcher": {
+      "skeptic": {
+        "1": "Reuse arithmetic and do not add an editable refund field: FrozenQuoteLib48-56 assigns amountOut only. A categorical ban on renaming the coupled interface/library is not a correctness requirement.",
+        "2": "The second same-NFT claim is unproved: ClaimVaultAllocationTarget54-55 and NftLib53-55 independently reject consumed NFTs. Stabilize the cross-category collision key, not a claimed repeat-surrender exploit.",
+        "3": "Keep chain/proxy/format and complete-book hash authentication from quotes78-86. Replace only historical-capture claims and global freshness; execution-state394-412 also needs mixed-config handling.",
+        "4": "One setter and no package rename stand, but artifact/salt changes do not justify skipping the owner-required Weighted facet rename."
+      },
+      "validator": {
+        "1": "Exact representation stands. Derived rated balances may instead be effective manual operands, but do not independently store both derived balances and raw inventory operands without choosing which is authoritative.",
+        "2": "Stabilize both hashes and preserve cross-category exclusions, not just NFT3 output identity.",
+        "3": "Mixed rows need their own stored expected configuration facts; a B-only preparation cannot verify valid A rows.",
+        "4": "Installation, removal, allocation ABI and operator classification are one obligation."
+      },
+      "architect": {
+        "1": "Closed V3 math and removal of acquisition metadata stand. Preserve nonzero stored rates and valid decimal-scale checks that capture previously supplied; stripping RPC wrappers must not strip mathematical validation.",
+        "2": "The narrowed identity/collision claim is accurate; same-NFT consumed guards are separate.",
+        "3": "Expected-book checks belong atomically in every quote-sensitive loader; stored issuance uses its own configurationId.",
+        "4": "Narrow rename stands, but permanent query ABI/tuple/version and quotes65-86 hash validation must move with it."
+      },
+      "creative": {
+        "1": "The merged pair-or-disabled branch is underspecified: disabled inflow ignores rate, while raw provider-backed inflow applies floor mulDiv before scaling. Preserve that difference; no editable refund operand exists in current V3 model.",
+        "2": "Stable origins plus domain-bound complete manual-book hash stand; those bindings do not authenticate historical pool state.",
+        "3": "Atomic load checks stand, but do not introduce latest-price equality for every configuration before owner-bond or activation.",
+        "4": "Expected pricing on the setter is optional concurrency policy, distinct from necessary loader protection. Define its meaning or omit the extra argument; keep book/query/ABI/salt updates."
+      }
+    },
+    "validator": {
+      "skeptic": {
+        "1": "Existing math and zero-refund behavior stand; apply the fee once before conversion.",
+        "2": "Existing configurationId already binds pricing, so no separate provenance table/counter is required.",
+        "3": "Deleting global checks is incomplete: define mined A reconciliation after B separately from unsent stale A rejection; preparation166-172 also reauthenticates inputs.",
+        "4": "Reuse existing surface/storage/cut; narrow facet naming changes need not rename package identity."
+      },
+      "researcher": {
+        "1": "Closed raw/rated/disabled/V3 branches stand. Provider-backed must mean a stored numeric rate, not a live provider call.",
+        "2": "Update both original derivations and exposure/collision consumers together.",
+        "3": "Atomic expected-book checks stop the race; issuance remains tied to stored configurationId.",
+        "4": "Keep permanent getters/previews out of the allocation ABI because operator verification treats every member as removed."
+      },
+      "architect": {
+        "1": "Rated balances can be effective manual operands if exact incoming mappings and output checks survive. Acquisition metadata is not required in pure manual evaluation; supported model/request validation still is.",
+        "2": "Stable original domain is needed independently of consumed-NFT guards; no new registry.",
+        "3": "Handle mined A before allocating new nonces; stored A facts must survive global B.",
+        "4": "One setter, permanent reads and narrow name/artifact/salt updates stand."
+      },
+      "creative": {
+        "1": "A shared effective-rate representation can work if direct/rated/disabled semantics remain exact; preserve V3 amount dependence and canonical output checks.",
+        "2": "Use chain/proxy/book hash for pricing provenance without a new identity mechanism.",
+        "3": "Owner-bond remains ordinary and has no compensation-pricing freshness gate. Every quote-sensitive load needs atomic expected ID.",
+        "4": "The compare-and-swap setter lacks genesis semantics: before any book, Repo._snapshot reverts. Define empty expected value/initial transition without reinstating a once-only lock."
+      }
+    },
+    "architect": {
+      "skeptic": {
+        "1": "Do not preserve the old acquisition abstraction unchanged: Snapshot interface28-43 bundles provenance and operands. Reshape/rename it in place, not a parallel evaluator; no editable refund field.",
+        "2": "Repricing does not itself prove a second NFT surrender; collection/token guards remain. The evidenced failure is unstable original/collision identity.",
+        "3": "Replace capture sealing with canonical manual-book chain/proxy/format binding. Expected load hash alone does not bind a reviewed manual-input document to the correct book.",
+        "4": "One writer, existing cut and no package rename stand. Both install subset and removal census must change; facet naming still propagates to artifact/salt."
+      },
+      "validator": {
+        "1": "Route-shaped raw/SE operands preserve exact branches. Keep economic/branch operands only, not RPC success/revert or live code authentication as knobs.",
+        "2": "Update active exposure matching as well as the two hash functions; preserve historical records.",
+        "3": "Mixed states include the SAME recipient with latest configuration B and immutable issuance A. Verify configuration and issued facts independently; neither force all expectations to A nor rewrite issuance to B.",
+        "4": "Allocation ABI classification and receipt verification must agree with the real cut."
+      },
+      "researcher": {
+        "1": "Preserve existing refund handling precisely: the supported V3 evaluator returns zero refund; no new editable refund model.",
+        "2": "Update active exposure derivations using the new stable key, not historical evidence bytes.",
+        "3": "Every quote-sensitive loader needs the atomic expected book; remove universal latest-book equality for stored facts.",
+        "4": "Retained getters must not enter the removable ABI; otherwise operator verification expects their removal."
+      },
+      "creative": {
+        "1": "Disabled inflow must ignore rate even if SE inventory valuation uses it. A shared arbitrary multiplier is not equivalent; represent the branch or force identity inflow without altering inventory valuation.",
+        "2": "Canonical content hash suffices; no revision counter needed.",
+        "3": "Continue exact per-record configuration/credit checks against accepted preparation; dropping freshness is not permission to accept an unexpected replacement.",
+        "4": "The setter expected argument is unclear: hash(next) is redundant and expected previous book is a separate CAS condition. Prefer one complete-book setter returning its hash; put expected ID on loaders."
+      }
+    },
+    "creative": {
+      "skeptic": {
+        "1": "Reuse/reshape the current interface/library; no parallel math or editable refund. Existing V3 refund remains zero.",
+        "2": "Remove mutable pricing from origin and reuse the existing book ID role in configuration provenance; no table/counter.",
+        "3": "Deletion plus expected-load check is insufficient: verifyConfiguration and activation still compare against one prepared manifest. Define per-record mixed A/B expectations and mined-intent reconciliation.",
+        "4": "Replace capture writer/stage on current surface; narrow facet/target names, not package-declared identity."
+      },
+      "validator": {
+        "1": "Raw/SE operands preserve inventory rounding and failure domains. Pre-rated balances alone bypass those operations; full existing V3 operands suffice without a new refund field.",
+        "2": "Exercise both stable origin/collision mappings and two-contribution NFT3 across A-to-B changes.",
+        "3": "Reject stale unsent loads while preserving verify/issue/activate of valid stored records.",
+        "4": "Three consumers—installation, removal and ABI-based operator verification—must agree."
+      },
+      "researcher": {
+        "1": "Closed branch representation stands, with existing zero-refund V3 behavior only.",
+        "2": "Keep exposure authentication and cross-category exclusions stable alongside the hash helpers.",
+        "3": "Expected-current pricing belongs to quote-sensitive configuration, not stored issuance or activation.",
+        "4": "Include the locked Weighted facet/target naming and artifact/CREATE3 propagation; selector reconciliation alone is not the entire required boundary."
+      },
+      "architect": {
+        "1": "Pre-rated balances omit existing raw/SE reserve computation and its rounding/failure domains. Preserve the raw operands, rates, scales, weights, disabled state and V3 model state.",
+        "2": "Stable prefix/chain/proxy/collection/token ID stands; consumed guards do not replace collision identity.",
+        "3": "Reconcile mined A under its own facts before new operations; no global current-book abort.",
+        "4": "Reuse the existing writer/read surfaces and reshape/rename the existing coupled interface/library; no parallel math abstraction or package rename."
+      }
+    },
+    "skeptic": {
+      "validator": {
+        "1": "Store existing raw operands and Frozen.Inputs, no extra fields or new curve.",
+        "2": "Delete pricing from both hashes; configurationId already carries the book. No provenance table.",
+        "3": "Point verification at stored configurationId; unsent configure carries the current book ID. Stored rows are not re-quoted.",
+        "4": "Maintain existing three selector lists and allocation ABI. Do not rename unrelated facets/package or build a naming program; only owner-required coupled facet naming affects salt."
+      },
+      "researcher": {
+        "1": "A closed branch type risks a second dispatcher; use the existing if/else evaluation and zero-refund V3 result, not a new refund branch.",
+        "2": "Update both hashes and exposure matching without a new authentication scheme.",
+        "3": "Operation-sensitive validation is not permission for a new lifecycle/ID type. Reuse the existing book ID and configurationId roles.",
+        "4": "This is existing list maintenance, not a new authority model; permanent reads survive."
+      },
+      "architect": {
+        "1": "Store raw operands, not separately editable derived rated balances; preserve inventory rounding. Drop acquisition outcome bytes/code hashes.",
+        "2": "Keep consumed-key and cross-category key roles separate; no new registry.",
+        "3": "Existing code already reconciles intents; adapt it by removing the global abort rather than adding another reconciler. Loaders take expected book ID and stored operations use configurationId.",
+        "4": "Only coupled facet rename is required. No new interface/library abstraction or package rename; keep one setter on existing allocation."
+      },
+      "creative": {
+        "1": "Pair-or-disabled collapses distinct raw, rated and disabled inflows. Preserve existing branches and Frozen.Inputs; no editable refund.",
+        "2": "Stable origin deletion is necessary; use the existing book-ID role rather than a second pricing-ID framework.",
+        "3": "Add the expected current book as a scalar loader argument, not a new ID type. Stored operations need no current pricing argument.",
+        "4": "CAS setter is not required; use one owner-only complete-book overwrite. Existing permanent getter/preview need no duplicate aliases; rename only the coupled facet surface."
+      }
+    }
+  },
+  "round3": {
+    "researcher": [
+      "REFINE: Preserve existing raw/provider/disabled/V3 evaluation with stored numeric rates, zero supported V3 refund and no second dispatcher or parallel abstraction.",
+      "REFINE: Change both economic-origin derivations and active exposure/collision consumers; preserve historical bytes and existing configuration-ID provenance role.",
+      "REFINE: Reuse book ID for atomic expected-input checks on quote-sensitive loads; stored IDs/credits govern issuance/resume/activation, including mixed A/B records, without a new lifecycle or all-current gate.",
+      "REFINE: Maintain installation/removal/ABI classification together and propagate required Weighted facet/target artifact/salt naming; permanent reads stay outside removable ABI."
+    ],
+    "validator": [
+      "REFINE: Choose one authoritative balance representation, not independently editable raw and rated duplicates. Preserve enabled-V3 amount dependence, native output operands and canonical failures, with no editable refund or flat substitute.",
+      "REFINE: Stabilize origins in Solidity, TS and active exposure/collision consumers, not only NFT3. Preserve historical records and use NFT3 as a regression case.",
+      "REFINE: Mixed state includes B configuration and immutable A issuance for one recipient. Verify those facts independently; reject unsent stale loads and reconcile mined A without requoting or forced reload.",
+      "DEFEND: Reconcile all selector consumers and narrow Weighted facet/target artifact references, leaving package/unrelated facets unchanged."
+    ],
+    "architect": [
+      "REFINE: Withdraw independently editable pre-rated balances as replacement. Use raw/SE reserves, rates/scales/weights, explicit existing input modes, V3 operands and raw output/fee/seigniorage; derive rated balances with existing rounding/checks, excluding acquisition metadata and editable refunds.",
+      "DEFEND: Fix unstable collision identity, not an unproved duplicate-NFT-surrender exploit; stable prefix/chain/proxy/collection/token ID in both languages, existing consumed guards retained.",
+      "REFINE: Adapt the existing reconciler, no second machine. Atomic expected-book load checks, stored A reconciliation and distinct latest config/immutable issuance facts; no global latest-book gate.",
+      "REFINE: One setter on existing allocation and permanent pricing queries. Narrow in-place Weighted names and interface/library reshaping, with tuple/hash/artifact updates; no parallel evaluator or package rename."
+    ],
+    "creative": [
+      "CONCEDE: The pre-rated and merged pair/disabled shorthand was not exact. The raw/SE closed-book correction survives through the other members; do not retain the original shorthand.",
+      "REFINE: Reuse the book-ID role as chain/proxy/complete-book content hash, not a new identity/counter. Stable NFT origin excludes price; book ID binds quote/configuration only.",
+      "REFINE: Expected current book is a scalar on quote-sensitive loaders only. Stored operations keep exact accepted per-record facts; owner-bond remains ordinary with no price gate.",
+      "REFINE: Drop CAS argument from setter; use setMigrationWeightedPricing(next) returning book ID, for initial and later overwrites until activation. Replace old capture/getter boundary in place, with narrow naming and no duplicate aliases."
+    ],
+    "skeptic": [
+      "REFINE: Withdraw ban on in-place interface/library reshaping; remove obsolete capture metadata, reuse evaluator, no parallel type/math or editable refund.",
+      "REFINE: Withdraw second-surrender claim. Stabilize economic-origin/collision key in both languages while retaining same-NFT consumed guard; no table/counter/new ID framework.",
+      "REFINE: Keep chain/proxy/manual-book authentication; merely deleting global freshness is insufficient. Existing preparation/reconciliation must preserve stored configuration facts across A/B and stale unsent load rejection; no second reconciler.",
+      "REFINE: Required facet rename and artifact/salt propagation remain; update install/removal/ABI lists together. One overwrite setter, no once-only capture, package rename or extra cut."
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+# Verified bounded operator delivery
+
+Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-08-operator on work/dtf-migration-phase-08-operator, expected parent421072a7630a0d3d47a6f36e1062d9eae98c93e2. Read repository rules and git-master; every Git invocation uses GIT_MASTER=1. User authorizes scoped verified local commits, not push, PR, main/integration merge, production edits or public execution.
+
+Read phase08 execution brief and fixed CLI contract from the main control directory. Read the complete incident migration/operator/preparation, execution, rehearsal and verification reports, actual final source and runbook. Independent report confirms only the bounded operator/resume contract:264 unique successful receipts, actual donation/issuance crash-resume, meaningful two-row issuance reordering, deterministic real snapshot preparation, selected NFT/recovery and final-source50 tests/strict typecheck. Do not rerun accepted suites to package identical bytes. Parent deployment42985843 gas exceeds historical32000000; phase09 separately diagnoses it. Full task9, all categories/E2/operational provenance and release stay open.
+
+## Exact commit ownership
+
+Candidates only: accepted scripts/recovery/dtf-migration/ files (including neighboring tests/fixtures), accepted scripts/foundry/recovery/dtf-migration/ files including the narrow existing MigrationCoreLocalQA visibility change, and docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md. No broad-directory staging: determine exact accepted paths from independent baseline/evidence source bindings and actual status. Reports, witness under evidence, logs, generated transactions/checkpoints/broadcast/cache, synthetic operational datasets, secrets, links, dependency/configuration and unrelated files stay outside the source commit. Never modify production or script/test source in this delivery stage.
+
+Inspect actual branch/parent/index, recent convention and full candidate diff. Bind each current source/doc candidate to independent verification/evidence.json and baseline.json and final source identities; distinguish historical preparation hashes, artifact envelopes and actual executable identities. Missing bindings are not passes. Detect any resolved private endpoints or production signing material before staging; do not change evidence or unrelated files to hide a conflict. Preserve foreign staged changes and stop with exact blocker if safe isolation is impossible.
+
+Write operator/commit/source-manifest.json before staging with exact paths,modes,accepted/current hashes,provenance locators,parent and preservation baseline. Stage only exact accepted paths, inspect complete staged diff and make one coherent local commit in repository convention with exactly one required git-master coauthor. Verify actual committed blob/mode/path equality and unchanged noncandidate index,unrelated files,prior evidence and protected refs. Write operator/commit/receipt.md with full commit/parent,path count/list,message,trailer,hashes,scope and cleanup. Do not claim every cache byte hashed from stat inventories.
+
+## Independent delivery audit
+
+Write only operator/commit/verification.md and supporting evidence there. Independently inspect actual commit blobs/modes/paths,parent,trailer against accepted source/doc identities and current bytes; verify noncandidate index/unrelated evidence/protected refs using consistent serialization. Read complete runtime verdict and retain its limitations. No production/script/doc fix, commit, extra runtime suite, push or merge. Return confirmed or needs-fix with exact evidence and no pending owned runtime. Do not confuse a successful local delivery with public deployability or completed all-category migration.
+

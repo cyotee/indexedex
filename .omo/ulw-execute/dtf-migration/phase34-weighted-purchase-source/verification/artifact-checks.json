@@ -1,0 +1,176 @@
+{
+  "completedAt": "2026-11-13T12:27:12.740Z",
+  "checks": [
+    {
+      "label": "published proof is exact actual stdout",
+      "pass": true
+    },
+    {
+      "label": "executed source identity rows-executed01.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "executed source identity rows-executed02.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "executed source identity verify-executed02.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "executed source identity verify-executed03.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "executed source identity auth.mjs",
+      "pass": true
+    },
+    {
+      "label": "executed source identity rows.mjs",
+      "pass": true
+    },
+    {
+      "label": "executed source identity verify.mjs",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse attempt-01.command.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL attempt-01.command.json",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse attempt-02.command.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL attempt-02.command.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL auth.mjs",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse final-syntax.command.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL final-syntax.command.json",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse proof-03.command.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL proof-03.command.json",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse proof-04.command.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL proof-04.command.json",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse proof.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL proof.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL report.md",
+      "pass": true
+    },
+    {
+      "label": "text without NUL rows-executed01.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "text without NUL rows-executed02.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "text without NUL rows.mjs",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse source-excerpts.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL source-excerpts.json",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse source-manifest.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL source-manifest.json",
+      "pass": true
+    },
+    {
+      "label": "complete JSON parse syntax-commands.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL syntax-commands.json",
+      "pass": true
+    },
+    {
+      "label": "text without NUL verify-executed02.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "text without NUL verify-executed03.mjs.txt",
+      "pass": true
+    },
+    {
+      "label": "text without NUL verify.mjs",
+      "pass": true
+    },
+    {
+      "label": "actual producer inventory equals sealed inventory",
+      "pass": true
+    }
+  ],
+  "failed": [],
+  "sourceInventory": [
+    "abi.json",
+    "attempts.md",
+    "cleanup.json",
+    "creation.json",
+    "direct-attribution.json",
+    "evidence.mjs",
+    "manifest.json",
+    "metadata.json",
+    "preservation.json",
+    "process-check.command.json",
+    "process-check.stdout",
+    "proof-01.command.json",
+    "proof.json",
+    "prove.mjs",
+    "recovered-package.json",
+    "references.json",
+    "report.md",
+    "rows.mjs",
+    "runtime.json",
+    "seal.json",
+    "source-index.json",
+    "source-manifest.json",
+    "syntax-commands.json",
+    "untouched-context.json",
+    "verify-01.command.json",
+    "verify-01.stdout",
+    "verify.mjs"
+  ],
+  "proofActualStdout": "66351a0b9218a5db2cca5f99409c75414772d7ad161973f8e60dfbf57954ce2c"
+}

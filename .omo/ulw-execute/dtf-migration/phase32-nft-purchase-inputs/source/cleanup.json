@@ -1,0 +1,58 @@
+{
+  "stopped": true,
+  "pendingOwnedOperations": 0,
+  "allRecordedChildrenAbsent": true,
+  "commands": [
+    {
+      "path": "observe-01.command.json",
+      "pid": 67238,
+      "exit": 1,
+      "finishedAt": "2026-11-13T11:05:27.445Z"
+    },
+    {
+      "path": "observe-02.command.json",
+      "pid": 68128,
+      "exit": 0,
+      "finishedAt": "2026-11-13T11:07:15.039Z"
+    },
+    {
+      "path": "prove-01.command.json",
+      "pid": 69961,
+      "exit": 0,
+      "finishedAt": "2026-11-13T11:09:52.209Z"
+    },
+    {
+      "path": "reconcile-01.command.json",
+      "pid": 69304,
+      "exit": 0,
+      "finishedAt": "2026-11-13T11:08:43.216Z"
+    },
+    {
+      "path": "reconcile-repeat.command.json",
+      "pid": 73361,
+      "exit": 0,
+      "finishedAt": "2026-11-13T11:14:50.388Z"
+    },
+    {
+      "path": "validate-01.command.json",
+      "pid": 72486,
+      "exit": 0,
+      "finishedAt": "2026-11-13T11:13:42.678Z"
+    }
+  ],
+  "providerRequests": {
+    "completeRetainedSecondAttempt": 363,
+    "pending": 0,
+    "failures": 0,
+    "firstAttempt": "243 scheduled reads completed before local TypeError; response entities lost from process memory, not usable evidence"
+  },
+  "credentialScan": {
+    "literalAndEncodedSelectedKeyMatches": 0,
+    "filesScanned": 1119
+  },
+  "temporaryRuntimeCreated": false,
+  "deletionRequired": false,
+  "sharedResourcesModified": false,
+  "retained": "All original inputs, old evidence, failed source snapshots and command streams retained; no old collector replay.",
+  "boundary": "Only this source directory written; no Git, signing, traces, range scans, provider change, source changes or phase29 retry."
+}

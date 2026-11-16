@@ -1,0 +1,26 @@
+{
+  "version": "weth-event-layout-inventory-v1",
+  "scope": "Only the376 previously accepted named transactions, not a history census or native balance proof",
+  "archives": [
+    "e390e13162b566cd4c138a4342e4e1186dc3053526e9743454db3d92d637839b",
+    "67a8cd97a26d0bfe4fc118469db605a9b0424e7b40c17fb977f6bd6990dfefc0"
+  ],
+  "asset": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+  "localLayoutSource": {
+    "path": "lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol",
+    "sha256": "932548f65328b08288b4a8f734a4660900bc00b3825085e833a50d2195811fce",
+    "qualification": "Local event declaration only, not historical deployed implementation equivalence"
+  },
+  "topics": {
+    "Deposit": "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c",
+    "Withdrawal": "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65"
+  },
+  "observedTopicCounts": {
+    "Approval": 107,
+    "Transfer": 61,
+    "Deposit": 0,
+    "Withdrawal": 0
+  },
+  "result": "No logs matching the two local wrapping/unwrapping event layouts in this named subset. This does not prove zero native payments/refunds/recoveries, event completeness outside the subset, or historical WETH implementation behavior.",
+  "relatedSourceLead": "Archived ED _burnDetfExactIn restricts tokenOut to configured pairToken; the accepted DTF-output execution already reaches LP withdrawal. An arbitrary E-S output is not admitted by simply changing tokenOut. No new call or source mutation performed."
+}

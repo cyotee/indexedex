@@ -1,0 +1,22 @@
+{
+  "id": 1,
+  "method": "eth_chainId",
+  "params": [],
+  "request": {
+    "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_chainId\",\"params\":[]}",
+    "bytes": 59,
+    "sha256": "09fabe0af56b7726f1666ddd147482df4d951f86f66124b936716c53ab0e8471"
+  },
+  "startedAt": "2026-11-13T11:06:38.943Z",
+  "response": {
+    "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":\"0x1237\"}",
+    "bytes": 42,
+    "sha256": "1fb0f19b45a4203bd13cb5be1e8ad3aa569f42905377cd4643fc8bc07ecd3aa3",
+    "raw": true,
+    "receivedBytes": 42,
+    "httpStatus": 200
+  },
+  "result": "0x1237",
+  "failure": null,
+  "finishedAt": "2026-11-13T11:06:39.078Z"
+}

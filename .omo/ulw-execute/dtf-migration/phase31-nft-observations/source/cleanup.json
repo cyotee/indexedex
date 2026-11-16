@@ -1,0 +1,124 @@
+{
+  "status": "STOPPED-BOUNDED-PRODUCER",
+  "capturedAt": "2026-11-13T10:25:48.462Z",
+  "commands": [
+    {
+      "path": "validate-05.command.json",
+      "pid": 40869,
+      "stoppedAt": "2026-11-13T10:17:21.667Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-05.command.json",
+      "pid": 41291,
+      "stoppedAt": "2026-11-13T10:18:07.314Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-02.command.json",
+      "pid": 40866,
+      "stoppedAt": "2026-11-13T10:17:21.551Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-02.command.json",
+      "pid": 41287,
+      "stoppedAt": "2026-11-13T10:18:07.187Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-03.command.json",
+      "pid": 41288,
+      "stoppedAt": "2026-11-13T10:18:07.228Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-03.command.json",
+      "pid": 40867,
+      "stoppedAt": "2026-11-13T10:17:21.591Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-04.command.json",
+      "pid": 41289,
+      "stoppedAt": "2026-11-13T10:18:07.270Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-04.command.json",
+      "pid": 40868,
+      "stoppedAt": "2026-11-13T10:17:21.629Z",
+      "exitCode": 0
+    },
+    {
+      "path": "prove-01.command.json",
+      "pid": 42263,
+      "stoppedAt": "2026-11-13T10:19:53.081Z",
+      "exitCode": 0
+    },
+    {
+      "path": "observe-01.command.json",
+      "pid": 41765,
+      "stoppedAt": "2026-11-13T10:19:23.217Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-06.command.json",
+      "pid": 40870,
+      "stoppedAt": "2026-11-13T10:17:21.708Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-06.command.json",
+      "pid": 41292,
+      "stoppedAt": "2026-11-13T10:18:07.354Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-01.command.json",
+      "pid": 40864,
+      "stoppedAt": "2026-11-13T10:17:21.510Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-01.command.json",
+      "pid": 41286,
+      "stoppedAt": "2026-11-13T10:18:07.146Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-final-07.command.json",
+      "pid": 41293,
+      "stoppedAt": "2026-11-13T10:18:07.566Z",
+      "exitCode": 0
+    },
+    {
+      "path": "validate-07.command.json",
+      "pid": 40871,
+      "stoppedAt": "2026-11-13T10:17:21.918Z",
+      "exitCode": 0
+    }
+  ],
+  "pendingOwnedChildOperations": [],
+  "rpcRequestsAwaited": true,
+  "serversStarted": 0,
+  "chainProcessesStarted": 0,
+  "subagentsStarted": 0,
+  "temporaryDirectoriesCreated": 0,
+  "signingOrGovernance": false,
+  "gitWrites": false,
+  "productionEdits": false,
+  "cleanupDeletions": [],
+  "retainedFailures": "exact per-request failures and attempts.md retained",
+  "inputsReauthenticated": 36,
+  "sourceBindingsReauthenticated": 116,
+  "selectedCredentialScan": {
+    "files": 602,
+    "matches": 0
+  },
+  "finalPublisher": {
+    "pid": 45516,
+    "action": "seal publication is the last write; this process exits immediately afterward"
+  },
+  "independentVerifier": "separate downstream workflow node, not launched or claimed by producer"
+}

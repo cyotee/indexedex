@@ -1,0 +1,49 @@
+{
+  "key": "dtf-migration-phase12-wallet-admission-v1",
+  "name": "Migration DETF phase 12: configured original-wallet NFT admission",
+  "nodes": [
+    {
+      "id": "implement-wallet-admission",
+      "label": "Enforce original-wallet NFT entitlement admission",
+      "category": "deep-high",
+      "task_summary": "Bind both NFT configurations to the original wallet and reject unconfigured or wrong-wallet surrender",
+      "prompt": "TASK: Implement the precise H1/H2/H7 original-wallet NFT admission change and required operator propagation.\nDELIVERABLE: Brief-owned code/spec/fork/operator delta and /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/implementation/report.md with exact final-source commands/counts/exits, actual source/rehearsal proof, retained limitations and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-original-wallet-admission-brief.md completely, current main plan r3 section1.3, independent phase11 report/matrix and repository/canonical rules. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission on work/dtf-migration-phase-12-wallet-admission at verified3f577eeca049c1bd70a812d130941c8a38dd4781. Root observed warm seed exit0 and WALLET_ADMISSION_WORKTREE_VERIFIED. This is the owner's new original-wallet and missing-entitlement requirement, not a continuation of the refused gas assignment; do not read/import/modify/test the held phase09 candidate or alter model routing. No ordinary/common/Crane production, config/dependency changes, public operations, source commit, push or merge. Preserve independent allocations/capital donations and all current funding/recovery behavior. No general fungible or gas-package work in this increment.\nVERIFY: Nonzero originalWallet in complete configuration/storage/query/config identity; economic origin remains wallet-independent; existing missing-config check retained; caller must equal configured originalWallet and actual owner before pull. Test both generations pre/postactivation, ownership transfer away/back, approved operator, missing config, zero wallet, consumed/config correction and rollback with exact fresh funded bonds. Update typed operator schemas/payloads/Foundry stage/rehearsal without live-owner fallback; keep unsupported category reasons factual. Artifact-first Solar specs/forks, final script tests/types and fixed real local CLI rehearsal with new assertions and existing interruption/resume proofs. No fake subject or weakened test.\nSTOP WHEN: Complete final-source report/bindings and all owned cleanup exist with required checks passing, or exact unmet in-scope/source gate is reported. Do not claim acceptance from compilation or a pending run; independent review follows."
+    },
+    {
+      "id": "verify-wallet-admission",
+      "label": "Independently verify original-wallet admission",
+      "category": "deep-high",
+      "dependsOn": [
+        "implement-wallet-admission"
+      ],
+      "task_summary": "Execute both real NFT wallet/configuration rejection paths and verify operator and lifecycle parity",
+      "prompt": "TASK: Independently verify the original-wallet NFT admission and operator propagation.\nDELIVERABLE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission/docs/incidents/2026-09-16-dtf-recovery/migration/wallet-admission/verification/report.md with AdversarialVerify confirmed or needs-fix, exact final-source/actual execution evidence, full bounded coverage and cleanup.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-original-wallet-admission-brief.md completely, current main plan r3 section1.3, independent phase11 report/matrix and repository/canonical rules. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission on work/dtf-migration-phase-12-wallet-admission at verified3f577eeca049c1bd70a812d130941c8a38dd4781. Root observed warm seed exit0 and WALLET_ADMISSION_WORKTREE_VERIFIED. This is the owner's new original-wallet and missing-entitlement requirement, not a continuation of the refused gas assignment; do not read/import/modify/test the held phase09 candidate or alter model routing. No ordinary/common/Crane production, config/dependency changes, public operations, source commit, push or merge. Read complete implementation report and actual changed source/tests/operator. Write only verification evidence/witnesses; no source fixes or commits.\nVERIFY: Both real NFT families reject absent matching config, zero-wallet loading, another current holder/approved operator and original wallet without control; positive original-wallet and transfer-back surrender works with exact original frozen arithmetic, funded fresh clock and no ancestry proof. Reconcile wallet-independent economic collision identity, consumed configuration replacement, currentOwner permissions, activation removal and postactivation admission. Independently execute the relevant real local operator/configuration/rejection/surrender and retained resume flow; confirm source/ABI/hash parity, scope and cleanup. Known baseline43m deployment remains a separate unresolved limit, not a claim of target feasibility.\nPREREQUISITE: A temporary upstream idle/DAG completion flag is not final source handoff. If report/bindings/cleanup are absent or upstream is still changing code, notify root and subscribe to the actual prerequisite; do not start a competing replay or issue acceptance.\nSTOP WHEN: Final bounded verdict with concrete evidence and no owned runtime; no full-category or gas-correction acceptance."
+    },
+    {
+      "id": "commit-wallet-admission",
+      "label": "Commit verified original-wallet guard",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "verify-wallet-admission"
+      ],
+      "task_summary": "Bind verified wallet-admission source, review documentation corrections and commit exact paths",
+      "prompt": "TASK: Deliver the bounded original-wallet admission increment as one verified local source commit.\nDELIVERABLE: incident migration/wallet-admission/commit/source-manifest.json, receipt.md and exact source/test/runbook commit.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission-commit-brief.md completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission at parent3f577eec. No source fixes, unrelated changes, held phase09 work, public actions, push or merge. Preserve historical evidence and caches. Two documented root help/runbook wording corrections must be reviewed as post-runtime exceptions, not false matching hashes.\nVERIFY: Inspect parent/index/full diff, derive exact accepted candidate set, compare final-source bindings, review only documented help/runbook exceptions, preserve baseline, stage exact paths, inspect staged diff, commit with convention and one coauthor, verify blobs/modes/refs and cleanup. No full-suite rerun for pure help/prose delta.\nSTOP WHEN: Exact local commit and complete preservation receipt exist or concrete blocker is reported; no pending runtime."
+    },
+    {
+      "id": "verify-wallet-admission-commit",
+      "label": "Independently verify original-wallet delivery",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-wallet-admission"
+      ],
+      "task_summary": "Independently compare wallet-guard commit to executed source and review help/runbook exceptions",
+      "prompt": "TASK: Independently verify the exact bounded wallet-admission source delivery.\nDELIVERABLE: incident migration/wallet-admission/commit/verification.md and supporting evidence only there.\nSCOPE: Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase12-wallet-admission-commit-brief.md completely. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-12-wallet-admission at parent3f577eec. No source fixes, unrelated changes, held phase09 work, public actions, push or merge. Preserve historical evidence and caches. Two documented root help/runbook wording corrections must be reviewed as post-runtime exceptions, not false matching hashes. Do not create a commit or fix source.\nVERIFY: Actual parent/path set/modes/blobs/trailer, accepted/current source binding, exact help/runbook-only exceptions versus report/runtime port, actual --help output, unchanged executable logic and preserved unrelated index/files/evidence/protected refs. Distinguish current documentation hashes from prior runtime hashes. Retain full-category and target-gas exclusions.\nSTOP WHEN: confirmed/needs-fix verdict with exact evidence and no owned runtime."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "executable": "/opt/homebrew/bin/node",
+  "argv": [
+    "--check",
+    "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/verification/verify.mjs"
+  ],
+  "pid": 11926,
+  "startedAt": "2026-11-13T12:22:54.632Z",
+  "finishedAt": "2026-11-13T12:22:54.677Z",
+  "exit": 0,
+  "stdoutBytes": 0,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrBytes": 0,
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrInline": "",
+  "source": {
+    "path": "verify.mjs",
+    "bytes": 7807,
+    "sha256": "eb9518be08c88e22643013f0f67504e4cd5268e5198f6f6d05b60128330bc511",
+    "pureLines": 92
+  }
+}

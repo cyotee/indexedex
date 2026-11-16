@@ -1,0 +1,67 @@
+{
+  "stopped": true,
+  "pendingOwnedOperations": 0,
+  "recordedChildPidsAbsent": [
+    67238,
+    68128,
+    69961,
+    69304,
+    73361,
+    72486,
+    79090,
+    79747,
+    80573,
+    80574,
+    80575,
+    80576
+  ],
+  "proofExit": 0,
+  "syntaxExits": [
+    {
+      "name": "intake.mjs",
+      "exit": 0
+    },
+    {
+      "name": "routing.mjs",
+      "exit": 0
+    },
+    {
+      "name": "verify.mjs",
+      "exit": 0
+    }
+  ],
+  "processInspection": "process-check.json: exit 0; no phase32 path or recorded child matches",
+  "inputPreservation": {
+    "files": 5423,
+    "changed": 0,
+    "artifact": "preservation.json"
+  },
+  "producerFiles": 1126,
+  "temporaryRuntimeCreated": false,
+  "deletionRequired": false,
+  "retainedFailedAttempt": "attempt01.json and verify-executed01.mjs.txt; pin type error only",
+  "publicationCorrection": "Removed own newline stderr artifact; actual empty stderr retained inline in proof-02.command.json",
+  "newNetworkRequests": 0,
+  "delegatedTasks": 0,
+  "ownedMonitors": 0,
+  "signing": false,
+  "gitOperations": false,
+  "sourceOrProducerEdits": false,
+  "writtenScope": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase32-nft-purchase-inputs/verification",
+  "credentialQualification": "No credential was selected or read by verifier. Reused producer credential-scan claim is hash-bound, not rerun as a new secret scan.",
+  "sourceSizes": [
+    {
+      "path": "intake.mjs",
+      "nonblankNoncommentLines": 136
+    },
+    {
+      "path": "routing.mjs",
+      "nonblankNoncommentLines": 95
+    },
+    {
+      "path": "verify.mjs",
+      "nonblankNoncommentLines": 178
+    }
+  ],
+  "sealPublication": "Final synchronous apply_patch after manifest creation; no publisher subprocess or later owned write."
+}

@@ -1,0 +1,86 @@
+{
+  "version": "phase31-named-nft-producer-seal-v1",
+  "status": "COMPLETE-STOPPED-BOUNDED-PRODUCER",
+  "publishedAt": "2026-11-13T10:25:48.465Z",
+  "sourceCommit": "1694e68a4bd66dd67d3b5e3f145f1da23074ff48",
+  "pin": {
+    "number": "113279837",
+    "hash": "0x78f23110692ee71a64dfea3463f7df0f9687ffa5d5f951fabb22c239921c4113"
+  },
+  "rows": 59,
+  "canonical": true,
+  "bindings": [
+    {
+      "path": "report.md",
+      "bytes": 28293,
+      "sha256": "d8463ed5ac5d259674005b2c3ba924aec72d29fb302ae0ddb5d55314e86eda89"
+    },
+    {
+      "path": "proof.json",
+      "bytes": 23434,
+      "sha256": "33deb0b2cfbf5c36be71f1e87380f49ecc120b0403355ff8405b32da5a17908a"
+    },
+    {
+      "path": "observations.json",
+      "bytes": 733020,
+      "sha256": "475064b312f330a1c613cc0d48e46fc121d20f6031b6e37bc000deec8f46d443"
+    },
+    {
+      "path": "pin.json",
+      "bytes": 3025,
+      "sha256": "14d2169abe37679f1f2dc8e05ddf1787496a9ffc55e5c8d24af599212258699e"
+    },
+    {
+      "path": "end-canonical.json",
+      "bytes": 2716,
+      "sha256": "7ef7f4302eae8de0cdf8954d4ddb02c03ca1b787eae53c786d7eb02113115698"
+    },
+    {
+      "path": "code-routing.json",
+      "bytes": 192057,
+      "sha256": "4c8ab1b6bc583ba088ffbe1bf3a5b4a05de5b1a41695887eea7f0b189ff3ac47"
+    },
+    {
+      "path": "http-manifest.json",
+      "bytes": 445832,
+      "sha256": "09ec0b667c8c0cd144f9c64a9f9d66d07096c986acdb5fb50f46a507e2294da2"
+    },
+    {
+      "path": "inputs.json",
+      "bytes": 13351,
+      "sha256": "b15e82fc750acbfd1b265d3f24636951d363d0314019a1538c01aa5d8de9b0bd"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 30546,
+      "sha256": "3298df5451d08a149d956346a30e7f9f340a060500a759209df6825642be7257"
+    },
+    {
+      "path": "originals.json",
+      "bytes": 624384,
+      "sha256": "8b02a6d3396d3e0318dcdf457fa36fd67bb0b4cf64378b595e923c7f0a68cdac"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 3161,
+      "sha256": "9f847db8bb333c724e480e63ac0640ab4803998945a0e170af9ee10372d612a1"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 87873,
+      "sha256": "f23f4301602319c04dc7ee2964d7a4c0c7ce8a67f03fc45c7f1df58188f2e8a5"
+    }
+  ],
+  "evidenceFiles": 603,
+  "pendingOwnedChildren": 0,
+  "independentVerification": "not-claimed-separate-node",
+  "scope": "59 named original purchase observations only; no eligibility, credit or operational/full-plan acceptance",
+  "publicationCommand": {
+    "executable": "/opt/homebrew/Cellar/bun/1.4.2/bin/bun",
+    "argv": [
+      "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/seal.mjs"
+    ],
+    "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source"
+  },
+  "finalPublication": true
+}

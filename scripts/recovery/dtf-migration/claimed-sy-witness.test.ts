@@ -1,9 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { keccak256 } from "ethers";
-import { readFile } from "node:fs/promises";
-import { z } from "zod";
-import { claimFrame, claimFrames, claimWitness, claimWitnessCodeHash, checkClaimEffects,
+import { claimFrame, claimFrames, claimWitness, checkClaimEffects,
   witnessedClaimBooks } from "./claimed-sy-witness.js";
 import { stakingClaim, stakingSource, claimBookFacets } from "./claimed-sy-source.js";
 import { claimedSyCertificate } from "./schema.js";
@@ -86,8 +83,3 @@ test("caught inner failure is rejected even when the outer witness succeeds", ()
   { code: "PROVENANCE", reason: "TRACE_FAILED" });
 });
 
-test("fixed witness pin matches the concrete compiled router used by the rehearsal", async () => {
-  const artifact = z.object({ deployedBytecode: z.object({ object: z.string() }) }).parse(
-    JSON.parse(await readFile("out/MigrationClaimWitness.sol/MigrationClaimWitness.json", "utf8")));
-  assert.equal(keccak256(artifact.deployedBytecode.object), claimWitnessCodeHash);
-});

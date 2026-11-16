@@ -1,0 +1,349 @@
+{
+  "date": "2026-11-13",
+  "run": "dag_ba88c194-7ea6-4c9d-a880-904eb80d6138",
+  "producer": "st_01a1d3a4",
+  "status": "failed-unaccepted",
+  "completedNodes": 0,
+  "failedNodes": 1,
+  "skippedNodes": 1,
+  "modelFailure": "Configured deep-high route refused for possible cybersecurity risk after partial work. No alternate model, rephrased retry or access workaround attempted.",
+  "historicalRpcFailure": {
+    "httpStatus": 400,
+    "code": -32600,
+    "message": "debug_traceTransaction is not available on the Free tier - upgrade to Pay As You Go, or Enterprise for access.",
+    "attempts": 1,
+    "evidence": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-29-delegated-source/docs/incidents/2026-09-16-dtf-recovery/migration/delegated-source/source/historical/wire/00007.json"
+  },
+  "partialArtifacts": "97 wire records, canonical/state observations and unfinished probe source retained. No report, completed source contract, verification result or seal was found in the enumerated source directory.",
+  "observations": [
+    {
+      "block": "0x4488889",
+      "designation": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c",
+      "state": {
+        "phase": "2",
+        "vault": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+        "asset": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+        "vaultDecimals": "19",
+        "syDecimals": "9",
+        "weight": "20000000000000000000000",
+        "weightSupply": "16637183231172308594542412",
+        "shares": "300366488643615577114",
+        "vaultSupply": "300366488643615577114",
+        "walletSy": "0",
+        "vaultSy": "30036648894",
+        "sySupply": "56814836186"
+      }
+    },
+    {
+      "block": "0x448888a",
+      "designation": "0xef01007702cb554e6bfb442cb743a7df23154544a7176c",
+      "state": {
+        "phase": "2",
+        "vault": "0xAf5C0cD3fDEdd10bee00Eff77Fa0429Bacdb41f0",
+        "asset": "0xB55604CF4dcdABB362078e106D20F98512391EdF",
+        "vaultDecimals": "19",
+        "syDecimals": "9",
+        "weight": "0",
+        "weightSupply": "16617183231172308594542412",
+        "shares": "300005410107098851136",
+        "vaultSupply": "300005410107098851136",
+        "walletSy": "36107853",
+        "vaultSy": "30000541041",
+        "sySupply": "56814836186"
+      }
+    }
+  ],
+  "observationLimits": "Unsealed and not independently verified. Before/after block state is not by itself authenticated inner-call attribution or a local signed custody/rollback witness.",
+  "checkedFiles": [
+    {
+      "path": "scripts/recovery/dtf-migration/schema.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt-source.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-materialize.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle-files.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-proof.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-receipt.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/held-se-lp.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/dtf-custody-se.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/provenance.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-owner-bond.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-receipt.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/quotes.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-domain.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-rpc.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-recovery.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-reconciliation.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/earlier-liquid.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/payloads.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-plan.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-owner-bond.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claimed-sy.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.fixture.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp-source.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-admission.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claimed-sy-source.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-inventory.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-schema.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-se.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-rpc.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-sy.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-process.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-weighted-liquid.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-liquid.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-dtf-custody-source.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-proofs.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-sy.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-association.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-earlier-receipt.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-input.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/preparation.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/claim-vault.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidates.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-held-se-lp.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-liquid.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearse.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/weighted-receipt.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/journal.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-claim-vault-source.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-data.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-chain.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/execution-state.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.test.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/bundle.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/rehearsal-portable.ts",
+      "match": true
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/candidate-nfts.ts",
+      "match": true
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "match": true
+    }
+  ],
+  "processObservation": {
+    "port": 18579,
+    "listening": false,
+    "anvilForgeSolarProcessesObserved": 0,
+    "scope": "Read-only lsof and process-name snapshot; not a comprehensive audit of every runtime handle."
+  },
+  "childRetirement": "Task st_01a1d3a4 had already finished (error); its retained child or queued continuation is now released. The result stays readable with task_output, and task_send revives it.",
+  "productionAdmission": "Unchanged; no partial probe promoted. Previously delivered 70 operator/runbook byte identities still match phase28 tested manifest.",
+  "next": "Resolve configured model-provider access before retrying this lane. Historical trace access is separately paywalled; no upgrade or alternate-provider workaround performed. Whether an inspected source-specific invariant can avoid that trace requirement remains unverified.",
+  "fullPlan": "Not complete. Source, operational-data, deployment and cleanup tasks remain open."
+}

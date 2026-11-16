@@ -1,0 +1,29 @@
+{
+  "key": "dtf-migration-phase25-full-hermetic-delivery",
+  "name": "Migration DETF phase 25: full hermetic correction delivery",
+  "nodes": [
+    {
+      "id": "commit-hermetic-correction",
+      "label": "Commit full-hermetic metadata correction",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "task_summary": "Commit the single verified metadata assertion fix without rerunning the full suite",
+      "prompt": "TASK: Deliver one scoped verified local commit and exact receipt/manifest. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-commit-brief.md fully and its actual complete reports/seals/logs. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic on phase25 branch, sole parent8db3f5ee6310e8a700dad2d6a33e21d0955e63ca. ONLY source path test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol; accepted SHA256 e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1.\nMUST: Inspect full diff and source binding; capture original reproducible per-entry preservation of evidence/out/cache/host/ref/foreign indexes before staging; stage exactly1file. Require current/staged/tested equality and full staged whitespace. Commit repository-style message with exactly one required coauthor; verify actual sole parent, exact committed/current/tested identity, immutable whitespace/clean source/index and every original row afterward. Write only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration/full-hermetic/commit/receipt.md, source-manifest.json and support.\nFORBIDDEN: Source changes, test/build/CLI replay, evidence rewrites, merges/push/history rewrites, dependency/config/provider/public changes, held09 candidate access or artifact relocation. All Git GIT_MASTER=1, --no-pager and GIT_PAGER=cat; reads GIT_OPTIONAL_LOCKS=0, status/diff ignore submodules. Preserve full28576pass proof, original1failure and pager incident, base P1 historical limitation and all operational/source/gas boundaries.\nSTOP WHEN: Actual coherent single-file commit, complete proof/receipt and no pending operation; otherwise precise blocker without commit."
+    },
+    {
+      "id": "audit-hermetic-correction",
+      "label": "Audit full-hermetic correction delivery",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-hermetic-correction"
+      ],
+      "task_summary": "Verify the one-file commit, actual full-suite evidence and complete original preservation",
+      "prompt": "TASK: Independently audit actual completed metadata-correction delivery. Read /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase25-full-hermetic-commit-brief.md fully and all required actual records. Work only in /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic; required sole parent8db3f5ee6310e8a700dad2d6a33e21d0955e63ca. Expected single source test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol SHA256 e8869bc93a199c7c35c97612b804cbb5fde94ef4df1c5661463670e0e0954fc1. Own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-25-full-hermetic/docs/incidents/2026-09-16-dtf-recovery/migration/full-hermetic/commit/verification.md and new support.\nMUST: Require complete actual receipt/manifest, independently compare exact committed/current/tested bytes/modes/path, actual sole parent, coauthor, full immutable whitespace/clean source/index and every original per-entry evidence/out/cache/host/ref/foreign-index preservation baseline/recipe. Read actual full/focused logs and commands; verify28576pass0fail0skip2687suites plus focused1pass and stage exits, seal membership/raw bytes and same tested source. Preserve initial failed run and pager incident, with real later progress, not a fabricated duplicate.\nFORBIDDEN: Runtime/build/test replay, source fixes, old evidence edits, new commit/ref/index mutation, provider/held09/public work. All Git GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 --no-pager, status/diff ignore submodules. Retain base P1 as unresolved historical raw-version limitation; no cold/portable/operational/unsupported-source/target-gas/full-plan acceptance.\nSTOP WHEN: Complete confirmed/needs-fix bounded immutable/full-hermetic evidence audit and cleanup with no pending operation."
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "executable": "/bin/ps",
+  "argv": [
+    "-axo",
+    "pid=,ppid=,comm="
+  ],
+  "cwd": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase34-weighted-purchase-source/source",
+  "pid": 5753,
+  "startedAt": "2026-11-13T12:11:51.598Z",
+  "finishedAt": "2026-11-13T12:11:51.627Z",
+  "exit": 0,
+  "stdoutBytes": 89455,
+  "stdoutSha256": "98570a3636dfaa8122c4d9a9d7475b2df7281a3fc95a17809adb1f754c707fee",
+  "stderrBytes": 0,
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrInline": ""
+}

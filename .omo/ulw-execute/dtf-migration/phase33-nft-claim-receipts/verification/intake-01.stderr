@@ -1,0 +1,12 @@
+19 | export const F = "0x3a07364eaba092472d40f0e6788b8891a31fad4d";
+20 | export const SF = "0xb7581fe833a2b2380dd786b345d61ffb734d36eb";
+21 | export const L = "0x343590ed92498739225e351c27133bc2c11b91b9";
+22 | export const ANCHOR = { number: "108944663", hash: "0xc497433dd691a40cb85959cfeba2e3fff85a975ae060612d984998e1d5765733" };
+23 | export class VerificationError extends Error { constructor(message) { super(message); this.name = "VerificationError"; } }
+24 | export function requireEvidence(ok, label) { if (!ok) throw new VerificationError(label); }
+                                                                 ^
+VerificationError: accepted current pin
+      at requireEvidence (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/evidence.mjs:24:61)
+      at intake (/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase33-nft-claim-receipts/verification/evidence.mjs:107:3)
+
+Bun v1.4.2 (macOS arm64)

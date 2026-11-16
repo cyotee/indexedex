@@ -1,0 +1,134 @@
+{
+  "status": "STOPPED-BOUNDED-INDEPENDENT-VERIFICATION",
+  "capturedAt": "2026-11-13T10:42:48.336Z",
+  "commands": [
+    {
+      "path": "validate-05.command.json",
+      "pid": 50225,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:10.649Z"
+    },
+    {
+      "path": "validate-final-05.command.json",
+      "pid": 50553,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:44.740Z"
+    },
+    {
+      "path": "validate-02.command.json",
+      "pid": 50222,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:10.523Z"
+    },
+    {
+      "path": "validate-final-02.command.json",
+      "pid": 50541,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:44.552Z"
+    },
+    {
+      "path": "validate-final-03.command.json",
+      "pid": 50545,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:44.616Z"
+    },
+    {
+      "path": "validate-03.command.json",
+      "pid": 50223,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:10.564Z"
+    },
+    {
+      "path": "validate-final-04.command.json",
+      "pid": 50549,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:44.682Z"
+    },
+    {
+      "path": "validate-04.command.json",
+      "pid": 50224,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:10.606Z"
+    },
+    {
+      "path": "observe-01.command.json",
+      "pid": 50560,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:35:12.049Z"
+    },
+    {
+      "path": "proof-01.command.json",
+      "pid": 51256,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:36:01.637Z"
+    },
+    {
+      "path": "validate-01.command.json",
+      "pid": 50221,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:10.483Z"
+    },
+    {
+      "path": "validate-final-01.command.json",
+      "pid": 50537,
+      "exitCode": 0,
+      "stoppedAt": "2026-11-13T10:34:44.470Z"
+    }
+  ],
+  "confirmedAbsentRecordedPids": [
+    50225,
+    50553,
+    50222,
+    50541,
+    50545,
+    50223,
+    50549,
+    50224,
+    50560,
+    51256,
+    50221,
+    50537,
+    40869,
+    41291,
+    40866,
+    41287,
+    41288,
+    40867,
+    41289,
+    40868,
+    42263,
+    41765,
+    40870,
+    41292,
+    40864,
+    41286,
+    41293,
+    40871,
+    45516
+  ],
+  "producerSeal": {
+    "path": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase31-nft-observations/source/seal.json",
+    "bytes": 2781,
+    "sha256": "dc8f757532b275af78cdd7b204bf1153238b99fc581699c45f17e35d65b52af6"
+  },
+  "inputsReauthenticated": 36,
+  "sourceBindingsReauthenticated": 116,
+  "pendingOwnedOperations": [],
+  "rpcRequestsAwaited": true,
+  "noSigningOrLiveWrites": true,
+  "serversStarted": 0,
+  "localChainsStarted": 0,
+  "subagentsStarted": 0,
+  "installsOrForgeOrFullSuites": false,
+  "cleanupDeletions": [],
+  "temporaryRuntimesCreated": 0,
+  "writesOnlyInsideVerification": true,
+  "credentialScan": {
+    "files": 585,
+    "matches": 0
+  },
+  "finalPublisher": {
+    "pid": 54967,
+    "meaning": "seal is last write; require external monitored exit before claiming stopped publication"
+  }
+}

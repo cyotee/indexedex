@@ -1,0 +1,29 @@
+{
+  "key": "dtf-migration-phase28-receipt-delivery",
+  "name": "Migration DETF phase 28: finite receipt collector immutable delivery",
+  "nodes": [
+    {
+      "id": "commit-receipt-collector",
+      "label": "Commit verified receipt collector",
+      "category": "unspecified-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "task_summary": "Commit ten verified read-only collector files and preserve exact source/evidence identities",
+      "prompt": "TASK: Complete the scoped local commit defined in /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-commit-source.json. Read both fully and all actual reports/seals. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence soleparent789fced820ed494d9651c598fb8f75c646d727a7; exactly10sourcepaths2modified8added, no evidence/data. DELIVERABLE: Actual commit plus /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/commit/receipt.md, source-manifest.json and new support. VERIFY: Full source/diff; staged/current/tested bytes/lengths and qualifiedmodes, full stagedwhitespace. Capture original reproducible per-entry preservation of evidence/out/cache/inputs/host/refs/foreign indexes before staging. Commit one repo-style increment with exactlyone coauthor. Verify actualparent/committed-current-index-tested identities/all70frozen source/immutablewhitespace/clean source-index and every original baseline row. No sourcefixes, execution/types/tests/collector/oracle/Forge replay, provider/held09/public/signing, old evidence/input/config/dependency changes or historyrewrite/merge/push. Git GIT_MASTER=1 --no-pager GIT_PAGER=cat; reads GIT_OPTIONAL_LOCKS=0, ignore submodules. Preserve20flags, credentialboundaries, failed histories/P1/source/operational/gas limits. STOP WHEN: Complete actual ten-file commit and proof/receipt with no pending operation, or precise blocker without commit."
+    },
+    {
+      "id": "audit-receipt-collector",
+      "label": "Audit receipt collector delivery",
+      "category": "deep-low",
+      "load_skills": [
+        "git-master"
+      ],
+      "dependsOn": [
+        "commit-receipt-collector"
+      ],
+      "task_summary": "Independently audit the collector commit, actual canonical archive and every preservation row",
+      "prompt": "TASK: Independently audit actual completed delivery under /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-commit-brief.md and /Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/phase28-receipt-evidence-commit-source.json. Read both completely and all required actual records. SCOPE: /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence; own only /Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-28-receipt-evidence/docs/incidents/2026-09-16-dtf-recovery/migration/receipt-evidence/commit/verification.md and new support. DELIVERABLE: Complete confirmed/needs-fix immutable audit. VERIFY: Actualreceipt/manifest; soleparent789fced820ed494d9651c598fb8f75c646d727a7;10pathdelta/eightnewbodies/coauthor/source-index-tested bytes/lengths/qualifiedmodes/fullimmutablewhitespace. Read actual159test/77reference/310response/2368log/568locator proof, complete20flags and exact raw source/seals/cleanup. Reproduce all originalper-entry evidence/out/cache/input/host/ref/foreign-index preservation using original baselines and actualbytes/modes, not aggregatecounts or newerinventories. No sourcefixes, runtime/type/test/collector/oracle/Forge replay, secret/provider/held09/public/signing, source/evidence/input edits, Gitwrites or configchange. Git GIT_MASTER=1 GIT_OPTIONAL_LOCKS=0 --no-pager GIT_PAGER=cat, ignoresubmodules. Preserve actual raw-versus-summary failure captures, credentialboundaries, P1 and alloperational/source/gas limits. STOP WHEN: Complete bounded audit and stopped cleanup, no pending operation; no fullplan or eligibility approval."
+    }
+  ]
+}

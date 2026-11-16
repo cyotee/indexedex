@@ -1,0 +1,68 @@
+{
+  "version": "phase34-independent-source-bindings-v1",
+  "finalModules": [
+    {
+      "path": "auth.mjs",
+      "bytes": 8865,
+      "sha256": "54ddfaacea1e48302685d5ec47a479583f93b9342ff908ea7f8603def2d0eba9",
+      "pureLines": 141
+    },
+    {
+      "path": "rows.mjs",
+      "bytes": 14646,
+      "sha256": "ab78ac804fbd1f12ce82bf28473a7af43a52c59a0ff6e051c27d076220bfc77c",
+      "pureLines": 186
+    },
+    {
+      "path": "verify.mjs",
+      "bytes": 7807,
+      "sha256": "eb9518be08c88e22643013f0f67504e4cd5268e5198f6f6d05b60128330bc511",
+      "pureLines": 92
+    }
+  ],
+  "executedSourceSnapshots": [
+    {
+      "path": "rows-executed01.mjs.txt",
+      "bytes": 13922,
+      "sha256": "6e249de66fa35e00131517fd2e5b91815c07feb537aed541e115ae7e44c076cd"
+    },
+    {
+      "path": "rows-executed02.mjs.txt",
+      "bytes": 14024,
+      "sha256": "c2b801df4bbcc7621d30620e85611ecd9a3ad7d268a184440fb115b8217fd765"
+    },
+    {
+      "path": "verify-executed02.mjs.txt",
+      "bytes": 7258,
+      "sha256": "084b17375d495d756ff9337f3bdb8fadcf16fd208abc5286c87c40351d6e47c2"
+    },
+    {
+      "path": "verify-executed03.mjs.txt",
+      "bytes": 7784,
+      "sha256": "4bd0612024c89f2c34a10f369eae4d077d3250805595c7d64a765083fb31f94d"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules/ethers/lib.esm/index.js",
+      "bytes": 350,
+      "sha256": "586bc08ce4c6bdb64f2972f9284f9eca568b7211f33c387d5b83f63887ffc468"
+    },
+    {
+      "path": "/Users/cyotee/Projects/indexedex-wt/dtf-migration-phase-30-recovery-receipts/node_modules/ethers/package.json",
+      "bytes": 4945,
+      "sha256": "d644d7df228197962e4ca19824b06e8d50dce0b5ee2aced63dcfc2a11ec7b90f"
+    }
+  ],
+  "sourceContents": {
+    "count": 99,
+    "identities": "proof.json#/authentication/sourceHashes",
+    "inspectedBodies": "source-excerpts.json",
+    "packageInput": "/Users/cyotee/Projects/indexedex/.omo/ulw-execute/dtf-migration/weighted-bond-facet-source-capture-20261113.json"
+  },
+  "admittedInputs": {
+    "count": 6780,
+    "identities": "proof.json#/inputIdentities"
+  },
+  "producerModulesImported": false
+}

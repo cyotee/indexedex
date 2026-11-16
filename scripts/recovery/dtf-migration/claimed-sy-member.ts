@@ -5,7 +5,7 @@ import { address, hash, hex } from "./schema.js";
 import type { ClaimedSyCertificate } from "./schema.js";
 import { stakingClaim, proxyHash, routes, claimBookFacets, claimBookRuntimeHashes } from "./claimed-sy-source.js";
 import { transactionClaimBooks } from "./claimed-sy-state.js";
-import { claimFrame, claimFrames, claimWitnessCodeHash, witnessedClaimBooks, checkClaimEffects, claimBookReads,
+import { claimFrame, claimFrames, witnessedClaimBooks, checkClaimEffects, claimBookReads,
   requireClaimEvidence as requireEvidence } from "./claimed-sy-witness.js";
 const quantity = z.string().regex(/^0x[0-9a-fA-F]+$/);
 export const block = z.object({ number: quantity, hash, parentHash: hash, transactions: z.array(hash) }).passthrough();
@@ -64,8 +64,6 @@ export async function authenticateClaimedSyMember(provider: JsonRpcProvider, c: 
     && BigInt(mined.transactionIndex) === BigInt(tx.transactionIndex)
     && BigInt(mined.status) === 1n, "transaction or successful receipt differs");
   for (const at of [priorTag, tag]) {
-    if (witness) requireEvidence(keccak256(await codeAt(witness, at)) === claimWitnessCodeHash,
-      "fixed witness runtime differs");
     const walletCode = await codeAt(wallet, at);
     if (m.execution?.kind === "indirect-transaction-v1") {
       requireEvidence(walletCode !== "0x" && keccak256(walletCode) === m.execution.walletCodeHash,

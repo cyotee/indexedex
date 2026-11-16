@@ -1,0 +1,46 @@
+{
+  "parent": "07d54b9a3d20d98aee24e75235bbf16b650a8028",
+  "reportSha256": "b6fd48a199b7a577eaa4007741264d99e7b21d700a147e979c6e3f47b6077b50",
+  "paths": [
+    {
+      "path": "scripts/recovery/dtf-migration/cli.ts",
+      "bytes": 13484,
+      "sha256": "9c1f4bd76f904ff178e0620357d37ce4cc0a06db105480a9b168b406e530c437"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-input.ts",
+      "bytes": 5724,
+      "sha256": "f0734996602d546e7670e7902b286d68093a60a8d28bf779859e7254a9d0a323"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-evidence.ts",
+      "bytes": 8738,
+      "sha256": "e82ae8ed232b4bbeb408c6f85a63647415edb5ac5508fe8e9b7467027503762e"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.ts",
+      "bytes": 10148,
+      "sha256": "f6d0ab3d229e438d059843939b0632ea761d26f7761b9cbb54af84a90e1a4dc4"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.fixture.ts",
+      "bytes": 8477,
+      "sha256": "d4db87127b8634c42ca0b12fd21ae4301e0dd8628472359449a7402b175cf472"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt.test.ts",
+      "bytes": 9645,
+      "sha256": "3566f180237b37baf14e0ae28fdd420e035beb82ffcd6ea42e81f6ccd44d4fa1"
+    },
+    {
+      "path": "scripts/recovery/dtf-migration/receipt-reconciliation.test.ts",
+      "bytes": 9271,
+      "sha256": "ca8ada6cbe818ee436c1344ed660d504877f548d8b021cd946ad14ebc68767e4"
+    },
+    {
+      "path": "docs/incidents/2026-09-16-dtf-recovery/migration/operator-runbook.md",
+      "bytes": 65301,
+      "sha256": "65474dcf25df7a9c737fe4b7afb4e9833bf148594f979d794d6356d08a49da4a"
+    }
+  ]
+}
